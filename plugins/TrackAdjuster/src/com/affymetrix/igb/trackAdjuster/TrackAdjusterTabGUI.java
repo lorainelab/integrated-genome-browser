@@ -1,10 +1,10 @@
 package com.affymetrix.igb.trackAdjuster;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.trackAdjuster.TrackAdjusterTab.DisplayType;
 import java.awt.Cursor;
@@ -86,7 +86,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         mmavgB = tat.graphP_mmavgB;
         dotB = tat.graphP_dotB;
         PluginRadioButton = tat.graphP_hmapB;
-        PluginComboBox = new javax.swing.JComboBox();
+        heat_mapCB = tat.graphP_heat_mapCB;
         jLabel7 = new javax.swing.JLabel();
         labelCB = tat.graphP_labelCB;
         yaxisCB = tat.graphP_yaxisCB;
@@ -100,14 +100,12 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         maxText = tat.vis_bounds_setter.max_valT;
         maxValLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        pluginPrefButton = new javax.swing.JButton();
-        PluginButton = tat.pluginDisplayAsB;
         jLabel5 = new javax.swing.JLabel();
         AnnotationButton = tat.annotationDisplayAsB;
         AutoButton = tat.autoDisplayAsB;
-        jComboBox2 = new javax.swing.JComboBox();
         GraphButton = tat.graphDisplayAsB;
         floatingCheckBox = tat.floatCB;
+        otherPreferencesButton = tat.otherPreferencesButton;
         TopPanel = new javax.swing.JPanel();
         height_slider = tat.height_slider;
         jLabel8 = new javax.swing.JLabel();
@@ -324,8 +322,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         stylegroup.add(PluginRadioButton);
 
-        PluginComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "HeatMap" }));
-        PluginComboBox.setFocusCycleRoot(true);
+        heat_mapCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "HeatMap" }));
+        heat_mapCB.setFocusCycleRoot(true);
 
         jLabel7.setText("Show:");
 
@@ -349,7 +347,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                         .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(mmavgB)
                             .add(lineB)
-                            .add(PluginComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(heat_mapCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(graphPanelLayout.createSequentialGroup()
                         .add(jLabel7)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -376,7 +374,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .add(5, 5, 5)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(PluginRadioButton)
-                    .add(PluginComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(heat_mapCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
 
         RangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Y Axis Scale (Graph)"));
@@ -433,7 +431,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                         .add(by_valRB_val)
                         .add(0, 0, 0)
                         .add(by_percentileRB_val)
-                        .add(0, 0, Short.MAX_VALUE))
+                        .add(0, 9, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, RangePanelLayout.createSequentialGroup()
                         .add(minValLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -467,21 +465,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         RangePanelLayout.linkSize(new java.awt.Component[] {maxText, minText}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
-        pluginPrefButton.setIcon(CommonUtils.getInstance().getIcon("images/configure.png"));
-        pluginPrefButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pluginPrefButtonActionPerformed(evt);
-            }
-        });
-
-        DisplayButtonGroup.add(PluginButton);
-        PluginButton.setEnabled(false);
-        PluginButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                PluginButtonActionPerformed(evt);
-            }
-        });
-
         jLabel5.setText("Display As:");
 
         DisplayButtonGroup.add(AnnotationButton);
@@ -500,9 +483,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
             }
         });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Plugin" }));
-        jComboBox2.setEnabled(false);
-
         DisplayButtonGroup.add(GraphButton);
         GraphButton.setText("Graph");
         GraphButton.addActionListener(new java.awt.event.ActionListener() {
@@ -512,6 +492,13 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         });
 
         floatingCheckBox.setText("Floating");
+
+        otherPreferencesButton.setText("Configure other");
+        otherPreferencesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                configureOtherButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -526,15 +513,11 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .add(GraphButton)
                 .add(10, 10, 10)
                 .add(AutoButton)
-                .add(10, 10, 10)
-                .add(PluginButton)
-                .add(5, 5, 5)
-                .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 158, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(5, 5, 5)
-                .add(pluginPrefButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(5, 5, 5)
+                .add(26, 26, 26)
+                .add(otherPreferencesButton)
+                .add(51, 51, 51)
                 .add(floatingCheckBox)
-                .addContainerGap(0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -543,10 +526,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .add(AnnotationButton)
                 .add(GraphButton)
                 .add(AutoButton)
-                .add(PluginButton)
-                .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(pluginPrefButton)
-                .add(floatingCheckBox))
+                .add(floatingCheckBox)
+                .add(otherPreferencesButton))
         );
 
         //This allows the Bundle String to be applied,
@@ -610,8 +591,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(TopPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
-                .add(StylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 159, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(3, 3, 3)
+                .add(StylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 179, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(AnnotationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 239, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -695,13 +676,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_maxTextActionPerformed
 
-	private void pluginPrefButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pluginPrefButtonActionPerformed
-		TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
-		pp.setTab(TrackAdjusterPreferences.TAB_DISPLAY_PLUGIN);
-		javax.swing.JFrame f = pp.getFrame();
-		f.setVisible(true);
-	}//GEN-LAST:event_pluginPrefButtonActionPerformed
-
 	private void by_valRB_valActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_valRB_valActionPerformed
 		switchView(false);
 	}//GEN-LAST:event_by_valRB_valActionPerformed
@@ -742,17 +716,11 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_AutoButtonActionPerformed
 
-	private void PluginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PluginButtonActionPerformed
-		if (tat.is_listening) {
-			tat.setViewMode(DisplayType.PLUGIN);
-		}
-	}//GEN-LAST:event_PluginButtonActionPerformed
-
 	private void StylePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StylePanelMouseClicked
 		Rectangle bounds = new Rectangle(43, 5, 57, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
-			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
-			pp.setTab(TrackAdjusterPreferences.TAB_STYLE);
+			PreferencesPanel pp = PreferencesPanel.getSingleton();
+			pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 			javax.swing.JFrame f = pp.getFrame();
 			f.setVisible(true);
 		}
@@ -762,8 +730,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void AnnotationPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AnnotationPanelMouseClicked
 		Rectangle bounds = new Rectangle(85, 5, 55, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
-			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
-			pp.setTab(TrackAdjusterPreferences.TAB_ANNOTATION);
+			PreferencesPanel pp = PreferencesPanel.getSingleton();
+			pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 			javax.swing.JFrame f = pp.getFrame();
 			f.setVisible(true);
 		}
@@ -772,8 +740,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void graphPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseClicked
 		Rectangle bounds = new Rectangle(50, 5, 60, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
-			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
-			pp.setTab(TrackAdjusterPreferences.TAB_GRAPH);
+			PreferencesPanel pp = PreferencesPanel.getSingleton();
+			pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 			javax.swing.JFrame f = pp.getFrame();
 			f.setVisible(true);
 		}
@@ -835,6 +803,13 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void selectAllCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllCBActionPerformed
         tat.selectAllCBSelected();	}//GEN-LAST:event_selectAllCBActionPerformed
 
+	private void configureOtherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureOtherButtonActionPerformed
+		PreferencesPanel pp = PreferencesPanel.getSingleton();
+		pp.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
+		javax.swing.JFrame f = pp.getFrame();
+		f.setVisible(true);
+	}//GEN-LAST:event_configureOtherButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton AnnotationButton;
     private javax.swing.JPanel AnnotationPanel;
@@ -842,8 +817,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     private javax.swing.ButtonGroup DisplayButtonGroup;
     private javax.swing.ButtonGroup DisplayModeButtonGroup;
     private javax.swing.JRadioButton GraphButton;
-    private javax.swing.JRadioButton PluginButton;
-    private javax.swing.JComboBox PluginComboBox;
     private javax.swing.JRadioButton PluginRadioButton;
     private javax.swing.JPanel RangePanel;
     private javax.swing.JPanel StylePanel;
@@ -863,9 +836,9 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     private javax.swing.JButton fitViewButton;
     private javax.swing.JCheckBox floatingCheckBox;
     private javax.swing.JPanel graphPanel;
+    private javax.swing.JComboBox heat_mapCB;
     private javax.swing.JSlider height_slider;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -885,7 +858,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     private javax.swing.JLabel minValLabel;
     private javax.swing.JRadioButton mmavgB;
     private javax.swing.JComboBox nameSizeComboBox;
-    private javax.swing.JButton pluginPrefButton;
+    private javax.swing.JButton otherPreferencesButton;
     private javax.swing.JSlider rangeSlider;
     private javax.swing.JComboBox selectAllCB;
     private javax.swing.ButtonGroup stylegroup;

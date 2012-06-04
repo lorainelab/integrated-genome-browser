@@ -104,6 +104,7 @@ public final class TrackAdjusterTab
 	public JPanel rangePanel = new JPanel();
 	public JPanel graphPanel = new JPanel();
 	public JPanel annotationPanel = new JPanel();
+	public JRPButton otherPreferencesButton = new JRPButton("TrackAdjusterTab_otherPreferencesButton");
 	public ColorComboBox styleP_fgColorComboBox = new ColorComboBox();
 	public ColorComboBox styleP_bgColorComboBox = new ColorComboBox();
 	public ColorComboBox styleP_labelFGComboBox = new ColorComboBox();

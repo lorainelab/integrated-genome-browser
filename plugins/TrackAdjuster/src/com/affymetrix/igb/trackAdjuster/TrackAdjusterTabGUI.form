@@ -40,8 +40,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="TopPanel" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="StylePanel" min="-2" pref="159" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+              <Component id="StylePanel" min="-2" pref="179" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="AnnotationPanel" min="-2" pref="239" max="-2" attributes="0"/>
@@ -405,7 +405,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="mmavgB" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lineB" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="PluginComboBox" alignment="0" min="-2" pref="123" max="-2" attributes="0"/>
+                              <Component id="heat_mapCB" alignment="0" min="-2" pref="123" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -441,7 +441,7 @@
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="PluginRadioButton" min="-2" max="-2" attributes="0"/>
-                      <Component id="PluginComboBox" min="-2" max="-2" attributes="0"/>
+                      <Component id="heat_mapCB" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -490,7 +490,7 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_hmapB"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JComboBox" name="PluginComboBox">
+        <Component class="javax.swing.JComboBox" name="heat_mapCB">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="1">
@@ -499,6 +499,9 @@
             </Property>
             <Property name="focusCycleRoot" type="boolean" value="true"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_heat_mapCB"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>
@@ -552,7 +555,7 @@
                           <Component id="by_valRB_val" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="by_percentileRB_val" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="9" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="minValLabel" min="-2" max="-2" attributes="0"/>
@@ -672,15 +675,11 @@
                   <Component id="GraphButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="AutoButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="PluginButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="jComboBox2" min="-2" pref="158" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="pluginPrefButton" min="-2" pref="42" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  <Component id="otherPreferencesButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                   <Component id="floatingCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -691,39 +690,13 @@
                   <Component id="AnnotationButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="GraphButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="AutoButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="PluginButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox2" alignment="2" min="-2" pref="29" max="-2" attributes="0"/>
-                  <Component id="pluginPrefButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="floatingCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="otherPreferencesButton" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="pluginPrefButton">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="CommonUtils.getInstance().getIcon(&quot;images/configure.png&quot;)" type="code"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pluginPrefButtonActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JRadioButton" name="PluginButton">
-          <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="DisplayButtonGroup"/>
-            </Property>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="PluginButtonActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.pluginDisplayAsB"/>
-          </AuxValues>
-        </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>
             <Property name="text" type="java.lang.String" value="Display As:"/>
@@ -759,16 +732,6 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.autoDisplayAsB"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JComboBox" name="jComboBox2">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="1">
-                <StringItem index="0" value="Plugin"/>
-              </StringArray>
-            </Property>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JRadioButton" name="GraphButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
@@ -790,6 +753,17 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.floatCB"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="otherPreferencesButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Configure other"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configureOtherButtonActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.otherPreferencesButton"/>
           </AuxValues>
         </Component>
       </SubComponents>

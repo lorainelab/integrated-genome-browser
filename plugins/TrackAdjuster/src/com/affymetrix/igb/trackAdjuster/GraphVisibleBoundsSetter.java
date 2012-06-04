@@ -46,8 +46,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	public JRPTextField max_perT;
 	public JRPTextField min_valT;
 	public JRPTextField max_valT;
-	public static final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", TrackAdjusterTab.BUNDLE.getString("byValue"));
-	public static final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", TrackAdjusterTab.BUNDLE.getString("byPercentile"));
+	public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", TrackAdjusterTab.BUNDLE.getString("byValue"));
+	public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", TrackAdjusterTab.BUNDLE.getString("byPercentile"));
 	private final static int max_chars = 8;
 	private final static int max_pix_per_char = 6;
 	private static final int tf_min_xpix = max_chars * max_pix_per_char;

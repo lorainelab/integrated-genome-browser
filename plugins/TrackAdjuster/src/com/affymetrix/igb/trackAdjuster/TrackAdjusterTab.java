@@ -328,11 +328,11 @@ public final class TrackAdjusterTab
 		pluginDisplayAsB.setSelected(false);
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
-			RootSeqSymmetry rootSym = (RootSeqSymmetry)selectedTiers.get(0).getInfo();
-			FileTypeCategory category = rootSym.getCategory();
-			if (style == null) {
+			if (style == null || selectedTiers.get(0).getInfo() == null) {
 				return;
 			}
+			RootSeqSymmetry rootSym = (RootSeqSymmetry)selectedTiers.get(0).getInfo();
+			FileTypeCategory category = rootSym.getCategory();
 			trackName.setText(style.getTrackName());
 			String viewmode = style.getViewMode();
 			if ("annotation".equals(viewmode) || "alignment".equals(viewmode)) {

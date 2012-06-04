@@ -86,6 +86,7 @@ public final class TrackAdjusterTab
 		}
 	}
 	public ComboBoxModel selectAllCBModel = new DefaultComboBoxModel(SELECT_ALL_ITEMS);
+	public ComboBoxModel heatMapModel = new DefaultComboBoxModel(HeatMap.getStandardNames());
 	public JRPComboBox selectAllCB = new JRPComboBox("TrackAdjusterTab_selectAllCB");
 	public JRPRadioButton graphP_mmavgB = new JRPRadioButton("TrackAdjusterTab_graphP_mmavgB", BUNDLE.getString("minMaxAvgButton"));
 	public JRPRadioButton graphP_lineB = new JRPRadioButton("TrackAdjusterTab_graphP_lineB", BUNDLE.getString("lineButton"));
@@ -137,7 +138,7 @@ public final class TrackAdjusterTab
 	public TrackAdjusterTab(IGBService igbS) {
 		igbService = igbS;
 		
-		graphP_heat_mapCB = new JRPComboBox("TrackAdjusterTab_heat_mapCB", HeatMap.getStandardNames());
+		graphP_heat_mapCB = new JRPComboBox("TrackAdjusterTab_heat_mapCB");
 		styleP_trackNameSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
 		graphP_heat_mapCB.addItemListener(new HeatMapItemListener());
 

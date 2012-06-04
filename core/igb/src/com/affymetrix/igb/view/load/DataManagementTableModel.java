@@ -89,7 +89,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		fireTableDataChanged();
-		System.out.println(this.getClass().getName() + ".createVirtualFeatures: twice");
+//		System.out.println(this.getClass().getName() + ".createVirtualFeatures: twice");
 	}
 
 	/*

@@ -118,6 +118,12 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
+	public void setPreferredHeight(double height, ViewI view) {
+		super.setPreferredHeight(height, view);
+		tempViewModeBarGraphGlyph.setPreferredHeight(height, view);
+	}
+	
+	@Override
 	public GraphType getGraphStyle() {
 		return GraphType.MINMAXAVG;
 	}

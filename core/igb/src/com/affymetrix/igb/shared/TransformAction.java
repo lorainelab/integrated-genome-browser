@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 
 import java.awt.event.ActionEvent;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,9 +36,18 @@ public class TransformAction extends SeqMapViewActionA {
 		}
 		for(TierGlyph tg : trackList){
 			final ITrackStyleExtended style = tg.getAnnotStyle();
+			Rectangle2D.Double savedCoordBox = tg.getCoordBox();
 			try {
+				
 				style.setOperator(operator.getName());
 				refreshMap(false, false);
+				
+				if(savedCoordBox != null){
+					tg.setCoordBox(savedCoordBox);
+				}
+				
+				getSeqMapView().getSeqMap().packTiers(false, false, false);
+				getSeqMapView().getSeqMap().packTiers(false, false, false);
 			}
 			catch (Exception ex) {
 				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());

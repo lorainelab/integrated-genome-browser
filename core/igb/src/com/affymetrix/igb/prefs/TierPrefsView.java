@@ -250,7 +250,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		viewModeCB.setEnabled(b);
 		labelFieldComboBox.setEnabled(b);
 		maxDepthTextField.setEnabled(b);
-		connectedCheckBox.setEnabled(b);
 		collapsedCheckBox.setEnabled(b);
 		colorCheckBox.setEnabled(b);
 		arrowCheckBox.setEnabled(b);
@@ -300,7 +299,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		labelFieldComboBox.setSelectedItem(getValueAt(COL_LABEL_FIELD));
 		maxDepthTextField.setText(String.valueOf(getValueAt(COL_MAX_DEPTH)));
 		show2TracksCheckBox.setSelected((Boolean) getValueAt(COL_SHOW_2_TRACKS));
-		connectedCheckBox.setSelected((Boolean) getValueAt(COL_CONNECTED));
 		collapsedCheckBox.setSelected((Boolean) getValueAt(COL_COLLAPSED));
 
 		DIRECTION_TYPE type = (DIRECTION_TYPE) getValueAt(COL_DIRECTION_TYPE);
@@ -364,13 +362,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 					break;
 				case COL_SHOW_2_TRACKS:
 					object = check2Tracks(style, temp);
-					if (object == null) {
-						object = Boolean.FALSE;
-						break;
-					}
-					break;
-				case COL_CONNECTED:
-					object = checkConnected(style, temp);
 					if (object == null) {
 						object = Boolean.FALSE;
 						break;
@@ -461,15 +452,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		return value;
 	}
 
-	private Boolean checkConnected(TrackStyle style, TrackStyle temp) {
-		Boolean value = style.getConnected();
-		if (value != temp.getConnected()) {
-			return null;
-		}
-
-		return value;
-	}
-
 	private Boolean checkCollapsed(TrackStyle style, TrackStyle temp) {
 		Boolean value = style.getCollapsed();
 		if (value != temp.getCollapsed()) {
@@ -521,7 +503,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		labelFieldComboBox.setSelectedItem(style.getLabelField());
 		maxDepthTextField.setText(String.valueOf(style.getMaxDepth()));
 		show2TracksCheckBox.setSelected(style.getSeparate());
-		connectedCheckBox.setSelected(style.getConnected());
 		collapsedCheckBox.setSelected(style.getCollapsed());
 
 		setSelectedByDirection(style.getDirectionName());
@@ -559,7 +540,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			}
 			viewModeCB.setEnabled(false);
 			labelFieldComboBox.setEnabled(false);
-			connectedCheckBox.setEnabled(false);
 			collapsedCheckBox.setEnabled(false);
 			colorCheckBox.setEnabled(false);
 			arrowCheckBox.setEnabled(false);
@@ -845,13 +825,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 							break;
 						case COL_SHOW_2_TRACKS:
 							style.setSeparate(((Boolean) value).booleanValue());
-							break;
-						case COL_CONNECTED:
-							if (Boolean.TRUE.equals(value)) {
-								style.setGlyphDepth(2);
-							} else {
-								style.setGlyphDepth(1);
-							}
 							break;
 						case COL_COLLAPSED:
 							style.setCollapsed(((Boolean) value).booleanValue());

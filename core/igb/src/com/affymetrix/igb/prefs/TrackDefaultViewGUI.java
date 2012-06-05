@@ -1,6 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.igb.tiers.TrackConstants;
 
@@ -55,7 +54,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         fgColorComboBox = tdv.getFgColorComboBox();
         show2TracksCheckBox = tdv.getShow2TracksCheckBox();
         collapsedCheckBox = tdv.getCollapsedCheckBox();
-        connectedCheckBox = tdv.getConnectedCheckBox();
 
         setPreferredSize(new java.awt.Dimension(470, 512));
 
@@ -118,7 +116,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                         .add(negativeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
         showStrandPanelLayout.setVerticalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -170,7 +168,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         selectTrackDefaultPanelLayout.setVerticalGroup(
             selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackDefaultPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addTrackDefaultButton)
@@ -252,20 +250,13 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
             }
         });
 
-        connectedCheckBox.setText("Connected");
-        connectedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                connectedCheckBoxActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(6, 6, 6)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
@@ -295,11 +286,11 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                                 .add(TrackTypeNameLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(trackDefaultTextField))))
-                    .add(show2TracksCheckBox)
                     .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(connectedCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                        .add(show2TracksCheckBox)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         propertiesPanelLayout.linkSize(new java.awt.Component[] {labelFieldComboBox, maxDepthTextField, trackNameSizeComboBox}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -331,11 +322,10 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                     .add(maxDepthLabel)
                     .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(show2TracksCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(connectedCheckBox)
-                    .add(collapsedCheckBox)))
+                    .add(show2TracksCheckBox)
+                    .add(collapsedCheckBox))
+                .add(30, 30, 30))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -349,14 +339,14 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(15, 15, 15)
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
+                    .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .add(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(10, 10, 10)
-                .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+                .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(10, 10, 10)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -392,10 +382,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		tdv.show2TracksCheckBox();
 	}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
-
-	private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		tdv.connectedCheckBox();
-	}//GEN-LAST:event_connectedCheckBoxActionPerformed
 
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
 		tdv.collapsedCheckBox();
@@ -433,7 +419,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private javax.swing.JLabel bgLabel;
     private javax.swing.JCheckBox collapsedCheckBox;
     private javax.swing.JCheckBox colorCheckBox;
-    private javax.swing.JCheckBox connectedCheckBox;
     private javax.swing.JButton deleteTrackDefaultButton;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;

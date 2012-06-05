@@ -163,7 +163,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		labelFieldComboBox.setEnabled(b);
 		maxDepthTextField.setEnabled(b);
 		show2TracksCheckBox.setEnabled(b);
-		connectedCheckBox.setEnabled(b);
 		collapsedCheckBox.setEnabled(b);
 		possitiveColorComboBox.setEnabled(b);
 		negativeColorComboBox.setEnabled(b);
@@ -202,7 +201,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 				labelFieldComboBox.setSelectedItem(null);
 				maxDepthTextField.setText("");
 				show2TracksCheckBox.setSelected(false);
-				connectedCheckBox.setSelected(false);
 				collapsedCheckBox.setSelected(false);
 				colorCheckBox.setSelected(false);
 				arrowCheckBox.setSelected(false);
@@ -214,7 +212,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 				labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 				maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
 				show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
-				connectedCheckBox.setSelected(selectedStyle.getConnected());
 				collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 				switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -260,8 +257,8 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		private static final long serialVersionUID = 1L;
 		private List<TrackStyle> tier_styles;
 		private AssociationElement element;
-		private Entry[] file2types;
-		private Entry entry;
+		private Entry<String, AssociationElement>[] file2types;
+		private Entry<String, AssociationElement> entry;
 
 		public TrackDefaultPrefTableModel() {
 			this.tier_styles = new ArrayList<TrackStyle>();
@@ -278,8 +275,8 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		private void setElements(Map<String, AssociationElement> elements) {
 			file2types = elements.entrySet().toArray(new Entry[elements.size()]);
 			tier_styles.add(default_annot_style);
-			for (Entry entries : file2types) {
-				element = (AssociationElement) entries.getValue();
+			for (Entry<String, AssociationElement> entries : file2types) {
+				element = entries.getValue();
 
 				addElement(entries.getKey().toString(), element);
 			}
@@ -422,20 +419,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 								element.getPropertyMap().put(PROP_SEPARATE, value.toString());
 							}
 							style.setSeparate(((Boolean) value).booleanValue());
-							break;
-						case COL_CONNECTED:
-							if (!style.equals(default_annot_style)) {
-								if (Boolean.TRUE.equals(value)) {
-									element.getPropertyMap().put(PROP_GLYPH_DEPTH, String.valueOf(2));
-								} else {
-									element.getPropertyMap().put(PROP_GLYPH_DEPTH, String.valueOf(1));
-								}
-							}
-							if (Boolean.TRUE.equals(value)) {
-								style.setGlyphDepth(2);
-							} else {
-								style.setGlyphDepth(1);
-							}
 							break;
 						case COL_COLLAPSED:
 							if (!style.equals(default_annot_style)) {

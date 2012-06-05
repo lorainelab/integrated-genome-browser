@@ -35,7 +35,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public JComboBox labelFieldComboBox;
 	public JRPCheckBox show2TracksCheckBox;
 	public JTextField maxDepthTextField;
-	public JRPCheckBox connectedCheckBox;
 	public JRPCheckBox collapsedCheckBox;
 	public JComboBox trackNameSizeComboBox;
 	public ColorComboBox possitiveColorComboBox;
@@ -54,7 +53,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public static final int COL_BACKGROUND = 1;
 	public static final int COL_FOREGROUND = 2;
 	public static final int COL_SHOW_2_TRACKS = 6;
-	public static final int COL_CONNECTED = 8;
+//	public static final int COL_CONNECTED = 8;
 	public static final int COL_COLLAPSED = 4;
 	public static final int COL_TRACK_NAME_SIZE = 3;
 	public static final int COL_POS_STRAND_COLOR = 10;
@@ -105,7 +104,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		labelFieldComboBox = new JComboBox();
 		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName() + "_maxDepth");
 		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_show2TracksCheckBox");
-		connectedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_connectedCheckBox");
 		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_collapsedCheckBox");
 		colorCheckBox.setText("Color");
 		arrowCheckBox.setText("Arrow");
@@ -142,8 +140,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
 
 		show2TracksCheckBox.setText("Show (+/-) tracks");
-
-		connectedCheckBox.setText("Connected");
 
 		collapsedCheckBox.setText("Collapsed");
 
@@ -197,10 +193,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		return show2TracksCheckBox;
 	}
 
-	public JCheckBox getConnectedCheckBox() {
-		return connectedCheckBox;
-	}
-
 	public JCheckBox getCollapsedCheckBox() {
 		return collapsedCheckBox;
 	}
@@ -241,12 +233,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 			if (!(((TierPrefsView) this).autoApplyChanges())) {
 				((TierPrefsView.TierPrefsTableModel) model).update(COL_MAX_DEPTH);
 			}
-		}
-	}
-
-	public void connectedCheckBox() {
-		if (applyChanged) {
-			model.setValueAt(connectedCheckBox.isSelected(), 0, COL_CONNECTED);
 		}
 	}
 

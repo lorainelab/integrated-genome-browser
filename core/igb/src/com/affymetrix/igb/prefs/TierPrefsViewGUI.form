@@ -261,9 +261,6 @@
             </Component>
             <Component class="com.jidesoft.combobox.ColorComboBox" name="possitiveColorComboBox">
               <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                     <LineBorder roundedCorners="true">
@@ -286,9 +283,6 @@
             </Component>
             <Component class="com.jidesoft.combobox.ColorComboBox" name="negativeColorComboBox">
               <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                     <LineBorder roundedCorners="true">
@@ -398,19 +392,16 @@
                                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                                   <Component id="maxDepthTextField" min="-2" pref="56" max="-2" attributes="1"/>
                                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                  <Component id="applyButton" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="collapsedCheckBox" min="-2" max="-2" attributes="0"/>
+                                      <Component id="applyButton" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="show2TracksCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          <Component id="connectedCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          <Component id="collapsedCheckBox" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="show2TracksCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="37" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -448,7 +439,6 @@
                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="show2TracksCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="connectedCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="collapsedCheckBox" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -476,9 +466,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -525,9 +512,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -579,17 +563,6 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.show2TracksCheckBox"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="connectedCheckBox">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Connected"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="connectedCheckBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.connectedCheckBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="collapsedCheckBox">

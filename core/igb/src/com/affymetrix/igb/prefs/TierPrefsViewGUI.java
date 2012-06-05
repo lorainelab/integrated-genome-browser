@@ -77,7 +77,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         maxDepthLabel = new javax.swing.JLabel();
         maxDepthTextField = tpv.maxDepthTextField;
         show2TracksCheckBox = tpv.show2TracksCheckBox;
-        connectedCheckBox = tpv.connectedCheckBox;
         collapsedCheckBox = tpv.collapsedCheckBox;
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
@@ -152,7 +151,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         negativeLabel.setText("-");
 
-        possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         possitiveColorComboBox.setButtonVisible(false);
         possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
@@ -163,7 +161,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             }
         });
 
-        negativeColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         negativeColorComboBox.setButtonVisible(false);
         negativeColorComboBox.setColorValueVisible(false);
@@ -261,7 +258,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         bgLabel.setText("Background:");
 
-        bgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         bgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         bgColorComboBox.setButtonVisible(false);
         bgColorComboBox.setColorValueVisible(false);
@@ -285,7 +281,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         fgLabel.setText("Foreground:");
 
-        fgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         fgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         fgColorComboBox.setButtonVisible(false);
         fgColorComboBox.setColorValueVisible(false);
@@ -315,13 +310,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 show2TracksCheckBoxActionPerformed(evt);
-            }
-        });
-
-        connectedCheckBox.setText("Connected");
-        connectedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                connectedCheckBoxActionPerformed(evt);
             }
         });
 
@@ -378,14 +366,11 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                                 .add(6, 6, 6)
                                 .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(6, 6, 6)
-                                .add(applyButton))))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(show2TracksCheckBox)
-                        .add(0, 0, 0)
-                        .add(connectedCheckBox)
-                        .add(0, 0, 0)
-                        .add(collapsedCheckBox)))
-                .addContainerGap())
+                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(collapsedCheckBox)
+                                    .add(applyButton)))))
+                    .add(show2TracksCheckBox))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -417,7 +402,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                 .add(6, 6, 6)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(show2TracksCheckBox)
-                    .add(connectedCheckBox)
                     .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
 
@@ -456,10 +440,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		tpv.show2TracksCheckBox();
 }//GEN-LAST:event_show2TracksCheckBoxActionPerformed
-
-    private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		tpv.connectedCheckBox();
-    }//GEN-LAST:event_connectedCheckBoxActionPerformed
 
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
 		tpv.collapsedCheckBox();
@@ -528,7 +508,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     private javax.swing.JLabel bgLabel;
     private javax.swing.JCheckBox collapsedCheckBox;
     private javax.swing.JCheckBox colorCheckBox;
-    private javax.swing.JCheckBox connectedCheckBox;
     private javax.swing.JLabel displayNameLabel;
     private javax.swing.JTextField displayNameTextField;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;

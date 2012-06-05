@@ -15,7 +15,7 @@ package com.affymetrix.igb.prefs;
  * @author lorainelab
  */
 public class KeyStrokesViewGUI extends IPrefEditorComponent {
-
+	private static final long serialVersionUID = 1L;
 	private static KeyStrokesViewGUI singleton;
 	private static KeyStrokesView ksv;
 

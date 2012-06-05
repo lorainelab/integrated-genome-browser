@@ -76,7 +76,7 @@ public final class GraphState {
 	private boolean show_axis = false;
 	private boolean show_graph = true;
 	private boolean show_bounds = false;
-	private boolean show_label = true;
+	private boolean show_label = false;
 
 	private HeatMap heat_map;
 	private final ITrackStyleExtended tier_style;

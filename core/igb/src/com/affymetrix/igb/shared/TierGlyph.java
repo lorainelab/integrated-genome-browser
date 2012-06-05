@@ -160,6 +160,9 @@ public class TierGlyph extends SolidGlyph {
 		Rectangle2D.Double cbox = map.getCoordBounds();
 		viewModeGlyph.setCoordBox(new Rectangle2D.Double(cbox.x, style.getY(), cbox.width, style.getHeight())); // viewModeGlyph does not have same CoordBox as TierGlyph
 		viewModeGlyph.setVisibility(true);
+		if(viewModeGlyph instanceof AbstractGraphGlyph){
+			((AbstractGraphGlyph)viewModeGlyph).setShowLabel(true);
+		}
 		GraphGlyphUtils.checkPixelBounds(viewModeGlyph, map);
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
 		floater.addChild(viewModeGlyph);

@@ -80,7 +80,7 @@ Mycobacterium abscessus	M. abcessus	M_abscessus
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
 Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
 Myotis lucifugus	Little brown bat	M_lucifugus		Myotis_lucifugus
-Nematostella vectensis	starlet sea anemone
+Nematostella vectensis	starlet sea anemone	N_vectensis
 Nicotiana tabacum	Tobacco	N_tabacum
 Ochotona princeps	American pika	O_princeps		Ochotona_princeps
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus

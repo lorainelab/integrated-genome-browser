@@ -254,7 +254,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 			}
 		}
 
-		if (point_max_ycoord <= point_min_ycoord) {
+		if (point_max_ycoord < point_min_ycoord) {
 			point_min_ycoord = point_max_ycoord - 1;
 		}
 

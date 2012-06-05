@@ -136,6 +136,7 @@ public class Activator implements BundleActivator {
         else
         {
         	ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
+				@Override
         	    public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
         	    	run(windowServiceReference);
         	        return super.addingService(windowServiceReference);
@@ -259,8 +260,10 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * call getAction on all subclasses of SeqMapViewActionA so that they appear in
-	 * the toolbar, must be done after SeqMapView is created and assigned to IGB.map_view
+	 * Add actions to the tool bar.
+	 * Call getAction on all subclasses of SeqMapViewActionA
+	 * so that they appear in the tool bar.
+	 * Must be done after SeqMapView is created and assigned to IGB.map_view
 	 */
 	private void initSeqMapViewActions() {
 		RepackSelectedTiersAction.getAction();
@@ -268,7 +271,10 @@ public class Activator implements BundleActivator {
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
 		ChangeLabelColorAction.getAction();
-		ShowStrandAction.getAction();
+		GenericActionHolder.getInstance().addGenericAction(
+				new SeqMapToggleAction(
+				ShowOneTierAction.getAction(),
+				ShowTwoTiersAction.getAction()));
 		CollapseExpandAction.getAction();
 		ZoomInXAction.getAction();
 		ZoomOutXAction.getAction();

@@ -10,6 +10,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -160,9 +161,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(change_expand_max_all);
 		changeMenu.add(new JSeparator());
 		JMenuItem show_two_tiers = new JMenuItem(ShowTwoTiersAction.getAction());
+		GenericActionHolder.getInstance().addGenericAction(ShowTwoTiersAction.getAction());
 		show_two_tiers.setEnabled(any_are_single_tier && num_selections > 0 && !coordinates_track_selected);
 		changeMenu.add(show_two_tiers);
 		JMenuItem show_one_tier = new JMenuItem(ShowOneTierAction.getAction());
+		GenericActionHolder.getInstance().addGenericAction(ShowOneTierAction.getAction());
 		show_one_tier.setEnabled(any_are_separate_tiers);
 		changeMenu.add(show_one_tier);
 		changeMenu.add(new JSeparator());

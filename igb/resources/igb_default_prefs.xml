@@ -9,7 +9,7 @@
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="2" />
 <server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" enabled="false" order="3" />
 <server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="4" />
-<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="5" />
+<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="5" enabled="false"/>
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="6" />
 <server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="7" />
 <server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="8" />

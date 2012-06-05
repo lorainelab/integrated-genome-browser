@@ -24,7 +24,7 @@ import javax.swing.Action;
  * but that is not yet needed.
  * This must extend {@link GenericAction}
  * to participate in the tool bar, scripting, and the tutorials.
- * Can we make this just aGenericAction? No.
+ * Can we make this just a GenericAction? No.
  * It must extend SeqMapViewActionA
  * because when added to the generic actions holder some init method is called?
  * @author Eric Blossom
@@ -53,7 +53,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 		super(one.getText(), one.getIconPath(), one.getLargeIconPath());
 		this.shownAction = one;
 		this.hiddenAction = two;
-		putValue(Action.SHORT_DESCRIPTION, one.getTooltip());
+		putValue(Action.SHORT_DESCRIPTION, getValue(Action.SHORT_DESCRIPTION));
 		one.addPropertyChangeListener(toggle);
 		two.addPropertyChangeListener(toggle);
 	}

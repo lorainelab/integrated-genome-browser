@@ -33,7 +33,11 @@ public class Activator extends WindowActivator implements BundleActivator {
 				private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Popup popup = PopupFactory.getSharedInstance().getPopup(trackAdjusterTabGUI, new TrackPropertiesGUI(), 10, 10);
+						JFrame frame = new JFrame();
+						frame.add(new TrackPropertiesGUI());
+						frame.pack();
+						frame.setVisible(true);
+						Popup popup = PopupFactory.getSharedInstance().getPopup(trackAdjusterTabGUI, frame, 10, 10);
 						popup.show();
 					}
 				}

@@ -23,8 +23,6 @@ public final class GraphSymUtils {
 	 *  limited range of values.
 	 */
 	public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
-	public static final String PREF_USE_URL_AS_NAME = "Use complete URL as graph name";
-	public static final boolean default_use_url_as_name = false;
 
 	private static final int MAX_INITCAP = 1024*1024;
 
@@ -422,13 +420,6 @@ public final class GraphSymUtils {
 			
 			pgraf.setGraphName(name);
 			aseq.addAnnotation(pgraf);
-
-			if(PreferenceUtils.getGraphPrefsNode().getBoolean(PREF_USE_URL_AS_NAME,
-					default_use_url_as_name)){
-				if(!name.contains(stream_name)){
-					pgraf.setGraphName(stream_name + " : " + name);
-				}
-			}
 		}
 		return pgraf;
 	}
@@ -445,36 +436,24 @@ public final class GraphSymUtils {
 	 */
 	public static String getGraphNameForURL(URL furl) {
 		String name;
-		boolean use_full_url = PreferenceUtils.getGraphPrefsNode().getBoolean(
-				PREF_USE_URL_AS_NAME, default_use_url_as_name);
-		if (use_full_url) {
-			name = furl.toExternalForm();
-		} else { // use only the filename, not the whole url
-			name = furl.getFile();
-			int index = name.lastIndexOf('/');
-			if (index > 0) {
-				String last_name = name.substring(index + 1);
-				if (last_name.length() > 0) {
-					name = GeneralUtils.URLDecode(last_name);
-				}
+		name = furl.getFile();
+		int index = name.lastIndexOf('/');
+		if (index > 0) {
+			String last_name = name.substring(index + 1);
+			if (last_name.length() > 0) {
+				name = GeneralUtils.URLDecode(last_name);
 			}
 		}
 		return name;
 	}
 
 	public static String getGraphNameForFile(String name) {
-		boolean use_full_url = PreferenceUtils.getGraphPrefsNode().getBoolean(
-				PREF_USE_URL_AS_NAME, default_use_url_as_name);
-		if (use_full_url) {
-			// leave the name alone
-		} else { // use only the filename, not the whole url
-			int index = name.lastIndexOf(System.getProperty("file.separator"));
-			if (index > 0) {
-				String last_name = name.substring(index + 1);
-				if (last_name.length() > 0) {
-					// shouldn't need to do URLDecoder.decode()
-					name = last_name;
-				}
+		int index = name.lastIndexOf(System.getProperty("file.separator"));
+		if (index > 0) {
+			String last_name = name.substring(index + 1);
+			if (last_name.length() > 0) {
+				// shouldn't need to do URLDecoder.decode()
+				name = last_name;
 			}
 		}
 		return name;

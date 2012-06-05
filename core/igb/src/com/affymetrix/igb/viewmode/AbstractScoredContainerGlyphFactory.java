@@ -268,13 +268,6 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 
 			scored.addChild(annot);
 			
-			boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-				ScoredIntervalParser.default_attach_graphs);
-			
-			if(!attach_graphs){
-				return scored;
-			}
-			
 			List<ViewModeGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
 			if(vmgs == null){
 				return scored;

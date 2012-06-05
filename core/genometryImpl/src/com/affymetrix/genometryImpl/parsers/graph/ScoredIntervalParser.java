@@ -97,9 +97,6 @@ public final class ScoredIntervalParser implements GraphParser {
 	private static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
 	private static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
-	static public final String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
-	static public final boolean default_attach_graphs = true;
-
 	public List<ScoredContainerSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
 		String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);

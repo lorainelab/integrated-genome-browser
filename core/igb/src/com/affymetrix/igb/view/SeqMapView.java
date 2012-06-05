@@ -2137,7 +2137,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 		gmodel.setSelectedSymmetries(glyphsToRootSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
-
+		seqmap.updateWidget();
 	}
 
 	public void deselectAll() {

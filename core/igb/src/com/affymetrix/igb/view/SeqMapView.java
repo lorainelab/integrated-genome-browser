@@ -2144,6 +2144,7 @@ public class SeqMapView extends JPanel
 		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
 		labelmap.clearSelected();
 		gmodel.setSelectedSymmetries(Collections.<RootSeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList(), this);
+		seqmap.updateWidget();
 	}
 
 	/**

@@ -273,6 +273,10 @@ public class Activator implements BundleActivator {
 		ChangeLabelColorAction.getAction();
 		GenericActionHolder.getInstance().addGenericAction(
 				new SeqMapToggleAction(
+				SetSummaryThresholdAboveAction.getAction(),
+				SetSummaryThresholdBelowAction.getAction()));
+		GenericActionHolder.getInstance().addGenericAction(
+				new SeqMapToggleAction(
 				ShowOneTierAction.getAction(),
 				ShowTwoTiersAction.getAction()));
 		CollapseExpandAction.getAction();

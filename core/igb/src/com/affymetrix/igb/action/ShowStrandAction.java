@@ -11,7 +11,9 @@ import javax.swing.ImageIcon;
 
 /**
  * Toggle between showing both strands in a single track or in separate tracks.
+ * @deprecated Use {@link SeqMapToggleAction}.
  */
+@Deprecated
 public class ShowStrandAction extends ShowStrandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final ShowStrandAction ACTION = new ShowStrandAction();

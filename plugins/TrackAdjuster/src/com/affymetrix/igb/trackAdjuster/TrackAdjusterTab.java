@@ -26,29 +26,34 @@ import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.*;
 import com.jidesoft.combobox.ColorComboBox;
+
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.*;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public final class TrackAdjusterTab
+public final class TrackAdjusterTab extends IGBTabPanel
 		implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, ListSelectionListener {
-
+	private static final long serialVersionUID = 1L;
 	//System.out.println() statements do not show on the screen, they are not translated.
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackAdjuster");
+	private static final int TAB_POSITION = 3;
 	private static final String SELECT_ALL_PROMPT = "Select All";
 	private static final String SELECT_ALL_SUFFIX = " tracks";
 	private static final String SELECT_ALL_ITEM = "";
 	private static final String SELECT_NONE_ITEM = "no";
-	private static TrackAdjusterTab singleton;
 	private static final Map<GraphType, String> graphType2ViewMode = new EnumMap<GraphType, String>(GraphType.class);
 
 	static {
@@ -126,17 +131,12 @@ public final class TrackAdjusterTab
 	public final JRPCheckBox floatCB = new JRPCheckBox("TrackAdjusterTab_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
 	public JRPComboBox graphP_heat_mapCB;
+	private TrackPreferencesGUI trackPreferencesGUI;
+	private YScaleAxisGUI yScaleAxisGUI;
 
-	public static void init(IGBService igbService) {
-		singleton = new TrackAdjusterTab(igbService);
-	}
-
-	public static synchronized TrackAdjusterTab getSingleton() {
-		return singleton;
-	}
-
-	public TrackAdjusterTab(IGBService igbS) {
-		igbService = igbS;
+	public TrackAdjusterTab(IGBService _igbService) {
+		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
+		igbService = _igbService;
 		
 		graphP_heat_mapCB = new JRPComboBox("TrackAdjusterTab_heat_mapCB");
 		styleP_trackNameSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
@@ -196,7 +196,7 @@ public final class TrackAdjusterTab
 		};
 		styleP_colorSchemeBox.addItemListener(itemListener);
 		styleP_colorSchemeBox.setChoices(0);
-		igbS.addListSelectionListener(styleP_colorSchemeBox);
+		igbService.addListSelectionListener(styleP_colorSchemeBox);
 
 		graphP_hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
@@ -241,6 +241,11 @@ public final class TrackAdjusterTab
 				setShowAxis(graphP_yaxisCB.isSelected());
 			}
 		});
+		setLayout(new FlowLayout());
+		trackPreferencesGUI = new TrackPreferencesGUI();
+		yScaleAxisGUI = new YScaleAxisGUI(this);
+	    add(trackPreferencesGUI);
+	    add(yScaleAxisGUI);
 	}
 
 	public void selectAllCBSelected() {

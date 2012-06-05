@@ -1,18 +1,20 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.CollapseExpandActionA;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
+import com.affymetrix.igb.action.CollapseAction;
+import com.affymetrix.igb.action.ExpandAction;
+import com.affymetrix.igb.action.SeqMapToggleAction;
+import com.affymetrix.igb.action.SeqMapViewActionA;
 
-public class CollapseExpandAction extends CollapseExpandActionA implements SymSelectionListener {
+public class CollapseExpandAction extends SeqMapToggleAction implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static final CollapseExpandAction ACTION = new CollapseExpandAction();
+	private static final CollapseExpandAction ACTION =
+		new CollapseExpandAction(
+			ExpandAction.getAction(),
+			CollapseAction.getAction()
+		);
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -22,8 +24,8 @@ public class CollapseExpandAction extends CollapseExpandActionA implements SymSe
 		return ACTION;
 	}
 
-	protected CollapseExpandAction() {
-		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png", "22x22/actions/collapse.png");
+	protected CollapseExpandAction(SeqMapViewActionA a, SeqMapViewActionA b) {
+		super(a, b);
 	}
 
 	@Override
@@ -32,18 +34,7 @@ public class CollapseExpandAction extends CollapseExpandActionA implements SymSe
 	}
 
 	@Override
-	protected void processChange(boolean hasCollapsed, boolean hasExpanded) {
-		collapsedTracks = !hasCollapsed || hasExpanded;
-		String text = collapsedTracks ? IGBConstants.BUNDLE.getString("collapseAction") : IGBConstants.BUNDLE.getString("expandAction") ;
-		putValue(Action.NAME, text);
-		putValue(SHORT_DESCRIPTION, text);
-		String iconPath = collapsedTracks ? "22x22/actions/collapse.png" : "22x22/actions/expand.png";
-		ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
-		if (icon == null) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "icon " + iconPath + " returned null");
-		}
-		else {
-			putValue(Action.LARGE_ICON_KEY, icon);
-		}
+	public void symSelectionChanged(SymSelectionEvent evt) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

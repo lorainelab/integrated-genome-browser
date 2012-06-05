@@ -213,6 +213,8 @@ public class TierGlyph extends SolidGlyph {
 		boolean change = viewModeGlyph.initUnloaded();
 		if (change) {
 			setViewModeGlyph(style); // new viewModeGlyph
+			// For graph glyph
+			viewModeGlyph.initUnloaded();
 		}
 		return change;
 	}

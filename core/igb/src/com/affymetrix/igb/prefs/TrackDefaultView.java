@@ -113,6 +113,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addTrackDefaultButton() {
 		initializeFileTypes();
 		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
@@ -272,6 +273,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 			return this.tier_styles;
 		}
 
+		@SuppressWarnings("unchecked")
 		private void setElements(Map<String, AssociationElement> elements) {
 			file2types = elements.entrySet().toArray(new Entry[elements.size()]);
 			tier_styles.add(default_annot_style);
@@ -369,7 +371,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 					TrackStyle style = tier_styles.get(row);
 					if (!style.equals(default_annot_style)) {
 						entry = file2types[row - 1];
-						element = (AssociationElement) entry.getValue();
+						element = entry.getValue();
 					}
 					switch (col) {
 						case COL_FOREGROUND:

@@ -1,9 +1,5 @@
 package com.affymetrix.igb.action;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
@@ -16,6 +12,9 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.AnnotationGlyph;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class CollapseExpandActionA extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -61,10 +60,13 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		boolean hasExpanded = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
-			if (selected_syms.contains(vg.getInfo()) && !(vg instanceof MultiGraphGlyph) && vg instanceof AnnotationGlyph) {
-				boolean collapsed = vg.getAnnotStyle().getCollapsed();
-				hasCollapsed |= collapsed;
-				hasExpanded |= !collapsed;
+			if (vg instanceof AnnotationGlyph && !(vg instanceof MultiGraphGlyph)) {
+				SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+				if (selected_syms.contains(ss)) {
+					boolean collapsed = vg.getAnnotStyle().getCollapsed();
+					hasCollapsed |= collapsed;
+					hasExpanded |= !collapsed;
+				}
 			}
 		}
 		processChange(hasCollapsed, hasExpanded);

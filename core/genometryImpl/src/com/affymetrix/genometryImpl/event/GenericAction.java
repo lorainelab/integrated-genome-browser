@@ -81,7 +81,7 @@ public abstract class GenericAction extends AbstractAction {
 	public final String getText() {
 		return text;
 	}
-	public final String getDisplay() {
+	public String getDisplay() {
 		if (text == null) {
 			return null;
 		}
@@ -99,7 +99,7 @@ public abstract class GenericAction extends AbstractAction {
 	public final Object getExtraInfo() {
 		return extraInfo;
 	}
-	public final String getId() {
+	public String getId() {
 		return this.getClass().getName();
 	}
 	public final String getLargeIconPath(){
@@ -112,6 +112,10 @@ public abstract class GenericAction extends AbstractAction {
 	public boolean usePrefixInMenu() {
 		return false;
 	}
+
+	/**
+	 * @return true if this action should appear with a checkbox in the menu.
+	 */
 	public boolean isToggle() {
 		return false;
 	}

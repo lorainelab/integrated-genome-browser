@@ -20,18 +20,36 @@ public class GenericActionHolder {
 
 	private Map<String, GenericAction> genericActions = new HashMap<String, GenericAction>();
 
+	/**
+	 * Add one to the collection and let everyone know.
+	 * All registered listeners will hear about this.
+	 * BUG: Not checking that the action has a valid identifier
+	 * which is used as a key to the collection.
+	 * @param genericAction to add.
+	 */
 	public void addGenericAction(GenericAction genericAction) {
 		genericActions.put(genericAction.getId(), genericAction);
-//		if (genericAction.getText() != null) {
-//			PreferenceUtils.getAccelerator(genericAction.getText());
-//		}
 		for (GenericActionListener listener : listeners) {
 			listener.onCreateGenericAction(genericAction);
 		}
 	}
 
+	/**
+	 * Add one to the collection and keep it a secret.
+	 * Don't tell the listeners.
+	 * This is experimental.
+	 * We are trying to avoid some actions from showing up
+	 * in the list of shortcuts in the preferences
+	 * and (hence) in the tool bar.
+	 * What about the tutorials?
+	 * @param genericAction to add.
+	 */
+	public void addGenericActionSilently(GenericAction genericAction) {
+		genericActions.put(genericAction.getId(), genericAction);
+	}
+
 	public void removeGenericAction(GenericAction genericAction) {
-		genericActions.remove(genericAction);
+		genericActions.remove(genericAction.getId());
 	}
 
 	public GenericAction getGenericAction(String name) {

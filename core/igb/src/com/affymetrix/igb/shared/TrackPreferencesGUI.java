@@ -136,7 +136,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 
         labelSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
 
-        labelSizeLabel.setText("Size:");
+        labelSizeLabel.setText("Sz");
 
         colorSchemeLabel.setText("Color Scheme:");
 
@@ -181,10 +181,10 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(labelColorLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(labelSizeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(labelSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(stylePanelLayout.createSequentialGroup()
@@ -200,7 +200,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                             .add(refreshCheckBox)
                             .add(restoreDefaultsButton))
                         .add(0, 0, Short.MAX_VALUE)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(stylePanelLayout.createSequentialGroup()
                     .add(0, 0, Short.MAX_VALUE)

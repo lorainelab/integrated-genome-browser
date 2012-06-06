@@ -56,7 +56,8 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	String getOperator();
 	
 	int getDirectionType();
-	
+	public void setDirectionType(int ordinal);
+
 	String getFileType();
 	public FileTypeCategory getFileTypeCategory();
 

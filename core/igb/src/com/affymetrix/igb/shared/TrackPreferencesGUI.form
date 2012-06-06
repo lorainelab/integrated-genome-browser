@@ -121,10 +121,10 @@
                           <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="labelColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="labelSizeLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="labelSizeComboBox" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="labelSizeComboBox" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -145,7 +145,7 @@
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
@@ -202,7 +202,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="labelSizeLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Size:"/>
+            <Property name="text" type="java.lang.String" value="Sz"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="colorSchemeLabel">

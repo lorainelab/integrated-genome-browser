@@ -135,6 +135,10 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	public void setDirectionType(int ordinal) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 	public void setForwardColor(Color c) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

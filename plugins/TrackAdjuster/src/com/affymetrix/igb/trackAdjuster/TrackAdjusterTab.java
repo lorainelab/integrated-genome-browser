@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
 
 import java.awt.Color;
@@ -425,6 +426,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 		});
 	    strandsArrowCheckBox = trackPreferencesGUI.getStrandsArrowCheckBox();
+		//style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
+
 	    strandsColorCheckBox = trackPreferencesGUI.getStrandsColorCheckBox();
 	    strandsForewardColorComboBox = trackPreferencesGUI.getStrandsForewardColorComboBox();
 	    strandsReverseColorComboBox = trackPreferencesGUI.getStrandsReverseColorComboBox();
@@ -561,8 +564,14 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				return;
 			}
 			stackDepthTextField.setText(Integer.toString(style.getMaxDepth()));
+			collapsedCheckBox.setSelected(style.getCollapsed());
+			strands2TracksCheckBox.setSelected(style.getSeparate());
+			strandsArrowCheckBox.setSelected(true);
 		} else {
 			stackDepthTextField.setText("");
+			collapsedCheckBox.setSelected(false);
+			strands2TracksCheckBox.setSelected(false);
+			strandsArrowCheckBox.setSelected(false);
 		}
 	}
 
@@ -570,7 +579,6 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		boolean select = graphGlyphs.size() > 0;
 		enablePanel(graphPanel, select);
 		enablePanel(rangePanel, select);
-		// float check box, not in graph panels
 		boolean allFloat = true;
 		boolean anySelected = false;
 		for (AbstractGraphGlyph gg : graphGlyphs) {
@@ -590,7 +598,6 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		}
-		floatCheckBox.setEnabled(anySelected);
 		floatCheckBox.setSelected(anySelected && allFloat);
 		// graph and range panels
 

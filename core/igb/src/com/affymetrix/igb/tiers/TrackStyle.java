@@ -897,6 +897,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return direction_type.ordinal();
 	}
 
+	public void setDirectionType(int ordinal) {
+		direction_type = TrackConstants.DIRECTION_TYPE.values()[ordinal];
+	}
+
 	public DIRECTION_TYPE getDirectionName() {
 		return direction_type;
 	}

@@ -9,19 +9,23 @@
  */
 package com.affymetrix.igb.prefs;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.*;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.shared.JRPStyledTable;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -32,7 +36,7 @@ import javax.swing.table.TableCellRenderer;
 public final class KeyStrokesView implements ListSelectionListener,
 		PreferenceChangeListener {
 
-	public final KeyStrokeViewTable table = new KeyStrokeViewTable("KeyStrokesView");
+	private final KeyStrokeViewTable table = new KeyStrokeViewTable("KeyStrokesView");
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
 	public static final int IconColumn = 0;
 	public static final int ToolbarColumn = 1;
@@ -49,6 +53,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 	public static synchronized KeyStrokesView getSingleton() {
 		if (singleton == null) {
 			singleton = new KeyStrokesView();
+			singleton.lsm.addListSelectionListener(singleton);
+			PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(singleton);
 		}
 		return singleton;
 	}
@@ -56,7 +62,6 @@ public final class KeyStrokesView implements ListSelectionListener,
 	private KeyStrokesView() {
 		super();
 		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		table.setModel(model);
@@ -83,7 +88,6 @@ public final class KeyStrokesView implements ListSelectionListener,
 			PreferenceUtils.getKeystrokesNode().flush();
 		} catch (Exception e) {
 		}
-		PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(this);
 
 		refresh();
 	}
@@ -104,13 +108,15 @@ public final class KeyStrokesView implements ListSelectionListener,
 			public int compare(String o1, String o2) {
 				GenericAction ga1 = GenericActionHolder.getInstance().getGenericAction(o1);
 				if (ga1 == null) {
+					String errMsg =	"No GenericAction found for \"" + o1 + "\".";
 					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-							"no GenericAction found for \"" + o1 + "\"");
+							errMsg);
 				}
 				GenericAction ga2 = GenericActionHolder.getInstance().getGenericAction(o2);
 				if (ga2 == null) {
+					String errMsg =	"No GenericAction found for \"" + o2 + "\".";
 					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-							"no GenericAction found for \"" + o2 + "\"");
+							errMsg);
 				}
 				return getSortField(ga1).compareTo(getSortField(ga2));
 			}
@@ -133,8 +139,9 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	/**
-	 * build the underlying data array - there is a fourth column, not shown in
-	 * the table, but needed by the seetValue() method
+	 * Build the underlying data array.
+	 * There is a fourth column, not shown in the table,
+	 * but needed by the setValue() method.
 	 *
 	 * @param keystroke_node
 	 * @param toolbar_node
@@ -153,7 +160,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 				String key = iter.next();
 				GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
 				if (genericAction == null) {
-					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, "!!! no GenericAction for key = " + key);
+					String logMsg = "!!! no GenericAction for key = " + key;
+					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, logMsg);
 				}
 				rows[i][IconColumn] = genericAction == null ? null : genericAction.getValue(Action.SMALL_ICON);
 				rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
@@ -169,14 +177,19 @@ public final class KeyStrokesView implements ListSelectionListener,
 	 * Re-populates the table with the shortcut data.
 	 */
 	private void refresh() {
-		Object[][] rows = null;
+		Object[][] rows;
 		rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
 		model.setRows(rows);
 	}
 
-	public void invokeRefreshTable() { //Should fix the problems associated with updating entire table at every preference change.
+	/**
+	 * Should fix the problems associated with updating entire table
+	 * at every preference change.
+	 */
+	public void invokeRefreshTable() {
 		SwingUtilities.invokeLater(new Runnable() {
 
+			@Override
 			public void run() {
 				refresh();
 				model.fireTableDataChanged();
@@ -189,8 +202,9 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	/**
-	 * This is called when the user selects a row of the table;
+	 * This is called when the user selects a row of the table.
 	 */
+	@Override
 	public void valueChanged(ListSelectionEvent evt) {
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 			int srow = table.getSelectedRow();
@@ -207,20 +221,16 @@ public final class KeyStrokesView implements ListSelectionListener,
 		edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
 			return;
 		}
-		// Each time a keystroke preference is changed, update the
-		// whole table.  Inelegant, but works. 
+		// Each time a keystroke preference is changed, update the whole table.
+		// Inelegant, but it works. 
 		invokeRefreshTable();
 	}
 
-	/*
-	 * public void destroy() { removeAll(); if (lsm != null)
-	 * {lsm.removeListSelectionListener(this);}
-	 * PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this); }
-	 */
 	class KeyStrokeViewTable extends JRPStyledTable {
 
 		public KeyStrokeViewTable(String id) {
@@ -251,4 +261,5 @@ public final class KeyStrokesView implements ListSelectionListener,
 			return renderer;
 		}
 	}
+
 }

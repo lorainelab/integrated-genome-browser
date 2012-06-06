@@ -11,7 +11,6 @@ import com.affymetrix.igb.view.SeqMapView;
 /**
  * Superclass of all IGB actions that must refer to a {@link SeqMapView}.
  * These classes are automatically added to a static hash map.
- * This is done via the constructor, a dubious practice.
  */
 public abstract class SeqMapViewActionA extends GenericAction {
 	private static final long serialVersionUID = 1L;

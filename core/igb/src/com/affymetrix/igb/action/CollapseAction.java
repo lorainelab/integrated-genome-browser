@@ -9,7 +9,7 @@ public class CollapseAction extends CollapseExpandActionA implements SymSelectio
 	private static final CollapseAction ACTION = new CollapseAction();
 
 	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		GenericActionHolder.getInstance().addGenericActionSilently(ACTION);
 	}
 	
 	public static CollapseAction getAction() {

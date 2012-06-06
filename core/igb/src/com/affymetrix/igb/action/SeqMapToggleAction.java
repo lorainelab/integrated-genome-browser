@@ -22,7 +22,7 @@ import javax.swing.Action;
  * It is enabled iff one of the delegates is.
  * This could probably be generalized to handle more than two delegates,
  * but that is not yet needed.
- * This must extend {@link GenericAction}
+ * This must extend {@link com.affymetrix.genometryImpl.event.GenericAction}
  * to participate in the tool bar, scripting, and the tutorials.
  * Can we make this just a GenericAction? No.
  * It must extend SeqMapViewActionA
@@ -30,7 +30,18 @@ import javax.swing.Action;
  * @author Eric Blossom
  */
 public class SeqMapToggleAction extends SeqMapViewActionA {
+	private static final long serialVersionUID = 1L;
 
+	/**
+	 * This is used to answer {@link #getId()}.
+	 * It is not the same as "id" in the super class.
+	 */
+	private String identifier = null;
+	/**
+	 * This is used to answer {@link #getDisplay()}.
+	 */
+	private String display = null;
+	
 	private SeqMapViewActionA shownAction, hiddenAction;
 	private PropertyChangeListener toggle = new PropertyChangeListener() {
 
@@ -42,6 +53,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 				o = evt.getNewValue();
 				Boolean enabled = (Boolean) o;
 				if (enabled) {
+					System.out.println("        switching     ");
 					SeqMapToggleAction.this.switchTo(source);
 				}
 			}
@@ -56,6 +68,13 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 		putValue(Action.SHORT_DESCRIPTION, getValue(Action.SHORT_DESCRIPTION));
 		one.addPropertyChangeListener(toggle);
 		two.addPropertyChangeListener(toggle);
+		this.identifier = this.getClass().getName() +
+				":" + one.getId() + ";" + two.getId();
+		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length()) {
+			this.identifier = this.getClass().getSimpleName() + ":" +
+					one.getClass().getSimpleName() + ";" + two.getClass().getSimpleName();
+		}
+		this.display = "Toggle " + one.getDisplay() + " and " + two.getDisplay();
 	}
 
 	private void switchTo(SeqMapViewActionA a) {
@@ -78,12 +97,41 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 	}
 
 	/**
-	 * Hide the currently shown delegate and then forward theEvent to it.
+	 * Forward theEvent to the currently shown delegate
+	 * and then enable the hidden one.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent theEvent) {
 		this.shownAction.actionPerformed(theEvent);
 		this.hiddenAction.setEnabled(true);
+	}
+
+	/**
+	 * Overridden to include both clients' displays.
+	 */
+	@Override
+	public String getDisplay() {
+		return this.display;
+	}
+
+	/**
+	 * Overridden to include both clients' identifiers.
+	 */
+	@Override
+	public String getId() {
+		return this.identifier;
+	}
+
+	/**
+	 * Dubious method just so we can participate in preferences.
+	 * This horrifying kludge is to sneak past the guardian
+	 * in {@link com.affymetrix.igb.prefs.KeyStrokesView}.
+	 * That guardian might be trying to enforce the use of singletons.
+	 * I could not find documentation on why this is so.
+	 * @return this
+	 */
+	public Action getAction() {
+		return this;
 	}
 
 }

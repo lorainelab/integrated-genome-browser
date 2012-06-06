@@ -9,7 +9,7 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 	private static final ExpandAction ACTION = new ExpandAction();
 
 	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		GenericActionHolder.getInstance().addGenericActionSilently(ACTION);
 	}
 	
 	public static ExpandAction getAction() {

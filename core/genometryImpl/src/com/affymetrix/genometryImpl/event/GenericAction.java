@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
  * This is so we can keep track of actions for scripting, shortcuts, etc.
  * All actions in IGB also need to be added
  * to a singleton {@link GenericActionHolder}.
- * This is done via the constructor, a dubious practice.
  * @see GenericActionDoneCallback
  * @see GenericActionListener
  */

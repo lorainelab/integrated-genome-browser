@@ -16,12 +16,15 @@ public class CollapseExpandAction extends SeqMapToggleAction implements SymSelec
 			CollapseAction.getAction()
 		);
 
-	static{
+	/**
+	 * Load the class and, so, run the static code
+	 * which creates a singleton.
+	 * Add it to the {@link GenericActionHolder}.
+	 * This is in lieu of the static {@link #getAction} method
+	 * used by other actions.
+	 */
+	public static void createSingleton() {
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static CollapseExpandAction getAction() {
-		return ACTION;
 	}
 
 	protected CollapseExpandAction(SeqMapViewActionA a, SeqMapViewActionA b) {

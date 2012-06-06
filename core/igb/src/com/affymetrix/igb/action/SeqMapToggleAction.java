@@ -53,7 +53,6 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 				o = evt.getNewValue();
 				Boolean enabled = (Boolean) o;
 				if (enabled) {
-					System.out.println("        switching     ");
 					SeqMapToggleAction.this.switchTo(source);
 				}
 			}
@@ -130,7 +129,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 	 * I could not find documentation on why this is so.
 	 * @return this
 	 */
-	public Action xxxxgetAction() {
+	public Action getAction() {
 		return this;
 	}
 

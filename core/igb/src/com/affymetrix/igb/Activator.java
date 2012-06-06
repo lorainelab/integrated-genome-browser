@@ -263,7 +263,7 @@ public class Activator implements BundleActivator {
 	 * Add actions to the tool bar.
 	 * Call getAction on all subclasses of SeqMapViewActionA
 	 * so that they appear in the tool bar.
-	 * Must be done after SeqMapView is created and assigned to IGB.map_view
+	 * Must be done after SeqMapView is created and assigned to IGB.map_view.
 	 */
 	private void initSeqMapViewActions() {
 		RepackSelectedTiersAction.getAction();
@@ -279,7 +279,7 @@ public class Activator implements BundleActivator {
 				new SeqMapToggleAction(
 				ShowOneTierAction.getAction(),
 				ShowTwoTiersAction.getAction()));
-		CollapseExpandAction.getAction();
+		CollapseExpandAction.createSingleton();
 		ZoomInXAction.getAction();
 		ZoomOutXAction.getAction();
 		ZoomInYAction.getAction();

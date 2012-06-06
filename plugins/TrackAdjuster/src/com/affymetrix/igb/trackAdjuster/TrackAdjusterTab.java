@@ -11,7 +11,6 @@ package com.affymetrix.igb.trackAdjuster;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -22,9 +21,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
-import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.*;
@@ -39,8 +36,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -54,6 +52,15 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	private static final String SELECT_ALL_SUFFIX = " tracks";
 	private static final String SELECT_ALL_ITEM = "";
 	private static final String SELECT_NONE_ITEM = "no";
+	private static final String[] SELECT_ALL_ITEMS = new String[FileTypeCategory.values().length + 3];
+	static {
+		SELECT_ALL_ITEMS[0] = SELECT_ALL_PROMPT;
+		SELECT_ALL_ITEMS[1] = SELECT_ALL_ITEM + SELECT_ALL_SUFFIX;
+		SELECT_ALL_ITEMS[2] = SELECT_NONE_ITEM + SELECT_ALL_SUFFIX;
+		for (int i = 0; i < FileTypeCategory.values().length; i++) {
+			SELECT_ALL_ITEMS[i + 3] = FileTypeCategory.values()[i].name() + SELECT_ALL_SUFFIX;
+		}
+	}
 	private static final Map<GraphType, String> graphType2ViewMode = new EnumMap<GraphType, String>(GraphType.class);
 
 	static {
@@ -76,144 +83,263 @@ public final class TrackAdjusterTab extends IGBTabPanel
 
 //	private BioSeq current_seq;
 	private GenometryModel gmodel;
-	private GenericAction annotationDepthTransformAction = new TransformAction(new DepthOperator(FileTypeCategory.Annotation));
-	private GenericAction alignmentDepthTransformAction = new TransformAction(new DepthOperator(FileTypeCategory.Alignment));
 	public boolean is_listening = true; // used to turn on and off listening to GUI events
 	public GraphVisibleBoundsSetter vis_bounds_setter;
-	boolean DEBUG_EVENTS = false;
-	private static final String[] SELECT_ALL_ITEMS = new String[FileTypeCategory.values().length + 3];
-	static {
-		SELECT_ALL_ITEMS[0] = SELECT_ALL_PROMPT;
-		SELECT_ALL_ITEMS[1] = SELECT_ALL_ITEM + SELECT_ALL_SUFFIX;
-		SELECT_ALL_ITEMS[2] = SELECT_NONE_ITEM + SELECT_ALL_SUFFIX;
-		for (int i = 0; i < FileTypeCategory.values().length; i++) {
-			SELECT_ALL_ITEMS[i + 3] = FileTypeCategory.values()[i].name() + SELECT_ALL_SUFFIX;
-		}
-	}
-	public ComboBoxModel selectAllCBModel = new DefaultComboBoxModel(SELECT_ALL_ITEMS);
-	public ComboBoxModel heatMapModel = new DefaultComboBoxModel(HeatMap.getStandardNames());
-	public JRPComboBox selectAllCB = new JRPComboBox("TrackAdjusterTab_selectAllCB");
-	public JRPRadioButton graphP_mmavgB = new JRPRadioButton("TrackAdjusterTab_graphP_mmavgB", BUNDLE.getString("minMaxAvgButton"));
-	public JRPRadioButton graphP_lineB = new JRPRadioButton("TrackAdjusterTab_graphP_lineB", BUNDLE.getString("lineButton"));
-	public JRPRadioButton graphP_barB = new JRPRadioButton("TrackAdjusterTab_graphP_barB", BUNDLE.getString("barButton"));
-	public JRPRadioButton graphP_dotB = new JRPRadioButton("TrackAdjusterTab_graphP_dotB", BUNDLE.getString("dotButton"));
-	public JRPRadioButton graphP_hmapB = new JRPRadioButton("TrackAdjusterTab_graphP_hmapB");
-//	public JRPRadioButton graphP_sstepB = new JRPRadioButton("TrackAdjusterTab_sstepB", BUNDLE.getString("stairStepButton"));
-	public JRPRadioButton graphP_hidden_styleB = new JRPRadioButton("TrackAdjusterTab_graphP_hidden_styleB", BUNDLE.getString("hiddenStyleButton")); // this button will not be displayed
-	public JRPRadioButton annotationDisplayAsB = new JRPRadioButton("TrackAdjusterTab_annotationDisplayAsB", BUNDLE.getString("AnnotationButton"));
-	public JRPRadioButton graphDisplayAsB = new JRPRadioButton("TrackAdjusterTab_graphDisplayAsB", BUNDLE.getString("graphButton"));
-	public JRPRadioButton autoDisplayAsB = new JRPRadioButton("TrackAdjusterTab_autoDisplayAsB", BUNDLE.getString("AutoButton"));
-	public JRPRadioButton pluginDisplayAsB = new JRPRadioButton("TrackAdjusterTab_pluginDisplayAsB");
-	public ButtonGroup stylegroup = new ButtonGroup();
-	public ButtonGroup displayGroup = new ButtonGroup();
-	public JPanel stylePanel = new JPanel();
+	private boolean DEBUG_EVENTS = false;
+
+	private JComboBox selectAllCB;
+	private JRadioButton graphP_mmavgB;
+	private JRadioButton graphP_lineB;
+	private JRadioButton graphP_barB;
+	private JRadioButton graphP_dotB;
+	private JRadioButton graphP_hmapB;
+	private JRadioButton graphP_sstepB;
+	private JRadioButton graphP_hidden_styleB;
+	private JPanel stylePanel;
+	private JPanel graphPanel;
+	private JPanel annotationPanel;
+	private ColorComboBox styleP_fgColorComboBox;
+	private ColorComboBox styleP_bgColorComboBox;
+	private ColorComboBox styleP_labelFGComboBox;
+	private ColorSchemeComboBox styleP_colorSchemeBox;
+	private JTextField annotP_maxStackDepthTextField;
+	private JTextField trackName;
+	private JComboBox styleP_trackNameSizeComboBox;
+	private JSlider height_slider;
+	private JCheckBox graphP_yaxisCB;
+	private JComboBox graphP_heat_mapCB;
+	private JCheckBox graphP_floatCB;
+
 	public JPanel rangePanel = new JPanel();
-	public JPanel graphPanel = new JPanel();
-	public JPanel annotationPanel = new JPanel();
-	public JRPButton otherPreferencesButton = new JRPButton("TrackAdjusterTab_otherPreferencesButton");
-	public ColorComboBox styleP_fgColorComboBox = new ColorComboBox();
-	public ColorComboBox styleP_bgColorComboBox = new ColorComboBox();
-	public ColorComboBox styleP_labelFGComboBox = new ColorComboBox();
-	public final ColorSchemeComboBox styleP_colorSchemeBox;
-	public JRPTextField annotP_maxStackDepthTextField = new JRPNumTextField("TrackAdjusterTab_annotP_maxStackDepthTextField");
-	public JRPTextField trackName = new JRPTextField("TrackAdjusterTab_track_name");
-	public static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-	public JRPComboBox styleP_trackNameSizeComboBox = new JRPComboBox("TrackAdjusterTab_styleP_trackNameSizeComboBox");
-	public JRPSlider height_slider = new JRPSlider("TrackAdjusterTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
-	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
-	public final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
-	public final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
-	public final JRPCheckBox graphP_labelCB = new JRPCheckBox("TrackAdjusterTab_graphP_labelCB", BUNDLE.getString("labelCheckBox"));
-	public final JRPCheckBox graphP_yaxisCB = new JRPCheckBox("TrackAdjusterTab_graphP_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
-	public final JRPCheckBox floatCB = new JRPCheckBox("TrackAdjusterTab_floatCB", BUNDLE.getString("floatingCheckBox"));
+    public ButtonGroup stylegroup = new ButtonGroup();
+
+	private final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
+	private final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
+	private final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
+	private final List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
+	private final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
+	private final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
 	private IGBService igbService;
-	public JRPComboBox graphP_heat_mapCB;
 	private TrackPreferencesGUI trackPreferencesGUI;
 	private YScaleAxisGUI yScaleAxisGUI;
 
 	public TrackAdjusterTab(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
 		igbService = _igbService;
-		
-		graphP_heat_mapCB = new JRPComboBox("TrackAdjusterTab_heat_mapCB");
-		styleP_trackNameSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
-		graphP_heat_mapCB.addItemListener(new HeatMapItemListener());
-
-		graphP_barB.addActionListener(new GraphStyleSetter(GraphType.BAR_GRAPH));
-		graphP_dotB.addActionListener(new GraphStyleSetter(GraphType.DOT_GRAPH));
-		graphP_hmapB.addActionListener(new GraphStyleSetter(GraphType.HEAT_MAP)); //will need to be re-written to function for plugins
-		graphP_lineB.addActionListener(new GraphStyleSetter(GraphType.LINE_GRAPH));
-		graphP_mmavgB.addActionListener(new GraphStyleSetter(GraphType.MINMAXAVG));
-//		graphP_sstepB.addActionListener(new GraphStyleSetter(GraphType.STAIRSTEP_GRAPH));
-
-		stylegroup.add(graphP_barB);
-		stylegroup.add(graphP_dotB);
-		stylegroup.add(graphP_hmapB);
-		stylegroup.add(graphP_lineB);
-		stylegroup.add(graphP_mmavgB);
-//		stylegroup.add(graphP_sstepB);
-		stylegroup.add(graphP_hidden_styleB); // invisible button
-
-		displayGroup.add(annotationDisplayAsB);
-		displayGroup.add(graphDisplayAsB);
-		displayGroup.add(autoDisplayAsB);
-		displayGroup.add(pluginDisplayAsB);
-
-
-		final ItemListener itemListener = new ItemListener() {
-
-			public void itemStateChanged(ItemEvent ie) {
-				switch (ie.getStateChange()) {
-					case ItemEvent.DESELECTED:
-						break;
-					case ItemEvent.SELECTED:
-						Object o = ie.getSource();
-						if (o instanceof ColorSchemeComboBox) {
-							ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
-							ColorScheme s = (ColorScheme) csb.getSelectedItem();
-							ColorSchemeAction.getAction().tempAction(s);
-						}
-						break;
-					default:
-						System.err.println(
-								"SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
-								+ ie.getStateChange());
-				}
-			}
-		};
-		styleP_colorSchemeBox = new ColorSchemeComboBox() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void setChoices(int i) {
-				this.removeItemListener(itemListener);
-				super.setChoices(i);
-				this.addItemListener(itemListener);
-			}
-		};
-		styleP_colorSchemeBox.addItemListener(itemListener);
-		styleP_colorSchemeBox.setChoices(0);
-		igbService.addListSelectionListener(styleP_colorSchemeBox);
-
-		graphP_hidden_styleB.setSelected(true); // deselect all visible radio buttons
-
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
-
-
+		setLayout(new FlowLayout());
+		trackPreferencesGUI = new TrackPreferencesGUI();
+		yScaleAxisGUI = new YScaleAxisGUI(this);
+	    add(trackPreferencesGUI);
+	    add(yScaleAxisGUI);
+	    assignTrackPreferences(trackPreferencesGUI);
+		igbService.addListSelectionListener(styleP_colorSchemeBox);
+		graphP_hidden_styleB = new JRadioButton();
+		trackPreferencesGUI.getButtonGroup1().add(graphP_hidden_styleB);
+		graphP_hidden_styleB.setSelected(true); // deselect all visible radio buttons
 		refreshSelection(Collections.<RootSeqSymmetry>emptyList());
-
 		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 		igbService.addListSelectionListener(this);
+	}
 
-		floatCB.addActionListener(new ActionListener() {
+	private void assignTrackPreferences(TrackPreferencesGUI trackPreferencesGUI) {
+		selectAllCB = trackPreferencesGUI.getSelectAllComboBox();
+	    selectAllCB.setModel(new DefaultComboBoxModel(SELECT_ALL_ITEMS));
+	    selectAllCB.addActionListener(
+	    	new ActionListener() {
+	    		@Override
+	    		public void actionPerformed(ActionEvent evt) {
+	    			JComboBox selectAllCB = (JComboBox)evt.getSource();
+	    			String displayItem = (String)selectAllCB.getSelectedItem();
+	    			if (SELECT_ALL_PROMPT.equals(displayItem)) {
+	    				return;
+	    			}
+	    			String item = displayItem.substring(0, displayItem.length() - SELECT_ALL_SUFFIX.length());
+	    			if (SELECT_ALL_ITEM.equals(item)) {
+	    				SelectAllAction.getAction().execute();
+	    			}
+	    			else if (SELECT_NONE_ITEM.equals(item)) {
+	    				DeselectAllAction.getAction().execute();
+	    			}
+	    			else {
+	    				SelectAllAction.getAction(FileTypeCategory.valueOf(item)).execute();
+	    			}
+	    			selectAllCB.setSelectedIndex(0);
+	    		}
+	    	}
+	    );
+		graphP_mmavgB = trackPreferencesGUI.getGraphStyleMinMaxAvgRadioButton();
+		graphP_lineB = trackPreferencesGUI.getGraphStyleLineRadioButton();
+		graphP_barB = trackPreferencesGUI.getGraphStyleBarRadioButton();
+		graphP_dotB = trackPreferencesGUI.getGraphStyleDotRadioButton();
+		graphP_hmapB = trackPreferencesGUI.getGraphStyleHeatMapRadioButton();
+		graphP_sstepB = trackPreferencesGUI.getGraphStyleStaiStepRadioButton();
+		graphP_barB.addActionListener(new GraphStyleSetter(GraphType.BAR_GRAPH));
+		graphP_dotB.addActionListener(new GraphStyleSetter(GraphType.DOT_GRAPH));
+		graphP_hmapB.addActionListener(new GraphStyleSetter(GraphType.HEAT_MAP));
+		graphP_lineB.addActionListener(new GraphStyleSetter(GraphType.LINE_GRAPH));
+		graphP_mmavgB.addActionListener(new GraphStyleSetter(GraphType.MINMAXAVG));
+		graphP_sstepB.addActionListener(new GraphStyleSetter(GraphType.STAIRSTEP_GRAPH));
+		stylePanel = trackPreferencesGUI.getStylePanel();
+		graphPanel = trackPreferencesGUI.getGraphPanel();
+		annotationPanel = trackPreferencesGUI.getAnnotationsPanel();
+		styleP_fgColorComboBox = trackPreferencesGUI.getForegroundColorComboBox();
+		styleP_fgColorComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				if (igbService.getSeqMap() == null) {
+					return;
+				}
+				Color color = styleP_fgColorComboBox.getSelectedColor();
+				if (color != null) {
+					for (TierGlyph tier : selectedTiers) {
+						tier.getAnnotStyle().setForeground(color);
+					}
+				}
+				igbService.getSeqMapView().updatePanel();
+			}
+			}
+		);
+		styleP_bgColorComboBox = trackPreferencesGUI.getBackgroundColorComboBox();
+		styleP_bgColorComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				if (igbService.getSeqMap() == null) {
+					return;
+				}
+				Color color = styleP_bgColorComboBox.getSelectedColor();
+				if (color != null) {
+					for (TierGlyph tier : selectedTiers) {
+						tier.getAnnotStyle().setBackground(color);
+					}
+				}
+				ThreadUtils.runOnEventQueue(new Runnable() {
+		
+					public void run() {
+						igbService.getSeqMap().updateWidget();
+					}
+				});
+			}
+			}
+		);
+		styleP_labelFGComboBox = trackPreferencesGUI.getLabelColorComboBox();
+		styleP_labelFGComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				if (igbService.getSeqMap() == null) {
+					return;
+				}
+				Color color = styleP_labelFGComboBox.getSelectedColor();
+				if (color != null) {
+					for (TierGlyph tier : selectedTiers) {
+						tier.getAnnotStyle().setLabelForeground(color);
+					}
+				}
+				ThreadUtils.runOnEventQueue(new Runnable() {
+		
+					public void run() {
+						igbService.getSeqMap().updateWidget();
+					}
+				});
+			}
+			}
+		);
+		styleP_colorSchemeBox = (ColorSchemeComboBox)trackPreferencesGUI.getColorSchemeComboBox();
+		annotP_maxStackDepthTextField = trackPreferencesGUI.getStackDepthTextField();
+		annotP_maxStackDepthTextField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				String mdepth_string = ((JTextField)evt.getSource()).getText();
+				if (selectedTiers == null || mdepth_string == null) {
+					return;
+				}
+				for (TierGlyph tier : selectedTiers) {
+					int prev_max_depth = tier.getAnnotStyle().getMaxDepth();
+					try {
+						tier.getAnnotStyle().setMaxDepth(Integer.parseInt(mdepth_string));
+					} catch (Exception ex) {
+						tier.getAnnotStyle().setMaxDepth(prev_max_depth);
+					}
+				}
+				igbService.getSeqMapView().setTierStyles();
+				igbService.getSeqMapView().repackTheTiers(true, true);
+			}
+			
+		});
+		trackName = trackPreferencesGUI.getTrackNameTextField();
+		trackName.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				String name = ((JTextField)evt.getSource()).getText();
+				if (igbService.getSeqMapView() == null) {
+					return;
+				}
+				if (selectedTiers != null) {
+					igbService.getSeqMapView().renameTier(selectedTiers.get(0), name);
+				}
+			}
+		});
+		styleP_trackNameSizeComboBox = trackPreferencesGUI.getLabelSizeComboBox();
+		styleP_trackNameSizeComboBox.addItemListener(
+			new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+						String fontstring = (String) ie.getItem();
+						if (selectedTiers == null || fontstring == null) {
+							return;
+						}
+						for (TierGlyph tier : selectedTiers) {
+							ITrackStyleExtended style = tier.getAnnotStyle();
+							float prev_font_size = style.getTrackNameSize();
+							try {
+								style.setTrackNameSize(Float.parseFloat(fontstring));
+							} catch (Exception ex) {
+								style.setTrackNameSize(prev_font_size);
+							}
+						}
+						igbService.getSeqMapView().setTierStyles();
+						igbService.getSeqMapView().repackTheTiers(true, true);
+					}
+				}
+			}
+		);
+		height_slider = trackPreferencesGUI.getHeightSlider();
+		height_slider.addChangeListener(
+			new ChangeListener() {
+			   public void stateChanged(ChangeEvent e) {
+				   int height = height_slider.getValue();
+					for (ViewModeGlyph gl : allGlyphs) {
+						Rectangle2D.Double cbox = gl.getCoordBox();
+						gl.setCoords(cbox.x, cbox.y, cbox.width, height);
+
+						// If a graph is joined with others in a combo tier, repack that tier.
+						GlyphI parentgl = gl.getParent();
+						if (isTierGlyph(parentgl)) {
+							parentgl.pack(igbService.getView());
+						}
+					}
+					igbService.packMap(false, true);
+			   }
+			}
+		);
+		graphP_yaxisCB = trackPreferencesGUI.getyAxisCheckBox();
+		graphP_yaxisCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (floatCB.isSelected()) {
+				boolean b = ((JCheckBox)e.getSource()).isSelected();
+				for (AbstractGraphGlyph gl : graphGlyphs) {
+					gl.setShowAxis(b);
+				}
+				igbService.getSeqMap().updateWidget();
+			}
+		});
+		graphP_floatCB = trackPreferencesGUI.getFloatCheckBox();
+		graphP_floatCB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (graphP_floatCB.isSelected()) {
 					GenericAction floatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction");
 					if (floatAction != null) {
 						floatAction.actionPerformed(null);
@@ -227,46 +353,32 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		});
+		graphP_heat_mapCB = trackPreferencesGUI.getGraphStyleHeatMapComboBox();
+		graphP_heat_mapCB.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (graphGlyphs.isEmpty() || !is_listening) {
+					return;
+				}
 
-		graphP_labelCB.addActionListener(new ActionListener() {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					String name = (String) e.getItem();
+					HeatMap hm = HeatMap.getStandardHeatMap(name);
 
-			public void actionPerformed(ActionEvent e) {
-				setShowLabels(graphP_labelCB.isSelected());
+					if (hm != null) {
+						for (AbstractGraphGlyph gl : graphGlyphs) {
+							if ("heatmapgraph".equals(gl.getName())) {
+								gl.setShowGraph(true);
+								gl.setHeatMap(hm);
+							}
+						}
+						igbService.getSeqMap().updateWidget();
+					}
+				}
 			}
 		});
-
-		graphP_yaxisCB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				setShowAxis(graphP_yaxisCB.isSelected());
-			}
-		});
-		setLayout(new FlowLayout());
-		trackPreferencesGUI = new TrackPreferencesGUI();
-		yScaleAxisGUI = new YScaleAxisGUI(this);
-	    add(trackPreferencesGUI);
-	    add(yScaleAxisGUI);
 	}
 
-	public void selectAllCBSelected() {
-		String displayItem = (String)selectAllCB.getSelectedItem();
-		if (SELECT_ALL_PROMPT.equals(displayItem)) {
-			return;
-		}
-		String item = displayItem.substring(0, displayItem.length() - SELECT_ALL_SUFFIX.length());
-		if (SELECT_ALL_ITEM.equals(item)) {
-			SelectAllAction.getAction().execute();
-		}
-		else if (SELECT_NONE_ITEM.equals(item)) {
-			DeselectAllAction.getAction().execute();
-		}
-		else {
-			SelectAllAction.getAction(FileTypeCategory.valueOf(item)).execute();
-		}
-		selectAllCB.setSelectedIndex(0);
-	}
-
-	public boolean isTierGlyph(GlyphI glyph) {
+	private boolean isTierGlyph(GlyphI glyph) {
 		return glyph instanceof TierGlyph;
 	}
 
@@ -281,6 +393,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		}
 	}
 
+	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List<RootSeqSymmetry> selected_syms = evt.getAllSelectedSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
@@ -327,10 +440,6 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		// track name, view mode
 		int selectedTrackCount = selectedTiers.size();
 		boolean select = selectedTrackCount > 0;
-		annotationDisplayAsB.setSelected(false);
-		graphDisplayAsB.setSelected(false);
-		autoDisplayAsB.setSelected(false);
-		pluginDisplayAsB.setSelected(false);
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
 			if (style == null || selectedTiers.get(0).getInfo() == null) {
@@ -340,25 +449,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			FileTypeCategory category = rootSym.getCategory();
 			trackName.setText(style.getTrackName());
 			String viewmode = style.getViewMode();
-			if ("annotation".equals(viewmode) || "alignment".equals(viewmode)) {
-				annotationDisplayAsB.setSelected(true);
-			}
-			else if (viewmode.indexOf("semantic") > -1) {
-				autoDisplayAsB.setSelected(true);
-			}
-			else if (graphType2ViewMode.values().contains(viewmode)) {
-				graphDisplayAsB.setSelected(true);
-			}
-			annotationDisplayAsB.setEnabled(category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment);
-//			graphDisplayAsB.setEnabled(category == FileTypeCategory.Graph || category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment);
-			graphDisplayAsB.setEnabled(category == FileTypeCategory.Graph);
-			autoDisplayAsB.setEnabled(category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment);
 		}
 		else {
 			trackName.setText("");
-			annotationDisplayAsB.setEnabled(false);
-			graphDisplayAsB.setEnabled(false);
-			autoDisplayAsB.setEnabled(false);
 		}
 
 		if (select) {
@@ -370,7 +463,6 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		}
 		trackName.setEnabled(select);
 		height_slider.setEnabled(select);
-		pluginDisplayAsB.setEnabled(false);
 	}
 
 	private void resetStylePanel() {
@@ -444,8 +536,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		}
-		floatCB.setEnabled(anySelected);
-		floatCB.setSelected(anySelected && allFloat);
+		graphP_floatCB.setEnabled(anySelected);
+		graphP_floatCB.setSelected(anySelected && allFloat);
 		// graph and range panels
 
 		boolean all_are_floating = false;
@@ -511,10 +603,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 		}
 
-		enableButtons(stylegroup, type);
 		if (select) {
 			graphP_yaxisCB.setSelected(all_show_axis);
-			graphP_labelCB.setSelected(all_show_label);
+			graphP_floatCB.setSelected(all_show_label);
 		}
 
 	}
@@ -617,6 +708,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		}
 	}
 
+	@Override
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (DEBUG_EVENTS) {
 			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
@@ -624,13 +716,6 @@ public final class TrackAdjusterTab extends IGBTabPanel
 //		current_seq = evt.getSelectedSeq();
 //		refreshSelection(gmodel.getSelectedSymmetries(current_seq));
 		refreshSelection(Collections.<RootSeqSymmetry>emptyList());
-	}
-
-	private static void enableButtons(ButtonGroup g, boolean b) {
-		Enumeration<AbstractButton> e = g.getElements();
-		while (e.hasMoreElements()) {
-			e.nextElement().setEnabled(b);
-		}
 	}
 
 	private final class GraphStyleSetter extends GenericAction implements ActionListener {
@@ -685,202 +770,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		}
 	}
 
-	private final class HeatMapItemListener implements ItemListener {
-
-		public void itemStateChanged(ItemEvent e) {
-			if (graphGlyphs.isEmpty() || !is_listening) {
-				return;
-			}
-
-			if (e.getStateChange() == ItemEvent.SELECTED) {
-				String name = (String) e.getItem();
-				HeatMap hm = HeatMap.getStandardHeatMap(name);
-
-				if (hm != null) {
-					for (AbstractGraphGlyph gl : graphGlyphs) {
-						if ("heatmapgraph".equals(gl.getName())) {
-							gl.setShowGraph(true);
-							gl.setHeatMap(hm);
-						}
-					}
-					igbService.getSeqMap().updateWidget();
-				}
-			}
-		}
-	}
-
-	public void setTrackHeight(double height) {
-		for (ViewModeGlyph gl : allGlyphs) {
-			Rectangle2D.Double cbox = gl.getCoordBox();
-			gl.setCoords(cbox.x, cbox.y, cbox.width, height);
-
-			// If a graph is joined with others in a combo tier, repack that tier.
-			GlyphI parentgl = gl.getParent();
-			if (isTierGlyph(parentgl)) {
-				parentgl.pack(igbService.getView());
-			}
-		}
-		igbService.packMap(false, true);
-	}
-
-	public void fgColorComboBoxActionPerformed() {
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
-		Color color = styleP_fgColorComboBox.getSelectedColor();
-		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setForeground(color);
-			}
-		}
-		igbService.getSeqMapView().updatePanel();
-	}
-
-	public void labelFGCBActionPerformed() {
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
-		Color color = styleP_labelFGComboBox.getSelectedColor();
-		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setLabelForeground(color);
-			}
-		}
-		igbService.getSeqMapView().updatePanel();
-	}
-
-	public void bgColorComboBoxActionPerformed() {
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
-		Color color = styleP_bgColorComboBox.getSelectedColor();
-		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setBackground(color);
-			}
-		}
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
-	}
-
-	public void setTrackName(String name) {
-		if (igbService.getSeqMapView() == null) {
-			return;
-		}
-		if (selectedTiers != null) {
-			igbService.getSeqMapView().renameTier(selectedTiers.get(0), name);
-		}
-	}
-
-	public void setMaxDepth(String mdepth_string) {
-		if (selectedTiers == null || mdepth_string == null) {
-			return;
-		}
-		for (TierGlyph tier : selectedTiers) {
-			int prev_max_depth = tier.getAnnotStyle().getMaxDepth();
-			try {
-				tier.getAnnotStyle().setMaxDepth(Integer.parseInt(mdepth_string));
-			} catch (Exception ex) {
-				tier.getAnnotStyle().setMaxDepth(prev_max_depth);
-			}
-		}
-		igbService.getSeqMapView().setTierStyles();
-		igbService.getSeqMapView().repackTheTiers(true, true);
-	}
-
-	public void setNameSize(String fontstring) {
-		if (selectedTiers == null || fontstring == null) {
-			return;
-		}
-		for (TierGlyph tier : selectedTiers) {
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			float prev_font_size = style.getTrackNameSize();
-			try {
-				style.setTrackNameSize(Float.parseFloat(fontstring));
-			} catch (Exception ex) {
-				style.setTrackNameSize(prev_font_size);
-			}
-		}
-		igbService.getSeqMapView().setTierStyles();
-		igbService.getSeqMapView().repackTheTiers(true, true);
-	}
-
+	@Override
 	public void trackstylePropertyChanged(EventObject eo) {
 		refreshSelection(rootSyms);
-	}
-
-	public void setViewMode(DisplayType displayType) {
-		if (selectedTiers == null) {
-			return;
-		}
-		is_listening = false;
-		for (GlyphI g : new CopyOnWriteArrayList<TierGlyph>(selectedTiers)) {
-			final TierGlyph tier = (TierGlyph) g;
-			final RootSeqSymmetry rootSym = (RootSeqSymmetry) tier.getInfo();
-			FileTypeCategory category = rootSym.getCategory();
-			final ITrackStyleExtended style = tier.getAnnotStyle();
-			final ITrackStyleExtended comboStyle = (tier.getViewModeGlyph() instanceof AbstractGraphGlyph)
-					? ((AbstractGraphGlyph) tier.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-			MapViewGlyphFactoryI mode;
-			if (graphDisplayAsB.isSelected() && category == FileTypeCategory.Annotation) {
-				TrackListProvider tlp = new TrackListProvider() {
-					@Override
-					public List<TierGlyph> getTrackList() {
-						return Arrays.asList(new TierGlyph[]{tier});
-					}
-				};
-				ActionEvent ae = new ActionEvent(tlp, -1, null);
-				annotationDepthTransformAction.actionPerformed(ae);
-				continue;
-			}
-			if (graphDisplayAsB.isSelected() && category == FileTypeCategory.Alignment) {
-				TrackListProvider tlp = new TrackListProvider() {
-					@Override
-					public List<TierGlyph> getTrackList() {
-						return Arrays.asList(new TierGlyph[]{tier});
-					}
-				};
-				ActionEvent ae = new ActionEvent(tlp, -1, null);
-				alignmentDepthTransformAction.actionPerformed(ae);
-				continue;
-			}
-			if (autoDisplayAsB.isSelected() && category == FileTypeCategory.Annotation) {
-				mode = MapViewModeHolder.getInstance().getViewFactory("semantic_zoom_annotation");
-			}
-			else if (autoDisplayAsB.isSelected() && category == FileTypeCategory.Alignment) {
-				mode = MapViewModeHolder.getInstance().getViewFactory("semantic_zoom_alignment");
-			}
-			else {
-				mode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
-			}
-			if (style.getSeparate() && !mode.supportsTwoTrack()) {
-				style.setSeparate(false);
-			}
-			igbService.changeViewMode(igbService.getSeqMapView(), style, mode.getName(), rootSym, comboStyle);
-		}
-		igbService.getSeqMapView().updatePanel(false, false);
-		is_listening = true;
-	}
-
-	private void setShowAxis(boolean b) {
-		for (AbstractGraphGlyph gl : graphGlyphs) {
-			gl.setShowAxis(b);
-		}
-		igbService.getSeqMap().updateWidget();
-	}
-
-	private void setShowLabels(boolean b) {
-		for (AbstractGraphGlyph gl : graphGlyphs) {
-			gl.setShowLabel(b);
-		}
-		igbService.getSeqMap().updateWidget();
-	}
-
-	public IGBService getIgbService() {
-		return igbService;
 	}
 }

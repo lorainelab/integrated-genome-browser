@@ -17,6 +17,8 @@
         </DimensionLayout>
       </Layout>
     </Container>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
   </NonVisualComponents>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -63,7 +65,7 @@
               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               <Component id="stylePanel" min="-2" max="-2" attributes="1"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="annotationsPanel" min="-2" pref="174" max="-2" attributes="1"/>
+              <Component id="annotationsPanel" min="-2" max="-2" attributes="1"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="graphPanel" min="-2" max="-2" attributes="1"/>
               <EmptySpace min="0" pref="1" max="32767" attributes="0"/>
@@ -199,9 +201,6 @@
               </StringArray>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelSizeComboBoxActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="labelSizeLabel">
           <Properties>
@@ -221,25 +220,19 @@
               </StringArray>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorSchemeComboBoxActionPerformed"/>
-          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.genoviz.color.ColorSchemeComboBox()"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="refreshCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Refresh"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshCheckBoxActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="restoreDefaultsButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Restore Defaults"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="restoreDefaultsButtonActionPerformed"/>
-          </Events>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="foregroundColorComboBox">
           <Properties>
@@ -331,7 +324,7 @@
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
               </Group>
-              <Component id="graphStyleStaiStepRadioButton" min="-2" max="-2" attributes="0"/>
+              <Component id="graphStyleStairStepRadioButton" min="-2" max="-2" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
@@ -377,7 +370,7 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="graphStyleStaiStepRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="graphStyleStairStepRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleDotRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -395,16 +388,25 @@
       <SubComponents>
         <Component class="javax.swing.JRadioButton" name="graphStyleLineRadioButton">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Line"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="graphStyleBarRadioButton">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Bar"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="graphStyleStaiStepRadioButton">
+        <Component class="javax.swing.JRadioButton" name="graphStyleStairStepRadioButton">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="StairStep"/>
           </Properties>
         </Component>
@@ -412,9 +414,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Float"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="floatCheckBoxActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="yAxisCheckBox">
           <Properties>
@@ -422,6 +421,11 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="graphStyleHeatMapRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="graphStylesLabel">
           <Properties>
@@ -430,25 +434,26 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="graphStyleDotRadioButton">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Dot"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="graphStyleMinMaxAvgRadioButton">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="min/max/mean"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="graphStyleHeatMapComboBox">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="1">
-                <StringItem index="0" value="Heat Map"/>
-              </StringArray>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames())" type="code"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="graphStyleHeatMapComboBoxActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -524,7 +529,7 @@
                       </Group>
                       <Component id="collapsedCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="17" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -573,9 +578,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="stackDepthTextField">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthTextFieldActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">
           <Properties>
@@ -584,23 +586,15 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="1">
-                <StringItem index="0" value="12 pt"/>
-              </StringArray>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new DefaultComboBoxModel(SUPPORTED_SIZE)" type="code"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFieldComboBoxActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="strands2TracksCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="2 track"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strands2TracksCheckBoxActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="strandsArrowCheckBox">
           <Properties>
@@ -664,16 +658,6 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JComboBox" name="selectAllComboBox">
-      <Properties>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
-        </Property>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -10,16 +10,57 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genoviz.color.ColorScheme;
+import com.affymetrix.genoviz.color.ColorSchemeComboBox;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.DefaultComboBoxModel;
+
+
 /**
  *
  * @author auser
  */
 public class TrackPreferencesGUI extends javax.swing.JPanel {
 	private static final long serialVersionUID = 1L;
+	private static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 
 	/** Creates new form TrackPreferencesGUI */
     public TrackPreferencesGUI() {
         initComponents();
+		final ItemListener colorSchemeItemListener = new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent ie) {
+				switch (ie.getStateChange()) {
+					case ItemEvent.DESELECTED:
+						break;
+					case ItemEvent.SELECTED:
+						Object o = ie.getSource();
+						if (o instanceof ColorSchemeComboBox) {
+							ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
+							ColorScheme s = (ColorScheme) csb.getSelectedItem();
+							ColorSchemeAction.getAction().tempAction(s);
+						}
+						break;
+					default:
+						System.err.println(
+								"SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
+								+ ie.getStateChange());
+				}
+			}
+		};
+		colorSchemeComboBox = new ColorSchemeComboBox() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void setChoices(int i) {
+				this.removeItemListener(colorSchemeItemListener);
+				super.setChoices(i);
+				this.addItemListener(colorSchemeItemListener);
+			}
+		};
+		colorSchemeComboBox.addItemListener(colorSchemeItemListener);
+		((ColorSchemeComboBox)colorSchemeComboBox).setChoices(0);
     }
 
     /** This method is called from within the constructor to
@@ -32,11 +73,12 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
     private void initComponents() {
 
         jFrame1 = new javax.swing.JFrame();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         stylePanel = new javax.swing.JPanel();
         labelSizeComboBox = new javax.swing.JComboBox();
         labelSizeLabel = new javax.swing.JLabel();
         colorSchemeLabel = new javax.swing.JLabel();
-        colorSchemeComboBox = new javax.swing.JComboBox();
+        colorSchemeComboBox = new com.affymetrix.genoviz.color.ColorSchemeComboBox();
         refreshCheckBox = new javax.swing.JCheckBox();
         restoreDefaultsButton = new javax.swing.JButton();
         foregroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
@@ -49,7 +91,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
         graphPanel = new javax.swing.JPanel();
         graphStyleLineRadioButton = new javax.swing.JRadioButton();
         graphStyleBarRadioButton = new javax.swing.JRadioButton();
-        graphStyleStaiStepRadioButton = new javax.swing.JRadioButton();
+        graphStyleStairStepRadioButton = new javax.swing.JRadioButton();
         floatCheckBox = new javax.swing.JCheckBox();
         yAxisCheckBox = new javax.swing.JCheckBox();
         graphStyleHeatMapRadioButton = new javax.swing.JRadioButton();
@@ -93,36 +135,16 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
         stylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
 
         labelSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "12 pt" }));
-        labelSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelSizeComboBoxActionPerformed(evt);
-            }
-        });
 
         labelSizeLabel.setText("Size:");
 
         colorSchemeLabel.setText("Color Scheme:");
 
         colorSchemeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "12 pt" }));
-        colorSchemeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorSchemeComboBoxActionPerformed(evt);
-            }
-        });
 
         refreshCheckBox.setText("Refresh");
-        refreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshCheckBoxActionPerformed(evt);
-            }
-        });
 
         restoreDefaultsButton.setText("Restore Defaults");
-        restoreDefaultsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restoreDefaultsButtonActionPerformed(evt);
-            }
-        });
 
         foregroundColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         foregroundColorComboBox.setButtonVisible(false);
@@ -219,33 +241,30 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 
         graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
 
+        buttonGroup1.add(graphStyleLineRadioButton);
         graphStyleLineRadioButton.setText("Line");
 
+        buttonGroup1.add(graphStyleBarRadioButton);
         graphStyleBarRadioButton.setText("Bar");
 
-        graphStyleStaiStepRadioButton.setText("StairStep");
+        buttonGroup1.add(graphStyleStairStepRadioButton);
+        graphStyleStairStepRadioButton.setText("StairStep");
 
         floatCheckBox.setText("Float");
-        floatCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                floatCheckBoxActionPerformed(evt);
-            }
-        });
 
         yAxisCheckBox.setText("Y-axis");
 
+        buttonGroup1.add(graphStyleHeatMapRadioButton);
+
         graphStylesLabel.setText("Graph Styles:");
 
+        buttonGroup1.add(graphStyleDotRadioButton);
         graphStyleDotRadioButton.setText("Dot");
 
+        buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
         graphStyleMinMaxAvgRadioButton.setText("min/max/mean");
 
-        graphStyleHeatMapComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Heat Map" }));
-        graphStyleHeatMapComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapComboBoxActionPerformed(evt);
-            }
-        });
+        graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
 
         org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
         graphPanel.setLayout(graphPanelLayout);
@@ -255,7 +274,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(graphStyleHeatMapRadioButton)
                 .add(5, 5, 5)
                 .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(graphStyleStaiStepRadioButton)
+            .add(graphStyleStairStepRadioButton)
             .add(graphPanelLayout.createSequentialGroup()
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(graphPanelLayout.createSequentialGroup()
@@ -290,7 +309,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(graphStyleBarRadioButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(graphStyleStaiStepRadioButton)
+                    .add(graphStyleStairStepRadioButton)
                     .add(graphStyleDotRadioButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(graphStyleMinMaxAvgRadioButton)
@@ -315,27 +334,11 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 
         stackDepthLabel.setText("Stack Depth:");
 
-        stackDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthTextFieldActionPerformed(evt);
-            }
-        });
-
         labelFieldLabel.setText("Label Field:");
 
-        labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "12 pt" }));
-        labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelFieldComboBoxActionPerformed(evt);
-            }
-        });
+        labelFieldComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
 
         strands2TracksCheckBox.setText("2 track");
-        strands2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strands2TracksCheckBoxActionPerformed(evt);
-            }
-        });
 
         strandsArrowCheckBox.setText("Arrow");
 
@@ -390,7 +393,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(strandsArrowCheckBox))
                     .add(collapsedCheckBox))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         annotationsPanelLayout.setVerticalGroup(
             annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -418,8 +421,6 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(strandsForewardColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
-
-        selectAllComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -449,7 +450,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(11, 11, 11)
                 .add(stylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 174, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 1, Short.MAX_VALUE))
@@ -478,47 +479,12 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void labelSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelSizeComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_labelSizeComboBoxActionPerformed
-
-    private void floatCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_floatCheckBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_floatCheckBoxActionPerformed
-
-    private void restoreDefaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreDefaultsButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_restoreDefaultsButtonActionPerformed
-
-    private void strands2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strands2TracksCheckBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_strands2TracksCheckBoxActionPerformed
-
-    private void stackDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stackDepthTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_stackDepthTextFieldActionPerformed
-
-    private void colorSchemeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorSchemeComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_colorSchemeComboBoxActionPerformed
-
-    private void refreshCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshCheckBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_refreshCheckBoxActionPerformed
-
-    private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_labelFieldComboBoxActionPerformed
-
-    private void graphStyleHeatMapComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleHeatMapComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_graphStyleHeatMapComboBoxActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel annotationsPanel;
     private com.jidesoft.combobox.ColorComboBox backgroundColorComboBox;
     private javax.swing.JLabel backgroundColorLabel;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox collapsedCheckBox;
     private javax.swing.JComboBox colorSchemeComboBox;
     private javax.swing.JLabel colorSchemeLabel;
@@ -532,7 +498,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
     private javax.swing.JRadioButton graphStyleHeatMapRadioButton;
     private javax.swing.JRadioButton graphStyleLineRadioButton;
     private javax.swing.JRadioButton graphStyleMinMaxAvgRadioButton;
-    private javax.swing.JRadioButton graphStyleStaiStepRadioButton;
+    private javax.swing.JRadioButton graphStyleStairStepRadioButton;
     private javax.swing.JLabel graphStylesLabel;
     private javax.swing.JLabel heightLabel;
     private javax.swing.JSlider heightSlider;
@@ -632,7 +598,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 	}
 
 	public javax.swing.JRadioButton getGraphStyleStaiStepRadioButton() {
-		return graphStyleStaiStepRadioButton;
+		return graphStyleStairStepRadioButton;
 	}
 
 	public javax.swing.JLabel getGraphStylesLabel() {
@@ -749,5 +715,9 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 
 	public javax.swing.JCheckBox getyAxisCheckBox() {
 		return yAxisCheckBox;
+	}
+
+	public javax.swing.ButtonGroup getButtonGroup1() {
+		return buttonGroup1;
 	}
 }

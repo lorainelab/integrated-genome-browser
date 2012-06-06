@@ -42,6 +42,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+/**
+ * TrackAdjusterTab consists of two GUIBuilder designed panels, the
+ * TrackPreferencesGUI, which is a common Panel, and the YScaleAxisGUI
+ * used only byt TrackAdjuster. Since TrackPreferencesGUI is common, it
+ * does not handle user actions, the TrackAdjusterTab handles them. The
+ * YScaleAxisGUI handles it's own actions.
+ */
 public final class TrackAdjusterTab extends IGBTabPanel
 		implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, ListSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -87,28 +94,38 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	public GraphVisibleBoundsSetter vis_bounds_setter;
 	private boolean DEBUG_EVENTS = false;
 
-	private JComboBox selectAllCB;
-	private JRadioButton graphP_mmavgB;
-	private JRadioButton graphP_lineB;
-	private JRadioButton graphP_barB;
-	private JRadioButton graphP_dotB;
-	private JRadioButton graphP_hmapB;
-	private JRadioButton graphP_sstepB;
+	private JComboBox selectAllComboBox;
+	private JRadioButton graphStyleMinMaxAvgRadioButton;
+	private JRadioButton graphStyleLineRadioButton;
+	private JRadioButton graphStyleBarRadioButton;
+	private JRadioButton graphStyleDotRadioButton;
+	private JRadioButton graphStyleHeatMapRadioButton;
+	private JRadioButton graphStyleStaiStepRadioButton;
 	private JRadioButton graphP_hidden_styleB;
 	private JPanel stylePanel;
 	private JPanel graphPanel;
 	private JPanel annotationPanel;
-	private ColorComboBox styleP_fgColorComboBox;
-	private ColorComboBox styleP_bgColorComboBox;
-	private ColorComboBox styleP_labelFGComboBox;
-	private ColorSchemeComboBox styleP_colorSchemeBox;
-	private JTextField annotP_maxStackDepthTextField;
-	private JTextField trackName;
-	private JComboBox styleP_trackNameSizeComboBox;
+	private ColorComboBox foregroundColorComboBox;
+	private ColorComboBox backgroundColorComboBox;
+	private ColorComboBox labelColorComboBox;
+	private JTextField stackDepthTextField;
+	private JTextField trackNameTextField;
+	private JComboBox labelSizeComboBox;
 	private JSlider height_slider;
-	private JCheckBox graphP_yaxisCB;
-	private JComboBox graphP_heat_mapCB;
-	private JCheckBox graphP_floatCB;
+	private JCheckBox yAxisCheckBox;
+	private JComboBox graphStyleHeatMapComboBox;
+	private JCheckBox floatCheckBox;
+    private JCheckBox collapsedCheckBox;
+    private JCheckBox refreshCheckBox;
+    private JButton restoreDefaultsButton;
+    private JCheckBox strands2TracksCheckBox;
+    private JCheckBox strandsArrowCheckBox;
+    private JCheckBox strandsColorCheckBox;
+    private ColorComboBox strandsForewardColorComboBox;
+    private ColorComboBox strandsReverseColorComboBox;
+    private JComboBox viewModeComboBox;
+    private JComboBox colorSchemeComboBox;
+    private ColorSchemeComboBox labelFieldComboBox;
 
 	public JPanel rangePanel = new JPanel();
     public ButtonGroup stylegroup = new ButtonGroup();
@@ -133,7 +150,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	    add(trackPreferencesGUI);
 	    add(yScaleAxisGUI);
 	    assignTrackPreferences(trackPreferencesGUI);
-		igbService.addListSelectionListener(styleP_colorSchemeBox);
+		igbService.addListSelectionListener((ColorSchemeComboBox)colorSchemeComboBox);
 		graphP_hidden_styleB = new JRadioButton();
 		trackPreferencesGUI.getButtonGroup1().add(graphP_hidden_styleB);
 		graphP_hidden_styleB.setSelected(true); // deselect all visible radio buttons
@@ -146,9 +163,12 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	}
 
 	private void assignTrackPreferences(TrackPreferencesGUI trackPreferencesGUI) {
-		selectAllCB = trackPreferencesGUI.getSelectAllComboBox();
-	    selectAllCB.setModel(new DefaultComboBoxModel(SELECT_ALL_ITEMS));
-	    selectAllCB.addActionListener(
+		stylePanel = trackPreferencesGUI.getStylePanel();
+		graphPanel = trackPreferencesGUI.getGraphPanel();
+		annotationPanel = trackPreferencesGUI.getAnnotationsPanel();
+		selectAllComboBox = trackPreferencesGUI.getSelectAllComboBox();
+	    selectAllComboBox.setModel(new DefaultComboBoxModel(SELECT_ALL_ITEMS));
+	    selectAllComboBox.addActionListener(
 	    	new ActionListener() {
 	    		@Override
 	    		public void actionPerformed(ActionEvent evt) {
@@ -171,29 +191,20 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	    		}
 	    	}
 	    );
-		graphP_mmavgB = trackPreferencesGUI.getGraphStyleMinMaxAvgRadioButton();
-		graphP_lineB = trackPreferencesGUI.getGraphStyleLineRadioButton();
-		graphP_barB = trackPreferencesGUI.getGraphStyleBarRadioButton();
-		graphP_dotB = trackPreferencesGUI.getGraphStyleDotRadioButton();
-		graphP_hmapB = trackPreferencesGUI.getGraphStyleHeatMapRadioButton();
-		graphP_sstepB = trackPreferencesGUI.getGraphStyleStaiStepRadioButton();
-		graphP_barB.addActionListener(new GraphStyleSetter(GraphType.BAR_GRAPH));
-		graphP_dotB.addActionListener(new GraphStyleSetter(GraphType.DOT_GRAPH));
-		graphP_hmapB.addActionListener(new GraphStyleSetter(GraphType.HEAT_MAP));
-		graphP_lineB.addActionListener(new GraphStyleSetter(GraphType.LINE_GRAPH));
-		graphP_mmavgB.addActionListener(new GraphStyleSetter(GraphType.MINMAXAVG));
-		graphP_sstepB.addActionListener(new GraphStyleSetter(GraphType.STAIRSTEP_GRAPH));
-		stylePanel = trackPreferencesGUI.getStylePanel();
-		graphPanel = trackPreferencesGUI.getGraphPanel();
-		annotationPanel = trackPreferencesGUI.getAnnotationsPanel();
-		styleP_fgColorComboBox = trackPreferencesGUI.getForegroundColorComboBox();
-		styleP_fgColorComboBox.addActionListener(new ActionListener() {
+		graphStyleMinMaxAvgRadioButton = trackPreferencesGUI.getGraphStyleMinMaxAvgRadioButton();
+		graphStyleLineRadioButton = trackPreferencesGUI.getGraphStyleLineRadioButton();
+		graphStyleBarRadioButton = trackPreferencesGUI.getGraphStyleBarRadioButton();
+		graphStyleDotRadioButton = trackPreferencesGUI.getGraphStyleDotRadioButton();
+		graphStyleHeatMapRadioButton = trackPreferencesGUI.getGraphStyleHeatMapRadioButton();
+		graphStyleStaiStepRadioButton = trackPreferencesGUI.getGraphStyleStaiStepRadioButton();
+		foregroundColorComboBox = trackPreferencesGUI.getForegroundColorComboBox();
+		foregroundColorComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				if (igbService.getSeqMap() == null) {
 					return;
 				}
-				Color color = styleP_fgColorComboBox.getSelectedColor();
+				Color color = foregroundColorComboBox.getSelectedColor();
 				if (color != null) {
 					for (TierGlyph tier : selectedTiers) {
 						tier.getAnnotStyle().setForeground(color);
@@ -203,14 +214,14 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 			}
 		);
-		styleP_bgColorComboBox = trackPreferencesGUI.getBackgroundColorComboBox();
-		styleP_bgColorComboBox.addActionListener(new ActionListener() {
+		backgroundColorComboBox = trackPreferencesGUI.getBackgroundColorComboBox();
+		backgroundColorComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				if (igbService.getSeqMap() == null) {
 					return;
 				}
-				Color color = styleP_bgColorComboBox.getSelectedColor();
+				Color color = backgroundColorComboBox.getSelectedColor();
 				if (color != null) {
 					for (TierGlyph tier : selectedTiers) {
 						tier.getAnnotStyle().setBackground(color);
@@ -225,14 +236,14 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 			}
 		);
-		styleP_labelFGComboBox = trackPreferencesGUI.getLabelColorComboBox();
-		styleP_labelFGComboBox.addActionListener(new ActionListener() {
+		labelColorComboBox = trackPreferencesGUI.getLabelColorComboBox();
+		labelColorComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				if (igbService.getSeqMap() == null) {
 					return;
 				}
-				Color color = styleP_labelFGComboBox.getSelectedColor();
+				Color color = labelColorComboBox.getSelectedColor();
 				if (color != null) {
 					for (TierGlyph tier : selectedTiers) {
 						tier.getAnnotStyle().setLabelForeground(color);
@@ -247,9 +258,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 			}
 		);
-		styleP_colorSchemeBox = (ColorSchemeComboBox)trackPreferencesGUI.getColorSchemeComboBox();
-		annotP_maxStackDepthTextField = trackPreferencesGUI.getStackDepthTextField();
-		annotP_maxStackDepthTextField.addActionListener(new ActionListener() {
+		stackDepthTextField = trackPreferencesGUI.getStackDepthTextField();
+		stackDepthTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				String mdepth_string = ((JTextField)evt.getSource()).getText();
@@ -269,8 +279,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 			
 		});
-		trackName = trackPreferencesGUI.getTrackNameTextField();
-		trackName.addActionListener(new ActionListener() {
+		trackNameTextField = trackPreferencesGUI.getTrackNameTextField();
+		trackNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				String name = ((JTextField)evt.getSource()).getText();
@@ -282,8 +292,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		});
-		styleP_trackNameSizeComboBox = trackPreferencesGUI.getLabelSizeComboBox();
-		styleP_trackNameSizeComboBox.addItemListener(
+		labelSizeComboBox = trackPreferencesGUI.getLabelSizeComboBox();
+		labelSizeComboBox.addItemListener(
 			new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
@@ -326,8 +336,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			   }
 			}
 		);
-		graphP_yaxisCB = trackPreferencesGUI.getyAxisCheckBox();
-		graphP_yaxisCB.addActionListener(new ActionListener() {
+		yAxisCheckBox = trackPreferencesGUI.getyAxisCheckBox();
+		yAxisCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean b = ((JCheckBox)e.getSource()).isSelected();
 				for (AbstractGraphGlyph gl : graphGlyphs) {
@@ -336,10 +346,10 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				igbService.getSeqMap().updateWidget();
 			}
 		});
-		graphP_floatCB = trackPreferencesGUI.getFloatCheckBox();
-		graphP_floatCB.addActionListener(new ActionListener() {
+		floatCheckBox = trackPreferencesGUI.getFloatCheckBox();
+		floatCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (graphP_floatCB.isSelected()) {
+				if (floatCheckBox.isSelected()) {
 					GenericAction floatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction");
 					if (floatAction != null) {
 						floatAction.actionPerformed(null);
@@ -353,8 +363,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		});
-		graphP_heat_mapCB = trackPreferencesGUI.getGraphStyleHeatMapComboBox();
-		graphP_heat_mapCB.addItemListener(new ItemListener() {
+		graphStyleHeatMapComboBox = trackPreferencesGUI.getGraphStyleHeatMapComboBox();
+		graphStyleHeatMapComboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (graphGlyphs.isEmpty() || !is_listening) {
 					return;
@@ -376,6 +386,50 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		});
+	    collapsedCheckBox = trackPreferencesGUI.getCollapsedCheckBox();
+	    collapsedCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				if (collapsedCheckBox.isSelected()) {
+					GenericAction collapseAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.CollapseAction");
+					if (collapseAction != null) {
+						collapseAction.actionPerformed(null);
+					}
+				}
+				else {
+					GenericAction expandAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ExpandAction");
+					if (expandAction != null) {
+						expandAction.actionPerformed(null);
+					}
+				}
+			}
+		});
+	    refreshCheckBox = trackPreferencesGUI.getRefreshCheckBox();
+	    restoreDefaultsButton = trackPreferencesGUI.getRestoreDefaultsButton();
+	    strands2TracksCheckBox = trackPreferencesGUI.getStrands2TracksCheckBox();
+	    strands2TracksCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				if (strands2TracksCheckBox.isSelected()) {
+					GenericAction collapseAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ShowOneTierAction");
+					if (collapseAction != null) {
+						collapseAction.actionPerformed(null);
+					}
+				}
+				else {
+					GenericAction expandAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ShowTwoTiersAction");
+					if (expandAction != null) {
+						expandAction.actionPerformed(null);
+					}
+				}
+			}
+		});
+	    strandsArrowCheckBox = trackPreferencesGUI.getStrandsArrowCheckBox();
+	    strandsColorCheckBox = trackPreferencesGUI.getStrandsColorCheckBox();
+	    strandsForewardColorComboBox = trackPreferencesGUI.getStrandsForewardColorComboBox();
+	    strandsReverseColorComboBox = trackPreferencesGUI.getStrandsReverseColorComboBox();
+	    viewModeComboBox = trackPreferencesGUI.getViewModeComboBox();
+	    colorSchemeComboBox = trackPreferencesGUI.getColorSchemeComboBox();
 	}
 
 	private boolean isTierGlyph(GlyphI glyph) {
@@ -447,11 +501,11 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			}
 			RootSeqSymmetry rootSym = (RootSeqSymmetry)selectedTiers.get(0).getInfo();
 			FileTypeCategory category = rootSym.getCategory();
-			trackName.setText(style.getTrackName());
+			trackNameTextField.setText(style.getTrackName());
 			String viewmode = style.getViewMode();
 		}
 		else {
-			trackName.setText("");
+			trackNameTextField.setText("");
 		}
 
 		if (select) {
@@ -461,7 +515,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		else {
 			height_slider.setValue(0);
 		}
-		trackName.setEnabled(select);
+		trackNameTextField.setEnabled(select);
 		height_slider.setEnabled(select);
 	}
 
@@ -474,16 +528,16 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			if (style == null || style instanceof SimpleTrackStyle) {
 				return;
 			}
-			styleP_fgColorComboBox.setSelectedColor(style.getForeground());
-			styleP_bgColorComboBox.setSelectedColor(style.getBackground());
-			styleP_labelFGComboBox.setSelectedColor(style.getLabelForeground());
-			styleP_trackNameSizeComboBox.setSelectedItem((int) style.getTrackNameSize());
+			foregroundColorComboBox.setSelectedColor(style.getForeground());
+			backgroundColorComboBox.setSelectedColor(style.getBackground());
+			labelColorComboBox.setSelectedColor(style.getLabelForeground());
+			labelSizeComboBox.setSelectedItem((int) style.getTrackNameSize());
 		}
 		else {
-			styleP_fgColorComboBox.setSelectedColor(null);
-			styleP_labelFGComboBox.setSelectedColor(null);
-			styleP_bgColorComboBox.setSelectedColor(null);
-			styleP_trackNameSizeComboBox.setSelectedItem(null);
+			foregroundColorComboBox.setSelectedColor(null);
+			labelColorComboBox.setSelectedColor(null);
+			backgroundColorComboBox.setSelectedColor(null);
+			labelSizeComboBox.setSelectedItem(null);
 		}
 	}
 
@@ -506,9 +560,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			if (style == null) {
 				return;
 			}
-			annotP_maxStackDepthTextField.setText(Integer.toString(style.getMaxDepth()));
+			stackDepthTextField.setText(Integer.toString(style.getMaxDepth()));
 		} else {
-			annotP_maxStackDepthTextField.setText("");
+			stackDepthTextField.setText("");
 		}
 	}
 
@@ -536,8 +590,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				}
 			}
 		}
-		graphP_floatCB.setEnabled(anySelected);
-		graphP_floatCB.setSelected(anySelected && allFloat);
+		floatCheckBox.setEnabled(anySelected);
+		floatCheckBox.setSelected(anySelected && allFloat);
 		// graph and range panels
 
 		boolean all_are_floating = false;
@@ -582,16 +636,16 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		selectButtonBasedOnGraphStyle(graph_style);
 
 		if (graph_style == GraphType.HEAT_MAP) {
-			graphP_heat_mapCB.setEnabled(true);
-			graphP_hmapB.setSelected(true);
+			graphStyleHeatMapComboBox.setEnabled(true);
+			graphStyleHeatMapRadioButton.setSelected(true);
 			if (hm == null) {
-				graphP_heat_mapCB.setSelectedIndex(-1);
+				graphStyleHeatMapComboBox.setSelectedIndex(-1);
 			} else {
-				graphP_heat_mapCB.setSelectedItem(hm.getName());
+				graphStyleHeatMapComboBox.setSelectedItem(hm.getName());
 			}
 		} else {
-			graphP_heat_mapCB.setEnabled(false);
-			graphP_hmapB.setSelected(false);
+			graphStyleHeatMapComboBox.setEnabled(false);
+			graphStyleHeatMapRadioButton.setSelected(false);
 		}
 		vis_bounds_setter.setGraphs(graphGlyphs);
 
@@ -604,8 +658,8 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		}
 
 		if (select) {
-			graphP_yaxisCB.setSelected(all_show_axis);
-			graphP_floatCB.setSelected(all_show_label);
+			yAxisCheckBox.setSelected(all_show_axis);
+			floatCheckBox.setSelected(all_show_label);
 		}
 
 	}
@@ -684,24 +738,23 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	private void selectButtonBasedOnGraphStyle(GraphType graph_style) {
 		switch (graph_style) {
 			case MINMAXAVG:
-				graphP_mmavgB.setSelected(true);
+				graphStyleMinMaxAvgRadioButton.setSelected(true);
 				break;
 			case LINE_GRAPH:
-				graphP_lineB.setSelected(true);
+				graphStyleLineRadioButton.setSelected(true);
 				break;
 			case BAR_GRAPH:
-				graphP_barB.setSelected(true);
+				graphStyleBarRadioButton.setSelected(true);
 				break;
 			case DOT_GRAPH:
-				graphP_dotB.setSelected(true);
+				graphStyleDotRadioButton.setSelected(true);
 				break;
 			case HEAT_MAP:
-				//hmapB.setSelected(true);
-				graphP_hmapB.setSelected(true);
+				graphStyleHeatMapRadioButton.setSelected(true);
 				break;
-//			case STAIRSTEP_GRAPH:
-//				graphP_sstepB.setSelected(true);
-//				break;
+			case STAIRSTEP_GRAPH:
+				graphStyleStaiStepRadioButton.setSelected(true);
+				break;
 			default:
 				graphP_hidden_styleB.setSelected(true);
 				break;
@@ -716,58 +769,6 @@ public final class TrackAdjusterTab extends IGBTabPanel
 //		current_seq = evt.getSelectedSeq();
 //		refreshSelection(gmodel.getSelectedSymmetries(current_seq));
 		refreshSelection(Collections.<RootSeqSymmetry>emptyList());
-	}
-
-	private final class GraphStyleSetter extends GenericAction implements ActionListener {
-
-		private static final long serialVersionUID = 1L;
-		GraphType graphType = GraphType.LINE_GRAPH;
-
-		public GraphStyleSetter(GraphType graphType) {
-			super(null, null, null);
-			this.graphType = graphType;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			super.actionPerformed(event);
-			if (DEBUG_EVENTS) {
-				System.out.println(this.getClass().getName() + " got an ActionEvent: " + event);
-			}
-			if (graphGlyphs.isEmpty() || !is_listening) {
-				return;
-			}
-
-			Runnable r = new Runnable() {
-
-				public void run() {
-					String viewMode = graphType2ViewMode.get(graphType);
-					HeatMap hm = (graphGlyphs.get(0)).getHeatMap();
-					for (AbstractGraphGlyph sggl : new ArrayList<AbstractGraphGlyph>(graphGlyphs)) {
-						sggl.setShowGraph(true);
-						igbService.changeViewMode(igbService.getSeqMapView(), sggl.getAnnotStyle(), viewMode, (RootSeqSymmetry) sggl.getInfo(), sggl.getGraphState().getComboStyle());
-						if ((graphType == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
-							hm = null;
-						}
-					}
-					if (graphType == GraphType.HEAT_MAP) {
-						graphP_heat_mapCB.setEnabled(true);
-						graphP_hmapB.setSelected(true);
-						if (hm == null) {
-							graphP_heat_mapCB.setSelectedIndex(-1);
-						} else {
-							graphP_heat_mapCB.setSelectedItem(hm.getName());
-						}
-					} else {
-						graphP_heat_mapCB.setEnabled(false);
-						graphP_hmapB.setSelected(false);
-						// don't bother to change the displayed heat map name
-					}
-				}
-			};
-
-			SwingUtilities.invokeLater(r);
-		}
 	}
 
 	@Override

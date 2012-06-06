@@ -3,6 +3,8 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -53,6 +55,14 @@ public abstract class SeqMapViewActionA extends GenericAction {
 		return handler;
 	}
 
+	protected AffyLabelledTierMap getTierMap(){
+		return ((AffyLabelledTierMap)getSeqMapView().getSeqMap());
+	}
+	
+	protected AffyTieredMap getLabelMap(){
+		return getTierMap().getLabelMap();
+	} 
+	
 	protected void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {
 			// if an AnnotatedSeqViewer is being used, ask it to update itself.

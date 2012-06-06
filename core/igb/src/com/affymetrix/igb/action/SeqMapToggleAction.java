@@ -130,7 +130,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 	 * I could not find documentation on why this is so.
 	 * @return this
 	 */
-	public Action getAction() {
+	public Action xxxxgetAction() {
 		return this;
 	}
 

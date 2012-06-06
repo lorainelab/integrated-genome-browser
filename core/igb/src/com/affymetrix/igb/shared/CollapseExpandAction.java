@@ -20,7 +20,7 @@ public class CollapseExpandAction extends SeqMapToggleAction implements SymSelec
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
 	
-	public static CollapseExpandAction xgetAction() {
+	public static CollapseExpandAction getAction() {
 		return ACTION;
 	}
 

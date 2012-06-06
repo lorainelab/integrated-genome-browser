@@ -36,7 +36,7 @@ import javax.swing.table.TableCellRenderer;
 public final class KeyStrokesView implements ListSelectionListener,
 		PreferenceChangeListener {
 
-	public final KeyStrokeViewTable table = new KeyStrokeViewTable("KeyStrokesView");
+	public final JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
 	public static final int IconColumn = 0;
 	public static final int ToolbarColumn = 1;

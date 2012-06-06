@@ -62,8 +62,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -891,7 +890,20 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		};
 
 		gmodel.addGroupSelectionListener(listener);
-		CThreadHolder.getInstance().execute(versionName, worker);
+		
+		if(IGB.getSingleton().getFrame().isVisible()){
+			CThreadHolder.getInstance().execute(versionName, worker);
+		}else{
+			final ComponentListener componentListener = new ComponentAdapter() {
+				
+				@Override
+				public void componentShown(ComponentEvent e) {
+					IGB.getSingleton().getFrame().removeComponentListener(this);
+					CThreadHolder.getInstance().execute(versionName, worker);
+				}
+			};
+			IGB.getSingleton().getFrame().addComponentListener(componentListener);
+		}
 	}
 
 	/**

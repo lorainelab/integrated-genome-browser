@@ -173,6 +173,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	    	new ActionListener() {
 	    		@Override
 	    		public void actionPerformed(ActionEvent evt) {
+					if(!is_listening)
+						return;
+					
 	    			JComboBox selectAllCB = (JComboBox)evt.getSource();
 	    			String displayItem = (String)selectAllCB.getSelectedItem();
 	    			if (SELECT_ALL_PROMPT.equals(displayItem)) {
@@ -202,6 +205,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		foregroundColorComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				if (igbService.getSeqMap() == null) {
 					return;
 				}
@@ -219,6 +225,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		backgroundColorComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				if (igbService.getSeqMap() == null) {
 					return;
 				}
@@ -241,6 +250,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		labelColorComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				if (igbService.getSeqMap() == null) {
 					return;
 				}
@@ -263,6 +275,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		stackDepthTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				String mdepth_string = ((JTextField)evt.getSource()).getText();
 				if (selectedTiers == null || mdepth_string == null) {
 					return;
@@ -284,6 +299,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		trackNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				String name = ((JTextField)evt.getSource()).getText();
 				if (igbService.getSeqMapView() == null) {
 					return;
@@ -298,6 +316,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 			new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
+					if(!is_listening)
+						return;
+					
 					if (ie.getStateChange() == ItemEvent.SELECTED) {
 						int fontsize = (Integer)ie.getItem();
 						if (selectedTiers == null || fontsize <= 0) {
@@ -322,7 +343,10 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		height_slider.addChangeListener(
 			new ChangeListener() {
 			   public void stateChanged(ChangeEvent e) {
-				   int height = height_slider.getValue();
+					if(!is_listening)
+						return;
+				   
+				    int height = height_slider.getValue();
 					for (ViewModeGlyph gl : allGlyphs) {
 						Rectangle2D.Double cbox = gl.getCoordBox();
 						gl.setCoords(cbox.x, cbox.y, cbox.width, height);
@@ -340,6 +364,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		yAxisCheckBox = trackPreferencesGUI.getyAxisCheckBox();
 		yAxisCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(!is_listening)
+					return;
+				
 				boolean b = ((JCheckBox)e.getSource()).isSelected();
 				for (AbstractGraphGlyph gl : graphGlyphs) {
 					gl.setShowAxis(b);
@@ -350,6 +377,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		floatCheckBox = trackPreferencesGUI.getFloatCheckBox();
 		floatCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(!is_listening)
+					return;
+				
 				if (floatCheckBox.isSelected()) {
 					GenericAction floatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction");
 					if (floatAction != null) {
@@ -367,7 +397,10 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		graphStyleHeatMapComboBox = trackPreferencesGUI.getGraphStyleHeatMapComboBox();
 		graphStyleHeatMapComboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (graphGlyphs.isEmpty() || !is_listening) {
+				if(!is_listening)
+					return;
+				
+				if (graphGlyphs.isEmpty()) {
 					return;
 				}
 
@@ -391,6 +424,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	    collapsedCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				if (collapsedCheckBox.isSelected()) {
 					GenericAction collapseAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.CollapseAction");
 					if (collapseAction != null) {
@@ -411,6 +447,9 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	    strands2TracksCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
+				if(!is_listening)
+					return;
+				
 				if (strands2TracksCheckBox.isSelected()) {
 					GenericAction collapseAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ShowOneTierAction");
 					if (collapseAction != null) {

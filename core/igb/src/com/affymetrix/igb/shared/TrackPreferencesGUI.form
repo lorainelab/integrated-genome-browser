@@ -195,10 +195,8 @@
       <SubComponents>
         <Component class="javax.swing.JComboBox" name="labelSizeComboBox">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="1">
-                <StringItem index="0" value="12 pt"/>
-              </StringArray>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new DefaultComboBoxModel(SUPPORTED_SIZE)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -212,17 +210,12 @@
             <Property name="text" type="java.lang.String" value="Color Scheme:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="colorSchemeComboBox">
+        <Component class="com.affymetrix.genoviz.color.ColorSchemeComboBox" name="colorSchemeComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="1">
-                <StringItem index="0" value="12 pt"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.genoviz.color.ColorSchemeComboBox()"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="refreshCheckBox">
           <Properties>
@@ -585,11 +578,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new DefaultComboBoxModel(SUPPORTED_SIZE)" type="code"/>
-            </Property>
-          </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="strands2TracksCheckBox">
           <Properties>

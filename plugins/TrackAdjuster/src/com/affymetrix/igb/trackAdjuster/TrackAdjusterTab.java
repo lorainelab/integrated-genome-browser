@@ -100,7 +100,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	private JRadioButton graphStyleBarRadioButton;
 	private JRadioButton graphStyleDotRadioButton;
 	private JRadioButton graphStyleHeatMapRadioButton;
-	private JRadioButton graphStyleStaiStepRadioButton;
+	private JRadioButton graphStyleStairStepRadioButton;
 	private JRadioButton graphP_hidden_styleB;
 	private JPanel stylePanel;
 	private JPanel graphPanel;
@@ -124,7 +124,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
     private ColorComboBox strandsForewardColorComboBox;
     private ColorComboBox strandsReverseColorComboBox;
     private JComboBox viewModeComboBox;
-    private JComboBox colorSchemeComboBox;
+    private ColorSchemeComboBox colorSchemeComboBox;
     private ColorSchemeComboBox labelFieldComboBox;
 
 	public JPanel rangePanel = new JPanel();
@@ -150,7 +150,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 	    add(trackPreferencesGUI);
 	    add(yScaleAxisGUI);
 	    assignTrackPreferences(trackPreferencesGUI);
-		igbService.addListSelectionListener((ColorSchemeComboBox)colorSchemeComboBox);
+		igbService.addListSelectionListener(colorSchemeComboBox);
 		graphP_hidden_styleB = new JRadioButton();
 		trackPreferencesGUI.getButtonGroup1().add(graphP_hidden_styleB);
 		graphP_hidden_styleB.setSelected(true); // deselect all visible radio buttons
@@ -196,7 +196,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 		graphStyleBarRadioButton = trackPreferencesGUI.getGraphStyleBarRadioButton();
 		graphStyleDotRadioButton = trackPreferencesGUI.getGraphStyleDotRadioButton();
 		graphStyleHeatMapRadioButton = trackPreferencesGUI.getGraphStyleHeatMapRadioButton();
-		graphStyleStaiStepRadioButton = trackPreferencesGUI.getGraphStyleStaiStepRadioButton();
+		graphStyleStairStepRadioButton = trackPreferencesGUI.getGraphStyleStairStepRadioButton();
 		foregroundColorComboBox = trackPreferencesGUI.getForegroundColorComboBox();
 		foregroundColorComboBox.addActionListener(new ActionListener() {
 			@Override
@@ -298,15 +298,15 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				@Override
 				public void itemStateChanged(ItemEvent ie) {
 					if (ie.getStateChange() == ItemEvent.SELECTED) {
-						String fontstring = (String) ie.getItem();
-						if (selectedTiers == null || fontstring == null) {
+						int fontsize = (Integer)ie.getItem();
+						if (selectedTiers == null || fontsize <= 0) {
 							return;
 						}
 						for (TierGlyph tier : selectedTiers) {
 							ITrackStyleExtended style = tier.getAnnotStyle();
 							float prev_font_size = style.getTrackNameSize();
 							try {
-								style.setTrackNameSize(Float.parseFloat(fontstring));
+								style.setTrackNameSize(fontsize);
 							} catch (Exception ex) {
 								style.setTrackNameSize(prev_font_size);
 							}
@@ -753,7 +753,7 @@ public final class TrackAdjusterTab extends IGBTabPanel
 				graphStyleHeatMapRadioButton.setSelected(true);
 				break;
 			case STAIRSTEP_GRAPH:
-				graphStyleStaiStepRadioButton.setSelected(true);
+				graphStyleStairStepRadioButton.setSelected(true);
 				break;
 			default:
 				graphP_hidden_styleB.setSelected(true);

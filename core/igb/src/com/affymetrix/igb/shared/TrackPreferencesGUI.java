@@ -60,7 +60,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 			}
 		};
 		colorSchemeComboBox.addItemListener(colorSchemeItemListener);
-		((ColorSchemeComboBox)colorSchemeComboBox).setChoices(0);
+		colorSchemeComboBox.setChoices(0);
     }
 
     /** This method is called from within the constructor to
@@ -134,13 +134,11 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 
         stylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
 
-        labelSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "12 pt" }));
+        labelSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
 
         labelSizeLabel.setText("Size:");
 
         colorSchemeLabel.setText("Color Scheme:");
-
-        colorSchemeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "12 pt" }));
 
         refreshCheckBox.setText("Refresh");
 
@@ -336,8 +334,6 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 
         labelFieldLabel.setText("Label Field:");
 
-        labelFieldComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
-
         strands2TracksCheckBox.setText("2 track");
 
         strandsArrowCheckBox.setText("Arrow");
@@ -486,7 +482,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
     private javax.swing.JLabel backgroundColorLabel;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox collapsedCheckBox;
-    private javax.swing.JComboBox colorSchemeComboBox;
+    private com.affymetrix.genoviz.color.ColorSchemeComboBox colorSchemeComboBox;
     private javax.swing.JLabel colorSchemeLabel;
     private javax.swing.JCheckBox floatCheckBox;
     private com.jidesoft.combobox.ColorComboBox foregroundColorComboBox;
@@ -549,7 +545,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 		return collapsedCheckBox;
 	}
 
-	public javax.swing.JComboBox getColorSchemeComboBox() {
+	public com.affymetrix.genoviz.color.ColorSchemeComboBox getColorSchemeComboBox() {
 		return colorSchemeComboBox;
 	}
 
@@ -597,7 +593,7 @@ public class TrackPreferencesGUI extends javax.swing.JPanel {
 		return graphStyleMinMaxAvgRadioButton;
 	}
 
-	public javax.swing.JRadioButton getGraphStyleStaiStepRadioButton() {
+	public javax.swing.JRadioButton getGraphStyleStairStepRadioButton() {
 		return graphStyleStairStepRadioButton;
 	}
 

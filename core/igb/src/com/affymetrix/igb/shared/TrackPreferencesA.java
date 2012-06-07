@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
+import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
@@ -56,26 +57,20 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void viewModeComboBoxActionPerformedA(ActionEvent evt) {
 	    final JComboBox viewModeComboBox = getViewModeComboBox();
 		MapViewGlyphFactoryI viewmode = (MapViewGlyphFactoryI)viewModeComboBox.getSelectedItem();
-		for (TierGlyph tier : selectedTiers) {
-			tier.getAnnotStyle().setViewMode(viewmode.getName());
-		}
+		GenericAction viewModeAction = new ChangeViewModeAction(viewmode);
+		viewModeAction.actionPerformed(null);
 		updateDisplay();
 	}
 
 	@Override
 	protected void floatCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox floatCheckBox = getFloatCheckBox();
-		if (floatCheckBox.isSelected()) {
-			GenericAction floatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction");
-			if (floatAction != null) {
-				floatAction.actionPerformed(null);
-			}
-		}
-		else {
-			GenericAction unFloatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.UnFloatTiersAction");
-			if (unFloatAction != null) {
-				unFloatAction.actionPerformed(null);
-			}
+	    String actionId = floatCheckBox.isSelected() ?
+	    	"com.affymetrix.igb.action.FloatTiersAction" :
+	    	"com.affymetrix.igb.action.UnFloatTiersAction";
+		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
+		if (action != null) {
+			action.actionPerformed(evt);
 		}
 		updateDisplay();
 	}
@@ -152,17 +147,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void collapsedCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox collapsedCheckBox = getCollapsedCheckBox();
-		if (collapsedCheckBox.isSelected()) {
-			GenericAction collapseAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.CollapseAction");
-			if (collapseAction != null) {
-				collapseAction.actionPerformed(evt);
-			}
-		}
-		else {
-			GenericAction expandAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ExpandAction");
-			if (expandAction != null) {
-				expandAction.actionPerformed(evt);
-			}
+	    String actionId = collapsedCheckBox.isSelected() ?
+	    	"com.affymetrix.igb.action.CollapseAction" :
+			"com.affymetrix.igb.action.ExpandAction";
+		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
+		if (action != null) {
+			action.actionPerformed(evt);
 		}
 		updateDisplay();
 	}
@@ -170,17 +160,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-		if (strands2TracksCheckBox.isSelected()) {
-			GenericAction strands2TracksAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ShowTwoTiersAction");
-			if (strands2TracksAction != null) {
-				strands2TracksAction.actionPerformed(evt);
-			}
-		}
-		else {
-			GenericAction strands1TrackAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.ShowOneTierAction");
-			if (strands1TrackAction != null) {
-				strands1TrackAction.actionPerformed(evt);
-			}
+	    String actionId = strands2TracksCheckBox.isSelected() ?
+			"com.affymetrix.igb.action.ShowTwoTiersAction" :
+			"com.affymetrix.igb.action.ShowOneTierAction";
+		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
+		if (action != null) {
+			action.actionPerformed(evt);
 		}
 		updateDisplay();
 	}
@@ -188,17 +173,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strandsArrowCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
-		if (strandsArrowCheckBox.isSelected()) {
-			GenericAction setArrowAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.SetDirectionStyleArrowAction");
-			if (setArrowAction != null) {
-				setArrowAction.actionPerformed(evt);
-			}
-		}
-		else {
-			GenericAction unsetArrowAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.UnsetDirectionStyleArrowAction");
-			if (unsetArrowAction != null) {
-				unsetArrowAction.actionPerformed(evt);
-			}
+		String actionId = strandsArrowCheckBox.isSelected() ?
+			"com.affymetrix.igb.action.SetDirectionStyleArrowAction" :
+			"com.affymetrix.igb.action.UnsetDirectionStyleArrowAction";
+		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
+		if (action != null) {
+			action.actionPerformed(evt);
 		}
 		updateDisplay();
 	}
@@ -206,17 +186,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strandsColorCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
-		if (strandsColorCheckBox.isSelected()) {
-			GenericAction setColorAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.SetDirectionStyleColorAction");
-			if (setColorAction != null) {
-				setColorAction.actionPerformed(evt);
-			}
-		}
-		else {
-			GenericAction unsetColorAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.UnsetDirectionStyleColorAction");
-			if (unsetColorAction != null) {
-				unsetColorAction.actionPerformed(evt);
-			}
+		String actionId = strandsColorCheckBox.isSelected() ?
+			"com.affymetrix.igb.action.SetDirectionStyleColorAction" :
+			"com.affymetrix.igb.action.UnsetDirectionStyleColorAction";
+		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
+		if (action != null) {
+			action.actionPerformed(evt);
 		}
 		updateDisplay();
 	}
@@ -290,7 +265,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void foregroundColorComboBoxActionPerformedA(ActionEvent evt) {
-		final ColorComboBox foregroundColorComboBox = getForgroundColorComboBox();
+		final ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
 		if (igbService.getSeqMap() == null) {
 			return;
 		}
@@ -551,7 +526,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				}
 			}
 		}
-		strandsForwardColorComboBox.setBackground(strandsForwardColor);
+		strandsForwardColorComboBox.setSelectedColor(strandsForwardColor);
 	}
 
 	@Override
@@ -573,7 +548,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				}
 			}
 		}
-		strandsReverseColorComboBox.setBackground(strandsReverseColor);
+		strandsReverseColorComboBox.setSelectedColor(strandsReverseColor);
 	}
 
 	@Override
@@ -638,15 +613,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		boolean labelColorSet = false;
 		for (ViewModeGlyph ag : annotGlyphs) {
 			if (labelColor == null && !labelColorSet) {
-				labelColor = ag.getAnnotStyle().getBackground();
+				labelColor = ag.getAnnotStyle().getLabelForeground();
 				labelColorSet = true;
 			}
-			else if (labelColor != ag.getAnnotStyle().getReverseColor()) {
+			else if (labelColor != ag.getAnnotStyle().getLabelForeground()) {
 				labelColor = null;
 				break;
 			}
 		}
-		labelColorComboBox.setBackground(labelColor);
+		labelColorComboBox.setSelectedColor(labelColor);
 	}
 
 	@Override
@@ -661,32 +636,32 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				backgroundColor = ag.getAnnotStyle().getBackground();
 				backgroundColorSet = true;
 			}
-			else if (backgroundColor != ag.getAnnotStyle().getReverseColor()) {
+			else if (backgroundColor != ag.getAnnotStyle().getBackground()) {
 				backgroundColor = null;
 				break;
 			}
 		}
-		backgroundColorComboBox.setBackground(backgroundColor);
+		backgroundColorComboBox.setSelectedColor(backgroundColor);
 	}
 
 	@Override
 	protected void foregroundColorComboBoxReset() {
-		ColorComboBox forgroundColorComboBox = getBackgroundColorComboBox();
-		forgroundColorComboBox.setEnabled(allGlyphs.size() > 0);
+		ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
+		foregroundColorComboBox.setEnabled(allGlyphs.size() > 0);
 		getForegroundColorLabel().setEnabled(allGlyphs.size() > 0);
-		Color forgroundColor = null;
-		boolean forgroundColorSet = false;
+		Color foregroundColor = null;
+		boolean foregroundColorSet = false;
 		for (ViewModeGlyph ag : annotGlyphs) {
-			if (forgroundColor == null && !forgroundColorSet) {
-				forgroundColor = ag.getAnnotStyle().getBackground();
-				forgroundColorSet = true;
+			if (foregroundColor == null && !foregroundColorSet) {
+				foregroundColor = ag.getAnnotStyle().getForeground();
+				foregroundColorSet = true;
 			}
-			else if (forgroundColor != ag.getAnnotStyle().getReverseColor()) {
-				forgroundColor = null;
+			else if (foregroundColor != ag.getAnnotStyle().getForeground()) {
+				foregroundColor = null;
 				break;
 			}
 		}
-		forgroundColorComboBox.setBackground(forgroundColor);
+		foregroundColorComboBox.setSelectedColor(foregroundColor);
 	}
 
 	@Override

@@ -290,7 +290,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .addContainerGap()
                         .add(graphStylesLabel))
                     .add(graphStyleMinMaxAvgRadioButton))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         graphPanelLayout.setVerticalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -314,7 +314,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(graphStyleHeatMapRadioButton)
                     .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         nameLabel.setText("Name:");
@@ -415,6 +415,16 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .addContainerGap()
                 .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(annotationsPanelLayout.createSequentialGroup()
+                        .add(stackDepthLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(annotationsPanelLayout.createSequentialGroup()
+                        .add(labelFieldLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 71, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(collapsedCheckBox)
+                    .add(strandsLabel)
+                    .add(annotationsPanelLayout.createSequentialGroup()
                         .add(strandsColorCheckBox)
                         .add(18, 18, 18)
                         .add(strandsForwardColorLabel)
@@ -425,18 +435,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(stackDepthLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(labelFieldLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 71, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(collapsedCheckBox)
-                    .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(strandsLabel)
-                            .add(strands2TracksCheckBox))
+                        .add(strands2TracksCheckBox)
                         .add(18, 18, 18)
                         .add(strandsArrowCheckBox)))
                 .addContainerGap(11, Short.MAX_VALUE))
@@ -455,7 +454,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(collapsedCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(strandsLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(strands2TracksCheckBox)
                     .add(strandsArrowCheckBox))
@@ -488,11 +487,11 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(viewModeLabel)))
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(layout.createSequentialGroup()
                         .add(26, 26, 26)
-                        .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -505,10 +504,11 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(viewModeLabel)
                     .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(13, 13, 13)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -700,7 +700,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		return floatCheckBox;
 	}
 
-	public com.jidesoft.combobox.ColorComboBox getForgroundColorComboBox() {
+	public com.jidesoft.combobox.ColorComboBox getForegroundColorComboBox() {
 		return foregroundColorComboBox;
 	}
 

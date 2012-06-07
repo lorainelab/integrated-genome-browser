@@ -37,12 +37,12 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	
 //	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/Warning.png");
-	private static final ImageIcon stopIcon = CommonUtils.getInstance().getIcon("images/Stop16.gif");
+	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("images/Stop16.gif");
 	private static final ImageIcon warningIcon = new ImageIcon("common/resources/images/warning.png");
 	private static final ImageIcon infoIcon = new ImageIcon("common/resources/images/info.gif");
-	private final JLabel status_ta;
+	private final JLabel status_ta, messageIcon;
 	private final MemoryStatusBarItem memory_item;
-	private final JRPButton mainCancel,stopAction;
+	private final JRPButton mainCancel;
 	private final JButton updateAvailable;
 	private final JPanel progressPanel;
 	public static Timer timer;
@@ -60,10 +60,10 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		updateAvailable.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		updateAvailable.setVisible(CommonUtils.getInstance().getUpdateAvailable());
 		mainCancel = new JRPButton("StatusBar_mainCancel", CancelAllAction.getAction());
-		stopAction = new JRPButton("StatusBar_stopAction", stopIcon);
-		stopAction.setVisible(false);
-		stopAction.setEnabled(false);
-		stopAction.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
+		messageIcon = new JLabel();
+		messageIcon.setVisible(false);
+		messageIcon.setEnabled(false);
+		messageIcon.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setHideActionText(true);
 //		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
@@ -101,7 +101,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
 				.addComponent(progressPanel)
-				.addComponent(stopAction)
+				.addComponent(messageIcon)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item, 1, 200, 200)
@@ -110,7 +110,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
 				.addComponent(progressPanel)
-				.addComponent(stopAction)
+				.addComponent(messageIcon)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item)
@@ -147,22 +147,22 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		timer= new Timer();
 		if(level.equals(Level.SEVERE)){
 			status_ta.setForeground(Color.red);
-			stopAction.setIcon(stopIcon);
+			messageIcon.setIcon(errorIcon);
 		}
 		else if(level.equals(Level.WARNING))	{
 			status_ta.setForeground(Color.orange);
-			stopAction.setIcon(warningIcon);
+			messageIcon.setIcon(warningIcon);
 		}
 		else if(level.equals(Level.INFO)){
 			status_ta.setForeground(new Color(30,255,30));
-			stopAction.setIcon(infoIcon);
+			messageIcon.setIcon(infoIcon);
 		}
-		stopAction.setVisible(true);
-		stopAction.setEnabled(true);
+		messageIcon.setVisible(true);
+		messageIcon.setEnabled(true);
 		setStatus(tempMessage);
 		timer.schedule(new TimerTask() {
             public void run() {
-				stopAction.setVisible(false);
+				messageIcon.setVisible(false);
 				status_ta.setForeground(Color.black);
 				setStatus(null);
 				timer.cancel();

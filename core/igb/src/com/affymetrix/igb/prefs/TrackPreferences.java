@@ -80,14 +80,8 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
 
 		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(82);
+	    table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
 	}
 
 	public void initCommonComponents() {

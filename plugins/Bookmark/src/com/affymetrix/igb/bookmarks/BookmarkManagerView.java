@@ -206,10 +206,10 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	/**
 	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
-	private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
+	private void importBookmarks(BookmarkList bookmark_list) {
 		JFileChooser chooser = getJFileChooser(false);
 		chooser.setCurrentDirectory(getLoadDirectory());
-		int option = chooser.showOpenDialog(frame);
+		int option = chooser.showOpenDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			setLoadDirectory(chooser.getCurrentDirectory());
 			try {
@@ -217,7 +217,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				BookmarksParser.parse(bookmark_list, fil);
 				AddBookmarkAction.addNode(bookmark_list);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex, Level.SEVERE);
+				ErrorHandler.errorPanel("Error", "Error importing bookmarks", ex, Level.SEVERE);
 			}
 		}
 	}
@@ -234,27 +234,27 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				String createdTime = dateFormat.format(Calendar.getInstance().getTime());
 				bl.setComment("Created Time: " + createdTime);
-				importBookmarks(bl, null);
+				importBookmarks(bl);
 				//tree_model.reload();
 			}
 		};
 		return a;
 	}
 
-	private void exportBookmarks(BookmarkList main_bookmark_list, JFrame frame) {
+	private void exportBookmarks(BookmarkList main_bookmark_list) {
 		if (main_bookmark_list == null || main_bookmark_list.getChildCount() == 0) {
-			ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", (Exception) null, Level.SEVERE);
+			ErrorHandler.errorPanel("Error", "No bookmarks to save", (Exception) null, Level.SEVERE);
 			return;
 		}
 		JFileChooser chooser = getJFileChooser(true);
 		chooser.setCurrentDirectory(getLoadDirectory());
-		int option = chooser.showSaveDialog(frame);
+		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			try {
 				setLoadDirectory(chooser.getCurrentDirectory());
 				((ExportFileFilter) chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex, Level.SEVERE);
+				ErrorHandler.errorPanel("Error", "Error exporting bookmarks", ex, Level.SEVERE);
 			}
 		}
 	}
@@ -268,7 +268,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				BookmarkList bl = (BookmarkList) tree_model.getRoot();
-				exportBookmarks(bl, null); // already contains a null check on bookmark list
+				exportBookmarks(bl); // already contains a null check on bookmark list
 			}
 		};
 		return a;

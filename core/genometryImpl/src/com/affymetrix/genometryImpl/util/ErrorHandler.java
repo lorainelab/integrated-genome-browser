@@ -72,20 +72,20 @@ public abstract class ErrorHandler implements DisplaysError{
 		errorPanel(frame, title, message, e, level);
 	}
 
-	public static void errorPanel(final String title, String message, final List<Throwable> errs, Level level) {
-		errorPanel((JFrame) null, title, message, errs, null, level);
-	}
-
 	public static void errorPanel(String title, String message, Throwable e, Level level) {
 		errorPanel((JFrame) null, title, message, e, level);
 	}
 
-	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e, Level level) {
+	public static void errorPanel(final String title, String message, final List<Throwable> errs, Level level) {
+		errorPanel((JFrame) null, title, message, errs, null, level);
+	}
+	
+	private static void errorPanel(final JFrame frame, final String title, String message, final Throwable e, Level level) {
 		List<Throwable> errs = new ArrayList<Throwable>();
 		if (e != null) {
 			errs.add(e);
 		}
-		errorPanel((JFrame) null, title, message, errs, null,level);
+		errorPanel(frame, title, message, errs, null, level);
 	}
 	
 	public static void errorPanelWithReportBug(String title, String message, Level level) {

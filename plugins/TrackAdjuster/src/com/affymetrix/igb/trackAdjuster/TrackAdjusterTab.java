@@ -12,7 +12,6 @@ package com.affymetrix.igb.trackAdjuster;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
-import java.awt.FlowLayout;
 import java.util.*;
 
 /**
@@ -29,7 +28,6 @@ public final class TrackAdjusterTab extends IGBTabPanel {
 
 	public TrackAdjusterTab(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
-		setLayout(new FlowLayout());
 	    add(new TrackPreferencesSeqMapViewPanel(igbService));
 	    add(new YScaleAxisGUI(igbService));
 	}

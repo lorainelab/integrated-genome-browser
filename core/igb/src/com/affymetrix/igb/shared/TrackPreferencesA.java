@@ -686,7 +686,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		getLabelColorLabel().setEnabled(allGlyphs.size() > 0);
 		Color labelColor = null;
 		boolean labelColorSet = false;
-		for (ViewModeGlyph ag : annotGlyphs) {
+		for (ViewModeGlyph ag : allGlyphs) {
 			if (labelColor == null && !labelColorSet) {
 				labelColor = ag.getAnnotStyle().getLabelForeground();
 				labelColorSet = true;
@@ -706,7 +706,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		getBackgroundColorLabel().setEnabled(allGlyphs.size() > 0);
 		Color backgroundColor = null;
 		boolean backgroundColorSet = false;
-		for (ViewModeGlyph ag : annotGlyphs) {
+		for (ViewModeGlyph ag : allGlyphs) {
 			if (backgroundColor == null && !backgroundColorSet) {
 				backgroundColor = ag.getAnnotStyle().getBackground();
 				backgroundColorSet = true;
@@ -726,7 +726,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		getForegroundColorLabel().setEnabled(allGlyphs.size() > 0);
 		Color foregroundColor = null;
 		boolean foregroundColorSet = false;
-		for (ViewModeGlyph ag : annotGlyphs) {
+		for (ViewModeGlyph ag : allGlyphs) {
 			if (foregroundColor == null && !foregroundColorSet) {
 				foregroundColor = ag.getAnnotStyle().getForeground();
 				foregroundColorSet = true;

@@ -55,6 +55,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 				if (enabled) {
 					SeqMapToggleAction.this.switchTo(source);
 				}
+				SeqMapToggleAction.this.setEnabled(shownAction.isEnabled());
 			}
 		}
 

@@ -63,7 +63,7 @@ public class CollapseExpandAction extends SeqMapToggleAction implements SymSelec
 		// Ignore the splice view as well as events coming from this class itself.
 
 		changeActionDisplay(selected_syms);
-		this.setEnabled(0 < selected_syms.size());
+		//this.setEnabled(0 < selected_syms.size());
 	}
 
 	private void changeActionDisplay(List<SeqSymmetry> selected_syms) {

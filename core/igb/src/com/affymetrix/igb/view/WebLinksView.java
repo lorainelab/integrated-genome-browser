@@ -282,7 +282,7 @@ public final class WebLinksView implements ListSelectionListener {
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
 		if (localTable.getRowCount() == 0) {
-			ErrorHandler.errorPanel("Error", "No web links to save", frame, Level.WARNING);
+			ErrorHandler.errorPanel("Error", "No web links to save", frame, null, Level.WARNING);
 			return;
 		}
 

@@ -62,10 +62,6 @@ public abstract class ErrorHandler implements DisplaysError{
 	public static void errorPanel(String title, String message, Level level) {
 		errorPanel(title, message, (Throwable) null, level);
 	}
-
-	public static void errorPanel(String title, String message, Component c, Level level) {
-		errorPanel(title, message, c, (Throwable) null, level);
-	}
 		
 	public static void errorPanel(String title, String message, Component c, Throwable e, Level level) {
 		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);

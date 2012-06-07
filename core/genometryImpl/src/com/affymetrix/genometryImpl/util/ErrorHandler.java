@@ -64,23 +64,49 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 	
 	public static void errorPanel(final String title, String message, final List<Throwable> errs, Level level) {
-		errorPanel((JFrame) null, title, message, errs, null, level);
+		errorPanel(title, message, errs, null, level);
 	}
 	
 	public static void errorPanelWithReportBug(String title, String message, Level level) {
 		List<GenericAction> actions = new ArrayList<GenericAction>();
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
-		errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, level);
+		errorPanel(title, message, new ArrayList<Throwable>(), actions, level);
 	}
 	
-	
+	public void showError(final String title, final String message, final List<GenericAction> actions, Level level) {
+		final Component scroll_pane = makeScrollPane(message);
+
+		String[] options = null;
+		if (actions != null) {
+			options = new String[actions.size()];
+			for (int i = 0; i < actions.size(); i++) {
+				options[i] = actions.get(i).getText();
+			}
+		}
+		final JOptionPane pane = new JOptionPane(scroll_pane, JOptionPane.ERROR_MESSAGE,
+				JOptionPane.DEFAULT_OPTION, null, options);
+		final JDialog dialog = pane.createDialog(null, title);
+		dialog.setResizable(true);
+
+		if (SwingUtilities.isEventDispatchThread()) {
+			processDialog(pane, dialog, actions);
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				public void run() {
+					processDialog(pane, dialog, actions);
+				}
+			});
+		}
+	}
+		
 	private static void errorPanel(String title, String message, Throwable e, Level level) {
 		List<Throwable> errs = new ArrayList<Throwable>();
 		if (e != null) {
 			errs.add(e);
 		}
-		errorPanel((JFrame)null, title, message, errs, null, level);
+		errorPanel(title, message, errs, null, level);
 	}
 	
 	/**
@@ -95,7 +121,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * exception text will be appended to the message and a stack trace might be
 	 * printed on standard error.
 	 */
-	private static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions, Level level) {
+	private static void errorPanel(final String title, String message, final List<Throwable> errs, final List<GenericAction> actions, Level level) {
 		// logging the error to standard out is redundant, but preserves
 		// the past behavior.  The flush() methods make sure that
 		// messages from system.out and system.err don't get out-of-synch
@@ -133,7 +159,7 @@ public abstract class ErrorHandler implements DisplaysError{
 		System.err.println();
 		System.err.flush();
 		Toolkit.getDefaultToolkit().beep();
-		displayHandler.showError(frame, title, message, actions, level);
+		displayHandler.showError(title, message, actions, level);
 	}
 
 	private static JScrollPane makeScrollPane(String message) {
@@ -158,32 +184,4 @@ public abstract class ErrorHandler implements DisplaysError{
 			}
 		}
 	}
-		
-	public void showError(final JFrame frame, final String title, final String message, final List<GenericAction> actions, Level level) {
-		final Component scroll_pane = makeScrollPane(message);
-
-		String[] options = null;
-		if (actions != null) {
-			options = new String[actions.size()];
-			for (int i = 0; i < actions.size(); i++) {
-				options[i] = actions.get(i).getText();
-			}
-		}
-		final JOptionPane pane = new JOptionPane(scroll_pane, JOptionPane.ERROR_MESSAGE,
-				JOptionPane.DEFAULT_OPTION, null, options);
-		final JDialog dialog = pane.createDialog(frame, title);
-		dialog.setResizable(true);
-
-		if (SwingUtilities.isEventDispatchThread()) {
-			processDialog(pane, dialog, actions);
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-
-				public void run() {
-					processDialog(pane, dialog, actions);
-				}
-			});
-		}
-	}
-
 }

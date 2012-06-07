@@ -142,7 +142,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		return status_ta.getText();
 	}
 
-	public void showError(JFrame frame, String title, String message, List<GenericAction> actions, Level level) {
+	public void showError(String title, String message, List<GenericAction> actions, Level level) {
 		final String tempMessage = message;
 		timer= new Timer();
 		if(level.equals(Level.SEVERE)){

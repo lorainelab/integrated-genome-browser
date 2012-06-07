@@ -217,7 +217,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				BookmarksParser.parse(bookmark_list, fil);
 				AddBookmarkAction.addNode(bookmark_list);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error", "Error importing bookmarks", ex, Level.SEVERE);
+				ErrorHandler.errorPanel("Error importing bookmarks", ex, Level.SEVERE);
 			}
 		}
 	}
@@ -243,7 +243,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 	private void exportBookmarks(BookmarkList main_bookmark_list) {
 		if (main_bookmark_list == null || main_bookmark_list.getChildCount() == 0) {
-			ErrorHandler.errorPanel("Error", "No bookmarks to save", (Exception) null, Level.SEVERE);
+			ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
 			return;
 		}
 		JFileChooser chooser = getJFileChooser(true);
@@ -254,7 +254,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				setLoadDirectory(chooser.getCurrentDirectory());
 				((ExportFileFilter) chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error", "Error exporting bookmarks", ex, Level.SEVERE);
+				ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
 			}
 		}
 	}

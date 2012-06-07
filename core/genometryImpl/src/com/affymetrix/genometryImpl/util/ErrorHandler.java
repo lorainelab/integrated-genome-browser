@@ -46,7 +46,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * Error panel with default title.
 	 */
 	public static void errorPanel(String message) {
-		errorPanel("ERROR", message, Level.SEVERE);
+		errorPanel("ERROR", message, (Throwable) null, Level.SEVERE);
 	}
 
 	/**
@@ -63,14 +63,6 @@ public abstract class ErrorHandler implements DisplaysError{
 		errorPanel(title, message, (Throwable) null, level);
 	}
 	
-	public static void errorPanel(String title, String message, Throwable e, Level level) {
-		List<Throwable> errs = new ArrayList<Throwable>();
-		if (e != null) {
-			errs.add(e);
-		}
-		errorPanel((JFrame)null, title, message, errs, null, level);
-	}
-
 	public static void errorPanel(final String title, String message, final List<Throwable> errs, Level level) {
 		errorPanel((JFrame) null, title, message, errs, null, level);
 	}
@@ -80,6 +72,15 @@ public abstract class ErrorHandler implements DisplaysError{
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
 		errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, level);
+	}
+	
+	
+	private static void errorPanel(String title, String message, Throwable e, Level level) {
+		List<Throwable> errs = new ArrayList<Throwable>();
+		if (e != null) {
+			errs.add(e);
+		}
+		errorPanel((JFrame)null, title, message, errs, null, level);
 	}
 	
 	/**

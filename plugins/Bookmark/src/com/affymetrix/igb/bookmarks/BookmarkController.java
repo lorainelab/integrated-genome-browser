@@ -229,9 +229,9 @@ public abstract class BookmarkController {
 			}
 
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", ex, Level.WARNING);
+			ErrorHandler.errorPanel("Error while applying symmetry properties", ex, Level.WARNING);
 		} catch (Error er) {
-			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", er, Level.WARNING);
+			ErrorHandler.errorPanel("Error while applying symmetry properties", er, Level.WARNING);
 		}
 	}
 

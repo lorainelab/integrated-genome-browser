@@ -87,4 +87,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public Color getLabelBackground();
 	public void setLabelForeground(Color c);
 	public void setLabelBackground(Color c);
+	public int getZoomTransition();
+	public void setZoomTransition(int level);
 }

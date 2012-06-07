@@ -75,6 +75,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private GenericFeature feature = null;
 	private int colorIntervals = 255;
 	public boolean customise = false;
+	private int zoomTransition;
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
@@ -579,10 +580,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return default_instance;
 	}
 
+	@Override
 	public String getUniqueName() {
 		return unique_name;
 	}
 
+	@Override
 	public String getMethodName() {
 		return method_name;
 	}
@@ -592,6 +595,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * name. The human-readable name may contain upper- and lower-case
 	 * characters. The default is equivalent to the unique name.
 	 */
+	@Override
 	public String getTrackName() {
 		if (track_name == null || track_name.trim().length() == 0) {
 			track_name = unique_name;
@@ -599,6 +603,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.track_name;
 	}
 
+	@Override
 	public void setTrackName(String track_name) {
 		this.track_name = track_name;
 		if (getNode() != null) {
@@ -612,6 +617,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * Whether the tier is shown or hidden.
 	 */
+	@Override
 	public boolean getShow() {
 		return show;
 	}
@@ -620,6 +626,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Sets whether the tier is shown or hidden; this is a non-persistent
 	 * setting.
 	 */
+	@Override
 	public void setShow(boolean b) {
 		this.show = b;
 	}
@@ -628,10 +635,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Whether PLUS and MINUS strand should be in separate tiers.
 	 */
 	//Show2Tracks
+	@Override
 	public boolean getSeparate() {
 		return show2tracks;
 	}
 
+	@Override
 	public void setSeparate(boolean b) {
 		if (is_graph && b) {
 			return;
@@ -652,10 +661,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * Whether tier is collapsed.
 	 */
+	@Override
 	public boolean getCollapsed() {
 		return collapsed;
 	}
 
+	@Override
 	public void setCollapsed(boolean b) {
 		this.collapsed = b;
 		if (getNode() != null) {
@@ -699,10 +710,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * The color of annotations in the tier.
 	 */
+	@Override
 	public Color getForeground() {
 		return foreground;
 	}
 
+	@Override
 	public void setForeground(Color c) {
 		if (c != this.foreground) {
 			custom_heatmap = null;
@@ -720,10 +733,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * The color of the tier Background.
 	 */
+	@Override
 	public Color getBackground() {
 		return background;
 	}
 
+	@Override
 	public void setBackground(Color c) {
 		if (c != this.background) {
 			custom_heatmap = null;
@@ -741,10 +756,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * The color of the start direction.
 	 */
+	@Override
 	public Color getForwardColor() {
 		return start_color;
 	}
 
+	@Override
 	public void setForwardColor(Color c) {
 		this.start_color = c;
 		if (getNode() != null) {
@@ -758,10 +775,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * The color of the start direction.
 	 */
+	@Override
 	public Color getReverseColor() {
 		return end_color;
 	}
 
+	@Override
 	public void setReverseColor(Color c) {
 		this.end_color = c;
 		if (getNode() != null) {
@@ -776,10 +795,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Returns the field name from which the glyph labels should be taken. This
 	 * will never return null, but will return "" instead.
 	 */
+	@Override
 	public String getLabelField() {
 		return label_field;
 	}
 
+	@Override
 	public void setLabelField(String l) {
 		if (l == null || l.trim().length() == 0) {
 			l = "";
@@ -807,10 +828,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	@Override
 	public int getGlyphDepth() {
 		return glyph_depth;
 	}
 
+	@Override
 	public void setGlyphDepth(int i) {
 		if (glyph_depth != i) {
 			glyph_depth = i;
@@ -829,10 +852,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	@Override
 	public double getHeight() {
 		return height;
 	}
 
+	@Override
 	public void setHeight(double h) {
 		height = h;
 		if (getNode() != null) {
@@ -844,10 +869,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.reverseHeight = this.height;
 	}
 
+	@Override
 	public float getTrackNameSize() {
 		return track_name_size;
 	}
 
+	@Override
 	public void setTrackNameSize(float font_size) {
 		this.track_name_size = font_size;
 		if (getNode() != null) {
@@ -858,18 +885,22 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	@Override
 	public void setFeature(GenericFeature f) {
 		this.feature = f;
 	}
 
+	@Override
 	public GenericFeature getFeature() {
 		return this.feature;
 	}
 
+	@Override
 	public String getFileType() {
 		return file_type;
 	}
 
+	@Override
 	public FileTypeCategory getFileTypeCategory() {
 		if (file_type == null) {
 			return null;
@@ -893,10 +924,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	@Override
 	public int getDirectionType() {
 		return direction_type.ordinal();
 	}
 
+	@Override
 	public void setDirectionType(int ordinal) {
 		direction_type = TrackConstants.DIRECTION_TYPE.values()[ordinal];
 	}
@@ -908,6 +941,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * could be used to remember tier positions.
 	 */
+	@Override
 	public void setY(double y) {
 		this.y = y;
 	}
@@ -915,6 +949,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * could be used to remember tier positions.
 	 */
+	@Override
 	public double getY() {
 		return y;
 	}
@@ -922,6 +957,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/**
 	 * A non-persistent property. Usually set by UCSC browser "track" lines.
 	 */
+	@Override
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -930,6 +966,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * A non-persistent property. Usually set by UCSC browser "track" lines. Can
 	 * return null.
 	 */
+	@Override
 	public String getUrl() {
 		return this.url;
 	}
@@ -938,10 +975,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return (is_persistent && getNode() != null);
 	}
 
+	@Override
 	public boolean getExpandable() {
 		return expandable;
 	}
 
+	@Override
 	public void setExpandable(boolean b) {
 		// currently there is no need to make this property persistent.
 		// there is rarly any reason to change it from the defualt value for
@@ -953,6 +992,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Returns false by default. This class is only intended for annotation
 	 * tiers, not graph tiers.
 	 */
+	@Override
 	public boolean isGraphTier() {
 		return is_graph;
 	}
@@ -961,6 +1001,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Avoid setting to anything but false. This class is only intended for
 	 * annotation tiers, not graph tiers.
 	 */
+	@Override
 	public void setGraphTier(boolean b) {
 		is_graph = b;
 		if (is_graph) {
@@ -979,6 +1020,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Indicates whether the scores of the annotations should be marked by
 	 * colors.
 	 */
+	@Override
 	public void setColorByScore(boolean b) {
 		color_by_score = b;
 	}
@@ -987,6 +1029,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Indicates whether the scores of the annotations should be marked by
 	 * colors.
 	 */
+	@Override
 	public boolean getColorByScore() {
 		return color_by_score;
 	}
@@ -1011,6 +1054,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Returns a color that can be used to indicate a score between 1 and 1000.
 	 * This will return a color even if getColorByScore() is false.
 	 */
+	@Override
 	public Color getScoreColor(float score) {
 		final float min = getMinScoreColor();
 		final float max = getMaxScoreColor();
@@ -1043,6 +1087,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return custom_heatmap;
 	}
 
+	@Override
 	public void setViewMode(String s) {
 		if (s != null && !default_view_mode.equalsIgnoreCase(s)
 				&& MapViewModeHolder.getInstance().getViewFactory(s) == null) {
@@ -1059,6 +1104,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	@Override
 	public String getViewMode() {
 		return view_mode;
 	}
@@ -1176,10 +1222,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return false;
 	}
 
+	@Override
 	public void setOperator(String o) {
 		operator = o;
 	}
 
+	@Override
 	public String getOperator() {
 		return operator;
 	}
@@ -1241,14 +1289,17 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.max_depth;
 	}
 
+	@Override
 	public final boolean getFloatTier() {
 		return float_graph;
 	}
 
+	@Override
 	public final void setFloatTier(boolean b) {
 		float_graph = b;
 	}
 
+	@Override
 	public Color getLabelForeground() {
 		if (labelForeground == null) {
 			//edge case hack fix for coordinate track 
@@ -1260,6 +1311,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return labelForeground;
 	}
 
+	@Override
 	public Color getLabelBackground() {
 		if (labelBackground == null) {
 			//edge case hack fix for coordinate track 
@@ -1271,11 +1323,23 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return labelBackground;
 	}
 
+	@Override
 	public void setLabelForeground(Color c) {
 		labelForeground = c;
 	}
 
+	@Override
 	public void setLabelBackground(Color c) {
 		labelBackground = c;
+	}
+
+	@Override
+	public int getZoomTransition() {
+		return zoomTransition;
+	}
+
+	@Override
+	public void setZoomTransition(int level) {
+		zoomTransition = level;
 	}
 }

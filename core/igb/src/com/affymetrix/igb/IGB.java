@@ -224,7 +224,7 @@ public final class IGB extends Application
 		MainMenuUtil.getInstance().loadMenu(mbar, "IGB");
 
 		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
-				new Rectangle(0, 0, 1100, 650)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
+				new Rectangle(0, 0, 1100, 700)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
 		PreferenceUtils.setWindowSize(frm, frame_bounds);
 
 		// Show the frame before loading the plugins.  Thus any error panel

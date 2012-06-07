@@ -14,7 +14,10 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.action.ChangeViewModeAction;
@@ -38,6 +41,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	public TrackPreferencesA(IGBService _igbService) {
 		super();
 		igbService = _igbService;
+//igbService.addListSelectionListener(getColorSchemeComboBox());
 //		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
@@ -58,7 +62,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	    final JComboBox viewModeComboBox = getViewModeComboBox();
 		MapViewGlyphFactoryI viewmode = (MapViewGlyphFactoryI)viewModeComboBox.getSelectedItem();
 		GenericAction viewModeAction = new ChangeViewModeAction(viewmode);
-		viewModeAction.actionPerformed(null);
+		viewModeAction.actionPerformed(evt);
 		updateDisplay();
 	}
 
@@ -126,13 +130,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void colorSchemeComboBoxActionPerformedA(ActionEvent evt) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void labelFieldComboBoxActionPerformedA(ActionEvent evt) {
-		final JComboBox labelFieldComboBox = getLabelSizeComboBox();
+		final JComboBox labelFieldComboBox = getLabelFieldComboBox();
 		String labelField = (String)labelFieldComboBox.getSelectedItem();
 		if (selectedTiers == null || labelField == null) {
 			return;
@@ -242,9 +244,30 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
-		// TODO Auto-generated method stub
+		String selectedMode = null;
+		if (getGraphStyleLineRadioButton().isSelected()) {
+			selectedMode = "linegraph";
+		}
+		if (getGraphStyleBarRadioButton().isSelected()) {
+			selectedMode = "bargraph";
+		}
+		if (getGraphStyleStairStepRadioButton().isSelected()) {
+			selectedMode = "stairstepgraph";
+		}
+		if (getGraphStyleDotRadioButton().isSelected()) {
+			selectedMode = "dotgraph";
+		}
+		if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
+			selectedMode = "minmaxavggraph";
+		}
+		if (getGraphStyleHeatMapRadioButton().isSelected()) {
+			selectedMode = "heatmapgraph";
+		}
+		MapViewGlyphFactoryI viewmode = MapViewModeHolder.getInstance().getViewFactory(selectedMode);
+		GenericAction viewModeAction = new ChangeViewModeAction(viewmode);
+		viewModeAction.actionPerformed(evt);
+		graphStyleHeatMapComboBoxReset();
 		updateDisplay();
-		
 	}
 
 	@Override
@@ -388,6 +411,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				}
 			}
 			if (allHeatMap) {
+				heatMapComboBox.setEnabled(true);
 				if (heatMap == null) {
 					heatMapComboBox.setSelectedIndex(-1);
 				}
@@ -431,10 +455,32 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void colorSchemeComboBoxReset() {
 		ColorSchemeComboBox colorSchemeComboBox = getColorSchemeComboBox();
-		colorSchemeComboBox.setEnabled(isAllAnnot());
-		getColorSchemeLabel().setEnabled(isAllAnnot());
-		// TODO Auto-generated method stub
-		
+		colorSchemeComboBox.setEnabled(selectedTiers.size() > 0);
+		getColorSchemeLabel().setEnabled(selectedTiers.size() > 0);
+	}
+
+	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
+		if (sym instanceof DerivedSeqSymmetry) {
+			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
+		}
+		return sym;
+	}
+
+	private Set<String> getFields(ViewModeGlyph glyph) {
+		Set<String> fields = new TreeSet<String>();
+		if (glyph.getInfo() != null && glyph.getInfo() instanceof SeqSymmetry) {
+			SeqSymmetry sym = (SeqSymmetry)glyph.getInfo();
+			if (sym.getChildCount() > 0) {
+				SeqSymmetry child = sym.getChild(0);
+				SeqSymmetry original = getMostOriginalSymmetry(child);
+				if (original instanceof SymWithProps) {
+					Map<String, Object> props = ((SymWithProps) original).getProperties();
+					fields.add(TrackConstants.NO_LABEL);
+					fields.addAll(props.keySet());
+				}
+			}
+		}
+		return fields;
 	}
 
 	@Override
@@ -442,8 +488,37 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JComboBox labelFieldComboBox = getLabelFieldComboBox();
 		labelFieldComboBox.setEnabled(isAllAnnot());
 		getLabelFieldLabel().setEnabled(isAllAnnot());
-		// TODO Auto-generated method stub
-		
+		String labelField = null;
+		boolean labelFieldSet = false;
+		Set<String> allFields = null;
+		for (ViewModeGlyph glyph : annotGlyphs) {
+			if (glyph.getAnnotStyle() != null && glyph.getAnnotStyle().getLabelField() != null) {
+				String field = glyph.getAnnotStyle().getLabelField();
+				if (!labelFieldSet) {
+					labelField = field;
+					labelFieldSet = true;
+				}
+				else if (labelField != null && !field.equals(labelField)) {
+					labelField = null;
+				}
+			}
+			Set<String> fields = getFields(glyph);
+			if (glyph.getInfo() instanceof SeqSymmetry) {
+				if (allFields == null) {
+					allFields = new TreeSet<String>(fields);
+				}
+				else {
+					allFields.retainAll(fields);
+				}
+			}
+		}
+		if (allFields == null) {
+			allFields = new TreeSet<String>();
+		}
+		labelFieldComboBox.setModel(new DefaultComboBoxModel(allFields.toArray()));
+		if (labelField != null) {
+			labelFieldComboBox.setSelectedItem(labelField);
+		}
 	}
 
 	@Override

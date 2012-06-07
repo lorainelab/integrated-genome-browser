@@ -11,6 +11,8 @@
 package com.affymetrix.igb.shared;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JRadioButton;
 
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genoviz.color.ColorScheme;
+import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 
 
 /**
@@ -45,6 +49,43 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		getButtonGroup1().add(hiddenRadioButton);
     }
 
+    private ColorSchemeComboBox createColorSchemeComboBox() {
+		final ItemListener itemListener = new ItemListener() {
+
+			public void itemStateChanged(ItemEvent ie) {
+				switch (ie.getStateChange()) {
+					case ItemEvent.DESELECTED:
+						break;
+					case ItemEvent.SELECTED:
+						Object o = ie.getSource();
+						if (o instanceof ColorSchemeComboBox) {
+							ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
+							ColorScheme s = (ColorScheme) csb.getSelectedItem();
+							ColorSchemeAction.getAction().tempAction(s);
+						}
+						break;
+					default:
+						System.err.println(
+								"SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
+								+ ie.getStateChange());
+				}
+			}
+		};
+		ColorSchemeComboBox colorSchemeBox = new ColorSchemeComboBox() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void setChoices(int i) {
+				this.removeItemListener(itemListener);
+				super.setChoices(i);
+				this.addItemListener(itemListener);
+			}
+		};
+		colorSchemeBox.addItemListener(itemListener);
+		colorSchemeBox.setChoices(0);
+		return colorSchemeBox;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -59,7 +100,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         stylePanel = new javax.swing.JPanel();
         labelSizeComboBox = new javax.swing.JComboBox();
         colorSchemeLabel = new javax.swing.JLabel();
-        colorSchemeComboBox = new com.affymetrix.genoviz.color.ColorSchemeComboBox();
+        colorSchemeComboBox = createColorSchemeComboBox();
         foregroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         foregroundColorLabel = new javax.swing.JLabel();
         backgroundColorLabel = new javax.swing.JLabel();
@@ -225,9 +266,19 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
         buttonGroup1.add(graphStyleBarRadioButton);
         graphStyleBarRadioButton.setText("Bar");
+        graphStyleBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleBarRadioButtonActionPerformed(evt);
+            }
+        });
 
         buttonGroup1.add(graphStyleStairStepRadioButton);
         graphStyleStairStepRadioButton.setText("StairStep");
+        graphStyleStairStepRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleStairStepRadioButtonActionPerformed(evt);
+            }
+        });
 
         floatCheckBox.setText("Float");
         floatCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -244,14 +295,29 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         });
 
         buttonGroup1.add(graphStyleHeatMapRadioButton);
+        graphStyleHeatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleHeatMapRadioButtonActionPerformed(evt);
+            }
+        });
 
         graphStylesLabel.setText("Graph Styles:");
 
         buttonGroup1.add(graphStyleDotRadioButton);
         graphStyleDotRadioButton.setText("Dot");
+        graphStyleDotRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleDotRadioButtonActionPerformed(evt);
+            }
+        });
 
         buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
         graphStyleMinMaxAvgRadioButton.setText("min/max/mean");
+        graphStyleMinMaxAvgRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleMinMaxAvgRadioButtonActionPerformed(evt);
+            }
+        });
 
         graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
         graphStyleHeatMapComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -598,8 +664,40 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	}//GEN-LAST:event_strandsReverseColorComboBoxActionPerformed
 
 	private void graphStyleLineRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleLineRadioButtonActionPerformed
-		// TODO add your handling code here:
+		if (is_listening) {
+			buttonGroup1ActionPerformedA(evt);
+		}
 	}//GEN-LAST:event_graphStyleLineRadioButtonActionPerformed
+
+	private void graphStyleBarRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleBarRadioButtonActionPerformed
+		if (is_listening) {
+			buttonGroup1ActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_graphStyleBarRadioButtonActionPerformed
+
+	private void graphStyleStairStepRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleStairStepRadioButtonActionPerformed
+		if (is_listening) {
+			buttonGroup1ActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_graphStyleStairStepRadioButtonActionPerformed
+
+	private void graphStyleDotRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleDotRadioButtonActionPerformed
+		if (is_listening) {
+			buttonGroup1ActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_graphStyleDotRadioButtonActionPerformed
+
+	private void graphStyleMinMaxAvgRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleMinMaxAvgRadioButtonActionPerformed
+		if (is_listening) {
+			buttonGroup1ActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_graphStyleMinMaxAvgRadioButtonActionPerformed
+
+	private void graphStyleHeatMapRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleHeatMapRadioButtonActionPerformed
+		if (is_listening) {
+			buttonGroup1ActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_graphStyleHeatMapRadioButtonActionPerformed
 
 	private void backgroundColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backgroundColorComboBoxActionPerformed
 		if (is_listening) {
@@ -841,8 +939,8 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	// "ActionPerformed" to "ActionPerformedA"
 	// "private" to "protected abstract"
 	// "// TODO add your handling code here:" to ""
-	// "                                     
-	// "                                    
+	// "//GEN-FIRST:event_[a-zA-Z0-9]*" to ""
+	// "//GEN-LAST:event_[a-zA-Z0-9]*" to ""
 	protected abstract void viewModeComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void floatCheckBoxActionPerformedA(ActionEvent evt);
 	protected abstract void YAxisCheckBoxActionPerformedA(ActionEvent evt);
@@ -871,6 +969,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	// "// TODO add your handling code here:" to ""
 	// "//GEN-FIRST:event_[a-zA-Z0-9]*" to ""
 	// "//GEN-LAST:event_[a-zA-Z0-9]*" to ""
+
 	protected abstract void viewModeComboBoxReset();
 	protected abstract void floatCheckBoxReset();
 	protected abstract void YAxisCheckBoxReset();

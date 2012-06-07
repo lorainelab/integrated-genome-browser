@@ -45,7 +45,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private final JRPButton mainCancel;
 	private final JButton updateAvailable;
 	private final JPanel progressPanel;
-	public static Timer timer;
 		
 	public StatusBar() {
 		String tt_status = "Shows Selected Item, or other Message";
@@ -144,7 +143,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 
 	public void showError(String title, String message, List<GenericAction> actions, Level level) {
 		final String tempMessage = message;
-		timer= new Timer();
 		if(level.equals(Level.SEVERE)){
 			status_ta.setForeground(Color.red);
 			messageIcon.setIcon(errorIcon);
@@ -160,6 +158,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		messageIcon.setVisible(true);
 		messageIcon.setEnabled(true);
 		setStatus(tempMessage);
+		final Timer timer= new Timer();
 		timer.schedule(new TimerTask() {
             public void run() {
 				messageIcon.setVisible(false);

@@ -297,6 +297,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	    minValLabel.setEnabled(enabled);
 	    rangeSlider.setEnabled(enabled);
 	    heightSlider.setEnabled(enabled);
+	    heightLabel.setEnabled(enabled);
 	    vis_bounds_setter.setGraphs(graphGlyphs);
 		if (enabled && graphGlyphs.size() == 1) {
 			double the_height = graphGlyphs.get(0).getAnnotStyle().getHeight();

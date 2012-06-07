@@ -10,10 +10,13 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
@@ -37,20 +40,26 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 //		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
+	private void updateDisplay() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+	
+			public void run() {
+				igbService.getSeqMap().updateWidget();
+//				igbService.getSeqMapView().setTierStyles();
+//				igbService.getSeqMapView().repackTheTiers(true, true);
+//				igbService.getSeqMapView().updatePanel();
+			}
+		});
+	}
 
 	@Override
 	protected void viewModeComboBoxActionPerformedA(ActionEvent evt) {
 	    final JComboBox viewModeComboBox = getViewModeComboBox();
-		String viewmode = (String)viewModeComboBox.getSelectedItem();
+		MapViewGlyphFactoryI viewmode = (MapViewGlyphFactoryI)viewModeComboBox.getSelectedItem();
 		for (TierGlyph tier : selectedTiers) {
-			tier.getAnnotStyle().setViewMode(viewmode);
+			tier.getAnnotStyle().setViewMode(viewmode.getName());
 		}
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		updateDisplay();
 	}
 
 	@Override
@@ -68,6 +77,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				unFloatAction.actionPerformed(null);
 			}
 		}
+		updateDisplay();
 	}
 
 	@Override
@@ -77,7 +87,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		for (AbstractGraphGlyph gl : graphGlyphs) {
 			gl.setShowAxis(b);
 		}
-		igbService.getSeqMap().updateWidget();
+		updateDisplay();
 	}
 
 	@Override
@@ -96,7 +106,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 					gl.setHeatMap(hm);
 				}
 			}
-			igbService.getSeqMap().updateWidget();
+			updateDisplay();
 		}
 	}
 
@@ -116,8 +126,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				style.setTrackNameSize(prev_font_size);
 			}
 		}
-		igbService.getSeqMapView().setTierStyles();
-		igbService.getSeqMapView().repackTheTiers(true, true);
+		updateDisplay();
 	}
 
 	@Override
@@ -129,17 +138,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void labelFieldComboBoxActionPerformedA(ActionEvent evt) {
 		final JComboBox labelFieldComboBox = getLabelSizeComboBox();
-		int fontsize = (Integer)labelFieldComboBox.getSelectedItem();
-		if (selectedTiers == null || fontsize <= 0) {
+		String labelField = (String)labelFieldComboBox.getSelectedItem();
+		if (selectedTiers == null || labelField == null) {
 			return;
 		}
-		String labelField = (String)labelFieldComboBox.getSelectedItem();
 		for (TierGlyph tier : selectedTiers) {
 			ITrackStyleExtended style = tier.getAnnotStyle();
 			style.setLabelField(labelField);
 		}
-		igbService.getSeqMapView().setTierStyles();
-		igbService.getSeqMapView().repackTheTiers(true, true);
+		updateDisplay();
 	}
 
 	@Override
@@ -157,6 +164,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				expandAction.actionPerformed(evt);
 			}
 		}
+		updateDisplay();
 	}
 
 	@Override
@@ -174,6 +182,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				strands1TrackAction.actionPerformed(evt);
 			}
 		}
+		updateDisplay();
 	}
 
 	@Override
@@ -191,6 +200,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				unsetArrowAction.actionPerformed(evt);
 			}
 		}
+		updateDisplay();
 	}
 
 	@Override
@@ -208,6 +218,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				unsetColorAction.actionPerformed(evt);
 			}
 		}
+		updateDisplay();
 	}
 
 	@Override
@@ -222,12 +233,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setLabelForeground(color);
 			}
 		}
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		updateDisplay();
 	}
 
 	@Override
@@ -242,12 +248,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setForwardColor(color);
 			}
 		}
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		updateDisplay();
 	}
 
 	@Override
@@ -262,17 +263,13 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setReverseColor(color);
 			}
 		}
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		updateDisplay();
 	}
 
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
 		// TODO Auto-generated method stub
+		updateDisplay();
 		
 	}
 
@@ -288,12 +285,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setBackground(color);
 			}
 		}
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		updateDisplay();
 	}
 
 	@Override
@@ -308,7 +300,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setForeground(color);
 			}
 		}
-		igbService.getSeqMapView().updatePanel();
+		updateDisplay();
 	}
 
 	@Override
@@ -326,8 +318,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setMaxDepth(prev_max_depth);
 			}
 		}
-		igbService.getSeqMapView().setTierStyles();
-		igbService.getSeqMapView().repackTheTiers(true, true);
+		updateDisplay();
 	}
 
 	@Override
@@ -340,24 +331,35 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (selectedTiers != null) {
 			igbService.getSeqMapView().renameTier(selectedTiers.get(0), name);
 		}
+		updateDisplay();
+	}
+
+	private boolean isAllGraph() {
+		return allGlyphs.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
+	}
+
+	private boolean isAllAnnot() {
+		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
 	}
 
 	@Override
 	protected void viewModeComboBoxReset() {
 		JComboBox viewModeComboBox = getViewModeComboBox();
-		viewModeComboBox.removeAll();
+		viewModeComboBox.removeAllItems();
 		viewModeComboBox.setEnabled(selectedTiers.size() > 0);
+		getViewModeLabel().setEnabled(selectedTiers.size() > 0);
 		if (selectedTiers.size() == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
 			if (style == null || selectedTiers.get(0).getInfo() == null) {
 				return;
 			}
-			List<MapViewGlyphFactoryI> viewModes = MapViewModeHolder.getInstance().getAllViewModesFor(style.getFileTypeCategory(), style.getMethodName());
+			FileTypeCategory category = (selectedTiers.get(0).getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)selectedTiers.get(0).getInfo()).getCategory() : null;
+			List<MapViewGlyphFactoryI> viewModes = MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName());
 			for (MapViewGlyphFactoryI viewmode : viewModes) {
-				viewModeComboBox.addItem(viewmode.getName());
+				viewModeComboBox.addItem(viewmode);
 			}
 			String viewmode = style.getViewMode();
-			viewModeComboBox.setSelectedItem(viewmode);
+			viewModeComboBox.setSelectedItem(MapViewModeHolder.getInstance().getViewFactory(viewmode));
 		}
 	}
 
@@ -446,17 +448,25 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (labelSize == -1) {
 			labelSizeComboBox.setSelectedIndex(-1);
 		}
-		labelSizeComboBox.setSelectedItem(labelSize);
+		else {
+			labelSizeComboBox.setSelectedItem(labelSize);
+		}
 	}
 
 	@Override
 	protected void colorSchemeComboBoxReset() {
+		ColorSchemeComboBox colorSchemeComboBox = getColorSchemeComboBox();
+		colorSchemeComboBox.setEnabled(isAllAnnot());
+		getColorSchemeLabel().setEnabled(isAllAnnot());
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected void labelFieldComboBoxReset() {
+		JComboBox labelFieldComboBox = getLabelFieldComboBox();
+		labelFieldComboBox.setEnabled(isAllAnnot());
+		getLabelFieldLabel().setEnabled(isAllAnnot());
 		// TODO Auto-generated method stub
 		
 	}
@@ -487,14 +497,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 		}
 		strands2TracksCheckBox.setSelected(all2Tracks);
-	}
-
-	private boolean isAllGraph() {
-		return allGlyphs.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
-	}
-
-	private boolean isAllAnnot() {
-		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
 	}
 
 	@Override
@@ -576,8 +578,55 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void buttonGroup1Reset() {
-		// TODO Auto-generated method stub
-		
+		getGraphStylesLabel().setEnabled(isAllGraph());
+		getGraphStyleLineRadioButton().setEnabled(isAllGraph());
+		getGraphStyleBarRadioButton().setEnabled(isAllGraph());
+		getGraphStyleStairStepRadioButton().setEnabled(isAllGraph());
+		getGraphStyleDotRadioButton().setEnabled(isAllGraph());
+		getGraphStyleMinMaxAvgRadioButton().setEnabled(isAllGraph());
+		getGraphStyleHeatMapRadioButton().setEnabled(isAllGraph());
+		if (isAllGraph()) {
+			GraphType graphType = null;
+			boolean graphTypeSet = false;
+			for (AbstractGraphGlyph vg : graphGlyphs) {
+				if (graphType == null && !graphTypeSet) {
+					graphType = vg.getGraphStyle();
+					graphTypeSet = true;
+				}
+				else if (graphType != vg.getGraphStyle()) {
+					graphType = null;
+					break;
+				}
+			}
+			if (graphType == null) {
+				unselectGraphStyle();
+			}
+			else {
+				switch (graphType) {
+				case LINE_GRAPH:
+					getGraphStyleLineRadioButton().setSelected(true);
+					break;
+				case BAR_GRAPH:
+					getGraphStyleBarRadioButton().setSelected(true);
+					break;
+				case STAIRSTEP_GRAPH:
+					getGraphStyleStairStepRadioButton().setSelected(true);
+					break;
+				case DOT_GRAPH:
+					getGraphStyleDotRadioButton().setSelected(true);
+					break;
+				case MINMAXAVG:
+					getGraphStyleMinMaxAvgRadioButton().setSelected(true);
+					break;
+				case HEAT_MAP:
+					getGraphStyleHeatMapRadioButton().setSelected(true);
+					break;
+				}
+			}
+		}
+		else {
+			unselectGraphStyle();
+		}
 	}
 
 	@Override
@@ -669,6 +718,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void trackNameTextFieldReset() {
 		JTextField trackNameTextField = getTrackNameTextField();
 		trackNameTextField.setEnabled(allGlyphs.size() == 1);
+		getNameLabel().setEnabled(allGlyphs.size() == 1);
 		if (allGlyphs.size() == 1) {
 			trackNameTextField.setText(allGlyphs.get(0).getLabel());
 		}

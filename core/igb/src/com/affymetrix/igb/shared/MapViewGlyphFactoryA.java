@@ -36,4 +36,9 @@ public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
 	public boolean canAutoLoad(String uri) {
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return getDisplayName();
+	}
 }

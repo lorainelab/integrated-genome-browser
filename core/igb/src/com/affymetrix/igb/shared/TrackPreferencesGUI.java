@@ -35,14 +35,14 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
 	protected final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
 	protected final List<ViewModeGlyph> annotGlyphs = new ArrayList<ViewModeGlyph>();
-	private JRadioButton hidden_RadioButton;
+	private JRadioButton hiddenRadioButton;
 	
 	/** Creates new form TrackPreferencesGUI */
     public TrackPreferencesGUI() {
+        hiddenRadioButton = new JRadioButton();
         initComponents();
         resetAll();
-        hidden_RadioButton = new JRadioButton();
-		getButtonGroup1().add(hidden_RadioButton);
+		getButtonGroup1().add(hiddenRadioButton);
     }
 
     /** This method is called from within the constructor to
@@ -918,6 +918,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	}
 
 	protected void unselectGraphStyle() {
-		hidden_RadioButton.setSelected(true); // deselect all visible radio buttons
+		hiddenRadioButton.setSelected(true); // deselect all visible radio buttons
 	}
 }

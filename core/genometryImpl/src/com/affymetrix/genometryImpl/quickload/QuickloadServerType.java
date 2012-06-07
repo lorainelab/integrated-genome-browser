@@ -277,7 +277,7 @@ public class QuickloadServerType implements ServerTypeI {
 			List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
 			if (typeNames == null) {
 				String errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.gServer.serverName, gVersion.group.getOrganism(), gVersion.versionName);
-				ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText);
+				ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText, Level.SEVERE);
 				return;
 			}
 			final MutableInt nameLoop = new MutableInt(0);

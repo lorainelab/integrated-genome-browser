@@ -91,13 +91,6 @@ public abstract class ErrorHandler implements DisplaysError{
 		errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, level);
 	}
 	
-	public static void errorPanelWithReportBug(String title, String message) {
-		List<GenericAction> actions = new ArrayList<GenericAction>();
-		actions.add(OKAction.getAction());
-		actions.add(ReportBugAction.getAction());
-		errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, Level.SEVERE);
-	}
-
 	/**
 	 * Opens a JOptionPane.ERROR_MESSAGE panel with the given frame as its
 	 * parent. This is designed to probably be safe from the EventDispatchThread

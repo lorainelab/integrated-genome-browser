@@ -532,7 +532,7 @@ public final class ServerList {
 					errorText = siteOK
 							? MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
 							: MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
-					ErrorHandler.errorPanelWithReportBug(server.serverName, errorText);
+					ErrorHandler.errorPanelWithReportBug(server.serverName, errorText, Level.SEVERE);
 				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);

@@ -292,6 +292,10 @@ public class Activator implements BundleActivator {
 		ThreadHandlerAction.getAction();
 		FloatTiersAction.getAction();
 		UnFloatTiersAction.getAction();
+		SetDirectionStyleArrowAction.getAction();
+		UnsetDirectionStyleArrowAction.getAction();
+		SetDirectionStyleColorAction.getAction();
+		UnsetDirectionStyleColorAction.getAction();
 	}
 
 	private void initOperators() {

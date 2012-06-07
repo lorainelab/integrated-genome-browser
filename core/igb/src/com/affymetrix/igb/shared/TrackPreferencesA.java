@@ -45,10 +45,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 	
 			public void run() {
-				igbService.getSeqMap().updateWidget();
+//				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-//				igbService.getSeqMapView().updatePanel();
+				igbService.getSeqMapView().updatePanel();
 			}
 		});
 	}
@@ -193,15 +193,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (action != null) {
 			action.actionPerformed(evt);
 		}
+		strandsForwardColorComboBoxReset();
+		strandsReverseColorComboBoxReset();
 		updateDisplay();
 	}
 
 	@Override
 	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
 		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
 		Color color = labelColorComboBox.getSelectedColor();
 		if (color != null) {
 			for (TierGlyph tier : selectedTiers) {
@@ -293,6 +292,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				tier.getAnnotStyle().setMaxDepth(prev_max_depth);
 			}
 		}
+		igbService.getSeqMapView().repackTheTiers(true, true);
 		updateDisplay();
 	}
 
@@ -491,7 +491,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	private boolean isAllStrandsColor() {
 		boolean allColor = true;
 		for (ViewModeGlyph glyph : annotGlyphs) {
-			if (!(glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() || glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+			if (!(glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal() || glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
 				allColor = false;
 				break;
 			}

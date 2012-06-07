@@ -50,7 +50,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
         operationParamLabel = trackOpTab.operationParamLabel;
         transformationParam = trackOpTab.transformationParam;
         operationParam = trackOpTab.operationParam;
-        threshholdB = trackOpTab.threshB;
+        threshB = trackOpTab.threshB;
 
         jLabel2.setText("jLabel2");
 
@@ -70,7 +70,11 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         operationParamLabel.setText(" ");
 
-        threshholdB.setText("Threshhold");
+        transformationParam.setVisible(false);
+
+        operationParam.setVisible(false);
+
+        threshB.setText("Threshhold");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -106,7 +110,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
                 .add(26, 26, 26)
                 .add(splitB)
                 .add(31, 31, 31)
-                .add(threshholdB)
+                .add(threshB)
                 .addContainerGap())
         );
 
@@ -135,7 +139,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(combineB)
                     .add(splitB)
-                    .add(threshholdB))
+                    .add(threshB))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -152,7 +156,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private javax.swing.JTextField operationParam;
     private javax.swing.JLabel operationParamLabel;
     private javax.swing.JButton splitB;
-    private javax.swing.JButton threshholdB;
+    private javax.swing.JButton threshB;
     private javax.swing.JLabel transformLabel;
     private javax.swing.JComboBox transformationCB;
     private javax.swing.JButton transformationGoB;

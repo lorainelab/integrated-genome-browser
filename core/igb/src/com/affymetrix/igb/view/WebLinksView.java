@@ -268,9 +268,9 @@ public final class WebLinksView implements ListSelectionListener {
 				WebLink.importWebLinks(fil);
 			} catch (FileNotFoundException fe) {
 				ErrorHandler.errorPanel("Importing web links: File Not Found "
-						+ fil.getAbsolutePath(), null, fe, Level.SEVERE);
+						+ fil.getAbsolutePath(), fe, Level.SEVERE);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Importing web links", null, ex, Level.SEVERE);
+				ErrorHandler.errorPanel("Importing web links", ex, Level.SEVERE);
 			}
 		}
 
@@ -282,7 +282,7 @@ public final class WebLinksView implements ListSelectionListener {
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
 		if (localTable.getRowCount() == 0) {
-			ErrorHandler.errorPanel("Error", "No web links to save", frame, null, Level.WARNING);
+			ErrorHandler.errorPanel("Error", "No web links to save", Level.WARNING);
 			return;
 		}
 
@@ -300,8 +300,7 @@ public final class WebLinksView implements ListSelectionListener {
 				}
 				WebLink.exportWebLinks(fil, false);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error", "Error exporting web links",
-						frame, ex, Level.SEVERE);
+				ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
 			}
 		}
 	}

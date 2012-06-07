@@ -62,26 +62,17 @@ public abstract class ErrorHandler implements DisplaysError{
 	public static void errorPanel(String title, String message, Level level) {
 		errorPanel(title, message, (Throwable) null, level);
 	}
-		
-	public static void errorPanel(String title, String message, Component c, Throwable e, Level level) {
-		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
-		errorPanel(frame, title, message, e, level);
-	}
-
-	public static void errorPanel(String title, String message, Throwable e, Level level) {
-		errorPanel((JFrame) null, title, message, e, level);
-	}
-
-	public static void errorPanel(final String title, String message, final List<Throwable> errs, Level level) {
-		errorPanel((JFrame) null, title, message, errs, null, level);
-	}
 	
-	private static void errorPanel(final JFrame frame, final String title, String message, final Throwable e, Level level) {
+	public static void errorPanel(String title, String message, Throwable e, Level level) {
 		List<Throwable> errs = new ArrayList<Throwable>();
 		if (e != null) {
 			errs.add(e);
 		}
-		errorPanel(frame, title, message, errs, null, level);
+		errorPanel((JFrame)null, title, message, errs, null, level);
+	}
+
+	public static void errorPanel(final String title, String message, final List<Throwable> errs, Level level) {
+		errorPanel((JFrame) null, title, message, errs, null, level);
 	}
 	
 	public static void errorPanelWithReportBug(String title, String message, Level level) {
@@ -103,7 +94,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * exception text will be appended to the message and a stack trace might be
 	 * printed on standard error.
 	 */
-	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions, Level level) {
+	private static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions, Level level) {
 		// logging the error to standard out is redundant, but preserves
 		// the past behavior.  The flush() methods make sure that
 		// messages from system.out and system.err don't get out-of-synch

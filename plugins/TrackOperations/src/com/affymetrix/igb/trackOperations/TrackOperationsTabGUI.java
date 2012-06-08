@@ -66,13 +66,13 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         splitB.setText("Split");
 
-        transformationParamLabel.setText(" ");
+        transformationParamLabel.setText("Base");
 
-        operationParamLabel.setText(" ");
+        operationParamLabel.setText("Base");
 
-        transformationParam.setVisible(false);
+        transformationParam.setEditable(false);
 
-        operationParam.setVisible(false);
+        operationParam.setEditable(false);
 
         threshB.setText("Threshhold");
 

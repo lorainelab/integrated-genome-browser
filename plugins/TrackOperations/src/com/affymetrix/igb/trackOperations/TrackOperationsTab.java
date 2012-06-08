@@ -49,7 +49,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
 	public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
 	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB");
-	public final JLabel transformationParamLabel = new JLabel();
+	public final JLabel transformationParamLabel = new JLabel("base");
 	public final JTextField transformationParam = new JTextField();
 	private final ItemListener transformationListener = new ItemListener() {
 		@Override
@@ -62,7 +62,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
 	public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
 	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
-	public final JLabel operationParamLabel = new JLabel();
+	public final JLabel operationParamLabel = new JLabel("base");
 	public final JTextField operationParam = new JTextField();
 	private final ItemListener operationListener = new ItemListener() {
 		@Override
@@ -88,7 +88,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		name2operation = new HashMap<String, Operator>();
 		hovereffect = new HoverEffect();
 		transformationCB.addItemListener(transformationListener);
-
+		
 		operationCB.addMouseListener(hovereffect);
 		operationCB.addItemListener(operationListener);
 
@@ -340,18 +340,18 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		) {
 		String selection = (String) ationCB.getSelectedItem();
 		if (selection == null) {
-			ationLabel.setText("");
-			ationParam.setVisible(false);
+			ationLabel.setText("Base");
+			ationParam.setEditable(false);
 		} else {
 			Operator operator = name2ation.get(selection);
 			ationGoB.setToolTipText(getTooltipMessage(operator));
 			Map<String, Class<?>> params = operator.getParameters();
 			if (params == null || params.size() == 0) {
-				ationLabel.setText("");
-				ationParam.setVisible(false);
+				ationLabel.setText("Base");
+				ationParam.setEditable(false);
 			} else {
 				ationLabel.setText(params.keySet().iterator().next());
-				ationParam.setVisible(true);
+				ationParam.setEditable(true);
 				ationParam.setText("");
 			}
 		}

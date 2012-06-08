@@ -9,7 +9,8 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -25,11 +26,9 @@ import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.*;
-
 import javax.swing.*;
 
 /**

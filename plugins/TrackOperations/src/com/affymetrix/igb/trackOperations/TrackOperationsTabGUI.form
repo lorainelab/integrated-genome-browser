@@ -44,15 +44,15 @@
               </Group>
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="transformationParamLabel" max="32767" attributes="0"/>
-                  <Component id="operationParamLabel" pref="71" max="32767" attributes="0"/>
+                  <Component id="transformationParamLabel" pref="38" max="32767" attributes="0"/>
+                  <Component id="operationParamLabel" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="transformationParam" max="32767" attributes="0"/>
-                  <Component id="operationParam" pref="200" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="operationParam" min="-2" pref="109" max="-2" attributes="0"/>
+                  <Component id="transformationParam" min="-2" pref="109" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="261" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="391" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
@@ -69,12 +69,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="2" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="transformationGoB" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="transformationCB" linkSize="4" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="transformLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="transformationParamLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="transformationParam" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" alignment="2" groupAlignment="3" attributes="0">
+                      <Component id="transformationParamLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="transformationParam" alignment="3" max="32767" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">

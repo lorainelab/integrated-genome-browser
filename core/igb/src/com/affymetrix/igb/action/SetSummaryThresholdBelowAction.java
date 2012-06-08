@@ -9,13 +9,14 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Stub for the action that will set the summary threshold
- * just above the current threshold.
+ * just below the current threshold.
  */
-public class SetSummaryThresholdBelowAction extends SeqMapViewActionA {
+public class SetSummaryThresholdBelowAction extends SetSummaryThresholdActionA {
 	private static final long serialVersionUID = 1L;
 	private static final SetSummaryThresholdBelowAction ACTION = new SetSummaryThresholdBelowAction();
 
@@ -33,11 +34,13 @@ public class SetSummaryThresholdBelowAction extends SeqMapViewActionA {
 	}
 
 	@Override
-    public void actionPerformed(ActionEvent e) {
-		javax.swing.JOptionPane.showMessageDialog(null,
-				"Not implemented yet.",
-				this.getClass().getSimpleName(),
-				javax.swing.JOptionPane.INFORMATION_MESSAGE);
+	protected int adjustThreshold(int threshold) {
+		if (threshold == 0) { // can't go any lower
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot set Summary Threshold above this level");
+			return threshold;
+		}
+		else {
+			return threshold - 1;
+		}
 	}
-
 }

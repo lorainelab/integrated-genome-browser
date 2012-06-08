@@ -33,15 +33,12 @@ public class AutoLoadThresholdAction extends GenericAction
 		return ACTION;
 	}
 
-	private static final int default_threshold = 80;
-	public final static String  PREFS_THRESHOLD = "Threshold Value";
-	public final static String  PREFS_AUTOLOAD = "Enable Auto load";
 	public final static boolean default_autoload = true;
 	private final JSlider zoomer;
 	private final JScrollBar scroller;
 	private final NeoMap map;
 	private boolean was_dragging = false;
-	public int threshold = default_threshold;
+	public int threshold = PreferenceUtils.default_threshold;
 	private boolean autoLoadEnabled;
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
@@ -58,8 +55,8 @@ public class AutoLoadThresholdAction extends GenericAction
 		this.map.addMouseListener(this);
 		this.map.addMouseMotionListener(this);
 		this.zoomer_value = this.zoomer.getValue();
-		threshold = PreferenceUtils.getIntParam(PREFS_THRESHOLD, default_threshold);
-		autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
+		threshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, PreferenceUtils.default_threshold);
+		autoLoadEnabled = PreferenceUtils.getBooleanParam(PreferenceUtils.PREFS_AUTOLOAD, default_autoload);
 		
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
@@ -133,8 +130,8 @@ public class AutoLoadThresholdAction extends GenericAction
           return;
         }
 
-		if(pce.getKey().equals(PREFS_AUTOLOAD)){
-			autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
+		if(pce.getKey().equals(PreferenceUtils.PREFS_AUTOLOAD)){
+			autoLoadEnabled = PreferenceUtils.getBooleanParam(PreferenceUtils.PREFS_AUTOLOAD, default_autoload);
 		}
 	}
 
@@ -143,7 +140,7 @@ public class AutoLoadThresholdAction extends GenericAction
 		super.actionPerformed(ae);
 		threshold = (zoomer.getValue() * 100 / zoomer.getMaximum());
 		update(zoomer);
-		PreferenceUtils.saveIntParam(PREFS_THRESHOLD, threshold);
+		PreferenceUtils.saveIntParam(PreferenceUtils.PREFS_THRESHOLD, threshold);
 		zoomer.repaint();
 		loadData();
 	}

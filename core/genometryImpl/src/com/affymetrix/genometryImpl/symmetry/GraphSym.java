@@ -587,6 +587,9 @@ public class GraphSym extends RootSeqSymmetry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		if (!isValid()) {
+			return result;
+		}
 //		DO NOT USE bufStart
 		result = prime * result + ((gid == null) ? 0 : gid.hashCode());
 		result = prime
@@ -618,6 +621,9 @@ public class GraphSym extends RootSeqSymmetry {
 		if (getClass() != obj.getClass())
 			return false;
 		GraphSym other = (GraphSym) obj;
+		if (!isValid() || !other.isValid()) {
+			return false;
+		}
 //		DO NOT USE bufStart
 		if (gid == null) {
 			if (other.gid != null)

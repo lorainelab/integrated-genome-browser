@@ -63,7 +63,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 
 		@Override
 		public boolean isDetail(ViewI view) {
-			return autoLoadThresholdAction.isDetail(null);
+			return autoLoadThresholdAction.isDetail(getAnnotStyle());
 			//return view.getTransform().getScaleX() >= ZOOM_X_SCALE;
 		}
 

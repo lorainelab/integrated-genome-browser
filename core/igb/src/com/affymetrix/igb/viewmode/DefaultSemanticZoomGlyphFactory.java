@@ -27,7 +27,7 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 
 		@Override
 		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
-			return autoLoadThresholdAction.isDetail(null) ? detailGlyph : depthGlyph;
+			return autoLoadThresholdAction.isDetail(getAnnotStyle()) ? detailGlyph : depthGlyph;
 		}
 
 		@Override

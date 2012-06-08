@@ -123,7 +123,11 @@ public class AutoLoadThresholdAction extends GenericAction
 	}
 
 	public boolean isDetail(ITrackStyleExtended style) {
-		return (zoomer.getValue() * 100 / zoomer.getMaximum()) >= threshold;
+		int trackThreshold = threshold;
+		if (style != null && style.getSummaryThreshold() > 0) {
+			trackThreshold = style.getSummaryThreshold();
+		}
+		return (zoomer.getValue() * 100 / zoomer.getMaximum()) >= trackThreshold;
 	}
 
 	public boolean shouldAutoLoad(){

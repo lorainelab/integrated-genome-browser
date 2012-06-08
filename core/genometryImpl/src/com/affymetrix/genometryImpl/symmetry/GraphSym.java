@@ -567,6 +567,7 @@ public class GraphSym extends RootSeqSymmetry {
 		wBuf = null;
 		xCoords = new int[]{};//null; to avoid NPE
 		bufFile = null;
+		pointCount = 0;
 	}
 
 	/**

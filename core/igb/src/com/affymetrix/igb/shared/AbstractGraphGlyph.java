@@ -278,8 +278,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		}
 		view.transformToPixels(getCoordBox(), getPixelBox());
 
-		Graphics g = view.getGraphics();
-		
 		if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
 			DrawTheGraph(view);
 		}
@@ -330,7 +328,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 			g.drawLine(getPixelBox().x, zero_point.y, getPixelBox().x + getPixelBox().width, zero_point.y);
 		}
 
-		g.setColor(this.getColor());
+		g.setColor(this.getForegroundColor());
 
 		// set up prev_point before starting loop
 		coord.x = graf.getMinXCoord();
@@ -427,7 +425,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	protected void drawLabel(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 		Graphics g = view.getGraphics();
-		g.setColor(this.getColor());
+		g.setColor(this.getForegroundColor());
 		g.setFont(default_font);
 		FontMetrics fm = g.getFontMetrics();
 		g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
@@ -440,7 +438,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		Rectangle hpix = calcHandlePix(view);
 		if (hpix != null) {
 			Graphics g = view.getGraphics();
-			g.setColor(this.getColor());
+			g.setColor(this.getForegroundColor());
 			drawRectOrLine(g,hpix.x, hpix.y, hpix.width, hpix.height);
 		}
 	}
@@ -453,7 +451,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		Rectangle hpix = calcHandlePix(view);
 
 		Graphics g = view.getGraphics();
-		g.setColor(this.getColor());
+		g.setColor(this.getForegroundColor());
 		g.setFont(axis_font);
 		FontMetrics fm = g.getFontMetrics();
 		int font_height = fm.getHeight();
@@ -846,7 +844,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		}
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		
-		if (getShowGraph()) {
+		if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
 			drawGraph(view);
 		}
 		

@@ -472,6 +472,10 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	}
 
 	private static void scaleChildHeights(double theScale, List<GlyphI> theSiblings, ViewI theView) {
+		if(theSiblings == null || theSiblings.isEmpty()){
+			return;
+		}
+		
 		int numberOfSiblings = theSiblings.size();
 		GlyphI child;
 		Rectangle2D.Double coordbox;

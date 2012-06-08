@@ -171,7 +171,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				resultGlyph.setParent(getParent());
 				resultGlyph.setScene(getScene());
 				double saveY = resultGlyph.getCoordBox().y;
-				resultGlyph.pack(view);
+				if (resultGlyph.getScene() != null) {
+					resultGlyph.pack(view);
+				}
 				if (resultGlyph.getCoordBox().y != saveY) {
 					resultGlyph.moveAbsolute(resultGlyph.getCoordBox().x, saveY);
 				}

@@ -2,6 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
@@ -119,6 +120,10 @@ public class AutoLoadThresholdAction extends GenericAction
 	
 	public void mouseDragged(MouseEvent e) {
 		was_dragging = true;
+	}
+
+	public boolean isDetail(ITrackStyleExtended style) {
+		return (zoomer.getValue() * 100 / zoomer.getMaximum()) >= threshold;
 	}
 
 	public boolean shouldAutoLoad(){

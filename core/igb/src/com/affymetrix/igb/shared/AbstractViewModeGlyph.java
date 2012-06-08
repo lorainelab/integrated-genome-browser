@@ -38,7 +38,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	 *    in front of the solid background, but behind the child glyphs
 	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
 	 */
-	protected final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+	private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 	private static final int handle_width = 10;  // width of handle in pixels
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;

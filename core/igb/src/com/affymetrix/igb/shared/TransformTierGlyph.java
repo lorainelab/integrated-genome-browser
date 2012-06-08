@@ -1,13 +1,9 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,42 +50,7 @@ public final class TransformTierGlyph extends TransformViewModeGlyph {
 	 */
 	@Override
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), getPixelBox());
-
-		getPixelBox().width = Math.max(getPixelBox().width, getMinPixelsWidth());
-		getPixelBox().height = Math.max(getPixelBox().height, getMinPixelsHeight());
-
-		Graphics g = view.getGraphics();
-		Rectangle vbox = view.getPixelBox();
-		setPixelBox(getPixelBox().intersection(vbox));
-
-		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height+1);
-			}
-		} else {
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(getPixelBox().x, getPixelBox().y, 2 * getPixelBox().width, getPixelBox().height+1);
-			}
-
-			// cycle through "middleground" glyphs,
-			//   make sure their coord box y and height are set to same as TierGlyph,
-			//   then call mglyph.draw(view)
-			// TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
-			// See bug 3032785
-			if(other_fill_color != null){
-				for (GlyphI mglyph : middle_glyphs) {
-					Rectangle2D.Double mbox = mglyph.getCoordBox();
-					mbox.setRect(mbox.x, getCoordBox().y, mbox.width, getCoordBox().height);
-					mglyph.setColor(other_fill_color);
-					mglyph.drawTraversal(view);
-				}
-			}
-		}
+		drawMiddle(view);
 /*
 		if (!style.isGraphTier()) {
 			// graph tiers take care of drawing their own handles and labels.

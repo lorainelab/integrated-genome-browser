@@ -215,6 +215,22 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		middle_glyphs.add(gl);
 	}
 	
+	/**
+	 * Remove all children of the glyph,
+	 * including those added with addMiddleGlyph(GlyphI).
+	 */
+	@Override
+	public void removeAllChildren() {
+		super.removeAllChildren();
+		// also remove all middleground glyphs
+		// this is currently the only place where middleground glyphs are treated as if they were children
+		//   maybe should rename this method clear() or something like that...
+		// only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by
+		//     clearing middle_glyphs.  These glyphs never have setScene() called on them,
+		//     so it is not necessary to call setScene(null) on them.
+		middle_glyphs.clear();
+	}
+	
 	@Override
 	public void setInfo(Object info) {
 		super.setInfo(info);

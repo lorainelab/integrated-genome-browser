@@ -281,9 +281,13 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		Graphics g = view.getGraphics();
 		
 		if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
-			DrawTheGraph(view, g);
+			DrawTheGraph(view);
 		}
+		
+		drawHandleAxisAndLabel(view);
+	}
 
+	protected void drawHandleAxisAndLabel(ViewI view) {
 		// drawing the "handle", which is the only part of the graph that recognizes hits
 		// not a normal "child", so if it is hit then graph is considered to be hit...
 		drawHandle(view);
@@ -294,6 +298,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 
 		// drawing outline around bounding box
 		if (getShowBounds()) {
+			Graphics g = view.getGraphics();
 			g.setColor(Color.green);
 			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width - 1, getPixelBox().height - 1);
 		}
@@ -305,8 +310,9 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 			System.out.println("graph draw time: " + tim.read());
 		}
 	}
-
-	private void DrawTheGraph(ViewI view, Graphics g) {
+		
+	private void DrawTheGraph(ViewI view) {
+		Graphics g = view.getGraphics();
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
 		double offset = scratch_trans.getTranslateY();
@@ -843,25 +849,8 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		if (getShowGraph()) {
 			drawGraph(view);
 		}
-
-		drawHandle(view);
 		
-		if (getShowAxis()) {
-			drawAxisLabel(view);
-		}
-		// drawing outline around bounding box
-		if (getShowBounds()) {
-			Graphics g = view.getGraphics();
-			g.setColor(Color.green);
-			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width - 1, getPixelBox().height - 1);
-		}
-		if (getShowLabel()) {
-			drawLabel(view);
-		}
-		if (TIME_DRAWING) {
-			long drawtime = tim.read();
-			System.out.println("graph draw time: " + drawtime);
-		}
+		drawHandleAxisAndLabel(view);
 	}
 
 	private void drawGraph(ViewI view) {

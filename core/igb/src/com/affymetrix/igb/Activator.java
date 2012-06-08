@@ -296,6 +296,8 @@ public class Activator implements BundleActivator {
 		UnsetDirectionStyleArrowAction.getAction();
 		SetDirectionStyleColorAction.getAction();
 		UnsetDirectionStyleColorAction.getAction();
+		SetSummaryThresholdAboveAction.getAction();
+		SetSummaryThresholdBelowAction.getAction();
 	}
 
 	private void initOperators() {

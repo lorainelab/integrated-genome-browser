@@ -48,6 +48,8 @@
                             <entry key="com.affymetrix.igb.action.ShowStrandAction" value="true"/>
                             <entry key="com.affymetrix.igb.shared.CollapseExpandAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.AutoLoadThresholdAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.SetSummaryThresholdAboveAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.SetSummaryThresholdBelowAction" value="true"/>
                         </map>
                     </node>
                 </node>

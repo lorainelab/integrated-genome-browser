@@ -190,6 +190,12 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		}
 	}//GEN-LAST:event_by_percentileRB_valActionPerformed
 
+	private void by_valRB_valActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_valRB_valActionPerformed
+		if (is_listening) {
+			switchView(false);
+		}
+	}//GEN-LAST:event_by_valRB_valActionPerformed
+
 	private void minTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minTextActionPerformed
 		if (is_listening) {
 			int min;
@@ -218,12 +224,10 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		}
 	}//GEN-LAST:event_maxTextActionPerformed
 
-	private void by_valRB_valActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_valRB_valActionPerformed
-		switchView(false);
-	}//GEN-LAST:event_by_valRB_valActionPerformed
-
 	private void heightSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSliderStateChanged
-		setTrackHeight(heightSlider.getValue());
+		if (is_listening) {
+			setTrackHeight(heightSlider.getValue());
+		}
 	}//GEN-LAST:event_heightSliderStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -288,6 +292,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private void resetAll(List<AbstractGraphGlyph> graphGlyphs) {
 		is_listening = false;
 		boolean enabled = graphGlyphs.size() > 0;
+		RangePanel.setEnabled(enabled);
 		setByLabel.setEnabled(enabled);
 	    by_percentileRB_val.setEnabled(enabled);
 	    by_valRB_val.setEnabled(enabled);

@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.action.TrackResizingAction;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
@@ -202,17 +203,17 @@ public final class TierLabelManager implements PropertyHolder {
 		labelmap.getScene().setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		labelmap.setPixelFuzziness(0); // there are no gaps between tiers, need no fuzziness
 		
-		MouseInputListener resizer;
+//		MouseInputListener resizer;
 //		resizer = new MouseInputAdapter() {
 			// Stub out resizing to disable it.
 //		};
 //		resizer = new NewTierResizer(this.tiermap);
 		gs = new GlyphTransformer(map);
-		resizer = new TierResizer(this.tiermap);
+//		resizer = new TierResizer(this.tiermap);
 //		resizer = new AccordionTierResizer(this.tiermap);
 
-		labelmap.addMouseListener(resizer);
-		labelmap.addMouseMotionListener(resizer);
+//		labelmap.addMouseListener(resizer);
+//		labelmap.addMouseMotionListener(resizer);
 	}
 
 	/** Returns a list of TierGlyph items representing the selected tiers. */

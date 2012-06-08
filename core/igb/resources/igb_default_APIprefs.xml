@@ -46,10 +46,11 @@
                             <entry key="com.affymetrix.igb.action.ChangeForegroundColorAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ChangeBackgroundColorAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ShowStrandAction" value="true"/>
-                            <entry key="com.affymetrix.igb.shared.CollapseExpandAction" value="true"/>
+                            <entry key="com.affymetrix.igb.shared.CollapseExpandAction:ExpandAction;CollapseAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.AutoLoadThresholdAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.SetSummaryThresholdAboveAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.SetSummaryThresholdBelowAction" value="true"/>
+							<entry key="SeqMapToggleAction:ShowOneTierAction;ShowTwoTiersAction" value="true"/>
                         </map>
                     </node>
                 </node>

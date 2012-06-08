@@ -11,8 +11,6 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Action;
 
 /**
@@ -70,6 +68,10 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 		two.addPropertyChangeListener(toggle);
 		this.identifier = this.getClass().getName() +
 				":" + one.getId() + ";" + two.getId();
+		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length()) {
+			this.identifier = this.getClass().getName() + ":" +
+					one.getClass().getSimpleName() + ";" + two.getClass().getSimpleName();
+		}
 		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length()) {
 			this.identifier = this.getClass().getSimpleName() + ":" +
 					one.getClass().getSimpleName() + ";" + two.getClass().getSimpleName();

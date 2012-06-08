@@ -56,6 +56,7 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.util.MainMenuUtil;
+import com.affymetrix.igb.util.StatusBarOutput;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqGroupViewGUI;
 import com.affymetrix.igb.view.SeqMapView;
@@ -165,9 +166,9 @@ public final class IGB extends Application
 		// be captured there.
 		ConsoleView.init(APP_NAME);
 
-
-
-
+		// Initialize statusbar output logger.
+		StatusBarOutput.initStatuBarOutput();
+		
 		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
 		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());
 
@@ -255,7 +256,7 @@ public final class IGB extends Application
 		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
-			notifyCounter();
+		notifyCounter();
 	}
 
 	private void notifyCounter(){

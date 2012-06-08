@@ -5,9 +5,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
@@ -171,13 +170,11 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph result = null;
 		if (sym == null) {
-			sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeq());
-			result = getViewModeGlyph(sym, style, Direction.BOTH, smv);
-			result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
+			result = createEmptyGraphGlyph(style, smv);
 		} else if (sym instanceof GraphSym) {
 			result = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (result == null) {
-				result = getViewModeGlyph(null, style, tier_direction, smv);
+				result = createEmptyGraphGlyph(style, smv);
 			}
 			else {
 				if(smv.getViewSeq() != smv.getAnnotatedSeq()){
@@ -196,6 +193,24 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
 		return result;
+	}
+	
+	private ViewModeGlyph createEmptyGraphGlyph(ITrackStyleExtended style, SeqMapViewExtendedI smv){
+		GraphSym sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());
+		ViewModeGlyph result = createViewModeGlyph(sym, getGraphState(style), smv);
+		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
+		return result;
+	}
+	
+	private static GraphState getGraphState(ITrackStyleExtended style){
+		String featureName = null, extension = null;
+		Map<String, String> featureProps = null;
+		if(style.getFeature() != null){
+			featureName = style.getFeature().featureName;
+			extension = style.getFeature().getExtension();
+			featureProps = style.getFeature().featureProps;
+		}
+		return DefaultStateProvider.getGlobalStateProvider().getGraphState(style.getMethodName(), featureName, extension, featureProps);
 	}
 	
 	public static class GenomeGraphGlyph extends MultiGraphGlyph{

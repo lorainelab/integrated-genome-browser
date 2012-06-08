@@ -12,7 +12,6 @@ import com.affymetrix.igb.action.SeqMapToggleAction;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.AnnotationGlyph;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CollapseExpandAction extends SeqMapToggleAction implements SymSelectionListener {
@@ -34,16 +33,10 @@ public class CollapseExpandAction extends SeqMapToggleAction implements SymSelec
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
 		ACTION.setEnabled(false); // until such time as a track is selected.
-
 	}
 
 	protected CollapseExpandAction(SeqMapViewActionA a, SeqMapViewActionA b) {
 		super(a, b);
-	}
-
-	@Override
-	public boolean isToggle() {
-		return true;
 	}
 
 	@Override
@@ -63,7 +56,6 @@ public class CollapseExpandAction extends SeqMapToggleAction implements SymSelec
 		// Ignore the splice view as well as events coming from this class itself.
 
 		changeActionDisplay(selected_syms);
-		//this.setEnabled(0 < selected_syms.size());
 	}
 
 	private void changeActionDisplay(List<SeqSymmetry> selected_syms) {

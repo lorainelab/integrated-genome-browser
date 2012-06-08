@@ -228,12 +228,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	}
 
 	@Override
-	public int getZoomTransition() {
+	public int getSummaryThreshold() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void setZoomTransition(int level) {
+	public void setSummaryThreshold(int level) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

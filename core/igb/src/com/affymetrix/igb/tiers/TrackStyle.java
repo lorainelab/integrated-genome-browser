@@ -75,7 +75,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private GenericFeature feature = null;
 	private int colorIntervals = 255;
 	public boolean customise = false;
-	private int zoomTransition;
+	private int summaryThreshold;
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
@@ -1334,12 +1334,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	@Override
-	public int getZoomTransition() {
-		return zoomTransition;
+	public int getSummaryThreshold() {
+		return summaryThreshold;
 	}
 
 	@Override
-	public void setZoomTransition(int level) {
-		zoomTransition = level;
+	public void setSummaryThreshold(int level) {
+		summaryThreshold = level;
 	}
 }

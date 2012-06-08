@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import java.awt.Color;
 
 public interface ITrackStyleExtended extends ITrackStyle {
+	public static final int NO_THRESHOLD = -1;
 	void setUrl(String url);
 	String getUrl();
 
@@ -87,6 +88,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public Color getLabelBackground();
 	public void setLabelForeground(Color c);
 	public void setLabelBackground(Color c);
-	public int getZoomTransition();
-	public void setZoomTransition(int level);
+	public int getSummaryThreshold();
+	public void setSummaryThreshold(int level);
 }

@@ -111,12 +111,6 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void stackDepthTextFieldActionPerformedA(ActionEvent evt) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	protected void trackNameTextFieldActionPerformedA(ActionEvent evt) {
 		// TODO Auto-generated method stub
 		
@@ -225,13 +219,19 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void stackDepthTextFieldReset() {
+	protected void trackNameTextFieldReset() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	protected void trackNameTextFieldReset() {
+	protected void stackDepthButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void stackDepthButtonReset() {
 		// TODO Auto-generated method stub
 		
 	}

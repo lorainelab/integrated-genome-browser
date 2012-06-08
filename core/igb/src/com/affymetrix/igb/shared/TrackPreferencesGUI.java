@@ -124,8 +124,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         viewModeLabel = new javax.swing.JLabel();
         annotationsPanel = new javax.swing.JPanel();
         collapsedCheckBox = new javax.swing.JCheckBox();
-        stackDepthLabel = new javax.swing.JLabel();
-        stackDepthTextField = new javax.swing.JTextField();
         labelFieldLabel = new javax.swing.JLabel();
         labelFieldComboBox = new javax.swing.JComboBox();
         strands2TracksCheckBox = new javax.swing.JCheckBox();
@@ -136,6 +134,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         strandsReverseColorLabel = new javax.swing.JLabel();
         strandsReverseColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+        stackDepthButton = new javax.swing.JButton();
 
         org.jdesktop.layout.GroupLayout jFrame1Layout = new org.jdesktop.layout.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -408,14 +407,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
             }
         });
 
-        stackDepthLabel.setText("Stack Depth:");
-
-        stackDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthTextFieldActionPerformed(evt);
-            }
-        });
-
         labelFieldLabel.setText("Label Field:");
 
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -473,6 +464,13 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
             }
         });
 
+        stackDepthButton.setText("Stack Depth");
+        stackDepthButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stackDepthButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout annotationsPanelLayout = new org.jdesktop.layout.GroupLayout(annotationsPanel);
         annotationsPanel.setLayout(annotationsPanelLayout);
         annotationsPanelLayout.setHorizontalGroup(
@@ -480,10 +478,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
             .add(annotationsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(stackDepthLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(annotationsPanelLayout.createSequentialGroup()
                         .add(labelFieldLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
@@ -503,16 +497,15 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(annotationsPanelLayout.createSequentialGroup()
                         .add(strands2TracksCheckBox)
                         .add(18, 18, 18)
-                        .add(strandsArrowCheckBox)))
+                        .add(strandsArrowCheckBox))
+                    .add(stackDepthButton))
                 .addContainerGap(11, Short.MAX_VALUE))
         );
         annotationsPanelLayout.setVerticalGroup(
             annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(annotationsPanelLayout.createSequentialGroup()
-                .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(stackDepthLabel)
-                    .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(stackDepthButton)
+                .add(6, 6, 6)
                 .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelFieldLabel)
                     .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -711,18 +704,17 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		}
 	}//GEN-LAST:event_foregroundColorComboBoxActionPerformed
 
-	private void stackDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stackDepthTextFieldActionPerformed
-		if (is_listening) {
-			stackDepthTextFieldActionPerformedA(evt);
-		}
-	}//GEN-LAST:event_stackDepthTextFieldActionPerformed
-
 	private void trackNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameTextFieldActionPerformed
 		if (is_listening) {
 			trackNameTextFieldActionPerformedA(evt);
 		}
 	}//GEN-LAST:event_trackNameTextFieldActionPerformed
 
+	private void stackDepthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stackDepthButtonActionPerformed
+		if (is_listening) {
+			stackDepthButtonActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_stackDepthButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox YAxisCheckBox;
@@ -752,8 +744,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
     private javax.swing.JLabel labelFieldLabel;
     private javax.swing.JComboBox labelSizeComboBox;
     private javax.swing.JLabel nameLabel;
-    private javax.swing.JLabel stackDepthLabel;
-    private javax.swing.JTextField stackDepthTextField;
+    private javax.swing.JButton stackDepthButton;
     private javax.swing.JCheckBox strands2TracksCheckBox;
     private javax.swing.JCheckBox strandsArrowCheckBox;
     private javax.swing.JCheckBox strandsColorCheckBox;
@@ -870,14 +861,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		return nameLabel;
 	}
 
-	public javax.swing.JLabel getStackDepthLabel() {
-		return stackDepthLabel;
-	}
-
-	public javax.swing.JTextField getStackDepthTextField() {
-		return stackDepthTextField;
-	}
-
 	public javax.swing.JCheckBox getStrands2TracksCheckBox() {
 		return strands2TracksCheckBox;
 	}
@@ -930,6 +913,10 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		return YAxisCheckBox;
 	}
 
+	public javax.swing.JButton getStackDepthButton() {
+		return stackDepthButton;
+	}
+
 	public javax.swing.ButtonGroup getButtonGroup1() {
 		return buttonGroup1;
 	}
@@ -939,8 +926,8 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	// "ActionPerformed" to "ActionPerformedA"
 	// "private" to "protected abstract"
 	// "// TODO add your handling code here:" to ""
-	// "//GEN-FIRST:event_[a-zA-Z0-9]*" to ""
-	// "//GEN-LAST:event_[a-zA-Z0-9]*" to ""
+	// "                                     
+	// "                                    
 	protected abstract void viewModeComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void floatCheckBoxActionPerformedA(ActionEvent evt);
 	protected abstract void YAxisCheckBoxActionPerformedA(ActionEvent evt);
@@ -958,7 +945,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected abstract void buttonGroup1ActionPerformedA(ActionEvent evt);
 	protected abstract void backgroundColorComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void foregroundColorComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void stackDepthTextFieldActionPerformedA(ActionEvent evt);
+	protected abstract void stackDepthButtonActionPerformedA(ActionEvent evt);
 	protected abstract void trackNameTextFieldActionPerformedA(ActionEvent evt);
 
 	// you can "generate" these by copying all the event handlers
@@ -987,7 +974,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected abstract void buttonGroup1Reset();
 	protected abstract void backgroundColorComboBoxReset();
 	protected abstract void foregroundColorComboBoxReset();
-	protected abstract void stackDepthTextFieldReset();
+	protected abstract void stackDepthButtonReset();
 	protected abstract void trackNameTextFieldReset();
 	protected void resetAll() {
 		is_listening = false;
@@ -1011,7 +998,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		buttonGroup1Reset();
 		backgroundColorComboBoxReset();
 		foregroundColorComboBoxReset();
-		stackDepthTextFieldReset();
+		stackDepthButtonReset();
 		trackNameTextFieldReset();
 		is_listening = true;
 	}

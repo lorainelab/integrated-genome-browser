@@ -490,11 +490,6 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="stackDepthLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="stackDepthTextField" min="-2" pref="51" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
                           <Component id="labelFieldLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="labelFieldComboBox" min="-2" pref="71" max="-2" attributes="0"/>
@@ -517,6 +512,7 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="strandsArrowCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="stackDepthButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="11" max="32767" attributes="0"/>
               </Group>
@@ -525,11 +521,8 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="stackDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="stackDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="stackDepthButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -562,16 +555,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="stackDepthLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Stack Depth:"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="stackDepthTextField">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthTextFieldActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">
@@ -661,6 +644,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsForwardColorComboBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="stackDepthButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Stack Depth"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
+import com.affymetrix.igb.action.ChangeExpandMaxAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -43,6 +44,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		igbService = _igbService;
 //igbService.addListSelectionListener(getColorSchemeComboBox());
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
+		initStackDepthButton();
+	}
+
+	private void initStackDepthButton() {
+		JButton stackDepthButton = getStackDepthButton();
+		String saveText = stackDepthButton.getText();
+		getStackDepthButton().setAction(ChangeExpandMaxAction.getAction());
+		getStackDepthButton().setHideActionText(true);
+		getStackDepthButton().setText(saveText);
 	}
 
 	private void updateDisplay() {
@@ -306,22 +316,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	}
 
 	@Override
-	protected void stackDepthTextFieldActionPerformedA(ActionEvent evt) {
-		final JTextField stackDepthTextField = getStackDepthTextField();
-		String mdepth_string = stackDepthTextField.getText();
-		if (selectedTiers == null || mdepth_string == null) {
-			return;
-		}
-		for (TierGlyph tier : selectedTiers) {
-			int prev_max_depth = tier.getAnnotStyle().getMaxDepth();
-			try {
-				tier.getAnnotStyle().setMaxDepth(Integer.parseInt(mdepth_string));
-			} catch (Exception ex) {
-				tier.getAnnotStyle().setMaxDepth(prev_max_depth);
-			}
-		}
-		igbService.getSeqMapView().repackTheTiers(true, true);
-		updateDisplay();
+	protected void stackDepthButtonActionPerformedA(ActionEvent evt) {
 	}
 
 	@Override
@@ -745,28 +740,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	}
 
 	@Override
-	protected void stackDepthTextFieldReset() {
-		JTextField stackDepthTextField = getStackDepthTextField();
-		stackDepthTextField.setEnabled(annotGlyphs.size() > 0);
-		getStackDepthLabel().setEnabled(annotGlyphs.size() > 0);
-		Integer stackDepth = -1;
-		boolean stackDepthSet = false;
-		for (ViewModeGlyph ag : annotGlyphs) {
-			if (stackDepth == -1 && !stackDepthSet) {
-				stackDepth = ag.getAnnotStyle().getMaxDepth();
-				stackDepthSet = true;
-			}
-			else if (stackDepth != ag.getAnnotStyle().getMaxDepth()) {
-				stackDepth = -1;
-				break;
-			}
-		}
-		if (stackDepth == -1) {
-			stackDepthTextField.setText("");
-		}
-		else {
-			stackDepthTextField.setText("" + stackDepth);
-		}
+	protected void stackDepthButtonReset() {
+		JButton stackDepthButton = getStackDepthButton();
+		stackDepthButton.setEnabled(annotGlyphs.size() > 0);
 	}
 
 	@Override

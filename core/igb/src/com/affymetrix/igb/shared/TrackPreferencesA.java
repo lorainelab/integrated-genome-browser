@@ -475,7 +475,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 				if (original instanceof SymWithProps) {
 					Map<String, Object> props = ((SymWithProps) original).getProperties();
 					fields.add(TrackConstants.NO_LABEL);
-					fields.addAll(props.keySet());
+					if(props != null){
+						fields.addAll(props.keySet());
+					}
 				}
 			}
 		}

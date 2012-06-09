@@ -29,7 +29,10 @@ public class OperatorComparator implements Comparator<Operator> {
 			return 1;
 		}
 
-		return o1.getDisplay().compareTo(o2.getDisplay());
+		int c = o1.getDisplay().compareTo(o2.getDisplay());
+		if (c == 0) {
+			c = o1.getName().compareTo(o2.getName());
+		}
+		return c;
 	}
-	
 }

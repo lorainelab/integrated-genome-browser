@@ -37,7 +37,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	boolean DEBUG_EVENTS = false;
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 	public final List<ViewModeGlyph> glyphs = new ArrayList<ViewModeGlyph>();
-	private Map<FileTypeCategory, Integer> categoryCounts;
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB", CombineGraphsAction.getAction());
 	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB", SplitGraphsAction.getAction());
@@ -184,7 +183,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			}
 		}
 		thresholdingAction.setGraphs(graphGlyphs);
-		categoryCounts = getCategoryCounts();
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -213,18 +211,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	private Map<FileTypeCategory, Integer> getCategoryCounts() {
-		Map<FileTypeCategory, Integer> categoryCounts = new HashMap<FileTypeCategory, Integer>();
-		for (FileTypeCategory category : FileTypeCategory.values()) {
-			categoryCounts.put(category, 0);
-		}
-		for (RootSeqSymmetry rootSym : rootSyms) {
-			FileTypeCategory category = rootSym.getCategory();
-			categoryCounts.put(category, categoryCounts.get(category) + 1);
-		}
-		return categoryCounts;
-	}
-
 	private void loadOperators() {
 		transformationCB.removeAllItems();
 		name2transformation.clear();
@@ -233,45 +219,24 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		if (rootSyms.size() == 0) {
 			return;
 		}
-		FileTypeCategory transformCategory = null;
-		FileTypeCategory testTransformCategory = null;
-		for (FileTypeCategory category : FileTypeCategory.values()) {
-			if (categoryCounts.get(category) > 0) {
-				if (testTransformCategory == null) {
-					testTransformCategory = category;
-					transformCategory = category;
-				}
-				if (testTransformCategory != category) {
-					transformCategory = null;
-				}
+		FileTypeCategory transformCategory = rootSyms.get(0).getCategory();
+		for (RootSeqSymmetry rootSym : rootSyms) {
+			if (transformCategory != rootSym.getCategory()) {
+				transformCategory = null;
+				break;
 			}
 		}
+		boolean transformOK = transformCategory != null;
 		TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
 		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
+		List<RootSeqSymmetry> transformSyms = new ArrayList<RootSeqSymmetry>(); // fake List to test compatibility of Transform operations
+		transformSyms.add(rootSyms.get(0));
 		for (Operator operator : operators) {
-			boolean operatorOK = true;
-			boolean transformOK = true;
-			for (FileTypeCategory category : FileTypeCategory.values()) {
-				int count = categoryCounts.get(category);
-				if (count < operator.getOperandCountMin(category) || count > operator.getOperandCountMax(category)) {
-					operatorOK = false;
-				}
-				if (category == transformCategory) {
-					if (operator.getOperandCountMin(category) != 1 || operator.getOperandCountMax(category) != 1) {
-						transformOK = false;
-					}
-				}
-				else {
-					if (operator.getOperandCountMax(category) > 0) {
-						transformOK = false;
-					}
-				}
-			}
-			if (transformOK) {
+			if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator)) {
 				name2transformation.put(operator.getDisplay(), operator);
 				transformationCB.addItem(operator.getDisplay());
 			}
-			if (operatorOK) {
+			if (TrackUtils.getInstance().checkCompatible(rootSyms, operator)) {
 				name2operation.put(operator.getDisplay(), operator);
 				operationCB.addItem(operator.getDisplay());
 			}

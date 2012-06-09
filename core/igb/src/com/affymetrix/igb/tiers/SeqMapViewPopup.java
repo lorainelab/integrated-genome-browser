@@ -13,6 +13,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -27,6 +28,8 @@ import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
+
 import javax.swing.*;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
@@ -50,25 +53,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 	}
 
-	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
-		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (!b || MapViewModeHolder.getInstance().styleSupportsTwoTrack(style)) {
-				style.setSeparate(b);
-			}
-		}
-		refreshMap(false, true);
-		handler.sortTiers();
-	}
-
-	public void renameTier(final TierGlyph tier) {
-		if (tier == null) {
-			return;
-		}
-		gviewer.renameTier(tier, JOptionPane.showInputDialog(BUNDLE.getString("label") + ": ", tier.getAnnotStyle().getTrackName()));
-	}
-	
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {
 			// if an AnnotatedSeqViewer is being used, ask it to update itself.
@@ -88,14 +72,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
 		JMenu operationsMenu = null;
-		for (Operator operator : ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls()) {
+		TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
+		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
+		for (Operator operator : operators) {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
 				String title = operator.getDisplay();
 				JMenuItem operatorMI = new JMenuItem(title);
-				operatorMI.addActionListener(new TrackOperationAction(
-						gviewer, operator));
+				operatorMI.addActionListener(new TrackOperationAction(gviewer, operator));
 				if (operationsMenu == null) {
-					operationsMenu = new JMenu("Track Operations");
+					operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
 				}
 				operationsMenu.add(operatorMI);
 			}
@@ -125,7 +110,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (glyph != null && glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			if (style instanceof TrackStyle) {
-				for (final Operator operator : TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory())) {
+				TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
+				operators.addAll(TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory()));
+				for (final Operator operator : operators) {
 					Action action = new TransformAction(operator);
 					if (operator.getName().equals(style.getOperator())) {
 						action.putValue(Action.SELECTED_KEY, true);
@@ -197,7 +184,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					public String getText() {
 						String name = style.getTrackName();
 						if (name == null) {
-							name = "<unnamed>";
+							name = "<" + BUNDLE.getString("unnamed") + ">";
 						}
 						if (name.length() > 30) {
 							name = name.substring(0, 30) + "...";

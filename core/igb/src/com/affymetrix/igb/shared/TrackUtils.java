@@ -74,7 +74,7 @@ public class TrackUtils {
 		return syms;
 	}
 
-	private Map<FileTypeCategory, Integer> getTrackCounts(List<SeqSymmetry> syms) {
+	private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
 		Map<FileTypeCategory, Integer> trackCounts = new HashMap<FileTypeCategory, Integer>();
 		for (SeqSymmetry sym : syms) {
 			if (sym != null) {
@@ -88,7 +88,7 @@ public class TrackUtils {
 		return trackCounts;
 	}
 
-	public boolean checkCompatible(List<SeqSymmetry> syms, Operator operator) {
+	public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator) {
 		
 		// Why are we excluding operators that have parameters?
 		Map<String, Class<?>> params = operator.getParameters();

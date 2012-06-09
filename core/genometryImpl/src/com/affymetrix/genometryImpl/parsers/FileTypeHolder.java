@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.parsers;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -495,5 +496,10 @@ public class FileTypeHolder {
 		map.put(".2bit", new String[]{"2bit"});
 		map.put("Binary", new String[]{"bnib"});
 		return map;
+	}
+
+	private static final List<String> TABIX_FILE_TYPES = Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx"});
+	public List<String> getTabixFileTypes() {
+		return TABIX_FILE_TYPES;
 	}
 }

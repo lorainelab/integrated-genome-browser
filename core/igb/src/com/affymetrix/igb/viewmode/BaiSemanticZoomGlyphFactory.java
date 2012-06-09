@@ -4,6 +4,7 @@ import java.net.URI;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symloader.BaiZoomSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
@@ -30,4 +31,14 @@ public class BaiSemanticZoomGlyphFactory extends GzIndexedSemanticZoomGlyphFacto
 		return new BaiZoomSymLoader(uri, featureName, group);
 	}
 
+	@Override
+	public boolean isURISupported(String uri) {
+		String extension = FileTypeHolder.getInstance().getExtensionForURI(uri);
+		return "bam".equals(extension) && super.isURISupported(uri);
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return isURISupported(uri);
+	}
 }

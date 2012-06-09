@@ -58,12 +58,15 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 
 	@Override
 	public boolean isURISupported(String uri) {
-		return isBigWig(uri) || hasIndex(uri);
+		String extension = FileTypeHolder.getInstance().getExtensionForURI(uri);
+		boolean isGraph = FileTypeHolder.getInstance().getFileTypeHandler(extension) != null && FileTypeHolder.getInstance().getFileTypeHandler(extension).getFileTypeCategory() == FileTypeCategory.Graph;
+		return !"bam".equals(extension) && !isGraph && (isBigWig(uri) || hasIndex(uri));
 	}
 
 	@Override
 	public boolean canAutoLoad(String uri) {
-		return isBigWig(uri) || hasIndex(uri);
+		String extension = FileTypeHolder.getInstance().getExtensionForURI(uri);
+		return !"bam".equals(extension) && isBigWig(uri) || hasIndex(uri);
 	}
 
 	@Override

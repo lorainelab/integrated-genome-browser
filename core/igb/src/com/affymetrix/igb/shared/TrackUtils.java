@@ -88,13 +88,14 @@ public class TrackUtils {
 		return trackCounts;
 	}
 
-	public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator) {
+	public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator, boolean paramsOK) {
 		
-		// Why are we excluding operators that have parameters?
-		Map<String, Class<?>> params = operator.getParameters();
-		if (null != params) {
-			if (0 < params.size()) {
-				return false;
+		if (!paramsOK) {
+			Map<String, Class<?>> params = operator.getParameters();
+			if (null != params) {
+				if (0 < params.size()) {
+					return false;
+				}
 			}
 		}
 

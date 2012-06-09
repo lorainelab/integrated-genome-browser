@@ -11,7 +11,7 @@ public final class LogTransform extends AbstractLogTransform implements Operator
 	}
 	
 	public LogTransform(Double base) {
-		super();
+		super(base);
 		LN_BASE = Math.log(base);
 		LOG_1 = (float)(Math.log(1)/LN_BASE);
 	}

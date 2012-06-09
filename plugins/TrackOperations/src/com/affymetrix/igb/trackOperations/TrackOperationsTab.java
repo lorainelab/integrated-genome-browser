@@ -232,11 +232,11 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		List<RootSeqSymmetry> transformSyms = new ArrayList<RootSeqSymmetry>(); // fake List to test compatibility of Transform operations
 		transformSyms.add(rootSyms.get(0));
 		for (Operator operator : operators) {
-			if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator)) {
+			if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator, true)) {
 				name2transformation.put(operator.getDisplay(), operator);
 				transformationCB.addItem(operator.getDisplay());
 			}
-			if (TrackUtils.getInstance().checkCompatible(rootSyms, operator)) {
+			if (TrackUtils.getInstance().checkCompatible(rootSyms, operator, true)) {
 				name2operation.put(operator.getDisplay(), operator);
 				operationCB.addItem(operator.getDisplay());
 			}
@@ -305,19 +305,25 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		) {
 		String selection = (String) ationCB.getSelectedItem();
 		if (selection == null) {
-			ationLabel.setText("Base");
+			ationLabel.setText(" ");
+			ationLabel.setEnabled(false);
 			ationParam.setEditable(false);
+			ationParam.setEnabled(false);
 		} else {
 			Operator operator = name2ation.get(selection);
 			ationGoB.setToolTipText(getTooltipMessage(operator));
 			Map<String, Class<?>> params = operator.getParameters();
 			if (params == null || params.size() == 0) {
-				ationLabel.setText("Base");
+				ationLabel.setText(" ");
+				ationLabel.setEnabled(false);
 				ationParam.setEditable(false);
+				ationParam.setEnabled(false);
 			} else {
-				ationLabel.setText(params.keySet().iterator().next());
+				ationLabel.setText(params.keySet().iterator().next() + " :"); // only one parameter, for now
+				ationLabel.setEnabled(true);
 				ationParam.setEditable(true);
 				ationParam.setText("");
+				ationParam.setEnabled(true);
 			}
 		}
 	}

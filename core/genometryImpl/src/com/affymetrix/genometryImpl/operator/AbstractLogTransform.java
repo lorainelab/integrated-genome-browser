@@ -29,7 +29,7 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 		super();
 		this.base = base;
 		paramPrompt = null;
-		name = getBaseName();
+		name = getBaseName() + "_" + base;
 		parameterized = false;
 	}
 	

@@ -1152,6 +1152,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			setGlyphDepth(as.getGlyphDepth());
 			setLabelField(as.getLabelField());
 			setSeparate(as.getSeparate());
+			setSummaryThreshold(as.getSummaryThreshold());
 		}
 		if (g instanceof TrackStyle) {
 			TrackStyle as = (TrackStyle) g;

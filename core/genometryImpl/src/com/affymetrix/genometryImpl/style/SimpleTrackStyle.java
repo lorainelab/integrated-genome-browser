@@ -115,6 +115,7 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 				setGlyphDepth(as.getGlyphDepth());
 				setSeparate(as.getSeparate());
 				setLabelField(as.getLabelField());
+				setSummaryThreshold(as.getSummaryThreshold());
 			}
 		}
 

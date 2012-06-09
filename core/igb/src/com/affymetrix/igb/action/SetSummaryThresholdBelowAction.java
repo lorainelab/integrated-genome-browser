@@ -36,7 +36,7 @@ public class SetSummaryThresholdBelowAction extends SetSummaryThresholdActionA {
 	@Override
 	protected int adjustThreshold(int threshold) {
 		if (threshold == 0) { // can't go any lower
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot set Summary Threshold above this level");
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot set Summary Threshold below this level");
 			return threshold;
 		}
 		else {

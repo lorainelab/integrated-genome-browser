@@ -477,57 +477,94 @@ public class SeqMapView extends JPanel
 		xzoombox.add(refresh_button);
 	}
 
-	protected Adjustable getXZoomer(String id) {
-		return new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL) {
+	private class ThresholdXZoomer extends RPAdjustableJSlider implements SymSelectionListener, SeqSelectionListener, TrackStylePropertyListener {
+		private static final long serialVersionUID = 1L;
 
-			private static final long serialVersionUID = 1L;
+		public ThresholdXZoomer(String id) {
+			super(id + "_xzoomer", Adjustable.HORIZONTAL);
+		}
 
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
+		@Override
+		public void trackstylePropertyChanged(EventObject eo) {
+			// TODO Auto-generated method stub
+			
+		}
 
-				if (getAutoLoad() != null) {
-					drawAutoLoadPoint(g);
-				}
+		@Override
+		public void seqSelectionChanged(SeqSelectionEvent evt) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void symSelectionChanged(SymSelectionEvent evt) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void paint(Graphics g) {
+			super.paint(g);
+
+			if (getAutoLoad() != null) {
+				drawAutoLoadPoint(g);
 			}
+			for (GlyphI glyph : SeqMapView.this.getSelectedTiers()) {
+				drawTrackThresholdPoint(g, (TierGlyph)glyph);
+			}
+		}
 
-			private void drawAutoLoadPoint(Graphics g) {
+		private void drawAutoLoadPoint(Graphics g) {
+			drawThresholdPoint(g, Color.BLACK, Color.WHITE, getAutoLoad().threshold);
+		}
+
+		private void drawTrackThresholdPoint(Graphics g, TierGlyph tier) {
+			ITrackStyleExtended style = tier.getAnnotStyle();
+			if (style == null || style.getSummaryThreshold() == 0) {
+				return;
+			}
+			drawThresholdPoint(g, style.getBackground(), style.getForeground(), style.getSummaryThreshold());
+		}
+
+		private void drawThresholdPoint(Graphics g, Color bgColor, Color fgColor, int threshold) {
+			Color c = g.getColor();
+			int thresholdPosition = (threshold * getMaximum() / 100);
+			g.setColor(fgColor);
+			int xp = xPositionForValue(thresholdPosition);
+			int yp = this.getHeight() / 2;
+			int x[] = new int[]{xp, xp - 5, xp - 5, xp + 5, xp + 5};
+			int y[] = new int[]{yp, yp / 2, 0, 0, yp / 2};
+			g.fillPolygon(x, y, 5);
+			g.setColor(bgColor);
+			g.drawPolygon(x, y, 5);
+			g.setColor(c);
+		}
+
+		private int xPositionForValue(int value) {
+			int min = getMinimum();
+			int max = getMaximum();
+			int trackLength = this.getWidth();
+			double valueRange = (double) max - (double) min;
+			double pixelsPerValue = trackLength / valueRange;
+
+			return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
+		}
+
+		@Override
+		public String getToolTipText(MouseEvent me) {
+			if (me != null && getAutoLoad() != null) {
 				int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
-				Color c = g.getColor();
-				g.setColor(this.getBackground().brighter());
 				int xp = xPositionForValue(threshValue);
-				int yp = this.getHeight() / 2;
-				int x[] = new int[]{xp, xp - 5, xp - 5, xp + 5, xp + 5};
-				int y[] = new int[]{yp, yp / 2, 0, 0, yp / 2};
-				g.fillPolygon(x, y, 5);
-				g.setColor(Color.BLACK);
-				g.drawPolygon(x, y, 5);
-				g.setColor(c);
-			}
-
-			private int xPositionForValue(int value) {
-				int min = getMinimum();
-				int max = getMaximum();
-				int trackLength = this.getWidth();
-				double valueRange = (double) max - (double) min;
-				double pixelsPerValue = trackLength / valueRange;
-
-				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
-			}
-
-			@Override
-			public String getToolTipText(MouseEvent me) {
-				if (me != null && getAutoLoad() != null) {
-					int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
-					int xp = xPositionForValue(threshValue);
-					if (me.getX() > xp - 5 && me.getX() < xp + 5) {
-						return BUNDLE.getString("autoloadToolTip");
-					}
-					return super.getToolTipText();
+				if (me.getX() > xp - 5 && me.getX() < xp + 5) {
+					return BUNDLE.getString("autoloadToolTip");
 				}
 				return super.getToolTipText();
 			}
-		};
+			return super.getToolTipText();
+		}
+	}
+	protected Adjustable getXZoomer(String id) {
+		return new ThresholdXZoomer(id);
 	}
 
 	protected AutoLoadThresholdAction addAutoLoad() {

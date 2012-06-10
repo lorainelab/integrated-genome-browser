@@ -14,6 +14,8 @@ import javax.swing.JSlider;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -46,9 +48,13 @@ public abstract class SetSummaryThresholdActionA extends SeqMapViewActionA {
 			ITrackStyleExtended style = tierGlyph.getAnnotStyle();
 			if (style != null && style instanceof TrackStyle) {
 				((TrackStyle) style).setSummaryThreshold(summaryThreshold);
+				if (tierGlyph.getViewModeGlyph() instanceof NeoRangeListener) {
+					NeoRangeEvent newevt = new NeoRangeEvent(getSeqMapView(), tierGlyph.getCoordBox().x, tierGlyph.getCoordBox().x + tierGlyph.getCoordBox().width);
+					((NeoRangeListener) tierGlyph.getViewModeGlyph()).rangeChanged(newevt);
+				}
 			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		getSeqMapView().updatePanel();
+		getSeqMapView().getSeqMap().updateWidget();
 	}
 }

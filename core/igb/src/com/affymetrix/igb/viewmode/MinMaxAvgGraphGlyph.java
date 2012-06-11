@@ -96,14 +96,14 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i) {
+	protected void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i, Point curr_x_plus_width) {
 		// cache for drawing later
 		// cache for drawing later
 		if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
 			int yavg_pixel = ysum / points_in_pixel;
 			pixel_avg_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 		}
-		super.drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, i);
+		super.drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, i, null);
 	}
 
 	@Override

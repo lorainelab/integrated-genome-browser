@@ -142,7 +142,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                 .add(selectAndAddButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(deleteAndRestoreButton))
-            .add(jScrollPane1)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -222,10 +222,10 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         jLabel6.setText("Max Stack Depth: ");
 
         maxStackDepthTextField.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
                 maxDepthTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
 
@@ -337,8 +337,12 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         );
 
         refreshButton = new javax.swing.JButton();
-        refreshButton.setVisible(false);
         refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonPressed(evt);
+            }
+        });
 
         autoRefreshCheckBox.setVisible(false);
         autoRefreshCheckBox.setText("Auto Refresh");
@@ -560,6 +564,10 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	private void maxDepthTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_maxDepthTextChanged
 		tdv.maxDepthTextField();
 	}//GEN-LAST:event_maxDepthTextChanged
+
+	private void refreshButtonPressed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonPressed
+		((TierPrefsView)(tdv)).refreshSeqMapViewAndSlicedView();
+	}//GEN-LAST:event_refreshButtonPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel FieldLabel;

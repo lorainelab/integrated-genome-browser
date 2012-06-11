@@ -43,11 +43,12 @@ public class TransformAction extends SeqMapViewActionA {
 				refreshMap(false, false);
 				
 				if(savedCoordBox != null){
-					tg.setCoordBox(savedCoordBox);
+					tg.setPreferredHeight(savedCoordBox.getHeight(), getTierMap().getView());
+					tg.pack(getTierMap().getView());
 				}
 				
-				getSeqMapView().getSeqMap().packTiers(false, true, false);
-				getSeqMapView().getSeqMap().packTiers(false, true, false);
+				getTierMap().packTiers(false, true, false);
+				getTierMap().packTiers(false, true, false);
 			}
 			catch (Exception ex) {
 				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());

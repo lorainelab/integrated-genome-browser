@@ -25,7 +25,7 @@ public class HideAction extends RepackTiersAction {
 	}
 
 	private HideAction() {
-		super(BUNDLE.getString("hideAction"), null, null);
+		super(BUNDLE.getString("hideAction"), "images/invisible.gif", "images/invisible.gif");
 	}
 
 	/**

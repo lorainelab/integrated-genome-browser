@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -28,7 +29,11 @@ import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.*;
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 /**
  * For Panels that update the Track styles (as opposed to the track style defaults)
@@ -80,8 +85,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 
 	@Override
 	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
-		final JCheckBox yAxisCheckBox = getyAxisCheckBox();
-		boolean b = yAxisCheckBox.isSelected();
+		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
+		boolean b = YAxisCheckBox.isSelected();
 		for (AbstractGraphGlyph gl : graphGlyphs) {
 			gl.setShowAxis(b);
 		}
@@ -146,19 +151,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		for (TierGlyph tier : selectedTiers) {
 			ITrackStyleExtended style = tier.getAnnotStyle();
 			style.setLabelField(labelField);
-		}
-		updateDisplay();
-	}
-
-	@Override
-	protected void collapsedCheckBoxActionPerformedA(ActionEvent evt) {
-	    final JCheckBox collapsedCheckBox = getCollapsedCheckBox();
-	    String actionId = collapsedCheckBox.isSelected() ?
-	    	"com.affymetrix.igb.action.CollapseAction" :
-			"com.affymetrix.igb.action.ExpandAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
 		}
 		updateDisplay();
 	}
@@ -304,14 +296,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		updateDisplay();
 	}
 
-	@Override
-	protected void stackDepthTextFieldActionPerformedA(ActionEvent evt) {
+	private void setStackDepth(List<? extends Glyph> tiers) {
 		final JTextField stackDepthTextField = getStackDepthTextField();
 		String mdepth_string = stackDepthTextField.getText();
-		if (selectedTiers == null || mdepth_string == null) {
+		if (tiers == null || mdepth_string == null) {
 			return;
 		}
-		for (TierGlyph tier : selectedTiers) {
+		for (Glyph glyph : tiers) {
+			TierGlyph tier = (TierGlyph)glyph;
 			int prev_max_depth = tier.getAnnotStyle().getMaxDepth();
 			try {
 				tier.getAnnotStyle().setMaxDepth(Integer.parseInt(mdepth_string));
@@ -321,6 +313,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		}
 		igbService.getSeqMapView().repackTheTiers(true, true);
 		updateDisplay();
+	}
+
+	@Override
+	protected void stackDepthTextFieldActionPerformedA(ActionEvent evt) {
+		setStackDepth(selectedTiers);
 	}
 
 	@Override
@@ -336,6 +333,34 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		updateDisplay();
 	}
 
+	@Override
+	protected void stackDepthGoButtonActionPerformedA(ActionEvent evt) {
+		setStackDepth(selectedTiers);
+	}
+
+	@Override
+	protected void stackDepthAllButtonActionPerformedA(ActionEvent evt) {
+		setStackDepth(igbService.getVisibleTierGlyphs());
+	}
+
+	@Override
+	protected void selectAllButtonActionPerformedA(ActionEvent evt) {
+	}
+
+	@Override
+	protected void hideButtonActionPerformedA(ActionEvent evt) {
+	}
+
+	@Override
+	protected void clearButtonActionPerformedA(ActionEvent evt) {
+	}
+
+	@Override
+	protected void restoreDefaultsButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private boolean isAllGraph() {
 		return allGlyphs.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
 	}
@@ -349,7 +374,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		JComboBox viewModeComboBox = getViewModeComboBox();
 		viewModeComboBox.removeAllItems();
 		viewModeComboBox.setEnabled(selectedTiers.size() > 0);
-		getViewModeLabel().setEnabled(selectedTiers.size() > 0);
+		getViewModePanel().setEnabled(selectedTiers.size() > 0);
 		if (selectedTiers.size() == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
 			if (style == null || selectedTiers.get(0).getInfo() == null) {
@@ -381,7 +406,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 
 	@Override
 	protected void YAxisCheckBoxReset() {
-		JCheckBox yAxisCheckBox = getyAxisCheckBox();
+		JCheckBox yAxisCheckBox = getYAxisCheckBox();
 		yAxisCheckBox.setEnabled(isAllGraph());
 		boolean allYAxis = isAllGraph();
 		for (AbstractGraphGlyph gg : graphGlyphs) {
@@ -525,20 +550,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		if (labelField != null) {
 			labelFieldComboBox.setSelectedItem(labelField);
 		}
-	}
-
-	@Override
-	protected void collapsedCheckBoxReset() {
-		JCheckBox collapsedCheckBox = getCollapsedCheckBox();
-		collapsedCheckBox.setEnabled(isAllAnnot());
-		boolean allCollapsed = isAllAnnot();
-		for (ViewModeGlyph glyph : annotGlyphs) {
-			if (!(glyph.getAnnotStyle().getExpandable() && glyph.getAnnotStyle().getCollapsed())) {
-				allCollapsed = false;
-				break;
-			}
-		}
-		collapsedCheckBox.setSelected(allCollapsed);
 	}
 
 	@Override
@@ -781,5 +792,41 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		else {
 			trackNameTextField.setText("");
 		}
+	}
+
+	@Override
+	protected void stackDepthGoButtonReset() {
+		JButton stackDepthGoButton = getStackDepthGoButton();
+		stackDepthGoButton.setEnabled(annotGlyphs.size() > 0);
+	}
+
+	@Override
+	protected void stackDepthAllButtonReset() {
+		JButton stackDepthAllButton = getStackDepthAllButton();
+		stackDepthAllButton.setEnabled(annotGlyphs.size() > 0);
+	}
+
+	@Override
+	protected void selectAllButtonReset() {
+		JButton selectAllButton = getSelectAllButton();
+		selectAllButton.setEnabled(allGlyphs.size() > 0);
+	}
+
+	@Override
+	protected void hideButtonReset() {
+		JButton hideButton = getHideButton();
+		hideButton.setEnabled(allGlyphs.size() > 0);
+	}
+
+	@Override
+	protected void clearButtonReset() {
+		JButton clearButton = getClearButton();
+		clearButton.setEnabled(allGlyphs.size() > 0);
+	}
+
+	@Override
+	protected void restoreDefaultsButtonReset() {
+		// TODO Auto-generated method stub
+		
 	}
 }

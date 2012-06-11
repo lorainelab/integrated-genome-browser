@@ -51,12 +51,6 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void collapsedCheckBoxActionPerformedA(ActionEvent evt) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 		// TODO Auto-generated method stub
 		
@@ -165,12 +159,6 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void collapsedCheckBoxReset() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	protected void strands2TracksCheckBoxReset() {
 		// TODO Auto-generated method stub
 		
@@ -232,6 +220,78 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 
 	@Override
 	protected void trackNameTextFieldReset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void stackDepthGoButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void stackDepthAllButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void selectAllButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void hideButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void clearButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void restoreDefaultsButtonActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void stackDepthGoButtonReset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void stackDepthAllButtonReset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void selectAllButtonReset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void hideButtonReset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void clearButtonReset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void restoreDefaultsButtonReset() {
 		// TODO Auto-generated method stub
 		
 	}

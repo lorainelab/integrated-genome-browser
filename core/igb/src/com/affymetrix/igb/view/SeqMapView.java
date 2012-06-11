@@ -477,29 +477,17 @@ public class SeqMapView extends JPanel
 		xzoombox.add(refresh_button);
 	}
 
-	private class ThresholdXZoomer extends RPAdjustableJSlider implements SymSelectionListener, SeqSelectionListener, TrackStylePropertyListener {
+	private class ThresholdXZoomer extends RPAdjustableJSlider implements TrackStylePropertyListener {
 		private static final long serialVersionUID = 1L;
 
 		public ThresholdXZoomer(String id) {
 			super(id + "_xzoomer", Adjustable.HORIZONTAL);
+			TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 		}
 
 		@Override
 		public void trackstylePropertyChanged(EventObject eo) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void symSelectionChanged(SymSelectionEvent evt) {
-			// TODO Auto-generated method stub
-			
+			getSeqMap().updateWidget();
 		}
 
 		@Override
@@ -509,8 +497,8 @@ public class SeqMapView extends JPanel
 			if (getAutoLoad() != null) {
 				drawAutoLoadPoint(g);
 			}
-			for (GlyphI glyph : SeqMapView.this.getSelectedTiers()) {
-				drawTrackThresholdPoint(g, (TierGlyph)glyph);
+			for (TierGlyph tierGlyph : SeqMapView.this.getTierManager().getVisibleTierGlyphs()) {
+				drawTrackThresholdPoint(g, tierGlyph);
 			}
 		}
 

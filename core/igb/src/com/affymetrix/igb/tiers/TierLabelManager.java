@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.action.TrackResizingAction;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
@@ -665,6 +664,10 @@ public final class TierLabelManager implements PropertyHolder {
 
 	@Override
 	public Map<String, Object> determineProps(SeqSymmetry sym) {
+		if(sym == null){
+			return Collections.<String, Object>emptyMap();
+		}
+		
 		Map<String, Object> props = null;
 		if (sym instanceof SymWithProps) {
 			// using Propertied.cloneProperties() here instead of Propertied.getProperties()

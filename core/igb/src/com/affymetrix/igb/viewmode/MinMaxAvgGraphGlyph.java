@@ -124,6 +124,18 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 	
 	@Override
+	public void moveRelative(double diffx, double diffy) {
+		super.moveRelative(diffy, diffy);
+		tempViewModeBarGraphGlyph.moveRelative(diffy, diffy);
+	}
+	
+	@Override
+	public void moveAbsolute(double x, double y){
+		super.moveAbsolute(x, y);
+		tempViewModeBarGraphGlyph.moveAbsolute(x, y);
+	}
+	
+	@Override
 	public GraphType getGraphStyle() {
 		return GraphType.MINMAXAVG;
 	}

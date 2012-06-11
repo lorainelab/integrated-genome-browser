@@ -12,7 +12,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.shared.DeselectAllAction;
 import com.affymetrix.igb.shared.SelectAllAction;
 
@@ -117,9 +116,8 @@ public class MainMenuUtil {
 		view_menu.addSeparator();
 		JRPMenu track_resize_behavior = MenuUtil.getRPMenu(menuBar, id + "_main_viewMenu_trackResizeBehavior", BUNDLE.getString("trackResizeBehavior"));
 		MenuUtil.addToMenu(view_menu, track_resize_behavior);
-		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAllTrack", TrackResizingAction.getAdjustAllAction()));
-		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAdjacentTrack", TrackResizingAction.getAdjustAdjacentAction()));
-		//MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_test", CollapseExpandAction.createSingleton()));
+		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAllTrack", ToggleTrackResizingAction.getAction().getAdjustAllAction()));
+		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAdjacentTrack", ToggleTrackResizingAction.getAction().getAdjustAdjacentAction()));
 	}
 
 	private void toolMenu(JMenuBar menuBar, String id) {

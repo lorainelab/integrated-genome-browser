@@ -17,12 +17,12 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 	}
 
 	protected ExpandAction() {
-		super(IGBConstants.BUNDLE.getString("expandAction"), "16x16/actions/view-fullscreen.png", "22x22/actions/expand.png");
+		super(IGBConstants.BUNDLE.getString("expandAction"), "16x16/actions/expand.png", "22x22/actions/expand.png");
 		collapsedTracks = false;
 	}
 
 	@Override
 	protected void processChange(boolean hasCollapsed, boolean hasExpanded) {
-		setEnabled(hasExpanded);
+		setEnabled(hasCollapsed);
 	}
 }

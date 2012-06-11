@@ -38,6 +38,16 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 		repack(true);
 	}
 
+	public int getOptimum() {
+		List<TierLabelGlyph> theTiers = getTierManager().getAllTierLabels();
+		int ourOptimum = 1;
+		for (TierLabelGlyph tlg : theTiers) {
+			TierGlyph tg = (TierGlyph) tlg.getInfo();
+			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));
+		}
+		return ourOptimum;
+	}
+
 	protected void changeExpandMax(List<TierLabelGlyph> theTiers) {
 		if (theTiers == null || theTiers.isEmpty()) {
 			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
@@ -65,7 +75,7 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 			}
 		}
 
-		int ourOptimum = 1;
+		int ourOptimum = getOptimum();
 		for (TierLabelGlyph tlg : theTiers) {
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));

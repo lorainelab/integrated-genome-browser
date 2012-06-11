@@ -105,7 +105,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         foregroundColorLabel = new javax.swing.JLabel();
         labelColorLabel = new javax.swing.JLabel();
         backgroundColorLabel = new javax.swing.JLabel();
-        fontSizeLabel = new javax.swing.JLabel();
+        labelSizeLabel = new javax.swing.JLabel();
         graphPanel = new javax.swing.JPanel();
         graphStyleLineRadioButton = new javax.swing.JRadioButton();
         graphStyleBarRadioButton = new javax.swing.JRadioButton();
@@ -133,7 +133,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         strandsReverseColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         stackDepthGoButton = new javax.swing.JButton();
-        stackDepthAllButton = new javax.swing.JButton();
+        stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction.getAction());
         viewModePanel = new javax.swing.JPanel();
         viewModeComboBox = new javax.swing.JComboBox();
         selectAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.SelectAllAction.getAction());
@@ -208,7 +208,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
         backgroundColorLabel.setText("BG");
 
-        fontSizeLabel.setText("Font Size");
+        labelSizeLabel.setText("Font Size");
 
         org.jdesktop.layout.GroupLayout stylePanelLayout = new org.jdesktop.layout.GroupLayout(stylePanel);
         stylePanel.setLayout(stylePanelLayout);
@@ -233,7 +233,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(colorSchemeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(fontSizeLabel))
+                            .add(labelSizeLabel))
                         .add(8, 8, 8)
                         .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(labelSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -253,7 +253,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fontSizeLabel))
+                    .add(labelSizeLabel))
                 .add(8, 8, 8)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(colorSchemeLabel)
@@ -390,7 +390,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        nameLabel.setText("Name:");
+        nameLabel.setText("Name");
 
         trackNameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -618,7 +618,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .add(0, 0, Short.MAX_VALUE))
+                .add(0, 6, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -821,7 +821,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
 	private void restoreToDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreToDefaultButtonActionPerformed
 		if (is_listening) {
-			restoreDefaultsButtonActionPerformedA(evt);
+			restoreToDefaultButtonActionPerformedA(evt);
 		}
 	}//GEN-LAST:event_restoreToDefaultButtonActionPerformed
 
@@ -835,7 +835,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
     private com.affymetrix.genoviz.color.ColorSchemeComboBox colorSchemeComboBox;
     private javax.swing.JLabel colorSchemeLabel;
     private javax.swing.JCheckBox floatCheckBox;
-    private javax.swing.JLabel fontSizeLabel;
     private com.jidesoft.combobox.ColorComboBox foregroundColorComboBox;
     private javax.swing.JLabel foregroundColorLabel;
     private javax.swing.JPanel graphPanel;
@@ -854,6 +853,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
     private javax.swing.JComboBox labelFieldComboBox;
     private javax.swing.JLabel labelFieldLabel;
     private javax.swing.JComboBox labelSizeComboBox;
+    private javax.swing.JLabel labelSizeLabel;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JButton restoreToDefaultButton;
     private javax.swing.JButton selectAllButton;
@@ -1037,7 +1037,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		return clearButton;
 	}
 
-	public javax.swing.JButton getRestoreDefaultsButton() {
+	public javax.swing.JButton getRestoreToDefaultButton() {
 		return restoreToDefaultButton;
 	}
 
@@ -1061,8 +1061,8 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		return viewModePanel;
 	}
 
-	public javax.swing.JLabel getFontSizeLabel() {
-		return fontSizeLabel;
+	public javax.swing.JLabel getLabelSizeLabel() {
+		return labelSizeLabel;
 	}
 
 	// you can "generate" these by copying all the event handlers
@@ -1095,7 +1095,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected abstract void selectAllButtonActionPerformedA(ActionEvent evt);
 	protected abstract void hideButtonActionPerformedA(ActionEvent evt);
 	protected abstract void clearButtonActionPerformedA(ActionEvent evt);
-	protected abstract void restoreDefaultsButtonActionPerformedA(ActionEvent evt);
+	protected abstract void restoreToDefaultButtonActionPerformedA(ActionEvent evt);
 
 	// you can "generate" these by copying all the event handlers
 	// into your text processor and globally changing (must handle regex)
@@ -1129,7 +1129,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected abstract void selectAllButtonReset();
 	protected abstract void hideButtonReset();
 	protected abstract void clearButtonReset();
-	protected abstract void restoreDefaultsButtonReset();
+	protected abstract void restoreToDefaultButtonReset();
 	protected final void resetAll() {
 		is_listening = false;
 		getStylePanel().setEnabled(allGlyphs.size() > 0);
@@ -1158,7 +1158,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		selectAllButtonReset();
 		hideButtonReset();
 		clearButtonReset();
-		restoreDefaultsButtonReset();
+		restoreToDefaultButtonReset();
 		is_listening = true;
 	}
 

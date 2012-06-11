@@ -62,7 +62,7 @@
                       <Component id="graphPanel" min="-2" max="-2" attributes="1"/>
                   </Group>
               </Group>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -139,7 +139,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="colorSchemeLabel" min="-2" pref="70" max="-2" attributes="0"/>
-                              <Component id="fontSizeLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelSizeLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -166,7 +166,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="labelSizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="fontSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -282,7 +282,7 @@
             <Property name="text" type="java.lang.String" value="BG"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="fontSizeLabel">
+        <Component class="javax.swing.JLabel" name="labelSizeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Font Size"/>
           </Properties>
@@ -473,7 +473,7 @@
     </Container>
     <Component class="javax.swing.JLabel" name="nameLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Name:"/>
+        <Property name="text" type="java.lang.String" value="Name"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="trackNameTextField">
@@ -680,6 +680,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthAllButtonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton(com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction.getAction())"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

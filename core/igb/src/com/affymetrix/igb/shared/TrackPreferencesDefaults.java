@@ -255,7 +255,7 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void restoreDefaultsButtonActionPerformedA(ActionEvent evt) {
+	protected void restoreToDefaultButtonActionPerformedA(ActionEvent evt) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -291,7 +291,7 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void restoreDefaultsButtonReset() {
+	protected void restoreToDefaultButtonReset() {
 		// TODO Auto-generated method stub
 		
 	}

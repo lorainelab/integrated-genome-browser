@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
+import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -29,11 +30,7 @@ import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.*;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 /**
  * For Panels that update the Track styles (as opposed to the track style defaults)
@@ -296,13 +293,13 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		updateDisplay();
 	}
 
-	private void setStackDepth(List<? extends Glyph> tiers) {
+	private void setStackDepth() {
 		final JTextField stackDepthTextField = getStackDepthTextField();
 		String mdepth_string = stackDepthTextField.getText();
-		if (tiers == null || mdepth_string == null) {
+		if (selectedTiers == null || mdepth_string == null) {
 			return;
 		}
-		for (Glyph glyph : tiers) {
+		for (Glyph glyph : selectedTiers) {
 			TierGlyph tier = (TierGlyph)glyph;
 			int prev_max_depth = tier.getAnnotStyle().getMaxDepth();
 			try {
@@ -317,7 +314,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 
 	@Override
 	protected void stackDepthTextFieldActionPerformedA(ActionEvent evt) {
-		setStackDepth(selectedTiers);
+		setStackDepth();
 	}
 
 	@Override
@@ -335,12 +332,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 
 	@Override
 	protected void stackDepthGoButtonActionPerformedA(ActionEvent evt) {
-		setStackDepth(selectedTiers);
+		setStackDepth();
 	}
 
 	@Override
 	protected void stackDepthAllButtonActionPerformedA(ActionEvent evt) {
-		setStackDepth(igbService.getVisibleTierGlyphs());
+		getStackDepthTextField().setText("" + ChangeExpandMaxOptimizeAction.getAction().getOptimum());
 	}
 
 	@Override
@@ -356,9 +353,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	}
 
 	@Override
-	protected void restoreDefaultsButtonActionPerformedA(ActionEvent evt) {
-		// TODO Auto-generated method stub
-		
+	protected void restoreToDefaultButtonActionPerformedA(ActionEvent evt) {
 	}
 
 	private boolean isAllGraph() {
@@ -461,6 +456,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	protected void labelSizeComboBoxReset() {
 		JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		labelSizeComboBox.setEnabled(allGlyphs.size() > 0);
+		getLabelSizeLabel().setEnabled(allGlyphs.size() > 0);
 		Integer labelSize = -1;
 		boolean labelSizeSet = false;
 		for (ViewModeGlyph vg : allGlyphs) {
@@ -825,8 +821,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	}
 
 	@Override
-	protected void restoreDefaultsButtonReset() {
-		// TODO Auto-generated method stub
-		
+	protected void restoreToDefaultButtonReset() {
+		JButton restoreToDefaultButton = getRestoreToDefaultButton();
+		restoreToDefaultButton.setEnabled(allGlyphs.size() > 0);
 	}
 }

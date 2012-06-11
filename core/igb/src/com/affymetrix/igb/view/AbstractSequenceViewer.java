@@ -148,7 +148,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	 this.isGenomicRequest = false;
 			} else {
 				if (syms.size() > 1 || seqmapview.getSeqSymmetry() != null) {
-					this.errorMessage = "Multiple selections, please select one feature or a parent";
+					this.errorMessage = "Multiple selections, please select only one feature at a time";
 				}
 			}
 		} else {

@@ -191,7 +191,12 @@ public class Activator implements BundleActivator {
 	 */
 	private void run(ServiceReference<IWindowService> windowServiceReference) {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
-    	GenericActionHolder.getInstance().addGenericActionListener(
+ 
+        IWindowService windowService = bundleContext.getService(windowServiceReference);
+        final IGB igb = new IGB();
+        IGB.commandLineBatchFileStr = commandLineBatchFileStr;
+
+		GenericActionHolder.getInstance().addGenericActionListener(
     		new GenericActionListener() {
 				@Override
 				public void onCreateGenericAction(GenericAction genericAction) {
@@ -208,10 +213,7 @@ public class Activator implements BundleActivator {
 				public void notifyGenericAction(GenericAction genericAction) {}
 			}
     	);
-        IWindowService windowService = bundleContext.getService(windowServiceReference);
-        final IGB igb = new IGB();
-        IGB.commandLineBatchFileStr = commandLineBatchFileStr;
-
+			
 		// To avoid race condition on startup
 		initMapViewGlyphFactorys();
 		

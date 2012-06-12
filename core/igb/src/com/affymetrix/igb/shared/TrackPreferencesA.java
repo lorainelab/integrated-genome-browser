@@ -697,6 +697,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		}
 		else {
 			unselectGraphStyle();
+			getGraphStyleHeatMapRadioButton().setText("Heat Map");
+			getGraphStyleHeatMapComboBox().setVisible(false);
 		}
 	}
 

@@ -21,7 +21,7 @@ public class CopyResiduesAction extends GenericAction {
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		GenericActionHolder.getInstance().addGenericAction(ACTION_SHORT);
+		//GenericActionHolder.getInstance().addGenericAction(ACTION_SHORT);
 	}
 	public static CopyResiduesAction getAction() {
 		return ACTION;

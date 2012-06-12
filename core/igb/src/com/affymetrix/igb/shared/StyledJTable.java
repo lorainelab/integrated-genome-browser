@@ -100,7 +100,10 @@ public class StyledJTable extends JideTable {
 	@Override
 	public Component prepareRenderer(TableCellRenderer tcr, int r, int c) {
 		Component component = super.prepareRenderer(tcr, r, c);
-		return setComponentBackground(component, r, c);
+		if(component!=null)
+			return setComponentBackground(component, r, c);
+		else 
+			return null;
 	}
 
 	@Override

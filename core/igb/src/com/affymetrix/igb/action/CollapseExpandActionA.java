@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -16,43 +15,72 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Some code common to collapsing and expanding tiers.
+ */
 public abstract class CollapseExpandActionA extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 	protected boolean collapsedTracks;
 	
 	protected CollapseExpandActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
-		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		getTierManager().setTiersCollapsed(tier_labels, collapsed);
 		getSeqMapView().getSeqMap().updateWidget();
 	}
 
+	/**
+	 * Expand or collapse as appropriate.
+	 * Then enable or disable ourself and our partner as appropriate.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		setTiersCollapsed(getTierManager().getSelectedTierLabels(), collapsedTracks);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		changeActionDisplay(new ArrayList<SeqSymmetry>());
+
+		// Don't fully understand why we need to treat the menu item
+		// differently from the tool bar, but we do.
+		List<SeqSymmetry> selected_syms;
+		if (e.getSource() instanceof javax.swing.JMenuItem) {
+			SeqMapView gviewer = getSeqMapView();
+			@SuppressWarnings("unchecked")
+			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+			selected_syms = SeqMapView.glyphsToSyms(tiers);
+		}
+		else {
+			selected_syms = new ArrayList<SeqSymmetry>();
+		}
+		changeActionDisplay(selected_syms);
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Override to enable or disable self and partner based on tracks selected.
+	 */
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		SeqMapView gviewer = getSeqMapView();
-		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms((List<GlyphI>)gviewer.getSelectedTiers());
+
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
-
 		Object src = evt.getSource();
+		SeqMapView gviewer = getSeqMapView();
 		if (!(src == gviewer || src == gviewer.getSeqMap())) {
 			return;
 		}
 
+		@SuppressWarnings("unchecked")
+		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
+
 		changeActionDisplay(selected_syms);
 	}
 
+	/**
+	 * Subclasses should enable and disable self and partner.
+	 * @param hasCollapsed if some selected tier is collapsed.
+	 * @param hasExpanded if some selected tier is expanded.
+	 */
 	protected abstract void processChange(boolean hasCollapsed, boolean hasExpanded);
 
 	private void changeActionDisplay(List<SeqSymmetry> selected_syms) {
@@ -71,4 +99,5 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		}
 		processChange(hasCollapsed, hasExpanded);
 	}
+
 }

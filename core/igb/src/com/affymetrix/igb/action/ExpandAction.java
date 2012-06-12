@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
@@ -10,6 +11,7 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 
 	static{
 		GenericActionHolder.getInstance().addGenericActionSilently(ACTION);
+		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
 	}
 	
 	public static ExpandAction getAction() {
@@ -24,5 +26,6 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 	@Override
 	protected void processChange(boolean hasCollapsed, boolean hasExpanded) {
 		setEnabled(hasCollapsed);
+		CollapseAction.getAction().setEnabled(hasExpanded);
 	}
 }

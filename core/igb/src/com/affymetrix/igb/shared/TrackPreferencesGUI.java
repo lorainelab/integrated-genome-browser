@@ -95,17 +95,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
         jFrame1 = new javax.swing.JFrame();
         buttonGroup1 = new javax.swing.ButtonGroup();
-        stylePanel = new javax.swing.JPanel();
-        labelSizeComboBox = new javax.swing.JComboBox();
-        colorSchemeLabel = new javax.swing.JLabel();
-        colorSchemeComboBox = createColorSchemeComboBox();
-        foregroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        backgroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        labelColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        foregroundColorLabel = new javax.swing.JLabel();
-        labelColorLabel = new javax.swing.JLabel();
-        backgroundColorLabel = new javax.swing.JLabel();
-        labelSizeLabel = new javax.swing.JLabel();
         graphPanel = new javax.swing.JPanel();
         graphStyleLineRadioButton = new javax.swing.JRadioButton();
         graphStyleBarRadioButton = new javax.swing.JRadioButton();
@@ -117,6 +106,17 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         graphStyleDotRadioButton = new javax.swing.JRadioButton();
         graphStyleMinMaxAvgRadioButton = new javax.swing.JRadioButton();
         graphStyleHeatMapComboBox = new javax.swing.JComboBox();
+        stylePanel = new javax.swing.JPanel();
+        labelSizeComboBox = new javax.swing.JComboBox();
+        colorSchemeLabel = new javax.swing.JLabel();
+        colorSchemeComboBox = createColorSchemeComboBox();
+        foregroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+        backgroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+        labelColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+        foregroundColorLabel = new javax.swing.JLabel();
+        labelColorLabel = new javax.swing.JLabel();
+        backgroundColorLabel = new javax.swing.JLabel();
+        labelSizeLabel = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
         trackNameTextField = new javax.swing.JTextField();
         annotationsPanel = new javax.swing.JPanel();
@@ -152,9 +152,143 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
             .add(0, 300, Short.MAX_VALUE)
         );
 
+        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
+        graphPanel.setPreferredSize(new java.awt.Dimension(155, 190));
+
+        buttonGroup1.add(graphStyleLineRadioButton);
+        graphStyleLineRadioButton.setText("Line");
+        graphStyleLineRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleLineRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleLineRadioButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(graphStyleBarRadioButton);
+        graphStyleBarRadioButton.setText("Bar");
+        graphStyleBarRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleBarRadioButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(graphStyleStairStepRadioButton);
+        graphStyleStairStepRadioButton.setText("StairStep");
+        graphStyleStairStepRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleStairStepRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleStairStepRadioButtonActionPerformed(evt);
+            }
+        });
+
+        floatCheckBox.setText("Float");
+        floatCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
+        floatCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                floatCheckBoxActionPerformed(evt);
+            }
+        });
+
+        YAxisCheckBox.setText("Y-axis");
+        YAxisCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
+        YAxisCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                YAxisCheckBoxActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(graphStyleHeatMapRadioButton);
+        graphStyleHeatMapRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleHeatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleHeatMapRadioButtonActionPerformed(evt);
+            }
+        });
+
+        graphStylesLabel.setText("Graph Styles:");
+
+        buttonGroup1.add(graphStyleDotRadioButton);
+        graphStyleDotRadioButton.setText("Dot");
+        graphStyleDotRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleDotRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleDotRadioButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
+        graphStyleMinMaxAvgRadioButton.setText("Min/Max/Mean");
+        graphStyleMinMaxAvgRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleMinMaxAvgRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleMinMaxAvgRadioButtonActionPerformed(evt);
+            }
+        });
+
+        graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
+        graphStyleHeatMapComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
+        graphStyleHeatMapComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleHeatMapComboBoxActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+            graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(graphPanelLayout.createSequentialGroup()
+                .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
+                .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(graphPanelLayout.createSequentialGroup()
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(graphPanelLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(graphPanelLayout.createSequentialGroup()
+                        .add(19, 19, 19)
+                        .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
+            .add(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(graphStylesLabel))
+            .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        );
+        graphPanelLayout.setVerticalGroup(
+            graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, graphPanelLayout.createSequentialGroup()
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(graphStylesLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(4, 4, 4)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+        );
+
         stylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
 
         labelSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
+        labelSizeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
         labelSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 labelSizeComboBoxActionPerformed(evt);
@@ -163,6 +297,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
         colorSchemeLabel.setText("Scheme");
 
+        colorSchemeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
         colorSchemeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorSchemeComboBoxActionPerformed(evt);
@@ -215,29 +350,29 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         stylePanelLayout.setHorizontalGroup(
             stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(stylePanelLayout.createSequentialGroup()
-                .add(6, 6, 6)
+                .add(0, 0, 0)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(foregroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(3, 3, 3)
+                        .add(0, 0, 0)
                         .add(foregroundColorLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(backgroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(0, 0, 0)
                         .add(backgroundColorLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(12, 12, 12)
                         .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(0, 0, 0)
                         .add(labelColorLabel))
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(colorSchemeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(labelSizeLabel))
-                        .add(8, 8, 8)
+                        .add(0, 0, 0)
                         .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(labelSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(colorSchemeComboBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))))
-                .add(0, 0, Short.MAX_VALUE))
+                .addContainerGap(0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         stylePanelLayout.setVerticalGroup(
             stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -249,144 +384,15 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(labelColorLabel)
                     .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(backgroundColorLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(labelSizeLabel))
-                .add(8, 8, 8)
+                .add(0, 0, 0)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(colorSchemeLabel)
                     .add(colorSchemeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-
-        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
-
-        buttonGroup1.add(graphStyleLineRadioButton);
-        graphStyleLineRadioButton.setText("Line");
-        graphStyleLineRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleLineRadioButtonActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(graphStyleBarRadioButton);
-        graphStyleBarRadioButton.setText("Bar");
-        graphStyleBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleBarRadioButtonActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(graphStyleStairStepRadioButton);
-        graphStyleStairStepRadioButton.setText("StairStep");
-        graphStyleStairStepRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleStairStepRadioButtonActionPerformed(evt);
-            }
-        });
-
-        floatCheckBox.setText("Float");
-        floatCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                floatCheckBoxActionPerformed(evt);
-            }
-        });
-
-        YAxisCheckBox.setText("Y-axis");
-        YAxisCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                YAxisCheckBoxActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(graphStyleHeatMapRadioButton);
-        graphStyleHeatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapRadioButtonActionPerformed(evt);
-            }
-        });
-
-        graphStylesLabel.setText("Graph Styles:");
-
-        buttonGroup1.add(graphStyleDotRadioButton);
-        graphStyleDotRadioButton.setText("Dot");
-        graphStyleDotRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleDotRadioButtonActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
-        graphStyleMinMaxAvgRadioButton.setText("min/max/mean");
-        graphStyleMinMaxAvgRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleMinMaxAvgRadioButtonActionPerformed(evt);
-            }
-        });
-
-        graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
-        graphStyleHeatMapComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapComboBoxActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
-        graphPanel.setLayout(graphPanelLayout);
-        graphPanelLayout.setHorizontalGroup(
-            graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(graphPanelLayout.createSequentialGroup()
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(graphPanelLayout.createSequentialGroup()
-                        .add(graphStyleHeatMapRadioButton)
-                        .add(5, 5, 5)
-                        .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(graphStyleStairStepRadioButton)
-                    .add(graphPanelLayout.createSequentialGroup()
-                        .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(graphPanelLayout.createSequentialGroup()
-                                .add(graphStyleLineRadioButton)
-                                .add(7, 7, 7))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, floatCheckBox))
-                        .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(graphPanelLayout.createSequentialGroup()
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(YAxisCheckBox))
-                            .add(graphPanelLayout.createSequentialGroup()
-                                .add(19, 19, 19)
-                                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(graphStyleDotRadioButton)
-                                    .add(graphStyleBarRadioButton)))))
-                    .add(graphPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(graphStylesLabel))
-                    .add(graphStyleMinMaxAvgRadioButton))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        graphPanelLayout.setVerticalGroup(
-            graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, graphPanelLayout.createSequentialGroup()
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(floatCheckBox)
-                    .add(YAxisCheckBox))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(graphStylesLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(graphStyleLineRadioButton)
-                    .add(graphStyleBarRadioButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(graphStyleStairStepRadioButton)
-                    .add(graphStyleDotRadioButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(graphStyleMinMaxAvgRadioButton)
-                .add(4, 4, 4)
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(graphStyleHeatMapRadioButton)
-                    .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         nameLabel.setText("Name");
@@ -487,31 +493,28 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(labelFieldComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .add(annotationsPanelLayout.createSequentialGroup()
-                .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(stackDepthLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(stackDepthGoButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(stackDepthAllButton))
-                    .add(strandsLabel)
-                    .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(strandsColorCheckBox)
-                        .add(18, 18, 18)
-                        .add(strandsForwardColorLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(strandsForwardColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(strandsReverseColorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(strands2TracksCheckBox)
-                        .add(18, 18, 18)
-                        .add(strandsArrowCheckBox)))
-                .add(0, 0, Short.MAX_VALUE))
+                .add(stackDepthLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(stackDepthGoButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(stackDepthAllButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(strandsLabel)
+            .add(annotationsPanelLayout.createSequentialGroup()
+                .add(strandsColorCheckBox)
+                .add(18, 18, 18)
+                .add(strandsForwardColorLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(strandsForwardColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(strandsReverseColorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(annotationsPanelLayout.createSequentialGroup()
+                .add(strands2TracksCheckBox)
+                .add(18, 18, 18)
+                .add(strandsArrowCheckBox))
         );
         annotationsPanelLayout.setVerticalGroup(
             annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -521,7 +524,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(stackDepthGoButton)
                     .add(stackDepthAllButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelFieldLabel)
                     .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -538,7 +541,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(strandsReverseColorLabel)
                     .add(strandsForwardColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(strandsForwardColorLabel))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         viewModePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
@@ -553,7 +556,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         viewModePanel.setLayout(viewModePanelLayout);
         viewModePanelLayout.setHorizontalGroup(
             viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 169, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(viewModeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         viewModePanelLayout.setVerticalGroup(
             viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -595,34 +598,34 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(3, 3, 3)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(0, 0, 0)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                     .add(layout.createSequentialGroup()
                         .add(nameLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(trackNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                        .add(1, 1, 1)
-                        .add(selectAllButton)
-                        .add(6, 6, 6)
-                        .add(hideButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(trackNameTextField)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(selectAllButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(hideButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 0, 0)
                         .add(clearButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(7, 7, 7)
-                        .add(restoreToDefaultButton))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(restoreToDefaultButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(stylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 167, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(viewModePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .add(6, 6, 6))
+                .add(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(5, 5, 5)
+                .add(0, 0, 0)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(clearButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(hideButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -631,19 +634,18 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(trackNameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(selectAllButton))
                     .add(restoreToDefaultButton))
-                .add(0, 8, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(0, 0, Short.MAX_VALUE)
-                        .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(0, 7, Short.MAX_VALUE)
+                        .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(layout.createSequentialGroup()
                                 .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(stylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 173, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(0, 0, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents

@@ -17,7 +17,7 @@ public class ShowOneTierAction extends ShowStrandActionA implements SymSelection
 	}
 
 	protected ShowOneTierAction() {
-		super(IGBConstants.BUNDLE.getString("showSingleTierAction"), "images/strand_mixed.png", "22x22/actions/strandstogether.png");
+		super(IGBConstants.BUNDLE.getString("showSingleTierAction"), "16x16/actions/strandstogether.png", "22x22/actions/strandstogether.png");
 		separateStrands = false;
 	}
 

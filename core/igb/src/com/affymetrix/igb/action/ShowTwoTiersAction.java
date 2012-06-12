@@ -19,7 +19,7 @@ implements SymSelectionListener {
 
 	protected ShowTwoTiersAction() {
 		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"),
-				"images/strand_separate.png", "22x22/actions/strandseparate.png");
+				"16x16/actions/strandseparate.png", "22x22/actions/strandseparate.png");
 		separateStrands = true;
 	}
 

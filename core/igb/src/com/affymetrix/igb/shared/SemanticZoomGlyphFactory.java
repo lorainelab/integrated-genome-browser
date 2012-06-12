@@ -36,6 +36,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		szg.setDirection(direction);
 		szg.setLastUsedGlyph(szg.getDefaultGlyph());
 		szg.setStyle(style);
+		szg.setLastUsedGlyph(szg.getGlyph(smv));
 		// Calling this in the construction is causes NPE
 		return szg;
 	}

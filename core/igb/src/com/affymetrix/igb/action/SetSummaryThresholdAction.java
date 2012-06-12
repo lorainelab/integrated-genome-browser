@@ -86,5 +86,6 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		getSeqMapView().getSeqMap().updateWidget();
+		getZoomer().repaint();
 	}
 }

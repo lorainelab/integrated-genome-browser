@@ -62,6 +62,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
         maxValLabel = new javax.swing.JLabel();
         heightLabel = new javax.swing.JLabel();
         heightSlider = new javax.swing.JSlider(javax.swing.JSlider.HORIZONTAL, 10, 500, 50);
+        otherOptionsButton = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -167,20 +168,36 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
                 .add(heightLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         RangePanelLayout.linkSize(new java.awt.Component[] {maxText, minText}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        otherOptionsButton.setText("Other Options");
+        otherOptionsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                otherOptionsButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(55, 55, 55)
+                .add(otherOptionsButton)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(otherOptionsButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 209, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -230,6 +247,12 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		}
 	}//GEN-LAST:event_heightSliderStateChanged
 
+	private void otherOptionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherOptionsButtonActionPerformed
+		if (is_listening) {
+			igbService.openPreferencesOtherPanel();
+		}
+	}//GEN-LAST:event_otherOptionsButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup DisplayButtonGroup;
     private javax.swing.ButtonGroup DisplayModeButtonGroup;
@@ -244,6 +267,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
     private javax.swing.JLabel maxValLabel;
     private javax.swing.JTextField minText;
     private javax.swing.JLabel minValLabel;
+    private javax.swing.JButton otherOptionsButton;
     private javax.swing.JSlider rangeSlider;
     private javax.swing.JLabel setByLabel;
     private javax.swing.ButtonGroup stylegroup;

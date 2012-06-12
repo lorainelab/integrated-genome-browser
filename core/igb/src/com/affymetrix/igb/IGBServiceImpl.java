@@ -495,18 +495,14 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void openPreferencesTrackPanel() {
-		PreferencesPanel pp = PreferencesPanel.getSingleton();
-		pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-		javax.swing.JFrame f = pp.getFrame();
-		f.setVisible(true);
-	}
-
-	@Override
 	public void openPreferencesOtherPanel() {
-		PreferencesPanel pp = PreferencesPanel.getSingleton();
-		pp.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
-		javax.swing.JFrame f = pp.getFrame();
-		f.setVisible(true);
+		if (PreferencesPanel.TAB_OTHER_OPTIONS_VIEW != -1) {
+			PreferencesPanel pv = PreferencesPanel.getSingleton();
+			pv.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);	// Other preferences tab
+			JFrame f = pv.getFrame();
+			f.setVisible(true);
+		} else {
+			System.out.println("Other Preferences not instantiated");
+		}
 	}
 }

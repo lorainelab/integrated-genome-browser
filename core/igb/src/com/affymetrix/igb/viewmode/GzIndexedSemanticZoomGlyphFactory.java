@@ -14,13 +14,12 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.action.AutoLoadThresholdAction;
+import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.IndexedSemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 
 public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory {
 
@@ -48,8 +47,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 
 	// glyph class
 	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph{
-//		private static final double ZOOM_X_SCALE = 0.002;
-		private AutoLoadThresholdAction autoLoadThresholdAction;
 		private ViewModeGlyph saveSummaryGlyph;
 
 		public GzIndexedSemanticZoomGlyph(SeqSymmetry sym) {
@@ -63,15 +60,13 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 
 		@Override
 		public boolean isDetail(ViewI view) {
-			return autoLoadThresholdAction.isDetail(getAnnotStyle());
-			//return view.getTransform().getScaleX() >= ZOOM_X_SCALE;
+			return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
 		}
 
 		@Override
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,
 				Direction direction, SeqMapViewExtendedI gviewer) {
 			super.init(sym, trackStyle, direction, gviewer);
-			autoLoadThresholdAction = ((SeqMapView)gviewer).getAutoLoad();
 			try {
 				String method = (sym == null) ? trackStyle.getMethodName() : BioSeq.determineMethod(sym);
 				detailSymL = FileTypeHolder.getInstance().getFileTypeHandlerForURI(method).createSymLoader(new URI(method), trackStyle.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeqGroup());

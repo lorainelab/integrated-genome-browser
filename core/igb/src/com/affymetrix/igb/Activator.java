@@ -273,10 +273,7 @@ public class Activator implements BundleActivator {
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
 		ChangeLabelColorAction.getAction();
-		GenericActionHolder.getInstance().addGenericAction(
-				new SeqMapToggleAction(
-				SetSummaryThresholdAboveAction.getAction(),
-				SetSummaryThresholdBelowAction.getAction()));
+		SetSummaryThresholdAction.getAction();
 		GenericActionHolder.getInstance().addGenericAction(
 				new SeqMapToggleAction(
 				ShowOneTierAction.getAction(),
@@ -298,8 +295,6 @@ public class Activator implements BundleActivator {
 		UnsetDirectionStyleArrowAction.getAction();
 		SetDirectionStyleColorAction.getAction();
 		UnsetDirectionStyleColorAction.getAction();
-		SetSummaryThresholdAboveAction.getAction();
-		SetSummaryThresholdBelowAction.getAction();
 	}
 
 	private void initOperators() {

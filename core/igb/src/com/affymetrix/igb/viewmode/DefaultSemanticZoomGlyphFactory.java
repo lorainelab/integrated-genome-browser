@@ -5,20 +5,18 @@ import java.util.HashMap;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.action.AutoLoadThresholdAction;
+import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	private final MapViewGlyphFactoryI detailGlyphFactory;
 	private final MapViewGlyphFactoryI depthFactory;
 
 	private class DefaultSemanticZoomGlyph extends SemanticZoomGlyph {
-		private AutoLoadThresholdAction autoLoadThresholdAction;
 		private ViewModeGlyph depthGlyph; 
 		private ViewModeGlyph detailGlyph; 
 		private DefaultSemanticZoomGlyph(SeqSymmetry sym) {
@@ -27,12 +25,11 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 
 		@Override
 		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
-			return autoLoadThresholdAction.isDetail(getAnnotStyle()) ? detailGlyph : depthGlyph;
+			return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle()) ? detailGlyph : depthGlyph;
 		}
 
 		@Override
 		public void init(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
-			autoLoadThresholdAction = ((SeqMapView)smv).getAutoLoad();
 			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
 			depthGlyph = depthFactory.getViewModeGlyph(sym, style, direction, smv);
 			viewModeGlyphs.put(depthFactory.getName(), depthGlyph);

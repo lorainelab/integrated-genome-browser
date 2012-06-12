@@ -195,7 +195,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 		super.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
 
 		rmMap = new HashMap<Integer, RowEditorModel>();
-
+		
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();

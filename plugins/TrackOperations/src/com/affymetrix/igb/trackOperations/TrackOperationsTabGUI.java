@@ -38,25 +38,16 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        transformLabel = new javax.swing.JLabel();
-        transformationCB = trackOpTab.transformationCB;
-        transformationGoB = trackOpTab.transformationGoB;
-        operationLabel = new javax.swing.JLabel();
+        operationLabel = trackOpTab.operationLabel;
         operationCB = trackOpTab.operationCB;
         operationGoB = trackOpTab.operationGoB;
         combineB = trackOpTab.combineB;
         splitB = trackOpTab.splitB;
-        transformationParamLabel = trackOpTab.transformationParamLabel;
         operationParamLabel = trackOpTab.operationParamLabel;
-        transformationParam = trackOpTab.transformationParam;
         operationParam = trackOpTab.operationParam;
         threshB = trackOpTab.threshB;
 
         jLabel2.setText("jLabel2");
-
-        transformLabel.setText("Transform");
-
-        transformationGoB.setText("Go");
 
         operationLabel.setText("Operation");
 
@@ -66,11 +57,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         splitB.setText("Split");
 
-        transformationParamLabel.setText("Base");
-
-        operationParamLabel.setText("Base");
-
-        transformationParam.setEditable(false);
+        operationParamLabel.setText(" ");
 
         operationParam.setEditable(false);
 
@@ -81,71 +68,47 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(10, 10, 10)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(operationLabel)
-                    .add(transformLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 153, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(9, 9, 9)
-                        .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(32, 32, 32)
+                        .add(combineB)
+                        .add(26, 26, 26)
+                        .add(splitB)
+                        .add(31, 31, 31)
+                        .add(threshB))
                     .add(layout.createSequentialGroup()
-                        .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(operationLabel)
+                            .add(operationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(operationGoB, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .add(23, 23, 23)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                    .add(operationParamLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(391, 391, 391))
-            .add(layout.createSequentialGroup()
-                .add(37, 37, 37)
-                .add(combineB)
-                .add(26, 26, 26)
-                .add(splitB)
-                .add(31, 31, 31)
-                .add(threshB)
-                .addContainerGap())
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(layout.createSequentialGroup()
+                                .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(operationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(572, Short.MAX_VALUE))
         );
-
-        layout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        layout.linkSize(new java.awt.Component[] {operationGoB, transformationGoB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.CENTER, transformationGoB)
-                    .add(org.jdesktop.layout.GroupLayout.CENTER, transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.CENTER, transformLabel)
-                    .add(org.jdesktop.layout.GroupLayout.CENTER, layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(transformationParamLabel)
-                        .add(transformationParam)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(8, 8, 8)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(operationLabel)
                     .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(operationGoB)
+                    .add(operationGoB))
+                .add(18, 18, 18)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(operationParamLabel)
                     .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(22, 22, 22)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(combineB)
                     .add(splitB)
                     .add(threshB))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        layout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.VERTICAL);
-
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -158,11 +121,6 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private javax.swing.JLabel operationParamLabel;
     private javax.swing.JButton splitB;
     private javax.swing.JButton threshB;
-    private javax.swing.JLabel transformLabel;
-    private javax.swing.JComboBox transformationCB;
-    private javax.swing.JButton transformationGoB;
-    private javax.swing.JTextField transformationParam;
-    private javax.swing.JLabel transformationParamLabel;
     // End of variables declaration//GEN-END:variables
 
 	@Override

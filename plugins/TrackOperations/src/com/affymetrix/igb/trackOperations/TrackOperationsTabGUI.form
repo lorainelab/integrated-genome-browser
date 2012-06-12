@@ -23,52 +23,70 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="operationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="transformLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                      <Component id="combineB" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-                      <Component id="splitB" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                      <Component id="threshB" min="-2" max="-2" attributes="0"/>
+                      <Component id="transformationCB" linkSize="10" min="-2" pref="153" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                      <Component id="transformationGoB" linkSize="11" min="-2" pref="61" max="-2" attributes="1"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
+                      <Component id="operationCB" linkSize="10" min="-2" pref="129" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="operationLabel" min="-2" max="-2" attributes="0"/>
-                          <Component id="operationParamLabel" min="-2" pref="83" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="operationParam" min="-2" pref="109" max="-2" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Component id="operationCB" min="-2" pref="129" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="operationGoB" min="-2" pref="70" max="-2" attributes="1"/>
-                          </Group>
-                      </Group>
+                      <Component id="operationGoB" linkSize="11" min="0" max="32767" attributes="1"/>
                   </Group>
               </Group>
-              <EmptySpace pref="572" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="transformationParamLabel" pref="38" max="32767" attributes="0"/>
+                  <Component id="operationParamLabel" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="operationParam" min="-2" pref="109" max="-2" attributes="0"/>
+                  <Component id="transformationParam" min="-2" pref="109" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="391" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+              <Component id="combineB" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+              <Component id="splitB" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+              <Component id="threshB" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="transformationGoB" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="transformationCB" linkSize="4" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="transformLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" alignment="2" groupAlignment="3" attributes="0">
+                      <Component id="transformationParamLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="transformationParam" alignment="3" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="operationLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="operationCB" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="operationCB" linkSize="4" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="operationGoB" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="operationParamLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="operationParam" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="operationParamLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="operationParam" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="combineB" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="splitB" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -80,13 +98,28 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
+    <Component class="javax.swing.JLabel" name="transformLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Unary Op"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="transformationCB">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationCB"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="transformationGoB">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Go"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationGoB"/>
+      </AuxValues>
+    </Component>
     <Component class="javax.swing.JLabel" name="operationLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Operation"/>
       </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.operationLabel"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="operationCB">
       <AuxValues>
@@ -117,6 +150,14 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.splitB"/>
       </AuxValues>
     </Component>
+    <Component class="javax.swing.JLabel" name="transformationParamLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value=" "/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationParamLabel"/>
+      </AuxValues>
+    </Component>
     <Component class="javax.swing.JLabel" name="operationParamLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value=" "/>
@@ -124,6 +165,12 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.operationParamLabel"/>
         <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JTextField" name="transformationParam">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationParam"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="transformationParam.setEditable(false);"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="operationParam">

@@ -43,6 +43,8 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
     public TrackPreferencesGUI() {
         hiddenRadioButton = new JRadioButton();
         initComponents();
+		getClearButton().setHideActionText(true);
+		getHideButton().setHideActionText(true);
         resetAll();
 		getButtonGroup1().add(hiddenRadioButton);
     }

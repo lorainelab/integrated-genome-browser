@@ -706,7 +706,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			String[] target_res_arr = null;
 			if (fields.length >= findex+2) {
 				// see if there are two extra fields with residues for each block
-				target_res_arr = comma_regex.split(fields[findex++]);
+				target_res_arr = targetResidues(fields[findex++], tforward);
 			}
 			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases,
 					t_gap_count, t_gap_bases, same_orientation,
@@ -862,6 +862,28 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		return results;
 	}
 
+	private static String[] targetResidues(String residues, boolean tforward){
+		if(tforward){
+			comma_regex.split(residues);
+		}
+		
+		String[] residues_array = comma_regex.split(residues);
+		
+		if(residues_array == null){
+			return null;
+		}
+		
+		//Reverse the array for negative strand;
+		String temp;
+		for(int i=0; i<residues_array.length/2; i++){
+			temp = residues_array[i];
+			residues_array[i] = residues_array[residues_array.length - i - 1];
+			residues_array[residues_array.length - i - 1] = temp;
+		}
+		
+		return residues_array;
+	}
+		
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "PSL" format

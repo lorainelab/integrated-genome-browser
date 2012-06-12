@@ -40,7 +40,20 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 		super.actionPerformed(e);
 		setTwoTiers(getTierManager().getSelectedTierLabels(), separateStrands);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		changeStrandActionDisplay(new ArrayList<SeqSymmetry>());
+
+		// Don't fully understand why we need to treat the menu item
+		// differently from the tool bar, but we do.
+		List<SeqSymmetry> selected_syms;
+		if (e.getSource() instanceof javax.swing.JMenuItem) {
+			SeqMapView gviewer = getSeqMapView();
+			@SuppressWarnings("unchecked")
+			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+			selected_syms = SeqMapView.glyphsToSyms(tiers);
+		}
+		else {
+			selected_syms = new ArrayList<SeqSymmetry>();
+		}
+		changeStrandActionDisplay(selected_syms);
 	}
 
 	@SuppressWarnings("unchecked")

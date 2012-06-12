@@ -24,5 +24,6 @@ public class ShowOneTierAction extends ShowStrandActionA implements SymSelection
 	@Override
 	protected void processChange(boolean hasSeparate, boolean hasMixed) {
 		setEnabled(hasSeparate);
+		ShowTwoTiersAction.getAction().setEnabled(hasMixed);
 	}
 }

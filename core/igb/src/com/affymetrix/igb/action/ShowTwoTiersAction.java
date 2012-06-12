@@ -26,5 +26,6 @@ implements SymSelectionListener {
 	@Override
 	protected void processChange(boolean hasSeparate, boolean hasMixed) {
 		setEnabled(hasMixed);
+		ShowOneTierAction.getAction().setEnabled(hasSeparate);
 	}
 }

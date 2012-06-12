@@ -600,7 +600,6 @@ HCLWARM     ("white", "#B7BE6C;#D3B380;#E0A8AA;#E0A3D2");
 	 * This is not really in the original spirit of the toString method
 	 * as a debugging tool.
 	 * We use it to make it easier to include in a JComboBox.
-	 * @return 
 	 */
 	@Override
 	public String toString() {

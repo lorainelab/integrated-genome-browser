@@ -193,6 +193,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public final boolean getFloatTier() {
 		return false;
 	}
+	
+	@Override
+	public int getSummaryThreshold() {
+		return 0;
+	}
+	
 	@Override
 	public final void setFloatTier(boolean b) {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -225,11 +231,6 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 
 	@Override
 	public void setLabelBackground(Color c) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public int getSummaryThreshold() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

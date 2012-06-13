@@ -3,6 +3,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 
 public class DeselectAllAction extends SeqMapViewActionA {
@@ -19,7 +20,7 @@ public class DeselectAllAction extends SeqMapViewActionA {
 	}
 
 	protected DeselectAllAction() {
-		super("No Tracks", null, null);
+		super(IGBConstants.BUNDLE.getString("selectNone"), null, null);
 	}
 
 	@Override

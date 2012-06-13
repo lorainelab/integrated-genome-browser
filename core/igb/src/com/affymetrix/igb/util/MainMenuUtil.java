@@ -79,7 +79,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack", ZoomingRepackAction.getAction()));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_colorChoice", ColorSchemeChoiceAction.getAction()));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_canonicalize", CanonicalizeTracksAction.getAction()));
-		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectAllAction"));
+		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectTracks"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_deselect_all", DeselectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {

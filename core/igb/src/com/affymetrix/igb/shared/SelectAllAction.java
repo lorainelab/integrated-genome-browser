@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 
 public class SelectAllAction extends SeqMapViewActionA {
@@ -34,7 +35,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 	}
 
 	protected SelectAllAction(FileTypeCategory category) {
-		super(((category == null ? "" : (category.toString() + " ")) + "Tracks"), null, null);
+		super(category == null ? IGBConstants.BUNDLE.getString("selectAll") : category.toString(), null, null);
 		this.category = category;
 	}
 

@@ -54,6 +54,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.igb.shared.JRPStyledTable;
@@ -319,7 +320,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
 	@Override
 	public ImageIcon getIcon(String name) {
-		return igbService.getIcon(name);
+		return MenuUtil.getIcon("16x16/actions/" + name);
 	}
 
 	@Override
@@ -509,7 +510,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
 //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-		repoAdmin = new RepositoryAdminWrapper((org.apache.felix.bundlerepository.RepositoryAdmin) new RepositoryAdminImpl(bundleContext, new org.apache.felix.utils.log.Logger(bundleContext)));
+		repoAdmin = new RepositoryAdminWrapper(new RepositoryAdminImpl(bundleContext, new org.apache.felix.utils.log.Logger(bundleContext)));
 		for (String url : igbService.getRepositoryChangerHolder().getRepositories().values()) {
 			repositoryAdded(url);
 		}

@@ -128,9 +128,9 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
                                 .add(setByLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(by_valRB_val)
-                                .add(0, 0, 0)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(by_percentileRB_val)))
-                        .add(0, 0, Short.MAX_VALUE))
+                        .addContainerGap())
                     .add(RangePanelLayout.createSequentialGroup()
                         .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(RangePanelLayout.createSequentialGroup()
@@ -139,12 +139,13 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
                             .add(RangePanelLayout.createSequentialGroup()
                                 .add(minValLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(27, 27, 27)
+                                .add(minText)
+                                .add(21, 21, 21)
                                 .add(maxValLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(10, Short.MAX_VALUE))))
+                                .add(maxText)
+                                .add(21, 21, 21)))
+                        .add(10, 10, 10))))
         );
         RangePanelLayout.setVerticalGroup(
             RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -158,7 +159,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(minValLabel)
-                    .add(minText)
+                    .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(maxValLabel)
                     .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
@@ -179,18 +180,21 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .add(0, 0, Short.MAX_VALUE)
-                .add(otherOptionsButton))
+                .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(otherOptionsButton)
+                .add(17, 17, 17))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(otherOptionsButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 

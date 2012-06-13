@@ -15,6 +15,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import java.util.*;
+import javax.swing.GroupLayout;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.plaf.basic.BasicSplitPaneUI.BasicHorizontalLayoutManager;
 
@@ -32,8 +33,22 @@ public final class TrackAdjusterTab extends IGBTabPanel {
 
 	public TrackAdjusterTab(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
-		this.setLayout(new GridBagLayout());
-	    add(new TrackPreferencesSeqMapViewPanel(igbService));
-	    add(new YScaleAxisGUI(igbService));
+		GroupLayout layout = new GroupLayout(this);
+		this.setLayout(layout);
+		TrackPreferencesSeqMapViewPanel trackPanel = new TrackPreferencesSeqMapViewPanel(igbService);
+		YScaleAxisGUI yAxisPanel= new YScaleAxisGUI(igbService);
+		add(trackPanel);
+	    add(yAxisPanel);
+		layout.setHorizontalGroup(
+				layout.createSequentialGroup()
+				.addComponent(trackPanel)
+				.addComponent(yAxisPanel)
+				);
+		layout.setVerticalGroup(
+				layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(trackPanel)
+				.addComponent(yAxisPanel))
+				);
 	}
 }

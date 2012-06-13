@@ -21,6 +21,10 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	
 	/** for height on the reverse strand. To help with track resizing. */
 	private double reverseHeight;
+	private float track_name_size;
+	private Color label_foreGround = new Color(0,0,0);
+	private int directionType;
+	private Color forwardColor, reverseColor, label_backGround;
 	@Override
 	public void setReverseHeight(double theNewHeight) {
 		this.reverseHeight = theNewHeight;
@@ -141,12 +145,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	}
 	@Override
 	public void setOperator(String o) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		//throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public void setFeature(GenericFeature f) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		//throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
@@ -161,32 +165,32 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 
 	@Override
 	public int getDirectionType() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return directionType;
 	}
 
 	@Override
 	public void setDirectionType(int ordinal) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		directionType = ordinal;
 	}
 
 	@Override
 	public void setForwardColor(Color c) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		forwardColor = c;
 	}
 
 	@Override
 	public Color getForwardColor() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return forwardColor;
 	}
 
 	@Override
 	public void setReverseColor(Color c) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		reverseColor = c;
 	}
 
 	@Override
 	public Color getReverseColor() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return reverseColor;
 	}
 
 	@Override
@@ -201,41 +205,41 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	
 	@Override
 	public final void setFloatTier(boolean b) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 
 	@Override
 	public void setTrackNameSize(float font_size) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		track_name_size = font_size;
 	}
 
 	@Override
 	public float getTrackNameSize() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return track_name_size;
 	}
 
 	@Override
 	public Color getLabelForeground() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return label_foreGround;
 	}
 
 	@Override
 	public Color getLabelBackground() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return label_foreGround;
 	}
 
 	@Override
 	public void setLabelForeground(Color c) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		label_foreGround = c;
 	}
 
 	@Override
 	public void setLabelBackground(Color c) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		label_backGround = c;
 	}
 
 	@Override
 	public void setSummaryThreshold(int level) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 }

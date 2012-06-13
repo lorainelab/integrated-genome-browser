@@ -641,7 +641,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 
 	@Override
 	protected void buttonGroup1Reset() {
-		getGraphStylesLabel().setEnabled(isAllGraph());
 		getGraphStyleLineRadioButton().setEnabled(isAllGraph());
 		getGraphStyleBarRadioButton().setEnabled(isAllGraph());
 		getGraphStyleStairStepRadioButton().setEnabled(isAllGraph());
@@ -791,7 +790,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	protected void trackNameTextFieldReset() {
 		JTextField trackNameTextField = getTrackNameTextField();
 		trackNameTextField.setEnabled(allGlyphs.size() == 1);
-		getNameLabel().setEnabled(allGlyphs.size() == 1);
 		if (allGlyphs.size() == 1) {
 			trackNameTextField.setText(allGlyphs.get(0).getLabel());
 		}

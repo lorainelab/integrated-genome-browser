@@ -494,16 +494,14 @@ public class SeqMapView extends JPanel
 		public void paint(Graphics g) {
 			super.paint(g);
 
-			if (getAutoLoad() != null) {
-				drawAutoLoadPoint(g);
-			}
+			drawAutoLoadPoint(g);
 			for (TierGlyph tierGlyph : SeqMapView.this.getTierManager().getVisibleTierGlyphs()) {
 				drawTrackThresholdPoint(g, tierGlyph);
 			}
 		}
 
 		private void drawAutoLoadPoint(Graphics g) {
-			drawThresholdPoint(g, Color.BLACK, Color.WHITE, getAutoLoad().threshold);
+			drawThresholdPoint(g, Color.BLACK, Color.WHITE, AutoLoadThresholdAction.getAction().threshold);
 		}
 
 		private void drawTrackThresholdPoint(Graphics g, TierGlyph tier) {
@@ -553,10 +551,6 @@ public class SeqMapView extends JPanel
 	}
 	protected Adjustable getXZoomer(String id) {
 		return new ThresholdXZoomer(id);
-	}
-
-	protected AutoLoadThresholdAction addAutoLoad() {
-		return AutoLoadThresholdAction.getAction();
 	}
 
 	public AutoLoadThresholdAction getAutoLoad() {
@@ -1618,9 +1612,7 @@ public class SeqMapView extends JPanel
 		seqmap.scroll(NeoAbstractWidget.X, smin);
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
 		seqmap.updateWidget();
-		if (getAutoLoad() != null) {
-			getAutoLoad().mapZoomed();
-		}
+		AutoLoadThresholdAction.getAction().mapZoomed();
 	}
 
 	/**
@@ -1695,9 +1687,7 @@ public class SeqMapView extends JPanel
 			seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
 			seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
 			seqmap.updateWidget();
-			if (getAutoLoad() != null) {
-				getAutoLoad().mapZoomed();
-			}
+			AutoLoadThresholdAction.getAction().mapZoomed();
 		}
 	}
 
@@ -2486,9 +2476,7 @@ public class SeqMapView extends JPanel
 		coord_value += 1; // fudge factor
 		seqmap.scroll(NeoMap.Y, coord_value);
 		seqmap.updateWidget();
-		if (getAutoLoad() != null) {
-			getAutoLoad().mapZoomed();
-		}
+		AutoLoadThresholdAction.getAction().mapZoomed();
 	}
 
 	@Override

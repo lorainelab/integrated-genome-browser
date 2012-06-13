@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-//import java.util.concurrent.Executor;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingWorker;
 
@@ -26,7 +25,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -348,12 +346,6 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		//Do nothing.
 	}
 	
-	@Override
-	protected AutoLoadThresholdAction addAutoLoad(){
-		//Do Nothing for alt splice view.
-		return null;
-	}
-
 	@Override
 	protected void addDependentAndEmptyTrack(){
 		//Do Nothing for alt splice view.

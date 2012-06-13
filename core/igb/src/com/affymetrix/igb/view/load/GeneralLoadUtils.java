@@ -66,6 +66,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -608,7 +609,7 @@ public final class GeneralLoadUtils {
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		SeqSpan overlap = null;
-		if (gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD && !gviewer.getAutoLoad().shouldAutoLoad()) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD && !AutoLoadThresholdAction.getAction().shouldAutoLoad()) {
 			return;
 		}
 		if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {

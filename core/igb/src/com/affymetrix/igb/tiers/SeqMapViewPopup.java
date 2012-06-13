@@ -327,10 +327,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		repack_all_tiers.setEnabled(!coordinates_track_selected);
 		popup.add(repack_all_tiers);
 
-		if (gviewer.getAutoLoad() != null) {
-			popup.add(new JSeparator());
-			popup.add(new JMenuItem(gviewer.getAutoLoad()));
-		}
+		popup.add(new JSeparator());
+		popup.add(new JMenuItem(AutoLoadThresholdAction.getAction()));
 
 		if (DEBUG) {
 			popup.add(new AbstractAction("DEBUG") {

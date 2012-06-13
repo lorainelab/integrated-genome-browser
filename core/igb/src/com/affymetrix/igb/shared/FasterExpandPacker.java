@@ -7,6 +7,8 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
@@ -144,8 +146,9 @@ public class FasterExpandPacker extends ExpandPacker {
 		int prev_slot_index = 0;
 		GlyphI layeredChild = null;
 
+		List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
 		for (int i = 0; i < child_count; i++) {
-			GlyphI child = parent.getChild(i);
+			GlyphI child = children.get(i);
 			child.setVisibility(true);
 			child.setOverlapped(false);
 			cbox = child.getCoordBox();
@@ -221,7 +224,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
 		//    (y+height) of bottom-most (ymax) child is at
 
-		for (GlyphI child : parent.getChildren()) {
+		for (GlyphI child : children) {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 

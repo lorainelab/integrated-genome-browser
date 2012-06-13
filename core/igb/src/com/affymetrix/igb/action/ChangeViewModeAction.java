@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.event.ActionEvent;
 
@@ -38,5 +39,6 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 		}
 
 		refreshMap(false, false);
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(ae);
 	}
 }

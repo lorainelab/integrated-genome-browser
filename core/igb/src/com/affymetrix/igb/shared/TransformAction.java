@@ -54,5 +54,6 @@ public class TransformAction extends SeqMapViewActionA {
 				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());
 			}
 		}
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 }

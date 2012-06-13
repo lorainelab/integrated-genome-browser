@@ -48,7 +48,7 @@ import javax.swing.table.*;
 public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	private static final long serialVersionUID = 2l;
-	private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("images/refresh16.png");
+	private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
 	protected final JPanel sourcePanel;
 	protected final GroupLayout layout;
 	protected ServerList serverList;

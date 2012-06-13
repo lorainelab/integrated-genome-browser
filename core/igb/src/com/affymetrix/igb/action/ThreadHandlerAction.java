@@ -49,7 +49,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 		return ACTION;
 	}
 
-	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
+	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
 	
 	private final JPopupMenu runningTasks;
 	private JPanel outerBox;

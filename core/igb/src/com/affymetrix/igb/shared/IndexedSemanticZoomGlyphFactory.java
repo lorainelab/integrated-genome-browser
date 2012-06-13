@@ -103,7 +103,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			}
 			
 			if (getRootSym() == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() rootSym is null");
+//				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() rootSym is null");
 				return null;
 			}
 				

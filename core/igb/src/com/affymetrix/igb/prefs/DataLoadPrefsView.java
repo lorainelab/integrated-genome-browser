@@ -118,7 +118,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 			}
 		});
 		editSourceButton.setEnabled(false);
-		ImageIcon up_icon = MenuUtil.getIcon("images/up.png");
+		ImageIcon up_icon = MenuUtil.getIcon("16x16/actions/up.png");
 		rankUpButton = new JRPButton("DataLoadPrefsView_rankUpButton", up_icon);
 		rankUpButton.setToolTipText("Increase sequence server priority");
 		rankUpButton.addActionListener(
@@ -139,7 +139,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 					}
 				});
 		rankUpButton.setEnabled(false);
-		ImageIcon down_icon = MenuUtil.getIcon("images/down.png");
+		ImageIcon down_icon = MenuUtil.getIcon("16x16/actions/down.png");
 		rankDownButton = new JRPButton("DataLoadPrefsView_rankDownButton", down_icon);
 		rankDownButton.setToolTipText("Decrease sequence server priority");
 		rankDownButton.addActionListener(

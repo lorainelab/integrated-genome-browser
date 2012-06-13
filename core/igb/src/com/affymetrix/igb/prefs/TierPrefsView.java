@@ -104,7 +104,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
 
-		ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
+		ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
 
 		applyToAllTip = new javax.swing.JLabel();
 		applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");

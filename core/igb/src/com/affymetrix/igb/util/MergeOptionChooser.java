@@ -96,7 +96,7 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	}
 
 	private JPanel setInfoLabel(JComponent component, String tooltip){
-		JLabel infolabel = new InfoLabel(CommonUtils.getInstance().getIcon("images/info.png"));
+		JLabel infolabel = new InfoLabel(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
 		infolabel.setToolTipText(tooltip);
 		
 		JPanel pane = new JPanel();

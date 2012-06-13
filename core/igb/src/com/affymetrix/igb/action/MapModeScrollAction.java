@@ -16,7 +16,7 @@ public class MapModeScrollAction extends SeqMapViewActionA {
 		super(
 			  BUNDLE.getString(MapMode.MapScrollMode.name() + "Button"),
 			  BUNDLE.getString(MapMode.MapScrollMode.name() + "Tip"),
-			  "images/open_hand.png", null,
+			  "16x16/actions/open_hand.png", null,
 			  KeyEvent.VK_UNDEFINED
 		);
 		this.id = id;

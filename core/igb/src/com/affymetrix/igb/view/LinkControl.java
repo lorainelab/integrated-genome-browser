@@ -109,13 +109,13 @@ final class LinkControl implements ContextualPopupListener {
 					mi.setEnabled(false);
 				}
 
-				mi.setIcon(MenuUtil.getIcon("images/search.png"));
+				mi.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
 				popup.add(mi);
 			}
 		} else {
 			name = "Get more info";
 			JMenu linkMenu = new JMenu(name);
-			linkMenu.setIcon(MenuUtil.getIcon("images/search.png"));
+			linkMenu.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
 			if (!isInternetReachable()) {
 				name += " (No Internet)";
 				linkMenu = new JMenu(name);

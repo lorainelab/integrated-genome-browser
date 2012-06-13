@@ -21,6 +21,7 @@ implements SymSelectionListener {
 		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"),
 				"16x16/actions/strandseparate.png", "22x22/actions/strandseparate.png");
 		separateStrands = true;
+		setEnabled(false);
 	}
 
 	@Override

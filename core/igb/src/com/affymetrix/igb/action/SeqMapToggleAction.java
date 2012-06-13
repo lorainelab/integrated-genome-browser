@@ -77,6 +77,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 					one.getClass().getSimpleName() + ";" + two.getClass().getSimpleName();
 		}
 		this.display = "Toggle " + one.getDisplay() + " and " + two.getDisplay();
+		this.setEnabled(one.isEnabled() || two.isEnabled());
 	}
 
 	private void switchTo(SeqMapViewActionA a) {

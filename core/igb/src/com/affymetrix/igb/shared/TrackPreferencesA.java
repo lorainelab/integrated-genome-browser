@@ -813,7 +813,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 	@Override
 	protected void selectAllButtonReset() {
 		JButton selectAllButton = getSelectAllButton();
-		selectAllButton.setEnabled(allGlyphs.size() > 0);
+		selectAllButton.setEnabled(igbService != null && igbService.getVisibleTierGlyphs() != null && igbService.getVisibleTierGlyphs().size() > 0);
 	}
 
 	@Override

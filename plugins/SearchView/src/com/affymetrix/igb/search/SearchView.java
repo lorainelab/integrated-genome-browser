@@ -184,9 +184,9 @@ public final class SearchView extends IGBTabPanel implements
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
 	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView_searchCB");
 	private final JRPCheckBox optionCheckBox = new JRPCheckBox("SearchView_optionCheckBox", "");
-	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("images/search.png"));
-	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("images/delete.png"));
-	private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("images/stop.png"));
+	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("16x16/actions/search.png"));
+	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("16x16/actions/delete.png"));
+	private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("16x16/actions/stop.png"));
 	private JRPTable table = new JRPTable("SearchView_table");
 	private JLabel status_bar = new JLabel(BUNDLE.getString("noResults"));
 	private TableRowSorter<SearchResultsTableModel> sorter;

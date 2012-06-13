@@ -621,7 +621,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
-				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
+				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
 				featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
 			}
 

@@ -172,7 +172,7 @@ class Actions {
 		final StringBuilder url = new StringBuilder();
 
 		final AbstractAction open_browser_action = new AbstractAction(BUNDLE.getString("openBrowser"),
-				MenuUtil.getIcon("images/search.png")){
+				MenuUtil.getIcon("16x16/actions/search.png")){
 
 			public void actionPerformed(ActionEvent e) {
 				if (url.length() > 0) {

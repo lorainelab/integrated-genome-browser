@@ -112,7 +112,7 @@ public final class GeneralLoadView {
 
 		all_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
-		all_residuesB.setIcon(CommonUtils.getInstance().getIcon("images/dna.gif"));
+		all_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
 		all_residuesB.setEnabled(false);
 		all_residuesB.setFont(font);
 		all_residuesB.setText("Load All Sequence");
@@ -121,14 +121,14 @@ public final class GeneralLoadView {
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		partial_residuesB.setFont(font);
-		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("images/dna.gif"));
+		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
 		partial_residuesB.setText("Load Sequence In View");
 
 		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
 		refresh_dataB.setFont(font);
-		refresh_dataB.setIcon(MenuUtil.getIcon("images/refresh22.png"));
+		refresh_dataB.setIcon(MenuUtil.getIcon("22x22/actions/refresh.png"));
 		refresh_dataB.setText("Load Data");
 	}
 

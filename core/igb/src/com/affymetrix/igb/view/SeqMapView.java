@@ -473,7 +473,7 @@ public class SeqMapView extends JPanel
 	protected void addRefreshButton(String id) {
 		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
 //		refresh_button.setText("");
-		refresh_button.setIcon(MenuUtil.getIcon("images/refresh16.png"));
+		refresh_button.setIcon(MenuUtil.getIcon("16x16/actions/refresh16.png"));
 		xzoombox.add(refresh_button);
 	}
 

@@ -14,7 +14,7 @@ import javax.swing.JPanel;
  * @author nick
  */
 public class WebLinksViewGUI extends JPanel {
-
+	private static final long serialVersionUID = 1L;
 	public static WebLinksView wlv;
 	public static JFrame static_frame = null;
 	private static WebLinksViewGUI singleton;
@@ -153,7 +153,7 @@ public class WebLinksViewGUI extends JPanel {
         });
 
         matchTip.setToolTipText("Choose for Regular Expression Matches");
-        matchTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
+        matchTip.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
         matchTip.setText(" ");
 
         regexLabel.setText("Regular Expression:");
@@ -161,7 +161,7 @@ public class WebLinksViewGUI extends JPanel {
         jLabel1.setText("Regular Expression Matches:");
 
         regularExpressionTip.setToolTipText("Click to the instruction page.");
-        regularExpressionTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
+        regularExpressionTip.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
         regularExpressionTip.setText(" ");
         regularExpressionTip.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -345,11 +345,11 @@ public class WebLinksViewGUI extends JPanel {
 	}//GEN-LAST:event_regularExpressionTipMouseReleased
 
 	private void regularExpressionTipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_regularExpressionTipMouseEntered
-		setCursor(wlv.handCursor);
+		setCursor(WebLinksView.handCursor);
 	}//GEN-LAST:event_regularExpressionTipMouseEntered
 
 	private void regularExpressionTipMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_regularExpressionTipMouseExited
-		setCursor(wlv.defaultCursor);
+		setCursor(WebLinksView.defaultCursor);
 	}//GEN-LAST:event_regularExpressionTipMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel builderPanel;

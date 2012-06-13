@@ -39,12 +39,12 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public final class DataManagementTable {
 
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
-	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("images/refresh16.png");
-	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
-	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
-	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
-	static final Icon error_icon = CommonUtils.getInstance().getIcon("images/stop.png");
-	static final Icon igb_icon = CommonUtils.getInstance().getIcon("images/warning.png");
+	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
+	static final Icon delete_icon = CommonUtils.getInstance().getIcon("16x16/actions/delete.gif");
+	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("16x16/actions/invisible.png");
+	static final Icon visible_icon = CommonUtils.getInstance().getIcon("16x16/actions/visible.png");
+	static final Icon error_icon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
+	static final Icon igb_icon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 	
 	//public static boolean iconTest;
 

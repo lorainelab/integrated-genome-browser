@@ -17,8 +17,8 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
-	private static final Icon UP_ICON = MenuUtil.getIcon("images/up.png");
-	private static final Icon DOWN_ICON = MenuUtil.getIcon("images/down.png");
+	private static final Icon UP_ICON = MenuUtil.getIcon("16x16/actions/up.png");
+	private static final Icon DOWN_ICON = MenuUtil.getIcon("16x16/actions/down.png");
 	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.45;
 
 	public JTabbedTrayBottomPane(JComponent _baseComponent) {

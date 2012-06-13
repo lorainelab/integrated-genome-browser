@@ -75,15 +75,15 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 	
 	protected String getLeftIconString(){
 		if (isMac()) {
-			return "images/down.png";
+			return "16x16/actions/down.png";
 		}
-		return "images/left.png";
+		return "16x16/actions/left.png";
 	}
 	
 	protected String getRightIconString(){
 		if (isMac()) {
-			return "images/up.png";
+			return "16x16/actions/up.png";
 		}
-		return "images/right.png";
+		return "16x16/actions/right.png";
 	}
 }

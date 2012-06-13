@@ -35,11 +35,11 @@ import java.util.logging.Level;
 public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
 	
-//	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
-	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/Warning.png");
-	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("images/Stop16.gif");
-	private static final ImageIcon warningIcon = new ImageIcon("common/resources/images/warning.png");
-	private static final ImageIcon infoIcon = new ImageIcon("common/resources/images/info.gif");
+//	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
+	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
+	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop_hex.gif");
+	private static final ImageIcon warningIcon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
+	private static final ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.gif");
 	private final JLabel status_ta, messageIcon;
 	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel;

@@ -79,7 +79,10 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 		boolean hasMixed = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
-			if (selected_syms.contains(vg.getInfo()) && !(vg instanceof MultiGraphGlyph) && MapViewModeHolder.getInstance().styleSupportsTwoTrack(vg.getAnnotStyle())) {
+			SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+			if (selected_syms.contains(ss)
+					&& !(vg instanceof MultiGraphGlyph)
+					&& MapViewModeHolder.getInstance().styleSupportsTwoTrack(vg.getAnnotStyle())) {
 				boolean separate = vg.getAnnotStyle().getSeparate();
 				hasSeparate |= separate;
 				hasMixed |= !separate;

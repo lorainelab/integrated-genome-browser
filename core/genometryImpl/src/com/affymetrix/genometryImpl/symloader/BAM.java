@@ -156,15 +156,6 @@ public final class BAM extends XAM {
 		return new BlockCompressedStreamPosition(blockAddressValue, currentOffsetValue);
 	}
 
-	private long getEndPosition(BioSeq seq, int max, boolean contained) throws Exception {
-		SAMFileReader readerTemp = getSAMFileReader();
-		CloseableIterator<SAMRecord> iter = readerTemp.query(seqs.get(seq), max - 1, max, contained);
-		while (iter.hasNext()) {
-			iter.next();
-		}
-		return getCompressedInputStreamPosition(readerTemp).getApproximatePosition();
-	}
-
 	/**
 	 * Return a list of symmetries for the given chromosome range
 	 * @param seq
@@ -177,7 +168,12 @@ public final class BAM extends XAM {
 		CloseableIterator<SAMRecord> iter = null;
 		try {
 			if (reader != null) {
-				long endPosition = getEndPosition(seq, max, contained);
+				iter = reader.query(seqs.get(seq), max - 1, max, contained);
+				while (iter.hasNext()) {
+					iter.next();
+				}
+				long endPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
+				iter.close();
 				iter = reader.query(seqs.get(seq), min, max, contained);
 				final long startPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
 				ProgressUpdater progressUpdater = new ProgressUpdater("BAM parse " + uri + " - " + seq + ":" + min + "-" + max, startPosition, endPosition,

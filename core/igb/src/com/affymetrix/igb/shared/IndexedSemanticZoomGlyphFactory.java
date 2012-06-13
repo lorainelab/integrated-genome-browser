@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -13,6 +14,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -74,7 +77,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
-
+		CThreadWorker<Void, Void> worker ;
+			
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym) {
 			super(sym);
 //			this.smv = smv;
@@ -88,35 +92,51 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			Direction direction, SeqMapViewExtendedI gviewer) {
 			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
 			defaultGlyph = getEmptyGraphGlyph(trackStyle, gviewer);
+			saveDetailGlyph = defaultGlyphFactory.getViewModeGlyph(sym, trackStyle, Direction.BOTH, gviewer);
 		}
 
 		protected RootSeqSymmetry getRootSym() {
 			return (RootSeqSymmetry)GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
 		}
 
-		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv) throws Exception {
-			GenericFeature feature = style.getFeature();
-			SeqSymmetry optimized_sym = feature.optimizeRequest(smv.getVisibleSpan());
-			List<SeqSymmetry> syms = null;
-			if (optimized_sym != null) {
-				syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
+		protected ViewModeGlyph getDetailGlyph(final SeqMapViewExtendedI smv) throws Exception {
+			final SeqSpan span = smv.getVisibleSpan();
+			if(worker != null && !worker.isCancelled() && !worker.isDone()){
+				worker.cancelThread(true);
 			}
-			
-			if (getRootSym() == null) {
-//				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() rootSym is null");
-				return null;
-			}
-				
-			if(saveDetailGlyph == null){
-				saveDetailGlyph = defaultGlyphFactory.getViewModeGlyph(getRootSym(), style, Direction.BOTH, smv);
-			}else if(syms != null && !syms.isEmpty()){
-				TypeContainerAnnot detailSym = new TypeContainerAnnot(style.getMethodName());
-				for(SeqSymmetry sym : syms){
-					detailSym.addChild(sym);
+			CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("Loading details for " + style.getTrackName() + " region " + span.toString(), Thread.MIN_PRIORITY) {
+
+				@Override
+				protected Void runInBackground() {
+					try {
+						GenericFeature feature = style.getFeature();
+						SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+						if (optimized_sym != null) {
+							List<SeqSymmetry> syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
+							if (syms != null && !syms.isEmpty()) {
+								TypeContainerAnnot detailSym = new TypeContainerAnnot(style.getMethodName());
+								for (SeqSymmetry sym : syms) {
+									detailSym.addChild(sym);
+								}
+								saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
+								pack(smv.getSeqMap().getView());
+							}
+						}
+					} catch (Exception ex) {
+						Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+					}
+					return null;
 				}
-				saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
-			}
-			
+
+				@Override
+				protected void finished() {
+					if (lastUsedGlyph == saveDetailGlyph) {
+						smv.getSeqMap().updateWidget();
+					}
+				}
+			};
+			CThreadHolder.getInstance().execute(saveDetailGlyph, worker);
+			this.worker = worker;
 			return saveDetailGlyph;
 		}
 

@@ -402,18 +402,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 			if (DEBUG) {
 				System.out.println("curr_point = " + curr_point.x + ":" + curr_point.y);
 			}
-			curr_x_plus_width = calculateCurrXPlusWidth(curr_x_plus_width,graphSym,i, view);
-			doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width,
-					ytemp, draw_end_index, i);
-			prev_point.x = curr_point.x;
-			prev_point.y = curr_point.y;
-		}
-	}
-	
-	protected Point calculateCurrXPlusWidth(Point curr_x_plus_width, GraphSym graphSym, int i, ViewI view)
-	{
-		if (graphSym.hasWidth()) {
-				int xtemp = graphSym.getGraphXCoord(i);
+			if (graphSym.hasWidth()) {
 				Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
 				x_plus_width2D.x = xtemp + graphSym.getGraphWidthCoord(i);
 				x_plus_width2D.y = coord.y;
@@ -422,8 +411,13 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 					System.out.println("graphSym.getGraphWidthCoord(i) = " + graphSym.getGraphWidthCoord(i));
 				}
 			}
-		return curr_x_plus_width;
+			doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width,
+					ytemp, draw_end_index, i);
+			prev_point.x = curr_point.x;
+			prev_point.y = curr_point.y;
+		}
 	}
+
 	protected int getStairStepEnd(ViewI view, GraphSym graphSym, int nextx, int xtemp) {
 		return curr_point.x;
 	}
@@ -915,7 +909,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		colorChange(g);
 
 		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
-		Point curr_x_plus_width = new Point(0,0);
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			int xtemp = graf.getGraphXCoord(i);
 			float ytemp = graf.getGraphYCoord(i);
@@ -927,28 +920,30 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 			view.transformToPixels(coord, curr_point);
 
-			// draw previous pixel position
-				curr_x_plus_width = calculateCurrXPlusWidth(curr_x_plus_width, graf, i, view);
+			if (prev_point.x == curr_point.x) {
+				ymin_pixel = Math.min(ymin_pixel, curr_point.y);
+				ymax_pixel = Math.max(ymax_pixel, curr_point.y);
+				ysum += curr_point.y;
+				points_in_pixel++;
+			} else {
+				// draw previous pixel position
 				drawSingleRect(
-						ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, i, curr_x_plus_width);
-				if (DEBUG) {
-					System.out.println("graphSym.getGraphWidthCoord(i) = " + graf.getGraphWidthCoord(i));
-				}	
-				
+						ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, i);
+
 				ymin_pixel = curr_point.y;
 				ymax_pixel = curr_point.y;
 				ysum = curr_point.y;
 				points_in_pixel = 1;
-				
+			}
 			prev_point.x = curr_point.x;
 			prev_point.y = curr_point.y;
 		}
 		/* draw last pixel position */
-		drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, draw_end_index, curr_x_plus_width);
+		drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, draw_end_index);
 	}
 
 	protected void drawSingleRect(
-			int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i, Point curr_x_plus_width) {
+			int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i) {
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 		drawRectOrLine(g, prev_point.x, ystart, 1, yend - ystart);

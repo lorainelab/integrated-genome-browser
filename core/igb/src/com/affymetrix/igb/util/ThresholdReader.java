@@ -4,6 +4,11 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
 
+/**
+ * holds all the logic for transitioning, for both semantic zoom and autoload.
+ * make any logic changes in this class, to attempt to leave all other
+ * classes alone.
+ */
 public class ThresholdReader {
 	public static final int threshold_increment = 10000;
 	public static final int threshold_min = threshold_increment;

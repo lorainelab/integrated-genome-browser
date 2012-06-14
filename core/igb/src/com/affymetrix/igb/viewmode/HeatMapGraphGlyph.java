@@ -51,7 +51,9 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i) {
+	protected void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, 
+			int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, 
+			int width, int i) {
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		double heatmap_scaling = 1;
 		if (state.getHeatMap() != null) {
@@ -61,7 +63,7 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph {
 		}
 		g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
 		//drawRectOrLine(g, prev_point.x, plot_top_ypixel, 1, plot_bottom_ypixel - plot_top_ypixel);
-		drawRectOrLine(g, prev_point.x, getPixelBox().y, 1, getPixelBox().height + 1);
+		drawRectOrLine(g, prev_point.x, getPixelBox().y, width, getPixelBox().height + 1);
 	}
 
 	@Override

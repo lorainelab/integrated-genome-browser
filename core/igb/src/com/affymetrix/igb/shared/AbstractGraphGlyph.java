@@ -906,6 +906,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		int ymax_pixel = prev_point.y;
 		int ysum = prev_point.y;
 		int points_in_pixel = 1;
+		int width = 1;
 		colorChange(g);
 
 		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
@@ -925,25 +926,29 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 				ymax_pixel = Math.max(ymax_pixel, curr_point.y);
 				ysum += curr_point.y;
 				points_in_pixel++;
+				if(graf.hasWidth()){
+					width += graf.getGraphWidthCoord(i);
+				}
 			} else {
 				// draw previous pixel position
 				drawSingleRect(
-						ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, i);
+						ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, width, i);
 
 				ymin_pixel = curr_point.y;
 				ymax_pixel = curr_point.y;
 				ysum = curr_point.y;
 				points_in_pixel = 1;
+				width = 1;
 			}
 			prev_point.x = curr_point.x;
 			prev_point.y = curr_point.y;
 		}
 		/* draw last pixel position */
-		drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, draw_end_index);
+		drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, width, draw_end_index);
 	}
 
 	protected void drawSingleRect(
-			int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i) {
+			int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int width, int i) {
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 		drawRectOrLine(g, prev_point.x, ystart, 1, yend - ystart);

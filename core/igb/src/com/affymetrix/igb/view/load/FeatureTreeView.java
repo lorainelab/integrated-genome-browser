@@ -773,27 +773,22 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 							nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
 						}
 
-						Rectangle r = thetree.getPathBounds(path);
-						int x = mouseEvent.getX() - r.x;
-
-						FeatureCheckBox checkbox = null;
 						if (nodeData instanceof GenericFeature) {
+							Rectangle r = thetree.getPathBounds(path);
+							int x = mouseEvent.getX() - r.x;
 							if (renderer == null) {
 								renderer = new FeatureTreeCellRenderer();
 							}
-							checkbox = renderer.getLeafCheckBox((GenericFeature)nodeData);
+							FeatureCheckBox checkbox = renderer.getLeafCheckBox((GenericFeature)nodeData);
 							if (!checkbox.isFeatureLoadActionSet()) {
 								checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
 							}
 							checkbox.setText("");
+							returnValue = editedNode.isLeaf() && x > 0 && x < checkbox.getPreferredSize().width;
 						}
-						else if(nodeData instanceof GenericServer){
-							return false;
-						}
-						else {
+						else if(!(nodeData instanceof GenericServer)){
 							throw new UnsupportedOperationException("isCellEditable with bad data");
-							}
-						returnValue = editedNode.isLeaf() && nodeData instanceof GenericFeature && x > 0 && x < checkbox.getPreferredSize().width;
+						}
 					}
 				}
 			}

@@ -57,6 +57,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.util.ThresholdReader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
@@ -518,7 +519,7 @@ public class SeqMapView extends JPanel
 
 		private void drawThresholdPoint(Graphics g, Color bgColor, Color fgColor, int threshold) {
 			Color c = g.getColor();
-			int thresholdPosition = (threshold * getMaximum() / 100);
+			int thresholdPosition = (int)(getMaximum() * ThresholdReader.getInstance().getAsZoomerPercent(threshold));
 			g.setColor(fgColor);
 			int xp = xPositionForValue(thresholdPosition);
 			int yp = this.getHeight() / 2;

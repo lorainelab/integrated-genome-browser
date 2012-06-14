@@ -28,4 +28,8 @@ public class ThresholdReader {
 	public int getDecrement() {
 		return Math.max(0, getCurrentThresholdValue() - 1);
 	}
+
+	public double getAsZoomerPercent(int threshold) {
+		return threshold / 100.0;
+	}
 }

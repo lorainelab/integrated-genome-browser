@@ -85,7 +85,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 			}
 			prev_scroller_value = scroller_value;
 		} else if (src == zoomer){
-			zoomer_value = (zoomer.getValue() * 100 / zoomer.getMaximum());
+			zoomer_value = ThresholdReader.getInstance().getCurrentThresholdValue();
 
 			if (prev_zoomer_value == zoomer_value) {
 				return;
@@ -105,7 +105,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 	}
 
 	public boolean shouldAutoLoad(){
-		return zoomer_value >= threshold;
+		return ThresholdReader.getInstance().isDetail(threshold);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent pce) {

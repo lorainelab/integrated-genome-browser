@@ -47,7 +47,7 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 		if (style != null && style.getSummaryThreshold() > 0) {
 			trackThreshold = style.getSummaryThreshold();
 		}
-		return ThresholdReader.getInstance().getCurrentThresholdValue() >= trackThreshold;
+		return ThresholdReader.getInstance().isDetail(trackThreshold);
 	}
 
 	@Override

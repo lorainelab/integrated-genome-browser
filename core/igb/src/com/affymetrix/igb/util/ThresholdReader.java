@@ -29,6 +29,10 @@ public class ThresholdReader {
 		return Math.max(0, getCurrentThresholdValue() - 1);
 	}
 
+	public boolean isDetail(int threshold) {
+		return getCurrentThresholdValue() >= threshold;
+	}
+
 	public double getAsZoomerPercent(int threshold) {
 		return threshold / 100.0;
 	}

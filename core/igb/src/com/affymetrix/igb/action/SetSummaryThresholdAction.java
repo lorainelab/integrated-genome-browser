@@ -23,6 +23,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.ThresholdReader;
 
 public class SetSummaryThresholdAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -41,30 +42,17 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 			"16x16/actions/summary.png", "22x22/actions/summary.png");
 	}
 
-	public SetSummaryThresholdAction(String text, String iconPath, String largeIconPath) {
-		super(text, iconPath, largeIconPath);
-	}
-
-	private JSlider getZoomer() {
-		return (JSlider)getSeqMapView().getSeqMap().getZoomer(NeoMap.X);
-	}
-
-	protected int getZoomerValue() {
-		return (getZoomer().getValue() * 100 / getZoomer().getMaximum());
-	}
-
 	public boolean isDetail(ITrackStyleExtended style) {
-		int trackThreshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, PreferenceUtils.default_threshold);
+		int trackThreshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, ThresholdReader.default_threshold);
 		if (style != null && style.getSummaryThreshold() > 0) {
 			trackThreshold = style.getSummaryThreshold();
 		}
-		return getZoomerValue() >= trackThreshold;
+		return ThresholdReader.getInstance().getCurrentThresholdValue() >= trackThreshold;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		int zoomerValue = getZoomerValue();
 		int summaryThreshold;
 		for (GlyphI glyph : getSeqMapView().getSelectedTiers()) {
 			TierGlyph tierGlyph = (TierGlyph)glyph;
@@ -72,10 +60,10 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 			if (style != null && style instanceof TrackStyle) {
 				boolean isDetail = isDetail(style);
 				if (isDetail) {
-					summaryThreshold = Math.min(100, zoomerValue + 1);
+					summaryThreshold = ThresholdReader.getInstance().getIncrement();
 				}
 				else {
-					summaryThreshold = Math.max(0, zoomerValue - 1);
+					summaryThreshold = ThresholdReader.getInstance().getDecrement();
 				}
 				((TrackStyle) style).setSummaryThreshold(summaryThreshold);
 				if (tierGlyph.getViewModeGlyph() instanceof NeoRangeListener) {
@@ -86,6 +74,6 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		getSeqMapView().getSeqMap().updateWidget();
-		getZoomer().repaint();
+		((JSlider)getSeqMapView().getSeqMap().getZoomer(NeoMap.X)).repaint();
 	}
 }

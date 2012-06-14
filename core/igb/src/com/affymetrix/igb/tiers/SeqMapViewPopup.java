@@ -329,6 +329,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		popup.add(new JSeparator());
 		popup.add(new JMenuItem(AutoLoadThresholdAction.getAction()));
+		JMenuItem sumThreshItem = new JMenuItem(SetSummaryThresholdAction.getAction());
+		sumThreshItem.setEnabled(num_selections > 0);
+		popup.add(sumThreshItem);
 
 		if (DEBUG) {
 			popup.add(new AbstractAction("DEBUG") {

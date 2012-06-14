@@ -82,7 +82,6 @@ public abstract class PreferenceUtils {
 	private static String prefs_mode = DEFAULT_PREFS_MODE;
 	public static final String  PREFS_THRESHOLD = "Threshold Value";
 	public static final String  PREFS_AUTOLOAD = "Enable Auto load";
-	public static final int default_threshold = 80;
 	private static JFileChooser static_chooser = null;
 	private static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
 

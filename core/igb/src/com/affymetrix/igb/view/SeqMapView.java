@@ -231,6 +231,7 @@ public class SeqMapView extends JPanel
 	private final static int[] default_offset = new int[]{0, 100};
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TransformTierGlyph axis_tier;
+	private AutoLoadThresholdHandler autoLoadThresholdHandler;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -467,6 +468,7 @@ public class SeqMapView extends JPanel
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
+		autoLoadThresholdHandler = new AutoLoadThresholdHandler(this);
 
 	}
 
@@ -494,14 +496,16 @@ public class SeqMapView extends JPanel
 		public void paint(Graphics g) {
 			super.paint(g);
 
-			drawAutoLoadPoint(g);
+			if (getAutoLoad() != null) {
+				drawAutoLoadPoint(g);
+			}
 			for (TierGlyph tierGlyph : SeqMapView.this.getTierManager().getVisibleTierGlyphs()) {
 				drawTrackThresholdPoint(g, tierGlyph);
 			}
 		}
 
 		private void drawAutoLoadPoint(Graphics g) {
-			drawThresholdPoint(g, Color.BLACK, Color.WHITE, AutoLoadThresholdAction.getAction().threshold);
+			drawThresholdPoint(g, Color.BLACK, Color.WHITE, getAutoLoad().threshold);
 		}
 
 		private void drawTrackThresholdPoint(Graphics g, TierGlyph tier) {
@@ -553,8 +557,8 @@ public class SeqMapView extends JPanel
 		return new ThresholdXZoomer(id);
 	}
 
-	public AutoLoadThresholdAction getAutoLoad() {
-		return AutoLoadThresholdAction.getAction();
+	public AutoLoadThresholdHandler getAutoLoad() {
+		return autoLoadThresholdHandler;
 	}
 
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
@@ -1612,7 +1616,9 @@ public class SeqMapView extends JPanel
 		seqmap.scroll(NeoAbstractWidget.X, smin);
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
 		seqmap.updateWidget();
-		AutoLoadThresholdAction.getAction().mapZoomed();
+		if (getAutoLoad() != null) {
+			getAutoLoad().mapZoomed();
+		}
 	}
 
 	/**
@@ -1687,7 +1693,9 @@ public class SeqMapView extends JPanel
 			seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
 			seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
 			seqmap.updateWidget();
-			AutoLoadThresholdAction.getAction().mapZoomed();
+			if (getAutoLoad() != null) {
+				getAutoLoad().mapZoomed();
+			}
 		}
 	}
 
@@ -2476,7 +2484,9 @@ public class SeqMapView extends JPanel
 		coord_value += 1; // fudge factor
 		seqmap.scroll(NeoMap.Y, coord_value);
 		seqmap.updateWidget();
-		AutoLoadThresholdAction.getAction().mapZoomed();
+		if (getAutoLoad() != null) {
+			getAutoLoad().mapZoomed();
+		}
 	}
 
 	@Override

@@ -54,11 +54,11 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         jLabel2.setText("jLabel2");
 
-        transformLabel.setText("Unary Op");
+        transformLabel.setText("Single-Track Operations");
 
         transformationGoB.setText("Go");
 
-        operationLabel.setText("Operation");
+        operationLabel.setText("Multi-Track Operations");
 
         operationGoB.setText("Go");
 
@@ -94,7 +94,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
                     .add(layout.createSequentialGroup()
                         .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(operationGoB, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(operationGoB, 0, 0, Short.MAX_VALUE)))
                 .add(23, 23, 23)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)

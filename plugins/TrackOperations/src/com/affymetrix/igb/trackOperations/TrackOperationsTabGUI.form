@@ -39,7 +39,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="operationCB" linkSize="10" min="-2" pref="129" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="operationGoB" linkSize="11" min="0" max="32767" attributes="1"/>
+                      <Component id="operationGoB" linkSize="11" min="0" pref="0" max="32767" attributes="1"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
@@ -100,7 +100,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="transformLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Unary Op"/>
+        <Property name="text" type="java.lang.String" value="Single-Track Operations"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="transformationCB">
@@ -118,7 +118,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="operationLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Operation"/>
+        <Property name="text" type="java.lang.String" value="Multi-Track Operations"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="operationCB">

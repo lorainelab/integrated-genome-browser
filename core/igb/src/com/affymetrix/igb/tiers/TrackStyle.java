@@ -543,8 +543,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.setReverseColor(template.getReverseColor());
 		this.setViewMode(template.getViewMode());
 		this.setDirectionType(template.getDirectionName());
-		this.setLabelBackground(template.getLabelBackground());
-		this.setLabelForeground(template.getLabelForeground());
 	}
 
 	// Returns the preferences node, or null if this is a non-persistent instance.

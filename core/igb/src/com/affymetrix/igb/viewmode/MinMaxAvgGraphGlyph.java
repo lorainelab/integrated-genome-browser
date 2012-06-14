@@ -10,6 +10,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 
 public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
@@ -118,22 +119,40 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
+	public void setCoords(double x, double y, double width, double height)  {
+		super.setCoords(x, y, width, height);
+		if(tempViewModeBarGraphGlyph != null){
+			tempViewModeBarGraphGlyph.setCoords(x, y, width, height);
+		}
+	}
+	
+	@Override
+	public void setCoordBox(Rectangle2D.Double coordbox)   {
+		super.setCoordBox(coordbox);
+		if(tempViewModeBarGraphGlyph != null){
+			tempViewModeBarGraphGlyph.setCoordBox(coordbox);
+		}
+	}
+	
+	@Override
 	public void setPreferredHeight(double height, ViewI view) {
 		super.setPreferredHeight(height, view);
-		tempViewModeBarGraphGlyph.setPreferredHeight(height, view);
+		if(tempViewModeBarGraphGlyph != null){
+			tempViewModeBarGraphGlyph.setPreferredHeight(height, view);
+		}
 	}
 	
-	@Override
-	public void moveRelative(double diffx, double diffy) {
-		super.moveRelative(diffy, diffy);
-		tempViewModeBarGraphGlyph.moveRelative(diffy, diffy);
-	}
-	
-	@Override
-	public void moveAbsolute(double x, double y){
-		super.moveAbsolute(x, y);
-		tempViewModeBarGraphGlyph.moveAbsolute(x, y);
-	}
+//	@Override
+//	public void moveRelative(double diffx, double diffy) {
+//		super.moveRelative(diffy, diffy);
+//		tempViewModeBarGraphGlyph.moveRelative(diffy, diffy);
+//	}
+//	
+//	@Override
+//	public void moveAbsolute(double x, double y){
+//		super.moveAbsolute(x, y);
+//		tempViewModeBarGraphGlyph.moveAbsolute(x, y);
+//	}
 	
 	@Override
 	public GraphType getGraphStyle() {

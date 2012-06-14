@@ -7,6 +7,8 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
 import com.affymetrix.igb.shared.ResidueColorHelper;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.ColorUtils;
@@ -14,6 +16,7 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import java.awt.BorderLayout;
+import java.util.EventObject;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -21,7 +24,7 @@ import java.util.prefs.PreferenceChangeListener;
  *
  * @author nick
  */
-public class OtherOptionsView extends IPrefEditorComponent implements PreferenceChangeListener {
+public class OtherOptionsView extends IPrefEditorComponent implements PreferenceChangeListener, TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	private final SeqMapView smv;
@@ -53,6 +56,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		}
 
 		initComponents();
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
 	/** This method is called from within the constructor to
@@ -406,10 +410,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
 		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
 		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void showCollapseOptionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showCollapseOptionCheckBoxActionPerformed
@@ -506,5 +512,10 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		//Update Coordinate Track Colors
 		bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());
 		fgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getForeground());
+	}
+
+	@Override
+	public void trackstylePropertyChanged(EventObject eo) {
+		refresh();
 	}
 }

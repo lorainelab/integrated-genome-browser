@@ -690,6 +690,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
     scroller[id].addAdjustmentListener(this);
   }
 
+  public double zoomerValueFromScale(int id, double scale) {
+	return zoomtrans[id].inverseTransform(id, scale) / (zoomer[id].getMaximum() - zoomer[id].getMinimum());
+  }
+
   public void adjustZoomer(int id) {
 		if (zoomer[id] == null) { return; }
 		if (pixels_per_coord[id] == zoomer_value[id]) { return; }

@@ -1608,11 +1608,16 @@ public class SeqMapView extends JPanel
 		zoomTo(span.getMin(), span.getMax());
 	}
 
-	public final void zoomTo(double smin, double smax) {
+	public final double getPixelsToCoord(double smin, double smax) {
 		double coord_width = Math.min(getAnnotatedSeq().getLengthDouble(), smax) - Math.max(getAnnotatedSeq().getMin(), smin);
 		double pixel_width = seqmap.getView().getPixelBox().width;
 		double pixels_per_coord = pixel_width / coord_width; // can be Infinity, but the Math.min() takes care of that
 		pixels_per_coord = Math.min(pixels_per_coord, seqmap.getMaxZoom(NeoAbstractWidget.X));
+		return pixels_per_coord;
+	}
+
+	public final void zoomTo(double smin, double smax) {
+		double pixels_per_coord = getPixelsToCoord(smin, smax);
 		seqmap.zoom(NeoAbstractWidget.X, pixels_per_coord);
 		seqmap.scroll(NeoAbstractWidget.X, smin);
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);

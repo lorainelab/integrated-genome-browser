@@ -1609,6 +1609,9 @@ public class SeqMapView extends JPanel
 	}
 
 	public final double getPixelsToCoord(double smin, double smax) {
+		if (getAnnotatedSeq() == null) {
+			return 0;
+		}
 		double coord_width = Math.min(getAnnotatedSeq().getLengthDouble(), smax) - Math.max(getAnnotatedSeq().getMin(), smin);
 		double pixel_width = seqmap.getView().getPixelBox().width;
 		double pixels_per_coord = pixel_width / coord_width; // can be Infinity, but the Math.min() takes care of that

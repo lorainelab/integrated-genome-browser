@@ -9,8 +9,10 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -303,7 +305,14 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		graphGlyphs.clear();
 		for (Glyph glyph : igbService.getSelectedTierGlyphs()) {
-			if (((TierGlyph)glyph).getViewModeGlyph() instanceof AbstractGraphGlyph) {
+			if(((TierGlyph)glyph).getViewModeGlyph() instanceof MultiGraphGlyph){
+				MultiGraphGlyph multiGraphGlyph = ((MultiGraphGlyph)((TierGlyph)glyph).getViewModeGlyph());
+				for(GlyphI g : multiGraphGlyph.getChildren()){
+					if(g instanceof AbstractGraphGlyph){
+						graphGlyphs.add((AbstractGraphGlyph)g);
+					}
+				}
+			}else if (((TierGlyph)glyph).getViewModeGlyph() instanceof AbstractGraphGlyph) {
 				graphGlyphs.add((AbstractGraphGlyph)((TierGlyph)glyph).getViewModeGlyph());
 			}
 		}

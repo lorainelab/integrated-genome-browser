@@ -75,6 +75,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
         VisibleRangeButtonGroup.add(by_valRB_val);
         by_valRB_val.setSelected(true);
         by_valRB_val.setText("Value");
+        by_valRB_val.setIconTextGap(2);
         by_valRB_val.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 by_valRB_valActionPerformed(evt);
@@ -83,6 +84,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 
         VisibleRangeButtonGroup.add(by_percentileRB_val);
         by_percentileRB_val.setText("Percentile");
+        by_percentileRB_val.setIconTextGap(2);
         by_percentileRB_val.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 by_percentileRB_valActionPerformed(evt);
@@ -173,14 +175,15 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(14, 14, 14)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(heightLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(otherOptionsButton)
-                    .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 222, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(0, 0, Short.MAX_VALUE)
+                .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

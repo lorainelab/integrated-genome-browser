@@ -49,8 +49,8 @@
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="stylePanel" max="32767" attributes="1"/>
                   <Component id="viewModePanel" max="-2" attributes="0"/>
-                  <Component id="stylePanel" min="-2" pref="168" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="annotationsPanel" min="-2" max="-2" attributes="1"/>
@@ -81,13 +81,13 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="viewModePanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="stylePanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="stylePanel" min="-2" pref="109" max="-2" attributes="0"/>
                   </Group>
                   <Component id="graphPanel" alignment="0" min="-2" pref="167" max="-2" attributes="0"/>
                   <Component id="annotationsPanel" alignment="0" pref="167" max="-2" attributes="1"/>
               </Group>
-              <EmptySpace pref="8" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -376,13 +376,13 @@
                   </Group>
                   <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="labelSizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelSizeComboBox" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
                       <Component id="labelSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="colorSchemeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="colorSchemeComboBox" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                      <Component id="colorSchemeComboBox" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="0" max="-2" attributes="0"/>
               </Group>
@@ -528,15 +528,6 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="labelFieldComboBox" pref="100" max="-2" attributes="0"/>
               </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="stackDepthLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="stackDepthTextField" min="-2" pref="44" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  <Component id="stackDepthGoButton" min="-2" pref="55" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="stackDepthAllButton" min="-2" pref="56" max="-2" attributes="0"/>
-              </Group>
               <Component id="strandsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
@@ -553,6 +544,15 @@
                   <Component id="strands2TracksCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="strandsArrowCheckBox" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="stackDepthLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="stackDepthTextField" min="-2" pref="44" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="stackDepthGoButton" min="-2" pref="49" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="stackDepthAllButton" min="-2" pref="56" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -727,7 +727,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="viewModeComboBox" alignment="0" pref="150" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace pref="11" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

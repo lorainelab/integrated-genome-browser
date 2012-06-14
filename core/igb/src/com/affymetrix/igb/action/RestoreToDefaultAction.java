@@ -38,6 +38,6 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		getSeqMapView().getSeqMap().updateWidget();
+		getSeqMapView().updatePanel();
 	}
 }

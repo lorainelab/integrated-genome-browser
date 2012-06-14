@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
@@ -214,7 +215,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void mapRefresh(List<GlyphI> glyphs) {
 		TransformTierGlyph axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
-		for (GlyphI glyph : glyphs) {
+		for (GlyphI glyph : new CopyOnWriteArrayList<GlyphI>(glyphs)) {
 			axis_tier.addChild(glyph);
 		}
 	}

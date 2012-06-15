@@ -12,11 +12,11 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.ExistentialTriad;
+import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
+import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.JRPStyledTable;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -139,13 +139,31 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	/**
+	 * These are actions that are inappropriate for the tool bar.
+	 * This is kind of a kludge until we can figure out a better way.
+	 */
+	static final Set<GenericAction> smallTimeActions = new HashSet<GenericAction>();
+	static {
+		// Prefs Panel Only
+		smallTimeActions.add(ExportPreferencesAction.getAction());
+		smallTimeActions.add(ImportPreferencesAction.getAction());
+		smallTimeActions.add(ClearPreferencesAction.getAction());
+		smallTimeActions.add(PreferencesHelpAction.getAction());
+		smallTimeActions.add(PreferencesHelpTabAction.getAction());
+		// Actions that have a toggle should not be in the tool bar.
+		// Their toggles can be, but the actions have large icons (for the toggle).
+		smallTimeActions.add(ExpandAction.getAction());
+		smallTimeActions.add(CollapseAction.getAction());
+		smallTimeActions.add(ShowOneTierAction.getAction());
+		smallTimeActions.add(ShowTwoTiersAction.getAction());
+	}
+	/**
 	 * Build the underlying data array.
 	 * There is a fourth column, not shown in the table,
 	 * but needed by the setValue() method.
 	 *
 	 * @param keystroke_node
 	 * @param toolbar_node
-	 * @return
 	 */
 	private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
 		TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
@@ -166,7 +184,13 @@ public final class KeyStrokesView implements ListSelectionListener,
 				rows[i][IconColumn] = genericAction == null ? null : genericAction.getValue(Action.SMALL_ICON);
 				rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
 				rows[i][KeyStrokeColumn] = keystroke_node.get(key, "");
-				rows[i][ToolbarColumn] = toolbar_node.getBoolean(key, false);
+				rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
+				if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) { // TODO is this condition correct?
+					rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
+				}
+				if (smallTimeActions.contains(genericAction)) {
+					rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
+				}
 				rows[i][IdColumn] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
 			}
 		}
@@ -235,6 +259,9 @@ public final class KeyStrokesView implements ListSelectionListener,
 
 		public KeyStrokeViewTable(String id) {
 			super(id);
+			setDefaultEditor(ExistentialTriad.class, new DefaultCellEditor(new JComboBox(ExistentialTriad.values())));
+			setDefaultEditor(ExistentialTriad.class, new SuperBooleanCellEditor());
+			setDefaultRenderer(ExistentialTriad.class, new SuperBooleanCellEditor());
 		}
 
 		private static final long serialVersionUID = 1L;
@@ -253,7 +280,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		public TableCellRenderer getCellRenderer(int row, int col) {
 			TableCellRenderer renderer = super.getCellRenderer(row, col);
 			if (col == ToolbarColumn) {
-				((JCheckBox) renderer).setHorizontalAlignment(SwingConstants.CENTER);
+				((SuperBooleanCellEditor) renderer).setHorizontalAlignment(SwingConstants.CENTER);
 			} else if (col == IconColumn) {
 			} else {
 				((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.LEFT);

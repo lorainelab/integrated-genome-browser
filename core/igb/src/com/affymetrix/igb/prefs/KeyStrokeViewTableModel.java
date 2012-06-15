@@ -1,13 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/*  Licensed under the Common Public License, Version 1.0 (the "License").
+ *  A copy of the license must be included
+ *  with any distribution of this source code.
+ *  Distributions from Genentech, Inc. place this in the IGB_LICENSE.html file.
+ * 
+ *  The license is also available at
+ *  http://www.opensource.org/licenses/CPL
  */
 package com.affymetrix.igb.prefs;
 
-import javax.swing.table.AbstractTableModel;
-
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.ExistentialTriad;
 import javax.swing.ImageIcon;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -58,7 +62,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 			return ImageIcon.class;
 		}
 		if (column == KeyStrokesView.ToolbarColumn) {
-			return Boolean.class;
+			return ExistentialTriad.class;
 		}
 		return String.class;
 	}
@@ -77,7 +81,13 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 		if (columnIndex == KeyStrokesView.ToolbarColumn && rows != null) {
 			rows[rowIndex][columnIndex] = aValue;
 			String pref_name = (String) rows[rowIndex][KeyStrokesView.IdColumn];
-			PreferenceUtils.getToolbarNode().putBoolean(pref_name, (Boolean) aValue);
+			if (aValue instanceof ExistentialTriad) {
+				ExistentialTriad t = (ExistentialTriad) aValue;
+				PreferenceUtils.getToolbarNode().putBoolean(pref_name, t.booleanValue());
+			}
+			else { // Vestigial; This used to be a boolean.
+				PreferenceUtils.getToolbarNode().putBoolean(pref_name, (Boolean) aValue);
+			}
 		}
 	}
 }

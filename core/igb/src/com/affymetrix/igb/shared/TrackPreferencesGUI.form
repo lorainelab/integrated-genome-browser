@@ -35,28 +35,31 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="1" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <Component id="trackNameTextField" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="selectAllButton" min="-2" pref="90" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="hideButton" min="-2" pref="43" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="clearButton" min="-2" pref="43" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="restoreToDefaultButton" min="-2" pref="124" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="1" attributes="0">
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="stylePanel" max="32767" attributes="1"/>
-                  <Component id="viewModePanel" max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace pref="0" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="trackNameTextField" max="32767" attributes="0"/>
+                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <Component id="selectAllButton" min="-2" pref="90" max="-2" attributes="0"/>
+                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <Component id="hideButton" min="-2" pref="43" max="-2" attributes="0"/>
+                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <Component id="clearButton" min="-2" pref="43" max="-2" attributes="0"/>
+                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <Component id="restoreToDefaultButton" min="-2" pref="124" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="stylePanel" min="-2" pref="161" max="-2" attributes="1"/>
+                          <Component id="viewModePanel" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="annotationsPanel" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="graphPanel" min="-2" pref="208" max="-2" attributes="1"/>
+                  </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="annotationsPanel" min="-2" max="-2" attributes="1"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="graphPanel" min="-2" pref="208" max="-2" attributes="1"/>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -76,18 +79,16 @@
                       <Component id="hideButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <Component id="graphPanel" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="annotationsPanel" alignment="0" max="32767" attributes="1"/>
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="viewModePanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="stylePanel" min="-2" pref="109" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <Component id="stylePanel" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="graphPanel" alignment="0" min="-2" pref="167" max="-2" attributes="0"/>
-                  <Component id="annotationsPanel" alignment="0" pref="167" max="-2" attributes="1"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -110,43 +111,35 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="graphStyleMinMaxAvgRadioButton" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jCheckBox1" min="-2" pref="63" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
                           <Component id="YAxisCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
                           <Component id="floatCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jSeparator1" alignment="1" max="32767" attributes="0"/>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="graphStyleMinMaxAvgRadioButton" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="graphStyleStairStepRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="graphStyleLineRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="graphStyleStairStepRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="graphStyleLineRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="graphStyleBarRadioButton" min="-2" max="-2" attributes="0"/>
-                                      <Component id="graphStyleDotRadioButton" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="graphStyleBarRadioButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="graphStyleDotRadioButton" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="jSeparator1" alignment="0" min="-2" pref="194" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -158,21 +151,21 @@
                       <Component id="YAxisCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="jCheckBox1" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="graphStyleLineRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="graphStyleBarRadioButton" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="graphStyleStairStepRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="graphStyleDotRadioButton" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Component id="graphStyleMinMaxAvgRadioButton" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleHeatMapComboBox" min="-2" max="-2" attributes="0"/>
@@ -338,11 +331,11 @@
                           <Component id="foregroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                           <Component id="foregroundColorLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Component id="backgroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                           <Component id="backgroundColorLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Component id="labelColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                           <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
@@ -524,35 +517,41 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="strandsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <Component id="strandsForwardColorLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <Component id="strandsForwardColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          <Component id="strandsReverseColorLabel" min="-2" pref="9" max="-2" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <Component id="strandsReverseColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="strands2TracksCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <Component id="strandsArrowCheckBox" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace min="32" max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
                   <Component id="labelFieldLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="labelFieldComboBox" pref="100" max="-2" attributes="0"/>
-              </Group>
-              <Component id="strandsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="strandsForwardColorLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="strandsForwardColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="strandsReverseColorLabel" min="-2" pref="9" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="strandsReverseColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="strands2TracksCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="strandsArrowCheckBox" min="-2" max="-2" attributes="0"/>
+                  <Component id="labelFieldComboBox" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="stackDepthLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Component id="stackDepthTextField" min="-2" pref="44" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="stackDepthGoButton" min="-2" pref="49" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="stackDepthAllButton" min="-2" pref="56" max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <Component id="stackDepthGoButton" min="-2" pref="43" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="stackDepthAllButton" min="-2" pref="46" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -570,14 +569,14 @@
                       <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Component id="strandsLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="strands2TracksCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="strandsArrowCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="strandsColorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="strandsForwardColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -725,10 +724,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <Component id="viewModeComboBox" alignment="0" pref="150" max="-2" attributes="0"/>
-                  <EmptySpace pref="11" max="32767" attributes="0"/>
-              </Group>
+              <Component id="viewModeComboBox" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

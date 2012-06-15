@@ -16,26 +16,36 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="orfAnalyzerPanel" alignment="1" max="32767" attributes="1"/>
-                  <Component id="edgeMatchPanel" alignment="1" pref="500" max="32767" attributes="1"/>
-                  <Component id="clear_prefsB" alignment="0" max="32767" attributes="0"/>
-                  <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
-                  <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
-                          <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-                          <Component id="keepZoomStripeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="showZoomStripLabelCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="showCollapseOptionCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="showZoomStripLabelCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="keepZoomStripeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="showCollapseOptionCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="displayOption" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="autoloadSequenceCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="222" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="orfAnalyzerPanel" alignment="1" max="32767" attributes="1"/>
+                          <Component id="edgeMatchPanel" alignment="1" pref="509" max="32767" attributes="1"/>
+                          <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="clear_prefsB" min="-2" pref="518" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -54,24 +64,29 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="edgeMatchPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="keepZoomStripeCheckBox" min="-2" pref="23" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="showCollapseOptionCheckBox" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="askBeforeExitCheckBox" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                      <Component id="confirmBeforeDeleteCheckBox" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                      <Component id="confirmBeforeLoadCheckBox" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                      <Component id="showZoomStripLabelCheckBox" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Component id="keepZoomStripeCheckBox" linkSize="1" min="-2" pref="23" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                      <Component id="showCollapseOptionCheckBox" linkSize="1" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="displayOption" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="autoloadSequenceCheckBox" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace type="unrelated" max="32767" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="13" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -102,7 +117,7 @@
                   <Component id="numFormatLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="coordinates_label_format_CB" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="57" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -176,16 +191,16 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="stopCodonLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                   <Component id="StopCodonColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
                   <Component id="dynamicORFLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="DynamicORFColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                   <Component id="bgLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="bgComboBox" min="-2" pref="20" max="-2" attributes="0"/>
@@ -196,6 +211,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="stopCodonLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="dynamicORFLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -204,7 +220,7 @@
                       <Component id="bgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="bgComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -226,6 +242,9 @@
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="DynamicORFColorComboBox">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DynamicORFColorComboBoxActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this);"/>
           </AuxValues>
@@ -259,19 +278,19 @@
                   <Component id="aLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="AColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
                   <Component id="tLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="TColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
                   <Component id="gLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="GColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
                   <Component id="cLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="CColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
                   <Component id="otherLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="OtherColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>

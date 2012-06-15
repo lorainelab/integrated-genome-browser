@@ -60,10 +60,10 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 			if (style != null && style instanceof TrackStyle) {
 				boolean isDetail = isDetail(style);
 				if (isDetail) {
-					summaryThreshold = ThresholdReader.getInstance().getIncrement();
+					summaryThreshold = ThresholdReader.getInstance().toSummary();
 				}
 				else {
-					summaryThreshold = ThresholdReader.getInstance().getDecrement();
+					summaryThreshold = ThresholdReader.getInstance().toDetail();
 				}
 				((TrackStyle) style).setSummaryThreshold(summaryThreshold);
 				if (tierGlyph.getViewModeGlyph() instanceof NeoRangeListener) {

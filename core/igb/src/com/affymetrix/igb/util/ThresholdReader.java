@@ -10,10 +10,9 @@ import com.affymetrix.igb.IGB;
  * classes alone.
  */
 public class ThresholdReader {
-	public static final int threshold_increment = 10000;
+	public static final int threshold_increment = 1000;
 	public static final int threshold_min = threshold_increment;
-	public static final int threshold_max = 20000000;
-	public static final int default_threshold = 200000;
+	public static final int default_threshold = 100000;
 	private static final ThresholdReader instance = new ThresholdReader();
 	public static final ThresholdReader getInstance() {
 		return instance;
@@ -33,12 +32,20 @@ public class ThresholdReader {
 		return seqmap.zoomerValueFromScale(NeoAbstractWidget.X, scale);
 	}
 
-	public int getIncrement() {
-		return Math.min(threshold_max, getCurrentThresholdValue() - threshold_increment);
+	/**
+	 * change the threshold so that the current value becomes summary
+	 * @return new threshhold
+	 */
+	public int toSummary() {
+		return Math.max(threshold_min, getCurrentThresholdValue() - threshold_increment);
 	}
 
-	public int getDecrement() {
-		return Math.max(threshold_min, getCurrentThresholdValue() + threshold_increment);
+	/**
+	 * change the threshold so that the current value becomes detail
+	 * @return new threshhold
+	 */
+	public int toDetail() {
+		return getCurrentThresholdValue() + threshold_increment;
 	}
 
 	public boolean isDetail(int threshold) {

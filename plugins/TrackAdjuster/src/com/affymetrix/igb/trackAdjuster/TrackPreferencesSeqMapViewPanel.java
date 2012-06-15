@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -96,10 +97,12 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 						for (GlyphI child : glyph.getChildren()) {
 							if (rootSyms.contains(child.getInfo())) {
 								graphGlyphs.add((AbstractGraphGlyph) child);
+								allGlyphs.add((AbstractGraphGlyph) child);
 							}
 						}
 					}else if (!graphGlyphs.contains(glyph)) {
 						graphGlyphs.add((AbstractGraphGlyph)glyph);
+						allGlyphs.add((AbstractGraphGlyph) glyph);
 					}
 				}
 			}
@@ -126,6 +129,13 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List<RootSeqSymmetry> selected_syms = evt.getAllSelectedSyms();
+		
+		// Selected sym contains graph sym
+		for(SeqSymmetry sym: evt.getSelectedGraphSyms()){
+			if(sym instanceof RootSeqSymmetry){
+				selected_syms.add((RootSeqSymmetry)sym);
+			}
+		}
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 

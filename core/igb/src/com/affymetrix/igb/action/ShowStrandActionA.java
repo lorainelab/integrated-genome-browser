@@ -1,9 +1,5 @@
 package com.affymetrix.igb.action;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
@@ -13,7 +9,10 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.List;
 
 public abstract class ShowStrandActionA extends SeqMapViewActionA
 implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {

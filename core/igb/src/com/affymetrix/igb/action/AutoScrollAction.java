@@ -45,15 +45,19 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	private static final AutoScrollAction ACTION = new AutoScrollAction();
 
 	private AutoScrollAction() {
-		super(BUNDLE.getString("autoScroll"), null, "toolbarButtonGraphics/media/Movie16.gif", null, KeyEvent.VK_A, null, true);
+		super(BUNDLE.getString("autoScroll"), null,
+			"toolbarButtonGraphics/media/Movie16.gif",
+			"toolbarButtonGraphics/media/Movie16.gif", // tool bar eligible
+			KeyEvent.VK_A, null, true);
 
-		GenometryModel model = GenometryModel.getGenometryModel();
-		model.addSeqSelectionListener(this);
-		this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
 	}
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		GenometryModel model = GenometryModel.getGenometryModel();
+		model.addSeqSelectionListener(ACTION);
+		ACTION.seqSelectionChanged(new SeqSelectionEvent(
+				ACTION, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
 	}
 	
 	public static AutoScrollAction getAction() { return ACTION; }
@@ -64,6 +68,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 		this.toggleAutoScroll();
 	}
 
+	@Override
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		this.setEnabled(evt.getSelectedSeq() != null);
 	}
@@ -72,7 +77,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 		this.toggleAutoScroll(IGB.getSingleton().getMapView());
 	}
 
-	private final void toggleAutoScroll(final SeqMapView seqMapView) {
+	private void toggleAutoScroll(final SeqMapView seqMapView) {
 		if (map_auto_scroller == null) {
 			if (seqMapView.getViewSeq() == null) {
 				return;
@@ -125,6 +130,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 
 			ActionListener al = new ActionListener() {
 
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
 					as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
@@ -167,7 +173,8 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	// Normalize a text field so that it holds an integer, with a fallback value
 	// if there is a problem, and a minimum and maximum
 	private static int normalizeTF(JRPTextField tf, int fallback, int min, int max) {
-		int result = fallback;
+		assert min <= fallback && fallback <= max;
+		int result;
 		try {
 			result = Integer.parseInt(tf.getText());
 		} catch (NumberFormatException nfe) {
@@ -194,6 +201,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 		if (map_auto_scroller == null) {
 			map_auto_scroller = new ActionListener() {
 
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					Rectangle2D.Double vbox = seqMapView.getSeqMap().getViewBounds();
 					int scrollpos = (int) (vbox.x + coords_to_scroll);

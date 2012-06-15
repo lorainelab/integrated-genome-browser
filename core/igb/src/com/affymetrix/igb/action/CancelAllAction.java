@@ -22,7 +22,11 @@ public class CancelAllAction extends GenericAction {
 		return ACTION;
 	}
 	public CancelAllAction() {
-		super(BUNDLE.getString("cancelAllAction"), BUNDLE.getString("cancelAllActionTooltip"), "16x16/actions/stop.png", null, KeyEvent.VK_UNDEFINED);
+		super(BUNDLE.getString("cancelAllAction"),
+			  BUNDLE.getString("cancelAllActionTooltip"),
+			  "16x16/actions/stop.png",
+			  "16x16/actions/stop.png", // just so it's eligible for the tool bar.
+			  KeyEvent.VK_UNDEFINED);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

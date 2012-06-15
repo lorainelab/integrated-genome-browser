@@ -1,15 +1,14 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Adjustable;
 import java.awt.event.ActionEvent;
 
-import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-
 public class ZoomOutYAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static ZoomOutYAction ACTION = new ZoomOutYAction();
+	private static final ZoomOutYAction ACTION = new ZoomOutYAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -20,7 +19,10 @@ public class ZoomOutYAction extends SeqMapViewActionA {
 	}
 
 	public ZoomOutYAction() {
-		super("Zoom out vertically", "toolbarButtonGraphics/general/ZoomOut16.gif", null);
+		super("Zoom out vertically",
+				"toolbarButtonGraphics/general/ZoomOut16.gif",
+				"toolbarButtonGraphics/general/ZoomOut16.gif" // for tool bar
+				);
 	}
 
 	@Override

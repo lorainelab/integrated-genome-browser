@@ -300,7 +300,19 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(5, 5, 5))
         );
 
+        confirmBeforeDeleteCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                confirmBeforeDeleteCheckBoxActionPerformed(evt);
+            }
+        });
+
         clear_prefsB.setText("Reset preference to defaults");
+
+        showZoomStripLabelCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showZoomStripLabelCheckBoxActionPerformed(evt);
+            }
+        });
 
         edgeMatchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edge Match"));
         edgeMatchPanel.setMaximumSize(new java.awt.Dimension(335, 57));
@@ -386,29 +398,26 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(askBeforeExitCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                    .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
+                .add(5, 5, 5)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(askBeforeExitCheckBox)
-                        .add(5, 5, 5)
-                        .add(confirmBeforeDeleteCheckBox)
-                        .add(5, 5, 5)
-                        .add(confirmBeforeLoadCheckBox)
-                        .add(5, 5, 5)
-                        .add(showZoomStripLabelCheckBox))
+                        .add(confirmBeforeDeleteCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(confirmBeforeLoadCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(showZoomStripLabelCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
-                        .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(5, 5, 5)
-                        .add(showCollapseOptionCheckBox)
+                        .add(showCollapseOptionCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(displayOption)
+                        .add(displayOption, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(autoloadSequenceCheckBox)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(autoloadSequenceCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)))
+                .add(24, 24, 24)
                 .add(clear_prefsB)
-                .add(24, 24, 24))
+                .add(20, 20, 20))
         );
-
-        layout.linkSize(new java.awt.Component[] {askBeforeExitCheckBox, autoloadSequenceCheckBox, confirmBeforeDeleteCheckBox, confirmBeforeLoadCheckBox, displayOption, keepZoomStripeCheckBox, showCollapseOptionCheckBox, showZoomStripLabelCheckBox}, org.jdesktop.layout.GroupLayout.VERTICAL);
-
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
@@ -455,6 +464,14 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 	private void DynamicORFColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DynamicORFColorComboBoxActionPerformed
 		// TODO add your handling code here:
 	}//GEN-LAST:event_DynamicORFColorComboBoxActionPerformed
+
+	private void showZoomStripLabelCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showZoomStripLabelCheckBoxActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_showZoomStripLabelCheckBoxActionPerformed
+
+	private void confirmBeforeDeleteCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmBeforeDeleteCheckBoxActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_confirmBeforeDeleteCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;

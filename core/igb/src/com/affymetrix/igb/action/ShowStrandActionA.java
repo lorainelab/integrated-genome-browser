@@ -13,14 +13,21 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import java.util.EventObject;
 
-public abstract class ShowStrandActionA extends SeqMapViewActionA implements SymSelectionListener {
+public abstract class ShowStrandActionA extends SeqMapViewActionA
+implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {
 	private static final long serialVersionUID = 1L;
 	protected boolean separateStrands;
 
+	protected final void listenUp() {
+		GenometryModel.getGenometryModel().addSymSelectionListener(this);		
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
+	}
+
 	protected ShowStrandActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
-		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+		listenUp();
 	}
 
 	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
@@ -90,4 +97,15 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 		}
 		processChange(hasSeparate, hasMixed);
 	}
+
+	@Override
+	public void trackstylePropertyChanged(EventObject eo) {
+		List<SeqSymmetry> selected_syms;
+		SeqMapView gviewer = getSeqMapView();		
+		@SuppressWarnings("unchecked")
+		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+		selected_syms = SeqMapView.glyphsToSyms(tiers);
+		changeStrandActionDisplay(selected_syms);
+	}
+
 }

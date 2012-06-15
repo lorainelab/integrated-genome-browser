@@ -1,10 +1,9 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
 
-public class ShowOneTierAction extends ShowStrandActionA implements SymSelectionListener {
+public class ShowOneTierAction extends ShowStrandActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ShowOneTierAction ACTION = new ShowOneTierAction();
 

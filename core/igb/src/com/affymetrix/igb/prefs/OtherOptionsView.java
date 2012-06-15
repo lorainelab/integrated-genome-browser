@@ -420,14 +420,19 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         );
     }// </editor-fold>//GEN-END:initComponents
 
+	boolean refresh = false;
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
+		if(!refresh){
+			TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
+		}
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
+		if(!refresh){
+			TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
+		}
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void showCollapseOptionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showCollapseOptionCheckBoxActionPerformed
@@ -532,9 +537,11 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
 	@Override
 	public void refresh() {
+		refresh = true;
 		//Update Coordinate Track Colors
 		bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());
 		fgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getForeground());
+		refresh = false;
 	}
 
 	@Override

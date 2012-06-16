@@ -29,7 +29,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 
 import org.apache.felix.bundlerepository.Capability;
@@ -52,8 +51,9 @@ import org.osgi.service.obr.Resource;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -676,9 +676,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
 	@Override
 	public boolean repositoryAdded(final String url) {
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("repositoryAdded") {
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected Void runInBackground() {
 				try {
 					repoAdmin.addRepository(new URL(url + "/repository.xml"));
 					setRepositoryBundles();
@@ -697,8 +697,11 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				}
 				return null;
 			}
+			@Override
+			protected void finished() {
+			}
 		};
-		ThreadUtils.getPrimaryExecutor(this).execute(worker);
+		CThreadHolder.getInstance().execute(this, worker);
 		return true;
 	}
 

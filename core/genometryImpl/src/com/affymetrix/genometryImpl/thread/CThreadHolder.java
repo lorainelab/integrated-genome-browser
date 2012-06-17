@@ -81,7 +81,7 @@ public class CThreadHolder implements WaitHelperI {
 		fireThreadEvent(worker, CThreadEvent.STARTED);
 	}
 
-	public void notifyEndThread (CThreadWorker<?,?> worker){
+	public void notifyBackgroundDone (CThreadWorker<?,?> worker){
 		synchronized(thread2CThreadWorker) {
 			Thread thread = null;
 			for (Thread threadLoop : thread2CThreadWorker.keySet()) {
@@ -104,6 +104,9 @@ public class CThreadHolder implements WaitHelperI {
 				}
 			}
 		}
+	}
+
+	public void notifyEndThread (CThreadWorker<?,?> worker){
 		fireThreadEvent(worker, CThreadEvent.ENDED);
 	}
 

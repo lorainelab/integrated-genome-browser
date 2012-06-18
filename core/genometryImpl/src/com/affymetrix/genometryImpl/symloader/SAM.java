@@ -149,7 +149,9 @@ public class SAM extends XAM implements LineProcessor{
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		init();
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SAM SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
+		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
+			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
+		}
 		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
 	}
 

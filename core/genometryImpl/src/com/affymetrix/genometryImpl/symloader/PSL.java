@@ -139,8 +139,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception  {
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("PSL parse lines " + uri);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
-
+		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
+			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
+		}
 		BufferedWriter bw = null;
 		BufferedReader br = null;
 		Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();

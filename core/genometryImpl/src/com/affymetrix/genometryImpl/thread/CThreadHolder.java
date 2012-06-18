@@ -13,6 +13,10 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 public class CThreadHolder implements WaitHelperI {
 	private static final boolean DEBUG = false;
+	private static final CThreadWorker<?,?> NOOP = new CThreadWorker<Void,Void>("noop") {
+		@Override protected Void runInBackground() { return null; }
+		@Override protected void finished() {}
+	};
 	private final Map<Thread, CThreadWorker<?,?>> thread2CThreadWorker = new HashMap<Thread, CThreadWorker<?,?>>();
 	private static CThreadHolder singleton;
 	private final Set<CThreadListener> listeners;
@@ -52,6 +56,10 @@ public class CThreadHolder implements WaitHelperI {
 
 	public CThreadWorker<?,?> getCurrentCThreadWorker() {
 		synchronized(thread2CThreadWorker) {
+			CThreadWorker<?,?> currentCThreadWorker = thread2CThreadWorker.get(Thread.currentThread());
+			if (currentCThreadWorker == null) { // to prevent NPE in test programs
+				currentCThreadWorker = NOOP;
+			}
 			return thread2CThreadWorker.get(Thread.currentThread());
 		}
 	}

@@ -40,6 +40,8 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop_hex.gif");
 	private static final ImageIcon warningIcon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 	private static final ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.gif");
+	private static final Color warningColor = new Color(255,127,36);
+	private static final Color infoColor = new Color(0,100,0);
 	private final JLabel status_ta, messageIcon;
 	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel;
@@ -148,11 +150,11 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 			messageIcon.setIcon(errorIcon);
 		}
 		else if(level.equals(Level.WARNING))	{
-			status_ta.setForeground(Color.red);
+			status_ta.setForeground(warningColor);
 			messageIcon.setIcon(warningIcon);
 		}
 		else if(level.equals(Level.INFO)){
-			status_ta.setForeground(Color.red);
+			status_ta.setForeground(infoColor);
 			messageIcon.setIcon(infoIcon);
 		}
 		messageIcon.setVisible(true);

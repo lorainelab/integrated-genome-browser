@@ -97,7 +97,9 @@ public class Delegate extends QuickLoadSymLoader {
 		}
 		
 		SymWithProps sym = (SymWithProps) operator.operate(overlapSpan.getBioSeq(), syms);
-		sym.setProperty("none", uri.toString());
+		sym.setProperty("method", uri.toString());
+		sym.setProperty("meth", uri.toString());
+		sym.setProperty("id", uri.toString());
 		result.add(sym);
 		return result;
     }

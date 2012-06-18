@@ -307,8 +307,9 @@ public final class NibbleResiduesParser implements Parser {
 					}
 				}
 			);
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
-
+			if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
+				CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
+			}
 			long lastSleepTime = System.nanoTime();
 			// Only keep BUFSIZE characters in memory at one time
 			for (sequenceLoop.setValue(0);sequenceLoop.longValue()<(end-start) && (!Thread.currentThread().isInterrupted());sequenceLoop.add(BUFSIZE)) {

@@ -569,7 +569,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         viewModePanel.setLayout(viewModePanelLayout);
         viewModePanelLayout.setHorizontalGroup(
             viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(viewModeComboBox, 0, 145, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         viewModePanelLayout.setVerticalGroup(
             viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -646,12 +646,12 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(hideButton)))
                 .add(0, 0, 0)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                    .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                     .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(1, 1, 1)
-                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE))))
+                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -22,9 +22,10 @@ public class Activator implements BundleActivator {
 	private void registerServices(IGBService igbService) {
 		ThresholdingAction thresholdingAction = new ThresholdingAction(igbService);
 		thresholdingActionRegistration = bundleContext.registerService(GenericAction.class, thresholdingAction, null);
-		JRPMenuItem menuItem = new JRPMenuItem("Thresholding_thresholding", thresholdingAction);
-		MenuUtil.addToMenu(igbService.getMenu("tools"), menuItem);
-		selectionListener = new SelectionListener(igbService, thresholdingAction);
+		JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding", thresholdingAction);
+		MenuUtil.addToMenu(igbService.getMenu("tools"), thresholdingMenuItem);
+		thresholdingMenuItem.setEnabled(false);
+		selectionListener = new SelectionListener(igbService, thresholdingAction, thresholdingMenuItem);
 		GenometryModel.getGenometryModel().addSeqSelectionListener(selectionListener);
 		GenometryModel.getGenometryModel().addSymSelectionListener(selectionListener);
 	}

@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
@@ -26,14 +27,16 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 	private final GenometryModel gmodel;
 	private BioSeq current_seq;
 	private final ThresholdingAction thresholdingAction;
+	private final JRPMenuItem thresholdingMenuItem;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	private final List<GraphSym> grafs = new ArrayList<GraphSym>();
 	private final List<AbstractGraphGlyph> glyphs = new ArrayList<AbstractGraphGlyph>();
 
-	public SelectionListener(IGBService igbService, ThresholdingAction thresholdingAction) {
+	public SelectionListener(IGBService igbService, ThresholdingAction thresholdingAction, JRPMenuItem thresholdingMenuItem) {
 		super();
 		this.igbService = igbService;
 		this.thresholdingAction = thresholdingAction;
+		this.thresholdingMenuItem = thresholdingMenuItem;
 		gmodel = GenometryModel.getGenometryModel();
 	}
 
@@ -100,6 +103,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 			}
 		}
 		thresholdingAction.setGraphs(glyphs);
+		thresholdingMenuItem.setEnabled(!glyphs.isEmpty());
 
 		is_listening = true; // turn back on GUI events
 	}

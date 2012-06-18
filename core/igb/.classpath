@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="/jar_extensions/sam/dist/sam--igbext.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/tribble-0.1"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-lang3-3.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

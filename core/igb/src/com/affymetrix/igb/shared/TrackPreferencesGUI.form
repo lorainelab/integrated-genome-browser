@@ -74,9 +74,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="103" alignment="1" groupAlignment="0" attributes="0">
                           <Component id="restoreToDefaultButton" min="-2" max="-2" attributes="0"/>
-                          <Component id="clearButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="clearButton" min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="hideButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="hideButton" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
@@ -327,6 +327,17 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="labelSizeLabel" max="32767" attributes="0"/>
+                              <Component id="colorSchemeLabel" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="labelSizeComboBox" min="-2" pref="85" max="-2" attributes="0"/>
+                              <Component id="colorSchemeComboBox" min="-2" pref="85" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                       <Group type="102" attributes="0">
                           <Component id="foregroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
@@ -340,19 +351,8 @@
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                           <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="colorSchemeLabel" min="-2" pref="70" max="-2" attributes="0"/>
-                              <Component id="labelSizeLabel" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="labelSizeComboBox" max="32767" attributes="0"/>
-                              <Component id="colorSchemeComboBox" min="-2" pref="85" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

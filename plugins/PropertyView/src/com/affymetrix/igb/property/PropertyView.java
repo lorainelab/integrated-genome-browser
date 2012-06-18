@@ -133,7 +133,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
-
+		
 		this.showProperties(prop_array, prop_order, "", false);
 	}
 

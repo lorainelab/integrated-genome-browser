@@ -244,17 +244,19 @@ public final class TierLabelManager implements PropertyHolder {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 
 		for (TierGlyph glyph : getSelectedTiers()) {
-			Map<String, Object> props = getTierProperties(glyph);
+			if(!(glyph.getViewModeGlyph() instanceof AbstractGraphGlyph)){
+				Map<String, Object> props = getTierProperties(glyph);
 
 			if(props != null)
 				propList.add(props);
+			}
 		}
 
 		return propList;
 	}
 
 	public static Map<String, Object> getTierProperties(TierGlyph glyph) {
-		
+	
 		if(glyph.getAnnotStyle().isGraphTier() && glyph.getChildCount() > 0 &&
 				glyph.getChild(0) instanceof AbstractGraphGlyph){
 			return null;

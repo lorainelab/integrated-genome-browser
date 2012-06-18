@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
@@ -148,11 +149,8 @@ public class SAM extends XAM implements LineProcessor{
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		init();
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SAM SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		symLoaderProgressUpdater.start();
-		List<SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return results;
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
 	}
 
 	@Override
@@ -160,12 +158,9 @@ public class SAM extends XAM implements LineProcessor{
 		// LineTrackerI ignored, since the SAMTextReader hides the lines
 		SeqSpan span = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SAM SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		symLoaderProgressUpdater.start();
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
-		 List<SeqSymmetry> results = parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return results;
+		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
 	}
 
 	public void init(URI uri) {

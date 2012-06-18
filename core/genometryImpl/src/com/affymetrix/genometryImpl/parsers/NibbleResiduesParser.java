@@ -17,6 +17,7 @@ import java.io.*;
 
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Timer;
@@ -306,7 +307,7 @@ public final class NibbleResiduesParser implements Parser {
 					}
 				}
 			);
-			progressUpdater.start();
+			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
 
 			long lastSleepTime = System.nanoTime();
 			// Only keep BUFSIZE characters in memory at one time
@@ -320,7 +321,6 @@ public final class NibbleResiduesParser implements Parser {
 				}
 			}
 			dos.flush();
-			progressUpdater.kill();
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();

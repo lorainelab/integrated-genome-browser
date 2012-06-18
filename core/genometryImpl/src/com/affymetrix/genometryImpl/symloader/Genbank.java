@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GenbankSym;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -233,17 +234,14 @@ public final class Genbank extends SymLoader {
 	@Override
 	public List<GenbankSym> getRegion(SeqSpan span) throws Exception   {
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater("Genbank SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		symLoaderProgressUpdater.start();
-		List<GenbankSym> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return results;
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 	
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception   {
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("Genbank parse lines " + uri);
-		parseLinesProgressUpdater.start();
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		try {
@@ -263,8 +261,6 @@ public final class Genbank extends SymLoader {
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(br);
-			parseLinesProgressUpdater.kill();
-			parseLinesProgressUpdater = null;
 		}
 	}
 	

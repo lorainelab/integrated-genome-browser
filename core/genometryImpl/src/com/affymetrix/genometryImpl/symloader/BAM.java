@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
@@ -191,7 +192,7 @@ public final class BAM extends XAM {
 						}
 					}
 				);
-				progressUpdater.start();
+				CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
 					lastSleepTime = System.nanoTime();
@@ -210,7 +211,6 @@ public final class BAM extends XAM {
 						}
 					}
 				}
-				progressUpdater.kill();
 			}
 		} catch (Exception ex){
 			throw ex;

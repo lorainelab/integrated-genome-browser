@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -296,13 +297,10 @@ public abstract class SymLoader implements LineTrackerI {
      */
     public List<? extends SeqSymmetry> getRegion(final SeqSpan overlapSpan) throws Exception {
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SymLoaderProgressUpdater getRegion for " + uri + " - " + overlapSpan, overlapSpan);
-		symLoaderProgressUpdater.start();
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
-		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return chrResults;
+		return this.getChromosome(overlapSpan.getBioSeq());
     }
 
 	public boolean isResidueLoader(){

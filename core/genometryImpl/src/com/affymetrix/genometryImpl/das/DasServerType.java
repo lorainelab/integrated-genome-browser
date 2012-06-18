@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Constants;
@@ -206,7 +207,7 @@ public class DasServerType implements ServerTypeI {
 				}
 			}
 		);
-		progressUpdater.start();
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
 		for (; nameLoop.intValue() < types.size(); nameLoop.increment()) {
 			Entry<String,String> type = types.get(nameLoop.intValue());
 			String type_name = type.getKey();
@@ -216,7 +217,6 @@ public class DasServerType implements ServerTypeI {
 			}
 			gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
 		}
-		progressUpdater.kill();
 	}
 
 	@Override

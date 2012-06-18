@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
@@ -117,11 +118,8 @@ public class BED extends SymLoader implements LineProcessor {
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("BED parse lines " + uri);
-		parseLinesProgressUpdater.start();
-		List<SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
-		parseLinesProgressUpdater.kill();
-		parseLinesProgressUpdater = null;
-		return results;
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
 	private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception {
@@ -709,7 +707,7 @@ public class BED extends SymLoader implements LineProcessor {
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("BED parse lines " + uri);
-		parseLinesProgressUpdater.start();
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -799,8 +797,6 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
-			parseLinesProgressUpdater.kill();
-			parseLinesProgressUpdater = null;
 		}
 
 	}

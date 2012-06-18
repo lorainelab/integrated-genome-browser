@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import org.broad.tribble.readers.LineReader;
 
@@ -131,17 +132,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	public List<UcscPslSym> getRegion(SeqSpan span)  throws Exception  {
 		init();
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater("PSL SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		symLoaderProgressUpdater.start();
-		List<UcscPslSym> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return results;
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception  {
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("PSL parse lines " + uri);
-		parseLinesProgressUpdater.start();
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;
@@ -277,8 +275,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
-			parseLinesProgressUpdater.kill();
-			parseLinesProgressUpdater = null;
 		}
 	}
 

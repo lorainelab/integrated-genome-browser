@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Constants;
@@ -289,7 +290,7 @@ public class QuickloadServerType implements ServerTypeI {
 					}
 				}
 			);
-			progressUpdater.start();
+			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
 			for (; nameLoop.intValue() < typeNames.size(); nameLoop.increment()) {
 				String type_name = typeNames.get(nameLoop.intValue());
 				if (type_name == null || type_name.length() == 0) {
@@ -306,9 +307,6 @@ public class QuickloadServerType implements ServerTypeI {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		if (progressUpdater != null) {
-			progressUpdater.kill();
 		}
 	}
 

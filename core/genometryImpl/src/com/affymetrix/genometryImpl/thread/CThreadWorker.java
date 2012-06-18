@@ -10,6 +10,7 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	private static final boolean DEBUG = false;
 	private final String message;
 	private final int priority;
+	private ProgressUpdater progressUpdater;
 
 	public CThreadWorker(String msg){
 		this(msg, Thread.NORM_PRIORITY);
@@ -35,6 +36,18 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		return priority;
 	}
 
+	public ProgressUpdater getProgressUpdater() {
+		return progressUpdater;
+	}
+
+	public void setProgressUpdater(ProgressUpdater progressUpdater) {
+		if (this.progressUpdater != null) { // first ProgressUpdater takes precedence
+			return;
+		}
+		this.progressUpdater = progressUpdater;
+		progressUpdater.start();
+	}
+
 	@Override
 	public final void done() {
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " done");
@@ -56,7 +69,18 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	protected final T doInBackground() throws Exception {
 		CThreadHolder.getInstance().notifyStartThread(this);
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " started");
-		T t = runInBackground();
+		T t;
+		try {
+			t = runInBackground();
+		}
+		catch (Exception x) {
+			throw (x);
+		}
+		finally {
+			if (progressUpdater != null) {
+				progressUpdater.kill();
+			}
+		}
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
 		CThreadHolder.getInstance().notifyBackgroundDone(this);
 		return t;

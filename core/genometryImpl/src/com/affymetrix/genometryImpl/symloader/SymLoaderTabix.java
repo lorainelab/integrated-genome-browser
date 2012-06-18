@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -143,11 +144,8 @@ public class SymLoaderTabix extends SymLoader {
 		long[] startEnd = getStartEnd(lineReader);
 		System.out.println("***** " + startEnd[0] + ":" + startEnd[1]);
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("Tabix process lines " + uri, startEnd[0], startEnd[1]);
-		parseLinesProgressUpdater.start();
-		List<? extends SeqSymmetry> region = lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader, this);
-		parseLinesProgressUpdater.kill();
-		parseLinesProgressUpdater = null;
-		return region;
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
+		return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader, this);
     }
 
 	private long[] getStartEnd(LineReader lineReader) {

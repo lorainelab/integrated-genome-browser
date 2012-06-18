@@ -148,11 +148,11 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 			messageIcon.setIcon(errorIcon);
 		}
 		else if(level.equals(Level.WARNING))	{
-			status_ta.setForeground(Color.orange);
+			status_ta.setForeground(Color.red);
 			messageIcon.setIcon(warningIcon);
 		}
 		else if(level.equals(Level.INFO)){
-			status_ta.setForeground(new Color(30,255,30));
+			status_ta.setForeground(Color.red);
 			messageIcon.setIcon(infoIcon);
 		}
 		messageIcon.setVisible(true);

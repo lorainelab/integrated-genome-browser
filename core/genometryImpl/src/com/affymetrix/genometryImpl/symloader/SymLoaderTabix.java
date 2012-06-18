@@ -142,6 +142,9 @@ public class SymLoaderTabix extends SymLoader {
 			return new ArrayList<SeqSymmetry>();
 		}
 		long[] startEnd = getStartEnd(lineReader);
+		if(startEnd == null){
+			return new ArrayList<SeqSymmetry>();
+		}
 		System.out.println("***** " + startEnd[0] + ":" + startEnd[1]);
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("Tabix process lines " + uri, startEnd[0], startEnd[1]);
 		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
@@ -154,6 +157,10 @@ public class SymLoaderTabix extends SymLoader {
 			Field field = lineReader.getClass().getDeclaredField("it");
 			field.setAccessible(true);
 			Object it = field.get(lineReader);
+			// Probably no data in the region
+			if(it == null){
+				return null;
+			}
 			field = it.getClass().getDeclaredField("off");
 			field.setAccessible(true);
 			Object[] off = (Object[])field.get(it);

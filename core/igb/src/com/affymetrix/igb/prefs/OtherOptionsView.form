@@ -18,38 +18,31 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="orfAnalyzerPanel" alignment="0" max="32767" attributes="1"/>
+                  <Component id="edgeMatchPanel" alignment="0" pref="479" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="clear_prefsB" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                              <Component id="orfAnalyzerPanel" alignment="0" max="32767" attributes="1"/>
-                              <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
-                              <Component id="edgeMatchPanel" alignment="0" pref="479" max="32767" attributes="1"/>
-                              <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="showZoomStripLabelCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-                                  <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="showZoomStripLabelCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="displayOption" min="-2" max="-2" attributes="0"/>
+                          <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
+                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
+                      <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
+                  </Group>
+                  <Component id="clear_prefsB" alignment="0" max="32767" attributes="0"/>
               </Group>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

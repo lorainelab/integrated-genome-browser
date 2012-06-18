@@ -1,6 +1,8 @@
 package com.affymetrix.igb.trackAdjuster;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -18,9 +20,10 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackPreferencesA;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener {
+public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {
 	private static final long serialVersionUID = 1L;
 
 	public TrackPreferencesSeqMapViewPanel(IGBService _igbService) {
@@ -28,7 +31,7 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
-//		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 //		igbService.addListSelectionListener(this);
 	}
 
@@ -153,6 +156,18 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 //		current_seq = evt.getSelectedSeq();
 //		refreshSelection(gmodel.getSelectedSymmetries(current_seq));
 		refreshSelection(Collections.<RootSeqSymmetry>emptyList());
+		resetAll();
+	}
+
+	@Override
+	public void trackstylePropertyChanged(EventObject eo) { // this is redundant when the source of the style change is this panel
+		List<RootSeqSymmetry> selected_syms = new ArrayList<RootSeqSymmetry>();
+		for (Glyph glyph : igbService.getSelectedTierGlyphs()) {
+			if (((TierGlyph)glyph).getInfo() instanceof RootSeqSymmetry) {
+				selected_syms.add((RootSeqSymmetry)((TierGlyph)glyph).getInfo());
+			}
+		}
+		refreshSelection(selected_syms);
 		resetAll();
 	}
 }

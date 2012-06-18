@@ -35,7 +35,7 @@ import javax.swing.*;
 /**
  * For Panels that update the Track styles (as opposed to the track style defaults)
  */
-public abstract class TrackPreferencesA extends TrackPreferencesGUI implements TrackstylePropertyMonitor.TrackStylePropertyListener {
+public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	private static final long serialVersionUID = 1L;
 	protected IGBService igbService;
 
@@ -43,7 +43,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 		super();
 		igbService = _igbService;
 //igbService.addListSelectionListener(getColorSchemeComboBox());
-		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
 	private void updateDisplay() {
@@ -131,11 +130,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI implements T
 
 	@Override
 	protected void colorSchemeComboBoxActionPerformedA(ActionEvent evt) {
-	}
-
-	@Override
-	public void trackstylePropertyChanged(EventObject eo) { // this is redundant when the source of the style change is this panel
-		resetAll();
 	}
 
 	@Override

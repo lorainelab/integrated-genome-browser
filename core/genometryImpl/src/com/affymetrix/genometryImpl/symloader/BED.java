@@ -707,7 +707,9 @@ public class BED extends SymLoader implements LineProcessor {
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("BED parse lines " + uri);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
+		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
+			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
+		}
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 

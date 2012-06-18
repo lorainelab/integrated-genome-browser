@@ -192,7 +192,9 @@ public final class BAM extends XAM {
 						}
 					}
 				);
-				CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
+				if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
+					CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
+				}
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
 					lastSleepTime = System.nanoTime();

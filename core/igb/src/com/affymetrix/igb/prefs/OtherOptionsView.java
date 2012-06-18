@@ -152,7 +152,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(numFormatLabel)
                 .add(10, 10, 10)
                 .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(5, 5, 5))
         );
         coordinatePanelLayout.setVerticalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

@@ -199,7 +199,7 @@ public class DasServerType implements ServerTypeI {
 		DasSource version = (DasSource) gVersion.versionSourceObj;
 		List<Entry<String, String>> types = new ArrayList<Entry<String, String>>(version.getTypes().entrySet());
 		final MutableInt nameLoop = new MutableInt(0);
-		ProgressUpdater progressUpdater = new ProgressUpdater("DAS2 discover features", 0, types.size(), 
+		ProgressUpdater progressUpdater = new ProgressUpdater("DAS discover features", 0, types.size(), 
 			new PositionCalculator() {
 				@Override
 				public long getCurrentPosition() {

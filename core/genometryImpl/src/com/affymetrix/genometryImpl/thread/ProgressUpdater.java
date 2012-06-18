@@ -29,7 +29,7 @@ public class ProgressUpdater {
 		}
 		public void run() {
 			double progress = (double)(progressUpdater.getPositionCalculator().getCurrentPosition() - progressUpdater.getStartPosition()) / (double)(progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
-			if (DEBUG) Logger.getLogger(this.getClass().getName()).log(Level.INFO, "called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
+			if (DEBUG) Logger.getLogger(this.getClass().getName()).log(Level.INFO, "))))) called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
 			ctw.setProgressAsPercent(progress);
 		}
 	}

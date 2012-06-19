@@ -150,7 +150,8 @@ public class SortTabFile {
 			if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
 				return Pattern.compile("\t");
 			} else if (ext.equals(".bed")) {
-				return Pattern.compile("\\s+");
+//				return Pattern.compile("\\s+");
+				return Pattern.compile("\\t");
 			}
 
 			return null;

@@ -41,7 +41,7 @@ public class BED extends SymLoader implements LineProcessor {
 		pref_list.add("bed");
 	}
 	private static final boolean DEBUG = false;
-	private static final Pattern line_regex = Pattern.compile("\\s+");
+//	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern tab_regex = Pattern.compile("\\t");
 	private static final Pattern comma_regex = Pattern.compile(",");
 	private final List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
@@ -277,7 +277,8 @@ public class BED extends SymLoader implements LineProcessor {
 
 	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum, String bedType) {
 		boolean bedDetail = "bedDetail".equals(bedType);
-		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+//		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+		String[] fields = tab_regex.split(line);
 		String detailId = null;
 		String detailDescription = null;
 		int field_count = fields.length;
@@ -743,7 +744,8 @@ public class BED extends SymLoader implements LineProcessor {
 					if (DEBUG) {
 						System.out.println(line);
 					}
-					fields = line_regex.split(line);
+//					fields = line_regex.split(line);
+					fields = tab_regex.split(line);
 
 					if (fields.length < 3) {
 						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", lineCounter);
@@ -764,15 +766,9 @@ public class BED extends SymLoader implements LineProcessor {
 
 					seq_name = fields[findex++]; // seq id field
 					
-					int max = 0;
-					try{
-						int beg = Integer.parseInt(fields[findex++]); // start field;
-						int end = Integer.parseInt(fields[findex++]); // stop field
-						max = Math.max(beg, end);
-					}catch(NumberFormatException nfe){
-						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid start or end field at {0} in BED file", lineCounter);
-						continue;
-					}
+					int beg = Integer.parseInt(fields[findex++]); // start field;
+					int end = Integer.parseInt(fields[findex++]); // stop field
+					int max = Math.max(beg, end);
 					
 					if (!chrs.containsKey(seq_name)) {
 						addToLists(chrs, seq_name, chrFiles, chrLength, ".bed");

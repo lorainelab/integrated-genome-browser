@@ -612,6 +612,7 @@ public final class GeneralLoadUtils {
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		if (selected_seq == null) {
+			ErrorHandler.errorPanel("Couldn't find genome data on server for file, genome = " + gFeature.gVersion.group.getID());
 			return;
 		}
 		SeqSpan overlap = null;

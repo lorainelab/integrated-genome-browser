@@ -230,10 +230,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
 		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color color = labelColorComboBox.getSelectedColor();
-		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeLabelColorAction");
 		if (color != null) {
-			action.changeColor(color);
+			action.performAction(color);
 		}
 		updateDisplay();
 	}
@@ -245,10 +245,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = strandsForwardColorComboBox.getSelectedColor();
-		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeForwardColorAction");
 		if (color != null) {
-			action.changeColor(color);
+			action.performAction(color);
 		}
 		updateDisplay();
 	}
@@ -260,10 +260,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = strandsReverseColorComboBox.getSelectedColor();
-		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeReverseColorAction");
 		if (color != null) {
-			action.changeColor(color);
+			action.performAction(color);
 		}
 		updateDisplay();
 	}
@@ -275,10 +275,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = backgroundColorComboBox.getSelectedColor();
-		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeBackgroundColorAction");
 		if (color != null) {
-			action.changeColor(color);
+			action.performAction(color);
 		}
 		updateDisplay();
 	}
@@ -290,10 +290,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = foregroundColorComboBox.getSelectedColor();
-		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeForegroundColorAction");
 		if (color != null) {
-			action.changeColor(color);
+			action.performAction(color);
 		}
 		updateDisplay();
 	}

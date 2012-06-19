@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.shared.ChangeColorActionA;
 import java.awt.Color;
 
 import javax.swing.JColorChooser;

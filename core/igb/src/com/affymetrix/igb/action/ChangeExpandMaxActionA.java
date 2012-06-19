@@ -17,7 +17,10 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 		super(text, iconPath, largeIconPath);
 	}
 
-	public void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
+	protected abstract List<TierLabelGlyph> getTiers();
+	
+	public void changeExpandMax(int max) {
+		List<TierLabelGlyph> tier_label_glyphs = getTiers();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = tlg.getReferenceTier();
 			ITrackStyleExtended style = tier.getAnnotStyle();
@@ -48,7 +51,8 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 		return ourOptimum;
 	}
 
-	protected void changeExpandMax(List<TierLabelGlyph> theTiers) {
+	protected void changeExpandMax() {
+		List<TierLabelGlyph> theTiers = getTiers();
 		if (theTiers == null || theTiers.isEmpty()) {
 			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
 			return;
@@ -81,7 +85,7 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));
 		}
 
-		MaxSlotsChooser chooser = new MaxSlotsChooser(IGBConstants.BUNDLE.getString("maxHeight"), ourLimit, ourOptimum, theTiers, this);
+		MaxSlotsChooser chooser = new MaxSlotsChooser(IGBConstants.BUNDLE.getString("maxHeight"), ourLimit, ourOptimum, this);
 		chooser.setVisible(true);
 		
 	}

@@ -21,16 +21,14 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 	private final Integer unlimitted = 0;
 	private Integer initial = 0;
 	private String theMessage ="";
-	private List<TierLabelGlyph> theTiers;
 	private ChangeExpandMaxActionA ac;
 	/**
 	 * Creates new form MaxSlotsChooser
 	 */
-	public MaxSlotsChooser(String theMessage, int theInitialValue, int theOptimalValue, List<TierLabelGlyph> theTiers , ChangeExpandMaxActionA ac) {
+	public MaxSlotsChooser(String theMessage, int theInitialValue, int theOptimalValue, ChangeExpandMaxActionA ac) {
 		this.theMessage = theMessage;
 		this.initial = theInitialValue;
 		this.optimum = theOptimalValue;
-		this.theTiers = theTiers;
 		this.ac = ac;
 		setLocationRelativeTo(IGB.getSingleton().getFrame());
 		init();
@@ -216,7 +214,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 	}//GEN-LAST:event_unlimitterKeyPressed
 	public void change(){
 		try{
-			ac.changeExpandMax(theTiers, Integer.parseInt(maxSlots.getText()));
+			ac.changeExpandMax(Integer.parseInt(maxSlots.getText()));
 		}
 		catch(NumberFormatException e){
 			ErrorHandler.errorPanel(e.getLocalizedMessage()

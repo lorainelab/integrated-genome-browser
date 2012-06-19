@@ -1,10 +1,12 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
 import java.awt.event.ActionEvent;
+import java.util.List;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 
 public class ChangeExpandMaxAllAction extends ChangeExpandMaxActionA {
@@ -24,9 +26,14 @@ public class ChangeExpandMaxAllAction extends ChangeExpandMaxActionA {
 	}
 
 	@Override
+	protected List<TierLabelGlyph> getTiers() {
+		return getTierManager().getAllTierLabels();
+	}
+	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		changeExpandMax(getTierManager().getAllTierLabels());
+		changeExpandMax();
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 }

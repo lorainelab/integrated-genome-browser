@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import java.util.List;
 
 public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 	private static final long serialVersionUID = 1L;
@@ -22,9 +24,14 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 	}
 
 	@Override
+	protected List<TierLabelGlyph> getTiers() {
+		return getTierManager().getAllTierLabels();
+	}
+	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		changeExpandMax(getTierManager().getAllTierLabels(), getOptimum());
+		changeExpandMax(getOptimum());
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 }

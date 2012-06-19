@@ -11,13 +11,14 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
-public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionListener, SymSelectionListener {
+public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	private final IGBService igbService;
@@ -37,6 +38,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
 	/**
@@ -308,6 +310,23 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
+		loadGlyphs();
+		resetAll(graphGlyphs);
+	}
+
+	@Override
+	public void seqSelectionChanged(SeqSelectionEvent evt) {
+		loadGlyphs();
+		resetAll(graphGlyphs);
+	}
+
+	@Override
+	public void trackstylePropertyChanged(EventObject eo) { // this is redundant when the source of the style change is this panel
+		loadGlyphs();
+		resetAll(graphGlyphs);
+	}
+
+	private void loadGlyphs() {
 		graphGlyphs.clear();
 		for (Glyph glyph : igbService.getSelectedTierGlyphs()) {
 			if(((TierGlyph)glyph).getViewModeGlyph() instanceof MultiGraphGlyph){
@@ -321,7 +340,6 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 				graphGlyphs.add((AbstractGraphGlyph)((TierGlyph)glyph).getViewModeGlyph());
 			}
 		}
-		resetAll(graphGlyphs);
 	}
 
 	private void resetAll(List<AbstractGraphGlyph> graphGlyphs) {
@@ -347,11 +365,6 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 			heightSlider.setValue(0);
 		}
 		is_listening = true;
-	}
-
-	@Override
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		resetAll(new ArrayList<AbstractGraphGlyph>());
 	}
 
 	public boolean isTierGlyph(GlyphI glyph) {

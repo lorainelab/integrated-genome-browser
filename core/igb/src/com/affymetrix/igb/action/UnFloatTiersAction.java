@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public class UnFloatTiersAction extends SeqMapViewActionA {
@@ -52,6 +53,10 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				style.setFloatTier(false);
 
 				something_changed = true;
+				
+				if(gl instanceof AbstractGraphGlyph){
+					((AbstractGraphGlyph)gl).getGraphState().setShowLabel(false);
+				}
 			}
 		}
 		if (something_changed) {

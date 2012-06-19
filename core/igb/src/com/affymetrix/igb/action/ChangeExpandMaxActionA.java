@@ -6,11 +6,12 @@ import java.util.List;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.MaxSlotsChooser;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 
-public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
+public abstract class ChangeExpandMaxActionA extends RepackTiersAction implements ParameteredAction{
 	private static final long serialVersionUID = 1L;
 
 	protected ChangeExpandMaxActionA(String text, String iconPath, String largeIconPath) {
@@ -41,6 +42,15 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 		repack(true);
 	}
 
+	@Override
+	public void performAction(Object parameter){
+		if(parameter.getClass() != Integer.class)
+			return; 
+		
+		changeExpandMax((Integer)parameter);
+	}
+	
+	
 	public int getOptimum() {
 		List<TierLabelGlyph> theTiers = getTierManager().getAllTierLabels();
 		int ourOptimum = 1;

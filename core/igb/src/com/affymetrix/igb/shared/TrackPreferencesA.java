@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -301,20 +302,18 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	private void setStackDepth() {
 		final JTextField stackDepthTextField = getStackDepthTextField();
 		String mdepth_string = stackDepthTextField.getText();
-		if (selectedTiers == null || mdepth_string == null) {
+		if (mdepth_string == null) {
 			return;
 		}
-		for (Glyph glyph : selectedTiers) {
-			TierGlyph tier = (TierGlyph)glyph;
-			int prev_max_depth = tier.getAnnotStyle().getMaxDepth();
-			try {
-				tier.getAnnotStyle().setMaxDepth(Integer.parseInt(mdepth_string));
-			} catch (Exception ex) {
-				tier.getAnnotStyle().setMaxDepth(prev_max_depth);
-			}
+		
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeExpandMaxAction");
+		try{
+			action.performAction(Integer.parseInt(mdepth_string));
+			updateDisplay();
+		}catch(Exception ex){
+			ErrorHandler.errorPanel("Invalid value "+mdepth_string);
 		}
-		igbService.getSeqMapView().repackTheTiers(true, true);
-		updateDisplay();
 	}
 
 	@Override

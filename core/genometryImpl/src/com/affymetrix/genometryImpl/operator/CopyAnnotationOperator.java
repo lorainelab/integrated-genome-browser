@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
-public class CopyAnnotationOperator implements Operator {
+public class CopyAnnotationOperator implements Operator, ICopy{
 
 	@Override
 	public String getName() {

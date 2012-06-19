@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public final class CopyGraphOperator implements Operator {
+public final class CopyGraphOperator implements Operator, ICopy {
 	public CopyGraphOperator() {}
 	@Override
 	public String getName() { return "copygraph"; }

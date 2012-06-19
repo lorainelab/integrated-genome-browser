@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author hiralv
  */
-public class CopyMismatchOperator implements Operator{
+public class CopyMismatchOperator implements Operator, ICopy {
 
 	@Override
 	public String getName() {

@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 
-public final class CopySequenceOperator implements Operator {
+public final class CopySequenceOperator implements Operator, ICopy {
 
 	@Override
 	public String getName() {

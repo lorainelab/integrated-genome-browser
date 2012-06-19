@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
+import com.affymetrix.genometryImpl.operator.ICopy;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -113,11 +114,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
 				operators.addAll(TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory()));
 				for (final Operator operator : operators) {
-					Action action = new TransformAction(operator);
-					if (operator.getName().equals(style.getOperator())) {
-						action.putValue(Action.SELECTED_KEY, true);
-					}
+					if(!(operator instanceof ICopy)){
+						Action action = new TransformAction(operator);
+						if (operator.getName().equals(style.getOperator())) {
+							action.putValue(Action.SELECTED_KEY, true);
+						}
 					transformMenu.add(new JCheckBoxMenuItem(action));
+					}
 				}
 				transformMenu.setEnabled(transformMenu.getMenuComponentCount() > 0);
 			}

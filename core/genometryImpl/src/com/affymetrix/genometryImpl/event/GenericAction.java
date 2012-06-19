@@ -109,6 +109,9 @@ public abstract class GenericAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
+	public boolean isEnabled(Object source) { // source is the same as ActionEvent.getSource() - usually a widget
+		return true;
+	}
 	public boolean usePrefixInMenu() {
 		return false;
 	}

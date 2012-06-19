@@ -5,6 +5,7 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.osgi.framework.BundleActivator;
@@ -28,6 +29,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.CollapseExpandAction;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -63,6 +65,17 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
     private String commandLineBatchFileStr;
+    private class JRPButtonTLP extends JRPButton implements TrackListProvider {
+		private static final long serialVersionUID = 1L;
+		private JRPButtonTLP(GenericAction genericAction) {
+    		super("Toolbar_" + genericAction.getId(), genericAction);
+			setHideActionText(true);
+    	}
+		@Override
+		public List<TierGlyph> getTrackList() {
+			return ((IGB)Application.getSingleton()).getMapView().getTierManager().getSelectedTiers();
+		}
+    }
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
@@ -203,9 +216,7 @@ public class Activator implements BundleActivator {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
-							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
-							button.setHideActionText(true);
-							((IGB)Application.getSingleton()).addToolbarButton(button);
+							((IGB)Application.getSingleton()).addToolbarButton(new JRPButtonTLP(genericAction));
 						}
 					}
 				}

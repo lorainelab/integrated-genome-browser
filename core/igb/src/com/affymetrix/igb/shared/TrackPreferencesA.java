@@ -187,48 +187,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		updateDisplay();
 	}
 
-	@Override
-	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
-		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
-		Color color = labelColorComboBox.getSelectedColor();
-		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setLabelForeground(color);
-			}
-		}
-		updateDisplay();
-	}
-
-	@Override
-	protected void strandsForwardColorComboBoxActionPerformedA(ActionEvent evt) {
-	    final ColorComboBox strandsForwardColorComboBox = getStrandsForwardColorComboBox();
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
-		Color color = strandsForwardColorComboBox.getSelectedColor();
-		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setForwardColor(color);
-			}
-		}
-		updateDisplay();
-	}
-
-	@Override
-	protected void strandsReverseColorComboBoxActionPerformedA(ActionEvent evt) {
-	    final ColorComboBox strandsReverseColorComboBox = getStrandsReverseColorComboBox();
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
-		Color color = strandsReverseColorComboBox.getSelectedColor();
-		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setReverseColor(color);
-			}
-		}
-		updateDisplay();
-	}
-
+	
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
 		String selectedMode = null;
@@ -256,6 +215,48 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		graphStyleHeatMapComboBoxReset();
 		updateDisplay();
 	}
+	
+	@Override
+	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
+		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
+		Color color = labelColorComboBox.getSelectedColor();
+		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeLabelColorAction");
+		if (color != null) {
+			action.changeColor(color);
+		}
+		updateDisplay();
+	}
+
+	@Override
+	protected void strandsForwardColorComboBoxActionPerformedA(ActionEvent evt) {
+	    final ColorComboBox strandsForwardColorComboBox = getStrandsForwardColorComboBox();
+		if (igbService.getSeqMap() == null) {
+			return;
+		}
+		Color color = strandsForwardColorComboBox.getSelectedColor();
+		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeForwardColorAction");
+		if (color != null) {
+			action.changeColor(color);
+		}
+		updateDisplay();
+	}
+
+	@Override
+	protected void strandsReverseColorComboBoxActionPerformedA(ActionEvent evt) {
+	    final ColorComboBox strandsReverseColorComboBox = getStrandsReverseColorComboBox();
+		if (igbService.getSeqMap() == null) {
+			return;
+		}
+		Color color = strandsReverseColorComboBox.getSelectedColor();
+		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeReverseColorAction");
+		if (color != null) {
+			action.changeColor(color);
+		}
+		updateDisplay();
+	}
 
 	@Override
 	protected void backgroundColorComboBoxActionPerformedA(ActionEvent evt) {
@@ -264,10 +265,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = backgroundColorComboBox.getSelectedColor();
+		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeBackgroundColorAction");
 		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setBackground(color);
-			}
+			action.changeColor(color);
 		}
 		updateDisplay();
 	}
@@ -279,10 +280,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = foregroundColorComboBox.getSelectedColor();
+		ChangeColorActionA action = (ChangeColorActionA) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeForegroundColorAction");
 		if (color != null) {
-			for (TierGlyph tier : selectedTiers) {
-				tier.getAnnotStyle().setForeground(color);
-			}
+			action.changeColor(color);
 		}
 		updateDisplay();
 	}

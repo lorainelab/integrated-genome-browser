@@ -763,10 +763,17 @@ public class BED extends SymLoader implements LineProcessor {
 					}
 
 					seq_name = fields[findex++]; // seq id field
-					int beg = Integer.parseInt(fields[findex++]); // start field;
-					int end = Integer.parseInt(fields[findex++]); // stop field
-					int max = Math.max(beg, end);
-
+					
+					int max = 0;
+					try{
+						int beg = Integer.parseInt(fields[findex++]); // start field;
+						int end = Integer.parseInt(fields[findex++]); // stop field
+						max = Math.max(beg, end);
+					}catch(NumberFormatException nfe){
+						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid start or end field at {0} in BED file", lineCounter);
+						continue;
+					}
+					
 					if (!chrs.containsKey(seq_name)) {
 						addToLists(chrs, seq_name, chrFiles, chrLength, ".bed");
 					}

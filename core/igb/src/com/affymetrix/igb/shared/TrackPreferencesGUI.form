@@ -86,7 +86,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="viewModePanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                      <Component id="stylePanel" pref="0" max="32767" attributes="0"/>
+                      <Component id="stylePanel" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -170,7 +170,7 @@
                       <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleHeatMapComboBox" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="13" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -601,6 +601,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthTextFieldActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField(&quot;trackPreference_maxDepth&quot;)"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">
           <Properties>

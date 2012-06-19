@@ -123,7 +123,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         trackNameTextField = new javax.swing.JTextField();
         annotationsPanel = new javax.swing.JPanel();
         stackDepthLabel = new javax.swing.JLabel();
-        stackDepthTextField = new javax.swing.JTextField();
+        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField("trackPreference_maxDepth");
         labelFieldLabel = new javax.swing.JLabel();
         labelFieldComboBox = new javax.swing.JComboBox();
         strands2TracksCheckBox = new javax.swing.JCheckBox();
@@ -298,7 +298,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         stylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
@@ -656,7 +656,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                     .add(layout.createSequentialGroup()
                         .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(1, 1, 1)
-                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE))))
+                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 

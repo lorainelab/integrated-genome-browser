@@ -32,8 +32,8 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	}
 
 	@Override
-	protected void setStyleColor(JColorChooser chooser, ITrackStyleExtended style) {
-		style.setForeground(chooser.getColor());
+	protected void setStyleColor(Color color, ITrackStyleExtended style) {
+		style.setForeground(color);
 	}
 
 	@Override

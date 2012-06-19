@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.IGBConstants;
+import java.awt.Color;
 
 public class ChangeForwardColorAction extends ChangeColorActionA {
 	private static final long serialVersionUID = 1L;
@@ -28,7 +29,7 @@ public class ChangeForwardColorAction extends ChangeColorActionA {
 	}
 
 	@Override
-	protected void setStyleColor(JColorChooser chooser, ITrackStyleExtended style) {
-		style.setForwardColor(chooser.getColor());
+	protected void setStyleColor(Color color, ITrackStyleExtended style) {
+		style.setForwardColor(color);
 	}
 }

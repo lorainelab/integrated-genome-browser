@@ -31,22 +31,22 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		changeColor(getTierManager().getSelectedTierLabels());
+		changeColor();
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
 	protected abstract void setChooserColor(JColorChooser chooser, ITrackStyleExtended style);
-	protected abstract void setStyleColor(JColorChooser chooser, ITrackStyleExtended style);
+	protected abstract void setStyleColor(Color color, ITrackStyleExtended style);
 	protected void setGraphColor(AbstractGraphGlyph gg, Color color) { }
 
-	private void changeColor(final List<TierLabelGlyph> tier_label_glyphs) {
-		if (tier_label_glyphs.isEmpty()) {
+	private void changeColor() {
+		if (getTierManager().getSelectedTierLabels().isEmpty()) {
 			return;
 		}
 
 		final JColorChooser chooser = new JColorChooser();
 
-		TierLabelGlyph tlg_0 = tier_label_glyphs.get(0);
+		TierLabelGlyph tlg_0 = getTierManager().getSelectedTierLabels().get(0);
 		TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
 		ITrackStyleExtended style_0 = tier_0.getAnnotStyle();
 		if (style_0 != null) {
@@ -57,19 +57,9 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (TierLabelGlyph tlg : tier_label_glyphs) {
-					TierGlyph tier = (TierGlyph) tlg.getInfo();
-					ITrackStyleExtended style = tier.getAnnotStyle();
-
-					if (style != null) {
-						setStyleColor(chooser, style);
-					}
-					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-						setStyleColor(chooser, gg.getGraphState().getTierStyle());
-						setGraphColor(gg, chooser.getColor());
-					}
-				}
+				changeColor(chooser.getColor());
 			}
+
 		};
 
 		JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
@@ -80,6 +70,27 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 				null); //no CANCEL button handler
 		dialog.setVisible(true);
 
+	}
+	
+	protected void changeColor(Color color) {
+		final List<TierLabelGlyph> tier_label_glyphs = getTierManager().getSelectedTierLabels();
+		if (tier_label_glyphs.isEmpty()) {
+			return;
+		}
+		
+		for (TierLabelGlyph tlg : tier_label_glyphs) {
+			TierGlyph tier = (TierGlyph) tlg.getInfo();
+			ITrackStyleExtended style = tier.getAnnotStyle();
+			if (style != null) {
+				setStyleColor(color, style);
+			}
+		}
+
+		for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+			setStyleColor(color, gg.getGraphState().getTierStyle());
+			setGraphColor(gg, color);
+		}
+		
 		refreshMap(false, false);
 	}
 }

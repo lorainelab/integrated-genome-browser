@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.stylesheet.*;
 import com.affymetrix.igb.view.SeqMapView;
@@ -1095,7 +1096,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			s = default_view_mode;
 		}
 		view_mode = s;
-
+		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(view_mode);
+		setExpandable(factory.isCategorySupported(FileTypeCategory.Annotation) || factory.isCategorySupported(FileTypeCategory.Alignment));
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);

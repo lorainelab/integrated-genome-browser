@@ -108,7 +108,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         graphStyleMinMaxAvgRadioButton = new javax.swing.JRadioButton();
         graphStyleHeatMapComboBox = new javax.swing.JComboBox();
         jSeparator1 = new javax.swing.JSeparator();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        labelCheckBox = new javax.swing.JCheckBox();
         stylePanel = new javax.swing.JPanel();
         labelSizeComboBox = new javax.swing.JComboBox();
         colorSchemeLabel = new javax.swing.JLabel();
@@ -238,8 +238,13 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
             }
         });
 
-        jCheckBox1.setText("Label");
-        jCheckBox1.setIconTextGap(2);
+        labelCheckBox.setText("Label");
+        labelCheckBox.setIconTextGap(2);
+        labelCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                labelCheckBoxActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
         graphPanel.setLayout(graphPanelLayout);
@@ -253,7 +258,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphPanelLayout.createSequentialGroup()
-                        .add(jCheckBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(labelCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -276,7 +281,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jCheckBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(labelCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -646,12 +651,12 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                         .add(hideButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .add(0, 0, 0)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                    .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
                     .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(1, 1, 1)
-                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))))
+                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -666,6 +671,12 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 			floatCheckBoxActionPerformedA(evt);
 		}
 	}//GEN-LAST:event_floatCheckBoxActionPerformed
+
+	private void labelCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelCheckBoxActionPerformed
+		if (is_listening) {
+			labelCheckBoxActionPerformedA(evt);
+		}
+	}//GEN-LAST:event_labelCheckBoxActionPerformed
 
 	private void YAxisCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YAxisCheckBoxActionPerformed
 		if (is_listening) {
@@ -850,9 +861,9 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
     private javax.swing.JRadioButton graphStyleMinMaxAvgRadioButton;
     private javax.swing.JRadioButton graphStyleStairStepRadioButton;
     private javax.swing.JButton hideButton;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JCheckBox labelCheckBox;
     private com.jidesoft.combobox.ColorComboBox labelColorComboBox;
     private javax.swing.JLabel labelColorLabel;
     private javax.swing.JComboBox labelFieldComboBox;
@@ -903,6 +914,10 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
 	public javax.swing.JCheckBox getFloatCheckBox() {
 		return floatCheckBox;
+	}
+
+	public javax.swing.JCheckBox getLabelCheckBox() {
+		return labelCheckBox;
 	}
 
 	public com.jidesoft.combobox.ColorComboBox getForegroundColorComboBox() {
@@ -1071,6 +1086,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	// "                                    
 	protected abstract void viewModeComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void floatCheckBoxActionPerformedA(ActionEvent evt);
+	protected abstract void labelCheckBoxActionPerformedA(ActionEvent evt);
 	protected abstract void YAxisCheckBoxActionPerformedA(ActionEvent evt);
 	protected abstract void graphStyleHeatMapComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void labelSizeComboBoxActionPerformedA(ActionEvent evt);
@@ -1105,6 +1121,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
 	protected abstract void viewModeComboBoxReset();
 	protected abstract void floatCheckBoxReset();
+	protected abstract void labelCheckBoxReset();
 	protected abstract void YAxisCheckBoxReset();
 	protected abstract void graphStyleHeatMapComboBoxReset();
 	protected abstract void labelSizeComboBoxReset();
@@ -1134,6 +1151,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		getGraphPanel().setEnabled(graphGlyphs.size() > 0);
 		viewModeComboBoxReset();
 		floatCheckBoxReset();
+		labelCheckBoxReset();
 		YAxisCheckBoxReset();
 		graphStyleHeatMapComboBoxReset();
 		labelSizeComboBoxReset();

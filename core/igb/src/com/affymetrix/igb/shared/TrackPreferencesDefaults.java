@@ -295,4 +295,16 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void labelCheckBoxReset() {
+		// TODO Auto-generated method stub
+		
+	}
 }

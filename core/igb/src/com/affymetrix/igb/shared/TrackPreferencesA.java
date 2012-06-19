@@ -80,6 +80,16 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	@Override
+	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
+		final JCheckBox labelCheckBox = getLabelCheckBox();
+		boolean b = labelCheckBox.isSelected();
+		for (AbstractGraphGlyph gl : graphGlyphs) {
+			gl.setShowLabel(b);
+		}
+		updateDisplay();
+	}
+
+	@Override
 	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
 		boolean b = YAxisCheckBox.isSelected();
@@ -392,6 +402,20 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 		}
 		floatCheckBox.setSelected(allFloat);
+	}
+
+	@Override
+	protected void labelCheckBoxReset() {
+		JCheckBox labelCheckBox = getLabelCheckBox();
+		labelCheckBox.setEnabled(isAllGraph());
+		boolean allLabel = isAllGraph();
+		for (AbstractGraphGlyph glyph : graphGlyphs) {
+			if (!glyph.getShowLabel()) {
+				allLabel = false;
+				break;
+			}
+		}
+		labelCheckBox.setSelected(allLabel);
 	}
 
 	@Override

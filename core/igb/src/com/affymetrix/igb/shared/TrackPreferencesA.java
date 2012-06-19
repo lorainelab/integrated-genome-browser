@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
@@ -124,18 +123,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelSizeComboBoxActionPerformedA(ActionEvent evt) {
 		final JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		int fontsize = (Integer)labelSizeComboBox.getSelectedItem();
-		if (selectedTiers == null || fontsize <= 0) {
+		if (fontsize <= 0) {
 			return;
 		}
-		for (TierGlyph tier : selectedTiers) {
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			float prev_font_size = style.getTrackNameSize();
-			try {
-				style.setTrackNameSize(fontsize);
-			} catch (Exception ex) {
-				style.setTrackNameSize(prev_font_size);
-			}
-		}
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.TierFontSizeAction");
+		action.performAction(fontsize);
 		updateDisplay();
 	}
 
@@ -147,13 +140,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelFieldComboBoxActionPerformedA(ActionEvent evt) {
 		final JComboBox labelFieldComboBox = getLabelFieldComboBox();
 		String labelField = (String)labelFieldComboBox.getSelectedItem();
-		if (selectedTiers == null || labelField == null) {
+		if (labelField == null) {
 			return;
 		}
-		for (TierGlyph tier : selectedTiers) {
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			style.setLabelField(labelField);
-		}
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.LabelGlyphAction");
+		action.performAction(labelField);
 		updateDisplay();
 	}
 

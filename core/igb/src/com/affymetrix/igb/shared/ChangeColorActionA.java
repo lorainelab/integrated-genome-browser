@@ -1,4 +1,4 @@
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -9,6 +9,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -58,6 +59,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				changeColor(chooser.getColor());
+				refreshMap(false, false);
 			}
 
 		};
@@ -91,6 +93,5 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 			setGraphColor(gg, color);
 		}
 		
-		refreshMap(false, false);
 	}
 }

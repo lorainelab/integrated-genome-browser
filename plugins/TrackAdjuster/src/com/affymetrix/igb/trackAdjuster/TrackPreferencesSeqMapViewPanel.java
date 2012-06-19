@@ -131,7 +131,7 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		List<RootSeqSymmetry> selected_syms = evt.getAllSelectedSyms();
+		List<RootSeqSymmetry> selected_syms = new ArrayList<RootSeqSymmetry>(evt.getAllSelectedSyms());
 		
 		// Selected sym contains graph sym
 		for(SeqSymmetry sym: evt.getSelectedGraphSyms()){

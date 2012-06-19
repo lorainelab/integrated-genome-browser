@@ -164,11 +164,11 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 				ViewModeGlyph vg = ((TierGlyph) g).getViewModeGlyph();
 				if (vg instanceof MultiGraphGlyph) {
 					for (GlyphI child : vg.getChildren()) {
-						if (rootSyms.contains(child.getInfo())) {
+						if (sym == child.getInfo()) {
 							glyphs.add((ViewModeGlyph) child);
 						}
 					}
-				} else if (rootSyms.contains(vg.getInfo())) {
+				} else if (sym == vg.getInfo()) {
 					glyphs.add(vg);
 					if (vg instanceof AbstractGraphGlyph) {
 						graphGlyphs.add((AbstractGraphGlyph)vg);
@@ -249,7 +249,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		boolean any_are_combined = false; // are any selections inside a combined tier
 		boolean all_are_combined = true;  // are all selections inside (a) combined tier(s)
-		boolean any_graphs = false;       // are any selections graph tracks
+		int graph_count = 0;              // are any selections graph tracks
 		boolean all_same = true;          // all tracks are the same type
 
 		// Now loop through other glyphs if there are more than one
@@ -259,7 +259,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			any_are_combined = any_are_combined || this_one_is_combined;
 			all_are_combined = all_are_combined && this_one_is_combined;
 			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
-				any_graphs = true;
+				graph_count++;
 			}
 			RootSeqSymmetry rootSym = (RootSeqSymmetry)gl.getInfo();
 			if (rootSym == null) {
@@ -276,9 +276,9 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			}
 		}
 
-		combineB.setEnabled(!all_are_combined && any_graphs);
+		combineB.setEnabled(!all_are_combined && graph_count > 1);
 		splitB.setEnabled(any_are_combined);
-		threshB.setEnabled(any_graphs);
+		threshB.setEnabled(graph_count > 0);
 		int operatorCount = name2operation.size();
 		transformationCB.setEnabled(all_same && operatorCount > 0);
 		transformationGoB.setEnabled(all_same && operatorCount > 0);

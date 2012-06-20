@@ -23,8 +23,9 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	private double reverseHeight;
 	private float track_name_size;
 	private Color label_foreGround = new Color(0,0,0);
+	private Color label_backGround = new Color(255,255,255);
 	private int directionType;
-	private Color forwardColor, reverseColor, label_backGround;
+	private Color forwardColor, reverseColor;
 	@Override
 	public void setReverseHeight(double theNewHeight) {
 		this.reverseHeight = theNewHeight;

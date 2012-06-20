@@ -77,30 +77,30 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	private void changeColor(Color color){
 		final List<TierLabelGlyph> tier_label_glyphs = getTierManager().getSelectedTierLabels();
-		if (tier_label_glyphs.isEmpty() && getSeqMapView().getPixelFloater().getChildren().isEmpty()) {
-			return;
-		}
-		
-		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null) {
-				setStyleColor(color, style);
+		if (!tier_label_glyphs.isEmpty()) {
+			for (TierLabelGlyph tlg : tier_label_glyphs) {
+				TierGlyph tier = (TierGlyph) tlg.getInfo();
+				ITrackStyleExtended style = tier.getAnnotStyle();
+				if (style != null) {
+					setStyleColor(color, style);
+				}
 			}
-		}
 
-		// For Joined Graphs
-		for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-			setStyleColor(color, gg.getGraphState().getTierStyle());
-			setGraphColor(gg, color);
+			// For Joined Graphs
+			for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+				setStyleColor(color, gg.getGraphState().getTierStyle());
+				setGraphColor(gg, color);
+			}
 		}
 		
 		// For Floating graphs
-		for(GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()){
-			if(glyph.isSelected() && glyph instanceof AbstractGraphGlyph){
-				AbstractGraphGlyph gg = (AbstractGraphGlyph)glyph;
-				setStyleColor(color, gg.getGraphState().getTierStyle());
-				setGraphColor(gg, color);
+		if (getSeqMapView().getPixelFloater() != null && getSeqMapView().getPixelFloater().getChildren() != null) {
+			for (GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()) {
+				if (glyph.isSelected() && glyph instanceof AbstractGraphGlyph) {
+					AbstractGraphGlyph gg = (AbstractGraphGlyph) glyph;
+					setStyleColor(color, gg.getGraphState().getTierStyle());
+					setGraphColor(gg, color);
+				}
 			}
 		}
 		

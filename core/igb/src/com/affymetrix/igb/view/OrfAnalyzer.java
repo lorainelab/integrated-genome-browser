@@ -159,8 +159,12 @@ public final class OrfAnalyzer extends JComponent
 			}
 			//ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
 		}
+		
 		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);
-		fortier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
+		SimpleTrackStyle forSts = new SimpleTrackStyle("Stop Codon", false);
+		forSts.setLabelBackground(bgcol);
+		forSts.setLabelForeground(bgcol);
+		fortier = new TransformTierGlyph(forSts);
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(bgcol);
@@ -171,7 +175,10 @@ public final class OrfAnalyzer extends JComponent
 
 		map.addTier(forTierGlyph, true);  // put forward tier above axis
 
-		revtier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
+		SimpleTrackStyle revSts = new SimpleTrackStyle("Stop Codon", false);
+		revSts.setLabelBackground(bgcol);
+		revSts.setLabelForeground(bgcol);
+		revtier = new TransformTierGlyph(revSts);
 		revtier.setLabel("Stop Codons");
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);

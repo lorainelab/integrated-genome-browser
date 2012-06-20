@@ -2,6 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -26,18 +27,25 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		for(TierGlyph glyph : getTierManager().getSelectedTiers()){
-			final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
-			final boolean isSeparate = style.getSeparate();
 			
-			if (isSeparate && !mode.supportsTwoTrack()) {
+			if (style.getSeparate() && !mode.supportsTwoTrack()) {
 				style.setSeparate(false);
 			}
 			
 			ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph) glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-			TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), rootSym, comboStyle);
+			TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), (RootSeqSymmetry) glyph.getInfo(), comboStyle);
 		}
-
+		
+		
+		// For Floating graphs
+		for(GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()){
+			if(glyph.isSelected() && glyph instanceof AbstractGraphGlyph){
+				AbstractGraphGlyph gg = (AbstractGraphGlyph)glyph;
+				TrackView.getInstance().changeViewMode(getSeqMapView(), gg.getAnnotStyle(), mode.getName(), (RootSeqSymmetry)glyph.getInfo(), null);
+			}
+		}
+		
 		refreshMap(false, false);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(ae);
 	}

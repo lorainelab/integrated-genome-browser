@@ -47,7 +47,6 @@
                             <entry key="com.affymetrix.igb.action.ChangeBackgroundColorAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ShowStrandAction" value="true"/>
                             <entry key="com.affymetrix.igb.shared.CollapseExpandAction:ExpandAction;CollapseAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.AutoLoadThresholdAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.SetSummaryThresholdAction" value="true"/>
 							<entry key="SeqMapToggleAction:ShowOneTierAction;ShowTwoTiersAction" value="true"/>
                         </map>

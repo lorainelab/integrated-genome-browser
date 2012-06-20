@@ -9,6 +9,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -76,7 +77,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	private void changeColor(Color color){
 		final List<TierLabelGlyph> tier_label_glyphs = getTierManager().getSelectedTierLabels();
-		if (tier_label_glyphs.isEmpty()) {
+		if (tier_label_glyphs.isEmpty() && getSeqMapView().getPixelFloater().getChildren().isEmpty()) {
 			return;
 		}
 		
@@ -88,10 +89,21 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 			}
 		}
 
+		// For Joined Graphs
 		for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
 			setStyleColor(color, gg.getGraphState().getTierStyle());
 			setGraphColor(gg, color);
 		}
+		
+		// For Floating graphs
+		for(GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()){
+			if(glyph.isSelected() && glyph instanceof AbstractGraphGlyph){
+				AbstractGraphGlyph gg = (AbstractGraphGlyph)glyph;
+				setStyleColor(color, gg.getGraphState().getTierStyle());
+				setGraphColor(gg, color);
+			}
+		}
+		
 	}
 	
 	@Override

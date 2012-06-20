@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.WaitHelperI;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.gene.igb.powertransformer.PowerTransformer;
 
 /**
  * OSGi Activator for genometry bundle
@@ -102,6 +103,8 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.LogTransform(Math.E), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.LogTransform(2.0), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.LogTransform(10.0), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.PowerTransformer(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.PowerTransformer(0.5), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.MaxOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.MeanOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.MedianOperator(), null);

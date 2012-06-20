@@ -225,7 +225,7 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 
 	@Override
 	public Color getLabelBackground() {
-		return label_foreGround;
+		return label_backGround;
 	}
 
 	@Override

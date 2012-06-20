@@ -36,8 +36,8 @@ public class ChangeFontSizeAction extends SeqMapViewActionA {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null && style instanceof TrackStyle) {
-				((TrackStyle) style).setTrackNameSize(size);
+			if (style != null && style instanceof ITrackStyleExtended) {
+				style.setTrackNameSize(size);
 			}
 		}
 		getSeqMapView().getSeqMap().updateWidget();
@@ -54,8 +54,8 @@ public class ChangeFontSizeAction extends SeqMapViewActionA {
 			TierLabelGlyph tlg = tier_labels.get(0);
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tg.getAnnotStyle();
-			if (style != null && style instanceof TrackStyle) {
-				initial_value = ((TrackStyle) style).getTrackNameSize();
+			if (style != null && style instanceof ITrackStyleExtended) {
+				initial_value = style.getTrackNameSize();
 			}
 		}
 

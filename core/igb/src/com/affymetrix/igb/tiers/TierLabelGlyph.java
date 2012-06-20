@@ -8,6 +8,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -131,8 +132,8 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
 
-		if (reftier.getAnnotStyle() instanceof TrackStyle) {
-			TrackStyle trackStyle = (TrackStyle) reftier.getAnnotStyle();
+		if (reftier.getAnnotStyle() instanceof ITrackStyleExtended) {
+			ITrackStyleExtended trackStyle = reftier.getAnnotStyle();
 			fgcolor = trackStyle.getLabelForeground();
 			bgcolor = trackStyle.getLabelBackground();
 			Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());

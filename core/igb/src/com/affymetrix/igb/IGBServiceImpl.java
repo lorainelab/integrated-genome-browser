@@ -506,4 +506,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			System.out.println("Other Preferences not instantiated");
 		}
 	}
+	
+	@Override
+	public float getDefaultTrackSize(){
+		return TrackConstants.default_track_name_size;
+	}
 }

@@ -217,4 +217,5 @@ public interface IGBService {
 	public void loadVisibleFeatures();
 	public void selectFeatureAndCenterZoomStripe(String selectParam);
 	public void openPreferencesOtherPanel();
+	public float getDefaultTrackSize();
 }

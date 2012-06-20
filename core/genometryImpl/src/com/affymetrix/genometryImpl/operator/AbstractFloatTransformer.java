@@ -29,7 +29,6 @@ public abstract class AbstractFloatTransformer implements Operator {
 		for (int i = 0; i < sourceY.length; i++) {
 			y[i] = transform(sourceY[i]);
 		}
-		System.arraycopy(sourceSym.getGraphYCoords(), 0, y, 0, sourceSym.getGraphYCoords().length);
 		String id = sourceSym.getID();
 		BioSeq seq = sourceSym.getGraphSeq();
 		if (sourceSym.hasWidth()) {

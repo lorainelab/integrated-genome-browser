@@ -10,8 +10,11 @@ import com.affymetrix.igb.IGB;
  * classes alone.
  */
 public class ThresholdReader {
+	/* amount (number of bases) that the Threshold is moved to switch from summary to detail */
 	public static final int threshold_increment = 1000;
+	/* minimum threshold amount (number of bases), individual tracks cannot go below this value. zero means to use the default */
 	public static final int threshold_min = threshold_increment;
+	/* default threshold amount (number of bases), for autoload and individual track threshold */
 	public static final int default_threshold = 100000;
 	private static final ThresholdReader instance = new ThresholdReader();
 	public static final ThresholdReader getInstance() {

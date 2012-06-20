@@ -123,7 +123,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		if (pspan == null) {
 			return null;
 		}
-		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), tier_style.getHeight());
+		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
 		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)

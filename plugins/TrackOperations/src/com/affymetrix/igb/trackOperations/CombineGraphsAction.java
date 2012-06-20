@@ -94,7 +94,7 @@ public class CombineGraphsAction extends GenericAction {
 				height += gsym.getGraphState().getTierStyle().getHeight();
 			}
 		}
-		combo_style.setHeight(height / i);
+		combo_style.setHeight(height);
 
 		TrackOperationsTab.getSingleton().updateViewer();
 	}

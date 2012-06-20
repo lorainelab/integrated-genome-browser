@@ -1,15 +1,18 @@
 package com.affymetrix.igb.shared;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -24,6 +27,8 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	protected final MapViewGlyphFactoryI defaultGlyphFactory;
 	protected final MapViewGlyphFactoryI graphGlyphFactory;
+//	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.LogTransform(Math.E);
+	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.PowerTransformer(0.5);
 
 	public IndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
 		super();
@@ -145,7 +150,11 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(smv.getVisibleSpan());
 			if (symList.size() > 0) {
 				GraphSym gsym = (GraphSym)symList.get(0);
-				resultGlyph = graphGlyphFactory.getViewModeGlyph(gsym, style, Direction.BOTH, smv);
+				List<SeqSymmetry> operList = new ArrayList<SeqSymmetry>();
+				operList.add(gsym);
+				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
+				resultGlyph = graphGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}
 			if (resultGlyph != null) {
 				((AbstractGraphGlyph)resultGlyph).drawHandle(false);

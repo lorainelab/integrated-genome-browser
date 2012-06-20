@@ -12,8 +12,8 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-//import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -27,38 +27,49 @@ public final class KeyStrokeEditPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
-	public final JRPTextField key_field = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
-	private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
-	public final JLabel key_label = new JLabel("Type a shortcut: ");
-	public final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB");
-	public final JRPButton clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
-	private int key_code;
-	private int modifiers;
+	public final JRPTextField key_field
+			= new JRPTextField("KeyStrokeEditPanel_key_field", 20);
+	private final JRPCheckBox toolbar_field
+			= new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
+	public final JLabel key_label
+			= new JLabel("Type a shortcut: ");
+	public final JLabel note_label
+			= new JLabel("Changes will take effect next time you launch IGB");
+	public final JRPButton clear_button
+			= new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
 	private Preferences the_keystroke_node = null;
-	  private Preferences the_toolbar_node = null;
+	private Preferences the_toolbar_node = null;
 	private String the_key = null;
+	private String lastTimeFocusGained = "";
 
 	/** Creates a new instance of KeyStrokesView */
-	public KeyStrokeEditPanel() {		
+	public KeyStrokeEditPanel() {
 		key_field.addKeyListener(new KeyListener() {
 
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				evt.consume();
-				key_code = evt.getKeyCode();
-				modifiers = evt.getModifiers();
-				KeyStroke ks = getStroke();
-				if (getKeyText(ks.getKeyCode()).equals("BACK_SPACE") || getKeyText(ks.getKeyCode()).equals("DELETE")) {
+				int keyCode = evt.getKeyCode();
+				int modifiers = evt.getModifiers();
+				KeyStroke ks = KeyStroke.getKeyStroke(keyCode, modifiers);
+				if (getKeyText(ks.getKeyCode()).equals("BACK_SPACE")
+						|| getKeyText(ks.getKeyCode()).equals("DELETE")) {
 					clearAction();
 				} else {
 					String command = keyStroke2String(ks);
 					String useCommand = isCommandInUse(command);
 					if (useCommand != null) {
-						if (!IGB.confirmPanel(KeyStrokeEditPanel.this, "This shortcut is currently in use; \n"
-								+ "reassigning this will remove the shortcut for " + useCommand + ".\n"
+						// TODO Fix bug here.
+						// When the confirm panel pops up the editor loses focus.
+						// This triggers an applyAction with an invalid key stroke.
+						if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
+								"This shortcut is currently in use; \n"
+								+ "reassigning this will remove the shortcut for "
+								+ useCommand + ".\n"
 								+ "Do you want to proceed?")) {
+							key_field.setText(lastTimeFocusGained);
 							return;
 						}
-
 						the_keystroke_node.put(useCommand, "");
 						key_field.setText(command);
 						applyAction();
@@ -68,16 +79,27 @@ public final class KeyStrokeEditPanel extends JPanel {
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent evt) {
 				evt.consume();
 			}
 
+			@Override
 			public void keyTyped(KeyEvent evt) {
 				evt.consume();
 			}
 		});
 		key_field.addFocusListener(new java.awt.event.FocusAdapter() {
 
+			@Override
+			public void focusGained(java.awt.event.FocusEvent fe) {
+				Object o = fe.getSource();
+				if (o instanceof JTextField) {
+					JTextField tf = (JTextField) o;
+					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+				}
+			}
+			@Override
 			public void focusLost(java.awt.event.FocusEvent evt) {
 				applyAction();
 			}
@@ -85,6 +107,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 
 		clear_button.addActionListener(new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				clearAction();
 				clearAction();//To Do: Fix the need to call this twice
@@ -138,43 +161,62 @@ public final class KeyStrokeEditPanel extends JPanel {
 			return;
 		}
 		String str = key_field.getText().trim();
-		KeyStroke ks = KeyStroke.getKeyStroke(str);
 		if (str.length() == 0) {
 			this.the_keystroke_node.put(this.the_key, "");
-		} else if (ks == null) {
-			ErrorHandler.errorPanel("Unknown Key", "Unknown key code: \"" + str + "\"");
+			return;
+		}
+		KeyStroke ks = KeyStroke.getKeyStroke(str);
+		if (ks == null) {
+			ErrorHandler.errorPanel("Unknown Key",
+					"Unknown key code: \"" + str + "\"");
 			key_field.setText("");
-		} else if (isModifierKey(ks) || (str.indexOf("unknown") >= 0)) {
-			ErrorHandler.errorPanel("Bad Keystroke", "Illegal shortcut: \"" + str + "\"");
+			return;
+		}
+		if (isModifierKey(ks) || (str.indexOf("unknown") >= 0)) {
+			ErrorHandler.errorPanel("Bad Keystroke",
+					"Illegal shortcut: \"" + str + "\"");
 			key_field.setText("");
-		} else if (str.indexOf(' ') <= 0 || str.startsWith("shift ")) {
-			// Checking that the string contains a space and does NOT start with "shift "
-			// is equivalent to checking that there is some other modifier key present.
-			// (such as "ctrl " or "alt ").
-			// I hate making this restriction, but without it, bad things can happen.
-			// For instance, if the user wants to use "Z" too mean "zoom" in the SeqMapView,
-			// then any time the letter "Z" is pressed in any input box, a zoom will happen,
-			// and the user won't be able to type things like "zebra genome".
-			ErrorHandler.errorPanel("Bad Keystroke", "Illegal shortcut: \"" + str + "\"\n"
+			return;
+		}
+		if (str.indexOf(' ') <= 0 || str.startsWith("shift ")) {
+			// Checking that there is a modifier (ctrl, alt, or meta) present.
+			// Without this restriction bad things can happen. For instance,
+			// if the user wants to use "Z" too mean "zoom" in the SeqMapView,
+			// then any time the letter "Z" is pressed in any input box,
+			// a zoom will happen, and the user won't be able to type things
+			// like "zebra genome".
+			ErrorHandler.errorPanel("Bad Keystroke",
+					"Illegal shortcut: \"" + str + "\"\n"
 					+ "Must contain a modifier key (ctrl, alt, ...)");
 			key_field.setText("");
-		} else {
-			if (DEBUG) {
-				System.out.println("Changing keystroke pref: " + this.the_keystroke_node
-						+ ": " + this.the_key + "  -->  " + str);
-			}
-			this.the_keystroke_node.put(this.the_key, str);
+			return;
 		}
-//    if (!this.the_toolbar_node.getBoolean(this.the_key, false) && toolbar_field.isSelected()) {
-//        this.the_toolbar_node.putBoolean(this.the_key, true);      
-//        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
-//                +": "+ this.the_key + "  -->  true");
-//    }
-//    else if (this.the_toolbar_node.getBoolean(this.the_key, false) && !toolbar_field.isSelected()) {
-//        this.the_toolbar_node.remove(this.the_key);      
-//        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
-//                +": "+ this.the_key + "  -->  false");
-//    }
+		if (DEBUG) {
+			System.out.println("Changing keystroke pref: "
+					+ this.the_keystroke_node + ": "
+					+ this.the_key + "  -->  " + str);
+		}
+		this.the_keystroke_node.put(this.the_key, str);
+		// The following seems to put the accelerator in the menu,
+		// but the action does not seem to be invoked by the key stroke.
+		Action a = GenericActionHolder.getInstance().getGenericAction(this.the_key);
+		if (null != a) {
+			KeyStroke k = KeyStroke.getKeyStroke(str);
+			if (null != k) {
+				a.putValue(Action.ACCELERATOR_KEY, k);
+			}
+		}
+		// Ah, the above handles things when the action is in a menu
+		// for the window (JFrame) with the focus.
+		// Here we add "orphan" actions that are not in a window's menu.
+		// i.e. the ones in the popup or the tool bar.
+		// Should we check and return if it's not "orphaned"?
+		javax.swing.JFrame f = IGB.getSingleton().getFrame();
+		javax.swing.JPanel p = (javax.swing.JPanel) f.getContentPane();
+		InputMap im = p.getInputMap(WHEN_IN_FOCUSED_WINDOW);
+		im.put(ks, this.the_key);
+		ActionMap am = p.getActionMap();
+		am.put(this.the_key, a);
 	}
 
 	private void clearAction() {
@@ -202,10 +244,6 @@ public final class KeyStrokeEditPanel extends JPanel {
 				|| (key_code == KeyEvent.VK_CONTROL)
 				|| (key_code == KeyEvent.VK_META)
 				|| (key_code == KeyEvent.VK_SHIFT));
-	}
-
-	private KeyStroke getStroke() {
-		return KeyStroke.getKeyStroke(key_code, modifiers);
 	}
 
 	/**

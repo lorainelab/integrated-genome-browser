@@ -1,10 +1,13 @@
 package com.affymetrix.genometryImpl.event;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 
 public class GenericActionHolder {
 	private static GenericActionHolder instance = new GenericActionHolder();
@@ -29,6 +32,8 @@ public class GenericActionHolder {
 	 */
 	public void addGenericAction(GenericAction genericAction) {
 		genericActions.put(genericAction.getId(), genericAction);
+		KeyStroke k = PreferenceUtils.getAccelerator(genericAction.getClass().getName());
+		genericAction.putValue(Action.ACCELERATOR_KEY, k);
 		for (GenericActionListener listener : listeners) {
 			listener.onCreateGenericAction(genericAction);
 		}
@@ -42,10 +47,13 @@ public class GenericActionHolder {
 	 * in the list of shortcuts in the preferences
 	 * and (hence) in the tool bar.
 	 * What about the tutorials?
+	 * <p>Don't think it's working. - elb
 	 * @param genericAction to add.
 	 */
 	public void addGenericActionSilently(GenericAction genericAction) {
 		genericActions.put(genericAction.getId(), genericAction);
+		KeyStroke k = PreferenceUtils.getAccelerator(genericAction.getClass().getName());
+		genericAction.putValue(Action.ACCELERATOR_KEY, k);
 	}
 
 	public void removeGenericAction(GenericAction genericAction) {

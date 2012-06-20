@@ -345,7 +345,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private void resetAll(List<AbstractGraphGlyph> graphGlyphs) {
 		is_listening = false;
 		boolean enabled = graphGlyphs.size() > 0;
-		RangePanel.setEnabled(enabled);
+		boolean heightEnabled = enabled && igbService.getVisibleTierGlyphs().size() > 2; // axis tier and 1 graph tier only - height slider disabled
 		setByLabel.setEnabled(enabled);
 	    by_percentileRB_val.setEnabled(enabled);
 	    by_valRB_val.setEnabled(enabled);
@@ -354,8 +354,8 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	    minText.setEnabled(enabled);
 	    minValLabel.setEnabled(enabled);
 	    rangeSlider.setEnabled(enabled);
-	    heightSlider.setEnabled(enabled);
-	    heightLabel.setEnabled(enabled);
+	    heightSlider.setEnabled(heightEnabled);
+	    heightLabel.setEnabled(heightEnabled);
 	    vis_bounds_setter.setGraphs(graphGlyphs);
 		if (graphGlyphs.size() == 1) {
 			double the_height = graphGlyphs.get(0).getAnnotStyle().getHeight();

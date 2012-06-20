@@ -152,10 +152,11 @@ public final class KeyStrokesView implements ListSelectionListener,
 		smallTimeActions.add(PreferencesHelpTabAction.getAction());
 		// Actions that have a toggle should not be in the tool bar.
 		// Their toggles can be, but the actions have large icons (for the toggle).
-		smallTimeActions.add(ExpandAction.getAction());
-		smallTimeActions.add(CollapseAction.getAction());
-		smallTimeActions.add(ShowOneTierAction.getAction());
-		smallTimeActions.add(ShowTwoTiersAction.getAction());
+		// No. Michael says leave these in. 2012-06-15
+		//smallTimeActions.add(ExpandAction.getAction());
+		//smallTimeActions.add(CollapseAction.getAction());
+		//smallTimeActions.add(ShowOneTierAction.getAction());
+		//smallTimeActions.add(ShowTwoTiersAction.getAction());
 	}
 	/**
 	 * Build the underlying data array.
@@ -185,7 +186,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 				rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
 				rows[i][KeyStrokeColumn] = keystroke_node.get(key, "");
 				rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
-				if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) { // TODO is this condition correct?
+				if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
 					rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
 				}
 				if (smallTimeActions.contains(genericAction)) {
@@ -259,7 +260,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 
 		public KeyStrokeViewTable(String id) {
 			super(id);
-			setDefaultEditor(ExistentialTriad.class, new DefaultCellEditor(new JComboBox(ExistentialTriad.values())));
+			//setDefaultEditor(ExistentialTriad.class, new DefaultCellEditor(new JComboBox(ExistentialTriad.values())));
 			setDefaultEditor(ExistentialTriad.class, new SuperBooleanCellEditor());
 			setDefaultRenderer(ExistentialTriad.class, new SuperBooleanCellEditor());
 		}

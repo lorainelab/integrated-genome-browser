@@ -317,7 +317,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void trackNameTextFieldActionPerformedA(ActionEvent evt) {
 		final JTextField trackNameTextField = getTrackNameTextField();
 		String name = trackNameTextField.getText();
-		if (igbService.getSeqMapView() == null) {
+		if (igbService.getSeqMapView() == null || selectedTiers.isEmpty()) {
 			return;
 		}
 		if (selectedTiers != null) {

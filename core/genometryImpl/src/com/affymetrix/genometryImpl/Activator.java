@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.WaitHelperI;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.gene.igb.powertransformer.PowerTransformer;
 
 /**
  * OSGi Activator for genometry bundle

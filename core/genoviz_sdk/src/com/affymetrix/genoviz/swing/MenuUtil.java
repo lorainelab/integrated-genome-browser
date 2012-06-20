@@ -13,14 +13,12 @@
 
 package com.affymetrix.genoviz.swing;
 
-import javax.swing.*;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.*;
 
 public abstract class MenuUtil {
 
@@ -36,7 +34,7 @@ public abstract class MenuUtil {
    *  the preference associated with the action command.
    *  The action command Strings should be unique across the whole application.
    */
-  private static final void addAccelerator(JMenuItem item, String command) {
+  private static void addAccelerator(JMenuItem item, String command) {
     item.setAccelerator(accelerators.get(command));
   }
   
@@ -51,7 +49,7 @@ public abstract class MenuUtil {
    *  is returned as a convenience
    *  @see PreferenceUtils#getAccelerator(String)
    */
-  public static final KeyStroke addAccelerator(JComponent comp, ActionListener al,
+  public static KeyStroke addAccelerator(JComponent comp, ActionListener al,
     String action_command) {
     KeyStroke ks = accelerators.get(action_command);
     if (ks != null) {
@@ -87,7 +85,7 @@ public abstract class MenuUtil {
     }
   }
 
-  public static final JMenu getMenu(JMenuBar main_menu_bar, String name) {
+  public static JMenu getMenu(JMenuBar main_menu_bar, String name) {
     JMenu new_menu = findMenu(main_menu_bar, name);
     if (new_menu != null) {
     	return new_menu;
@@ -98,7 +96,7 @@ public abstract class MenuUtil {
     return new_menu;
   }
   
-  public static final JRPMenu getRPMenu(JMenuBar main_menu_bar, String id, String name) {
+  public static JRPMenu getRPMenu(JMenuBar main_menu_bar, String id, String name) {
     JRPMenu new_menu = (JRPMenu)findMenu(main_menu_bar, name);
     if (new_menu != null) {
     	return new_menu;
@@ -113,11 +111,11 @@ public abstract class MenuUtil {
    *  Calls {@link #addToMenu(JMenu, JMenuItem)}
    *  with command set to null.
    */
-  public static final JMenuItem addToMenu(JMenu menu, JMenuItem item) {
+  public static JMenuItem addToMenu(JMenu menu, JMenuItem item) {
     return addToMenu(menu, item, "");
   }
 
-  public static final JMenuItem addToMenu(JMenu menu, JMenuItem item, String prefix) {
+  public static JMenuItem addToMenu(JMenu menu, JMenuItem item, String prefix) {
 	Action action = item.getAction();
 	if (action != null) {
 		String command = action.getClass().getName(); // duplicates GenericAction.getId()
@@ -129,13 +127,13 @@ public abstract class MenuUtil {
     return menu.add(item);
   }
 
-  public static final JMenuItem insertIntoMenu(JMenu menu, JMenuItem item, int position) {
+  public static JMenuItem insertIntoMenu(JMenu menu, JMenuItem item, int position) {
     Action action = item.getAction();
     if (action != null) { addAccelerator(item, action.getClass().getName()); } // duplicates GenericAction.getId()
     return menu.insert(item, position);
   }
 
-  public static final void removeFromMenu(JMenu menu, JMenuItem item) {
+  public static void removeFromMenu(JMenu menu, JMenuItem item) {
     menu.remove(item);
   }
 

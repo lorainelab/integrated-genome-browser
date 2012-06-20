@@ -39,8 +39,8 @@
               <EmptySpace pref="0" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="trackNameTextField" max="32767" attributes="0"/>
-                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <Component id="trackNameTextField" min="-2" pref="256" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="selectAllButton" min="-2" pref="90" max="-2" attributes="0"/>
                       <EmptySpace pref="0" max="-2" attributes="0"/>
                       <Component id="hideButton" min="-2" pref="43" max="-2" attributes="0"/>

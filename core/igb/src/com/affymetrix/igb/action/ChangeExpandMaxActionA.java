@@ -56,6 +56,8 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction implement
 		int ourOptimum = 1;
 		for (TierLabelGlyph tlg : theTiers) {
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
+			if(tg.getAnnotStyle().isGraphTier())
+				continue;
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));
 		}
 		return ourOptimum;

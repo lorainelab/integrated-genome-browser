@@ -200,7 +200,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		if (smv != null) {
 			currentTiers = smv.getSeqMap().getTiers();
-			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
+			List<TrackStyle> styles = new ArrayList<TrackStyle>();
 			Iterator<TierGlyph> titer = currentTiers.iterator();
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
@@ -213,12 +213,12 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				if (style instanceof TrackStyle
 						&& style.getShow()
 						&& !tier.isGarbage()) {
-					stylemap.put((TrackStyle) style, (TrackStyle) style);
+					styles.add((TrackStyle) style);
 				}
 			}
 
 			currentStyles.clear();
-			currentStyles.addAll(stylemap.values());
+			currentStyles.addAll(styles);
 		}
 
 		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyles.size());

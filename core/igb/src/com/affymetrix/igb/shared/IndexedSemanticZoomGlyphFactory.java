@@ -20,6 +20,8 @@ import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -92,6 +94,19 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 
 		public abstract boolean isDetail(ViewI view);
 
+		protected boolean isAutoLoadMode(){
+			if(this.getAnnotStyle() == null)
+				return false;
+			
+			if(this.getAnnotStyle().getFeature() == null)
+				return false;
+			
+			if(this.getAnnotStyle().getFeature().getLoadStrategy() != LoadStrategy.AUTOLOAD)
+				return false;
+			
+			return true;
+		}
+		
 		@Override
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,
 			Direction direction, SeqMapViewExtendedI gviewer) {
@@ -176,7 +191,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 //	        }
 			try {
 				ViewModeGlyph resultGlyph = null;
-				if (isDetail(view)) {
+				if (isAutoLoadMode() && isDetail(view)) {
 					resultGlyph = getDetailGlyph(smv);
 				}
 				else {

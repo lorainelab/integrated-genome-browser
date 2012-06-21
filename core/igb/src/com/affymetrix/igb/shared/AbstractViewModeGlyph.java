@@ -327,8 +327,11 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	}
 	
 	@Override
-	public double getChildHeight(){
-		return style.getHeight();
+	public final double getChildHeight(){
+		double child_height = MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
+		child_height = AbstractViewModeGlyph.useLabel(getAnnotStyle()) ? child_height * 2 : child_height;
+		child_height = child_height + getSpacing() * 2;
+		return child_height;
 	}
 	
 	protected final double getSpacing() {

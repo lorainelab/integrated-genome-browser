@@ -237,33 +237,7 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 	public int getOffset(){
 		return offset;
 	}
-	
-	@Override
-	public double getChildHeight(){
-		double child_height = 0;
-				boolean use_label = getAnnotStyle().getLabelField() != null && 
-				!getAnnotStyle().getLabelField().equals(TrackConstants.NO_LABEL) && 
-				(getAnnotStyle().getLabelField().trim().length() > 0);
 		
-		switch(getDirection()){
-			case REVERSE:
-				child_height = (int) getAnnotStyle().getReverseHeight();
-				break;
-			
-			case FORWARD:
-				child_height = (int) getAnnotStyle().getForwardHeight();
-				break;
-				
-			case BOTH:
-				child_height = (int) getAnnotStyle().getHeight();
-				break;
-		}
-		child_height = use_label ? child_height * 2 : child_height;
-		child_height = child_height + getSpacing() * 2;
-		
-		return child_height;
-	}
-	
 	@Override
 	public boolean isScrollingAllowed(){
 		if(getPacker() != expand_packer)

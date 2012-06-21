@@ -218,4 +218,5 @@ public interface IGBService {
 	public void selectFeatureAndCenterZoomStripe(String selectParam);
 	public void openPreferencesOtherPanel();
 	public float getDefaultTrackSize();
+	public void deselect(GlyphI tierGlyph);
 }

@@ -12,7 +12,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  *  Puts all selected graphs in separate tiers by setting the
- *  combo state of each graph's state to null.
+ *  combo state of each graph's state to null.        
  */
 public class SplitGraphsAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
@@ -33,6 +33,7 @@ public class SplitGraphsAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		List<ViewModeGlyph> selectedGlyphs = TrackOperationsTab.getSingleton().getSelectedGlyphss();
 		for (ViewModeGlyph vg : selectedGlyphs) {
+			TrackOperationsTab.getSingleton().getIgbService().deselect(vg.getTierGlyph());
 			for (GlyphI gl : vg.getChildren()) {
 				GraphSym gsym = (GraphSym)gl.getInfo();
 				GraphState gstate = gsym.getGraphState();

@@ -39,10 +39,12 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 		
 		
 		// For Floating graphs
-		for(GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()){
-			if(glyph.isSelected() && glyph instanceof AbstractGraphGlyph){
-				AbstractGraphGlyph gg = (AbstractGraphGlyph)glyph;
-				TrackView.getInstance().changeViewMode(getSeqMapView(), gg.getAnnotStyle(), mode.getName(), (RootSeqSymmetry)glyph.getInfo(), null);
+		if(getSeqMapView().getPixelFloater() != null && getSeqMapView().getPixelFloater().getChildren() != null){
+			for (GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()) {
+				if (glyph.isSelected() && glyph instanceof AbstractGraphGlyph) {
+					AbstractGraphGlyph gg = (AbstractGraphGlyph) glyph;
+					TrackView.getInstance().changeViewMode(getSeqMapView(), gg.getAnnotStyle(), mode.getName(), (RootSeqSymmetry) glyph.getInfo(), null);
+				}
 			}
 		}
 		

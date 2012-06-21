@@ -102,6 +102,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Single-Track Operations"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationLabel"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="transformationCB">
       <AuxValues>
@@ -120,6 +123,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Multi-Track Operations"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.operationLabel"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="operationCB">
       <AuxValues>
@@ -156,6 +162,7 @@
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationParamLabel"/>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="operationParamLabel">

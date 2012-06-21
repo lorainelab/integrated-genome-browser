@@ -38,10 +38,10 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        transformLabel = new javax.swing.JLabel();
+        transformLabel = trackOpTab.transformationLabel;
         transformationCB = trackOpTab.transformationCB;
         transformationGoB = trackOpTab.transformationGoB;
-        operationLabel = new javax.swing.JLabel();
+        operationLabel = trackOpTab.operationLabel;
         operationCB = trackOpTab.operationCB;
         operationGoB = trackOpTab.operationGoB;
         combineB = trackOpTab.combineB;

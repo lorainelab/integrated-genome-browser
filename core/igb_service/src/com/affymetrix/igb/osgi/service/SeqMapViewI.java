@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+
 import java.util.List;
 
 /**
@@ -115,4 +116,5 @@ public interface SeqMapViewI {
 	 */
 	public void updatePanel(boolean preserveViewX, boolean preserveViewY);
 
+	public List<GlyphI> getAllSelectedTiers();
 }

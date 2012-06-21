@@ -1555,6 +1555,39 @@ public class SeqMapView extends JPanel
 
 	}
 
+	/* returns ViewModeGlyphs */
+	@Override
+	public List<GlyphI> getAllSelectedTiers() {
+		List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
+		for (TierGlyph tierGlyph : tier_manager.getSelectedTiers()) {
+			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
+			if (!(vg instanceof MultiGraphGlyph)) {
+				allSelectedTiers.add(vg);
+			}
+		}
+		if (pixel_floater_glyph.getChildren() != null) {
+			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
+				if (floatGlyph.isSelected()) {
+					allSelectedTiers.add(floatGlyph);
+				}
+			}
+		}
+		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
+			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
+			if (vg.isSelected()) {
+				allSelectedTiers.add(vg);
+			}
+			if (vg instanceof MultiGraphGlyph) {
+				for (GlyphI child : vg.getChildren()) {
+					if (child.isSelected()) {
+						allSelectedTiers.add(child);
+					}
+				}
+			}
+		}
+		return allSelectedTiers;
+	}
+
 	@Override
 	public List<? extends GlyphI> getSelectedTiers() {
 		return tier_manager.getSelectedTiers();

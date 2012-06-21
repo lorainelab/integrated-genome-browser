@@ -81,7 +81,9 @@ public class TrackUtils {
 			if (rootSym == null && glyph.getChildCount() > 0 && glyph.getChild(0) instanceof RootSeqSymmetry) {
 				rootSym = (RootSeqSymmetry) glyph.getChild(0).getInfo();
 			}
-			syms.add(rootSym);
+			if (rootSym != null) {
+				syms.add(rootSym);
+			}
 		}
 		return syms;
 	}

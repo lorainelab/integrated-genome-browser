@@ -271,20 +271,7 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 		
 		return true;
 	}
-	
-	private int getStyleDepth(){
-		switch(getDirection()){
-			case REVERSE:
-				return getAnnotStyle().getReverseMaxDepth();
 			
-			case FORWARD:
-				return getAnnotStyle().getForwardMaxDepth();
-						
-			default:
-				return getAnnotStyle().getMaxDepth();
-		}
-	}
-		
 	@Override
 	protected void setModifiedViewCoords(ViewI view){
 		Rectangle temp_width = new Rectangle();

@@ -198,7 +198,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	private ViewModeGlyph createEmptyGraphGlyph(ITrackStyleExtended style, SeqMapViewExtendedI smv){
 		GraphSym sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());
 		ViewModeGlyph result = createViewModeGlyph(sym, getGraphState(style), smv);
-		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
+		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getMaxDepth() * DEFAULT_CHILD_HEIGHT);
 		return result;
 	}
 	

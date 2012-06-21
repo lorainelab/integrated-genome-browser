@@ -331,6 +331,20 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	}
 	
 	@Override
+	public final int getStyleDepth(){
+		switch(getDirection()){
+			case REVERSE:
+				return getAnnotStyle().getReverseMaxDepth();
+			
+			case FORWARD:
+				return getAnnotStyle().getForwardMaxDepth();
+						
+			default:
+				return getAnnotStyle().getMaxDepth();
+		}
+	}
+		
+	@Override
 	public void pack(ViewI view) {
 		super.pack(view);
 		// Make sure the parent is not too short.

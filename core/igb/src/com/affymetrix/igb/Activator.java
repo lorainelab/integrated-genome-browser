@@ -219,8 +219,8 @@ public class Activator implements BundleActivator {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
-							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
-//							JRPButton button = new JRPButtonTLP(genericAction); // >>>>>>> .r12096
+//							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
+							JRPButton button = new JRPButtonTLP(genericAction); // >>>>>>> .r12096
 							button.setHideActionText(true);
 							Preferences p = PreferenceUtils.getKeystrokesNode();
 							if (null != p) {

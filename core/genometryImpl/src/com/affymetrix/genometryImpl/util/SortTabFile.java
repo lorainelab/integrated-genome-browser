@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
  * @author hiralv
  */
 public class SortTabFile {
+	
+	private static final Pattern line_regex = Pattern.compile("\\s+");
+	private static final Pattern tab_regex = Pattern.compile("\\t");
 
 	public static boolean sort(File file){
 		
@@ -121,7 +124,14 @@ public class SortTabFile {
 			int or_col = or_column;
 
 			String[] o1Fields = regex.split(o1);
+			if (o1Fields.length == 1) {
+				o1Fields = line_regex.split(o1);
+			}
+			
 			String[] o2Fields = regex.split(o2);
+			if (o2Fields.length == 1) {
+				o2Fields = line_regex.split(o2);
+			}
 
 			if(ext.endsWith(".bed")){
 				boolean includes_bin_field = o1Fields.length > 6 &&
@@ -148,10 +158,11 @@ public class SortTabFile {
 
 		private static Pattern determineRegex(String ext){
 			if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
-				return Pattern.compile("\t");
+//				return Pattern.compile("\t");
+				return tab_regex;
 			} else if (ext.equals(".bed")) {
 //				return Pattern.compile("\\s+");
-				return Pattern.compile("\\t");
+				return tab_regex;
 			}
 
 			return null;

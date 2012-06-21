@@ -41,7 +41,7 @@ public class BED extends SymLoader implements LineProcessor {
 		pref_list.add("bed");
 	}
 	private static final boolean DEBUG = false;
-//	private static final Pattern line_regex = Pattern.compile("\\s+");
+	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern tab_regex = Pattern.compile("\\t");
 	private static final Pattern comma_regex = Pattern.compile(",");
 	private final List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
@@ -279,6 +279,9 @@ public class BED extends SymLoader implements LineProcessor {
 		boolean bedDetail = "bedDetail".equals(bedType);
 //		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
 		String[] fields = tab_regex.split(line);
+		if (fields.length == 1) {
+			fields = line_regex.split(line);
+		}
 		String detailId = null;
 		String detailDescription = null;
 		int field_count = fields.length;
@@ -746,6 +749,10 @@ public class BED extends SymLoader implements LineProcessor {
 					}
 //					fields = line_regex.split(line);
 					fields = tab_regex.split(line);
+					
+					if (fields.length == 1) {
+						fields = line_regex.split(line);
+					}
 
 					if (fields.length < 3) {
 						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", lineCounter);

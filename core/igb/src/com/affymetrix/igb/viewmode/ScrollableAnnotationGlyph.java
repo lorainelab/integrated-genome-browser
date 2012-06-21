@@ -471,13 +471,6 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 			return expand_packer.getActualSlots();
 		return 1;
 	}
-
-	private double getSpacing() {
-		if(getPacker() instanceof AbstractCoordPacker){
-			return ((AbstractCoordPacker)getPacker()).getSpacing();
-		}
-		return 2;
-	}
 	
 	private double getMaxChildHeight() {
 		double max = 0;

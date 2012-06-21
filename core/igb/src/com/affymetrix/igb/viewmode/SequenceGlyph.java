@@ -105,10 +105,6 @@ public class SequenceGlyph extends AbstractViewModeGlyph {
 		return 1;
 	}
 
-	private double getSpacing() {
-		return 2;
-	}
-
 	public void setPreferredHeight(double height, ViewI view){
 		height = height - 2 * getSpacing();
 

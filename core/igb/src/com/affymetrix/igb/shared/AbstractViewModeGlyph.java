@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -328,6 +329,13 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	@Override
 	public double getChildHeight(){
 		return style.getHeight();
+	}
+	
+	protected final double getSpacing() {
+		if(getPacker() instanceof AbstractCoordPacker){
+			return ((AbstractCoordPacker)getPacker()).getSpacing();
+		}
+		return 2;
 	}
 	
 	@Override

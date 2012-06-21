@@ -1286,10 +1286,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return Math.min(0, getVisibleMaxY());
 	}
 
-	private double getSpacing() {
-		return 2;
-	}
-
 	@Override
 	public void setPreferredHeight(double height, ViewI view) {
 		GlyphI child = getChild(0);

@@ -373,13 +373,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 		return 1;
 	}
 
-	private double getSpacing() {
-		if(getPacker() instanceof AbstractCoordPacker){
-			return ((AbstractCoordPacker)getPacker()).getSpacing();
-		}
-		return 2;
-	}
-	
 	private double getMaxChildHeight() {
 		double max = 0;
 		int children = this.getChildCount();

@@ -20,6 +20,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
@@ -32,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
-
 import javax.swing.*;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
@@ -64,6 +65,52 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		};
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
+		addActions();
+	}
+
+	/**
+	 * Load all the actions in use by this pop up.
+	 * Beware, this is a maintenance nightmare.
+	 * This was created by grepping for '\.getAction\('
+	 * and then making an {@link #addAction} call out of each one.
+	 * So if anyone ever adds or removes one of the actions in the pop up
+	 * this list should be modified to match.
+	 * Watch out for duplicates (like ShowOneTierAction).
+	 * Note that this should be called early,
+	 * preferably by the constructor.
+	 * The shortcuts should be available
+	 * even before this pop up is ever popped up.
+	 * Sigh. - elb
+	 */
+	private void addActions() {
+		IGB igb = (IGB) Application.getSingleton();
+		igb.addAction(ShowPlusStrandAction.getAction());
+		igb.addAction(ShowMinusStrandAction.getAction());
+		igb.addAction(ChangeForegroundColorAction.getAction());
+		igb.addAction(ChangeBackgroundColorAction.getAction());
+		igb.addAction(RenameAction.getAction());
+		igb.addAction(ChangeFontSizeAction.getAction());
+		igb.addAction(ChangeExpandMaxAction.getAction());
+		igb.addAction(ChangeExpandMaxAllAction.getAction());
+		igb.addAction(ShowTwoTiersAction.getAction());
+		igb.addAction(ShowOneTierAction.getAction());
+		igb.addAction(SetColorByScoreAction.getAction());
+		igb.addAction(ColorByScoreAction.getAction());
+		igb.addAction(ExportFileAction.getAction());
+		igb.addAction(ExportSelectedAnnotationFileAction.getAction());
+		igb.addAction(UseAsReferenceSeqAction.getAction());
+		igb.addAction(CustomizeAction.getAction());
+		igb.addAction(HideAction.getAction());
+		igb.addAction(ShowAllAction.getAction());
+		igb.addAction(CenterAtHairlineAction.getAction());
+		igb.addAction(MaximizeTrackAction.getAction());
+		igb.addAction(CollapseAction.getAction());
+		igb.addAction(ExpandAction.getAction());
+		igb.addAction(RemoveDataFromTracksAction.getAction());
+		igb.addAction(RepackSelectedTiersAction.getAction());
+		igb.addAction(RepackAllTiersAction.getAction());
+		igb.addAction(AutoLoadThresholdAction.getAction());
+		igb.addAction(SetSummaryThresholdAction.getAction());
 	}
 
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {

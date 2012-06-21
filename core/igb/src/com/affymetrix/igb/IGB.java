@@ -9,43 +9,21 @@
  */
 package com.affymetrix.igb;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
-import java.util.Map.Entry;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.*;
-
-import com.jidesoft.plaf.LookAndFeelFactory;
 import com.affymetrix.common.CommonUtils;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.*;
-
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-
+import static com.affymetrix.igb.IGBConstants.*;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -64,7 +42,22 @@ import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
-import static com.affymetrix.igb.IGBConstants.*;
+import com.jidesoft.plaf.LookAndFeelFactory;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Authenticator;
+import java.util.Map.Entry;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.*;
 
 
 /**
@@ -94,10 +87,12 @@ public final class IGB extends Application
 		stopRoutines = new HashSet<IStopRoutine>();
 	}
 
+	@Override
 	public SeqMapView getMapView() {
 		return map_view;
 	}
 
+	@Override
 	public JFrame getFrame() {
 		return frm;
 	}
@@ -314,6 +309,11 @@ public final class IGB extends Application
 			tool_bar = new JToolBar();
 		}
 		tool_bar.add(button);
+		Action a = button.getAction();
+		if (a instanceof GenericAction) {
+			GenericAction g = (GenericAction) a;
+			addAction(g);
+		}
 	}
 
 	/**
@@ -322,6 +322,7 @@ public final class IGB extends Application
 	 *
 	 * @return null if the image file is not found or can't be opened.
 	 */
+	@Override
 	public Image getIcon() {
 		ImageIcon imageIcon = CommonUtils.getInstance().getIcon("images/igb.gif");
 		if (imageIcon != null) {
@@ -330,6 +331,7 @@ public final class IGB extends Application
 		return null;
 	}
 
+	@Override
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
 		if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
@@ -339,6 +341,7 @@ public final class IGB extends Application
 		prev_selected_group = selected_group;
 	}
 
+	@Override
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		BioSeq selected_seq = evt.getSelectedSeq();
 		if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
@@ -403,25 +406,36 @@ public final class IGB extends Application
 		return windowService.getPlugins();
 	}
 
+	/**
+	 * Get a named view.
+	 */
 	public IGBTabPanel getView(String viewName) {
 		for (IGBTabPanel plugin : windowService.getPlugins()) {
 			if (plugin.getClass().getName().equals(viewName)) {
 				return plugin;
 			}
 		}
-		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
+		String message = getClass().getName() + ".getView() failed for " + viewName;
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, message);
 		return null;
 	}
 
-	//Easier for scripting if we don't require full name.
-	//This method only take display name of a tab instead of full package+classname
+	/**
+	 * Get a named view.
+	 * This differs from {@link #getView(String)}
+	 * in that it wants the display name instead of the full name.
+	 * This is easier for scripting.
+	 * @param viewName the display name of a tab
+	 *        instead of a full package and class name.
+	 */
 	public IGBTabPanel getViewByDisplayName(String viewName) {
 		for (IGBTabPanel plugin : windowService.getPlugins()) {
 			if (plugin.getDisplayName().equals(viewName)) {
 				return plugin;
 			}
 		}
-		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
+		String message = getClass().getName() + ".getView() failed for " + viewName;
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, message);
 		return null;
 	}
 
@@ -432,4 +446,26 @@ public final class IGB extends Application
 	public void setScriptWorker(CThreadWorker<Void, Void> scriptWorker) {
 		this.scriptWorker = scriptWorker;
 	}
+
+	/**
+	 * Put the action's accelerator key (if there is one)
+	 * in the panel's input and action maps.
+	 * This makes the action available via shortcut,
+	 * even if it is "hidden" in a pop up menu.
+	 * @param theAction to which the shortcut points.
+	 */
+	public void addAction(GenericAction theAction) {
+		javax.swing.JPanel thePanel = (javax.swing.JPanel) this.frm.getContentPane();
+		Object o = theAction.getValue(Action.ACCELERATOR_KEY);
+		if (null != o && o instanceof KeyStroke) {
+			KeyStroke ks = (KeyStroke) o;
+			InputMap im = thePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+			ActionMap am = thePanel.getActionMap();
+			GenericActionHolder h = GenericActionHolder.getInstance();
+			String actionIdentifier = theAction.getId();
+			im.put(ks, actionIdentifier);
+			am.put(actionIdentifier, theAction);
+		}
+	}
+
 }

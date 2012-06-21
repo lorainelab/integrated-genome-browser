@@ -58,6 +58,9 @@ import com.affymetrix.igb.viewmode.StairStepGraphGlyph;
 import com.affymetrix.igb.viewmode.TbiSemanticZoomGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import java.util.prefs.Preferences;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 
 /**
  * OSGi Activator for igb bundle
@@ -216,7 +219,19 @@ public class Activator implements BundleActivator {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
-							((IGB)Application.getSingleton()).addToolbarButton(new JRPButtonTLP(genericAction));
+							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
+							button.setHideActionText(true);
+							Preferences p = PreferenceUtils.getKeystrokesNode();
+							if (null != p) {
+								String ak = p.get(genericAction.getId(), "");
+								if (null != ak & 0 < ak.length()) {
+									KeyStroke ks = KeyStroke.getKeyStroke(ak);
+									genericAction.putValue(Action.ACCELERATOR_KEY, ks);
+								}
+							}
+							((IGB)Application.getSingleton()).addToolbarButton(button);
+//							((IGB)Application.getSingleton()).addToolbarButton(new JRPButtonTLP(genericAction));
+//>>>>>>> .r12096
 						}
 					}
 				}

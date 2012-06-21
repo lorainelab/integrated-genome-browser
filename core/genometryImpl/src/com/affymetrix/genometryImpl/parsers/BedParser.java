@@ -183,8 +183,12 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		boolean bedDetail = "bedDetail".equals(bedType);
 		String detailId = null;
 		String detailDescription = null;
-		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+//		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+		String[] fields = tab_regex.split(line);
 		int field_count = fields.length;
+		if(field_count == 1){
+			fields = line_regex.split(line);
+		}
 		if (bedDetail) {
 			detailId = fields[field_count - 2];
 			detailDescription = fields[field_count - 1];

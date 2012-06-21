@@ -2,12 +2,8 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import java.util.List;
 
 /**
  *
@@ -29,21 +25,11 @@ public class TierFontSizeAction extends SeqMapViewActionA implements Parametered
 	}
 
 	private void setFontSize(int fontsize){
-		final List<TierLabelGlyph> tier_label_glyphs = getTierManager().getSelectedTierLabels();
-		if (tier_label_glyphs.isEmpty()) {
-			return;
-		}
-		
-		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = (TierGlyph) tlg.getInfo();
+		for (TierGlyph tier : getTierManager().getSelectedTiers()) {
 			ITrackStyleExtended style = tier.getAnnotStyle();
 			if (style != null) {
 				style.setTrackNameSize(fontsize);
 			}
-		}
-
-		for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-			gg.getGraphState().getTierStyle().setTrackNameSize(fontsize);
 		}
 	}
 	

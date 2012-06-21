@@ -209,10 +209,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	@Override
 	public double getChildHeight(){
 		double child_height = 0;
-				boolean use_label = getAnnotStyle().getLabelField() != null && 
-				!getAnnotStyle().getLabelField().equals(TrackConstants.NO_LABEL) && 
-				(getAnnotStyle().getLabelField().trim().length() > 0);
-		
 		switch(getDirection()){
 			case REVERSE:
 				child_height = (int) getAnnotStyle().getReverseHeight();
@@ -226,25 +222,13 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 				child_height = (int) getAnnotStyle().getHeight();
 				break;
 		}
-		child_height = use_label ? child_height * 2 : child_height;
+
+		child_height = AbstractViewModeGlyph.useLabel(getAnnotStyle()) ? child_height * 2 : child_height;
 		child_height = child_height + getSpacing() * 2;
 		
 		return child_height;
 	}
-		
-	private int getStyleDepth(){
-		switch(getDirection()){
-			case REVERSE:
-				return getAnnotStyle().getReverseMaxDepth();
-			
-			case FORWARD:
-				return getAnnotStyle().getForwardMaxDepth();
-						
-			default:
-				return getAnnotStyle().getMaxDepth();
-		}
-	}
-			
+				
 	@Override
 	public void drawChildren(ViewI view) {
 		try {

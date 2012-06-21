@@ -92,11 +92,14 @@ public class SeqMapView extends JPanel
 	}
 
 	@Override
-	public void renameTier(GlyphI tier, String new_label){
-		ITrackStyleExtended style = ((TierGlyph)tier).getAnnotStyle();	
+	public void renameTier(GlyphI glyph, String new_label){
+		ViewModeGlyph vg = (ViewModeGlyph)glyph;
+		ITrackStyleExtended style = vg.getAnnotStyle();	
 		if (new_label != null && new_label.length() > 0) {
 			style.setTrackName(new_label);
-			((TierGlyph)tier).setLabel(new_label);
+			if (vg.getTierGlyph() != null) {
+				vg.getTierGlyph().setLabel(new_label);
+			}
 			getSeqMap().setTierLabels();
 		}
 		getSeqMap().updateWidget();

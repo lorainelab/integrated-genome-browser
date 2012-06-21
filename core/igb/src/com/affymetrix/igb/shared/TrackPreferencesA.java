@@ -317,11 +317,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void trackNameTextFieldActionPerformedA(ActionEvent evt) {
 		final JTextField trackNameTextField = getTrackNameTextField();
 		String name = trackNameTextField.getText();
-		if (igbService.getSeqMapView() == null || selectedTiers.isEmpty()) {
+		if (igbService.getSeqMapView() == null || allGlyphs.isEmpty()) {
 			return;
 		}
-		if (selectedTiers != null) {
-			igbService.getSeqMapView().renameTier(selectedTiers.get(0), name);
+		if (allGlyphs != null) {
+			igbService.getSeqMapView().renameTier(allGlyphs.get(0), name);
 		}
 		updateDisplay();
 	}
@@ -364,14 +364,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void viewModeComboBoxReset() {
 		JComboBox viewModeComboBox = getViewModeComboBox();
 		viewModeComboBox.removeAllItems();
-		viewModeComboBox.setEnabled(selectedTiers.size() > 0);
-		getViewModePanel().setEnabled(selectedTiers.size() > 0);
-		if (selectedTiers.size() == 1) {
-			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
-			if (style == null || selectedTiers.get(0).getInfo() == null) {
+		viewModeComboBox.setEnabled(allGlyphs.size() > 0);
+		getViewModePanel().setEnabled(allGlyphs.size() > 0);
+		if (allGlyphs.size() == 1) {
+			ITrackStyleExtended style = allGlyphs.get(0).getAnnotStyle();
+			if (style == null || allGlyphs.get(0).getInfo() == null) {
 				return;
 			}
-			FileTypeCategory category = (selectedTiers.get(0).getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)selectedTiers.get(0).getInfo()).getCategory() : null;
+			FileTypeCategory category = (allGlyphs.get(0).getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)allGlyphs.get(0).getInfo()).getCategory() : null;
 			List<MapViewGlyphFactoryI> viewModes = MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName());
 			for (MapViewGlyphFactoryI viewmode : viewModes) {
 				viewModeComboBox.addItem(viewmode);
@@ -490,8 +490,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void colorSchemeComboBoxReset() {
 		ColorSchemeComboBox colorSchemeComboBox = getColorSchemeComboBox();
-		colorSchemeComboBox.setEnabled(selectedTiers.size() > 0);
-		getColorSchemeLabel().setEnabled(selectedTiers.size() > 0);
+		colorSchemeComboBox.setEnabled(allGlyphs.size() > 0);
+		getColorSchemeLabel().setEnabled(allGlyphs.size() > 0);
 	}
 
 	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {

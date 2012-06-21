@@ -33,7 +33,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 	protected final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
 	protected final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
-	protected final List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
 	protected final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
 	protected final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
 	protected final List<ViewModeGlyph> annotGlyphs = new ArrayList<ViewModeGlyph>();

@@ -40,6 +40,7 @@ public class SymLoaderTabix extends SymLoader {
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.AUTOLOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
 		strategyList.add(LoadStrategy.CHROMOSOME);
 		strategyList.add(LoadStrategy.GENOME);

@@ -190,7 +190,7 @@ public final class Genbank extends SymLoader {
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+//		strategyList.add(LoadStrategy.CHROMOSOME);
 		strategyList.add(LoadStrategy.GENOME);
 	}
 

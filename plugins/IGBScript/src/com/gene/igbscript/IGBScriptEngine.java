@@ -318,8 +318,8 @@ public class IGBScriptEngine implements ScriptEngine {
 			s = LoadStrategy.NO_LOAD;
 		} else if (loadMode.equalsIgnoreCase("region_in_view") || loadMode.equalsIgnoreCase("visible")) {
 			s = LoadStrategy.VISIBLE;
-		} else if (loadMode.equalsIgnoreCase("chromosome")) {
-			s = LoadStrategy.CHROMOSOME;
+//		} else if (loadMode.equalsIgnoreCase("chromosome")) {
+//			s = LoadStrategy.CHROMOSOME;
 		} else if (loadMode.equalsIgnoreCase("genome")) {
 			s = LoadStrategy.GENOME;
 		}

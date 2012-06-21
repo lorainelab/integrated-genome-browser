@@ -30,7 +30,7 @@ public class BNIB extends SymLoader {
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+//		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 
 	public BNIB(URI uri, String featureName, AnnotatedSeqGroup group) {

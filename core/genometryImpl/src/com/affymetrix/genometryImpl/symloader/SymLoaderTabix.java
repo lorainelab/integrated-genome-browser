@@ -42,7 +42,7 @@ public class SymLoaderTabix extends SymLoader {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.AUTOLOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+//		strategyList.add(LoadStrategy.CHROMOSOME);
 		strategyList.add(LoadStrategy.GENOME);
 	}
 	

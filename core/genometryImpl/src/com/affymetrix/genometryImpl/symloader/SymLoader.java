@@ -123,7 +123,7 @@ public abstract class SymLoader implements LineTrackerI {
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+		strategyList.add(LoadStrategy.VISIBLE);
 		strategyList.add(LoadStrategy.GENOME);
 	}
 

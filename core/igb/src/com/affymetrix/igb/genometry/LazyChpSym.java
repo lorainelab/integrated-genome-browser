@@ -283,8 +283,9 @@ public final class LazyChpSym extends ScoredContainerSym {
 			// optimizer should also figure out (based on Das2Type info) an optimized format to load data with
 			//   (for example "bp2" for
 			LoadStrategy ls = das_type.getFeature().getLoadStrategy();
-			if (ls == LoadStrategy.NO_LOAD || ls == LoadStrategy.VISIBLE) {
-				ls = LoadStrategy.CHROMOSOME;
+			if (ls == LoadStrategy.NO_LOAD) {
+//				ls = LoadStrategy.CHROMOSOME;
+				ls = LoadStrategy.VISIBLE;
 			}
 			SeqSymmetry optimized_sym = das_type.getFeature().optimizeRequest(whole_span);
 			if (optimized_sym != null) {

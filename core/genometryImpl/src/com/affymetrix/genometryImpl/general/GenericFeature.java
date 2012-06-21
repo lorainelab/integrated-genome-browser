@@ -56,7 +56,7 @@ public final class GenericFeature {
 	static {
 		standardLoadChoices.add(LoadStrategy.NO_LOAD);
 		standardLoadChoices.add(LoadStrategy.VISIBLE);
-		standardLoadChoices.add(LoadStrategy.CHROMOSOME);
+		//standardLoadChoices.add(LoadStrategy.CHROMOSOME);
 	}
 	// Requests that have been made for this feature (to avoid overlaps)
 	private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
@@ -107,8 +107,8 @@ public final class GenericFeature {
 				if (this.symL != null) {
 					if (this.symL.getLoadChoices().contains(LoadStrategy.VISIBLE)) {
 						setLoadStrategy(LoadStrategy.VISIBLE);
-					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
-						setLoadStrategy(LoadStrategy.CHROMOSOME);
+//					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
+//						setLoadStrategy(LoadStrategy.CHROMOSOME);
 					} else {
 						setLoadStrategy(LoadStrategy.GENOME);
 					}

@@ -31,7 +31,7 @@ public class TwoBit extends SymLoader {
 		// BAM files are generally large, so only allow loading visible data.
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+//		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 	
 	public TwoBit(URI uri, AnnotatedSeqGroup group, String seqName) {

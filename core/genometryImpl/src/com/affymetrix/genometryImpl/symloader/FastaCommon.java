@@ -23,7 +23,7 @@ public abstract class FastaCommon extends SymLoader {
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+//		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 
 	public FastaCommon(URI uri, String featureName, AnnotatedSeqGroup group) {

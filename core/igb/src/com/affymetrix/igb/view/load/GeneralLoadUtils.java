@@ -625,7 +625,7 @@ public final class GeneralLoadUtils {
 			if (overlap.getMin() == selected_seq.getMin() && overlap.getMax() == selected_seq.getMax()) {
 				overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax() - 1, selected_seq);
 			}
-		} else if (gFeature.getLoadStrategy() == LoadStrategy.GENOME || gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME) {
+		} else if (gFeature.getLoadStrategy() == LoadStrategy.GENOME /*|| gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
 			// TODO: Investigate edge case at max
 			overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax() - 1, selected_seq);
 		}
@@ -1149,8 +1149,8 @@ public final class GeneralLoadUtils {
 		if (gFeature != null) {
 			addFeature(gFeature);
 			
-			if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE ||
-					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME){
+			if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
+					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/){
 				Application.infoPanel(GenericFeature.howtoloadmsg, PreferenceUtils.getTopNode(), 
 				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 			}

@@ -268,7 +268,7 @@ public final class GeneralLoadView {
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.AUTOLOAD);
 		loadStrategies.add(LoadStrategy.VISIBLE);
-		loadStrategies.add(LoadStrategy.CHROMOSOME);
+//		loadStrategies.add(LoadStrategy.CHROMOSOME);
 		loadFeatures(loadStrategies, null);
 	}
 

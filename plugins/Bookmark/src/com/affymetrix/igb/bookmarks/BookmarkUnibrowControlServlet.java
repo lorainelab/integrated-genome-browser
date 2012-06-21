@@ -374,8 +374,8 @@ public final class BookmarkUnibrowControlServlet {
 			if(gFeatures[i] != null){
 				gFeatures[i].setVisible();
 				gFeatures[i].setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-				if(gFeatures[i].getLoadStrategy() == LoadStrategy.VISIBLE ||
-					gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME){
+				if(gFeatures[i].getLoadStrategy() == LoadStrategy.VISIBLE /*||
+					gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME*/){
 					show_message = true;
 				}	
 			}

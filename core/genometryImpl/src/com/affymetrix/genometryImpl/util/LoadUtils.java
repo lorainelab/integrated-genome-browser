@@ -3,11 +3,11 @@ package com.affymetrix.genometryImpl.util;
 public final class LoadUtils {
 	public static enum LoadStrategy {
 		NO_LOAD ("Don't Load"),
-		VISIBLE ("Region"),
-		CHROMOSOME ("Chromosome"),
-		GENOME ("Genome"),
-		AUTOLOAD ("Auto Load");
-
+		AUTOLOAD ("Auto"),
+		VISIBLE ("Manual"),
+		//CHROMOSOME ("Chromosome"),
+		GENOME ("Genome");
+		
 		private String name;
 
 		LoadStrategy(String name) {

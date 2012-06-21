@@ -52,7 +52,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
+//		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {

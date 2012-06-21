@@ -39,19 +39,10 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		super.actionPerformed(e);
 		setTiersCollapsed(getTierManager().getSelectedTierLabels(), collapsedTracks);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-
-		// Don't fully understand why we need to treat the menu item
-		// differently from the tool bar, but we do.
-		List<SeqSymmetry> selected_syms;
-		if (e.getSource() instanceof javax.swing.JMenuItem) {
-			SeqMapView gviewer = getSeqMapView();
-			@SuppressWarnings("unchecked")
-			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-			selected_syms = SeqMapView.glyphsToSyms(tiers);
-		}
-		else {
-			selected_syms = new ArrayList<SeqSymmetry>();
-		}
+		SeqMapView gviewer = getSeqMapView();
+		@SuppressWarnings("unchecked")
+		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
 		changeActionDisplay(selected_syms);
 	}
 

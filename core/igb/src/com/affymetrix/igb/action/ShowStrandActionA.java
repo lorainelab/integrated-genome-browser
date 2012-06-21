@@ -46,19 +46,10 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		super.actionPerformed(e);
 		setTwoTiers(getTierManager().getSelectedTierLabels(), separateStrands);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-
-		// Don't fully understand why we need to treat the menu item
-		// differently from the tool bar, but we do.
-		List<SeqSymmetry> selected_syms;
-		if (e.getSource() instanceof javax.swing.JMenuItem) {
-			SeqMapView gviewer = getSeqMapView();
-			@SuppressWarnings("unchecked")
-			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-			selected_syms = SeqMapView.glyphsToSyms(tiers);
-		}
-		else {
-			selected_syms = new ArrayList<SeqSymmetry>();
-		}
+		SeqMapView gviewer = getSeqMapView();
+		@SuppressWarnings("unchecked")
+		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
 		changeStrandActionDisplay(selected_syms);
 	}
 
@@ -86,12 +77,15 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
 			SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
-			if (selected_syms.contains(ss)
-					&& !(vg instanceof MultiGraphGlyph)
-					&& MapViewModeHolder.getInstance().styleSupportsTwoTrack(vg.getAnnotStyle())) {
-				boolean separate = vg.getAnnotStyle().getSeparate();
-				hasSeparate |= separate;
-				hasMixed |= !separate;
+			if (selected_syms.contains(ss)) {
+				if (!(vg instanceof MultiGraphGlyph)) {
+					if (MapViewModeHolder.getInstance().styleSupportsTwoTrack(
+							vg.getAnnotStyle())) {
+						boolean separate = vg.getAnnotStyle().getSeparate();
+						hasSeparate |= separate;
+						hasMixed |= !separate;
+					}
+				}
 			}
 		}
 		processChange(hasSeparate, hasMixed);

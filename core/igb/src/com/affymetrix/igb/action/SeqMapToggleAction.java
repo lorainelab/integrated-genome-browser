@@ -101,13 +101,11 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 	}
 
 	/**
-	 * Forward theEvent to the currently shown delegate
-	 * and then enable the hidden one.
+	 * Forward theEvent to the currently shown delegate.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent theEvent) {
 		this.shownAction.actionPerformed(theEvent);
-		this.hiddenAction.setEnabled(true);
 	}
 
 	/**

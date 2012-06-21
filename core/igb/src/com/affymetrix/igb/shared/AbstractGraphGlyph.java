@@ -117,22 +117,37 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	}
 
 	public float getXCoord(int i) {
+		if (graf == null) {
+			return 0;
+		}
 		return graf.getGraphXCoord(i);
 	}
 
 	public float getYCoord(int i) {
+		if (graf == null) {
+			return 0;
+		}
 		return graf.getGraphYCoord(i);
 	}
 
 	public boolean hasWidth() {
+		if (graf == null) {
+			return false;
+		}
 		return graf.hasWidth();
 	}
 
 	protected int getWCoord(int i) {
+		if (graf == null) {
+			return 0;
+		}
 		return graf.getGraphWidthCoord(i);
 	}
 
 	public int[] getWCoords() {
+		if (graf == null) {
+			return new int[]{};
+		}
 		return graf.getGraphWidthCoords();
 	}
 
@@ -140,6 +155,9 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	 * Temporary helper method.
 	 */
 	public float[] copyYCoords() {
+		if (graf == null) {
+			return new float[]{};
+		}
 		return graf.normalizeGraphYCoords();
 	}
 	

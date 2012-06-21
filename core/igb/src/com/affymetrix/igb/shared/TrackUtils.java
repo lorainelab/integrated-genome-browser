@@ -74,6 +74,18 @@ public class TrackUtils {
 		return syms;
 	}
 
+	public List<SeqSymmetry> getSymsFromTierGlyphs(List<TierGlyph> tierGlyphs) {
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		for (TierGlyph glyph : tierGlyphs) {
+			RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+			if (rootSym == null && glyph.getChildCount() > 0 && glyph.getChild(0) instanceof RootSeqSymmetry) {
+				rootSym = (RootSeqSymmetry) glyph.getChild(0).getInfo();
+			}
+			syms.add(rootSym);
+		}
+		return syms;
+	}
+
 	private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
 		Map<FileTypeCategory, Integer> trackCounts = new HashMap<FileTypeCategory, Integer>();
 		for (SeqSymmetry sym : syms) {

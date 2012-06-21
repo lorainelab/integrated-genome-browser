@@ -14,13 +14,13 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -169,6 +169,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				operList.add(gsym);
 				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
+				opersym.getGraphState().setHeatMap(HeatMap.makeLinearHeatmap(gsym.getID(), style.getBackground(), style.getForeground()));
 				resultGlyph = graphGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}
 			if (resultGlyph != null) {

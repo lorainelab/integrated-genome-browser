@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.tiers.TrackConstants;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -351,4 +352,9 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		}
 	}
 	
+	public static boolean useLabel(ITrackStyleExtended style){
+		return style.getLabelField() != null && 
+		!style.getLabelField().equals(TrackConstants.NO_LABEL) && 
+		(style.getLabelField().trim().length() > 0);
+	}
 }

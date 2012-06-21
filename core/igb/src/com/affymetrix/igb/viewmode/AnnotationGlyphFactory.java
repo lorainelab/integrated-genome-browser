@@ -39,7 +39,6 @@ import java.util.Map;
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
 public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
-
 	private final FileTypeCategory category;
 	private static final boolean DEBUG = false;
 	/** Set to true if the we can assume the container SeqSymmetry being passed
@@ -178,7 +177,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(gviewer, insym, sym, pspan, the_style, annotseq, pglyph, coordseq);
-			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, the_style.getHeight());
+			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, DEFAULT_CHILD_HEIGHT /*the_style.getHeight() */);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer);
@@ -201,7 +200,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		// allows the user to select both the parent and the child as separate entities
 		// in order to look at the properties associated with them.  Otherwise, the method
 		// EfficientGlyph.pickTraversal() will only allow one to be chosen.
-		double pheight = the_style.getHeight() + 0.0001;
+		double pheight = /*the_style.getHeight()*/ DEFAULT_CHILD_HEIGHT + 0.0001;
 		String label_field = the_style.getLabelField();
 		boolean use_label = label_field != null && !label_field.equals(TrackConstants.NO_LABEL) && (label_field.trim().length() > 0);
 		if (use_label) {
@@ -277,7 +276,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
-		double thin_height = the_style.getHeight() * 0.6;
+		double thin_height = /* the_style.getHeight() */ DEFAULT_CHILD_HEIGHT * 0.6;
 //		Color start_color = the_style.getStartColor();
 //		Color end_color = the_style.getEndColor();
 		for (int i = 0; i < childCount; i++) {
@@ -289,7 +288,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
-				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, the_style.getHeight(), thin_height);
+				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ DEFAULT_CHILD_HEIGHT, thin_height);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);

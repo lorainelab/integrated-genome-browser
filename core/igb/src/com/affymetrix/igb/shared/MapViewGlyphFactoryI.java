@@ -25,6 +25,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
  * initMapViewGlyphFactorys() method.
  */
 public interface MapViewGlyphFactoryI  {
+	public static final int DEFAULT_CHILD_HEIGHT = 25;
+	
 	/**
 	 * initialize the factory
 	 * @param options - any options appropriate to the factory

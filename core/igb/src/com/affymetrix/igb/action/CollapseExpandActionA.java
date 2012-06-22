@@ -12,7 +12,6 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.AnnotationGlyph;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

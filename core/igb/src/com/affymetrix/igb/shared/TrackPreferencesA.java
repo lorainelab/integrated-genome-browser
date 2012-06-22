@@ -360,6 +360,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
 	}
 
+	private boolean isAnyFloat() {
+		for (ViewModeGlyph ag : allGlyphs) {
+			if (ag.getAnnotStyle().getFloatTier()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	protected void viewModeComboBoxReset() {
 		JComboBox viewModeComboBox = getViewModeComboBox();
@@ -467,7 +476,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		Integer labelSize = -1;
 		boolean labelSizeSet = false;
-		boolean anyFloat = false;
 		for (ViewModeGlyph vg : allGlyphs) {
 			if (labelSize == -1 && !labelSizeSet) {
 				labelSize = (int)vg.getAnnotStyle().getTrackNameSize();
@@ -476,11 +484,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			else if (labelSize != (int)vg.getAnnotStyle().getTrackNameSize()) {
 				labelSize = -1;
 			}
-			if (vg.getAnnotStyle().getFloatTier()) {
-				anyFloat = true;
-			}
 		}
-		boolean enable = allGlyphs.size() > 0 && !anyFloat;
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		labelSizeComboBox.setEnabled(enable);
 		getLabelSizeLabel().setEnabled(enable);
 		if (!enable || labelSize == -1) {
@@ -720,7 +725,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color labelColor = null;
 		boolean labelColorSet = false;
-		boolean anyFloat = false;
 		for (ViewModeGlyph ag : allGlyphs) {
 			if (labelColor == null && !labelColorSet) {
 				labelColor = ag.getAnnotStyle().getLabelForeground();
@@ -730,11 +734,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				labelColor = null;
 				break;
 			}
-			if (ag.getAnnotStyle().getFloatTier()) {
-				anyFloat = true;
-			}
 		}
-		boolean enable = allGlyphs.size() > 0 && !anyFloat;
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		labelColorComboBox.setEnabled(enable);
 		getLabelColorLabel().setEnabled(enable);
 		labelColorComboBox.setSelectedColor(enable ? labelColor : null);
@@ -745,7 +746,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		ColorComboBox backgroundColorComboBox = getBackgroundColorComboBox();
 		Color backgroundColor = null;
 		boolean backgroundColorSet = false;
-		boolean anyFloat = false;
 		for (ViewModeGlyph ag : allGlyphs) {
 			if (backgroundColor == null && !backgroundColorSet) {
 				backgroundColor = ag.getAnnotStyle().getBackground();
@@ -755,11 +755,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				backgroundColor = null;
 				break;
 			}
-			if (ag.getAnnotStyle().getFloatTier()) {
-				anyFloat = true;
-			}
 		}
-		boolean enable = allGlyphs.size() > 0 && !anyFloat;
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		backgroundColorComboBox.setEnabled(enable);
 		getBackgroundColorLabel().setEnabled(enable);
 		backgroundColorComboBox.setSelectedColor(enable ? backgroundColor : null);
@@ -843,39 +840,21 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void hideButtonReset() {
 		JButton hideButton = getHideButton();
-		boolean anyFloat = false;
-		for (ViewModeGlyph ag : allGlyphs) {
-			if (ag.getAnnotStyle().getFloatTier()) {
-				anyFloat = true;
-			}
-		}
-		boolean enable = allGlyphs.size() > 0 && !anyFloat;
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		hideButton.setEnabled(enable);
 	}
 
 	@Override
 	protected void clearButtonReset() {
 		JButton clearButton = getClearButton();
-		boolean anyFloat = false;
-		for (ViewModeGlyph ag : allGlyphs) {
-			if (ag.getAnnotStyle().getFloatTier()) {
-				anyFloat = true;
-			}
-		}
-		boolean enable = allGlyphs.size() > 0 && !anyFloat;
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		clearButton.setEnabled(enable);
 	}
 
 	@Override
 	protected void restoreToDefaultButtonReset() {
 		JButton restoreToDefaultButton = getRestoreToDefaultButton();
-		boolean anyFloat = false;
-		for (ViewModeGlyph ag : allGlyphs) {
-			if (ag.getAnnotStyle().getFloatTier()) {
-				anyFloat = true;
-			}
-		}
-		boolean enable = allGlyphs.size() > 0 && !anyFloat;
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		restoreToDefaultButton.setEnabled(enable);
 	}
 }

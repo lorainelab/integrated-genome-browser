@@ -148,9 +148,7 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		System.out.println("***** " + startEnd[0] + ":" + startEnd[1]);
 		parseLinesProgressUpdater = new ParseLinesProgressUpdater("Tabix process lines " + uri, startEnd[0], startEnd[1]);
-		if(CThreadHolder.getInstance().getCurrentCThreadWorker() != null){
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
-		}
+		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
 		return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader, this);
     }
 

@@ -60,7 +60,7 @@ public class CThreadHolder implements WaitHelperI {
 			if (currentCThreadWorker == null) { // to prevent NPE in test programs
 				currentCThreadWorker = NOOP;
 			}
-			return thread2CThreadWorker.get(Thread.currentThread());
+			return currentCThreadWorker;
 		}
 	}
 

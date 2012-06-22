@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import javax.swing.SwingWorker;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	protected final MapViewGlyphFactoryI defaultGlyphFactory;
@@ -85,7 +86,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
-		CThreadWorker<Void, Void> worker ;
+		SwingWorker previousWorker, worker;
 			
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym) {
 			super(sym);
@@ -122,13 +123,15 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 
 		protected ViewModeGlyph getDetailGlyph(final SeqMapViewExtendedI smv) throws Exception {
 			final SeqSpan span = smv.getVisibleSpan();
-			if(worker != null && !worker.isCancelled() && !worker.isDone()){
-				worker.cancelThread(true);
+			if(previousWorker != null && !previousWorker.isCancelled() && !previousWorker.isDone()){
+				previousWorker.cancel(true);
+				previousWorker = null;
 			}
-			CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("Loading details for " + style.getTrackName() + " region " + span.toString(), Thread.MIN_PRIORITY) {
+			
+			worker = new SwingWorker() {
 
 				@Override
-				protected Void runInBackground() {
+				protected Object doInBackground() throws Exception {
 					try {
 						GenericFeature feature = style.getFeature();
 						SeqSymmetry optimized_sym = feature.optimizeRequest(span);
@@ -150,14 +153,16 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				}
 
 				@Override
-				protected void finished() {
+				public void done() {
 					if (lastUsedGlyph == saveDetailGlyph) {
 						smv.getSeqMap().updateWidget();
 					}
 				}
 			};
-			CThreadHolder.getInstance().execute(saveDetailGlyph, worker);
-			this.worker = worker;
+			worker.execute();
+			this.previousWorker = worker;
+			worker = null;
+			
 			return saveDetailGlyph;
 		}
 

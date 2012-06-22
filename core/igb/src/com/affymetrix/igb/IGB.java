@@ -455,12 +455,12 @@ public final class IGB extends Application
 	 * @param theAction to which the shortcut points.
 	 */
 	public void addAction(GenericAction theAction) {
-		javax.swing.JPanel thePanel = (javax.swing.JPanel) this.frm.getContentPane();
+		JPanel panel = (JPanel) this.frm.getContentPane();
 		Object o = theAction.getValue(Action.ACCELERATOR_KEY);
 		if (null != o && o instanceof KeyStroke) {
 			KeyStroke ks = (KeyStroke) o;
-			InputMap im = thePanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-			ActionMap am = thePanel.getActionMap();
+			InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+			ActionMap am = panel.getActionMap();
 			GenericActionHolder h = GenericActionHolder.getInstance();
 			String actionIdentifier = theAction.getId();
 			im.put(ks, actionIdentifier);

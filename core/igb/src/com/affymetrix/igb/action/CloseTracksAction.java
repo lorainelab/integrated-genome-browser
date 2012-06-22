@@ -1,21 +1,26 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import java.awt.event.ActionEvent;
-import java.util.List;
-
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
-public class CloseTracksAction extends SeqMapViewActionA {
+public class CloseTracksAction
+extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final CloseTracksAction ACTION = new CloseTracksAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		ACTION.setEnabled(false);
+		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
 	}
 	
 	public static CloseTracksAction getAction() {
@@ -23,7 +28,9 @@ public class CloseTracksAction extends SeqMapViewActionA {
 	}
 
 	protected CloseTracksAction() {
-		super(IGBConstants.BUNDLE.getString("closeTracksAction"), "16x16/status/user-trash-full.png", "22x22/status/user-trash-full.png");
+		super(IGBConstants.BUNDLE.getString("closeTracksAction"),
+				"16x16/status/user-trash-full.png",
+				"22x22/status/user-trash-full.png");
 	}
 
 	@Override
@@ -38,4 +45,14 @@ public class CloseTracksAction extends SeqMapViewActionA {
 			}
 		}
 	}
+
+	/**
+	 * Override to enable only when there are tracks to close.
+	 */
+	@Override
+	public void symSelectionChanged(SymSelectionEvent evt) {
+		List<TierLabelGlyph> tiers = getTierManager().getSelectedTierLabels();
+		this.setEnabled(0 < tiers.size());
+	}
+
 }

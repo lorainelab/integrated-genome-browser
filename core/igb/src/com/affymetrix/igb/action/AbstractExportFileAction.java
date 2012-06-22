@@ -14,6 +14,8 @@ import javax.swing.JFileChooser;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -33,20 +35,39 @@ import com.affymetrix.igb.shared.TierGlyph;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.util.logging.Level;
 
-public abstract class AbstractExportFileAction extends GenericAction {
+public abstract class AbstractExportFileAction
+extends GenericAction implements SymSelectionListener {
 	private static final long serialVersionUID = 1l;
 	private static final String MIME_TYPE_PREFIX = "text/";
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	private static final Map<FileTypeCategory, Class<? extends AnnotationWriter>> annotationWriters = new HashMap<FileTypeCategory, Class<? extends AnnotationWriter>>();
+	private static final Map<FileTypeCategory, Class<? extends AnnotationWriter>> annotationWriters
+			= new HashMap<FileTypeCategory, Class<? extends AnnotationWriter>>();
 	static {
 		annotationWriters.put(FileTypeCategory.Annotation, BedParser.class);
 		annotationWriters.put(FileTypeCategory.Graph, BedGraph.class);
 		annotationWriters.put(FileTypeCategory.Sequence, Fasta.class);
 	}
 	
-	protected AbstractExportFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
+	protected AbstractExportFileAction(
+			String text,
+			String tooltip,
+			String iconPath, String largeIconPath,
+			int mnemonic,
+			Object extraInfo,
+			boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+	}
+
+	/**
+	 * Override to enable or disable self based on tracks selected.
+	 * Note that this must match {@link #actionPerformed(java.awt.event.ActionEvent) 
+	 * which only works when one track is selected.
+	 */
+	@Override
+	public void symSelectionChanged(SymSelectionEvent evt) {
+		List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+		setEnabled(1 == answer.size());
 	}
 
 	@Override
@@ -67,23 +88,24 @@ public abstract class AbstractExportFileAction extends GenericAction {
 
 	private void saveAsFile(TierGlyph atier) {
 		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getViewModeGlyph().getInfo();
-		AnnotationWriter annotationWriter = null;
+		AnnotationWriter annotationWriter;
 		try {
 			annotationWriter = annotationWriters.get(rootSym.getCategory()).newInstance();
 		}
 		catch (Exception x) {
-			ErrorHandler.errorPanel("not supported yet", "cannot export files of type " + rootSym.getCategory().name(), Level.WARNING);
+			ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
+					+ rootSym.getCategory().name(), Level.WARNING);
 			return;
-//			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name(), x);
 		}
-		if (annotationWriter == null) {
-			ErrorHandler.errorPanel("not supported yet", "cannot export files of type " + rootSym.getCategory().name(), Level.WARNING);
+		if (annotationWriter == null) {		
+			ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
+					+ rootSym.getCategory().name(), Level.WARNING);
 			return;
-//			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name());
 		}
 		String mimeType = annotationWriter.getMimeType();
 		if (!mimeType.startsWith(MIME_TYPE_PREFIX)) {
-			throw new UnsupportedOperationException("Export file can't handle mime type " + mimeType);
+			throw new UnsupportedOperationException("Export file can't handle mime type "
+					+ mimeType);
 		}
 		String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
@@ -107,6 +129,11 @@ public abstract class AbstractExportFileAction extends GenericAction {
 		}
 	}
 
-	protected abstract void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException;
+	protected abstract void exportFile(
+			AnnotationWriter annotationWriter,
+			DataOutputStream dos,
+			BioSeq aseq,
+			TierGlyph atier
+			) throws java.io.IOException;
 	
 }

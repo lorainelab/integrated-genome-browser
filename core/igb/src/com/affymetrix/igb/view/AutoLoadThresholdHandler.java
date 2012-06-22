@@ -49,7 +49,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 		if(!shouldAutoLoad()){
 			return;
 		}
-		GeneralLoadView.loadAutoLoadFeatures();
+		//GeneralLoadView.loadAutoLoadFeatures();
 	}
 		
 	public void mouseClicked(MouseEvent e) {}

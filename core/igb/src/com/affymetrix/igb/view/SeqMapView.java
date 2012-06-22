@@ -1577,13 +1577,15 @@ public class SeqMapView extends JPanel
 		// this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (vg.isSelected()) {
-				allSelectedTiers.add(vg);
-			}
-			if (vg instanceof MultiGraphGlyph) {
-				for (GlyphI child : vg.getChildren()) {
-					if (child.isSelected()) {
-						allSelectedTiers.add(child);
+			if (!allSelectedTiers.contains(vg)) {
+				if (vg.isSelected()) {
+					allSelectedTiers.add(vg);
+				}
+				if (vg instanceof MultiGraphGlyph) {
+					for (GlyphI child : vg.getChildren()) {
+						if (child.isSelected()) {
+							allSelectedTiers.add(child);
+						}
 					}
 				}
 			}

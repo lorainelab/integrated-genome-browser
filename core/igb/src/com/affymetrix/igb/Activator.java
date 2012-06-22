@@ -58,9 +58,11 @@ import com.affymetrix.igb.viewmode.StairStepGraphGlyph;
 import com.affymetrix.igb.viewmode.TbiSemanticZoomGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 /**
  * OSGi Activator for igb bundle
@@ -284,6 +286,63 @@ public class Activator implements BundleActivator {
 			null
 		);
 		initSeqMapViewActions();
+		addShortcuts();
+	}
+
+	private void addShortcuts() {
+		JFrame frm = Application.getSingleton().getFrame();
+		JPanel panel = (JPanel) frm.getContentPane();
+		Preferences p = PreferenceUtils.getKeystrokesNode();
+		try {
+			for (String k : p.keys()) {
+				String v = p.get(k, "");
+				KeyStroke ks = KeyStroke.getKeyStroke(v);
+				if (null == ks) { // nothing we can do.
+					continue; // Skip this one.
+				}
+				GenericActionHolder h = GenericActionHolder.getInstance();
+				GenericAction a = h.getGenericAction(k);
+				if (null == a) { // what can we do?
+					System.err.println("need to make a generic action: " + k);
+					try {
+						Class type = ClassLoader.getSystemClassLoader().loadClass(k);
+						Object o = type.newInstance();
+						a = (GenericAction) o;
+						System.out.println("IT WORKED? " + a);
+					}
+					catch (ClassNotFoundException cnfe) {
+						String message = "Class " + cnfe.getMessage() + "not found.";
+						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+								message);
+						message = "Keyboard shortcut " + v + " not set.";
+						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+								message);
+						continue; // Skip this one.
+					}
+					catch (InstantiationException ie) {
+						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+								ie.getMessage());
+						continue; // Skip this one.
+					}
+					catch (IllegalAccessException iae) {
+						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+								iae.getMessage());
+						continue; // Skip this one.
+					}
+				}
+				InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+				ActionMap am = panel.getActionMap();
+				String actionIdentifier = a.getId();
+				im.put(ks, actionIdentifier);
+				am.put(actionIdentifier, a);
+			}
+		}
+		catch (BackingStoreException bse) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+					bse.getMessage());
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+					"Some keyboard shortcuts may not be set.");
+		}
 	}
 
 	/**
@@ -323,6 +382,16 @@ public class Activator implements BundleActivator {
 		UnsetDirectionStyleArrowAction.getAction();
 		SetDirectionStyleColorAction.getAction();
 		UnsetDirectionStyleColorAction.getAction();
+		
+		// These are not in the toolbar,
+		// but they have keyboard shortcuts (accelerators)
+		// defined in the preferences.
+		//RefreshDataAction.getAction(); // no singleton.
+		SelectParentAction.getAction();
+		//com.affymetrix.igb.bookmarks.action.AddBookmarkAction.getAction(); // no singleton.
+		//ExitSeqViewerAction.getAction(); // no singleton.
+		ToggleEdgeMatchingAction.getAction();
+		//UCSCViewAction.getAction(); // external class. no singleton.
 	}
 
 	private void initOperators() {

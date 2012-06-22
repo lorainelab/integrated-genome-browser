@@ -1562,12 +1562,11 @@ public class SeqMapView extends JPanel
 	@Override
 	public List<GlyphI> getAllSelectedTiers() {
 		List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
+		// this adds all tracks selected on the label, including join tracks (not join children)
 		for (TierGlyph tierGlyph : tier_manager.getSelectedTiers()) {
-			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (!(vg instanceof MultiGraphGlyph)) {
-				allSelectedTiers.add(vg);
-			}
+			allSelectedTiers.add(tierGlyph.getViewModeGlyph());
 		}
+		// this adds all floating tracks
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
 				if (floatGlyph.isSelected()) {
@@ -1575,6 +1574,7 @@ public class SeqMapView extends JPanel
 				}
 			}
 		}
+		// this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
 			if (vg.isSelected()) {
@@ -2188,11 +2188,10 @@ public class SeqMapView extends JPanel
 		return rootSeqSymmetry.getCategory() == category || category == null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void selectAll(FileTypeCategory category) {
+		clearAllSelections();
+		// this selects all regular tracks on the label
 		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
-		labelmap.clearSelected();
-
 		for (TierLabelGlyph labelGlyph : tier_manager.getAllTierLabels()) {
 			TierGlyph tierGlyph = (TierGlyph) labelGlyph.getInfo();
 			if (labelGlyph.isVisible()
@@ -2204,13 +2203,54 @@ public class SeqMapView extends JPanel
 				}
 			}
 		}
-		gmodel.setSelectedSymmetries(glyphsToRootSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
+		// this selects all floating tracks
+		if (pixel_floater_glyph.getChildren() != null) {
+			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
+				ViewModeGlyph gl = (ViewModeGlyph)floatGlyph;
+				boolean matches = matchesCategory((RootSeqSymmetry) gl.getInfo(), category);
+				if (matches) {
+					floatGlyph.setSelected(true);
+				}
+			}
+		}
+		// this selects all join subtracks on the track itself (arrow on left edge)
+		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
+			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
+			if (vg instanceof MultiGraphGlyph) {
+				for (GlyphI child : vg.getChildren()) {
+					boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
+					if (matches) {
+						child.setSelected(true);
+					}
+				}
+			}
+		}
+		@SuppressWarnings("unchecked")
+		List<GlyphI> selectedTiers = (List<GlyphI>)getSelectedTiers();
+		gmodel.setSelectedSymmetries(glyphsToRootSyms(selectedTiers), getSelectedSyms(), this);
 		seqmap.updateWidget();
 	}
 
-	public void deselectAll() {
+	private void clearAllSelections() {
 		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
 		labelmap.clearSelected();
+		if (pixel_floater_glyph.getChildren() != null) {
+			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
+				floatGlyph.setSelected(false);
+			}
+		}
+		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
+			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
+			if (vg instanceof MultiGraphGlyph) {
+				for (GlyphI child : vg.getChildren()) {
+					child.setSelected(false);
+				}
+			}
+		}
+	}
+
+	public void deselectAll() {
+		clearAllSelections();
 		gmodel.setSelectedSymmetries(Collections.<RootSeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList(), this);
 		seqmap.updateWidget();
 	}

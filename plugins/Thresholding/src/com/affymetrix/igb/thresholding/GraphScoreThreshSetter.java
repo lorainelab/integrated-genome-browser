@@ -26,7 +26,6 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.*;
 
 import java.awt.Dimension;
@@ -51,8 +50,8 @@ public final class GraphScoreThreshSetter extends JPanel
 	private static class ThresholdOperationAction extends TrackOperationAction {
 		private static final long serialVersionUID = 1L;
 
-		ThresholdOperationAction(SeqMapViewI gviewer, Operator operator) {
-			super(gviewer, operator);
+		ThresholdOperationAction(Operator operator) {
+			super(operator);
 		}
 
 		@Override
@@ -549,7 +548,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		} else if (src == tier_threshB) {
 			for (AbstractGraphGlyph sggl : graphs) {
 				if (sggl.isVisible()) {
-					new ThresholdOperationAction(igbService.getSeqMapView(), new ThresholdOperator(sggl, ((NeoWidget)widg).getView())).actionPerformed(null);
+					new ThresholdOperationAction(new ThresholdOperator(sggl, ((NeoWidget)widg).getView())).actionPerformed(null);
 					//pickleThreshold(sggl);
 				}
 			}

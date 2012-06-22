@@ -507,7 +507,7 @@ public final class GraphSelectionManager
 	 for (final Operator operator : operators) {
 	 	if (AbstractGraphOperator.isGraphOperator(operator)){
 			JMenuItem menuItem = new JMenuItem(operator.getDisplay());
-			menuItem.addActionListener(new TrackOperationAction(gviewer, operator));
+			menuItem.addActionListener(new TrackOperationAction(operator));
 	 		combine.add(menuItem);	
 		}
 	 }

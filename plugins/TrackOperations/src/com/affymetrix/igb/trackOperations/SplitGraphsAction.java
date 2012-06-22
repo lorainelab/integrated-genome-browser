@@ -31,6 +31,7 @@ public class SplitGraphsAction extends GenericAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		List<ViewModeGlyph> selectedGlyphs = TrackOperationsTab.getSingleton().getSelectedGlyphss();
 		for (ViewModeGlyph vg : selectedGlyphs) {
 			TrackOperationsTab.getSingleton().getIgbService().deselect(vg.getTierGlyph());

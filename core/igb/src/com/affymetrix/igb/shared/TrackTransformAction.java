@@ -1,25 +1,24 @@
 
-package com.affymetrix.igb.trackOperations;
+package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.TrackFunctionOperationA;
 
 public class TrackTransformAction extends TrackFunctionOperationA {
 	private static final long serialVersionUID = 1L;
 
-	public TrackTransformAction(IGBService igbService) {
-		super(igbService.getSeqMapView(), null, TrackOperationsTab.BUNDLE.getString("goButton"));
+	public TrackTransformAction(Operator operator) {
+		super(operator);
 	}
 
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
 		List<GlyphI> tiers;
-		for (GlyphI glyph : gviewer.getSelectedTiers()) {
+		for (GlyphI glyph : getSeqMapView().getAllSelectedTiers()) {
 			tiers = new ArrayList<GlyphI>();
 			tiers.add(glyph);
 			addTier(tiers);

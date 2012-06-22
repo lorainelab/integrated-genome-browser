@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
@@ -16,6 +15,8 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.TrackUtils;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  *  Puts all selected graphs in the same tier.
@@ -24,23 +25,20 @@ import com.affymetrix.igb.osgi.service.IGBService;
 public class CombineGraphsAction extends GenericAction {
 
 	private static final long serialVersionUID = 1l;
-	private static final CombineGraphsAction ACTION = new CombineGraphsAction();
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static CombineGraphsAction getAction() {
-		return ACTION;
+
+	public CombineGraphsAction(IGBService igbService) {
+		super(TrackOperationsTab.BUNDLE.getString("combineButton"), null, null);
+		this.igbService = igbService;
 	}
 
-	private CombineGraphsAction() {
-		super(TrackOperationsTab.BUNDLE.getString("combineButton"), null, null);
-	}
+	private final IGBService igbService;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		List<RootSeqSymmetry> rootSyms = TrackOperationsTab.getSingleton().getRootSyms();
 		super.actionPerformed(e);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<RootSeqSymmetry> rootSyms = TrackUtils.getInstance().getSymsFromViewModeGlyphs(selected);
 		int gcount = rootSyms.size();
 		float height = 0;
 
@@ -70,7 +68,6 @@ public class CombineGraphsAction extends GenericAction {
 			combo_style.setTrackName("Joined Graphs");
 			combo_style.setExpandable(true);
 			//	combo_style.setCollapsed(true);
-			IGBService igbService = TrackOperationsTab.getSingleton().getIgbService();
 			combo_style.setLabelForeground(igbService.getDefaultForegroundColor());
 			combo_style.setForeground(igbService.getDefaultForegroundColor());
 			Color background = igbService.getDefaultBackgroundColor();

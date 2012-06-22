@@ -36,7 +36,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 	public final List<ViewModeGlyph> glyphs = new ArrayList<ViewModeGlyph>();
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
-	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB", CombineGraphsAction.getAction());
+	public final JRPButton combineB;
 	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB", SplitGraphsAction.getAction());
 	private final IGBService igbService;
 	private final ThresholdingAction thresholdingAction;
@@ -81,6 +81,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 	public TrackOperationsTab(IGBService igbS) {
 		igbService = igbS;
+		combineB = new JRPButton("TrackOperationsTab_combineB", new CombineGraphsAction(igbService));
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
 		hovereffect = new HoverEffect();
@@ -89,7 +90,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		operationCB.addMouseListener(hovereffect);
 		operationCB.addItemListener(operationListener);
 
-		transformationGoB.setAction(new TrackTransformAction(igbService) {
+		transformationGoB.setAction(new TrackTransformAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected Operator getOperator() {
@@ -98,7 +99,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			}
 		});
 
-		operationGoB.setAction(new TrackOperationAction(igbService.getSeqMapView(), null) {
+		operationGoB.setAction(new TrackOperationAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected Operator getOperator() {

@@ -138,7 +138,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator, false)) { // cannot handle Operators with parameters
 				String title = operator.getDisplay();
 				JMenuItem operatorMI = new JMenuItem(title);
-				operatorMI.addActionListener(new TrackOperationAction(gviewer, operator));
+				operatorMI.addActionListener(new TrackOperationAction(operator));
 				if (operationsMenu == null) {
 					operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
 				}

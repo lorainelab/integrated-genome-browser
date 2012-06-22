@@ -306,13 +306,15 @@ public final class GraphSymUtils {
 		float[] percent2score = new float[num_percents];
 
 		float scores_per_percent = ordered_scores.length / 100.0f;
-		for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_bin) {
-			int score_index = (int)(percent * scores_per_percent);
-			if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
-			percent2score[Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
+		if (ordered_scores.length > 0) {
+			for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_bin) {
+				int score_index = (int)(percent * scores_per_percent);
+				if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
+				percent2score[Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
+			}
+			// just making sure max 100% is really 100%...
+			percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
 		}
-		// just making sure max 100% is really 100%...
-		percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
 		return percent2score;
 	}
 

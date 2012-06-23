@@ -215,18 +215,20 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		FileTypeCategory saveCategory = null;
 
 		boolean any_are_combined = false; // are any selections inside a combined tier
-		boolean all_are_combined = true;  // are all selections inside (a) combined tier(s)
+		int uncombined_graph_glyph_count = 0;  // count of graph glyphs not in combined tier(s)
 		int graph_count = 0;              // are any selections graph tracks
 		boolean all_same = true;          // all tracks are the same type
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (ViewModeGlyph gl : glyphs) {
-			boolean this_one_is_combined = gl instanceof MultiGraphGlyph;
-			any_are_combined = any_are_combined || this_one_is_combined;
-			all_are_combined = all_are_combined && this_one_is_combined;
+			boolean this_one_is_combined = gl instanceof MultiGraphGlyph || gl.getParent() instanceof MultiGraphGlyph;
+			any_are_combined = any_are_combined || gl instanceof MultiGraphGlyph;
 			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
 				graph_count++;
+				if (!(gl.getParent() instanceof MultiGraphGlyph)) {
+					uncombined_graph_glyph_count++;
+				}
 			}
 			RootSeqSymmetry rootSym = (RootSeqSymmetry)gl.getInfo();
 			if (rootSym == null) {
@@ -243,7 +245,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			}
 		}
 
-		combineB.setEnabled(enable && !all_are_combined && graph_count > 1);
+		combineB.setEnabled(enable && uncombined_graph_glyph_count > 1);
 		splitB.setEnabled(enable && any_are_combined);
 		threshB.setEnabled(enable && graph_count > 0);
 		int transformCount = name2transformation.size();

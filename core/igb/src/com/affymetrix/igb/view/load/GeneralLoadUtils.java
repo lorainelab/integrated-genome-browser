@@ -793,7 +793,7 @@ public final class GeneralLoadUtils {
 
 				if (aseq != null) {
 					gviewer.setAnnotatedSeq(aseq, true, true);
-				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+				} else if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 					// This can happen when loading a brand-new genome
 					aseq = gmodel.getSelectedSeqGroup().getSeq(0);
 					gmodel.setSelectedSeq(aseq);

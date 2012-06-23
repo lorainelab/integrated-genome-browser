@@ -800,7 +800,7 @@ public final class GeneralLoadUtils {
 				}
 
 				//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
-				if (gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
+				if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
 					SeqGroupView.getInstance().refreshTable();
 				}
 

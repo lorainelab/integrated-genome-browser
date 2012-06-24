@@ -641,6 +641,14 @@ public final class TierLabelManager implements PropertyHolder {
 		}
 	}
 
+	public void select(GlyphI tierGlyph) {
+		for (TierLabelGlyph tlg : tiermap.getTierLabels()) {
+			if (tlg.getReferenceTier() == tierGlyph) {
+				labelmap.select(tlg);
+			}
+		}
+	}
+
 	/** An interface that lets listeners modify the popup menu before it is shown. */
 	public interface PopupListener {
 

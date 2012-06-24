@@ -42,6 +42,7 @@ public class HideAction extends RepackTiersAction {
 				if (style != null) {
 					style.setShow(false);
 					tier.setVisibility(false);
+					getSeqMapView().selectTrack(tier, false);
 				}
 			}
 		}

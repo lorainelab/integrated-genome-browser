@@ -1424,6 +1424,17 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	public final void selectTrack(TierGlyph tier, boolean selected) {
+		if (selected) {
+			tier_manager.select(tier);
+		}
+		else {
+			tier_manager.deselect(tier);
+		}
+		seqmap.updateWidget();
+		postSelections();
+	}
+
 	private void select(List<SeqSymmetry> sym_list, boolean add_to_previous,
 			boolean call_listeners, boolean update_widget) {
 		if (!add_to_previous) {

@@ -77,6 +77,10 @@ public final class GraphState {
 	private boolean show_graph = true;
 	private boolean show_bounds = false;
 	private boolean show_label = false;
+	
+	private boolean default_show_threshold = false;
+	private boolean default_show_axis = false;
+	private boolean default_show_label = false;
 
 	private HeatMap heat_map;
 	private final ITrackStyleExtended tier_style;
@@ -108,6 +112,12 @@ public final class GraphState {
 	public GraphState(ITrackStyleExtended tierStyle) {
 		super();
 		tier_style = tierStyle;
+	}
+	
+	public void restoreToDefault(){
+		show_threshold = default_show_threshold;
+		show_axis = default_show_axis;
+		show_label = default_show_label;
 	}
 	
 	/** Copy all the properties, except ID and label, of the given state into this state. */

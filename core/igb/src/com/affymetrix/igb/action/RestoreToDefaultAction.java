@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -35,6 +36,9 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 			TierGlyph tierGlyph = (TierGlyph)glyph;
 			if (tierGlyph.getAnnotStyle() instanceof TrackStyle) {
 				((TrackStyle)tierGlyph.getAnnotStyle()).restoreToDefault();
+			}
+			if(tierGlyph.getViewModeGlyph() instanceof AbstractGraphGlyph ){
+				((AbstractGraphGlyph)tierGlyph.getViewModeGlyph()).getGraphState().restoreToDefault();
 			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);

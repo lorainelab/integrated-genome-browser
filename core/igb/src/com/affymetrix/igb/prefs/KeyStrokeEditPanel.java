@@ -19,7 +19,10 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
-import java.awt.event.*;
+import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 
@@ -41,6 +44,22 @@ public final class KeyStrokeEditPanel extends JPanel {
 	private Preferences the_toolbar_node = null;
 	private String the_key = null;
 	private String lastTimeFocusGained = "";
+	private FocusListener lois = new FocusListener() {
+	
+			@Override
+			public void focusGained(java.awt.event.FocusEvent fe) {
+				Object o = fe.getSource();
+				if (o instanceof JTextField) {
+					JTextField tf = (JTextField) o;
+					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+				}
+			}
+			@Override
+			public void focusLost(java.awt.event.FocusEvent evt) {
+				applyAction();
+			}
+
+	};
 
 	/** Creates a new instance of KeyStrokesView */
 	public KeyStrokeEditPanel() {
@@ -59,20 +78,23 @@ public final class KeyStrokeEditPanel extends JPanel {
 					String command = keyStroke2String(ks);
 					String useCommand = isCommandInUse(command);
 					if (useCommand != null) {
-						// TODO Fix bug here.
-						// When the confirm panel pops up the editor loses focus.
-						// This triggers an applyAction with an invalid key stroke.
+						// Temorarily remove the focus listener
+						// so that it doesn't try to apply the action
+						// when the confirmation dialog pops up.
+						key_field.removeFocusListener(lois);
 						if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
 								"This shortcut is currently in use; \n"
 								+ "reassigning this will remove the shortcut for "
 								+ useCommand + ".\n"
 								+ "Do you want to proceed?")) {
 							key_field.setText(lastTimeFocusGained);
-							return;
 						}
-						the_keystroke_node.put(useCommand, "");
-						key_field.setText(command);
-						applyAction();
+						else { // cancelled
+							the_keystroke_node.put(useCommand, "");
+							key_field.setText(command);
+							applyAction();
+						}
+						key_field.addFocusListener(lois);
 						return;
 					}
 					key_field.setText(command);
@@ -89,30 +111,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 				evt.consume();
 			}
 		});
-		key_field.addFocusListener(new java.awt.event.FocusAdapter() {
-
-			@Override
-			public void focusGained(java.awt.event.FocusEvent fe) {
-				Object o = fe.getSource();
-				if (o instanceof JTextField) {
-					JTextField tf = (JTextField) o;
-					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
-				}
-			}
-			@Override
-			public void focusLost(java.awt.event.FocusEvent evt) {
-				applyAction();
-			}
-		});
-
-		clear_button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				clearAction();
-				clearAction();//To Do: Fix the need to call this twice
-			}
-		});
+		key_field.addFocusListener(lois);
 
 		setEnabled(false);
 	}
@@ -253,7 +252,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 	 *  http://javaalmanac.com/egs/javax.swing/Key2Str.html
 	 */
 	public static String keyStroke2String(KeyStroke key) {
-		StringBuffer s = new StringBuffer(50);
+		StringBuilder s = new StringBuilder(50);
 		int m = key.getModifiers();
 
 		if ((m & (InputEvent.CTRL_DOWN_MASK)) != 0) {

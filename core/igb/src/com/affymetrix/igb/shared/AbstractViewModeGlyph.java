@@ -10,6 +10,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -22,6 +23,8 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import java.util.Collections;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +47,31 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private static final int handle_width = 10;  // width of handle in pixels
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
+	
+	protected RootSeqSymmetry loadRegion(SeqSpan span){
+		loadData(span);
+		return (RootSeqSymmetry) this.getInfo();
+	}
+	
+	protected List<SeqSymmetry> loadData(SeqSpan span) {
+		try {
+			GenericFeature feature = style.getFeature();
+			if(feature == null){
+				return Collections.<SeqSymmetry>emptyList();
+			}
+			
+			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+			if (optimized_sym == null) {
+				return Collections.<SeqSymmetry>emptyList();
+			}
+			
+			return GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
+		} catch (Exception ex) {
+			Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return Collections.<SeqSymmetry>emptyList();
+	}
 	
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {

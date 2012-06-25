@@ -131,7 +131,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 
 				@Override
 				protected RootSeqSymmetry doInBackground() throws Exception {
-					return loadData(span);
+					return saveDetailGlyph.loadRegion(span);
 				}
 
 				@Override
@@ -156,28 +156,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			
 			return saveDetailGlyph;
 		}
-
-		protected RootSeqSymmetry loadData(SeqSpan span){
-			RootSeqSymmetry detailSym = null;
-			try {
-				detailSym = new TypeContainerAnnot(style.getMethodName());
-				GenericFeature feature = style.getFeature();
-				SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-				if (optimized_sym != null) {
-					List<SeqSymmetry> syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
-					if (syms != null && !syms.isEmpty()) {
-						for (SeqSymmetry sym : syms) {
-							detailSym.addChild(sym);
-						}
-						//pack(smv.getSeqMap().getView());
-					}
-				}
-			} catch (Exception ex) {
-				Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			return detailSym;
-		}
-						
+				
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
 			ViewModeGlyph resultGlyph = null;
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(smv.getVisibleSpan());

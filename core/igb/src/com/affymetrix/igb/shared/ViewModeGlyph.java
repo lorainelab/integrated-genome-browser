@@ -1,6 +1,8 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -41,6 +43,7 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract double getChildHeight();
 	public abstract int getStyleDepth();
 	protected abstract boolean shouldDrawToolBar();
+	protected abstract RootSeqSymmetry loadRegion(SeqSpan span);
 	public boolean isGarbage() {
 		return getChildCount() == 0;
 	}

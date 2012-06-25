@@ -30,7 +30,7 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	// glyph class
-	private class DummyGlyph extends AbstractViewModeGlyph {
+	public class DummyGlyph extends AbstractViewModeGlyph {
 
 		public DummyGlyph(ITrackStyleExtended style, Direction tier_direction) {
 			super();

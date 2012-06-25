@@ -19,6 +19,8 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
+import com.affymetrix.igb.viewmode.DummyGlyphFactory;
+
 import java.awt.Cursor;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -222,7 +224,9 @@ public final class TierLabelManager implements PropertyHolder {
 		for (TierLabelGlyph tlg : getSelectedTierLabels()) {
 			// TierGlyph should be data model for tier label, access via label.getInfo()
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			selected_tiers.add(tier);
+			if (!(tier.getViewModeGlyph() instanceof DummyGlyphFactory.DummyGlyph)) {
+				selected_tiers.add(tier);
+			}
 		}
 		return selected_tiers;
 	}

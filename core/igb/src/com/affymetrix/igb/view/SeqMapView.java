@@ -1425,7 +1425,10 @@ public class SeqMapView extends JPanel
 	}
 
 	public final void selectTrack(TierGlyph tier, boolean selected) {
-		if (selected) {
+		if (tier.getAnnotStyle().getFloatTier()) {
+			tier.setSelected(selected);
+		}
+		else if (selected) {
 			tier_manager.select(tier);
 		}
 		else {

@@ -19,14 +19,11 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
@@ -87,7 +84,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
-		SwingWorker<TypeContainerAnnot, Void> previousWorker, worker;
+		SwingWorker<RootSeqSymmetry, Void> previousWorker, worker;
 			
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym) {
 			super(sym);
@@ -129,33 +126,17 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				previousWorker = null;
 			}
 			
-			worker = new SwingWorker<TypeContainerAnnot, Void>() {
+			worker = new SwingWorker<RootSeqSymmetry, Void>() {
 
 				@Override
-				protected TypeContainerAnnot doInBackground() throws Exception {
-					TypeContainerAnnot detailSym = new TypeContainerAnnot(style.getMethodName());
-					try {
-						GenericFeature feature = style.getFeature();
-						SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-						if (optimized_sym != null) {
-							List<SeqSymmetry> syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
-							if (syms != null && !syms.isEmpty()) {
-								for (SeqSymmetry sym : syms) {
-									detailSym.addChild(sym);
-								}
-								//pack(smv.getSeqMap().getView());
-							}
-						}
-					} catch (Exception ex) {
-						Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-					}
-					return detailSym;
+				protected RootSeqSymmetry doInBackground() throws Exception {
+					return loadData(span);
 				}
 
 				@Override
 				public void done() {
 					try {
-						TypeContainerAnnot detailSym = get();
+						RootSeqSymmetry detailSym = get();
 						if(detailSym.getChildCount() > 0){
 							saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
 						}
@@ -175,6 +156,27 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return saveDetailGlyph;
 		}
 
+		protected RootSeqSymmetry loadData(SeqSpan span){
+			RootSeqSymmetry detailSym = null;
+			try {
+				detailSym = new TypeContainerAnnot(style.getMethodName());
+				GenericFeature feature = style.getFeature();
+				SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+				if (optimized_sym != null) {
+					List<SeqSymmetry> syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
+					if (syms != null && !syms.isEmpty()) {
+						for (SeqSymmetry sym : syms) {
+							detailSym.addChild(sym);
+						}
+						//pack(smv.getSeqMap().getView());
+					}
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			return detailSym;
+		}
+						
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
 			ViewModeGlyph resultGlyph = null;
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(smv.getVisibleSpan());

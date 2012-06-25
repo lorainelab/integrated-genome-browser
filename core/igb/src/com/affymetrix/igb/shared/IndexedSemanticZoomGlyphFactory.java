@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
@@ -86,7 +87,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
-		SwingWorker previousWorker, worker;
+		SwingWorker<TypeContainerAnnot, Void> previousWorker, worker;
 			
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym) {
 			super(sym);
@@ -128,33 +129,41 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				previousWorker = null;
 			}
 			
-			worker = new SwingWorker() {
+			worker = new SwingWorker<TypeContainerAnnot, Void>() {
 
 				@Override
-				protected Object doInBackground() throws Exception {
+				protected TypeContainerAnnot doInBackground() throws Exception {
+					TypeContainerAnnot detailSym = new TypeContainerAnnot(style.getMethodName());
 					try {
 						GenericFeature feature = style.getFeature();
 						SeqSymmetry optimized_sym = feature.optimizeRequest(span);
 						if (optimized_sym != null) {
 							List<SeqSymmetry> syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 							if (syms != null && !syms.isEmpty()) {
-								TypeContainerAnnot detailSym = new TypeContainerAnnot(style.getMethodName());
 								for (SeqSymmetry sym : syms) {
 									detailSym.addChild(sym);
 								}
-								saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
-								pack(smv.getSeqMap().getView());
+								//pack(smv.getSeqMap().getView());
 							}
 						}
 					} catch (Exception ex) {
 						Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 					}
-					return null;
+					return detailSym;
 				}
 
 				@Override
 				public void done() {
+					try {
+						TypeContainerAnnot detailSym = get();
+						if(detailSym.getChildCount() > 0){
+							saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
+						}
+					} catch (Exception ex) {
+						//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+					}
 					if (lastUsedGlyph == saveDetailGlyph) {
+						smv.repackTheTiers(true, true);
 						smv.getSeqMap().updateWidget();
 					}
 				}

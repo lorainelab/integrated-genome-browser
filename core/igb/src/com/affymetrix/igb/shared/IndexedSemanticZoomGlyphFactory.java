@@ -120,7 +120,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		}
 
 		protected ViewModeGlyph getDetailGlyph(final SeqMapViewExtendedI smv) throws Exception {
-			saveDetailGlyph.loadAndDisplayRegion(smv, defaultGlyphFactory);
+			if(isAutoLoadMode()){
+				saveDetailGlyph.loadAndDisplayRegion(smv, defaultGlyphFactory);
+			}
 			return saveDetailGlyph;
 		}
 				
@@ -157,7 +159,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 //	        }
 			try {
 				ViewModeGlyph resultGlyph = null;
-				if (isAutoLoadMode() && isDetail(view)) {
+				if (isDetail(view)) {
 					resultGlyph = getDetailGlyph(smv);
 				}
 				else {

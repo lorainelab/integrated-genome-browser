@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.style;
 
 import java.awt.Color;
 
-public final class HeatMap {
+public class HeatMap {
 	public enum StandardHeatMap {
 		BLACK_WHITE("Black/White", Color.BLACK, Color.WHITE),
 		VIOLET("Violet", Color.BLACK, new Color(255, 0, 255)),
@@ -81,9 +81,9 @@ public final class HeatMap {
 	public static final StandardHeatMap def_heatmap_name = StandardHeatMap.BLUE_YELLOW;
 
 	private final String name;
-	private final Color[] colors;
+	protected final Color[] colors;
 
-	private HeatMap(String name, Color[] colors) {
+	public HeatMap(String name, Color[] colors) {
 		this.name = name;
 		this.colors = colors;
 	}
@@ -147,7 +147,6 @@ public final class HeatMap {
 
 		return heat_map;
 	}
-
 
 	/**
 	 *  Creates a new color inbetween c1 and c2.

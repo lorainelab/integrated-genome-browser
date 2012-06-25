@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +23,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
+
 import javax.swing.SwingWorker;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
@@ -186,8 +187,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				operList.add(gsym);
 				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
-				Color halfwayColor = new Color((style.getBackground().getRed() + style.getForeground().getRed()) / 2, (style.getBackground().getGreen() + style.getForeground().getGreen()) / 2, (style.getBackground().getBlue() + style.getForeground().getBlue()) / 2);
-				opersym.getGraphState().setHeatMap(HeatMap.makeLinearHeatmap(gsym.getID(), style.getBackground(), halfwayColor));
+				HeatMap styleHeatMap = new DynamicStyleHeatMap("BG/FG", style, 1.0f, 0.5f);
+				opersym.getGraphState().setHeatMap(styleHeatMap);
 				resultGlyph = graphGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}
 			if (resultGlyph != null) {

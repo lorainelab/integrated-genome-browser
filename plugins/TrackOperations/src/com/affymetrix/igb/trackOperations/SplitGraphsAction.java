@@ -8,8 +8,8 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 
 /**
  *  Puts all selected graphs in separate tiers by setting the
@@ -35,7 +35,7 @@ public class SplitGraphsAction extends GenericAction {
 		super.actionPerformed(e);
 		List<ViewModeGlyph> selectedGlyphs = TrackOperationsTab.getSingleton().getSelectedGlyphss();
 		for (ViewModeGlyph vg : selectedGlyphs) {
-			if (vg instanceof ComboGlyph) {
+			if (vg instanceof MultiGraphGlyph) {
 				TrackOperationsTab.getSingleton().getIgbService().deselect(vg.getTierGlyph());
 				for (GlyphI gl : vg.getChildren()) {
 					GraphSym gsym = (GraphSym)gl.getInfo();

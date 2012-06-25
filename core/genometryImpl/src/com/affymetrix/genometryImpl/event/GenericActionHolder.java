@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
@@ -65,7 +67,7 @@ public class GenericActionHolder {
 	}
 
 	public Set<String> getGenericActionIds() {
-		return genericActions.keySet();
+		return new CopyOnWriteArraySet<String>(genericActions.keySet());
 	}
 
 	public void addGenericActionListener(GenericActionListener listener) {

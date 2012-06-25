@@ -17,7 +17,6 @@ import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -101,7 +100,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 
 	private static TreeSet<String> filterActions() {
 		// this still throws ConcurrentModificationException
-		Set<String> keys = new CopyOnWriteArraySet<String>(GenericActionHolder.getInstance().getGenericActionIds());
+		Set<String> keys = GenericActionHolder.getInstance().getGenericActionIds();
 		TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
 
 			@Override

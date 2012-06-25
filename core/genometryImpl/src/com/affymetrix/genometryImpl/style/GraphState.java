@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.awt.Color;
 import java.util.Map;
 
 /**
@@ -26,6 +27,19 @@ public final class GraphState {
 	public static final int THRESHOLD_DIRECTION_GREATER = 1;
 	public static final int THRESHOLD_DIRECTION_BETWEEN = 0;
 	public static final int THRESHOLD_DIRECTION_LESS_EQUAL = -1;
+	
+	public static final double DEFAULT_YPOS = 30;
+	public static final double DEFAULT_YHEIGHT = 60;
+	public static final Color DEFAULT_COL = Color.lightGray;
+	public static final boolean DEFAULT_FLOAT = false;
+	public static final boolean DEFAULT_SHOW_LABEL = true;
+	public static final boolean DEFAULT_SHOW_AXIS = false;
+	public static final double DEFAULT_MINVIS = Double.NEGATIVE_INFINITY;
+	public static final double DEFAULT_MAXVIS = Double.POSITIVE_INFINITY;
+	public static final double DEFAULT_SCORE_THRESH = 0;
+	public static final int DEFAULT_MINRUN_THRESH = 30;
+	public static final int DEFAULT_MAXGAP_THRESH = 100;
+	public static final boolean DEFAULT_SHOW_THRESH = false;
 
 	private GraphType graph_style = GraphType.MINMAXAVG;
 

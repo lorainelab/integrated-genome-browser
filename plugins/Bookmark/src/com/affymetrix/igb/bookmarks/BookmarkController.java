@@ -78,18 +78,18 @@ public abstract class BookmarkController {
 	}
 
 	public static void applyProperties(IGBService igbService, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
-		double default_ypos = 30;
-		double default_yheight = 60;
-		Color default_col = Color.lightGray;
-		boolean default_float = true;
-		boolean default_show_label = true;
-		boolean default_show_axis = false;
-		double default_minvis = Double.NEGATIVE_INFINITY;
-		double default_maxvis = Double.POSITIVE_INFINITY;
-		double default_score_thresh = 0;
-		int default_minrun_thresh = 30;
-		int default_maxgap_thresh = 100;
-		boolean default_show_thresh = false;
+		double default_ypos = GraphState.DEFAULT_YPOS;
+		double default_yheight = GraphState.DEFAULT_YHEIGHT;
+		Color default_col = GraphState.DEFAULT_COL;
+		boolean default_float = GraphState.DEFAULT_FLOAT;
+		boolean default_show_label = GraphState.DEFAULT_SHOW_LABEL;
+		boolean default_show_axis = GraphState.DEFAULT_SHOW_AXIS;
+		double default_minvis = GraphState.DEFAULT_MINVIS;
+		double default_maxvis = GraphState.DEFAULT_MAXVIS;
+		double default_score_thresh = GraphState.DEFAULT_SCORE_THRESH;
+		int default_minrun_thresh = GraphState.DEFAULT_MINRUN_THRESH;
+		int default_maxgap_thresh = GraphState.DEFAULT_MAXGAP_THRESH;
+		boolean default_show_thresh = GraphState.DEFAULT_SHOW_THRESH;
 		int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
 		Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
 

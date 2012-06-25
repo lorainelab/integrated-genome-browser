@@ -8,10 +8,8 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -22,10 +20,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
-
-import javax.swing.SwingWorker;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	protected final MapViewGlyphFactoryI defaultGlyphFactory;
@@ -135,7 +130,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				operList.add(gsym);
 				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
-				HeatMap styleHeatMap = new DynamicStyleHeatMap("BG/FG", style, 1.0f, 0.5f);
+				HeatMap styleHeatMap = new DynamicStyleHeatMap("BG/FG", style, 0.0f, 0.5f);
 				opersym.getGraphState().setHeatMap(styleHeatMap);
 				resultGlyph = graphGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}

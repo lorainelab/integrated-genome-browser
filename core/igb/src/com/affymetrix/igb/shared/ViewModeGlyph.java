@@ -44,7 +44,8 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract int getStyleDepth();
 	protected abstract boolean shouldDrawToolBar();
 	protected abstract RootSeqSymmetry loadRegion(SeqSpan span);
-	protected abstract void createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv);
+	protected abstract ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv);
+	protected abstract void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapViewGlyphFactoryI factory) throws Exception;
 	public boolean isGarbage() {
 		return getChildCount() == 0;
 	}

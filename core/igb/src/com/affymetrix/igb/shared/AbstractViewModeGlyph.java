@@ -28,6 +28,7 @@ import java.util.Collections;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 
 public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	protected ITrackStyleExtended style;
@@ -47,14 +48,17 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private static final int handle_width = 10;  // width of handle in pixels
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
+	SwingWorker<RootSeqSymmetry, Void> previousWorker, worker;
 	
+	@Override
 	protected RootSeqSymmetry loadRegion(SeqSpan span){
 		loadData(span);
 		return (RootSeqSymmetry) this.getInfo();
 	}
 	
-	protected void createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
-		copyChildren(factory.getViewModeGlyph(rootSym, style, direction, smv));
+	@Override
+	protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
+		return factory.getViewModeGlyph(rootSym, style, direction, smv);
 	}
 	
 	protected List<SeqSymmetry> loadData(SeqSpan span) {
@@ -77,6 +81,43 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		return Collections.<SeqSymmetry>emptyList();
 	}
 	
+	@Override
+	protected void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapViewGlyphFactoryI factory) throws Exception {
+		final SeqSpan span = smv.getVisibleSpan();
+		if (previousWorker != null && !previousWorker.isCancelled() && !previousWorker.isDone()) {
+			previousWorker.cancel(true);
+			previousWorker = null;
+		}
+
+		worker = new SwingWorker<RootSeqSymmetry, Void>() {
+
+			@Override
+			protected RootSeqSymmetry doInBackground() throws Exception {
+				return loadRegion(span);
+			}
+
+			@Override
+			public void done() {
+				if (this.isCancelled())
+					return;
+				
+				try {
+					createGlyphs(get(), factory, smv);
+				} catch (Exception ex) {
+					//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				//TODO: Find a way to avoid this
+				//if (lastUsedGlyph == saveDetailGlyph) {
+				smv.repackTheTiers(true, true);
+				smv.getSeqMap().updateWidget();
+				//}
+			}
+		};
+		worker.execute();
+		previousWorker = worker;
+		worker = null;
+	}
+			
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;

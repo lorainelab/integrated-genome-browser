@@ -1,12 +1,10 @@
 package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
-import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
@@ -15,14 +13,10 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
@@ -95,7 +89,15 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 
 		return detailSym;
 	}
-			
+	
+	@Override
+	protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
+		if (rootSym.getChildCount() > 0) {
+			copyChildren(factory.getViewModeGlyph(rootSym, style, direction, smv));
+		}
+		return this;
+	}
+	
 	private void initForSearching() {
 		int child_count = getChildCount();
 		if (child_count > 0) {

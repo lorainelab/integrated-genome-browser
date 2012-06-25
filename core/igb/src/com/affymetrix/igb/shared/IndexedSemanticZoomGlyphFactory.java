@@ -85,7 +85,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
-		SwingWorker<RootSeqSymmetry, Void> previousWorker, worker;
 			
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym) {
 			super(sym);
@@ -121,39 +120,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		}
 
 		protected ViewModeGlyph getDetailGlyph(final SeqMapViewExtendedI smv) throws Exception {
-			final SeqSpan span = smv.getVisibleSpan();
-			if(previousWorker != null && !previousWorker.isCancelled() && !previousWorker.isDone()){
-				previousWorker.cancel(true);
-				previousWorker = null;
-			}
-			
-			worker = new SwingWorker<RootSeqSymmetry, Void>() {
-
-				@Override
-				protected RootSeqSymmetry doInBackground() throws Exception {
-					return saveDetailGlyph.loadRegion(span);
-				}
-
-				@Override
-				public void done() {
-					try {
-						RootSeqSymmetry detailSym = get();
-						if(detailSym.getChildCount() > 0){
-							saveDetailGlyph.createGlyphs(detailSym, defaultGlyphFactory, smv);
-						}
-					} catch (Exception ex) {
-						//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-					}
-					if (lastUsedGlyph == saveDetailGlyph) {
-						smv.repackTheTiers(true, true);
-						smv.getSeqMap().updateWidget();
-					}
-				}
-			};
-			worker.execute();
-			this.previousWorker = worker;
-			worker = null;
-			
+			saveDetailGlyph.loadAndDisplayRegion(smv, defaultGlyphFactory);
 			return saveDetailGlyph;
 		}
 				

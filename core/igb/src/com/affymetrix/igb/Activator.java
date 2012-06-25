@@ -311,7 +311,7 @@ public class Activator implements BundleActivator {
 						System.out.println("IT WORKED? " + a);
 					}
 					catch (ClassNotFoundException cnfe) {
-						String message = "Class " + cnfe.getMessage() + "not found.";
+						String message = "Class " + cnfe.getMessage() + " not found.";
 						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
 								message);
 						message = "Keyboard shortcut " + v + " not set.";
@@ -382,7 +382,7 @@ public class Activator implements BundleActivator {
 		UnsetDirectionStyleArrowAction.getAction();
 		SetDirectionStyleColorAction.getAction();
 		UnsetDirectionStyleColorAction.getAction();
-		
+
 		// These are not in the toolbar,
 		// but they have keyboard shortcuts (accelerators)
 		// defined in the preferences.

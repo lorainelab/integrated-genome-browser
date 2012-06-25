@@ -51,12 +51,12 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				style.setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
 				style.setHeight(coordbox.height);
 				style.setFloatTier(false);
-
-				something_changed = true;
 				
 				if(gl instanceof AbstractGraphGlyph){
 					((AbstractGraphGlyph)gl).getGraphState().setShowLabel(false);
 				}
+
+				something_changed = true;
 			}
 		}
 		if (something_changed) {

@@ -52,6 +52,11 @@ public class FloatTiersAction extends SeqMapViewActionA {
 					style.setHeight(pixbox.height);
 	
 					style.setFloatTier(true);
+
+					if(gl instanceof AbstractGraphGlyph){
+						((AbstractGraphGlyph)gl).setShowLabel(true);
+					}
+
 					something_changed = true;
 				}
 			}

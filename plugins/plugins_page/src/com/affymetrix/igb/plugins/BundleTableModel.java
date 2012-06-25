@@ -256,8 +256,11 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 			@Override
 			public Object getValue(Bundle bundle) {
-				Object description = bundle.getHeaders().get(BUNDLE_DESCRIPTION);
-				return description == null ? "" : description.toString();
+				Object descriptionObj = bundle.getHeaders().get(BUNDLE_DESCRIPTION).toString();
+				String description = (descriptionObj == null) ? "" : descriptionObj.toString();
+				description = description.replaceAll("\n", " ");
+				description = description.replaceAll(" +", " ");
+				return description;
 			}
 
 			@Override

@@ -47,8 +47,14 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
 			return;
 		}
 		try {
-			String uriString = GeneralUtils.fixFileName(uri.toString());
-			uriString = uriString.toString().substring(0, uriString.toString().length() - ".tbi".length());
+			String uriString;
+			if (uri.toString().startsWith("http:") || uri.toString().startsWith("https:")) {
+				uriString = uri.toString();
+			}
+			else {
+				uriString = GeneralUtils.fixFileName(uri.toString());
+			}
+			uriString = uriString.substring(0, uriString.toString().length() - ".tbi".length());
 			tabixReader = new TabixReader(uriString);
 			tabixReader.readIndex();
 		}

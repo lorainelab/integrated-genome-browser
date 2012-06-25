@@ -139,7 +139,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 					try {
 						RootSeqSymmetry detailSym = get();
 						if(detailSym.getChildCount() > 0){
-							saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
+							saveDetailGlyph.createGlyphs(detailSym, defaultGlyphFactory, smv);
 						}
 					} catch (Exception ex) {
 						//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);

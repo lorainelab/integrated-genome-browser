@@ -53,6 +53,10 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		return (RootSeqSymmetry) this.getInfo();
 	}
 	
+	protected void createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
+		copyChildren(factory.getViewModeGlyph(rootSym, style, direction, smv));
+	}
+	
 	protected List<SeqSymmetry> loadData(SeqSpan span) {
 		try {
 			GenericFeature feature = style.getFeature();

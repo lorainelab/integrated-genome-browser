@@ -69,6 +69,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
         jMenu1.setText("jMenu1");
 
         RangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Y Axis Scale (Graph)"));
+        RangePanel.setPreferredSize(new java.awt.Dimension(231, 133));
 
         setByLabel.setText("Set By:");
 
@@ -151,7 +152,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
                             .add(minValLabel))
                         .addContainerGap())
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, RangePanelLayout.createSequentialGroup()
-                        .add(0, 0, Short.MAX_VALUE)
+                        .add(0, 3, Short.MAX_VALUE)
                         .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(maxValLabel))
@@ -177,19 +178,12 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(heightLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(0, 0, 0)
-                        .add(otherOptionsButton))))
+                .add(heightLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, otherOptionsButton)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -200,7 +194,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
                     .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(heightLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

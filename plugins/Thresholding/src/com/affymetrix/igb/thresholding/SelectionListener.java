@@ -128,7 +128,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				for (Glyph g : igbService.getVisibleTierGlyphs()) {
 					ViewModeGlyph vg = ((TierGlyph)g).getViewModeGlyph();
-					if (vg instanceof MultiGraphGlyph) {
+					if (vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
 						for (GlyphI child : vg.getChildren()) {
 							if (grafs.contains(child.getInfo())) {
 								glyphs.add((AbstractGraphGlyph) child);

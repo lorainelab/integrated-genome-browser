@@ -877,7 +877,7 @@ public final class GeneralLoadUtils {
 		//end max
 	}
 
-	private static void setLastRefreshStatus(GenericFeature feature, boolean result) {
+	public static void setLastRefreshStatus(GenericFeature feature, boolean result) {
 		if (result) {
 			feature.setLastRefreshStatus(RefreshStatus.DATA_LOADED);
 		} else {

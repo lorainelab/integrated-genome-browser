@@ -110,7 +110,9 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 					return;
 				
 				try {
-					createGlyphs(get(), factory, smv);
+					RootSeqSymmetry rootSym = get();
+					createGlyphs(rootSym, factory, smv);
+					GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), rootSym.getChildCount() > 0);
 				} catch (Exception ex) {
 					//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 				}

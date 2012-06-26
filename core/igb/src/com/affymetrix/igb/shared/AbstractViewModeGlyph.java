@@ -21,6 +21,8 @@ import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -32,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
-public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
+public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements NeoRangeListener{
 	protected ITrackStyleExtended style;
 	protected Direction direction = Direction.NONE;
 	/*
@@ -51,6 +53,8 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
 	SwingWorker<RootSeqSymmetry, Void> previousWorker, worker;
+	
+	protected void rangeChanged(SeqMapViewExtendedI smv){};
 	
 	@Override
 	protected RootSeqSymmetry loadRegion(SeqSpan span){
@@ -137,6 +141,13 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	
 	public boolean isDetail(ViewI view) {
 		return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
+	}
+	
+	@Override
+	public void rangeChanged(NeoRangeEvent evt){
+		if(evt.getSource() instanceof SeqMapViewExtendedI){
+			rangeChanged(((SeqMapViewExtendedI)evt.getSource()));
+		}
 	}
 			
 	@Override

@@ -3,6 +3,7 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Graphics;
@@ -20,7 +21,7 @@ public class StairStepGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, int i) {
+	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
 		int endx = curr_point.x;
 		int stairwidth = endx - prev_point.x;
 		if (stairwidth >= 0 && stairwidth <= 10000 && (i == 0 || graphSym.getGraphYCoord(i - 1) != 0)) {

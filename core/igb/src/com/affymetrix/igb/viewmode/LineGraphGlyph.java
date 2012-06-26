@@ -22,7 +22,7 @@ public class LineGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, int i) {
+	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
 		if (!graphSym.hasWidth()) {
 			g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 		} else {

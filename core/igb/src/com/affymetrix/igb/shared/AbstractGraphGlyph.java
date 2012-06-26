@@ -386,7 +386,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	
 	protected abstract void doBigDraw(Graphics g, GraphSym graphSym,
 		Point curr_x_plus_width, Point max_x_plus_width,
-		float ytemp, int draw_end_index, int i
+		float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i
 	);
 
 	protected void bigDrawLoop(
@@ -430,7 +430,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 				}
 			}
 			doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width,
-					ytemp, draw_end_index, i);
+					ytemp, draw_end_index, offset, yscale, view, i);
 			prev_point.x = curr_point.x;
 			prev_point.y = curr_point.y;
 		}

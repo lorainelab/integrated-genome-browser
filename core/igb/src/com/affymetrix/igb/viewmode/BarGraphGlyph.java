@@ -3,6 +3,7 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Graphics;
@@ -22,7 +23,7 @@ public class BarGraphGlyph extends AbstractGraphGlyph {
 	@Override
 	protected void doBigDraw(Graphics g, GraphSym graphSym,
 			Point curr_x_plus_width, Point max_x_plus_width,
-			float ytemp, int draw_end_index, int i) {
+			float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
 		int ymin_pixel = Math.min(curr_point.y, zero_point.y);
 		int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
 		yheight_pixel = Math.max(1, yheight_pixel);

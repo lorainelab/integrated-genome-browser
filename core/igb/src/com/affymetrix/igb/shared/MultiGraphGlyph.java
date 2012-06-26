@@ -44,7 +44,7 @@ public abstract class MultiGraphGlyph extends AbstractGraphGlyph {
 	@Override
 	protected void doBigDraw(java.awt.Graphics g, GraphSym graphSym,
 			java.awt.Point curr_x_plus_width, java.awt.Point max_x_plus_width, 
-			float ytemp,int draw_end_index, int i) {
+			float ytemp,int draw_end_index, double offset, double yscale, ViewI view, int i) {
 	}
 
 }

@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -57,7 +58,7 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 		}
 
 		@Override
-		protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, int i) {
+		protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
 			setBaseColor();
 			MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
 			Color saveColor = g.getColor();
@@ -69,7 +70,7 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 			}
 			// need to draw coverage first, then mismatches so that the mismatches are not covered up
 			g.setColor(MATCH_COLOR);
-			super.doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width, ytemp, draw_end_index, i);
+			super.doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width, ytemp, draw_end_index, offset, yscale, view, i);
 
 			// now draw the mismatches, piled up
 
@@ -104,17 +105,19 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 				_ytemp = Math.min(_ytemp, getVisibleMaxY());
 				_ytemp = Math.max(_ytemp, getVisibleMinY());
 
-//				coord.y = offset - ((_ytemp - getVisibleMinY()) * yscale);
-//				view.transformToPixels(coord, curr_point);
+				Point2D.Double coordMMP = new Point2D.Double(0, 0);
+				coordMMP.y = offset - ((_ytemp - getVisibleMinY()) * yscale);
+				Point curr_pointMMP = new Point(0, 0);
+				view.transformToPixels(coordMMP, curr_pointMMP);
 //				x_plus_width2D.y = coord.y;
 //				view.transformToPixels(x_plus_width2D, curr_x_plus_width);
 
-				int ymin_pixel = Math.min(curr_point.y, savey);
-				int yheight_pixel = Math.abs(curr_point.y - savey);
+				int ymin_pixel = Math.min(curr_pointMMP.y, savey);
+				int yheight_pixel = Math.abs(curr_pointMMP.y - savey);
 				yheight_pixel = Math.max(1, yheight_pixel);
 				g.setColor(baseColors[loopIndex]);
 				g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
-				savey = curr_point.y;
+				savey = curr_pointMMP.y;
 
 			}
 			g.setColor(saveColor);

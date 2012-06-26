@@ -33,7 +33,7 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, int i) {
+	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
 		double heatmap_scaling = (double) (state.getHeatMap().getColors().length - 1) / (getVisibleMaxY() - getVisibleMinY());
 		int heatmap_index = (int) (heatmap_scaling * (ytemp - getVisibleMinY()));
 		if (heatmap_index < 0) {

@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -30,7 +29,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 	}
 
 	public FloatTiersAction() {
-		super("Float", null, null);
+		super("Float", "16x16/actions/float.png", "22x22/actions/float.png");
 	}
 
 	@Override

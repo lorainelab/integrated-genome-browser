@@ -30,7 +30,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	}
 
 	public UnFloatTiersAction() {
-		super("Float", null, null);
+		super("Float", "16x16/actions/anchor.png", "22x22/actions/anchor.png");
 	}
 
 	@Override

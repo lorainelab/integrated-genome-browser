@@ -54,8 +54,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 	protected String label = null;
 	SwingWorker<RootSeqSymmetry, Void> previousWorker, worker;
 	
-	protected void rangeChanged(SeqMapViewExtendedI smv){};
-	
 	@Override
 	protected RootSeqSymmetry loadRegion(SeqSpan span){
 		loadData(span);
@@ -149,7 +147,20 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 			rangeChanged(((SeqMapViewExtendedI)evt.getSource()));
 		}
 	}
-			
+	
+	protected void rangeChanged(SeqMapViewExtendedI smv){
+		if(isAutoLoadMode() && isDetail(smv.getSeqMap().getView())){
+			try {
+				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(getAnnotStyle().getViewMode());
+				if(factory != null){
+					loadAndDisplayRegion(smv, factory);
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+	};
+	
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;

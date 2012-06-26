@@ -37,7 +37,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final List<ViewModeGlyph> glyphs = new ArrayList<ViewModeGlyph>();
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB;
-	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB", SplitGraphsAction.getAction());
+	public final JRPButton splitB;
 	private final IGBService igbService;
 	private final ThresholdingAction thresholdingAction;
 	private final HoverEffect hovereffect;
@@ -82,6 +82,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public TrackOperationsTab(IGBService igbS) {
 		igbService = igbS;
 		combineB = new JRPButton("TrackOperationsTab_combineB", new CombineGraphsAction(igbService));
+		splitB = new JRPButton("TrackOperationsTab_splitB", new SplitGraphsAction(igbService));
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
 		hovereffect = new HoverEffect();
@@ -140,7 +141,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 	private void collectGraphsAndGlyphs() {
 		glyphs.clear();
-		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		glyphs.addAll(selected);
 		List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
@@ -222,8 +223,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (ViewModeGlyph gl : glyphs) {
-			boolean this_one_is_combined = gl instanceof MultiGraphGlyph || gl.getParent() instanceof MultiGraphGlyph;
-			any_are_combined = any_are_combined || gl instanceof MultiGraphGlyph;
+			any_are_combined |= gl instanceof MultiGraphGlyph;
 			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
 				graph_count++;
 				if (!(gl.getParent() instanceof MultiGraphGlyph)) {

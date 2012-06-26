@@ -2,12 +2,13 @@ package com.affymetrix.igb.trackOperations;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
@@ -17,37 +18,39 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
  */
 public class SplitGraphsAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
-	private static final SplitGraphsAction ACTION = new SplitGraphsAction();
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static SplitGraphsAction getAction() {
-		return ACTION;
+
+	public SplitGraphsAction(IGBService igbService) {
+		super(TrackOperationsTab.BUNDLE.getString("splitButton"), null, null);
+		this.igbService = igbService;
 	}
 
-	private SplitGraphsAction() {
-		super(TrackOperationsTab.BUNDLE.getString("splitButton"), null, null);
-	}
+	private final IGBService igbService;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		List<ViewModeGlyph> selectedGlyphs = TrackOperationsTab.getSingleton().getSelectedGlyphss();
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		List<ViewModeGlyph> selectedGlyphs = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		for (ViewModeGlyph vg : selectedGlyphs) {
 			if (vg instanceof MultiGraphGlyph) {
-				TrackOperationsTab.getSingleton().getIgbService().deselect(vg.getTierGlyph());
-				for (GlyphI gl : vg.getChildren()) {
-					GraphSym gsym = (GraphSym)gl.getInfo();
-					GraphState gstate = gsym.getGraphState();
-					gstate.setComboStyle(null, 0);
-	
-					// For simplicity, set the floating state of all new tiers to false.
-					// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
-					gstate.getTierStyle().setFloatTier(false); // for simplicity
+				igbService.deselect(vg.getTierGlyph());
+				if (vg.getChildren() != null) {
+					for (GlyphI gl : new CopyOnWriteArrayList<GlyphI>(vg.getChildren())) {
+						GraphSym gsym = (GraphSym)gl.getInfo();
+						GraphState gstate = gsym.getGraphState();
+						gstate.setComboStyle(null, 0);
+						ViewModeGlyph child = (ViewModeGlyph)gl;
+						child.getTierGlyph().dejoin(vg, child);
+//						igbService.selectTrack(child, true);
+		
+						// For simplicity, set the floating state of all new tiers to false.
+						// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
+						gstate.getTierStyle().setFloatTier(false); // for simplicity
+					}
 				}
 			}
 		}
 		TrackOperationsTab.getSingleton().updateViewer();
+		igbService.getSeqMapView().postSelections();
 	}
 }

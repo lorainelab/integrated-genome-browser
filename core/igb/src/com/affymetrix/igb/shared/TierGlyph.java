@@ -205,6 +205,7 @@ public class TierGlyph extends SolidGlyph {
 	 */
 	public void dejoin(ViewModeGlyph comboGlyph, ViewModeGlyph joinedGlyph) {
 		comboGlyph.removeChild(joinedGlyph);
+		joinedGlyph.setParent(getParent());
 		viewModeGlyph = joinedGlyph;
 		viewModeGlyph.setCoordBox(super.getCoordBox());
 	}

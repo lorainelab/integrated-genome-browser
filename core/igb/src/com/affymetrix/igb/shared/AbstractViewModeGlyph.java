@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.Glyph;
@@ -116,6 +117,21 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		worker.execute();
 		previousWorker = worker;
 		worker = null;
+	}
+	
+	protected boolean isAutoLoadMode() {
+		if (this.getAnnotStyle() == null) {
+			return false;
+		}
+
+		if (this.getAnnotStyle().getFeature() == null) {
+			return false;
+		}
+
+		if (this.getAnnotStyle().getFeature().getLoadStrategy() != LoadUtils.LoadStrategy.AUTOLOAD) {
+			return false;
+		}
+		return true;
 	}
 			
 	@Override

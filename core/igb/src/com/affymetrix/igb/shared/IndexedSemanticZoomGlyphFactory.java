@@ -88,19 +88,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		}
 
 		public abstract boolean isDetail(ViewI view);
-
-		protected boolean isAutoLoadMode(){
-			if(this.getAnnotStyle() == null)
-				return false;
-			
-			if(this.getAnnotStyle().getFeature() == null)
-				return false;
-			
-			if(this.getAnnotStyle().getFeature().getLoadStrategy() != LoadStrategy.AUTOLOAD)
-				return false;
-			
-			return true;
-		}
 		
 		@Override
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,

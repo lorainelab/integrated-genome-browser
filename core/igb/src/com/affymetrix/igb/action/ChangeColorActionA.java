@@ -9,13 +9,10 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  * note - this class contains an instance of SeqMapView. For now, there
@@ -42,15 +39,13 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	protected void setGraphColor(AbstractGraphGlyph gg, Color color) { }
 
 	private void changeColor() {
-		if (getTierManager().getSelectedTierLabels().isEmpty()) {
+		if (getSeqMapView().getAllSelectedTiers().isEmpty()) {
 			return;
 		}
 
 		final JColorChooser chooser = new JColorChooser();
 
-		TierLabelGlyph tlg_0 = getTierManager().getSelectedTierLabels().get(0);
-		TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
-		ITrackStyleExtended style_0 = tier_0.getAnnotStyle();
+		ITrackStyleExtended style_0 = ((ViewModeGlyph)getSeqMapView().getAllSelectedTiers().get(0)).getAnnotStyle();
 		if (style_0 != null) {
 			setChooserColor(chooser, style_0);
 		}
@@ -60,7 +55,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				performAction(chooser.getColor());
-				refreshMap(false, false);
+				getSeqMapView().getSeqMap().updateWidget();
 			}
 
 		};
@@ -76,34 +71,16 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	}
 	
 	private void changeColor(Color color){
-		final List<TierLabelGlyph> tier_label_glyphs = getTierManager().getSelectedTierLabels();
-		if (!tier_label_glyphs.isEmpty()) {
-			for (TierLabelGlyph tlg : tier_label_glyphs) {
-				TierGlyph tier = (TierGlyph) tlg.getInfo();
-				ITrackStyleExtended style = tier.getAnnotStyle();
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		List<ViewModeGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
+		if (!vgList.isEmpty()) {
+			for (ViewModeGlyph vg : vgList) {
+				ITrackStyleExtended style = vg.getAnnotStyle();
 				if (style != null) {
 					setStyleColor(color, style);
 				}
 			}
-
-			// For Joined Graphs
-			for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-				setStyleColor(color, gg.getGraphState().getTierStyle());
-				setGraphColor(gg, color);
-			}
 		}
-		
-		// For Floating graphs
-		if (getSeqMapView().getPixelFloater() != null && getSeqMapView().getPixelFloater().getChildren() != null) {
-			for (GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()) {
-				if (glyph.isSelected() && glyph instanceof AbstractGraphGlyph) {
-					AbstractGraphGlyph gg = (AbstractGraphGlyph) glyph;
-					setStyleColor(color, gg.getGraphState().getTierStyle());
-					setGraphColor(gg, color);
-				}
-			}
-		}
-		
 	}
 	
 	@Override

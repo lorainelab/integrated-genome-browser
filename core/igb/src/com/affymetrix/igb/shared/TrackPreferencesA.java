@@ -185,8 +185,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (action != null) {
 			action.actionPerformed(evt);
 		}
+		is_listening = false;
 		strandsForwardColorComboBoxReset();
 		strandsReverseColorComboBoxReset();
+		is_listening = true;
 		updateDisplay();
 	}
 

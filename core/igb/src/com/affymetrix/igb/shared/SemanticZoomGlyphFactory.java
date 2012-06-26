@@ -41,8 +41,8 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 	// glyph class
 	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements TransformableViewModeGlyph {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
-		protected ViewModeGlyph lastUsedGlyph;
-		
+		protected ViewModeGlyph lastUsedGlyph, detailGlyph;
+	
 		protected SemanticZoomGlyph(SeqSymmetry sym) {
 			super();
 			super.setInfo(sym);
@@ -61,6 +61,13 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		@Override
 		protected void rangeChanged(SeqMapViewExtendedI smv){
 			setLastUsedGlyph(getGlyph(smv));
+		}
+		
+		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv, MapViewGlyphFactoryI factory) throws Exception {
+			if(isAutoLoadMode()){
+				detailGlyph.loadAndDisplayRegion(smv, factory);
+			}
+			return detailGlyph;
 		}
 				
 		@Override

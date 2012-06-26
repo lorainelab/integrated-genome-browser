@@ -1,11 +1,12 @@
 package com.affymetrix.igb.viewmode;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -18,14 +19,21 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 
 	private class DefaultSemanticZoomGlyph extends SemanticZoomGlyph {
 		private ViewModeGlyph depthGlyph; 
-		private ViewModeGlyph detailGlyph; 
+		
 		private DefaultSemanticZoomGlyph(SeqSymmetry sym) {
 			super(sym);
 		}
 
 		@Override
 		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
-			return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle()) ? detailGlyph : depthGlyph;
+			if(isDetail(smv.getSeqMap().getView())){
+				try {
+					return getDetailGlyph(smv, detailGlyphFactory);
+				} catch (Exception ex) {
+					Logger.getLogger(DefaultSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+			return depthGlyph;
 		}
 
 		@Override

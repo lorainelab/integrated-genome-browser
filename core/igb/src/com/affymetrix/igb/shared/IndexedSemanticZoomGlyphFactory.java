@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
@@ -75,7 +74,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 	}
 	// glyph class
 	public abstract class IndexedSemanticZoomGlyph extends SemanticZoomGlyphFactory.SemanticZoomGlyph implements SeqSelectionListener {
-		protected ViewModeGlyph defaultGlyph, saveDetailGlyph;
+		protected ViewModeGlyph defaultGlyph;
 //		protected final SeqMapViewExtendedI smv;
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
@@ -92,18 +91,11 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			Direction direction, SeqMapViewExtendedI gviewer) {
 			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
 			defaultGlyph = getEmptyGraphGlyph(trackStyle, gviewer);
-			saveDetailGlyph = defaultGlyphFactory.getViewModeGlyph(sym, trackStyle, Direction.BOTH, gviewer);
+			detailGlyph = defaultGlyphFactory.getViewModeGlyph(sym, trackStyle, Direction.BOTH, gviewer);
 		}
 
 		protected RootSeqSymmetry getRootSym() {
 			return (RootSeqSymmetry)GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
-		}
-
-		protected ViewModeGlyph getDetailGlyph(final SeqMapViewExtendedI smv) throws Exception {
-			if(isAutoLoadMode()){
-				saveDetailGlyph.loadAndDisplayRegion(smv, defaultGlyphFactory);
-			}
-			return saveDetailGlyph;
 		}
 				
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
@@ -140,7 +132,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			try {
 				ViewModeGlyph resultGlyph = null;
 				if (isDetail(view)) {
-					resultGlyph = getDetailGlyph(smv);
+					resultGlyph = getDetailGlyph(smv, defaultGlyphFactory);
 				}
 				else {
 					resultGlyph = getSummaryGlyph(smv);
@@ -207,7 +199,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		
 		@Override
 		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			saveDetailGlyph = null;
+			detailGlyph = null;
 		}
 	}
 	// end glyph class

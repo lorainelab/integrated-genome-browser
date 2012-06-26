@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -97,11 +98,14 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 
 			@Override
 			protected RootSeqSymmetry doInBackground() throws Exception {
+				Application.getSingleton().addNotLockedUpMsg("Loading "+getAnnotStyle().getTrackName());
 				return loadRegion(span);
 			}
 
 			@Override
 			public void done() {
+				Application.getSingleton().removeNotLockedUpMsg("Loading "+getAnnotStyle().getTrackName());
+				
 				if (this.isCancelled())
 					return;
 				

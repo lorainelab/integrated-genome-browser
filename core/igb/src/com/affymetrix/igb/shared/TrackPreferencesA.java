@@ -225,7 +225,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color color = labelColorComboBox.getSelectedColor();
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeLabelColorAction");
-		if (color != null) {
+		if (action != null && color != null) {
 			action.performAction(color);
 		}
 		updateDisplay();
@@ -240,7 +240,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color color = strandsForwardColorComboBox.getSelectedColor();
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeForwardColorAction");
-		if (color != null) {
+		if (action != null && color != null) {
 			action.performAction(color);
 		}
 		updateDisplay();
@@ -255,7 +255,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color color = strandsReverseColorComboBox.getSelectedColor();
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeReverseColorAction");
-		if (color != null) {
+		if (action != null && color != null) {
 			action.performAction(color);
 		}
 		updateDisplay();
@@ -270,7 +270,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color color = backgroundColorComboBox.getSelectedColor();
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeBackgroundColorAction");
-		if (color != null) {
+		if (action != null && color != null) {
 			action.performAction(color);
 		}
 		updateDisplay();
@@ -285,7 +285,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color color = foregroundColorComboBox.getSelectedColor();
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeForegroundColorAction");
-		if (color != null) {
+		if (action != null && color != null) {
 			action.performAction(color);
 		}
 		updateDisplay();

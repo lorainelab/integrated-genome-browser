@@ -2,10 +2,9 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
 
-public class ExpandAction extends CollapseExpandActionA implements SymSelectionListener {
+public class ExpandAction extends CollapseExpandActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ExpandAction ACTION = new ExpandAction();
 

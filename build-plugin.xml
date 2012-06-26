@@ -18,13 +18,12 @@
 		<mkdir dir="${build}" />
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" debug="${debug}" deprecation="${deprecation}" includeantruntime="false" classpath="${extra-classpath}">
-			<classpath location="${workspace}/Integrated_Genome_Browser/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/common/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/igb/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/genometryImpl/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/genoviz_sdk/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/igb_service/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/window_service/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/core/common/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/core/igb/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/core/genometryImpl/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/core/genoviz_sdk/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/core/igb_service/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/core/window_service/build" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/SearchModeSymmetryFilter/build" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/colt.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/felix.jar" />

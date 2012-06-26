@@ -59,11 +59,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		}
 
 		@Override
-		public boolean isDetail(ViewI view) {
-			return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
-		}
-
-		@Override
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,
 				Direction direction, SeqMapViewExtendedI gviewer) {
 			super.init(sym, trackStyle, direction, gviewer);

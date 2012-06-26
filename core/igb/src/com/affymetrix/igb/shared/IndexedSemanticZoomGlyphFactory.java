@@ -86,8 +86,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 //			this.smv = smv;
 //			saveSpan = null;
 		}
-
-		public abstract boolean isDetail(ViewI view);
 		
 		@Override
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,

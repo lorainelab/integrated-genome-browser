@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -132,6 +133,10 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean isDetail(ViewI view) {
+		return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
 	}
 			
 	@Override

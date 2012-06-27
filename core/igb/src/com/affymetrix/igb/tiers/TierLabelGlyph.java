@@ -132,13 +132,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
 
-		if (reftier.getAnnotStyle() instanceof ITrackStyleExtended) {
-			ITrackStyleExtended trackStyle = reftier.getAnnotStyle();
-			fgcolor = trackStyle.getLabelForeground();
-			bgcolor = trackStyle.getLabelBackground();
-			Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
-			g.setFont(newfnt);
-		}
+		ITrackStyleExtended trackStyle = reftier.getAnnotStyle();
+		fgcolor = trackStyle.getLabelForeground();
+		bgcolor = trackStyle.getLabelBackground();
+		Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
+		g.setFont(newfnt);
 
 		Rectangle pixelbox = new Rectangle();
 		view.transformToPixels(getCoordBox(), pixelbox);

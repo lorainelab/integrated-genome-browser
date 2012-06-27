@@ -173,7 +173,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			if (style instanceof TrackStyle) {
 				TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
-				operators.addAll(TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory()));
+				operators.addAll(TransformHolder.getInstance().getAllTransformFor(((RootSeqSymmetry) glyph.getInfo()).getCategory()));
 				for (final Operator operator : operators) {
 					if(!(operator instanceof ICopy)){
 						Action action = new TransformAction(operator);

@@ -16,6 +16,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Thresholding"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackAdjuster"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackOperations"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Tutorial"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genoviz"/>

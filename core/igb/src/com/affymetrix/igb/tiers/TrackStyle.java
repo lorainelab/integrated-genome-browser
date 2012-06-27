@@ -546,7 +546,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.setTrackNameSize(template.getTrackNameSize());
 		this.setForwardColor(template.getForwardColor());
 		this.setReverseColor(template.getReverseColor());
-		this.setViewMode(template.getViewMode());
+//		this.setViewMode(template.getViewMode());
 		this.setDirectionType(template.getDirectionName());
 	}
 

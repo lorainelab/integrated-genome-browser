@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
@@ -10,6 +11,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -28,7 +31,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 
 		@Override
 		public void symSelectionChanged(SymSelectionEvent evt) {
-
+(new RuntimeException(this.getClass().getName() + ".symSelectionChanged")).printStackTrace();
 			// Only pay attention to selections from the main SeqMapView or its map.
 			// Ignore the splice view as well as events coming from this class itself.
 			Object src = evt.getSource();
@@ -111,7 +114,10 @@ public class FloatTiersAction extends SeqMapViewActionA {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				getSeqMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
+				SeqMapView v = getSeqMapView();
+				GenometryModel m = GenometryModel.getGenometryModel();
+				BioSeq s = m.getSelectedSeq();
+				v.setAnnotatedSeq(s, true, true);
 			}
 		});
 	}

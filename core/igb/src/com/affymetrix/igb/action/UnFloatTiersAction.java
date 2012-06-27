@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
@@ -7,9 +8,12 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -51,10 +55,10 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
-			for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-				ViewModeGlyph vg = tg.getViewModeGlyph();
+			List<ViewModeGlyph> selectedTiers = getSelectedFloatingTiers();
+			for (ViewModeGlyph vg : selectedTiers) {
 				if (vg instanceof AbstractGraphGlyph) {
-					SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+					//SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
 					//if (selected_syms.contains(ss)) { // Need this? Action doesn't.
 						boolean floating = vg.getAnnotStyle().getFloatTier();
 						hasFloater |= floating;
@@ -116,7 +120,19 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 
 	private List<ViewModeGlyph> getSelectedFloatingTiers() {
 		List<ViewModeGlyph> selectedTiers = new ArrayList<ViewModeGlyph>();
-		for (GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()) {
+		SeqMapView v = this.getSeqMapView();
+		if (null == v) {
+			return selectedTiers;
+		}
+		PixelFloaterGlyph g = v.getPixelFloater();
+		if (null == g) {
+			return selectedTiers;
+		}
+		List<GlyphI> l = g.getChildren();
+		if (null == l) {
+			return selectedTiers;
+		}
+		for (GlyphI glyph : l) {
 			if (glyph.isSelected()) {
 				selectedTiers.add((ViewModeGlyph)glyph);
 			}
@@ -125,8 +141,26 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	}
 	private void updateViewer() {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
-				getSeqMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
+				SeqMapView v = getSeqMapView();
+				GenometryModel m = GenometryModel.getGenometryModel();
+				BioSeq s = m.getSelectedSeq();
+				v.setAnnotatedSeq(s, true, true);
+				// Compensating for what I think is a bug in setAnnotatedSeq:
+				// Select the label glyph to generate a selection change event.
+				TierLabelManager mgr = v.getTierManager();
+				List<TierLabelGlyph> labels = mgr.getAllTierLabels();
+				for (TierLabelGlyph g : labels) {
+					TierGlyph tg = g.getReferenceTier();
+					ViewModeGlyph vmg = tg.getViewModeGlyph();
+					int iteration = 0;
+					if (vmg.isSelected()) {
+						mgr.select(tg);
+						mgr.doGraphSelections(0 == iteration);
+						iteration += 1;
+					}
+				}
 			}
 		});
 	}

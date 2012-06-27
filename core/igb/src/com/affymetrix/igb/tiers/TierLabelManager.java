@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.action.FloatTiersAction;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
@@ -343,7 +344,17 @@ public final class TierLabelManager implements PropertyHolder {
 		do_graph_selections = b;
 	}
 
-	private void doGraphSelections(boolean preserve_selection) {
+	/**
+	 * Handle selection generating a selection event.
+	 * This was made public to serve the {@link UnFloatTiersAction}.
+	 * It needed to restore the selection after acting
+	 * and to fire the selection changed event so the {@link FloatTiersAction}
+	 * could get the news and enable itself.
+	 * There may be other actions that act on a selection of graph glyphs.
+	 * Those may well need this too.
+	 * @param preserve_selection Clear selection if this is false.
+	 */
+	public void doGraphSelections(boolean preserve_selection) {
 		if (!do_graph_selections) {
 			return;
 		}

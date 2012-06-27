@@ -371,6 +371,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return false;
 	}
 
+	private boolean isAnyIGBTrack() { // calculated (operator) tracks
+		for (ViewModeGlyph ag : annotGlyphs) {
+			if (ag.getAnnotStyle().isIGBTrack()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	protected void viewModeComboBoxReset() {
 		JComboBox viewModeComboBox = getViewModeComboBox();
@@ -572,7 +581,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strands2TracksCheckBoxReset() {
 		JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-		strands2TracksCheckBox.setEnabled(isAllAnnot());
+		strands2TracksCheckBox.setEnabled(isAllAnnot() && !isAnyIGBTrack());
 		boolean all2Tracks = isAllAnnot();
 		for (ViewModeGlyph glyph : annotGlyphs) {
 			if (!glyph.getAnnotStyle().getSeparate()) {
@@ -586,7 +595,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strandsArrowCheckBoxReset() {
 		JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
-		strandsArrowCheckBox.setEnabled(isAllAnnot());
+		strandsArrowCheckBox.setEnabled(isAllAnnot() && !isAnyIGBTrack());
 		boolean allArrow = isAllAnnot();
 		for (ViewModeGlyph glyph : annotGlyphs) {
 			if (!(glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() || glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
@@ -611,7 +620,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strandsColorCheckBoxReset() {
 		JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
-		strandsColorCheckBox.setEnabled(isAllAnnot());
+		strandsColorCheckBox.setEnabled(isAllAnnot() && !isAnyIGBTrack());
 		strandsColorCheckBox.setSelected(isAllAnnot() && isAllStrandsColor());
 		getStrandsLabel().setEnabled(isAllAnnot());
 	}
@@ -619,7 +628,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strandsForwardColorComboBoxReset() {
 		ColorComboBox strandsForwardColorComboBox = getStrandsForwardColorComboBox();
-		strandsForwardColorComboBox.setEnabled(isAllAnnot() && isAllStrandsColor());
+		strandsForwardColorComboBox.setEnabled(isAllAnnot() && isAllStrandsColor() && !isAnyIGBTrack());
 		getStrandsForwardColorLabel().setEnabled(isAllAnnot() && isAllStrandsColor());
 		Color strandsForwardColor = null;
 		if (isAllAnnot() && isAllStrandsColor()) {
@@ -641,7 +650,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strandsReverseColorComboBoxReset() {
 		ColorComboBox strandsReverseColorComboBox = getStrandsReverseColorComboBox();
-		strandsReverseColorComboBox.setEnabled(isAllAnnot() && isAllStrandsColor());
+		strandsReverseColorComboBox.setEnabled(isAllAnnot() && isAllStrandsColor() && !isAnyIGBTrack());
 		getStrandsReverseColorLabel().setEnabled(isAllAnnot() && isAllStrandsColor());
 		Color strandsReverseColor = null;
 		if (isAllAnnot() && isAllStrandsColor()) {
@@ -658,6 +667,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 		}
 		strandsReverseColorComboBox.setSelectedColor(strandsReverseColor);
+	}
+
+	protected void strandsLabelReset() {
+		JLabel strandsLabel = getStrandsLabel();
+		strandsLabel.setEnabled(isAllAnnot() && !isAnyIGBTrack());
 	}
 
 	@Override

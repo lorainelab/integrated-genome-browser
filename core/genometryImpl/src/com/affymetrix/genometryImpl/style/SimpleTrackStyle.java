@@ -15,6 +15,7 @@ package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+
 import java.awt.Color;
 
 public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
@@ -242,5 +243,10 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	@Override
 	public void setSummaryThreshold(int level) {
 		
+	}
+
+	@Override
+	public boolean isIGBTrack() {
+		return false;
 	}
 }

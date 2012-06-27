@@ -307,4 +307,10 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void strandsLabelReset() {
+		// TODO Auto-generated method stub
+		
+	}
 }

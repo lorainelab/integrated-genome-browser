@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
@@ -1348,5 +1349,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setSummaryThreshold(int level) {
 		summaryThreshold = level;
+	}
+
+	@Override
+	public boolean isIGBTrack() {
+		return Delegate.EXT.equalsIgnoreCase(getFileType());
 	}
 }

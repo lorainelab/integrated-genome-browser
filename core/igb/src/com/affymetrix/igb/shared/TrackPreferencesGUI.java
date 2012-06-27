@@ -1126,6 +1126,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected abstract void labelSizeComboBoxReset();
 	protected abstract void colorSchemeComboBoxReset();
 	protected abstract void labelFieldComboBoxReset();
+	protected abstract void strandsLabelReset();
 	protected abstract void strands2TracksCheckBoxReset();
 	protected abstract void strandsArrowCheckBoxReset();
 	protected abstract void strandsColorCheckBoxReset();
@@ -1156,6 +1157,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		labelSizeComboBoxReset();
 		colorSchemeComboBoxReset();
 		labelFieldComboBoxReset();
+		strandsLabelReset();
 		strands2TracksCheckBoxReset();
 		strandsArrowCheckBoxReset();
 		strandsColorCheckBoxReset();

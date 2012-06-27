@@ -88,6 +88,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		igb.addAction(ShowMinusStrandAction.getAction());
 		igb.addAction(ChangeForegroundColorAction.getAction());
 		igb.addAction(ChangeBackgroundColorAction.getAction());
+		igb.addAction(ChangeForwardColorAction.getAction());
+		igb.addAction(ChangeReverseColorAction.getAction());
 		igb.addAction(RenameAction.getAction());
 		igb.addAction(ChangeFontSizeAction.getAction());
 		igb.addAction(ChangeExpandMaxAction.getAction());

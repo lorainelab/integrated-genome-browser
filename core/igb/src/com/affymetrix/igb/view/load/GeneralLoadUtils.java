@@ -743,6 +743,7 @@ public final class GeneralLoadUtils {
 						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
 					}
 				}
+				setLastRefreshStatus(feature, true);
 				GeneralLoadView.getLoadView().refreshDataManagementView();
 			}
 
@@ -803,7 +804,7 @@ public final class GeneralLoadUtils {
 				if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
 					SeqGroupView.getInstance().refreshTable();
 				}
-
+				
 				GeneralLoadView.getLoadView().refreshDataManagementView();
 								
 				if (this.isCancelled()) {

@@ -29,6 +29,7 @@ import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.Collections;
 
 import java.util.logging.Level;
@@ -113,6 +114,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 					RootSeqSymmetry rootSym = get();
 					createGlyphs(rootSym, factory, smv);
 					GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), rootSym.getChildCount() > 0);
+					GeneralLoadView.getLoadView().refreshDataManagementView();
 				} catch (Exception ex) {
 					//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 				}

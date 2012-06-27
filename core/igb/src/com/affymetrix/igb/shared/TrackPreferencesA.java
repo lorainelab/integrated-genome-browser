@@ -622,7 +622,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
 		strandsColorCheckBox.setEnabled(isAllAnnot() && !isAnyIGBTrack());
 		strandsColorCheckBox.setSelected(isAllAnnot() && isAllStrandsColor());
-		getStrandsLabel().setEnabled(isAllAnnot());
 	}
 
 	@Override

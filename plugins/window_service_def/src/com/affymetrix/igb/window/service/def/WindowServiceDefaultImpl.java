@@ -70,10 +70,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Map<JMenu, Integer> tabMenuPositions;
 	private Container cpane;
-	private JPanel topPanel; 
+	private JPanel innerPanel; 
 	private boolean tabSeparatorSet = false;
-	private JComponent topComponent1;
-	private JComponent topComponent2;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -99,31 +97,29 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		    	}
 			}
 		});
-		topPanel = new JPanel();
-		topPanel.setLayout(new BorderLayout());
-		cpane.add(topPanel, BorderLayout.NORTH);
+		innerPanel = new JPanel();
+		innerPanel.setLayout(new BorderLayout());
+		cpane.add(innerPanel, BorderLayout.CENTER);
 	}
 
 	@Override
 	public void setStatusBar(JComponent status_bar) {
-		cpane.add(status_bar, BorderLayout.SOUTH);
+		innerPanel.add(status_bar, BorderLayout.SOUTH);
 	}
 
 	@Override
 	public void setToolBar(JToolBar tool_bar) {
-		topPanel.add(tool_bar, BorderLayout.SOUTH);
+		cpane.add(tool_bar, BorderLayout.NORTH);
 	}
 
 	@Override
 	public void setTopComponent1(JComponent topComponent1) {
-		this.topComponent1 = topComponent1;
-		topPanel.add(topComponent1, BorderLayout.NORTH);
+		innerPanel.add(topComponent1, BorderLayout.NORTH);
 	}
 
 	@Override
 	public void setTopComponent2(JComponent topComponent2) {
-		this.topComponent2 = topComponent2;
-		topPanel.add(topComponent2, BorderLayout.CENTER);
+		// not implemented
 	}
 
 	@Override
@@ -157,7 +153,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		catch (Exception x) {
 			right_pane.invokeTrayState(TrayState.getDefaultTrayState());
 		}
-		cpane.add("Center", right_pane);
+		innerPanel.add(right_pane, BorderLayout.CENTER);
 	}
 
 	@Override

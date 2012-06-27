@@ -436,10 +436,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		}
 	}
 
-	protected int getStairStepEnd(ViewI view, GraphSym graphSym, int nextx, int xtemp) {
-		return curr_point.x;
-	}
-
 	protected void drawLabel(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 		Graphics g = view.getGraphics();

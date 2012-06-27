@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -46,7 +47,7 @@ public class TrackUtils {
 		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
-		TrackStyle style = TrackStyle.getInstance(unique_name, false);
+		TrackStyle style = TrackStyle.getInstance(unique_name, Delegate.EXT, false);
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands

@@ -89,6 +89,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return getInstance(unique_name, track_name, file_type, true, true, null);
 	}
 
+	public static TrackStyle getInstance(String unique_name, String file_type, boolean persistent) {
+		return getInstance(unique_name, null, file_type, persistent, false, null);
+	}
+	
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {
 		return getInstance(unique_name, null, null, persistent, false, null);
 	}

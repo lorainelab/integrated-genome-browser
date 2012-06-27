@@ -5,11 +5,11 @@ import com.affymetrix.igb.shared.MapViewModeHolder;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -80,8 +80,12 @@ public class OperatorGlyphFactory extends MapViewGlyphFactoryA {
 		
 		if (result_sym != null) {
 			if(result_sym instanceof GraphSym){
+				GraphSym graphSym = (GraphSym)result_sym;
 				if(operator.getOperandCountMin(operator.getOutputCategory()) == 0){
-					((GraphSym)result_sym).setGraphState(new GraphState(style));
+					boolean isGraph = style.isGraphTier();
+					graphSym.setID(meth);
+					graphSym.setGraphState(graphSym.getGraphState());
+					style.setGraphTier(isGraph); // may get modified above, so reset it back
 				}
 			}else if(!(result_sym instanceof RootSeqSymmetry)){
 				TypeContainerAnnot container = new TypeContainerAnnot(meth);

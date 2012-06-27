@@ -1,27 +1,69 @@
 package com.affymetrix.igb.action;
 
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
-import java.util.List;
-
-import javax.swing.SwingUtilities;
-
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.view.SeqMapView;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
+import javax.swing.SwingUtilities;
 
 public class FloatTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 
 	private static final FloatTiersAction ACTION = new FloatTiersAction();
 
-	static{
+	private Enabler enabler = new Enabler();
+
+	private class Enabler implements SymSelectionListener {
+
+		@Override
+		public void symSelectionChanged(SymSelectionEvent evt) {
+
+			// Only pay attention to selections from the main SeqMapView or its map.
+			// Ignore the splice view as well as events coming from this class itself.
+			Object src = evt.getSource();
+			SeqMapView gviewer = getSeqMapView();
+			if (!(src == gviewer || src == gviewer.getSeqMap())) {
+				return;
+			}
+
+			@SuppressWarnings("unchecked")
+			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
+			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
+
+			boolean hasFloater = false;
+			boolean hasAnchored = false;
+			for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
+				ViewModeGlyph vg = tg.getViewModeGlyph();
+				if (vg instanceof AbstractGraphGlyph) {
+					SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+					if (selected_syms.contains(ss)) { // Need this? Action doesn't.
+						boolean floating = vg.getAnnotStyle().getFloatTier();
+						hasFloater |= floating;
+						hasAnchored |= !floating;
+					}
+				}
+			}
+			ACTION.setEnabled(hasAnchored);
+
+		}
+		
+	};
+
+	static {
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION.enabler);
+		ACTION.setEnabled(false);
 	}
 	
 	public static FloatTiersAction getAction() {
@@ -29,7 +71,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 	}
 
 	public FloatTiersAction() {
-		super("Float", "16x16/actions/float.png", "22x22/actions/float.png");
+		super("Float Track", "16x16/actions/float.png", "22x22/actions/float.png");
 	}
 
 	@Override
@@ -67,6 +109,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 
 	private void updateViewer() {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				getSeqMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
 			}

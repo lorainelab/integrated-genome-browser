@@ -118,12 +118,13 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tier_style = gstate.getComboStyle();
 		}
 
-		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
-//		if (pspan == null || pspan.getLength() == 0) {
-		if (pspan == null) {
-			return null;
-		}
-		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
+		graph_glyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
+//		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
+////		if (pspan == null || pspan.getLength() == 0) {
+//		if (pspan == null) {
+//			return null;
+//		}
+//		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
 		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)

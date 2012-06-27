@@ -58,6 +58,19 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 		}
 
 		@Override
+		protected void bigDrawLoop(
+				int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
+				Graphics g, Point max_x_plus_width, GraphSym graphSym) {
+			MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
+			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			if (!mmgs.hasReferenceSequence()) {
+				seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
+			}
+			super.bigDrawLoop(draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width,
+					g, max_x_plus_width, graphSym);
+		}
+
+		@Override
 		protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
 			setBaseColor();
 			MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
@@ -65,9 +78,6 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 
 			final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
 			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-			if (!mmgs.hasReferenceSequence()) {
-				seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
-			}
 			// need to draw coverage first, then mismatches so that the mismatches are not covered up
 			g.setColor(MATCH_COLOR);
 			super.doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width, ytemp, draw_end_index, offset, yscale, view, i);

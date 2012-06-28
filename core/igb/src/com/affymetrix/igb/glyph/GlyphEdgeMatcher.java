@@ -78,7 +78,8 @@ public final class GlyphEdgeMatcher  {
   
   private void matchEdges(NeoMap map, GlyphI query, GlyphI target, List<GlyphI> match_glyphs) {
     // Simply skip all TransientGlyph, such as the hairline shadow
-    if ((target instanceof TransientGlyph) || (query instanceof TransientGlyph)) {
+    if ((target instanceof TransientGlyph) || (query instanceof TransientGlyph)
+			|| target.getSkipDraw() || query.getSkipDraw()) {
       return;
     }
 

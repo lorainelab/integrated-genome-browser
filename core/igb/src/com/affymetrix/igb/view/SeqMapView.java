@@ -310,9 +310,9 @@ public class SeqMapView extends JPanel
 		}
 	};
 
-	public SeqMapView(boolean add_popups, String id) {
+	public SeqMapView(boolean add_popups, String theId) {
 		super();
-		this.id = id;
+		this.id = theId;
 		ScriptManager.getInstance().addWidget(this);
 		seqmap = createAffyTieredMap();
 
@@ -334,10 +334,10 @@ public class SeqMapView extends JPanel
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
-		Adjustable xzoomer = getXZoomer(id);
+		Adjustable xzoomer = getXZoomer(this.id);
 
 		((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
-		Adjustable yzoomer = new RPAdjustableJSlider(id + "_yzoomer", Adjustable.VERTICAL);
+		Adjustable yzoomer = new RPAdjustableJSlider(this.id + "_yzoomer", Adjustable.VERTICAL);
 		((JSlider) yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
@@ -367,6 +367,7 @@ public class SeqMapView extends JPanel
 		// grid with properties of the Type.
 		TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
 
+			@Override
 			public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
 				// TODO:  Find properties of selected track and show in 'Selection Info' tab.
 			}
@@ -400,8 +401,11 @@ public class SeqMapView extends JPanel
 
 		xzoombox = Box.createHorizontalBox();
 		map_range_box = new MapRangeBox(this);
-		JRPButton searchButton = new JRPButton(id + "_search_button",
-			new GenericAction(null, BUNDLE.getString("goToRegionToolTip"), "16x16/actions/system-search.png", "22x22/actions/system-search.png", KeyEvent.VK_UNDEFINED) {
+		JRPButton searchButton = new JRPButton(this.id + "_search_button",
+			new GenericAction(null, BUNDLE.getString("goToRegionToolTip"),
+				"16x16/actions/system-search.png",
+				null, //"22x22/actions/system-search.png",
+				KeyEvent.VK_UNDEFINED) {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -414,12 +418,14 @@ public class SeqMapView extends JPanel
 
 		xzoombox.add(map_range_box.range_box);
 
-		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeSelectAction(getId()));
+		select_mode_button = new JRPToggleButton(this.id + "_select_mode_button",
+				new MapModeSelectAction(this.id));
 		select_mode_button.setText("");
 		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
 		xzoombox.add(select_mode_button);
 
-		scroll_mode_button = new JRPToggleButton(id + "_scroll_mode_button", new MapModeScrollAction(getId()));
+		scroll_mode_button = new JRPToggleButton(this.id + "_scroll_mode_button",
+				new MapModeScrollAction(this.id));
 		scroll_mode_button.setText("");
 		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
 		xzoombox.add(scroll_mode_button);
@@ -438,7 +444,7 @@ public class SeqMapView extends JPanel
 		xzoombox.add((Component) xzoomer);
 
 		refreshDataAction = new RefreshDataAction(this);
-		addRefreshButton(id);
+		addRefreshButton(this.id);
 
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 		JPanel pan = new JPanel(new BorderLayout());

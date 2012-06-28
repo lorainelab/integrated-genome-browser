@@ -24,7 +24,7 @@ public class ShowAllAction extends RepackTiersAction {
 	}
 
 	private ShowAllAction() {
-		super(BUNDLE.getString("showAllAction"), "16x16/status/weather-few-clouds.png", null);
+		super(BUNDLE.getString("showAllAction"), "16x16/status/weather-few-clouds.png", "22x22/status/weather-few-clouds.png");
 	}
 
 	public void showAllTiers() {

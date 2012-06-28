@@ -27,7 +27,7 @@ public class CustomizeAction extends SeqMapViewActionA {
 	}
 
 	private CustomizeAction() {
-		super(BUNDLE.getString("customizeAction"), null, "16x16/categories/preferences-system.png", null, KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("customizeAction"), null, null, null, KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	private void showCustomizer() {

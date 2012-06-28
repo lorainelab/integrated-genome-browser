@@ -56,7 +56,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	private final Map<CThreadWorker<?,?>, Box> cThreadWorker2Box = new HashMap<CThreadWorker<?,?>, Box>();
 	
 	private ThreadHandlerAction(){
-		super("Handle Threads", "16x16/status/image-loading.png","22x22/status/image-loading.png");
+		super("Handle Threads", null, null);
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		CThreadHolder.getInstance().addListener(this);

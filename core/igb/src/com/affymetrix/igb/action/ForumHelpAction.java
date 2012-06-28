@@ -28,7 +28,7 @@ public class ForumHelpAction extends GenericAction {
 	}
 
 	private ForumHelpAction() {
-		super(MessageFormat.format(BUNDLE.getString("forumHelp"),APP_NAME), null, "16x16/apps/help-browser.png","22x22/apps/help-browser.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(MessageFormat.format(BUNDLE.getString("forumHelp"),APP_NAME), null, "16x16/actions/address-book-new.png","22x22/actions/address-book-new.png", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override

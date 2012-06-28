@@ -27,7 +27,7 @@ public class DocumentationAction extends GenericAction {
 	}
 
 	private DocumentationAction() {
-		super(BUNDLE.getString("documentation"), null, "16x16/status/dialog-information.png", "22x22/status/dialog-information.png", KeyEvent.VK_D, null, true);
+		super(BUNDLE.getString("documentation"), null, "16x16/actions/edit-find-replace.png", "22x22/actions/edit-find-replace.png", KeyEvent.VK_D, null, true);
 	}
 
 	@Override

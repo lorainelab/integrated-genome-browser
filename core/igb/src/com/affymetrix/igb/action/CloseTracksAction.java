@@ -29,8 +29,8 @@ extends SeqMapViewActionA implements SymSelectionListener {
 
 	protected CloseTracksAction() {
 		super(IGBConstants.BUNDLE.getString("closeTracksAction"),
-				"16x16/status/user-trash-full.png",
-				"22x22/status/user-trash-full.png");
+				"16x16/status/image-missing.png",
+				"22x22/status/image-missing.png");
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class PrintFrameAction extends GenericAction {
 	}
 
 	private PrintFrameAction() {
-		super(BUNDLE.getString("printWhole"), null, "16x16/devices/printer.png", "22x22/devices/printer.png", KeyEvent.VK_P, null, true);
+		super(BUNDLE.getString("printWhole"), null, "16x16/actions/document-print-preview.png", "22x22/actions/document-print-preview.png", KeyEvent.VK_P, null, true);
 	}
 
 	@Override

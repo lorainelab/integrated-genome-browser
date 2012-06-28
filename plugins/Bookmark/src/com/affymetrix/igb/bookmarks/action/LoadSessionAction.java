@@ -23,7 +23,7 @@ public class LoadSessionAction extends GenericAction {
 
 	public LoadSessionAction(IGBService igbService) {
 		super(BookmarkManagerView.BUNDLE.getString("loadSession"), null,
-				"16x16/actions/document-open.png", "22x22/actions/document-open.png",
+				"16x16/places/user-home.png", "22x22/places/user-home.png",
 				KeyEvent.VK_L, null, true);
 		this.igbService = igbService;
 	}

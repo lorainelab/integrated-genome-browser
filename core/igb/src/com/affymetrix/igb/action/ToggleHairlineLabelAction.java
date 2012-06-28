@@ -20,7 +20,7 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 	private static final ToggleHairlineLabelAction ACTION = new ToggleHairlineLabelAction();
 
 	private ToggleHairlineLabelAction() {
-		super(BUNDLE.getString("toggleHairlineLabel"), KeyEvent.VK_H);
+		super(BUNDLE.getString("toggleHairlineLabel"), null, "16x16/apps/office-calender.png", null, KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 

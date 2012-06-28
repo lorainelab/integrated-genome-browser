@@ -37,7 +37,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 	}
 
 	private ViewGenomicSequenceInSeqViewerAction() {
-		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/system-search.png", "22x22/actions/system-search.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/edit-find.png", "22x22/actions/edit-find.png", KeyEvent.VK_UNDEFINED, null, true);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 //		if (ks != null) {

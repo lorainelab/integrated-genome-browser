@@ -464,4 +464,8 @@ public interface GlyphI extends NeoConstants  {
 	public boolean isOverlapped();
 	
 	public void setOverlapped(boolean overlapped);
+	
+	public boolean getSkipDraw();
+	
+	public void setSkipDraw(boolean skip);
 }

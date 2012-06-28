@@ -59,6 +59,7 @@ public abstract class Glyph implements GlyphI  {
 
 	private boolean selectable = true;
 	private boolean overlapped = false;
+	private boolean skipDraw = false;
 
 	public Glyph()
 	{
@@ -279,7 +280,7 @@ public abstract class Glyph implements GlyphI  {
 			}
 		}
 	}
-
+	
 
 	/**
 	 * Detects whether or not this glyph is "hit"
@@ -583,6 +584,14 @@ public abstract class Glyph implements GlyphI  {
 		this.overlapped = overlapped;
 	}
 
+	public boolean getSkipDraw(){
+		return skipDraw;
+	}
+	
+	public void setSkipDraw(boolean skip){
+		this.skipDraw = skip;
+	}
+	
 	public void setFont(Font f) {
 		this.glyphStyle = stylefactory.getStyle( glyphStyle.getForegroundColor(), glyphStyle.getBackgroundColor(), f );
 	}

@@ -38,7 +38,14 @@ import java.awt.geom.Rectangle2D;
 public class TierGlyph extends SolidGlyph {
 	protected ITrackStyleExtended style;
 	public static enum Direction {
-		FORWARD, NONE, REVERSE, BOTH, AXIS
+		FORWARD(" (+)"), NONE(""), REVERSE(" (-)"), BOTH(" (+/-)"), AXIS("");
+		private final String display;
+		private Direction(String display) {
+			this.display = display;
+		}
+		public String getDisplay() {
+			return display;
+		}
 	};
 	private Direction direction = Direction.NONE;
 

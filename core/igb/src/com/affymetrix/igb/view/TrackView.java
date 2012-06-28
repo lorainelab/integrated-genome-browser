@@ -228,10 +228,20 @@ public class TrackView {
 					style.setSeparate(false);
 				}
 			}
-			TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+			Direction direction = null;
+			if (annotSym instanceof GraphSym) {
+				direction = Direction.NONE;
+			}
+			else if (style.getSeparate()) {
+				direction = Direction.FORWARD;
+			}
+			else {
+				direction = Direction.BOTH;
+			}
+			TierGlyph mainTier = smv.getTrack(annotSym, style, direction);
 			mainTier.setInfo(annotSym);
 			if (style.getSeparate()) {
-				TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+				TierGlyph secondTier = smv.getTrack(annotSym, style, TierGlyph.Direction.REVERSE);
 				secondTier.setInfo(annotSym);
 			}
 			return;

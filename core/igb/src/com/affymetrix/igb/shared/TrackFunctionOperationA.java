@@ -65,8 +65,13 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	protected String getMethod(List<? extends GlyphI> vgs) {
 		StringBuilder meth = new StringBuilder();
 		meth.append(getOperator().getDisplay()).append(": ");
-		for (GlyphI gl : vgs) {			
-			meth.append(((ViewModeGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
+		boolean started = false;
+		for (GlyphI gl : vgs) {
+			if (started) {
+				meth.append(", ");
+			}
+			meth.append(((ViewModeGlyph)gl).getAnnotStyle().getTrackName()).append(((ViewModeGlyph)gl).getDirection().getDisplay());
+			started = true;
 		}
 		return meth.toString();
 	}

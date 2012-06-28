@@ -1071,7 +1071,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		final float range = max - min;
-		int index = (int) ((score / range) * 255);
+		int index = (int) (((score - min) / range) * 255);
 
 		return getCustomHeatMap().getColors()[index];
 	}

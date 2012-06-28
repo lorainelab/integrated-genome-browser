@@ -10,7 +10,6 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 

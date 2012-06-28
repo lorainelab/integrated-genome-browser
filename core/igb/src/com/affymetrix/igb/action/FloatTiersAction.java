@@ -31,7 +31,6 @@ public class FloatTiersAction extends SeqMapViewActionA {
 
 		@Override
 		public void symSelectionChanged(SymSelectionEvent evt) {
-//(new RuntimeException(this.getClass().getName() + ".symSelectionChanged")).printStackTrace();
 			// Only pay attention to selections from the main SeqMapView or its map.
 			// Ignore the splice view as well as events coming from this class itself.
 			Object src = evt.getSource();

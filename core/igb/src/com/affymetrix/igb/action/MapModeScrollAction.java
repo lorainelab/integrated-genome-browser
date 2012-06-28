@@ -1,10 +1,9 @@
 package com.affymetrix.igb.action;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  * button action for SeqMapView modes
@@ -16,7 +15,7 @@ public class MapModeScrollAction extends SeqMapViewActionA {
 		super(
 			  BUNDLE.getString(MapMode.MapScrollMode.name() + "Button"),
 			  BUNDLE.getString(MapMode.MapScrollMode.name() + "Tip"),
-			  "16x16/actions/open_hand.png", null,
+			  "16x16/actions/open_hand.png",  "16x16/actions/open_hand.png",
 			  KeyEvent.VK_UNDEFINED
 		);
 		this.id = id;

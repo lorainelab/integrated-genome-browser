@@ -129,6 +129,10 @@ public final class KeyStrokesView implements ListSelectionListener,
 				hasGetAction = true;
 			} catch (NoSuchMethodException x) {
 				hasGetAction = false;
+			} catch (NullPointerException npe) {
+				System.err.println(KeyStrokesView.class.getName() + ".filterActions: " + npe.getMessage());
+				System.err.println(KeyStrokesView.class.getName() + ".filterActions: Trying to get class for " + key);
+				hasGetAction = false;
 			}
 			if (hasGetAction && genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
 				actions.add(key);

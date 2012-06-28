@@ -90,5 +90,4 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public void setLabelBackground(Color c);
 	public int getSummaryThreshold();
 	public void setSummaryThreshold(int level);
-	public boolean isIGBTrack();
 }

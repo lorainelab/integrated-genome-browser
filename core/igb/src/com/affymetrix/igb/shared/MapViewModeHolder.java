@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -68,6 +69,9 @@ public class MapViewModeHolder {
 	}
 
 	public boolean styleSupportsTwoTrack(ITrackStyleExtended style) {
+		if (Delegate.EXT.equalsIgnoreCase(style.getFileType())) {
+			return false;
+		}
 		String viewMode = style.getViewMode();
 		if (viewMode.equals(TrackConstants.default_view_mode)) {
 			viewMode = getDefaultFactoryFor(style.getFileTypeCategory()).getName();

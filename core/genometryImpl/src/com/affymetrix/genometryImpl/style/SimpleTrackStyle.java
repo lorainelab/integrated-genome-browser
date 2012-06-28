@@ -244,9 +244,4 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public void setSummaryThreshold(int level) {
 		
 	}
-
-	@Override
-	public boolean isIGBTrack() {
-		return false;
-	}
 }

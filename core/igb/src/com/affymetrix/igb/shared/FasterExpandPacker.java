@@ -143,13 +143,14 @@ public class FasterExpandPacker extends ExpandPacker {
 		double prev_min_xmax = Double.POSITIVE_INFINITY;
 		int min_xmax_slot_index = 0;	//index of slot with max of prev_min_xmax
 		int prev_slot_index = 0;
-		GlyphI layeredChild = null;
-
+		boolean skipDraw = false;
+		
 		List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
 		for (int i = 0; i < child_count; i++) {
 			GlyphI child = children.get(i);
 			child.setVisibility(true);
 			child.setOverlapped(false);
+			child.setSkipDraw(false);
 			cbox = child.getCoordBox();
 			double child_min = cbox.x;
 			double child_max = child_min + cbox.width;
@@ -177,6 +178,7 @@ public class FasterExpandPacker extends ExpandPacker {
 						prev_slot_index = 0;
 						min_xmax_slot_index = 0;
 						prev_min_xmax = slot_maxes.get(0);
+						skipDraw = false;
 					} else if (child_max < prev_min_xmax) {
 						prev_min_xmax = child_max;
 						min_xmax_slot_index = slot_index;
@@ -193,11 +195,12 @@ public class FasterExpandPacker extends ExpandPacker {
 				if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
 					int slot_index = slot_maxes.size() - 1;
 					prev_slot_index = slot_index;
-
-					if (layeredChild == null) {
-						layeredChild = child;	// First child that could be layered
-					} 
+ 
 					child.setOverlapped(true);
+					child.setSkipDraw(skipDraw);
+					
+					skipDraw = true;
+					//chr1 : 16,091,572 - 16,339,646
 				} else {
 					slot_maxes.add(child_max);
 					int slot_index = slot_maxes.size() - 1;

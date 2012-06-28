@@ -238,11 +238,13 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 					// TransientGlyphs are usually NOT drawn in standard drawTraversal
 					if (!(child instanceof TransientGlyph) || drawTransients()) {
 						if (child.isOverlapped()) {
-							Graphics2D g = view.getGraphics();
-							Composite dac = g.getComposite();
-							g.setComposite(ac);
-							child.drawTraversal(view);
-							g.setComposite(dac);
+							if (!child.getSkipDraw()) {
+								Graphics2D g = view.getGraphics();
+								Composite dac = g.getComposite();
+								g.setComposite(ac);
+								child.drawTraversal(view);
+								g.setComposite(dac);
+							}
 						} else {
 							child.drawTraversal(view);
 						}

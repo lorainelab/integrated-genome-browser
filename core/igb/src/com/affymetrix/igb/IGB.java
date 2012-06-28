@@ -434,8 +434,13 @@ public final class IGB extends Application
 				return plugin;
 			}
 		}
-		String message = getClass().getName() + ".getView() failed for " + viewName;
-		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, message);
+		String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";
+		try {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, message);
+		}
+		catch (Exception x) {
+			System.out.println(message);
+		}
 		return null;
 	}
 

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -228,7 +227,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			} catch (InterruptedException x) {
 			}
 		} else if (step.getWaitFor() == null) {
-			waitFor = TutorialNextAction.class.getSimpleName(); // default
+			waitFor = TutorialNextAction.class.getName(); // default
 //			highlightWidget("TutorialNavigator_next");
 			return false;
 		} else {

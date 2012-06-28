@@ -11,8 +11,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -117,6 +115,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 				GenometryModel m = GenometryModel.getGenometryModel();
 				BioSeq s = m.getSelectedSeq();
 				v.setAnnotatedSeq(s, true, true);
+				v.postSelections(); // to disable partner.
 			}
 		});
 	}

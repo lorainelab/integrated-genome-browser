@@ -382,6 +382,10 @@ public class Activator implements BundleActivator {
 		UnsetDirectionStyleArrowAction.getAction();
 		SetDirectionStyleColorAction.getAction();
 		UnsetDirectionStyleColorAction.getAction();
+		GenericActionHolder.getInstance().addGenericAction(
+				new SeqMapToggleAction(
+				FloatTiersAction.getAction(),
+				UnFloatTiersAction.getAction()));
 
 		// These are not in the toolbar,
 		// but they have keyboard shortcuts (accelerators)

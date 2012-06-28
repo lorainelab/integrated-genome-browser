@@ -26,7 +26,7 @@ public class PreferencesHelpTabAction extends HelpActionA {
 	}
 
 	private PreferencesHelpTabAction() {
-		super(BUNDLE.getString("PreferencesHelpForCurrentTab"), null, "16x16/apps/help-browser.png","22x22/apps/help-browser.png", KeyEvent.VK_C, null, true);
+		super(BUNDLE.getString("PreferencesHelpForCurrentTab"), null, "16x16/actions/tab-new.png","22x22/actions/tab-new.png", KeyEvent.VK_C, null, true);
 		putValue(ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
 	}
 

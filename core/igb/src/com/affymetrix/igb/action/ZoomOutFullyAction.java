@@ -21,7 +21,7 @@ public class ZoomOutFullyAction extends SeqMapViewActionA {
 	}
 
 	public ZoomOutFullyAction() {
-		super("Home Position", "Zoom out fully", "toolbarButtonGraphics/general/ZoomOut16.gif", null, KeyEvent.VK_UNDEFINED);
+		super("Home Position", "Zoom out fully", "16x16/actions/go-home.png", null, KeyEvent.VK_UNDEFINED);
 	}
 
 	@Override

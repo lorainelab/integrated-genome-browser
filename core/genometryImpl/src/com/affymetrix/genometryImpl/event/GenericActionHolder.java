@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.Action;
@@ -33,7 +34,9 @@ public class GenericActionHolder {
 	 * @param genericAction to add.
 	 */
 	public void addGenericAction(GenericAction genericAction) {
-		genericActions.put(genericAction.getId(), genericAction);
+		synchronized(genericActions) {
+			genericActions.put(genericAction.getId(), genericAction);
+		}
 		KeyStroke k = PreferenceUtils.getAccelerator(genericAction.getClass().getName());
 		genericAction.putValue(Action.ACCELERATOR_KEY, k);
 		for (GenericActionListener listener : listeners) {
@@ -53,26 +56,40 @@ public class GenericActionHolder {
 	 * @param genericAction to add.
 	 */
 	public void addGenericActionSilently(GenericAction genericAction) {
-		genericActions.put(genericAction.getId(), genericAction);
+		synchronized(genericActions) {
+			genericActions.put(genericAction.getId(), genericAction);
+		}
 		KeyStroke k = PreferenceUtils.getAccelerator(genericAction.getClass().getName());
 		genericAction.putValue(Action.ACCELERATOR_KEY, k);
 	}
 
 	public void removeGenericAction(GenericAction genericAction) {
-		genericActions.remove(genericAction.getId());
+		synchronized(genericActions) {
+			genericActions.remove(genericAction.getId());
+		}
 	}
 
 	public GenericAction getGenericAction(String name) {
-		return genericActions.get(name);
+		synchronized(genericActions) {
+			return genericActions.get(name);
+		}
 	}
 
 	public Set<String> getGenericActionIds() {
-		return new CopyOnWriteArraySet<String>(genericActions.keySet());
+		synchronized(genericActions) {
+			return new CopyOnWriteArraySet<String>(genericActions.keySet());
+		}
+	}
+
+	public Set<GenericAction> getGenericActions() {
+		synchronized(genericActions) {
+			return new CopyOnWriteArraySet<GenericAction>(genericActions.values());
+		}
 	}
 
 	public void addGenericActionListener(GenericActionListener listener) {
 		listeners.add(listener);
-		for (GenericAction genericAction : genericActions.values()) {
+		for (GenericAction genericAction : getGenericActions()) {
 			listener.onCreateGenericAction(genericAction);
 		}
 	}
@@ -82,7 +99,7 @@ public class GenericActionHolder {
 	}
 
 	public void notifyActionPerformed(GenericAction action) {
-		for (GenericActionListener listener : listeners) {
+		for (GenericActionListener listener : new CopyOnWriteArrayList<GenericActionListener>(listeners)) {
 			listener.notifyGenericAction(action);
 		}
 	}

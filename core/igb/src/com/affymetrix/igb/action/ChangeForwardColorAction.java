@@ -20,7 +20,7 @@ public class ChangeForwardColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeForwardColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeForwardColorAction"), "16x16/actions/go-next.png", "22x22/actions/go-next.png");
+		super(IGBConstants.BUNDLE.getString("changeForwardColorAction"), "16x16/actions/go-next.png", null);
 	}
 
 	@Override

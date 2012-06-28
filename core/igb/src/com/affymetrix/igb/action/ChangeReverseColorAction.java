@@ -20,7 +20,7 @@ public class ChangeReverseColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeReverseColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeReverseColorAction"), "16x16/actions/go-previous.png", "22x22/actions/go-previous.png");
+		super(IGBConstants.BUNDLE.getString("changeReverseColorAction"), "16x16/actions/go-previous.png", null);
 	}
 
 	@Override

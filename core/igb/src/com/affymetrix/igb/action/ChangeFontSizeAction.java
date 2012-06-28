@@ -29,7 +29,7 @@ public class ChangeFontSizeAction extends SeqMapViewActionA {
 	}
 
 	private ChangeFontSizeAction() {
-		super(BUNDLE.getString("changeFontSizeAction"), "16x16/mimetypes/font-x-generic.png", null);
+		super(BUNDLE.getString("changeFontSizeAction"), null, null);
 	}
 
 	private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size) {

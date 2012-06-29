@@ -492,6 +492,9 @@ public final class GeneralUtils {
 	}
 
 	public static String fixFileName(String fileName) {
+		if (fileName.startsWith("http:/") || fileName.startsWith("https:/")) {
+			return fileName;
+		}
 		String fixedFileName = fileName;
 		if (fileName.startsWith("file:/")) {
 			fixedFileName = fileName.substring(getFileScheme().length());

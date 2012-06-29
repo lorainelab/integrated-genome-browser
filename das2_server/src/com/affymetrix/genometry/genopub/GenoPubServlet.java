@@ -3100,8 +3100,11 @@ public class GenoPubServlet extends HttpServlet {
 		return message;
 	}
 
-	/**Checks the bulk upload file before making any annotations. Returns null if all OK or error messages.
-	 * @author davidnix*/
+	/**
+	 * Checks the bulk upload file before making any annotations.
+	 * @return null if all OK or error messages.
+	 * - davidnix
+	 */
 	private String validateBulkUploadFile(File spreadSheet)   {
 		//for each line check params are OK
 		BufferedReader in = null;
@@ -3183,8 +3186,12 @@ public class GenoPubServlet extends HttpServlet {
 		return null;
 	}
 
-	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
-	 * @author davidnix*/
+	/**
+	 * Reads in a tab delimited file (name, fullPathFileName, summary, description)
+	 * describing new Annotations
+	 * to be created using a sourceAnnotation as a template.
+	 * - davidnix
+	 */
 	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping defaultAnnotationGrouping, HttpServletResponse res) 
 	throws Exception  {
 
@@ -3257,9 +3264,12 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	/**Looks for an Annotation in the provided AnnotationGrouping with the given name.  Returns null if not found or its directory.
+	/**
+	 * Looks for an Annotation in the provided AnnotationGrouping with the given name.
 	 * Used for adding multiple files to the same Annotation to suport bar and bam file formats.
-	 * @author davidnix*/
+	 * @return null if not found or its directory.
+	 * - davidnix
+	 */
 	private File fetchAnnotationDirectory (AnnotationGrouping ag, String annotationName){
 		Iterator it = ag.getAnnotations().iterator();
 		while (it.hasNext()){
@@ -3269,8 +3279,11 @@ public class GenoPubServlet extends HttpServlet {
 		return null;
 	}
 
-	/**Fetches the AnnotationGrouping from a particular request. For bulk uploading.
-	 * @author davidnix*/
+	/**
+	 * Fetches the AnnotationGrouping from a particular request.
+	 * For bulk uploading.
+	 * - davidnix
+	 */
 	private AnnotationGrouping getDefaultAnnotationGrouping(Annotation sourceAnnot, Session sess, Integer idAnnotationGrouping) throws Exception{		
 		// Get the annotation grouping this annotation is in.
 		AnnotationGrouping ag = null;
@@ -3325,8 +3338,11 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	/**Adds a new Annotation cloning in part the source annotation. For bulk uploading.
-	 * @author davidnix*/
+	/**
+	 * Adds a new Annotation cloning in part the source annotation.
+	 * For bulk uploading.
+	 * - davidnix
+	 */
 	private void addNewClonedAnnotation(Session sess, Annotation sourceAnnot, String name, String summary, String description, File dataFile, AnnotationGrouping ag, HttpServletResponse res) 
 	throws BulkFileUploadException, InsufficientPermissionException {		
 

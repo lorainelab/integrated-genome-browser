@@ -61,7 +61,7 @@ extends GenericAction implements SymSelectionListener {
 
 	/**
 	 * Override to enable or disable self based on tracks selected.
-	 * Note that this must match {@link #actionPerformed(java.awt.event.ActionEvent) 
+	 * Note that this must match {@link #actionPerformed(java.awt.event.ActionEvent} 
 	 * which only works when one track is selected.
 	 */
 	@Override

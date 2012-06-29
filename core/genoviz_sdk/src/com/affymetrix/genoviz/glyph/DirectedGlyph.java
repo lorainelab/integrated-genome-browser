@@ -40,8 +40,8 @@ public abstract class DirectedGlyph extends SolidGlyph {
 	private int orientation = NeoConstants.HORIZONTAL;
 
 	/**
-	 * @param theOrientation must be one of {@link NeoConstants.HORIZONTAL}
-	 *        or {@link NeoConstants.VERTICAL}
+	 * @param theOrientation must be one of {@link NeoConstants#HORIZONTAL}
+	 *        or {@link NeoConstants#VERTICAL}
 	 */
 	public void setOrientation( int theOrientation ) {
 		switch ( theOrientation ) {

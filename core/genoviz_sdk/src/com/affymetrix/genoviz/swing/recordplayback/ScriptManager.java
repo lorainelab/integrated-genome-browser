@@ -101,8 +101,7 @@ public class ScriptManager {
 	}
 
 	/**
-	 * run text lines in the specified scripting language
-	 * @param line the script line
+	 * Run text lines in the specified scripting language.
 	 */
 	public void runScriptString(String scriptText, String extension) {
 		try {

@@ -29,8 +29,7 @@ public class EfficientSolidGlyph extends Glyph  {
    public boolean is_Compulsary = false;
 
   /**
-   * @return whether or not this glyph is hitable
-   * @see #setHitable
+   * @return true. These glyphs are always hitable.
    */
 	@Override
   public boolean isHitable() {

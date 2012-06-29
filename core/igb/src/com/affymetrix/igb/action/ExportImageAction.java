@@ -41,4 +41,9 @@ public class ExportImageAction extends GenericAction {
 			ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);
 		}
 	}
+
+	@Override
+	public int getOrdinal() {
+		return -9002000;
+	}
 }

@@ -90,4 +90,9 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 		
 		changeColor((Color)parameter);
 	}
+
+	@Override
+	public int getOrdinal() {
+		return -6000000;
+	}
 }

@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.operator.ICopy;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -152,15 +153,24 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private JMenu addViewModeMenu(final TierGlyph glyph) {
 		JMenu viewModeMenu = new JMenu(BUNDLE.getString("viewModeMenu"));
-		if (glyph != null && glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
-			final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+		if (glyph != null && glyph.getAnnotStyle() != null) {
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
-			for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
-				Action action = new ChangeViewModeAction(mode);
-				if(mode.getName().equals(style.getViewMode())){
-					action.putValue(Action.SELECTED_KEY, true);
+			FileTypeCategory category = null;
+			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
+				RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+				category = rootSym.getCategory();
+			}
+			else {
+				category = style.getFileTypeCategory();
+			}
+			if (category != null) {
+				for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName())) {
+					Action action = new ChangeViewModeAction(mode);
+					if(mode.getName().equals(style.getViewMode())){
+						action.putValue(Action.SELECTED_KEY, true);
+					}
+					viewModeMenu.add(new JCheckBoxMenuItem(action));
 				}
-				viewModeMenu.add(new JCheckBoxMenuItem(action));
 			}
 		}
 		viewModeMenu.setEnabled(viewModeMenu.getMenuComponentCount() > 0);

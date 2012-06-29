@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -171,7 +172,9 @@ public class TrackView {
 		}
 		if (comboStyle == null) {
 			style.setViewMode(viewMode);
-			gviewer.addAnnotationTrackFor(style);
+			if (rootSym != null) {
+				gviewer.addAnnotationTrackFor(style);
+			}
 		}
 		else {
 			// must be a GraphGlyph in a ComboGlyph

@@ -503,8 +503,6 @@ public final class GeneralLoadView {
 
 	/**
 	 * Check if it is necessary to disable buttons.
-	 *
-	 * @return
 	 */
 	public static boolean getIsDisableNecessary() {
 		boolean enabled = !IsGenomeSequence();

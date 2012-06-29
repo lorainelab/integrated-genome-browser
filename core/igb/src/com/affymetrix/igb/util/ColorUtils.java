@@ -23,11 +23,6 @@ public class ColorUtils {
 	 *  Will initialize itself with the value of the given
 	 *  preference and will update itself, via a PreferenceChangeListener,
 	 *  if the preference value changes.
-	 * 
-	 * @param node
-	 * @param pref_name 
-	 * @param default_val 
-	 * @return
 	 */	
 
 	public static ColorComboBox createColorComboBox(final Preferences node,

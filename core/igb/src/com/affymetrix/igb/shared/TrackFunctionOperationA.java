@@ -140,6 +140,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 		if(preferredStyle != null){
 			style.copyPropertiesFrom(preferredStyle);
+			style.setSeparate(false);
 		}
 		style.setTrackName(featureName);
 		

@@ -52,8 +52,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	}
 
 	/**
-	 * Return possible strategies to load this URI.
-	 * @return
+	 * @return possible strategies to load this URI.
 	 */
 	@Override
 	public List<LoadStrategy> getLoadChoices() {
@@ -229,7 +228,6 @@ public class QuickLoadSymLoader extends SymLoader {
 
 	/**
 	 * Only used for non-symloader files.
-	 * @return
 	 */
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {

@@ -129,10 +129,7 @@ public class CacheScript extends Thread {
 	}
 
 	/**
-	 * Returns true if file may not exist else false.
-	 *
-	 * @param fileName
-	 * @return
+	 * @return true if file may not exist else false.
 	 */
 	public static boolean getFileAvailability(String fileName) {
 		if (fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
@@ -188,10 +185,9 @@ public class CacheScript extends Thread {
 	}
 
 	/**
-	 * Returns server type.
-	 *
-	 * @param type	Type name.
-	 * @return
+	 * Get a named server type.
+	 * @param type	name.
+	 * @return server type.
 	 */
 	private static ServerTypeI getServerType(String type) {
 		for (ServerTypeI t : ServerUtils.getServerTypes()) {

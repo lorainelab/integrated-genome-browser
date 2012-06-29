@@ -95,7 +95,9 @@ public abstract class ServerUtils {
 		}
 	}
 
-	/**Loads a originalFile's lines into a hash first column is the key, second the value.
+	/**
+	 * Loads a originalFile's lines into a hash.
+	 * The first column is the key, second the value.
 	 * Skips blank lines and those starting with a '#'
 	 * @return null if an exception in thrown
 	 * */
@@ -546,13 +548,8 @@ public abstract class ServerUtils {
 	}
 
 	/**
-	 * Load an annotations file (indexed or non-indexed), and return the symmetries.
-	 * @param current_file
-	 * @param type_name
-	 * @param annotList
-	 * @param genome
-	 * @param isIndexed
-	 * @return
+	 * Load an annotations file (indexed or non-indexed).
+	 * @return the symmetries found.
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -620,7 +617,6 @@ public abstract class ServerUtils {
 	 * @param overlap_span
 	 * @param query_type - annotation "type", which is feature name.
 	 * @param inside_span
-	 * @return
 	 */
 	public static List<SeqSymmetry> getIntersectedSymmetries(SeqSpan overlap_span, String query_type, SeqSpan inside_span) {
 		List<SeqSymmetry> result =

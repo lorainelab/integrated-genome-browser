@@ -123,9 +123,7 @@ public abstract class XAM extends SymLoader {
 	}
 	
 	/**
-	 * Return a list of symmetries for the given chromosome range
-	 * @param seq
-	 * @return
+	 * @return a list of symmetries for the given chromosome range.
 	 */
 	public abstract List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception  ;
 	
@@ -285,12 +283,7 @@ public abstract class XAM extends SymLoader {
 	}
 
 	/**
-	 * Rewrite the residue string, based upon cigar information
-	 * @param cigarObj
-	 * @param residues
-	 * @param spanLength
-	 * @param insResidues
-	 * @return
+	 * Rewrite the residue string, based upon cigar information.
 	 */
 	@SuppressWarnings("unused")
 	private static String interpretCigar(Cigar cigar, String residues, int spanLength, StringBuffer insResidues) {

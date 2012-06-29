@@ -19,11 +19,7 @@ import java.util.logging.Logger;
  */
 public final class SearchUtils {
 	/**
-	 * Due to disagreements between group ID search and BioSeq ID search, do both and combine their results
-	 * @param group
-	 * @param chrFilter
-	 * @param regex
-	 * @return
+	 * Due to disagreements between group ID search and BioSeq ID search, do both and combine their results.
 	 */
 	public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
 

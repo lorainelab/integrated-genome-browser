@@ -56,8 +56,7 @@ public class Delegate extends QuickLoadSymLoader {
 	}
 	
 	/**
-	 * Return possible strategies to load this URI.
-	 * @return
+	 * @return possible strategies to load this URI.
 	 */
 	@Override
 	public List<LoadUtils.LoadStrategy> getLoadChoices() {

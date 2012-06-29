@@ -5,7 +5,6 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import org.osgi.framework.BundleActivator;
@@ -26,10 +25,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.CollapseExpandAction;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -70,17 +67,6 @@ import javax.swing.*;
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
     private String commandLineBatchFileStr;
-    private class JRPButtonTLP extends JRPButton implements TrackListProvider {
-		private static final long serialVersionUID = 1L;
-		private JRPButtonTLP(GenericAction genericAction) {
-    		super("Toolbar_" + genericAction.getId(), genericAction);
-			setHideActionText(true);
-    	}
-		@Override
-		public List<TierGlyph> getTrackList() {
-			return ((IGB)Application.getSingleton()).getMapView().getTierManager().getSelectedTiers();
-		}
-    }
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
@@ -222,8 +208,6 @@ public class Activator implements BundleActivator {
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
 //							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
-							JRPButton button = new JRPButtonTLP(genericAction); // >>>>>>> .r12096
-							button.setHideActionText(true);
 							Preferences p = PreferenceUtils.getKeystrokesNode();
 							if (null != p) {
 								String ak = p.get(genericAction.getId(), "");
@@ -232,7 +216,7 @@ public class Activator implements BundleActivator {
 									genericAction.putValue(Action.ACCELERATOR_KEY, ks);
 								}
 							}
-							((IGB)Application.getSingleton()).addToolbarButton(button);
+							((IGB)Application.getSingleton()).addToolbarAction(genericAction);
 						}
 					}
 				}
@@ -305,7 +289,7 @@ public class Activator implements BundleActivator {
 				if (null == a) { // what can we do?
 					System.err.println("need to make a generic action: " + k);
 					try {
-						Class type = ClassLoader.getSystemClassLoader().loadClass(k);
+						Class<?> type = ClassLoader.getSystemClassLoader().loadClass(k);
 						Object o = type.newInstance();
 						a = (GenericAction) o;
 						System.out.println("IT WORKED? " + a);

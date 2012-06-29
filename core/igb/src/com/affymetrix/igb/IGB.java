@@ -24,10 +24,13 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import static com.affymetrix.igb.IGBConstants.*;
+
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -69,6 +72,17 @@ import javax.swing.*;
 public final class IGB extends Application
 		implements GroupSelectionListener, SeqSelectionListener {
 
+    private class JRPButtonTLP extends JRPButton implements TrackListProvider {
+		private static final long serialVersionUID = 1L;
+		private JRPButtonTLP(GenericAction genericAction) {
+    		super("Toolbar_" + genericAction.getId(), genericAction);
+			setHideActionText(true);
+    	}
+		@Override
+		public List<TierGlyph> getTrackList() {
+			return ((IGB)Application.getSingleton()).getMapView().getTierManager().getSelectedTiers();
+		}
+    }
 	private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
 	private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
 	public static final String NODE_PLUGINS = "plugins";
@@ -313,20 +327,32 @@ public final class IGB extends Application
 		return ordinal;
 	}
 
-	public void addToolbarButton(JRPButton button) {
+	public void addToolbarAction(GenericAction genericAction) {
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
 		}
-		Action a = button.getAction();
-		if (a instanceof GenericAction) {
-			GenericAction g = (GenericAction) a;
-			addAction(g);
-		}
+		JRPButton button = new JRPButtonTLP(genericAction); // >>>>>>> .r12096
+		button.setHideActionText(true);
+		addAction(genericAction);
 		int index = 0;
-		while (index < tool_bar.getComponentCount() && getOrdinal(button) > getOrdinal(tool_bar.getComponent(index))) {
+		while (index < tool_bar.getComponentCount() && getOrdinal(button) >= getOrdinal(tool_bar.getComponent(index))) {
 			index++;
 		}
 		tool_bar.add(button, index);
+		tool_bar.validate();
+	}
+
+	public void removeToolbarAction(GenericAction action) {
+		if (tool_bar == null) {
+			return;
+		}
+		for (int i = 0; i < tool_bar.getComponentCount(); i++) {
+			if (((JButton)tool_bar.getComponent(i)).getAction() == action) {
+				tool_bar.remove(i);
+				tool_bar.validate();
+				break;
+			}
+		}
 	}
 
 	/**

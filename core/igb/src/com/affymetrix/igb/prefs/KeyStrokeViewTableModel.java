@@ -8,8 +8,12 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
+import com.affymetrix.igb.IGB;
+
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
@@ -81,12 +85,26 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 		if (columnIndex == KeyStrokesView.ToolbarColumn && rows != null) {
 			rows[rowIndex][columnIndex] = aValue;
 			String pref_name = (String) rows[rowIndex][KeyStrokesView.IdColumn];
+			boolean bValue;
 			if (aValue instanceof ExistentialTriad) {
 				ExistentialTriad t = (ExistentialTriad) aValue;
-				PreferenceUtils.getToolbarNode().putBoolean(pref_name, t.booleanValue());
+				bValue = t.booleanValue();
 			}
 			else { // Vestigial; This used to be a boolean.
-				PreferenceUtils.getToolbarNode().putBoolean(pref_name, (Boolean) aValue);
+				bValue = (Boolean) aValue;
+			}
+			PreferenceUtils.getToolbarNode().putBoolean(pref_name, bValue);
+			GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(pref_name);
+			if (genericAction == null) {
+				
+			}
+			else {
+				if (bValue) {
+					((IGB)IGB.getSingleton()).addToolbarAction(genericAction);
+				}
+				else {
+					((IGB)IGB.getSingleton()).removeToolbarAction(genericAction);
+				}
 			}
 		}
 	}

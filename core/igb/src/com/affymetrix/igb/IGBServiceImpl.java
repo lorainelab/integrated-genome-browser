@@ -44,7 +44,6 @@ import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.SeqGroupView;

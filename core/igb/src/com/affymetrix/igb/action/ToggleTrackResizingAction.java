@@ -13,6 +13,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author hiralv
  */
 public class ToggleTrackResizingAction extends SeqMapViewActionA {
+	private static final long serialVersionUID = 1L;
 	private static ToggleTrackResizingAction ACTION = new ToggleTrackResizingAction();
 	
 	public static ToggleTrackResizingAction getAction(){

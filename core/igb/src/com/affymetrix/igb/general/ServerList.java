@@ -34,8 +34,6 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javax.swing.JFrame;
-
 /**
  *
  * @version $Id: ServerList.java 11173 2012-04-19 13:52:00Z imnick $

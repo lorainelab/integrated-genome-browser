@@ -10,6 +10,7 @@ import com.affymetrix.igb.shared.TierGlyph;
  * @author hiralv
  */
 public class TierFontSizeAction extends SeqMapViewActionA implements ParameteredAction {
+	private static final long serialVersionUID = 1L;
 	private final static TierFontSizeAction ACTION = new TierFontSizeAction();
 	
 	static{

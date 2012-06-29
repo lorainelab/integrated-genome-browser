@@ -140,6 +140,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				if (resultGlyph == null) {
 					resultGlyph = getEmptyGraphGlyph(style, smv);
 				}
+				if(resultGlyph == lastUsedGlyph)
+					return resultGlyph;
+				
 				resultGlyph.setSelectable(false);
 				double y = resultGlyph.getCoordBox().y;
 				if (y == 0) {
@@ -155,9 +158,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				resultGlyph.setParent(getParent());
 				resultGlyph.setScene(getScene());
 				double saveY = resultGlyph.getCoordBox().y;
-				if (resultGlyph.getScene() != null) {
-					resultGlyph.pack(view);
-				}
+//				if (resultGlyph.getScene() != null) {
+//					resultGlyph.pack(view);
+//				}
 				if (resultGlyph.getCoordBox().y != saveY) {
 					resultGlyph.moveAbsolute(resultGlyph.getCoordBox().x, saveY);
 				}

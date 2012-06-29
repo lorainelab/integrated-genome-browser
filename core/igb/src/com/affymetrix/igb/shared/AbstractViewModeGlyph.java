@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -54,7 +55,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 	private static final int handle_width = 10;  // width of handle in pixels
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
-	SwingWorker<RootSeqSymmetry, Void> previousWorker, worker;
+	SwingWorker previousWorker, worker;
 	
 	@Override
 	protected RootSeqSymmetry loadRegion(SeqSpan span){
@@ -65,6 +66,11 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 	@Override
 	protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
 		return factory.getViewModeGlyph(rootSym, style, direction, smv);
+	}
+	
+	//TODO: Make this abstract
+	protected void updateParent(ViewModeGlyph vmg){
+		//Do Nothing
 	}
 	
 	protected List<SeqSymmetry> loadData(SeqSpan span) {
@@ -79,6 +85,8 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			
+			Application.getSingleton().addNotLockedUpMsg("Loading "+getAnnotStyle().getTrackName());
+			
 			return GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 		} catch (Exception ex) {
 			Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
@@ -89,41 +97,38 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 	
 	@Override
 	protected void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapViewGlyphFactoryI factory) throws Exception {
-		final SeqSpan span = smv.getVisibleSpan();
 		if (previousWorker != null && !previousWorker.isCancelled() && !previousWorker.isDone()) {
 			previousWorker.cancel(true);
 			previousWorker = null;
 		}
 
-		worker = new SwingWorker<RootSeqSymmetry, Void>() {
+		worker = new SwingWorker() {
 
 			@Override
-			protected RootSeqSymmetry doInBackground() throws Exception {
-				Application.getSingleton().addNotLockedUpMsg("Loading "+getAnnotStyle().getTrackName());
-				return loadRegion(span);
-			}
+			protected Void doInBackground() throws Exception {
+				RootSeqSymmetry rootSym = loadRegion(smv.getVisibleSpan());
+				if (rootSym.getChildCount() > 0) {
+					final ViewModeGlyph vmg = createGlyphs(rootSym, factory, smv);
+					ThreadUtils.runOnEventQueue(new Runnable() {
 
-			@Override
-			public void done() {
-				Application.getSingleton().removeNotLockedUpMsg("Loading "+getAnnotStyle().getTrackName());
-				
-				if (this.isCancelled())
-					return;
-				
-				try {
-					RootSeqSymmetry rootSym = get();
-					createGlyphs(rootSym, factory, smv);
-					GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), rootSym.getChildCount() > 0);
-					GeneralLoadView.getLoadView().refreshDataManagementView();
-				} catch (Exception ex) {
-					//Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+						public void run() {
+							updateParent(vmg);
+							GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), vmg.getChildCount() > 0);
+							GeneralLoadView.getLoadView().refreshDataManagementView();
+							//TODO: Find a way to avoid this
+							//if (lastUsedGlyph == saveDetailGlyph) {
+							smv.repackTheTiers(true, true);
+							smv.getSeqMap().updateWidget();
+							Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
+							//}
+						}
+					});
+				}else{
+					Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
 				}
-				//TODO: Find a way to avoid this
-				//if (lastUsedGlyph == saveDetailGlyph) {
-				smv.repackTheTiers(true, true);
-				smv.getSeqMap().updateWidget();
-				//}
+				return null;
 			}
+
 		};
 		worker.execute();
 		previousWorker = worker;

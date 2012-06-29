@@ -89,13 +89,12 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 
 		return detailSym;
 	}
-	
+		
 	@Override
-	protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
-		if (rootSym.getChildCount() > 0) {
-			copyChildren(factory.getViewModeGlyph(rootSym, style, direction, smv));
+	protected void updateParent(ViewModeGlyph vmg){
+		if(vmg.getChildCount() > 0){
+			copyChildren(vmg);
 		}
-		return this;
 	}
 	
 	private void initForSearching() {

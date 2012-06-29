@@ -59,10 +59,6 @@ public class MapHandler extends DefaultHandler implements ContentParser {
 	 * importContent parses an xml formated stream and creates
 	 * and returns a NeoMap object that contains the objects
 	 * specified by the stream.
-	 *
-	 * @param theInput 
-	 * @return
-	 * @throws IOException
 	 */
 	public Object importContent(Reader theInput) throws IOException {
 		if (null == xmlParser) {

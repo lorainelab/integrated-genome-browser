@@ -43,8 +43,7 @@ public class EfficientSolidGlyph extends Glyph  {
   }
 
   /**
-   * @return  whether or not this glyph show useful information
-   * @return
+   * @return whether or not this glyph show useful information.
    */
   public boolean isCompulsary(){
 	  return is_Compulsary;

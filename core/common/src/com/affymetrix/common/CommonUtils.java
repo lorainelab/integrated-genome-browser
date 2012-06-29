@@ -61,8 +61,7 @@ public class CommonUtils {
 	}
 	
 	/**
-	 * get the build version from svn repository.
-	 * @return 
+	 * Get the build version from svn repository.
 	 */
 	public boolean getUpdateAvailable(){
 		return updateAvailable;

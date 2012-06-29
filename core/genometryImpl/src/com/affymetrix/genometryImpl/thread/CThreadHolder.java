@@ -112,6 +112,7 @@ public class CThreadHolder implements WaitHelperI {
 				}
 			}
 		}
+		notifyEndThread(worker);
 	}
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){

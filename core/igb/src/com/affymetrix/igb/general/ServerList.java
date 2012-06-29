@@ -557,8 +557,6 @@ public final class ServerList {
 
 	/**
 	 * Gets the primary server if present else returns null.
-	 *
-	 * @return
 	 */
 	public GenericServer getPrimaryServer() {
 		for (GenericServer server : getEnabledServers()) {

@@ -55,7 +55,6 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 	
 	/**
 	 * Only used for non-symloader files.
-	 * @return
 	 */
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {

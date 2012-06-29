@@ -487,10 +487,6 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Determine size of spacer between chromosomes in whole genome view.
-	 *
-	 * @param group
-	 * @param chrom_count
-	 * @return
 	 */
 	private static int determineSpacer(AnnotatedSeqGroup group, int chrom_count) {
 		double spacer = 0;
@@ -917,7 +913,6 @@ public final class GeneralLoadUtils {
 	 * @param genomeVersionName -- name of the genome.
 	 * @param seq_name -- sequence (chromosome) name
 	 * @param span	-- May be null. If not, then it's used for partial loading.
-	 * @return boolean
 	 */
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
@@ -1291,11 +1286,6 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Handle file formats that has SeqGroup info.
-	 *
-	 * @param uri
-	 * @param loadGroup
-	 * @param version
-	 * @return
 	 */
 	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version) {
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
@@ -1331,10 +1321,6 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get AnnotatedSeqGroup for BAR file format.
-	 *
-	 * @param uri
-	 * @param group
-	 * @return
 	 */
 	private static AnnotatedSeqGroup handleBar(URI uri, AnnotatedSeqGroup group) {
 		InputStream istr = null;
@@ -1364,10 +1350,6 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get AnnotatedSeqGroup for USEQ file format.
-	 *
-	 * @param uri
-	 * @param group
-	 * @return
 	 */
 	private static AnnotatedSeqGroup handleUseq(URI uri, AnnotatedSeqGroup group) {
 		InputStream istr = null;
@@ -1412,7 +1394,6 @@ public final class GeneralLoadUtils {
 	 * For unoptimized file formats load symmetries and add them.
 	 *
 	 * @param feature
-	 * @return
 	 */
 	public static void loadAllSymmetriesThread(final GenericFeature feature) {
 		final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;

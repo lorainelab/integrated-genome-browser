@@ -143,10 +143,7 @@ public class AltSpliceView extends IGBTabPanel
 	}
 
 	/**
-	 * takes a list of SeqSymmetries and removes any GraphSyms from it.
-	 *
-	 * @param syms
-	 * @return
+	 * Takes a list of SeqSymmetries and removes any GraphSyms from it.
 	 */
 	private static List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
 		List<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());

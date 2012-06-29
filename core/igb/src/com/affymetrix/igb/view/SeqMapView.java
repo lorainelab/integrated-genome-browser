@@ -2481,9 +2481,6 @@ public class SeqMapView extends JPanel
 
 	/**
 	 * Converts given properties into string.
-	 *
-	 * @param properties
-	 * @return
 	 */
 	private static String convertPropsToString(String[][] properties) {
 		StringBuilder props = new StringBuilder();

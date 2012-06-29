@@ -89,8 +89,8 @@ public abstract class HelpActionA extends GenericAction {
 	 *  in the panel will have, how to make the changes (if it isn't obvious),
 	 *  and whether the changes are expected to take effect immediately or only
 	 *  after a re-start.
-	 *  @param the parent of the panel to display text for
-	 *  @param the panel to display text for
+	 *  @param parentPanel the parent of the panel to display text for
+	 *  @param panel the panel to display text for
 	 */
 	protected void showHelpForPanel(JPanel parentPanel, JPanel panel) {
 		StringBuilder builder = new StringBuilder();

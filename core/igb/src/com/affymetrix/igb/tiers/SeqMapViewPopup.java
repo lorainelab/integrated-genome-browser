@@ -73,7 +73,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	 * Load all the actions in use by this pop up.
 	 * Beware, this is a maintenance nightmare.
 	 * This was created by grepping for '\.getAction\('
-	 * and then making an {@link #addAction} call out of each one.
+	 * and then making an {@link IGB#addAction} call out of each one.
 	 * So if anyone ever adds or removes one of the actions in the pop up
 	 * this list should be modified to match.
 	 * Watch out for duplicates (like ShowOneTierAction).

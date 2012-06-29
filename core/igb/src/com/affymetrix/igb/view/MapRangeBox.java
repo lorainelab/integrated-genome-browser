@@ -464,9 +464,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	 * instances registered, including plugins. The standard forms
 	 * of region entry are hard coded. This method tries all the
 	 * ISearchModes until the first one that gives a positive result.
-	 * @param gview - the SeqMapView.
-	 * @param range - any search string like "chr1: 40000 - 60000",
-	 * or "ADAR" (a gene name)
+	 * @param search_text - any search string like "chr1: 40000 - 60000",
+	 *        or "ADAR" (a gene name)
 	 */
 	public void setRange(String search_text) {
 		List<SeqSpan> mergedSpans = getSpanList(gview, search_text);

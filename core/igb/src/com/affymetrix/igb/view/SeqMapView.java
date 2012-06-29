@@ -162,19 +162,23 @@ public class SeqMapView extends JPanel
 	protected SeqSymmetry[] transform_path;
 	public static final String PREF_COORDINATE_LABEL_FORMAT = "Coordinate label format";
 	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}.
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT}
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
 	 */
 	public static final String VALUE_COORDINATE_LABEL_FORMAT_COMMA = "COMMA";
 	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}.
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
 	 */
 	public static final String VALUE_COORDINATE_LABEL_FORMAT_FULL = "FULL";
 	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}.
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
 	 */
 	public static final String VALUE_COORDINATE_LABEL_FORMAT_ABBREV = "ABBREV";
 	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}.
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
 	 */
 	public static final String VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
 	public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
@@ -922,13 +926,11 @@ public class SeqMapView extends JPanel
 	 * this can create empty tiers. But if the tiers are not filled with
 	 * something, they will later be removed automatically.
 	 *
-	 * @param smv The SeqMapView (could be AltSplice)
 	 * @param sym The SeqSymmetry (data model) for the track
 	 * @param style a non-null instance of IAnnotStyle; tier label and other
 	 * properties are determined by the IAnnotStyle.
-	 * @param tier_direction the direction of the track (FORWARD, REVERSE, or
-	 * BOTH)
-	 * @return a tier
+	 * @param tier_direction the direction of the track
+	 *       (FORWARD, REVERSE, or BOTH)
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style);
@@ -1158,9 +1160,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
-	 * move non floating glyphs from pixel floater to tierGlyph
-	 *
-	 * @param tiers the list of TierGlyphs
+	 * Move non floating glyphs from pixel floater to tier glyph.
 	 */
 	private boolean moveNonFloatingTierGlyphs() {
 		boolean change_happened = false;
@@ -1193,9 +1193,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
-	 * move non joined glyphs from their comboGlyph to tierGlyph
-	 *
-	 * @param tiers the list of TierGlyphs
+	 * Move non joined glyphs from their comboGlyph to tierGlyph.
 	 */
 	private boolean moveNonJoinedTierGlyphs() {
 		boolean change_happened = false;

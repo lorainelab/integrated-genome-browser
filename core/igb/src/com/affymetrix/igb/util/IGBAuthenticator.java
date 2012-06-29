@@ -242,7 +242,7 @@ public class IGBAuthenticator extends Authenticator {
 	/**
 	 * Formats and word wraps the message of the authentication dialog.
 	 * 
-	 * @param serverObject friendly name of the server that requested authentication
+	 * @param serverName friendly name of the server that requested authentication.
 	 * @return a JPanel containing the message
 	 */
 	private static JPanel setMessage(String serverName, boolean authOptional) {

@@ -485,10 +485,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Start export process when Ok Button action performed.
-	 *
-	 * @return successfully export or not
-	 * @throws IOException
+	 * Start export process when OK Button action performed.
 	 */
 	public void okButtonActionPerformed() throws IOException {
 		String previousPath = exportFile.getAbsolutePath();

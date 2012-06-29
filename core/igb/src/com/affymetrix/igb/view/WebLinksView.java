@@ -26,7 +26,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * All the function codes for web links panel are implemented in this class.
  *
- * @modified by nick
+ * modified by nick
  */
 public final class WebLinksView implements ListSelectionListener {
 

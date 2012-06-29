@@ -346,9 +346,9 @@ public final class TierLabelManager implements PropertyHolder {
 
 	/**
 	 * Handle selection generating a selection event.
-	 * This was made public to serve the {@link UnFloatTiersAction}.
+	 * This was made public to serve the {@link com.affymetrix.igb.action.UnFloatTiersAction}.
 	 * It needed to restore the selection after acting
-	 * and to fire the selection changed event so the {@link FloatTiersAction}
+	 * and to fire the selection changed event so the {@link com.affymetrix.igb.action.FloatTiersAction}
 	 * could get the news and enable itself.
 	 * There may be other actions that act on a selection of graph glyphs.
 	 * Those may well need this too.

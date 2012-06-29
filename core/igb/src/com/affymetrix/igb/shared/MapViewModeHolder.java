@@ -114,10 +114,9 @@ public class MapViewModeHolder {
 	}
 
 	/**
-	 * get the MapViewGlyphFactoryI to be used for a track when it is first
-	 * selected (before Load Data), normally the UnloadedFactory (gray background).
-	 * @param uri - the uri of the data source of the track
-	 * @return the factory to use
+	 * Get the MapViewGlyphFactoryI to be used for a track
+	 * when it is first selected (before Load Data),
+	 * normally the UnloadedFactory (gray background).
 	 */
 	public MapViewGlyphFactoryI getAutoloadFactory(ITrackStyleExtended style) {
 		FileTypeCategory category = null;

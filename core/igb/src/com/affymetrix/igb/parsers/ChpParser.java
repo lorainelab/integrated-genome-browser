@@ -627,16 +627,18 @@ public final class ChpParser {
 		return results;
 	}
 
-	/** Finds all symmetries with the given case-insensitive ID and add them to
-	 *  the given list.
-	 *  @param id  a case-insensitive id.
-	 *  @param results  the list to which entries will be appended. It is responsibility of
-	 *   calling code to clear out results list before calling this, if desired.
-	 *  @param try_appended_id whether to also search for ids of the form
-	 *   id + ".1", id + ".2", etc.
-	 *  @return true if any symmetries were added to the list.
+	/**
+	 * Finds all symmetries with the given case-insensitive ID
+	 * and adds them to the given list.
+	 * @param id  a case-insensitive id.
+	 * @param results  the list to which entries will be appended.
+	 *        It is responsibility of calling code to clear out results list
+	 *        before calling this, if desired.
+	 *  @param try_appended_id whether to also search for ids
+	 *         of the form id + ".1", id + ".2", etc.
 	 */
-	//TODO: does this routine do what is expected?  What if id does not exist, but id + ".1" does?
+	// TODO: does this routine do what is expected?
+	// What if id does not exist, but id + ".1" does?
 	// What if id + ".1" does not exist, but id + ".2" does?
 	// Does this list need to be in order?
 	private static void findSyms(AnnotatedSeqGroup group, String id, List<SeqSymmetry> results, boolean try_appended_id) {

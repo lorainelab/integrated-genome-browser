@@ -68,9 +68,9 @@ public abstract class Application {
 	}
 
 	/**
-	 * Set the status text, and show a little progress bar so that the app doesn't look locked up.
+	 * Set the status text, and show a little progress bar
+	 * so that the application doesn't look locked up.
 	 * @param s text of the message
-	 * @param visible if the progress bar is to be displayed
 	 */
 	private synchronized void setNotLockedUpStatus(String s) {
 		status_bar.setStatus(s);

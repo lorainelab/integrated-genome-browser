@@ -149,15 +149,6 @@ public final class ServerList {
 		return server;
 	}
 
-	/**
-	 *
-	 * @param serverType
-	 * @param name
-	 * @param url
-	 * @param enabled
-	 * @param isPrimary
-	 * @return GenericServer
-	 */
 	public GenericServer addServer(ServerTypeI serverType, String name, String url,
 			boolean enabled, boolean primary, int order, boolean isDefault) {
 		url = ServerUtils.formatURL(url, serverType);

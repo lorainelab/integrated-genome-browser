@@ -97,8 +97,6 @@ public final class GeneralLoadUtils {
 	 * Location of synonym file for correlating versions to species. The file
 	 * lookup is done using {@link Class#getResourceAsStream(String)}. The
 	 * default file is {@value}.
-	 *
-	 * @see #SPECIES_LOOKUP
 	 */
 	private static final String SPECIES_SYNONYM_FILE = "/species.txt";
 	private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
@@ -269,7 +267,6 @@ public final class GeneralLoadUtils {
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
 	 *
-	 * @param seqgroup
 	 * @return genome version
 	 */
 	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup group, String speciesName) {
@@ -344,7 +341,6 @@ public final class GeneralLoadUtils {
 	/**
 	 * Only want to display features with visible attribute set to true.
 	 *
-	 * @param features
 	 * @return list of visible features
 	 */
 	public static List<GenericFeature> getVisibleFeatures() {
@@ -597,9 +593,6 @@ public final class GeneralLoadUtils {
 	/**
 	 * Load and display annotations (requested for the specific feature). Adjust
 	 * the load status accordingly.
-	 *
-	 * @param gFeature
-	 * @return true or false
 	 */
 	static public void loadAndDisplayAnnotations(GenericFeature gFeature) {
 		if (!checkBeforeLoading(gFeature)) {
@@ -907,11 +900,10 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Get residues from servers: DAS/2, Quickload, or DAS/1. Also gets partial
-	 * residues.
+	 * Get residues from servers: DAS/2, Quickload, or DAS/1.
+	 * Also gets partial residues.
 	 *
 	 * @param genomeVersionName -- name of the genome.
-	 * @param seq_name -- sequence (chromosome) name
 	 * @param span	-- May be null. If not, then it's used for partial loading.
 	 */
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.

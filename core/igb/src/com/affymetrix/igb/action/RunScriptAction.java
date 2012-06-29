@@ -53,12 +53,11 @@ public final class RunScriptAction extends GenericAction {
 	private final FileTracker load_dir_tracker;
 	private JRPFileChooser chooser = null;
 
-	/**
-	 *  Constructor.
-	 *  @param ft  a FileTracker used to keep track of directory to load from
-	 */
 	private RunScriptAction() {
-		super(BUNDLE.getString("runScript"), null, "16x16/actions/media-playback-start.png", "22x22/actions/media-playback-start.png", KeyEvent.VK_R, null, true);
+		super(BUNDLE.getString("runScript"), null,
+				"16x16/actions/media-playback-start.png",
+				"22x22/actions/media-playback-start.png",
+				KeyEvent.VK_R, null, true);
 
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;

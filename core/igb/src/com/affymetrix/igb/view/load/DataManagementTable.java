@@ -49,12 +49,8 @@ public final class DataManagementTable {
 	//public static boolean iconTest;
 
 	/**
-	 * Set the columns to use the ComboBox DAScb and renderer (which also
-	 * depends on the row/server type)
-	 *
-	 * @param table
-	 * @param column
-	 * @param enabled
+	 * Set the columns to use the ComboBox DAScb and renderer.
+	 * (which also depends on the row/server type)
 	 */
 	static void setComboBoxEditors(JTableX table, boolean enabled) {
 		comboRenderer.setToolTipEntry(LoadStrategy.NO_LOAD.toString(), IGBConstants.BUNDLE.getString("noLoadCBToolTip"));

@@ -179,11 +179,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private JMenu addTransformMenu(TierGlyph glyph) {
 		JMenu transformMenu = new JMenu(BUNDLE.getString("transformMenu"));
-		if (glyph != null && glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
+		//if (glyph != null && glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			if (style instanceof TrackStyle) {
 				TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
-				operators.addAll(TransformHolder.getInstance().getAllTransformFor(((RootSeqSymmetry) glyph.getInfo()).getCategory()));
+				operators.addAll(TransformHolder.getInstance().getAllTransformFor(style.getFileTypeCategory()));
 				for (final Operator operator : operators) {
 					if(!(operator instanceof ICopy)){
 						Action action = new TransformAction(operator);
@@ -195,7 +195,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 				transformMenu.setEnabled(transformMenu.getMenuComponentCount() > 0);
 			}
-		}
+		//}
 		transformMenu.setEnabled(transformMenu.getMenuComponentCount() > 0);
 		return transformMenu;
 	}

@@ -252,8 +252,6 @@ public final class GenericFeature {
 	/**
 	 * Split the requested span into spans that still need to be loaded.
 	 * Note we can't filter inside spans (in general) until after the data is returned.
-	 * @param span
-	 * @return
 	 */
 	public SeqSymmetry optimizeRequest(SeqSpan span) {
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();

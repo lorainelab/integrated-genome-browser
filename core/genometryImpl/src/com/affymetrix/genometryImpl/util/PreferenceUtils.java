@@ -92,8 +92,6 @@ public abstract class PreferenceUtils {
 	 * node even if it has been deleted with Preferences.removeNode(),
 	 * whereas trying to use a static variable could lead to
 	 * IllegalStateException's.
-	 *
-	 * @return
 	 */
 	public static Preferences getTopNode() {
 		return Preferences.userRoot().node(PREFS_MAIN + "/" + prefs_mode);
@@ -188,7 +186,6 @@ public abstract class PreferenceUtils {
 	 *
 	 * @param name   a unique identifying name
 	 * @param def    a default location
-	 * @return
 	 */
 	public static Rectangle retrieveWindowLocation(String name, Rectangle def) {
 		Rectangle r = new Rectangle();
@@ -309,9 +306,7 @@ public abstract class PreferenceUtils {
 	}
 
 	/**
-	 * Gets a static re-usable file chooser that prefers "xml" files.
-	 *
-	 * @return
+	 * Gets a static re-usable file chooser that prefers XML files.
 	 */
 	public static JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
@@ -469,8 +464,6 @@ public abstract class PreferenceUtils {
 	/**
 	 * Returns the location of the application data directory.
 	 * The String will always end with "/".
-	 *
-	 * @return 
 	 */
 	public static String getAppDataDirectory() {
 		return CommonUtils.getInstance().getAppDataDirectory();
@@ -497,12 +490,8 @@ public abstract class PreferenceUtils {
 	}
 
 	/**
-	 * Retrieves a color preference that was stored with {@link #putColor(Preferences, String, Color)}.
-	 *
-	 * @param node
-	 * @param default_color
-	 * @param key
-	 * @return 
+	 * Retrieves a color preference
+	 * that was stored with {@link #putColor(Preferences, String, Color)}.
 	 */
 	public static Color getColor(Preferences node, String key, Color default_color) {
 		Color result = default_color;
@@ -522,12 +511,6 @@ public abstract class PreferenceUtils {
 	 * Will initialize itself with the value of the given
 	 * preference and will update itself, via a PreferenceChangeListener,
 	 * if the preference value changes.
-	 *
-	 * @param title
-	 * @param node
-	 * @param pref_name 
-	 * @param default_val
-	 * @return
 	 */
 	public static JCheckBox createCheckBox(String title, final Preferences node,
 			final String pref_name, boolean default_val) {
@@ -555,12 +538,6 @@ public abstract class PreferenceUtils {
 	 * Will initialize itself with the value of the given
 	 * preference and will update itself, via a PreferenceChangeListener,
 	 * if the preference value changes.
-	 *
-	 * @param node
-	 * @param pref_name 
-	 * @param options
-	 * @param default_value
-	 * @return
 	 */
 	public static JComboBox createComboBox(final Preferences node,
 			final String pref_name, String[] options, String default_value) {
@@ -618,10 +595,6 @@ public abstract class PreferenceUtils {
 
 	/**
 	 * Create a subnode, making sure to shorten the name if necessary.
-	 *
-	 * @param parent
-	 * @param name
-	 * @return
 	 */
 	public static Preferences getSubnode(Preferences parent, String name) {
 		return getSubnode(parent, name, false);
@@ -629,11 +602,6 @@ public abstract class PreferenceUtils {
 
 	/**
 	 * Create a subnode, making sure to shorten the name if necessary.
-	 *
-	 * @param parent
-	 * @param remove_slash
-	 * @param name
-	 * @return 
 	 */
 	public static Preferences getSubnode(Preferences parent, String name, boolean remove_slash) {
 		String short_name = shortNodeName(name, remove_slash);

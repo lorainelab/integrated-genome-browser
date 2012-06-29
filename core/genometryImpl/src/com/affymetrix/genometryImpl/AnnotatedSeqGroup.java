@@ -80,7 +80,6 @@ public class AnnotatedSeqGroup {
 
 	/**
 	 * Only return versions that should be visible.
-	 * @return
 	 */
 	final public Set<GenericVersion> getEnabledVersions() {
 		Set<GenericVersion> versions = new CopyOnWriteArraySet<GenericVersion>();
@@ -102,7 +101,6 @@ public class AnnotatedSeqGroup {
 	
 	/**
 	 * Return all versions.
-	 * @return
 	 */
 	final public Set<GenericVersion> getAllVersions() {
 		return Collections.unmodifiableSet(gVersions);

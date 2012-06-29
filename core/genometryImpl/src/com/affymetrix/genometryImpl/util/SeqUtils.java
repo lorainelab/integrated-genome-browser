@@ -64,9 +64,6 @@ public abstract class SeqUtils {
 
 	/**
 	 * Get spans that are contained as leaves in the symmetry (on the BioSeq).
-	 * @param sym
-	 * @param seq
-	 * @return
 	 */
 	public static List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
 		List<SeqSpan> leafSpans = new ArrayList<SeqSpan>();

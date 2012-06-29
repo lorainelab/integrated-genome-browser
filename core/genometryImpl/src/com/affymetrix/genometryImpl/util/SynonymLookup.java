@@ -329,8 +329,6 @@ public class SynonymLookup {
 
 	/**
 	 * Find the second synonym, if it exists.  Otherwise return the first.
-	 * @param synonym
-	 * @return
 	 */
 	public String findSecondSynonym(String synonym) {
 		Set<String> synonymSet = this.lookupHash.get(synonym);

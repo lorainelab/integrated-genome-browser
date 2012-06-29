@@ -105,10 +105,7 @@ public class PSLParserTest {
 	}
 
 	/**
-	 * Return the symmetries that match the given chromosome.
-	 * @param genomeResults
-	 * @param seq
-	 * @return
+	 * @return the symmetries that match the given chromosome.
 	 */
 	public List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();

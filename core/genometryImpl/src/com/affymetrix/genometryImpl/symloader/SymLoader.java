@@ -173,8 +173,7 @@ public abstract class SymLoader implements LineTrackerI {
 		}
 	}
 	/**
-	 * Return possible strategies to load this URI.
-	 * @return
+	 * @return possible strategies to load this URI.
 	 */
 	public List<LoadStrategy> getLoadChoices() {
 		return strategyList;
@@ -247,9 +246,6 @@ public abstract class SymLoader implements LineTrackerI {
 	
 	/**
 	 * Return the symmetries that match the given chromosome.
-	 * @param genomeResults
-	 * @param seq
-	 * @return
 	 */
 	public static List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();

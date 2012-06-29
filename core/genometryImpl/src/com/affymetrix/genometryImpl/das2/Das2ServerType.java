@@ -104,9 +104,7 @@ public class Das2ServerType implements ServerTypeI {
 	}
 
 	/**
-	 * Returns true if file may not exist else false.
-	 * @param fileName
-	 * @return
+	 * @return true if file may not exist else false.
 	 */
 	private boolean getFileAvailability(String fileName){
 		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))

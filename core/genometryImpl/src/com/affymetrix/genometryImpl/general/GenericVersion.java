@@ -57,7 +57,6 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 
 	/**
 	 * Return versions, but don't allow them to be modified.
-	 * @return
 	 */
 	public Set<GenericFeature> getFeatures() {
 		return Collections.<GenericFeature>unmodifiableSet(features);

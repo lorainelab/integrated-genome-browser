@@ -91,7 +91,6 @@ public class DasServerType implements ServerTypeI {
 	 * @param id	Genome id
 	 * @param server	Server url.
 	 * @param mapping	File name.
-	 * @return
 	 */
 	private String getPath(String id, URL server, String file){
 		try {

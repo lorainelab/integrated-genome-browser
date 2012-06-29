@@ -138,8 +138,6 @@ public final class GeneralUtils {
 
 	/**
 	 * Fix several potential problems in URL names.
-	 * @param streamName
-	 * @return
 	 */
 	public static String convertStreamNameToValidURLName(String streamName) {
 		int httpIndex = streamName.indexOf("http:");
@@ -334,7 +332,6 @@ public final class GeneralUtils {
 	 * @param mapping	File to be moved.
 	 * @param fileName	File name to be given to moved mapping.
 	 * @param path	Path to where mapping is moved.
-	 * @return
 	 */
 	public static boolean moveFileTo(File file, String fileName, String path){
 		File newLocation = new File(path+ "/" +fileName);
@@ -352,7 +349,6 @@ public final class GeneralUtils {
 	 * @param mapping	File to be copied
 	 * @param fileName	File name to be given to copied mapping.
 	 * @param path	Path to where mapping is copied.
-	 * @return
 	 */
 	public static boolean copyFileTo(File file, String fileName, String path){
 		try {
@@ -376,7 +372,6 @@ public final class GeneralUtils {
 	/**
 	 * Creates directory for the given path.
 	 * @param path	Path where directory is to be created.
-	 * @return
 	 */
 	public static File makeDir(String path){
 		File dir = new File(path);
@@ -390,7 +385,6 @@ public final class GeneralUtils {
 	 * Returns mapping for give path.
 	 * @param path	File path.
 	 * @param fileMayNotExist
-	 * @return
 	 */
 	public static File getFile(String path, boolean fileMayNotExist){
 		File file = null;

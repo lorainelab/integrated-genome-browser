@@ -158,9 +158,7 @@ public final class BAM extends XAM {
 	}
 
 	/**
-	 * Return a list of symmetries for the given chromosome range
-	 * @param seq
-	 * @return
+	 * Return a list of symmetries for the given chromosome range.
 	 */
 	public synchronized List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception  {
 		init();
@@ -230,9 +228,8 @@ public final class BAM extends XAM {
 	}
 	
 	/**
-	 * Returns a list of symmetries for the entire file, good for loading DAS/2 derived data slices, skips building an index
-	 * @param seq
-	 * @return
+	 * Returns a list of symmetries for the entire file.
+	 * Good for loading DAS/2 derived data slices, skips building an index.
 	 */
 	public List<SeqSymmetry> parseAll(BioSeq seq, String method) {		
 		reader = new SAMFileReader(new File(uri));

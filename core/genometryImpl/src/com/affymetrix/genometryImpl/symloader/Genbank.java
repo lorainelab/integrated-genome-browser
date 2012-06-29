@@ -195,8 +195,7 @@ public final class Genbank extends SymLoader {
 	}
 
 	/**
-	 * Return possible strategies to load this URI.
-	 * @return
+	 * @return possible strategies to load this URI.
 	 */
 	@Override
 	public List<LoadStrategy> getLoadChoices() {
@@ -373,9 +372,7 @@ public final class Genbank extends SymLoader {
 	}
 		
 	/**
-	 * Return a list of symmetries for the given chromosome range
-	 * @param seq
-	 * @return
+	 * Return a list of symmetries for the given chromosome range.
 	 */
 	public List<GenbankSym> parse(BioSeq seq, int min, int max) throws Exception {
 		BufferedInputStream bis = null;

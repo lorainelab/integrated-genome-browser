@@ -208,10 +208,10 @@ public final class Das2ServerInfo  {
 	}
 
 	/**
-	 * Get url string to load data from.
-	 * Returns primary server's url if present else
-	 * actual servers's url.
-	 * @return
+	 * Get URL string to load data from.
+	 * Returns
+	 * @return primary server's URL if present
+	 *         else actual server's URL.
 	 */
 	private String getLoadURL(){
 		if(!isLoadingFromPrimary())

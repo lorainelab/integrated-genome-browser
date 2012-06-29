@@ -442,13 +442,6 @@ public final class LocalUrlCacher {
 
 	/**
 	 * Retrieve a page from a URL, optionally storing it in the cache.
-	 *
-	 * @param conn
-	 * @param headers
-	 * @param write_to_cache
-	 * @param cache_file
-	 * @param header_cache_file
-	 * @return
 	 * @throws IOException
 	 */
 	private static InputStream RetrieveFromURL(
@@ -528,16 +521,15 @@ public final class LocalUrlCacher {
 		}
 	}
 
-	/** Returns the location of the root directory of the cache.
-	 * @return 
+	/**
+	 * @return the location of the root directory of the cache.
 	 */
 	public static String getCacheRoot() {
 		return cache_content_root;
 	}
 
-	/** Returns the current value of the persistent user preference PREF_CACHE_USAGE.
-	 *
-	 * @return the preferred cache usage
+	/**
+	 * @return the current value of the persistent user preference PREF_CACHE_USAGE.
 	 */
 	public static int getPreferredCacheUsage() {
 		return PreferenceUtils.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
@@ -664,7 +656,6 @@ public final class LocalUrlCacher {
 	/**
 	 * Get stream associated with this uri.  Don't unzip here.
 	 * @param uri
-	 * @return
 	 */
 	public static BufferedInputStream convertURIToBufferedUnzippedStream(URI uri) {
 		String scheme = uri.getScheme().toLowerCase();
@@ -693,9 +684,7 @@ public final class LocalUrlCacher {
 	}
 
 	/**
-	 * Get stream associated with this uri.  Don't unzip here.
-	 * @param uri
-	 * @return
+	 * Get stream associated with this URI.  Don't unzip here.
 	 */
 	public static BufferedInputStream convertURIToBufferedStream(URI uri) {
 		String scheme = uri.getScheme().toLowerCase();

@@ -148,9 +148,6 @@ public final class NibbleResiduesParser implements Parser {
 
 	/**
 	 * Determine the chromosome referenced by the BNIB stream.
-	 * @param istr
-	 * @param seq_group
-	 * @return
 	 */
 	public static BioSeq determineChromosome(InputStream istr, AnnotatedSeqGroup seq_group) {
 		BioSeq result_seq = null;

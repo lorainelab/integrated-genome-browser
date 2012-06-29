@@ -1,5 +1,6 @@
 package com.gene.bigwighandler;
 
+import java.io.File;
 import java.net.URI;
 import java.util.List;
 import java.util.logging.Level;
@@ -157,7 +158,13 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 				bbReader = new BBFileReader(bwUrl, SeekableStreamFactory.getStreamFor(bwUrl));
 				_levelHeaders = bbReader.getZoomLevels().getZoomLevelHeaders();
 //					levelGlyphs = new ArrayList<ViewModeGlyph>(levelHeaders.size());
-				URI bwUri = new URI(bwUrl);
+				URI bwUri;
+				if (method.startsWith("file:")) {
+					bwUri = new File(bwUrl).toURI();
+				}
+				else {
+					bwUri = new URI(bwUrl);
+				}
 				if (isBigWig) {
 					detailSymL = new BigWigSymLoader(bwUri, trackStyle.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeqGroup());
 				}

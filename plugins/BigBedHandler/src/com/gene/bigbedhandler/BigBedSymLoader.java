@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 public class BigBedSymLoader extends SymLoader {
@@ -46,10 +47,7 @@ public class BigBedSymLoader extends SymLoader {
 	}
 
 	private void initbbReader(){
-		String uriString = uri.toString();
-		if (uriString.startsWith(FILE_PREFIX)) {
-			uriString = uriString.substring(FILE_PREFIX.length());
-		}
+		String uriString = GeneralUtils.fixFileName(uri.toString());
 		try {
 			bbReader = new BBFileReader(uriString, SeekableStreamFactory.getStreamFor(uriString));
 		} catch (IOException x) {

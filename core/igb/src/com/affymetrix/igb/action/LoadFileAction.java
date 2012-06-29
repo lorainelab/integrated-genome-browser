@@ -145,4 +145,8 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		return "loadFile";
 	}
 
+	@Override
+	public int getOrdinal() {
+		return -9009000;
+	}
 }

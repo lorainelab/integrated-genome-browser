@@ -133,5 +133,7 @@ public abstract class GenericAction extends AbstractAction {
 			doneCallback.actionDone(this);
 		}
 	}
-	
+	public int getOrdinal() {
+		return 0;
+	}
 }

@@ -107,4 +107,9 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	protected String getID() {
 		return "loadURL";
 	}
+
+	@Override
+	public int getOrdinal() {
+		return -9004000;
+	}
 }

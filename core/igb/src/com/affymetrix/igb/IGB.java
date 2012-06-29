@@ -44,6 +44,7 @@ import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
@@ -304,16 +305,28 @@ public final class IGB extends Application
 		return MenuUtil.getRPMenu(mbar, id, text);
 	}
 
+	private int getOrdinal(Component c) {
+		int ordinal = 0;
+		if (c instanceof JButton && ((JButton)c).getAction() instanceof GenericAction) {
+			ordinal = ((GenericAction)((JButton)c).getAction()).getOrdinal();
+		}
+		return ordinal;
+	}
+
 	public void addToolbarButton(JRPButton button) {
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
 		}
-		tool_bar.add(button);
 		Action a = button.getAction();
 		if (a instanceof GenericAction) {
 			GenericAction g = (GenericAction) a;
 			addAction(g);
 		}
+		int index = 0;
+		while (index < tool_bar.getComponentCount() && getOrdinal(button) > getOrdinal(tool_bar.getComponent(index))) {
+			index++;
+		}
+		tool_bar.add(button, index);
 	}
 
 	/**
@@ -466,7 +479,7 @@ public final class IGB extends Application
 			KeyStroke ks = (KeyStroke) o;
 			InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
 			ActionMap am = panel.getActionMap();
-			GenericActionHolder h = GenericActionHolder.getInstance();
+//			GenericActionHolder h = GenericActionHolder.getInstance();
 			String actionIdentifier = theAction.getId();
 			im.put(ks, actionIdentifier);
 			am.put(actionIdentifier, theAction);

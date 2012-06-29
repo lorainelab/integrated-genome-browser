@@ -898,9 +898,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 
-		for (SeqMapRefreshed smr : seqmap_refresh_list) {
-			smr.mapRefresh();
-		}
+		seqMapRefresh();
 
 		seqmap.updateWidget();
 
@@ -910,6 +908,12 @@ public class SeqMapView extends JPanel
 		}
 		
 		//GeneralLoadView.getLoadView().getTableModel().fireTableDataChanged(); //for updating cell renderers/editors
+	}
+	
+	public void seqMapRefresh(){
+		for(SeqMapRefreshed smr : seqmap_refresh_list){
+			smr.mapRefresh();
+		}
 	}
 
 	/**

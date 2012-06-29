@@ -40,6 +40,8 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction implement
 			}
 		}
 		repack(true);
+		this.getSeqMapView().seqMapRefresh();
+		this.getSeqMapView().getSeqMap().updateWidget();
 	}
 
 	@Override

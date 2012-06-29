@@ -16,6 +16,7 @@ package com.affymetrix.genometryImpl.style;
 import java.awt.Color;
 
 public class HeatMap {
+	public static final String FOREGROUND_BACKGROUND = "FG/BG";
 	public enum StandardHeatMap {
 		BLACK_WHITE("Black/White", Color.BLACK, Color.WHITE),
 		VIOLET("Violet", Color.BLACK, new Color(255, 0, 255)),
@@ -170,11 +171,12 @@ public class HeatMap {
 
 	public static String[] getStandardNames() {
 			int length = StandardHeatMap.values().length;
-			String[] names = new String[length];
+			String[] names = new String[length + 1];
 			HeatMap.StandardHeatMap[] shm = StandardHeatMap.values();
 			for (int i=0; i<length; i++) {
 				names[i] = shm[i].toString();
 			}
+			names[length] = FOREGROUND_BACKGROUND;
 			return names;
 		}
 }

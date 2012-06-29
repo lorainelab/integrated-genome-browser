@@ -26,6 +26,7 @@ import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -106,17 +107,31 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		}
 		JComboBox heatMapComboBox = getGraphStyleHeatMapComboBox();
 		String name = (String) heatMapComboBox.getSelectedItem();
-		HeatMap hm = HeatMap.getStandardHeatMap(name);
-
-		if (hm != null) {
+		if (name == null) {
+			return;
+		}
+		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
 			for (AbstractGraphGlyph gl : graphGlyphs) {
 				if ("heatmapgraph".equals(gl.getName())) {
 					gl.setShowGraph(true);
-					gl.setHeatMap(hm);
+					if (!(gl.getHeatMap() instanceof DynamicStyleHeatMap)) {
+						gl.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, gl.getAnnotStyle(), 0.0f, 0.5f));
+					}
 				}
 			}
-			updateDisplay();
 		}
+		else {
+			HeatMap hm = HeatMap.getStandardHeatMap(name);
+			if (hm != null) {
+				for (AbstractGraphGlyph gl : graphGlyphs) {
+					if ("heatmapgraph".equals(gl.getName())) {
+						gl.setShowGraph(true);
+						gl.setHeatMap(hm);
+					}
+				}
+			}
+		}
+		updateDisplay();
 	}
 
 	@Override

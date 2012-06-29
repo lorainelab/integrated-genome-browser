@@ -107,7 +107,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				operList.add(gsym);
 				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
-				HeatMap styleHeatMap = new DynamicStyleHeatMap("BG/FG", style, 0.0f, 0.5f);
+				HeatMap styleHeatMap = new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, style, 0.0f, 0.5f);
 				opersym.getGraphState().setHeatMap(styleHeatMap);
 				resultGlyph = graphGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}

@@ -55,7 +55,7 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
         jScrollPane1.setViewportView(jTable1);
 
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel1.setText("Changes will take effect next time you launch IGB");
+        jLabel1.setText("");
 
         jButton2.setText("Clear");
 

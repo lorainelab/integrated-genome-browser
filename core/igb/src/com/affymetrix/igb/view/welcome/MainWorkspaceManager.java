@@ -63,8 +63,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	}
 	
 	/**
-	 * Returns welcome JPanel
-	 * @return 
+	 * @return welcome panel. 
 	 */
 	public JPanel getWelcomePane(){
 		//return new JPanel();

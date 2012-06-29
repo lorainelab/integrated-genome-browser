@@ -135,7 +135,6 @@ public class ExportDialog implements ExportConstants {
 	};
 
 	/**
-	 *
 	 * @return ExportDialog instance
 	 */
 	public static ExportDialog getSingleton() {
@@ -162,7 +161,6 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 *
 	 * @return whether the export panel is initialized and visible or not.
 	 */
 	private static boolean isVisible() {
@@ -363,7 +361,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Passed file and changed its extension
+	 * Passed file and changed its extension.
 	 *
 	 * @param file
 	 * @param extension
@@ -448,10 +446,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Get export file type by passed image format description
-	 *
-	 * @param description
-	 * @return
+	 * Get export file type by passed image format description.
 	 */
 	private ExportFileType getType(String description) {
 		for (ExportFileType type : FILTER_LIST.keySet()) {
@@ -464,10 +459,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Get export filter by passed image format extension
-	 *
-	 * @param ext
-	 * @return
+	 * Get export filter by passed image format extension.
 	 */
 	private ExportFileFilter getFilter(String ext) {
 		for (ExportFileFilter filter : FILTER_LIST.values()) {
@@ -480,10 +472,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Get image format description by passed image format extension
-	 *
-	 * @param ext
-	 * @return
+	 * Get image format description by passed image format extension.
 	 */
 	private String getDescription(String ext) {
 		if (ext.equalsIgnoreCase(EXTENSION[0])) {
@@ -554,9 +543,6 @@ public class ExportDialog implements ExportConstants {
 	 * Test whether the current export path is valid or not. If not, reset
 	 * current export path to previous export path and return false. Also, test
 	 * whether the image size is valid or not.
-	 *
-	 * @param previousPath
-	 * @return
 	 */
 	private boolean isValidExportFile(String previousPath) {
 		if (!exportFile.getParentFile().isDirectory()) {
@@ -580,8 +566,6 @@ public class ExportDialog implements ExportConstants {
 
 	/**
 	 * Give the user the choice to overwrite the existing file or not.
-	 *
-	 * @return
 	 */
 	private boolean isOverwrite() {
 		String[] options = {"Yes", "No"};
@@ -688,9 +672,6 @@ public class ExportDialog implements ExportConstants {
 	/**
 	 * Return whether the passed extention is contained in IGB support image
 	 * extention list or not.
-	 *
-	 * @param ext
-	 * @return
 	 */
 	public static boolean isExt(String ext) {
 		for (String s : EXTENSION) {
@@ -875,7 +856,6 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 *
 	 * @return sliced view component.
 	 */
 	public static Component determineSlicedComponent() {

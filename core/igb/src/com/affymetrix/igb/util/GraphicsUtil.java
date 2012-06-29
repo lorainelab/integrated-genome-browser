@@ -17,10 +17,6 @@ public class GraphicsUtil {
 
 	/**
 	 * Get device compatible image by passed width and height.
-	 *
-	 * @param width
-	 * @param height
-	 * @return
 	 */
 	public static BufferedImage getDeviceCompatibleImage(int width, int height) {
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -33,11 +29,6 @@ public class GraphicsUtil {
 
 	/**
 	 * Resize the passed image by passed width and height.
-	 *
-	 * @param image
-	 * @param width
-	 * @param height
-	 * @return
 	 */
 	public static BufferedImage resizeImage(BufferedImage image,
 			int width, int height) {

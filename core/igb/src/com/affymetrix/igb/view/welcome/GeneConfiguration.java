@@ -172,9 +172,6 @@ public class GeneConfiguration extends Configuration {
 
 	/**
 	 * from http://stackoverflow.com/questions/1324106/jai-change-jpeg-resolution
-	 * @param sourceImage
-	 * @param scaledWidth
-	 * @return 
 	 */
 	BufferedImage scaleImage(BufferedImage sourceImage, int scaledWidth) {
 		float scale = scaledWidth / (float) sourceImage.getWidth();

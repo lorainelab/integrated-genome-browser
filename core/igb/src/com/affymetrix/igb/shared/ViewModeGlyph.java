@@ -52,9 +52,6 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public boolean isCombo() {
 		return false;
 	}
-	public boolean isPreLoaded() {
-		return false;
-	}
 	public void addSym(SeqSymmetry sym) {}
 	public TierGlyph getTierGlyph() {
 		return tierGlyph;

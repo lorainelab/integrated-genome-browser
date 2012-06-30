@@ -172,8 +172,6 @@ public final class GeneralLoadView {
 	/**
 	 * Handles clicking of partial residue, all residue, and refresh data
 	 * buttons.
-	 *
-	 * @param evt
 	 */
 	public void loadResidues(final boolean partial) {
 		final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
@@ -286,8 +284,6 @@ public final class GeneralLoadView {
 	/**
 	 * Load any features that have a whole strategy and haven't already been
 	 * loaded.
-	 *
-	 * @param versionName
 	 */
 	public static void loadWholeRangeFeatures(ServerTypeI serverType) {
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
@@ -295,23 +291,6 @@ public final class GeneralLoadView {
 		loadFeatures(loadStrategies, serverType);
 	}
 
-	/**
-	 * @param gFeature the feature to check
-	 * @return if this feature is "preloaded", that is, it has a view mode that
-	 * is displayed without "Load Data", like Semantic zooming
-	 */
-	/*
-	 * private static boolean isPreLoaded(GenericFeature gFeature) { if
-	 * (gFeature.getMethods().size() > 1) { return false; } String method =
-	 * null; if (gFeature.getMethods().size() == 0) { if (gFeature.symL != null
-	 * && gFeature.symL.uri != null) { method = gFeature.symL.uri.toString(); }
-	 * } else { method = gFeature.getMethods().iterator().next(); } if (method
-	 * == null) { return false; } ITrackStyleExtended style =
-	 * TrackView.getInstance().getStyle(method, gFeature); TierGlyph tierGlyph =
-	 * TrackView.getInstance().getTier(style, Direction.BOTH); if (tierGlyph !=
-	 * null && tierGlyph.getViewModeGlyph() != null) { return
-	 * tierGlyph.getViewModeGlyph().isPreLoaded(); } return false; }
-	 */
 	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (GeneralLoadUtils.isLoaded(gFeature)) {

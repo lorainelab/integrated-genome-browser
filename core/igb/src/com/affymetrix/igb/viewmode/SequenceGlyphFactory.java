@@ -44,9 +44,6 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 
 	/**
 	 * Determine and set the appropriate residues for this element.
-	 * @param sym
-	 * @param annotseq
-	 * @return GlyphI
 	 */
 	private static void addAlignedResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI childGlyph) {
 		SeqSpan span = sym.getSpan(annotseq);

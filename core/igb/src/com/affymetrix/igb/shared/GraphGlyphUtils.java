@@ -130,7 +130,7 @@ public final class GraphGlyphUtils {
 	 */
 	private static float[] getPercents2Scores(AbstractGraphGlyph gl) {
 		Object info = gl.getInfo();
-		if (info == null) {
+		if (info == null && !(gl instanceof MultiGraphGlyph)) {
 			System.err.println("Graph has no info! " + gl);
 		}
 		float[] p2score = info2pscores.get(info);

@@ -40,7 +40,8 @@ import javax.swing.event.ListSelectionListener;
 public interface IGBService {
 	public static final String UTF8 = "UTF-8";
 	/**
-	 * A potential parameter in either the URL of a bookmark, or a command-line option.  This allows a response file to be loaded, instead of anything else.
+	 * A potential parameter in either the URL of a bookmark, or a command-line option.
+	 * This allows a response file to be loaded, instead of anything else.
 	 */
 	public final static String SCRIPTFILETAG = "scriptfile";
 
@@ -48,58 +49,45 @@ public interface IGBService {
 	/**
 	 * Add a lockedUp message to the list of locked messages and display with
 	 * a little progress bar so that the app doesn't look locked up.
-	 * @param s text of the message
+	 * @param message text of the message
 	 */
 	public void addNotLockedUpMsg(String message);
 	/**
-	 * Remove a lockedUp message from the list of locked messages and undisplay it
-	 * @param s text of the message
+	 * Remove a lockedUp message from the list of locked messages and undisplay it.
+	 * @param message text of the message
 	 */
 	public void removeNotLockedUpMsg(String message);
 	/**
-	 *  Sets the text in the status bar.
-	 *  Will optionally echo a copy of the string to System.out.
-	 *  It is safe to call this method even if the status bar is not being displayed.
-	 *  @param echo  Whether to echo a copy to System.out.
+	 * Sets the text in the status bar.
+	 * Will optionally echo a copy of the string to System.out.
+	 * It is safe to call this method even if the status bar is not being displayed.
 	 */
 	public void setStatus(String message);
 	/**
 	 * Shows a panel asking for the user to confirm something.
 	 *
-	 * @param message the message String to display to the user
+	 * @param text the message to display to the user.
 	 * @return true if the user confirms, else false.
 	 */
 	public boolean confirmPanel(String text);
 	/**
 	 * Shows a panel asking for the user to confirm something.
-	 * 
-	 * @param message
-	 * @param node
-	 * @param check
-	 * @param def_val
-	 * @return 
 	 */
 	public boolean confirmPanel(final String message, final Preferences node,
 			final String check, final boolean def_val);
-		/**
+	/**
 	 * Shows a info panel to the user.
-	 * 
-	 * @param message
-	 * @param node
-	 * @param check
-	 * @param def_val
-	 * @return 
 	 */
 	public void infoPanel(final String message, final Preferences node,
 			final String check, final boolean def_val);
 	/**
-	 * get the specified icon
+	 * Get the specified icon.
 	 * @param name of the icon
 	 * @return the specified icon
 	 */
 	public ImageIcon getIcon(String name);
 	/**
-	 * get the given menu of the application
+	 * Get the given menu of the application.
 	 * @return the given menu of the IGB application
 	 */
 	public JRPMenu getMenu(String menuName);
@@ -117,15 +105,14 @@ public interface IGBService {
 	public Color getDefaultForegroundColor();
 	// for RestrictionSites/SearchView
 	/**
-	 * get a count of the number of hits that match the specified regular
-	 * expression and mark the in the Seq Map View
+	 * Get a count of the number of hits that match the specified regular
+	 * expression and mark the in the Seq Map View.
 	 * @param forward - true = forward search, false = reverse search
 	 * @param regex - the regular expression to match
 	 * @param residues the residues to search
 	 * @param residue_offset the starting offset within the residues
 	 * @param glyphs the glyphs to mark
 	 * @param hitColor the color to mark them with
-	 * @return
 	 */
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
@@ -140,7 +127,7 @@ public interface IGBService {
 	public void removeListSelectionListener(ListSelectionListener listener);
 	
 	/**
-	 * get the SeqMapViewI, the main window for IGB
+	 * Get the SeqMapViewI, the main window for IGB.
 	 * @return the SeqMapViewI
 	 */
 	public SeqMapViewI getSeqMapView();
@@ -150,16 +137,16 @@ public interface IGBService {
 	public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial);
 	// for Graph Adjuster
 	/**
-	 * get the main JFrame for the application
+	 * Get the main JFrame for the application.
 	 * @return the main JFrame for the IGB instance
 	 */
 	public JFrame getFrame();
 	/**
-	 * save the current state of the application
+	 * Save the current state of the application.
 	 */
 	public void saveState();
 	/**
-	 * load the current state of the application
+	 * Load the current state of the application.
 	 */
 	public void loadState();
 	public IGBTabPanel getTabPanel(String className);

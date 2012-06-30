@@ -1174,16 +1174,17 @@ public static boolean areResiduesComplete(String residues) {
 		}
 	}
 
-	/** Returns the minimum and maximum positions of all included annotations.
-	 *  Necessary because getMin() and getMax() do not give this information
-	 *  for this type of SeqSymmetry.
+	/**
+	 * Returns the minimum and maximum positions of all included annotations.
+	 * Necessary because getMin() and getMax() do not give this information
+	 * for this type of SeqSymmetry.
 	 *
-	 *  @param seq  consider annotations only on this seq
-	 *  @param exclude_graphs if true, ignore graph annotations
-	 *  @param min  an initial minimum value.
-	 *  @param max  an initial maximum value.
+	 * @param seq  consider annotations only on this seq
+	 * @param min  an initial minimum value.
+	 * @param max  an initial maximum value.
 	 */
-	private static int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, int min, int max) {
+	private static int[] getAnnotationBounds(
+			BioSeq seq, TypeContainerAnnot tca, int min, int max) {
 		int[] min_max = new int[2];
 		min_max[0] = min;
 		min_max[1] = max;

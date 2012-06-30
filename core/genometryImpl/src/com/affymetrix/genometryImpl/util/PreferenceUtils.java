@@ -370,7 +370,6 @@ public abstract class PreferenceUtils {
 	 * Any preferences in the file will be read and merged into the
 	 * user's preferences.
 	 *
-	 * @param f
 	 * @throws IOException
 	 * @throws InvalidPreferencesFormatException
 	 * @see Preferences#importPreferences(InputStream)

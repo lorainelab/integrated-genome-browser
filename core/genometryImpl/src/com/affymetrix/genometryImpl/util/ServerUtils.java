@@ -128,8 +128,6 @@ public abstract class ServerUtils {
 
 	/**
 	 * Load synonyms from file into lookup.
-	 * @param symfile
-	 * @param lookup
 	 */
 	public static void loadSynonyms(File synfile, SynonymLookup lookup) {
 		if (synfile.exists()) {
@@ -880,8 +878,6 @@ public abstract class ServerUtils {
 
 	/**
 	 * Add symloader types to map.
-	 * @param genome
-	 * @param types_hash
 	 */
 	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {		
 		for(BioSeq aseq : genome.getSeqList()){

@@ -261,8 +261,6 @@ public final class IndexingUtils {
 	 * @param syms -- a sorted list of annotations (on one chromosome)
 	 * @param seq -- the chromosome
 	 * @param group -- the group (used to determine IDs for each sym)
-	 * @param iSyms
-	 * @param indexesFileName
 	 * @throws java.io.IOException
 	 */
 	public static void writeIndexedAnnotations(
@@ -280,9 +278,6 @@ public final class IndexingUtils {
 
 	/**
 	 * Determine file positions and create iSyms array.
-	 * @param iSyms
-	 * @param syms
-	 * @param seq
 	 * @throws IOException
 	 */
 	private static void createIndexArray(
@@ -318,9 +313,6 @@ public final class IndexingUtils {
 
 	/**
 	 * Write out indexes to files (for one chromosome).
-	 *
-	 * @param iSyms
-	 * @param indexesFileName -- file
 	 * @param syms -- symmetries to write out
 	 * @param seq -- chromosome
 	 * @throws IOException
@@ -609,12 +601,6 @@ public final class IndexingUtils {
 
 	/**
 	 * Index a graph.
-	 * @param graphName
-	 * @param pointCount
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @return File
 	 */
 	public static File createIndexedFile(int pointCount, int[] x, float[] y, int[] w) {
 		File bufVal = null;

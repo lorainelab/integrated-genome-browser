@@ -29,10 +29,9 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
 	 *  This object is optimized for the case where all optional columns in the
 	 *  bed file are used.  If you are using only the first few columns, it would
 	 *  be more efficient to use a different SeqSymmetry object.
-	 *  @param cdsMin the start of the CDS region, "thinEnd", or Integer.MIN_VALUE.
+	 *  @param min the start of the CDS region, "thinEnd", or Integer.MIN_VALUE.
 	 *         If cdsMin = Integer.MIN_VALUE or cdsMin = cdsMax, then there is no CDS.
-	 *  @param cdsMax the end of the CDS region, "thickEnd", or Integer.MIN_VALUE.
-	 *  @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no score.
+	 *  @param max the end of the CDS region, "thickEnd", or Integer.MIN_VALUE.
 	 */
 	public GenbankSym(String type, BioSeq seq, int min, int max, String ID) {
 		this.type = type;

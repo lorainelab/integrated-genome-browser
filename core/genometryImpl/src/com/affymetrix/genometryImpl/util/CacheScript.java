@@ -89,10 +89,8 @@ public class CacheScript extends Thread {
 	}
 
 	/**
-	 * Create serverMapping.txt and adds server name and corresponding directory
+	 * Create serverMapping.txt and add server name and corresponding directory
 	 * to it.
-	 *
-	 * @param server_list
 	 */
 	public void writeServerMapping() {
 		FileOutputStream fos = null;

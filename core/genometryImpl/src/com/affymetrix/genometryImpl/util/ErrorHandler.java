@@ -113,15 +113,10 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * Opens a JOptionPane.ERROR_MESSAGE panel with the given frame as its
 	 * parent. This is designed to probably be safe from the EventDispatchThread
 	 * or from any other thread.
-	 *
-	 * @param frame the parent frame, null is ok.
-	 * @param title
-	 * @param message
-	 * @param e an exception (or error), if any. null is ok. If not null, the
-	 * exception text will be appended to the message and a stack trace might be
-	 * printed on standard error.
 	 */
-	private static void errorPanel(final String title, String message, final List<Throwable> errs, final List<GenericAction> actions, Level level) {
+	private static void errorPanel(final String title, String message,
+			final List<Throwable> errs, final List<GenericAction> actions,
+			Level level) {
 		// logging the error to standard out is redundant, but preserves
 		// the past behavior.  The flush() methods make sure that
 		// messages from system.out and system.err don't get out-of-synch

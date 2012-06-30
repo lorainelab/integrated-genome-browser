@@ -329,7 +329,7 @@ public final class GeneralUtils {
 
 	/**
 	 * Moves mapping to the given path and renames it to filename.
-	 * @param mapping	File to be moved.
+	 * @param file	File to be moved.
 	 * @param fileName	File name to be given to moved mapping.
 	 * @param path	Path to where mapping is moved.
 	 */
@@ -346,7 +346,7 @@ public final class GeneralUtils {
 
 	/**
 	 * Copies mapping to the given path.
-	 * @param mapping	File to be copied
+	 * @param file	File to be copied
 	 * @param fileName	File name to be given to copied mapping.
 	 * @param path	Path to where mapping is copied.
 	 */

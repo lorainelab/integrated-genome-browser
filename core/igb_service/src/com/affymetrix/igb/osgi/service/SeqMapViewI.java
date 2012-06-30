@@ -42,7 +42,6 @@ public interface SeqMapViewI {
 
 	/**
 	 * Check if map should display genome sequence
-	 * @return 
 	 */
 	public boolean isGenomeSequenceSupported();
 	

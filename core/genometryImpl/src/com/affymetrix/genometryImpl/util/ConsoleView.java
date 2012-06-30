@@ -39,7 +39,7 @@ public final class ConsoleView {
   /**
    *  Call this to create and initialize the singleton JFrame and
    *  to start the redirection of standard out and err streams into it.
-   *  Call {@link #showConsole()} or {@link #getFrame()} when you are
+   *  Call {@link #showConsole} or {@link #getFrame} when you are
    *  ready to display the frame.
    */
   public static void init(String APP_NAME) {
@@ -49,7 +49,7 @@ public final class ConsoleView {
    /**
    *  Displays the console and brings it to the front.
    *  If necessary, it will be de-iconified.
-   *  This will call {@link #init()} if necessary, but
+   *  This will call {@link #init} if necessary, but
    *  it is better for you to call init() at the time you want
    *  the console to begin working. 
    */
@@ -66,7 +66,7 @@ public final class ConsoleView {
   /**
    *  Returns the JFrame that holds the console, creating it if necessary,
    *  but not displaying it if it isn't already displayed.
-   *  If you want to display the frame, call {@link #showConsole()} instead.
+   *  If you want to display the frame, call {@link #showConsole} instead.
    */
   private static JFrame getFrame(String APP_NAME) {
 	  String TITLE = APP_NAME + " Console";

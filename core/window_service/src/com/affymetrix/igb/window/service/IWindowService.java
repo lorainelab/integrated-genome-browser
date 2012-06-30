@@ -76,7 +76,7 @@ public interface IWindowService {
 	/**
 	 * set the state of the given tab to the given state and update
 	 * the view menu to the new value
-	 * @param igbTabPanel the tab to change
+	 * @param panel the tab to change
 	 * @param tabState the new state
 	 */
 	public void setTabStateAndMenu(IGBTabPanel panel, TabState tabState);

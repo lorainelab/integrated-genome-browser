@@ -130,13 +130,13 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	}
 	
 	/**
-	 * Load data of size of buffer into buffer from file istr.
+	 * Fill the given buffer from the given input stream.
 	 *
-	 * @param istr	File istr from which data is to be loaded.
-	 * @param buffer	Buffer in which data from file istr is read.
-	 * @throws IOException
+	 * @param bistr from which data is to be loaded.
+	 * @param buffer Buffer in which data from file bistr is read.
 	 */
-	private static void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer) throws IOException {
+	private static void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer)
+			throws IOException {
 		buffer.rewind();
 		bistr.read(buffer.array());
 		buffer.rewind();

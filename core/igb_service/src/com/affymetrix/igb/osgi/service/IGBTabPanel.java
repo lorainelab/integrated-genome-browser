@@ -171,9 +171,9 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	}
 
 	/**
-	 * set the main Frame for this panel (only applies when
-	 * a separate window - tab state WINDOW)
-	 * @param the JFrame of this tab panel
+	 * Set the main Frame for this panel.
+	 * (only applies when a separate window - tab state WINDOW).
+	 * @param frame the JFrame of this tab panel.
 	 */
 	public void setFrame(JFrame frame) {
 		this.frame = frame;

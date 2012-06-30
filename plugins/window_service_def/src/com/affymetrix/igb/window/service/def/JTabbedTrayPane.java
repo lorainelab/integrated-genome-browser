@@ -3,9 +3,10 @@ package com.affymetrix.igb.window.service.def;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -252,6 +253,18 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 				}
 			);
 		}
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+		    	resize();
+			}
+		    public void componentResized(ComponentEvent e) {
+		    	resize();
+		    }
+		    public void componentMoved(ComponentEvent e) {
+		    	resize();
+		    }
+		});
 	}
 
 	private void unWindow() {
@@ -599,6 +612,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			case EXTENDED:
 				setDividerLocation(getExtendDividerLocation());
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -616,15 +631,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 		PreferenceUtils.saveDividerLocation(title, saveDividerProportionalLocation);
 		PreferenceUtils.saveComponentState(title, trayState.toString());
-	}
-
-	@Override
-	public void paint(Graphics g) {
-		if (!initialized) {
-			resize();
-			initialized = true;
-		}
-		super.paint(g);
 	}
 
 	@Override

@@ -12,8 +12,8 @@ import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 public class BaiSemanticZoomGlyphFactory extends GzIndexedSemanticZoomGlyphFactory {
 	public static final String BAI_ZOOM_DISPLAYER_EXTENSION = "bai";
 
-	public BaiSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
-		super(defaultGlyphFactory, graphGlyphFactory);
+	public BaiSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI heatMapGraphGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
+		super(defaultGlyphFactory, heatMapGraphGlyphFactory, graphGlyphFactory);
 	}
 
 	@Override

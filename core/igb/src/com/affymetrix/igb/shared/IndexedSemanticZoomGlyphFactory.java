@@ -17,13 +17,14 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	protected final MapViewGlyphFactoryI defaultGlyphFactory;
-	protected final MapViewGlyphFactoryI graphGlyphFactory;
+	private final MapViewGlyphFactoryI graphGlyphFactory;
 //	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.LogTransform(Math.E);
 	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.PowerTransformer(0.5);
 
@@ -41,6 +42,10 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return false;
 		}
 		return GeneralUtils.urlExists(getIndexedFileName(uri, Direction.BOTH));
+	}
+
+	protected MapViewGlyphFactoryI getGraphGlyphFactory() {
+		return graphGlyphFactory;
 	}
 
 	@Override
@@ -61,7 +66,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 	protected AbstractGraphGlyph getEmptyGraphGlyph(ITrackStyleExtended trackStyle, SeqMapViewExtendedI gviewer) {
 		GraphSym graf = new GraphSym(new int[]{gviewer.getVisibleSpan().getMin()}, new int[]{gviewer.getVisibleSpan().getLength()}, 
 				new float[]{0}, trackStyle.getMethodName(), gviewer.getVisibleSpan().getBioSeq());
-		return (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(graf, trackStyle, Direction.BOTH, gviewer);
+		return (AbstractGraphGlyph)getGraphGlyphFactory().getViewModeGlyph(graf, trackStyle, Direction.BOTH, gviewer);
 	}
 
 	@Override
@@ -107,9 +112,11 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				operList.add(gsym);
 				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
-				HeatMap styleHeatMap = new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, style, 0.0f, 0.5f);
-				opersym.getGraphState().setHeatMap(styleHeatMap);
-				resultGlyph = graphGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
+				if (PreferenceUtils.getBooleanParam(PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap)) {
+					HeatMap styleHeatMap = new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, style, 0.0f, 0.5f);
+					opersym.getGraphState().setHeatMap(styleHeatMap);
+				}
+				resultGlyph = getGraphGlyphFactory().getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}
 			if (resultGlyph != null) {
 				((AbstractGraphGlyph)resultGlyph).drawHandle(false);

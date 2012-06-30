@@ -16,30 +16,36 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
-                          <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-                          <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
-                          <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="coverageSummaryHeatMapCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="displayOption" min="-2" max="-2" attributes="0"/>
+                                  <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="orfAnalyzerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="edgeMatchPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="coordinatePanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="residueColorPanel" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                   </Group>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="orfAnalyzerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                      <Component id="edgeMatchPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                      <Component id="coordinatePanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                      <Component id="residueColorPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                      <Component id="clear_prefsB" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="clear_prefsB" min="-2" pref="510" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
@@ -79,9 +85,11 @@
                   <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
                   <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="coverageSummaryHeatMapCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -205,7 +213,7 @@
                   <Component id="bgLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="bgComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace pref="27" max="32767" attributes="0"/>
+                  <EmptySpace pref="83" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -458,7 +466,7 @@
                   <Component id="edgeMatchLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace pref="420" max="32767" attributes="0"/>
+                  <EmptySpace pref="429" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -509,6 +517,15 @@
     <Component class="javax.swing.JCheckBox" name="autoloadSequenceCheckBox">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Autoload Sequence&quot;, PreferenceUtils.getTopNode(),       PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence)"/>
+        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="coverageSummaryHeatMapCheckBox">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="coverageSummaryHeatMapCheckBoxActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Coverage Summary as HeatMap&quot;, PreferenceUtils.getTopNode(),       PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap)"/>
       </AuxValues>
     </Component>
   </SubComponents>

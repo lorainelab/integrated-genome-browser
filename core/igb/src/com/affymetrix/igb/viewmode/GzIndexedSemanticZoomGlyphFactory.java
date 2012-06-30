@@ -13,8 +13,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.action.SetSummaryThresholdAction;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.shared.IndexedSemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -22,9 +21,24 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory {
+	private MapViewGlyphFactoryI heatMapGraphGlyphFactory;
+	private MapViewGlyphFactoryI graphGlyphFactory;
 
-	public GzIndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
-		super(defaultGlyphFactory, graphGlyphFactory);
+	public GzIndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI heatMapGraphGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
+		super(defaultGlyphFactory, null);
+		this.heatMapGraphGlyphFactory = heatMapGraphGlyphFactory;
+		this.graphGlyphFactory = graphGlyphFactory;
+	}
+
+
+	@Override
+	protected MapViewGlyphFactoryI getGraphGlyphFactory() {
+		if (PreferenceUtils.getBooleanParam(PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap)) {
+			return heatMapGraphGlyphFactory;
+		}
+		else {
+			return graphGlyphFactory;
+		}
 	}
 
 	@Override

@@ -67,6 +67,7 @@ public abstract class PreferenceUtils {
 	public static final String CONFIRM_BEFORE_REFRESH = "Confirm before refresh";
 	public static final String AUTO_LOAD = "Auto Load Data";
 	public static final String AUTO_LOAD_SEQUENCE = "Auto Load Sequence";
+	public static final String COVERAGE_SUMMARY_HEATMAP = "Coverage Summary as HeatMap";
 	public static final String DISPLAY_ERRORS_STATUS_BAR = "Display Errors on Status Bar";
 	public static final String SHOW_COLLAPSE_OPTION = "Show Collapse Option";
 	public static final boolean default_display_errors = false;
@@ -77,6 +78,7 @@ public abstract class PreferenceUtils {
 	public static final boolean default_confirm_before_refresh = true;
 	public static final boolean default_auto_load = true;
 	public static final boolean default_auto_load_sequence = false;
+	public static final boolean default_coverage_summary_heatmap = true;
 	private static final String DEFAULT_PREFS_MODE = "igb";
 	private static final String SLASH_STANDIN = "%";
 	private static String prefs_mode = DEFAULT_PREFS_MODE;

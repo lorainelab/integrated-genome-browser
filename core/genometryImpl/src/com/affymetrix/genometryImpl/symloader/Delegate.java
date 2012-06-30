@@ -76,7 +76,6 @@ public class Delegate extends QuickLoadSymLoader {
 	
 	/**
      * Get a region of the chromosome.
-     * @param seq - chromosome
      * @param overlapSpan - span of overlap
      * @return List of symmetries satisfying requirements
      */

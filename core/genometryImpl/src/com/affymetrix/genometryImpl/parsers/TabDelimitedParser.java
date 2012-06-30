@@ -62,8 +62,6 @@ public class TabDelimitedParser implements Parser {
 	 *  @param props Whether to use the column names to construct properties.
 	 *    Only valid if "header" is true.
 	 *  @param header Whether there is a header line containing column names for properties
-	 *  @param addToIndex Whether to add the ID of each item to the index on the
-	 *    AnnotatedSeqGroup
 	 */
 	public TabDelimitedParser(int type, int chromosome, int start, int end, int length,
 			int strand, int group, int id, boolean props, boolean header) {

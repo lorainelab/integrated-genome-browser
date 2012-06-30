@@ -306,9 +306,6 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 
 	/**
 	 * Sort xList, yList, and wList based upon xList
-	 * @param xList
-	 * @param yList
-	 * @param wList
 	 */
 	private static void sortXYDataOnX(final int[] xList, final float[] yList) {
 		Swapper swapper = new Swapper() {

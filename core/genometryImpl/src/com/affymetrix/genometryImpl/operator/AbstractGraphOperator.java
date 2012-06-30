@@ -20,7 +20,7 @@ public abstract class AbstractGraphOperator implements Operator {
 	 * width of 1.
 	 *
 	 * @param aseq the BioSeq to use
-	 * @param graphs the selected graphs to use as the operands of the operation
+	 * @param symList the selected graphs to use as the operands of the operation
 	 * @return the graph result of the operation
 	 */
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {

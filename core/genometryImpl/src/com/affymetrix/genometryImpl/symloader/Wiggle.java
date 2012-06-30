@@ -513,12 +513,13 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 	/**
 	 * Writes the give GraphSym in bar format.
 	 * @param syms		GraphSym to be written.
-	 * @param seq		BioSeq to be written.
 	 * @param type		Type required for bar format.
 	 * @param ostr		Outputstream to write bar file.
 	 * @return			Returns true if bar file is written sucessfully.
 	 */
-	public static boolean writeBarFormat(Collection<? extends SeqSymmetry> syms, String type, OutputStream ostr){
+	public static boolean writeBarFormat(
+			Collection<? extends SeqSymmetry> syms,
+			String type, OutputStream ostr) {
 			
 			BarParser instance = new BarParser();
 			return instance.writeAnnotations(syms, null, type, ostr);

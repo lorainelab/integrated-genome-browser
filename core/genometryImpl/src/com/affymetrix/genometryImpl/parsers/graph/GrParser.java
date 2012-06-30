@@ -138,10 +138,7 @@ public final class GrParser implements GraphParser {
 	}
 
 	/**
-	 * Sort xList, yList, and wList based upon xList
-	 * @param xList
-	 * @param yList
-	 * @param wList
+	 * Sort xList, yList, and wList based upon xList.
 	 */
 	public static void sortXYDataOnX(final int[] xList, final float[] yList) {
 		Swapper swapper = new Swapper() {

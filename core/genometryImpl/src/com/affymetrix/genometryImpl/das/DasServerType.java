@@ -87,10 +87,9 @@ public class DasServerType implements ServerTypeI {
 	}
 
 	/**
-	 * Returns server path for a mapping on Das server.
+	 * Gets server path for a mapping on DAS server.
 	 * @param id	Genome id
-	 * @param server	Server url.
-	 * @param mapping	File name.
+	 * @param file	File name.
 	 */
 	private String getPath(String id, URL server, String file){
 		try {
@@ -104,7 +103,6 @@ public class DasServerType implements ServerTypeI {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
-	 * @param server_path	Server path from where mapping is to be copied.
 	 * @param local_path	Local path from where mapping is to saved.
 	 */
 	@SuppressWarnings("unused")
@@ -271,9 +269,8 @@ public class DasServerType implements ServerTypeI {
 	/**
 	 * Load annotations from a DAS server.
 	 *
-	 * @param gFeature the generic feature that is to be loaded from the server.
-	 * @param spans List of spans containing the ranges for which you want annotations.
-	 * @return true if data was loaded
+	 * @param feature the generic feature that is to be loaded from the server.
+	 * @param span containing the ranges for which you want annotations.
 	 */
 	@Override
 	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {

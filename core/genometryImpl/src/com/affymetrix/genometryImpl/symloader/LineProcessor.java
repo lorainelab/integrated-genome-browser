@@ -46,10 +46,10 @@ public interface LineProcessor {
 	public SeqSpan getSpan(String line);
 
 	/**
-	 * check to see if this line is an "info" line - a special line
+	 * Check to see if this line is an "info" line - a special line
 	 * giving information about the data, not specific SeqSymmetries,
 	 * and possibly adding the line to the passed infoLines parameter.
-	 * These lines vary by file type and may start with {@link #clone()}, for example
+	 * These lines vary by file type and may start with clone(), for example.
 	 * @param line - the line to check
 	 * @param infoLines - accumulation of info lines
 	 * @return - true if this line was an info line, false otherwise

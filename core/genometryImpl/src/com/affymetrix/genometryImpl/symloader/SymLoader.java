@@ -275,9 +275,8 @@ public abstract class SymLoader implements LineTrackerI {
 	}
 
 	/**
-	 * called by the SymLoaders when they parse a new line during parseLines()
-	 * used by the progress updater to show the progress of the parseLines()
-	 * @param sym the last line read during the parseLines()
+	 * Called by the SymLoaders when they parse a new line during parseLines().
+	 * Used by the progress updater to show the progress of the parseLines().
 	 */
 	public void notifyReadLine(int lineLength) {
 		if (parseLinesProgressUpdater != null) {
@@ -287,7 +286,6 @@ public abstract class SymLoader implements LineTrackerI {
 
     /**
      * Get a region of the chromosome.
-     * @param seq - chromosome
      * @param overlapSpan - span of overlap
      * @return List of symmetries satisfying requirements
      */

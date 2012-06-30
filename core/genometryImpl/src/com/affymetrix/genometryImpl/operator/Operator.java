@@ -76,7 +76,7 @@ public interface Operator  {
 	/**
 	 * specify the FileTypeCategory of the result SeqSymmetry
 	 * @return the file type category appropriate for the BioSeq
-	 * returned by {@link #operate(BioSeq, List<SeqSymetry>)).
+	 * returned by {@link #operate}.
 	 */
 	public FileTypeCategory getOutputCategory();
 

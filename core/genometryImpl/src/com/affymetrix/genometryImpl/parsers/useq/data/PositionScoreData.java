@@ -183,7 +183,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		}
 	}
 	
-	/**Writes position score format to the PrintWriter, 1bp positions*/
+	/**
+	 * Writes position score format to the PrintWriter, 1bp positions.
+	 */
 	public void writePositionScore (PrintWriter out){
 		int prior = -1;
 		for (int i=0; i< sortedPositionScores.length; i++){
@@ -196,11 +198,16 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	
 	
 
-	/**Writes the PositionScore[] to a binary file.
-	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
-	 * @param attemptToSaveAsShort, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
+	/**
+	 * Writes the PositionScore[] to a binary file.
+	 * @param saveDirectory the binary file will be written
+	 *        using the chromStrandStartBP-StopBP.extension notation
+	 *        to this directory.
+	 * @param attemptToSaveAsShort scans to see if the offsets exceed 65,536 bp.
+	 *        A bit slower to write but potentially a considerable size reduction.
+	 *        Set to false for max speed.
 	 * @return the binaryFile written to the saveDirectory
-	 * */
+	 */
 	public File write (File saveDirectory, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShort = false;

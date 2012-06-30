@@ -115,8 +115,6 @@ public class Das2ServerType implements ServerTypeI {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
-	 * @param servertype	Server type to determine which set of files to be used.
-	 * @param server_path	Server path from where mapping is to be copied.
 	 * @param local_path	Local path from where mapping is to saved.
 	 */
 	private boolean getAllFiles(GenericServer gServer, String genome_name, String local_path){
@@ -284,11 +282,6 @@ public class Das2ServerType implements ServerTypeI {
 	/**
 	 * Loads (and displays) DAS/2 annotations.
 	 * This is done in a multi-threaded fashion so that the UI doesn't lock up.
-	 * @param selected_seq
-	 * @param gFeature
-	 * @param gviewer
-	 * @param overlap
-	 * @return true or false
 	 */
 	@Override
 	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {

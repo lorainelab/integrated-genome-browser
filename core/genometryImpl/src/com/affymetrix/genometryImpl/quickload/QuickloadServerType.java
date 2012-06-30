@@ -120,9 +120,6 @@ public class QuickloadServerType implements ServerTypeI {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
-	 *
-	 * @param servertype	Server type to determine which set of files to be used.
-	 * @param server_path	Server path from where mapping is to be copied.
 	 * @param local_path	Local path from where mapping is to saved.
 	 */
 	private boolean getAllFiles(GenericServer gServer, String genome_name, String local_path) {
@@ -323,13 +320,12 @@ public class QuickloadServerType implements ServerTypeI {
 
 	/**
 	 * Discover genomes from Quickload
-	 *
-	 * @param gServer
-	 * @param loadGenome boolean to check load genomes from server.
 	 * @return false if there's an obvious failure.
 	 */
 	@Override
-	public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+	public boolean getSpeciesAndVersions(GenericServer gServer,
+	        GenericServer primaryServer, URL primaryURL,
+		    VersionDiscoverer versionDiscoverer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -459,15 +455,11 @@ public class QuickloadServerType implements ServerTypeI {
 
 	/**
 	 * Get the partial residues from the specified QuickLoad server.
-	 *
-	 * @param seq_group
-	 * @param path
-	 * @param root_url
-	 * @param span
 	 * @return residue String.
 	 */
 	private String GetQuickLoadResidues(
-			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span, BioSeq aseq) {
+			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group,
+			String seq_name, String root_url, SeqSpan span, BioSeq aseq) {
 		String common_url = "";
 		String path = "";
 		SymLoader symloader;

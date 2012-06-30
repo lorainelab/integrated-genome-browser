@@ -89,7 +89,9 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	@Override
 	public boolean getColorByScore() { return this.colorByScore;}
 
-	/** Default implementation returns the same as {@link #getColor()}. */
+	/**
+	 * @return the foreground color.
+	 */
 	@Override
 	public Color getScoreColor(float f) { return getForeground(); }
 

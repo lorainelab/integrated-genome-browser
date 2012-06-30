@@ -75,8 +75,8 @@ public class RegionTextData extends USeqData{
 
 	
 	/**Writes the RegionText[] to a binary file.  Each region's start/stop is converted to a running offset/length which are written as either ints or shorts.
-	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
-	 * @param attemptToSaveAsShort, scans to see if the offsets and region lengths exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
+	 * @param saveDirectory the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
+	 * @param attemptToSaveAsShort scans to see if the offsets and region lengths exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * @return the binaryFile written to the saveDirectory
 	 * */
 	public File write (File saveDirectory, boolean attemptToSaveAsShort) {

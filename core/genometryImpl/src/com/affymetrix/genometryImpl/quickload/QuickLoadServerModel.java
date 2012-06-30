@@ -85,12 +85,11 @@ public final class QuickLoadServerModel {
 
 	/**
 	 * Initialize quickload server model for given url. Then add gnomes names provided in set.
-	 * @param url	server url.
-	 * @param primary_url	url of primary server. 
-	 * @param genome_names	Set of genomes names to be added.
-	 * @return an instance of QuickLoadServerModel
+	 * @param url	server URL.
+	 * @param primary_url	URL of primary server. 
 	 */
-	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url, GenericServer primaryServer) {
+	public static synchronized QuickLoadServerModel getQLModelForURL(URL url,
+			URL primary_url, GenericServer primaryServer) {
 
 		String ql_http_root = url.toExternalForm();
 		
@@ -265,9 +264,6 @@ public final class QuickLoadServerModel {
 	/**
 	 * Process the annots.xml file (if it exists).
 	 * This has friendly type names.
-	 * @param filename
-	 * @param annotList
-	 * @return true or false
 	 */
 	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) throws SAXParseException {
 			if (istr == null) {
@@ -281,9 +277,6 @@ public final class QuickLoadServerModel {
 
 	/**
 	 * Process the annots.txt file (if it exists).
-	 * @param filename
-	 * @param annotList
-	 * @return true or false
 	 */
 	private static boolean processAnnotsTxt(InputStream istr, List<AnnotMapElt> annotList) {
 		BufferedReader br = null;

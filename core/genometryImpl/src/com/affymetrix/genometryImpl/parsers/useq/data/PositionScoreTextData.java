@@ -95,8 +95,8 @@ public class PositionScoreTextData extends USeqData{
 	//methods
 
 	/**Writes the PositionScoreText[] to a binary file.
-	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
-	 * @param attemptToSaveAsShort, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
+	 * @param saveDirectory the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
+	 * @param attemptToSaveAsShort scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * @return the binaryFile written to the saveDirectory, null if something bad happened
 	 * */
 	public File write (File saveDirectory, boolean attemptToSaveAsShort) {

@@ -394,13 +394,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	}
 	
 	/**
-	 *  Parse.
-	 *  The most common parameters are:
-	 *     annotate_query = false;
-	 *     annotate_target = true;
-	 *     annotate_other = false.
-	 *
-	 *  @param istr             An input stream
 	 *  @param annot_type       The method name for the annotation to load from the file, if the track line is missing;
 	 *                          if there is a track line in the file, the name from the track line will be used instead.
 	 *  @param query_group      An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
@@ -408,13 +401,11 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	 *  @param target_group     An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
 	 *  @param other_group      An AnnotatedSeqGroup (or null) to look for other SeqSymmetries in (in PSL3 format) and add SeqSymmetries to.
 	 *                          This parameter is ignored if the file is not in psl3 format.
-	 *  @param annotate_query   if true, then alignment SeqSymmetries are added to query seq as annotations
-	 *  @param annotate_target  if true, then alignment SeqSymmetries are added to target seq as annotations
-	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
-	 *
 	 */
-	private List<UcscPslSym> parse(Iterator<String> it, String annot_type, int min, int max, 
-			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group){
+	private List<UcscPslSym> parse(
+			Iterator<String> it, String annot_type, int min, int max, 
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+			AnnotatedSeqGroup other_group) {
 
 		if (DEBUG) {
 			System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);

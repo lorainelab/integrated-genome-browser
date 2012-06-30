@@ -112,7 +112,7 @@ public class Region implements Comparable<Region>, Serializable {
 		return false;
 	}
 	/**Parses a tab delimited file (chr, start, stop, ...), zip/ gz OK. 
-	 * @param bed file, skips empty lines and those starting with '#'
+	 * @param bedFile skips empty lines and those starting with '#'
 	 * @param subStart and subEnd are the number to subtract from the ends of each region
 	 * @return a HashMap<Chr,sorted Region[]> or null in none are found
 	 * */

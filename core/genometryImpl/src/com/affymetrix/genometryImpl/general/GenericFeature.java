@@ -208,11 +208,6 @@ public final class GenericFeature {
 		return lastRefresh;
 	}
 
-	/**
-	 * Delete given method on a given bioseq.
-	 * @param method	Method to be deleted.
-	 * @param seq		Bioseq on which method should be deleted;
-	 */
 	public void clear(BioSeq seq) {
 		List<SeqSymmetry> removeList = new ArrayList<SeqSymmetry>();
 
@@ -232,7 +227,6 @@ public final class GenericFeature {
 
 	/**
 	 * Remove all methods and set feature invisible.
-	 * @param group
 	 */
 	public void clear() {
 		// Remove all childred from request

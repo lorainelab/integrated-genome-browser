@@ -7,12 +7,9 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.TrackPreferencesA;
-import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.shared.*;
 
 public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {
 	private static final long serialVersionUID = 1L;
@@ -32,19 +29,30 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
 		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allGlyphs.clear();
-		allGlyphs.addAll(selected);
+		//allGlyphs.addAll(selected);
 		graphGlyphs.clear();
 		annotGlyphs.clear();
-		for (ViewModeGlyph vg : allGlyphs) {
+		for (ViewModeGlyph vg : selected) {
 			if (vg instanceof AbstractGraphGlyph) {
-				graphGlyphs.add((AbstractGraphGlyph)vg);
+				if (vg instanceof MultiGraphGlyph) {
+					for (GlyphI g : vg.getChildren()) {
+						if (g instanceof AbstractGraphGlyph) {
+							graphGlyphs.add((AbstractGraphGlyph) g);
+							allGlyphs.add((ViewModeGlyph) g);
+						}
+					}
+				}else{
+					graphGlyphs.add((AbstractGraphGlyph) vg);
+					allGlyphs.add(vg);
+				}
 			}
 			else if (vg.getInfo() != null && vg.getInfo() instanceof RootSeqSymmetry && (((RootSeqSymmetry)vg.getInfo()).getCategory() == FileTypeCategory.Annotation || ((RootSeqSymmetry)vg.getInfo()).getCategory() == FileTypeCategory.Alignment)) {
 				annotGlyphs.add(vg);
+				allGlyphs.add(vg);
 			}
 		}
 		rootSyms.clear();
-		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(selected));
+		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(allGlyphs));
 		// First loop through and collect graphs and glyphs
 		for (RootSeqSymmetry rootSym : rootSyms) {
 			if (rootSym.getCategory() == FileTypeCategory.Annotation || rootSym.getCategory() == FileTypeCategory.Alignment) {

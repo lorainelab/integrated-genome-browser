@@ -3,10 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.event.ActionEvent;
 
@@ -26,29 +23,37 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		for(TierGlyph glyph : getTierManager().getSelectedTiers()){
-			final ITrackStyleExtended style = glyph.getAnnotStyle();
-			
-			if (style.getSeparate() && !mode.supportsTwoTrack()) {
-				style.setSeparate(false);
+		for (TierGlyph glyph : getTierManager().getSelectedTiers()) {
+			if (glyph.getViewModeGlyph() instanceof MultiGraphGlyph) {
+				for (GlyphI g : glyph.getViewModeGlyph().getChildren()) {
+					if (g instanceof AbstractGraphGlyph) {
+						changeViewMode(((AbstractGraphGlyph) (g)));
+					}
+				}
+			} else {
+				changeViewMode(glyph.getViewModeGlyph());
 			}
-			
-			ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph) glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-			TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), (RootSeqSymmetry) glyph.getInfo(), comboStyle);
 		}
-		
 		
 		// For Floating graphs
 		if(getSeqMapView().getPixelFloater() != null && getSeqMapView().getPixelFloater().getChildren() != null){
 			for (GlyphI glyph : getSeqMapView().getPixelFloater().getChildren()) {
 				if (glyph.isSelected() && glyph instanceof AbstractGraphGlyph) {
-					AbstractGraphGlyph gg = (AbstractGraphGlyph) glyph;
-					TrackView.getInstance().changeViewMode(getSeqMapView(), gg.getAnnotStyle(), mode.getName(), (RootSeqSymmetry) glyph.getInfo(), null);
+					changeViewMode(((AbstractGraphGlyph) (glyph)));
 				}
 			}
 		}
-		
+		//chr1 : 14,999,501 - 15,001,981
 		refreshMap(false, false);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(ae);
+	}
+
+	private void changeViewMode(ViewModeGlyph glyph) {
+		final ITrackStyleExtended style = glyph.getAnnotStyle();
+		if (style.getSeparate() && !mode.supportsTwoTrack()) {
+			style.setSeparate(false);
+		}
+		//ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph) glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
+		TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), (RootSeqSymmetry) glyph.getInfo(), null);
 	}
 }

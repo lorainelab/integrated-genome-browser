@@ -27,7 +27,7 @@ public class ClearPreferencesAction extends GenericAction {
 	}
 
 	private ClearPreferencesAction() {
-		super(BUNDLE.getString("ClearPreferences"), "16x16/actions/edit-clear.png", "22x22/actions/edit-clear.png");
+		super(BUNDLE.getString("ClearPreferences"), null, null);
 	}
 
 	@Override

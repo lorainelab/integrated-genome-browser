@@ -275,6 +275,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 			DefaultCellEditor textEditor = new DefaultCellEditor(edit_panel.key_field);
 			if (col == KeyStrokeColumn) {
 				selected = row;
+				textEditor.setClickCountToStart(1);
 				return textEditor;
 			}
 			return super.getCellEditor(row, col);

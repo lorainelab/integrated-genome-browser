@@ -377,6 +377,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
 	}
 
+	private boolean isAnyJoined(){
+		for (AbstractGraphGlyph gg : graphGlyphs) {
+			if (gg.getGraphState().getComboStyle() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private boolean isAnyFloat() {
 		for (ViewModeGlyph ag : allGlyphs) {
 			if (ag.getAnnotStyle().getFloatTier()) {
@@ -419,7 +428,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void floatCheckBoxReset() {
 		JCheckBox floatCheckBox = getFloatCheckBox();
-		floatCheckBox.setEnabled(isAllGraph());
+		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined());
 		boolean allFloat = isAllGraph();
 		for (AbstractGraphGlyph glyph : graphGlyphs) {
 			if (!glyph.getAnnotStyle().getFloatTier()) {

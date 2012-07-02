@@ -36,23 +36,24 @@ public class TransformAction extends SeqMapViewActionA {
 		}
 		for(TierGlyph tg : trackList){
 			final ITrackStyleExtended style = tg.getAnnotStyle();
-			Rectangle2D.Double savedCoordBox = tg.getCoordBox();
-			try {
+//			Rectangle2D.Double savedCoordBox = tg.getCoordBox();
+//			try {
 				
 				style.setOperator(operator.getName());
-				refreshMap(false, false);
+				refreshMap(true, true);
 				
-				if(savedCoordBox != null){
-					tg.setPreferredHeight(savedCoordBox.getHeight(), getTierMap().getView());
-					tg.pack(getTierMap().getView());
-				}
-				
-				getTierMap().packTiers(false, true, false);
-				getTierMap().packTiers(false, true, false);
-			}
-			catch (Exception ex) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());
-			}
+//				if(savedCoordBox != null){
+//					tg.setPreferredHeight(savedCoordBox.getHeight(), getTierMap().getView());
+//					tg.pack(getTierMap().getView());
+//				}
+//				
+//				getTierMap().packTiers(true, true, false);
+//				getTierMap().packTiers(true, true, false);
+//				getTierMap().updateWidget();
+//			}
+//			catch (Exception ex) {
+//				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());
+//			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}

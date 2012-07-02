@@ -709,9 +709,6 @@ public class SeqMapView extends JPanel
 	}
 
 	public void dataRemoved() {
-		for(TierLabelGlyph tlg : ((AffyLabelledTierMap)getSeqMap()).getTierLabels()){
-			((AffyLabelledTierMap)getSeqMap()).getLabelMap().deselect(tlg);
-		}
 		setAnnotatedSeq(aseq);
 		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view != null) {
@@ -846,7 +843,8 @@ public class SeqMapView extends JPanel
 		// Restore selected tiers
 		if(old_tier_selections != null){
 			for(TierLabelGlyph tierLabelGlyph : getTierManager().getAllTierLabels()){
-				if(old_tier_selections.contains(tierLabelGlyph.getReferenceTier())){
+				if(tierLabelGlyph.getReferenceTier().isVisible() && 
+						old_tier_selections.contains(tierLabelGlyph.getReferenceTier())){
 					((AffyLabelledTierMap)getSeqMap()).getLabelMap().select(tierLabelGlyph);
 				}
 			}

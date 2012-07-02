@@ -122,7 +122,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   public List<TierLabelGlyph> getTierLabels() {
     return label_glyphs;
   }
-
+  
   private static final double FUDGE_FACTOR = 0.2;
   private List<TierLabelGlyph> getOrderedGlyphs() {
     List<TierLabelGlyph> orderedGlyphs = new ArrayList<TierLabelGlyph>();
@@ -212,7 +212,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 			super.setSelectionMode(theMode);
 		}
 	}
-	private TierSelectionModel selectionModel = new TierSelectionModel();
+	private AffyLabelledTierMap.TierSelectionModel selectionModel = new AffyLabelledTierMap.TierSelectionModel();
 	public void addListSelectionListener(ListSelectionListener theListener) {
 		this.selectionModel.addListSelectionListener(theListener);
 	}

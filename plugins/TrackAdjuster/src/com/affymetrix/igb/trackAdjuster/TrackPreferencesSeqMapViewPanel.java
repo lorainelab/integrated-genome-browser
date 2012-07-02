@@ -4,10 +4,7 @@ import java.util.EventObject;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -17,7 +14,7 @@ import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {
+public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {
 	private static final long serialVersionUID = 1L;
 
 	public TrackPreferencesSeqMapViewPanel(IGBService _igbService) {
@@ -25,6 +22,7 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
+		igbService.getSeqMapView().addToRefreshList(this);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 //		igbService.addListSelectionListener(this);
 	}
@@ -83,5 +81,11 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 	public void trackstylePropertyChanged(EventObject eo) { // this is redundant when the source of the style change is this panel
 		refreshSelection();
 		resetAll();
+	}
+
+	public void mapRefresh() {
+		refreshSelection();
+		resetAll();
+		//selectAllButtonReset();
 	}
 }

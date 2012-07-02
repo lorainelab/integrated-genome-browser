@@ -709,6 +709,9 @@ public class SeqMapView extends JPanel
 	}
 
 	public void dataRemoved() {
+		for(TierLabelGlyph tlg : ((AffyLabelledTierMap)getSeqMap()).getTierLabels()){
+			((AffyLabelledTierMap)getSeqMap()).getLabelMap().deselect(tlg);
+		}
 		setAnnotatedSeq(aseq);
 		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view != null) {

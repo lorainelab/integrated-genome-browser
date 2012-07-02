@@ -102,16 +102,7 @@ final class ServletUtils {
 
 
 	/**
-	 *Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
-	 * @param ranges
-	 * @param span
-	 * @param sequence_directory
-	 * @param organism_name
-	 * @param seqname
-	 * @param format
-	 * @param response
-	 * @param request
-	 * @throws java.io.IOException
+	 * Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
 	 * @deprecated
 	 */
 	@Deprecated

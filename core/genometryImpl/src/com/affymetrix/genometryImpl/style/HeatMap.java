@@ -173,10 +173,10 @@ public class HeatMap {
 			int length = StandardHeatMap.values().length;
 			String[] names = new String[length + 1];
 			HeatMap.StandardHeatMap[] shm = StandardHeatMap.values();
-			for (int i=0; i<length; i++) {
+			names[0] = FOREGROUND_BACKGROUND;
+			for (int i=1; i<length; i++) {
 				names[i] = shm[i].toString();
 			}
-			names[length] = FOREGROUND_BACKGROUND;
 			return names;
 		}
 }

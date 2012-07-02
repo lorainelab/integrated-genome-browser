@@ -40,7 +40,7 @@ public class TransformAction extends SeqMapViewActionA {
 //			try {
 				
 				style.setOperator(operator.getName());
-				refreshMap(true, true);
+				refreshMap(false, true);
 				
 //				if(savedCoordBox != null){
 //					tg.setPreferredHeight(savedCoordBox.getHeight(), getTierMap().getView());

@@ -200,9 +200,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		public Object getInfo() {
 			RootSeqSymmetry rootSym = getRootSym();
 			if (rootSym == null) {
-				rootSym = new RootSeqSymmetry() { // so that it is not null
-					@Override public FileTypeCategory getCategory() { return getFileTypeCategory(); }
-				};
+				rootSym = new DummyRootSeqSymmetry(getFileTypeCategory()); // so that it is not null
 			};
 			return rootSym;
 		}

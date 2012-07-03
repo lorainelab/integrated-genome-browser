@@ -2263,7 +2263,7 @@ public class SeqMapView extends JPanel
 		// this selects all join subtracks on the track itself (arrow on left edge)
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (vg instanceof MultiGraphGlyph) {
+			if (vg instanceof MultiGraphGlyph && vg.getChildCount() > 0) {
 				for (GlyphI child : vg.getChildren()) {
 					boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
 					if (matches) {
@@ -2288,7 +2288,7 @@ public class SeqMapView extends JPanel
 		}
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (vg instanceof MultiGraphGlyph) {
+			if (vg instanceof MultiGraphGlyph && vg.getChildCount() > 0) {
 				for (GlyphI child : vg.getChildren()) {
 					child.setSelected(false);
 				}

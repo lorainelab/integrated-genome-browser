@@ -34,7 +34,7 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		annotGlyphs.clear();
 		for (ViewModeGlyph vg : selected) {
 			if (vg instanceof AbstractGraphGlyph) {
-				if (vg instanceof MultiGraphGlyph) {
+				if (vg instanceof MultiGraphGlyph && vg.getChildCount() > 0) {
 					for (GlyphI g : vg.getChildren()) {
 						if (g instanceof AbstractGraphGlyph) {
 							graphGlyphs.add((AbstractGraphGlyph) g);

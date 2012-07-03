@@ -24,7 +24,7 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		for (TierGlyph glyph : getTierManager().getSelectedTiers()) {
-			if (glyph.getViewModeGlyph() instanceof MultiGraphGlyph) {
+			if (glyph.getViewModeGlyph() instanceof MultiGraphGlyph && glyph.getViewModeGlyph().getChildCount() > 0) {
 				for (GlyphI g : glyph.getViewModeGlyph().getChildren()) {
 					if (g instanceof AbstractGraphGlyph) {
 						changeViewMode(((AbstractGraphGlyph) (g)));

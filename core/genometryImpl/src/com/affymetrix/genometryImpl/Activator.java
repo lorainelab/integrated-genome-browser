@@ -88,6 +88,8 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopySequenceOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DepthOperator(FileTypeCategory.Alignment), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DepthOperator(FileTypeCategory.Annotation), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SummaryOperator(FileTypeCategory.Annotation), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SummaryOperator(FileTypeCategory.Alignment), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DiffOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveAOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveBOperator(), null);

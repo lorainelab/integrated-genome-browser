@@ -68,7 +68,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Neo
 		return factory.getViewModeGlyph(rootSym, style, direction, smv);
 	}
 	
-	//TODO: Make this abstract
+	@Override
 	protected void updateParent(ViewModeGlyph vmg){
 		//Do Nothing
 	}

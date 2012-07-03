@@ -74,7 +74,7 @@ public class MutableSingletonSeqSymmetry
 	public void removeSpan(SeqSpan span) { throw new
 		RuntimeException("Operation Not Allowed. Can't remove a span froma a SingletonSeqSymmetry."); }
 
-	public String getID() { return id.toString(); }
+	public String getID() { return id != null ? id.toString() : null; }
 
 }
 

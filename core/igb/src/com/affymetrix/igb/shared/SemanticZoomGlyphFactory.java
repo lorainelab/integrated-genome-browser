@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -63,9 +65,19 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			setLastUsedGlyph(getGlyph(smv));
 		}
 		
+		@Override
+		protected RootSeqSymmetry loadRegion(SeqSpan span) {
+			return detailGlyph.loadRegion(span);
+		}
+		
+		@Override
+		protected void updateParent(ViewModeGlyph vmg){
+			detailGlyph.updateParent(vmg);
+		}
+	
 		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv, MapViewGlyphFactoryI factory) throws Exception {
 			if(isAutoLoadMode()){
-				detailGlyph.loadAndDisplayRegion(smv, factory);
+				loadAndDisplayRegion(smv, factory);
 			}
 			return detailGlyph;
 		}

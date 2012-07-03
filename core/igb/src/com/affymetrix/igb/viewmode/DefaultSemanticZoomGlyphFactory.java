@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
@@ -24,6 +25,13 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 			super(sym);
 		}
 
+		@Override
+		protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
+			ViewModeGlyph result = factory.getViewModeGlyph(rootSym, style, direction, smv);
+			depthGlyph = depthFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
+			return result;
+		}
+		
 		@Override
 		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
 			if(isDetail(smv.getSeqMap().getView())){

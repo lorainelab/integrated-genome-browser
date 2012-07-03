@@ -199,7 +199,9 @@ public final class KeyStrokeEditPanel extends JPanel {
 		// The following seems to put the accelerator in the menu,
 		// but the action does not seem to be invoked by the key stroke.
 		Action a = GenericActionHolder.getInstance().getGenericAction(this.the_key);
+		KeyStroke previousKeyStroke = null;
 		if (null != a) {
+			previousKeyStroke = (KeyStroke) a.getValue(Action.ACCELERATOR_KEY);
 			KeyStroke k = KeyStroke.getKeyStroke(str);
 			if (null != k) {
 				a.putValue(Action.ACCELERATOR_KEY, k);
@@ -213,8 +215,18 @@ public final class KeyStrokeEditPanel extends JPanel {
 		javax.swing.JFrame f = IGB.getSingleton().getFrame();
 		javax.swing.JPanel p = (javax.swing.JPanel) f.getContentPane();
 		InputMap im = p.getInputMap(WHEN_IN_FOCUSED_WINDOW);
+		
+		String previousKey = null;
+		if(previousKeyStroke != null){
+			previousKey = (String) im.get(previousKeyStroke);
+			im.remove(previousKeyStroke);
+		}
 		im.put(ks, this.the_key);
+		
 		ActionMap am = p.getActionMap();
+		if(previousKey != null){
+			am.remove(previousKey);
+		}
 		am.put(this.the_key, a);
 	}
 

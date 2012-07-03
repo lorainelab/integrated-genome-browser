@@ -243,6 +243,17 @@ public final class GenericFeature {
 		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
 
+	public boolean isLoaded(SeqSpan span){
+		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
+		query_sym.addSpan(span);
+
+		SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, requestSym, span.getBioSeq());
+		if (SeqUtils.hasSpan(optimized_sym)) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Split the requested span into spans that still need to be loaded.
 	 * Note we can't filter inside spans (in general) until after the data is returned.

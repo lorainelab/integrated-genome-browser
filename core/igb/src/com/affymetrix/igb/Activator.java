@@ -468,7 +468,7 @@ public class Activator implements BundleActivator {
 
 		// Add Default factories
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentSemanticZoomGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, minMaxAvgGraphGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);

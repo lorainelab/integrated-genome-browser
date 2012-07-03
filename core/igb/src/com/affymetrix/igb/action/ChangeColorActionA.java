@@ -9,10 +9,8 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.ParameteredAction;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.*;
 
 /**
  * note - this class contains an instance of SeqMapView. For now, there
@@ -75,10 +73,22 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 		List<ViewModeGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
 		if (!vgList.isEmpty()) {
 			for (ViewModeGlyph vg : vgList) {
-				ITrackStyleExtended style = vg.getAnnotStyle();
-				if (style != null) {
-					setStyleColor(color, style);
+				if (vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
+					for (GlyphI child : vg.getChildren()) {
+						if (child instanceof ViewModeGlyph) {
+							ITrackStyleExtended style = ((ViewModeGlyph)child).getAnnotStyle();
+							if (style != null) {
+								setStyleColor(color, style);
+							}
+						}
+					}
+				}else{
+					ITrackStyleExtended style = vg.getAnnotStyle();
+					if (style != null) {
+						setStyleColor(color, style);
+					}	
 				}
+				
 			}
 		}
 	}

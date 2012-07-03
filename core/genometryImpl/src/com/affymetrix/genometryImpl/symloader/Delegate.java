@@ -118,7 +118,7 @@ public class Delegate extends QuickLoadSymLoader {
 				break;
 			}
 
-			while (dp.feature.optimizeRequest(overlapSpan) != null) {
+			while (!dp.feature.isLoaded(overlapSpan)) {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException ex) {

@@ -44,44 +44,48 @@ public final class KeyStrokeEditPanel extends JPanel {
 	private Preferences the_toolbar_node = null;
 	private String the_key = null;
 	private String lastTimeFocusGained = "";
-	private FocusListener lois = new FocusListener() {
-	
-			@Override
-			public void focusGained(java.awt.event.FocusEvent fe) {
-				Object o = fe.getSource();
-				if (o instanceof JTextField) {
-					JTextField tf = (JTextField) o;
-					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
-				}
-			}
-			@Override
-			public void focusLost(java.awt.event.FocusEvent evt) {
-				applyAction();
-			}
-
-	};
+//	private FocusListener lois = new FocusListener() {
+//	
+//			@Override
+//			public void focusGained(java.awt.event.FocusEvent fe) {
+//				Object o = fe.getSource();
+//				if (o instanceof JTextField) {
+//					JTextField tf = (JTextField) o;
+//					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+//				}
+//			}
+//			@Override
+//			public void focusLost(java.awt.event.FocusEvent evt) {
+//				applyAction();
+//			}
+//
+//	};
 
 	/** Creates a new instance of KeyStrokesView */
-	public KeyStrokeEditPanel() {
+	public KeyStrokeEditPanel(){
 		key_field.addKeyListener(new KeyListener() {
 
 			@Override
 			public void keyPressed(KeyEvent evt) {
-				evt.consume();
 				int keyCode = evt.getKeyCode();
 				int modifiers = evt.getModifiers();
 				KeyStroke ks = KeyStroke.getKeyStroke(keyCode, modifiers);
 				if (getKeyText(ks.getKeyCode()).equals("BACK_SPACE")
 						|| getKeyText(ks.getKeyCode()).equals("DELETE")) {
+					evt.consume();
 					clearAction();
+				} else if (getKeyText(ks.getKeyCode()).equals("ENTER")
+						|| getKeyText(ks.getKeyCode()).equals("RETURN")) {
+					applyAction();
 				} else {
+//					evt.consume();
 					String command = keyStroke2String(ks);
 					String useCommand = isCommandInUse(command);
 					if (useCommand != null) {
 						// Temorarily remove the focus listener
 						// so that it doesn't try to apply the action
 						// when the confirmation dialog pops up.
-						key_field.removeFocusListener(lois);
+//						key_field.removeFocusListener(lois);
 						if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
 								"This shortcut is currently in use; \n"
 								+ "reassigning this will remove the shortcut for "
@@ -92,9 +96,13 @@ public final class KeyStrokeEditPanel extends JPanel {
 						else { // cancelled
 							the_keystroke_node.put(useCommand, "");
 							key_field.setText(command);
-							applyAction();
+							try {
+								applyAction();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
-						key_field.addFocusListener(lois);
+//						key_field.addFocusListener(lois);
 						return;
 					}
 					key_field.setText(command);
@@ -111,7 +119,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 				evt.consume();
 			}
 		});
-		key_field.addFocusListener(lois);
+//		key_field.addFocusListener(lois);
 
 		setEnabled(false);
 	}
@@ -159,25 +167,24 @@ public final class KeyStrokeEditPanel extends JPanel {
 			setEnabled(false);
 			return;
 		}
+		
 		String str = key_field.getText().trim();
-		if (str.length() == 0) {
-			this.the_keystroke_node.put(this.the_key, "");
-			return;
-		}
+		
 		KeyStroke ks = KeyStroke.getKeyStroke(str);
-		if (ks == null) {
+		
+		if (str.length() > 0 && ks == null) {
 			ErrorHandler.errorPanel("Unknown Key",
 					"Unknown key code: \"" + str + "\"");
 			key_field.setText("");
 			return;
 		}
-		if (isModifierKey(ks) || (str.indexOf("unknown") >= 0)) {
+		if (str.length() > 0 && (isModifierKey(ks) || (str.indexOf("unknown") >= 0))) {
 			ErrorHandler.errorPanel("Bad Keystroke",
 					"Illegal shortcut: \"" + str + "\"");
 			key_field.setText("");
 			return;
 		}
-		if (str.indexOf(' ') <= 0 || str.startsWith("shift ")) {
+		if (str.length() > 0 && (str.indexOf(' ') <= 0 || str.startsWith("shift "))) {
 			// Checking that there is a modifier (ctrl, alt, or meta) present.
 			// Without this restriction bad things can happen. For instance,
 			// if the user wants to use "Z" too mean "zoom" in the SeqMapView,
@@ -203,9 +210,9 @@ public final class KeyStrokeEditPanel extends JPanel {
 		if (null != a) {
 			previousKeyStroke = (KeyStroke) a.getValue(Action.ACCELERATOR_KEY);
 			KeyStroke k = KeyStroke.getKeyStroke(str);
-			if (null != k) {
-				a.putValue(Action.ACCELERATOR_KEY, k);
-			}
+//			if (null != k) {
+			a.putValue(Action.ACCELERATOR_KEY, k);
+//			}
 		}
 		// Ah, the above handles things when the action is in a menu
 		// for the window (JFrame) with the focus.
@@ -221,13 +228,16 @@ public final class KeyStrokeEditPanel extends JPanel {
 			previousKey = (String) im.get(previousKeyStroke);
 			im.remove(previousKeyStroke);
 		}
-		im.put(ks, this.the_key);
 		
 		ActionMap am = p.getActionMap();
 		if(previousKey != null){
 			am.remove(previousKey);
 		}
-		am.put(this.the_key, a);
+		
+		if (str.length() > 0) {
+			im.put(ks, this.the_key);
+			am.put(this.the_key, a);
+		}
 	}
 
 	private void clearAction() {

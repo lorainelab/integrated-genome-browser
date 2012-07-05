@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
+
 import java.awt.event.ActionEvent;
 
 /**
@@ -53,7 +54,9 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 			style.setSeparate(false);
 		}
 		style.setViewMode(mode.getName());
-		//ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph) glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-		//TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), (RootSeqSymmetry) glyph.getInfo(), null);
+		// special case - glyph with no data loaded yet
+		if (glyph.getInfo() == null || glyph.getInfo() instanceof DummyRootSeqSymmetry) {
+			glyph.getTierGlyph().setInfo(null);
+		}
 	}
 }

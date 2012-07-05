@@ -83,11 +83,15 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	private void initViewModeGlyph(ViewModeGlyph vmg){
+		ViewModeGlyph oldViewModeGlyph = viewModeGlyph;
 		viewModeGlyph = vmg;
 		viewModeGlyph.setTierGlyph(this);
 		// Below code does not work in case of bai zoom loader glyph.
 		// viewModeGlyph.processParentCoordBox(super.getCoordBox());
 		viewModeGlyph.processParentCoordBox(getCoordBox());
+		if ((viewModeGlyph.getInfo() == null || viewModeGlyph.getInfo() instanceof DummyRootSeqSymmetry) && oldViewModeGlyph != null) {
+			viewModeGlyph.setParent(oldViewModeGlyph.getParent());
+		}
 	}
 	
 	private void setViewModeGlyph(ITrackStyleExtended style) {

@@ -139,7 +139,7 @@ public class TrackUtils {
 			if (vg.getTierGlyph() != null && vg.getTierGlyph().getViewModeGlyph() != null) {
 				vg = vg.getTierGlyph().getViewModeGlyph(); // for semantic zoom this will be different
 			}
-			FileTypeCategory category = (vg.getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)vg.getInfo()).getCategory() : null;
+			FileTypeCategory category = (vg.getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)vg.getInfo()).getCategory() : style.getFileTypeCategory();
 			List<MapViewGlyphFactoryI> viewModes = new ArrayList<MapViewGlyphFactoryI>(MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName()));
 			Collections.sort(viewModes,
 				new Comparator<MapViewGlyphFactoryI>() {

@@ -20,7 +20,8 @@ import com.affymetrix.igb.shared.*;
 public abstract class ChangeColorActionA extends SeqMapViewActionA implements ParameteredAction {
 	protected static final java.awt.Color DEFAULT_COLOR = javax.swing.UIManager.getColor("Button.background");
 	private static final long serialVersionUID = 1L;
-
+	private boolean iterateMultigraph = true;
+	
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
@@ -36,6 +37,10 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	protected abstract void setStyleColor(Color color, ITrackStyleExtended style);
 	protected void setGraphColor(AbstractGraphGlyph gg, Color color) { }
 
+	protected final void iterateMultiGraph(boolean iterate){
+		iterateMultigraph = iterate;
+	}
+	
 	private void changeColor() {
 		if (getSeqMapView().getAllSelectedTiers().isEmpty()) {
 			return;
@@ -73,7 +78,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 		List<ViewModeGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
 		if (!vgList.isEmpty()) {
 			for (ViewModeGlyph vg : vgList) {
-				if (vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
+				if (iterateMultigraph && vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
 					for (GlyphI child : vg.getChildren()) {
 						if (child instanceof ViewModeGlyph) {
 							ITrackStyleExtended style = ((ViewModeGlyph)child).getAnnotStyle();

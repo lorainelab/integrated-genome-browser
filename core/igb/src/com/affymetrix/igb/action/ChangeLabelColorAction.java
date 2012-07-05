@@ -21,6 +21,7 @@ public class ChangeLabelColorAction extends ChangeColorActionA {
 
 	public ChangeLabelColorAction() {
 		super(IGBConstants.BUNDLE.getString("changeLabelColorAction"), "16x16/actions/format-text-bold.png", "22x22/actions/format-text-bold.png");
+		iterateMultiGraph(false);
 	}
 
 	@Override

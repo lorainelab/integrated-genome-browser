@@ -50,7 +50,7 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 	@Override
 	protected FileTypeCategory getFileTypeCategory() {
 		for (FileTypeCategory category : FileTypeCategory.values()) {
-			if (defaultGlyphFactory.isCategorySupported(category)) {
+			if (defaultDetailGlyphFactory.isCategorySupported(category)) {
 				return category;
 			}
 		}
@@ -71,8 +71,8 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 	}
 
 	@Override
-	protected SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym) {
-		return new BigWigSemanticZoomGlyph(sym);
+	protected SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
+		return new BigWigSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym, smv);
 	}
 
 	@Override
@@ -86,8 +86,8 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 		private List<BBZoomLevelHeader> levelHeaders;
 //		private final List<ViewModeGlyph> levelGlyphs;
 
-		public BigWigSemanticZoomGlyph(SeqSymmetry sym) {
-			super(sym);
+		public BigWigSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
+			super(detailGlyphFactory, summaryGlyphFactory, sym, smv);
 		}
 
 		@Override

@@ -23,15 +23,23 @@ import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
+	protected final MapViewGlyphFactoryI defaultDetailGlyphFactory;
+	protected final MapViewGlyphFactoryI defaultSummaryGlyphFactory;
 
-	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym);
+	public SemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory) {
+		super();
+		this.defaultDetailGlyphFactory = defaultDetailGlyphFactory;
+		this.defaultSummaryGlyphFactory = defaultSummaryGlyphFactory;
+	}
+
+	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv);
 	
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction,
 			SeqMapViewExtendedI smv) {
 
-		SemanticZoomGlyph szg = getSemanticZoomGlyph(sym);
+		SemanticZoomGlyph szg = getSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym, smv);
 		szg.init(sym, style, direction, smv);
 		szg.setDirection(direction);
 		szg.setLastUsedGlyph(szg.getDefaultGlyph());
@@ -41,12 +49,18 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		return szg;
 	}
 	// glyph class
-	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements TransformableViewModeGlyph {
+	public abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements TransformableViewModeGlyph {
+		protected MapViewGlyphFactoryI detailGlyphFactory;
+		protected MapViewGlyphFactoryI summaryGlyphFactory;
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph, detailGlyph;
+		private SeqMapViewExtendedI smv;
 	
-		protected SemanticZoomGlyph(SeqSymmetry sym) {
+		protected SemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
 			super();
+			this.detailGlyphFactory = detailGlyphFactory;
+			this.summaryGlyphFactory = summaryGlyphFactory;
+			this.smv = smv;
 			super.setInfo(sym);
 			// initUnloaded();
 		}
@@ -59,10 +73,37 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected void setLastUsedGlyph(ViewModeGlyph vmg){
 			lastUsedGlyph = vmg;
 		}
-		
+
+		public ViewModeGlyph getLastUsedGlyph() {
+			return lastUsedGlyph;
+		}
+
+		public boolean isLastSummary() {
+			return lastUsedGlyph != detailGlyph;
+		}
+
+		public void setSummaryViewMode(String viewmode) {
+			summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(viewmode);
+			if (isLastSummary()) {
+				lastUsedGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)lastUsedGlyph.getInfo(), style, Direction.NONE, smv);
+			}
+		}
+
+		public void setDetailViewMode(String viewmode) {
+			detailGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(viewmode);
+			detailGlyph = detailGlyphFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
+			if (!isLastSummary()) {
+				lastUsedGlyph = detailGlyph;
+			}
+		}
+
 		@Override
 		protected void rangeChanged(SeqMapViewExtendedI smv){
+			ViewModeGlyph saveGlyph = lastUsedGlyph;
 			setLastUsedGlyph(getGlyph(smv));
+			if (saveGlyph == null || saveGlyph.getClass() != lastUsedGlyph.getClass()) {
+				smv.postSelections(); // fire SymSelectionChanged
+			}
 		}
 		
 		@Override
@@ -114,6 +155,12 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			super.setStyle(style);
 			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
 				vmg.setStyle(style);
+			}
+			if (style != null && style.getSummaryViewMode() != null) {
+				summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(getAnnotStyle().getSummaryViewMode());
+			}
+			if (style != null && style.getDetailViewMode() != null) {
+				detailGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(getAnnotStyle().getDetailViewMode());
 			}
 		}
 

@@ -55,6 +55,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Color start_color = default_start;
 	private Color end_color = default_end;
 	private String view_mode = default_view_mode;
+	private String summary_view_mode = null;
+	private String detail_view_mode = null;
 	private String operator = default_operator;
 	private float min_score_color = default_min_score_color;
 	private float max_score_color = default_max_score_color;
@@ -1113,6 +1115,26 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public String getViewMode() {
 		return view_mode;
+	}
+
+	@Override
+	public void setSummaryViewMode(String s) {
+		summary_view_mode = s;
+	}
+
+	@Override
+	public String getSummaryViewMode() {
+		return summary_view_mode;
+	}
+
+	@Override
+	public void setDetailViewMode(String s) {
+		detail_view_mode = s;
+	}
+
+	@Override
+	public String getDetailViewMode() {
+		return detail_view_mode;
 	}
 
 	public static void setDrawCollapseControl(boolean b) {

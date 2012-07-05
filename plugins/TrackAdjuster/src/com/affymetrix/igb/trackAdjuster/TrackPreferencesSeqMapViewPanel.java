@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.SemanticZoomGlyphFactory.SemanticZoomGlyph;
 
 public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {
 	private static final long serialVersionUID = 1L;
@@ -33,22 +34,33 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		graphGlyphs.clear();
 		annotGlyphs.clear();
 		for (ViewModeGlyph vg : selected) {
-			if (vg instanceof AbstractGraphGlyph) {
-				if (vg instanceof MultiGraphGlyph && vg.getChildCount() > 0) {
-					for (GlyphI g : vg.getChildren()) {
+			ViewModeGlyph useGlyph = vg;
+			if (vg instanceof SemanticZoomGlyph) {
+				useGlyph = ((SemanticZoomGlyph)vg).getLastUsedGlyph();
+			}
+			FileTypeCategory category = null;
+			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
+				category = ((RootSeqSymmetry)useGlyph.getInfo()).getCategory();
+			}
+			if (category == null && useGlyph.getAnnotStyle() != null) {
+				category = useGlyph.getAnnotStyle().getFileTypeCategory();
+			}
+			if (useGlyph instanceof AbstractGraphGlyph) {
+				if (useGlyph instanceof MultiGraphGlyph && useGlyph.getChildCount() > 0) {
+					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof AbstractGraphGlyph) {
 							graphGlyphs.add((AbstractGraphGlyph) g);
 							allGlyphs.add((ViewModeGlyph) g);
 						}
 					}
 				}else{
-					graphGlyphs.add((AbstractGraphGlyph) vg);
-					allGlyphs.add(vg);
+					graphGlyphs.add((AbstractGraphGlyph) useGlyph);
+					allGlyphs.add(useGlyph);
 				}
 			}
-			else if (vg.getInfo() != null && vg.getInfo() instanceof RootSeqSymmetry && (((RootSeqSymmetry)vg.getInfo()).getCategory() == FileTypeCategory.Annotation || ((RootSeqSymmetry)vg.getInfo()).getCategory() == FileTypeCategory.Alignment)) {
-				annotGlyphs.add(vg);
-				allGlyphs.add(vg);
+			else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {
+				annotGlyphs.add(useGlyph);
+				allGlyphs.add(useGlyph);
 			}
 		}
 		rootSyms.clear();

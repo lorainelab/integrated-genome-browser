@@ -23,8 +23,10 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
+import com.affymetrix.igb.action.ChangeGraphTypeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.SemanticZoomGlyphFactory.SemanticZoomGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 import com.jidesoft.combobox.ColorComboBox;
@@ -230,7 +232,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			selectedMode = "heatmapgraph";
 		}
 		MapViewGlyphFactoryI viewmode = MapViewModeHolder.getInstance().getViewFactory(selectedMode);
-		GenericAction viewModeAction = new ChangeViewModeAction(viewmode);
+		GenericAction viewModeAction = new ChangeGraphTypeAction(viewmode);
 		viewModeAction.actionPerformed(evt);
 		graphStyleHeatMapComboBoxReset();
 		updateDisplay();
@@ -373,6 +375,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return allGlyphs.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
 	}
 
+	private boolean isAnySemanticZoomGraph() {
+		for (AbstractGraphGlyph gg : graphGlyphs) {
+			if (MapViewModeHolder.getInstance().getViewFactory(gg.getAnnotStyle().getViewMode()) instanceof SemanticZoomGlyphFactory) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean isAllAnnot() {
 		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
 	}
@@ -428,7 +439,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void floatCheckBoxReset() {
 		JCheckBox floatCheckBox = getFloatCheckBox();
-		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined());
+		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined() && !isAnySemanticZoomGraph());
 		boolean allFloat = isAllGraph();
 		for (AbstractGraphGlyph glyph : graphGlyphs) {
 			if (!glyph.getAnnotStyle().getFloatTier()) {

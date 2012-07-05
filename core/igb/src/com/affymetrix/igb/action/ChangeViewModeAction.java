@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 public class ChangeViewModeAction extends SeqMapViewActionA {
 
 	private static final long serialVersionUID = 1L;
-	private final MapViewGlyphFactoryI mode;
+	protected final MapViewGlyphFactoryI mode;
 
 	public ChangeViewModeAction(MapViewGlyphFactoryI mode) {
 		super(mode.getDisplayName(), null, null);
@@ -30,7 +30,8 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 						changeViewMode(((AbstractGraphGlyph) (g)));
 					}
 				}
-			} else {
+			}
+			else {
 				changeViewMode(glyph.getViewModeGlyph());
 			}
 		}
@@ -48,7 +49,7 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(ae);
 	}
 
-	private void changeViewMode(ViewModeGlyph glyph) {
+	protected void changeViewMode(ViewModeGlyph glyph) {
 		final ITrackStyleExtended style = glyph.getAnnotStyle();
 		if (style.getSeparate() && !mode.supportsTwoTrack()) {
 			style.setSeparate(false);

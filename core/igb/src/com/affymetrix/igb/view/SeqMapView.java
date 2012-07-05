@@ -636,7 +636,7 @@ public class SeqMapView extends JPanel
 //		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
 //		viewParentinSequenceViewer = new JMenuItem("View sequence for parent in sequence Viewer");
 //		seqViewerOptions.add(viewFeatureinSequenceViewer);
-//		seqViewerOptions.add(viewParentinSequenceViewer);
+//		seqViewerOptions.add(viewParentinSequenceViewer);// get more info
 	}
 
 	public final TransformTierGlyph getAxisTier() {

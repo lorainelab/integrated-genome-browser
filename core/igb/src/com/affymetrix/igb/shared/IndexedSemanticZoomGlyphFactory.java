@@ -23,15 +23,11 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
-	protected final MapViewGlyphFactoryI defaultGlyphFactory;
-	private final MapViewGlyphFactoryI graphGlyphFactory;
 //	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.LogTransform(Math.E);
 	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.PowerTransformer(0.5);
 
-	public IndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
-		super();
-		this.defaultGlyphFactory = defaultGlyphFactory;
-		this.graphGlyphFactory = graphGlyphFactory;
+	public IndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory) {
+		super(defaultDetailGlyphFactory, summaryGlyphFactory);
 	}
 
 	public abstract String getIndexedFileName(String method, Direction direction);
@@ -44,13 +40,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		return GeneralUtils.urlExists(getIndexedFileName(uri, Direction.BOTH));
 	}
 
-	protected MapViewGlyphFactoryI getGraphGlyphFactory() {
-		return graphGlyphFactory;
-	}
-
 	@Override
 	public boolean isCategorySupported(FileTypeCategory category) {
-		return defaultGlyphFactory.isCategorySupported(category);
+		return defaultDetailGlyphFactory.isCategorySupported(category);
 	}
 
 	@Override
@@ -61,12 +53,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 	@Override
 	public boolean canAutoLoad(String uri) {
 		return hasIndex(uri);
-	}
-
-	protected AbstractGraphGlyph getEmptyGraphGlyph(ITrackStyleExtended trackStyle, SeqMapViewExtendedI gviewer) {
-		GraphSym graf = new GraphSym(new int[]{gviewer.getVisibleSpan().getMin()}, new int[]{gviewer.getVisibleSpan().getLength()}, 
-				new float[]{0}, trackStyle.getMethodName(), gviewer.getVisibleSpan().getBioSeq());
-		return (AbstractGraphGlyph)getGraphGlyphFactory().getViewModeGlyph(graf, trackStyle, Direction.BOTH, gviewer);
 	}
 
 	@Override
@@ -85,8 +71,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
 			
-		public IndexedSemanticZoomGlyph(SeqSymmetry sym) {
-			super(sym);
+		public IndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
+			super(detailGlyphFactory, summaryGlyphFactory, sym, smv);
 //			this.smv = smv;
 //			saveSpan = null;
 		}
@@ -96,7 +82,13 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			Direction direction, SeqMapViewExtendedI gviewer) {
 			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
 			defaultGlyph = getEmptyGraphGlyph(trackStyle, gviewer);
-			detailGlyph = defaultGlyphFactory.getViewModeGlyph(sym, trackStyle, Direction.BOTH, gviewer);
+			detailGlyph = detailGlyphFactory.getViewModeGlyph(sym, trackStyle, Direction.BOTH, gviewer);
+		}
+
+		protected AbstractGraphGlyph getEmptyGraphGlyph(ITrackStyleExtended trackStyle, SeqMapViewExtendedI gviewer) {
+			GraphSym graf = new GraphSym(new int[]{gviewer.getVisibleSpan().getMin()}, new int[]{gviewer.getVisibleSpan().getLength()}, 
+					new float[]{0}, trackStyle.getMethodName(), gviewer.getVisibleSpan().getBioSeq());
+			return (AbstractGraphGlyph)summaryGlyphFactory.getViewModeGlyph(graf, trackStyle, Direction.BOTH, gviewer);
 		}
 
 		protected RootSeqSymmetry getRootSym() {
@@ -116,7 +108,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 					HeatMap styleHeatMap = new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, style, 0.0f, 0.5f);
 					opersym.getGraphState().setHeatMap(styleHeatMap);
 				}
-				resultGlyph = getGraphGlyphFactory().getViewModeGlyph(opersym, style, Direction.BOTH, smv);
+				resultGlyph = summaryGlyphFactory.getViewModeGlyph(opersym, style, Direction.BOTH, smv);
 			}
 			if (resultGlyph != null) {
 				((AbstractGraphGlyph)resultGlyph).drawHandle(false);
@@ -137,7 +129,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			try {
 				ViewModeGlyph resultGlyph = null;
 				if (isDetail(view)) {
-					resultGlyph = getDetailGlyph(smv, defaultGlyphFactory);
+					resultGlyph = getDetailGlyph(smv, detailGlyphFactory);
 				}
 				else {
 					resultGlyph = getSummaryGlyph(smv);

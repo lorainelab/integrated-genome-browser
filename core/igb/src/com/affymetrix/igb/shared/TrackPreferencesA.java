@@ -26,7 +26,6 @@ import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.action.ChangeGraphTypeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.SemanticZoomGlyphFactory.SemanticZoomGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 import com.jidesoft.combobox.ColorComboBox;
@@ -423,10 +422,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		getViewModePanel().setEnabled(allGlyphs.size() > 0);
 		if (allGlyphs.size() == 1) {
 			ITrackStyleExtended style = allGlyphs.get(0).getAnnotStyle();
-			if (style == null || allGlyphs.get(0).getInfo() == null) {
+			if (style == null) {
 				return;
 			}
-			FileTypeCategory category = (allGlyphs.get(0).getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)allGlyphs.get(0).getInfo()).getCategory() : null;
+			ViewModeGlyph vg = allGlyphs.get(0);
+			if (vg.getTierGlyph() != null && vg.getTierGlyph().getViewModeGlyph() != null) {
+				vg = vg.getTierGlyph().getViewModeGlyph(); // for semantic zoom this will be different
+			}
+			FileTypeCategory category = (vg.getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)vg.getInfo()).getCategory() : null;
 			List<MapViewGlyphFactoryI> viewModes = MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName());
 			for (MapViewGlyphFactoryI viewmode : viewModes) {
 				viewModeComboBox.addItem(viewmode);

@@ -781,10 +781,19 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		for (ViewModeGlyph ag : allGlyphs) {
 			if (labelColor == null && !labelColorSet) {
 				labelColor = ag.getAnnotStyle().getLabelForeground();
+				if(ag instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)ag).getGraphState().getComboStyle() != null){
+					labelColor = ((AbstractGraphGlyph)ag).getGraphState().getComboStyle().getLabelForeground();
+				}
 				labelColorSet = true;
 			}
 			else if (labelColor != ag.getAnnotStyle().getLabelForeground()) {
-				labelColor = null;
+				if(ag instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)ag).getGraphState().getComboStyle() != null){
+					if(labelColor != ((AbstractGraphGlyph)ag).getGraphState().getComboStyle().getLabelForeground()){
+						labelColor = null;
+					}
+				}else{
+					labelColor = null;
+				}
 				break;
 			}
 		}

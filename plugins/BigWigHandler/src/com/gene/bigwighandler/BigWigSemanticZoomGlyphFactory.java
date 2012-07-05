@@ -72,7 +72,7 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 
 	@Override
 	protected SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		return new BigWigSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym, smv);
+		return new BigWigSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym);
 	}
 
 	@Override
@@ -86,8 +86,8 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 		private List<BBZoomLevelHeader> levelHeaders;
 //		private final List<ViewModeGlyph> levelGlyphs;
 
-		public BigWigSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-			super(detailGlyphFactory, summaryGlyphFactory, sym, smv);
+		public BigWigSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
+			super(detailGlyphFactory, summaryGlyphFactory, sym);
 		}
 
 		@Override

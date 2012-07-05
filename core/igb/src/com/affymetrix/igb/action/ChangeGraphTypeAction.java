@@ -14,7 +14,7 @@ public class ChangeGraphTypeAction extends ChangeViewModeAction {
 	@Override
 	protected void changeViewMode(ViewModeGlyph glyph) {
 		if (glyph instanceof SemanticZoomGlyph) {
-			((SemanticZoomGlyph)glyph).setSummaryViewMode(mode.getName());
+			((SemanticZoomGlyph)glyph).setSummaryViewMode(mode.getName(), getSeqMapView());
 			glyph.getAnnotStyle().setSummaryViewMode(mode.getName());
 		}
 		else {

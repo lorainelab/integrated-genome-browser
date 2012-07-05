@@ -71,8 +71,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
 			
-		public IndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-			super(detailGlyphFactory, summaryGlyphFactory, sym, smv);
+		public IndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
+			super(detailGlyphFactory, summaryGlyphFactory, sym);
 //			this.smv = smv;
 //			saveSpan = null;
 		}

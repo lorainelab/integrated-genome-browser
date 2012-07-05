@@ -20,10 +20,10 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	private class DefaultSemanticZoomGlyph extends SemanticZoomGlyph {
 		private ViewModeGlyph summaryGlyph; 
 		
-		private DefaultSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-			super(detailGlyphFactory, summaryGlyphFactory, sym, smv);
+		private DefaultSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
+			super(detailGlyphFactory, summaryGlyphFactory, sym);
 		}
-
+			
 		@Override
 		protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
 			ViewModeGlyph result = factory.getViewModeGlyph(rootSym, style, direction, smv);
@@ -84,6 +84,6 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 
 	@Override
 	protected SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		return new DefaultSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym, smv);
+		return new DefaultSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym);
 	}
 }

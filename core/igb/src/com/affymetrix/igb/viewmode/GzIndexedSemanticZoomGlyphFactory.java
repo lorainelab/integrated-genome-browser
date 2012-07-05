@@ -34,7 +34,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	@Override
 	protected SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv){
 		boolean useHeatMap = PreferenceUtils.getBooleanParam(PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap);
-		return new GzIndexedSemanticZoomGlyph(defaultDetailGlyphFactory, useHeatMap ? heatMapGraphGlyphFactory : graphGlyphFactory, sym, smv);
+		return new GzIndexedSemanticZoomGlyph(defaultDetailGlyphFactory, useHeatMap ? heatMapGraphGlyphFactory : graphGlyphFactory, sym);
 	}
 	
 	@Override
@@ -54,8 +54,8 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph{
 		private ViewModeGlyph saveSummaryGlyph;
 
-		public GzIndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-			super(detailGlyphFactory, summaryGlyphFactory, sym, smv);
+		public GzIndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
+			super(detailGlyphFactory, summaryGlyphFactory, sym);
 		}
 
 		@Override
@@ -94,8 +94,8 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 			saveSummaryGlyph = null;
 		}
 
-		public void setSummaryViewMode(String viewmode) {
-			super.setSummaryViewMode(viewmode);
+		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {
+			super.setSummaryViewMode(viewmode, smv);
 			if (isLastSummary()) {
 				saveSummaryGlyph = lastUsedGlyph;
 			}

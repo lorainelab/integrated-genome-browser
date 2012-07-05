@@ -54,13 +54,11 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected MapViewGlyphFactoryI summaryGlyphFactory;
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph, detailGlyph;
-		private SeqMapViewExtendedI smv;
 	
-		protected SemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
+		protected SemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
 			super();
 			this.detailGlyphFactory = detailGlyphFactory;
 			this.summaryGlyphFactory = summaryGlyphFactory;
-			this.smv = smv;
 			super.setInfo(sym);
 			// initUnloaded();
 		}
@@ -82,14 +80,14 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			return lastUsedGlyph != detailGlyph;
 		}
 
-		public void setSummaryViewMode(String viewmode) {
+		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {
 			summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(viewmode);
 			if (isLastSummary()) {
 				lastUsedGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)lastUsedGlyph.getInfo(), style, Direction.NONE, smv);
 			}
 		}
 
-		public void setDetailViewMode(String viewmode) {
+		public void setDetailViewMode(String viewmode, SeqMapViewExtendedI smv) {
 			detailGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(viewmode);
 			detailGlyph = detailGlyphFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
 			if (!isLastSummary()) {

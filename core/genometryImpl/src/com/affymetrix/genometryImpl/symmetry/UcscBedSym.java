@@ -282,17 +282,17 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithPr
 		// only keep going if has name
 		if (name != null) {
 			out.write('\t');
-			out.write(name.getBytes());
+			out.write(getName().getBytes());
 			// only keep going if has score field
-			if (score > Float.NEGATIVE_INFINITY) {
+			if (getScore() > Float.NEGATIVE_INFINITY) {
 				out.write('\t');
-				if (score == 0) {
+				if (getScore() == 0) {
 					out.write('0');
 				} else {
-					out.write(Float.toString(score).getBytes());
+					out.write(Float.toString(getScore()).getBytes());
 				}
 				out.write('\t');
-				if (forward) { out.write('+'); }
+				if (isForward()) { out.write('+'); }
 				else { out.write('-'); }
 				// only keep going if has thickstart/thickend
 				if (cdsMin > Integer.MIN_VALUE &&

@@ -802,19 +802,17 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void backgroundColorComboBoxReset() {
 		ColorComboBox backgroundColorComboBox = getBackgroundColorComboBox();
+		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		Color backgroundColor = null;
-		boolean backgroundColorSet = false;
-		for (ViewModeGlyph ag : allGlyphs) {
-			if (backgroundColor == null && !backgroundColorSet) {
-				backgroundColor = ag.getAnnotStyle().getBackground();
-				backgroundColorSet = true;
-			}
-			else if (backgroundColor != ag.getAnnotStyle().getBackground()) {
-				backgroundColor = null;
-				break;
+		if (enable) {
+			backgroundColor = allGlyphs.get(0).getAnnotStyle().getBackground();
+			for (ViewModeGlyph ag : allGlyphs) {
+				if (backgroundColor != ag.getAnnotStyle().getBackground()) {
+					backgroundColor = null;
+					break;
+				}
 			}
 		}
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
 		backgroundColorComboBox.setEnabled(enable);
 		getBackgroundColorLabel().setEnabled(enable);
 		backgroundColorComboBox.setSelectedColor(enable ? backgroundColor : null);
@@ -823,18 +821,17 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void foregroundColorComboBoxReset() {
 		ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
-		foregroundColorComboBox.setEnabled(allGlyphs.size() > 0);
-		getForegroundColorLabel().setEnabled(allGlyphs.size() > 0);
+		boolean enable = allGlyphs.size() > 0;
+		foregroundColorComboBox.setEnabled(enable);
+		getForegroundColorLabel().setEnabled(enable);
 		Color foregroundColor = null;
-		boolean foregroundColorSet = false;
-		for (ViewModeGlyph ag : allGlyphs) {
-			if (foregroundColor == null && !foregroundColorSet) {
-				foregroundColor = ag.getAnnotStyle().getForeground();
-				foregroundColorSet = true;
-			}
-			else if (foregroundColor != ag.getAnnotStyle().getForeground()) {
-				foregroundColor = null;
-				break;
+		if (enable) {
+			foregroundColor = allGlyphs.get(0).getAnnotStyle().getForeground();
+			for (ViewModeGlyph ag : allGlyphs) {
+				if (!(foregroundColor.equals(ag.getAnnotStyle().getForeground()))) {
+					foregroundColor = null;
+					break;
+				}
 			}
 		}
 		foregroundColorComboBox.setSelectedColor(foregroundColor);

@@ -129,8 +129,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
 //			BioSeq seq = smv.getAnnotatedSeq();
 			ViewI view = smv.getSeqMap().getView();
-	        int startBase = (int)Math.round(view.getCoordBox().getX());
-			int length = (int)Math.round(view.getCoordBox().getWidth());
 //	        int endBase = startBase + length;
 //	        SimpleSeqSpan span = new SimpleSeqSpan(startBase, endBase, seq);
 //	        if (span.equals(saveSpan) && lastUsedGlyph != null) {
@@ -150,27 +148,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				if(resultGlyph == lastUsedGlyph)
 					return resultGlyph;
 				
-				resultGlyph.setSelectable(false);
-				double y = resultGlyph.getCoordBox().y;
-				if (y == 0) {
-					y = getCoordBox().y;
-				}
-				double height = resultGlyph.getCoordBox().height;
-				if (height == 0) {
-					height = getCoordBox().height;
-				}
-				getCoordBox().setRect(startBase, y, length, height);
-				resultGlyph.setCoordBox(getCoordBox());
-				resultGlyph.setVisibility(true);
-				resultGlyph.setParent(getParent());
-				resultGlyph.setScene(getScene());
-				double saveY = resultGlyph.getCoordBox().y;
-//				if (resultGlyph.getScene() != null) {
-//					resultGlyph.pack(view);
-//				}
-				if (resultGlyph.getCoordBox().y != saveY) {
-					resultGlyph.moveAbsolute(resultGlyph.getCoordBox().x, saveY);
-				}
+				prepareViewModeGlyph(resultGlyph, view);
+				
 //				saveSpan = span;
 				lastUsedGlyph = resultGlyph;
 				viewModeGlyphs.put("lastUsed", lastUsedGlyph);
@@ -180,6 +159,33 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				Logger logger = Logger.getLogger(this.getClass().getName());
 				logger.log(Level.SEVERE, "Error in Indexed Semantic zoom", x);
 				return null;
+			}
+		}
+
+		protected void prepareViewModeGlyph(ViewModeGlyph resultGlyph, ViewI view) {
+			int startBase = (int)Math.round(view.getCoordBox().getX());
+			int length = (int)Math.round(view.getCoordBox().getWidth());
+			
+			resultGlyph.setSelectable(false);
+			double y = resultGlyph.getCoordBox().y;
+			if (y == 0) {
+				y = getCoordBox().y;
+			}
+			double height = resultGlyph.getCoordBox().height;
+			if (height == 0) {
+				height = getCoordBox().height;
+			}
+			getCoordBox().setRect(startBase, y, length, height);
+			resultGlyph.setCoordBox(getCoordBox());
+			resultGlyph.setVisibility(true);
+			resultGlyph.setParent(getParent());
+			resultGlyph.setScene(getScene());
+			double saveY = resultGlyph.getCoordBox().y;
+//				if (resultGlyph.getScene() != null) {
+//					resultGlyph.pack(view);
+//				}
+			if (resultGlyph.getCoordBox().y != saveY) {
+				resultGlyph.moveAbsolute(resultGlyph.getCoordBox().x, saveY);
 			}
 		}
 

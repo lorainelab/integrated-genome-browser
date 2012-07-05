@@ -50,6 +50,10 @@ public class OperatorGlyphFactory extends MapViewGlyphFactoryA {
 		return factory.getName();
 	}
 	
+	public Operator getOperator(){
+		return operator;
+	}
+	
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI smv) {
 		final String meth = BioSeq.determineMethod(sym);

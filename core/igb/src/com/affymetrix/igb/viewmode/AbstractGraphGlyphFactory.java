@@ -190,8 +190,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 				}
 			}
 		} else {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry "
-					+ "passed in is NOT a GraphSym: " + sym);
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry " + "passed in is NOT a GraphSym: {0}", sym);
 		}
 		return result;
 	}

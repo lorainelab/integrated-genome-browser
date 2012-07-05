@@ -83,7 +83,15 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	protected SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		return new DefaultSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym);
+	protected SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, ITrackStyleExtended style) {
+		MapViewGlyphFactoryI graphFactory = defaultSummaryGlyphFactory;
+		if (style.getSummaryViewMode() != null && defaultSummaryGlyphFactory instanceof OperatorGlyphFactory &&
+				!((OperatorGlyphFactory)defaultSummaryGlyphFactory).getActualFactoryName().equals(style.getSummaryViewMode())){
+			graphFactory = MapViewModeHolder.getInstance().getViewFactory(style.getSummaryViewMode());
+			if(graphFactory != null){
+				graphFactory = new OperatorGlyphFactory(((OperatorGlyphFactory)defaultSummaryGlyphFactory).getOperator(), graphFactory);
+			}
+		}
+		return new DefaultSemanticZoomGlyph(defaultDetailGlyphFactory, graphFactory, sym);
 	}
 }

@@ -32,14 +32,14 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		this.defaultSummaryGlyphFactory = defaultSummaryGlyphFactory;
 	}
 
-	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, SeqMapViewExtendedI smv);
+	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI defaultSummaryGlyphFactory, SeqSymmetry sym, ITrackStyleExtended style);
 	
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction,
 			SeqMapViewExtendedI smv) {
 
-		SemanticZoomGlyph szg = getSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym, smv);
+		SemanticZoomGlyph szg = getSemanticZoomGlyph(defaultDetailGlyphFactory, defaultSummaryGlyphFactory, sym, style);
 		szg.init(sym, style, direction, smv);
 		szg.setDirection(direction);
 		szg.setLastUsedGlyph(szg.getDefaultGlyph());

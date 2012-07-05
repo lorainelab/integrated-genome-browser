@@ -41,8 +41,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 					Logger.getLogger(DefaultSemanticZoomGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
-			if (!summaryGlyphFactory.getName().equals(style.getViewMode())) {
-				summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(style.getViewMode());
+			if (style.getSummaryViewMode() != null && !summaryGlyphFactory.getName().equals(style.getSummaryViewMode())) {
+				summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(style.getSummaryViewMode());
 				summaryGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)summaryGlyph.getInfo(), style, direction, smv);
 			}
 			return summaryGlyph;

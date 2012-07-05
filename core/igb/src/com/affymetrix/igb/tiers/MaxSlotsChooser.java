@@ -7,14 +7,9 @@ package com.affymetrix.igb.tiers;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
-import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-/**
- *
- * @author blossome
- */
 public class MaxSlotsChooser extends javax.swing.JFrame {
 
 	private Integer optimum = 5;

@@ -25,12 +25,12 @@ public class ToggleTrackResizeActionA extends SeqMapViewActionA implements Prope
 		return ACTION;
 	}
 	
-	private final TrackResizingAction trackAjustAllAction, trackAdjustAdjacentAction;
+	private final ToggleTrackResizeActionA.TrackResizingAction trackAjustAllAction, trackAdjustAdjacentAction;
 	private final GenericActionGroup group;
 	protected ToggleTrackResizeActionA() {
 		super(null, null, null);
-		trackAjustAllAction = new TrackResizingAction(BUNDLE.getString("adjustAllTracks"), new AccordionTierResizer(getTierMap()));
-		trackAdjustAdjacentAction = new TrackResizingAction(BUNDLE.getString("adjustAdjacentTracks"), new TierResizer(getTierMap()));
+		trackAjustAllAction = new ToggleTrackResizeActionA.TrackResizingAction(BUNDLE.getString("adjustAllTracks"), new AccordionTierResizer(getTierMap()));
+		trackAdjustAdjacentAction = new ToggleTrackResizeActionA.TrackResizingAction(BUNDLE.getString("adjustAdjacentTracks"), new TierResizer(getTierMap()));
 		
 		group = new GenericActionGroup();
 		group.add(trackAjustAllAction);
@@ -56,8 +56,8 @@ public class ToggleTrackResizeActionA extends SeqMapViewActionA implements Prope
 				return;
 			
 		if (evt.getPropertyName().equals(AbstractAction.SELECTED_KEY)) {
-			TrackResizingAction oldSelection = (TrackResizingAction) evt.getOldValue();
-			TrackResizingAction newSelection = (TrackResizingAction) evt.getNewValue();
+			ToggleTrackResizeActionA.TrackResizingAction oldSelection = (ToggleTrackResizeActionA.TrackResizingAction) evt.getOldValue();
+			ToggleTrackResizeActionA.TrackResizingAction newSelection = (ToggleTrackResizeActionA.TrackResizingAction) evt.getNewValue();
 			if(oldSelection != null){
 				removeResizer(oldSelection.resizer);
 			}

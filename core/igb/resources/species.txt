@@ -52,6 +52,7 @@ Escherichia coli	E. coli	E_coli
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
 Eucalyptus grandis	Eucalyptus	E_grandis
 Felis catus	House Cat	F_catus	felCat	Felis_catus
+Fragaria vesca	woodland strawberry	F_vesca
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
 Glycine max	Soybean	G_max	

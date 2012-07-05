@@ -1,10 +1,8 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.view.TrackView;
 import java.awt.event.ActionEvent;
 
 /**
@@ -44,8 +42,8 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 				}
 			}
 		}
-		//chr1 : 14,999,501 - 15,001,981
-		refreshMap(false, false);
+		
+		refreshMap(false, true);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(ae);
 	}
 
@@ -54,7 +52,8 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 		if (style.getSeparate() && !mode.supportsTwoTrack()) {
 			style.setSeparate(false);
 		}
+		style.setViewMode(mode.getName());
 		//ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph) glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-		TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), (RootSeqSymmetry) glyph.getInfo(), null);
+		//TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), (RootSeqSymmetry) glyph.getInfo(), null);
 	}
 }

@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -460,10 +459,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		CThreadHolder.getInstance().execute(server, worker);
 	}
 
-	@Override
-	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
-		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, style, viewMode, rootSym, comboStyle);
-	}
+//	@Override
+//	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
+//		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, style, viewMode, rootSym, comboStyle);
+//	}
 
 	@Override
 	public void goToRegion(String region) {

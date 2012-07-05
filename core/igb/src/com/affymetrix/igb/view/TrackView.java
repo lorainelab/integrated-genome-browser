@@ -1,5 +1,8 @@
 package com.affymetrix.igb.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -15,30 +18,22 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TransformHolder;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -165,42 +160,42 @@ public class TrackView {
 		}
 	}
 
-	public void changeViewMode(SeqMapView gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
-		String oldViewMode = style.getViewMode();
-		if (oldViewMode.equals(viewMode)) {
-			return;
-		}
-		if (comboStyle == null) {
-			style.setViewMode(viewMode);
-			if (rootSym != null) {
-				gviewer.addAnnotationTrackFor(style);
-			}
-		}
-		else {
-			// must be a GraphGlyph in a ComboGlyph
-			TierGlyph comboTier = gviewer.getTrack(rootSym, comboStyle, TierGlyph.Direction.NONE, null);
-			ComboGlyph comboGlyph = (ComboGlyph)comboTier.getViewModeGlyph();
-			AbstractGraphGlyph oldGlyph = (AbstractGraphGlyph)comboGlyph.getChildWithStyle(style);
-			AbstractGraphGlyph newGlyph = (AbstractGraphGlyph)MapViewModeHolder.getInstance().getViewFactory(viewMode).getViewModeGlyph((SeqSymmetry)oldGlyph.getInfo(), style, TierGlyph.Direction.NONE, gviewer);
-			style.setViewMode(viewMode);
-			comboGlyph.removeChild(oldGlyph);
-			newGlyph.setScene(oldGlyph.getScene());
-			newGlyph.setCoordBox(oldGlyph.getCoordBox());
-			newGlyph.setTierGlyph(oldGlyph.getTierGlyph());
-			newGlyph.setVisibility(oldGlyph.isVisible());
-			comboGlyph.addChild(newGlyph);
-			//gviewer.getSeqMap().packTiers(true, false, false);
-			gviewer.getSeqMap().updateWidget();
-		}
-		
-		if(rootSym != null){
-			// kludge to get GraphAdjuster tab to update Style box (graph type)
-			List<RootSeqSymmetry> all_syms = new ArrayList<RootSeqSymmetry>();
-			List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>();
-			graph_syms.add(rootSym);
-			GenometryModel.getGenometryModel().setSelectedSymmetries(all_syms, graph_syms, gviewer);
-		}
-	}
+//	public void changeViewMode(SeqMapView gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
+//		String oldViewMode = style.getViewMode();
+//		if (oldViewMode.equals(viewMode)) {
+//			return;
+//		}
+//		if (comboStyle == null) {
+//			style.setViewMode(viewMode);
+//			if (rootSym != null) {
+//				gviewer.addAnnotationTrackFor(style);
+//			}
+//		}
+//		else {
+//			// must be a GraphGlyph in a ComboGlyph
+//			TierGlyph comboTier = gviewer.getTrack(rootSym, comboStyle, TierGlyph.Direction.NONE, null);
+//			ComboGlyph comboGlyph = (ComboGlyph)comboTier.getViewModeGlyph();
+//			AbstractGraphGlyph oldGlyph = (AbstractGraphGlyph)comboGlyph.getChildWithStyle(style);
+//			AbstractGraphGlyph newGlyph = (AbstractGraphGlyph)MapViewModeHolder.getInstance().getViewFactory(viewMode).getViewModeGlyph((SeqSymmetry)oldGlyph.getInfo(), style, TierGlyph.Direction.NONE, gviewer);
+//			style.setViewMode(viewMode);
+//			comboGlyph.removeChild(oldGlyph);
+//			newGlyph.setScene(oldGlyph.getScene());
+//			newGlyph.setCoordBox(oldGlyph.getCoordBox());
+//			newGlyph.setTierGlyph(oldGlyph.getTierGlyph());
+//			newGlyph.setVisibility(oldGlyph.isVisible());
+//			comboGlyph.addChild(newGlyph);
+//			//gviewer.getSeqMap().packTiers(true, false, false);
+//			gviewer.getSeqMap().updateWidget();
+//		}
+//		
+//		if(rootSym != null){
+//			// kludge to get GraphAdjuster tab to update Style box (graph type)
+//			List<RootSeqSymmetry> all_syms = new ArrayList<RootSeqSymmetry>();
+//			List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>();
+//			graph_syms.add(rootSym);
+//			GenometryModel.getGenometryModel().setSelectedSymmetries(all_syms, graph_syms, gviewer);
+//		}
+//	}
 
 	public void addAnnotationGlyphs(SeqMapView smv, ITrackStyleExtended style){ 
 		String meth = style.getMethodName();

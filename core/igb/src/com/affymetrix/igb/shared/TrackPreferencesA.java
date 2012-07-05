@@ -11,12 +11,9 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -32,6 +29,7 @@ import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.*;
+
 import javax.swing.*;
 
 /**
@@ -418,24 +416,22 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void viewModeComboBoxReset() {
 		JComboBox viewModeComboBox = getViewModeComboBox();
 		viewModeComboBox.removeAllItems();
-		viewModeComboBox.setEnabled(allGlyphs.size() > 0);
-		getViewModePanel().setEnabled(allGlyphs.size() > 0);
-		if (allGlyphs.size() == 1) {
-			ITrackStyleExtended style = allGlyphs.get(0).getAnnotStyle();
-			if (style == null) {
-				return;
+		List<MapViewGlyphFactoryI> factories = TrackUtils.getInstance().getAvailableViewModes(allGlyphs);
+		boolean hasFactories = (factories != null) && factories.size() > 0;
+		viewModeComboBox.setEnabled(hasFactories);
+		getViewModePanel().setEnabled(hasFactories);
+		if (hasFactories) {
+			String selectViewMode = allGlyphs.get(0).getAnnotStyle().getViewMode();
+			for (ViewModeGlyph vg : allGlyphs) {
+				if (!selectViewMode.equals(vg.getAnnotStyle().getViewMode())) {
+					selectViewMode = null;
+					break;
+				}
 			}
-			ViewModeGlyph vg = allGlyphs.get(0);
-			if (vg.getTierGlyph() != null && vg.getTierGlyph().getViewModeGlyph() != null) {
-				vg = vg.getTierGlyph().getViewModeGlyph(); // for semantic zoom this will be different
-			}
-			FileTypeCategory category = (vg.getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)vg.getInfo()).getCategory() : null;
-			List<MapViewGlyphFactoryI> viewModes = MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName());
-			for (MapViewGlyphFactoryI viewmode : viewModes) {
+			for (final MapViewGlyphFactoryI viewmode : factories) {
 				viewModeComboBox.addItem(viewmode);
 			}
-			String viewmode = style.getViewMode();
-			viewModeComboBox.setSelectedItem(MapViewModeHolder.getInstance().getViewFactory(viewmode));
+			viewModeComboBox.setSelectedItem(MapViewModeHolder.getInstance().getViewFactory(selectViewMode));
 		}
 	}
 

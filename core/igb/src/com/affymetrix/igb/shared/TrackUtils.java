@@ -1,6 +1,8 @@
 package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,5 +126,35 @@ public class TrackUtils {
 		}
 		return true;
 	}
-	
+
+	public List<MapViewGlyphFactoryI> getAvailableViewModes(List<ViewModeGlyph> glyphs) {
+		List<MapViewGlyphFactoryI> factories = null;
+		for (ViewModeGlyph glyph : glyphs) {
+			ITrackStyleExtended style = glyph.getAnnotStyle();
+			if (style == null) {
+				return null;
+			}
+			ViewModeGlyph vg = glyph;
+			if (vg.getTierGlyph() != null && vg.getTierGlyph().getViewModeGlyph() != null) {
+				vg = vg.getTierGlyph().getViewModeGlyph(); // for semantic zoom this will be different
+			}
+			FileTypeCategory category = (vg.getInfo() instanceof RootSeqSymmetry) ? ((RootSeqSymmetry)vg.getInfo()).getCategory() : null;
+			List<MapViewGlyphFactoryI> viewModes = new ArrayList<MapViewGlyphFactoryI>(MapViewModeHolder.getInstance().getAllViewModesFor(category, style.getMethodName()));
+			Collections.sort(viewModes,
+				new Comparator<MapViewGlyphFactoryI>() {
+					@Override
+					public int compare(MapViewGlyphFactoryI o1, MapViewGlyphFactoryI o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
+				}
+			);
+			if (factories == null) {
+				factories = viewModes;
+			}
+			else if (!factories.equals(viewModes)) {
+				return null;
+			}
+		}
+		return factories;
+	}
 }

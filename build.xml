@@ -53,6 +53,7 @@
 		<property name="bundle.dir"			 value="${basedir}/bundles" />
 		<property name="igb.ant.dir"		 value="${basedir}/plugins/ant" />
 		<property name="jar_extensions"		 value="${basedir}/core/jar_extensions" />
+		<property name="def.prefs.dir"           value="${basedir}/core/igb/resources" />
 
 		<!-- list the libraries to create bundle -->
 		<property name="include.lib" value="affx_fusion,be.pwnt.jflow_1.0.0,freehep-2.1.1,jdom-1.1.3,colt,commons-net-2.0,image4j,jide,jlfgr-1_0,log4j-1.2.11,picard,swing-layout,tribble-0.1,ant-1.7.1"/>
@@ -152,8 +153,14 @@
 		<foreach target="ant-copy-bundle" parallel="true" inheritall="true" param="name_jar" list="${include.lib}"/>
 		<foreach target="bundle-copy" parallel="true" inheritall="true" param="jar_name" list="${copy.lib}"/>
 	</target>
-	
-	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
+
+	<target name="customize_xml">
+		<copy todir="${basedir}/core/igb/build" filtering="true">
+			<fileset dir="${def.prefs.dir}" includes="**/*.xml"/>
+		</copy>
+	</target>
+
+	<target name="jar" depends="common-init,customize_xml" description="Create jar files for all genoviz subprojects">
 		<parallel>
 			<iterate target="jar" />
 			<antcall target="copy-bundles" inheritAll="true" inheritRefs="true" />
@@ -168,7 +175,7 @@
 		<my.signjar jar="${basedir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
 		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
 
-		<copy file="${igb}/resources/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
+		<copy file="${def.prefs.dir}/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
 		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.largefile.path}" tofile="${webstart.dir}/igb-large.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.5GB.path}" tofile="${webstart.dir}/igb-5GB.jnlp" filtering="true" overwrite="true" />

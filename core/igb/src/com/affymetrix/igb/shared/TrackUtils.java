@@ -61,6 +61,7 @@ public class TrackUtils {
 			style.setGlyphDepth(Math.max(1, SeqUtils.getDepth(sym) - 1));
 		}
 		style.setTrackName(human_name);
+		style.setGraphTier(sym instanceof GraphSym);
 		return style;
 	}
 

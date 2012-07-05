@@ -1187,6 +1187,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (g instanceof TrackStyle) {
 			TrackStyle as = (TrackStyle) g;
 			setCustomizable(as.getCustomizable());
+			setViewMode(as.getViewMode());
 		}
 
 		getTransientPropertyMap().putAll(g.getTransientPropertyMap());

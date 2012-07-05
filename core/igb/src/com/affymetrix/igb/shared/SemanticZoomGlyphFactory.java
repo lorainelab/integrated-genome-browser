@@ -81,6 +81,33 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			}
 			return detailGlyph;
 		}
+		
+		protected void prepareViewModeGlyph(ViewModeGlyph resultGlyph, ViewI view) {
+			int startBase = (int)Math.round(view.getCoordBox().getX());
+			int length = (int)Math.round(view.getCoordBox().getWidth());
+			
+			resultGlyph.setSelectable(false);
+			double y = resultGlyph.getCoordBox().y;
+			if (y == 0) {
+				y = getCoordBox().y;
+			}
+			double height = resultGlyph.getCoordBox().height;
+			if (height == 0) {
+				height = getCoordBox().height;
+			}
+			getCoordBox().setRect(startBase, y, length, height);
+			resultGlyph.setCoordBox(getCoordBox());
+			resultGlyph.setVisibility(true);
+			resultGlyph.setParent(getParent());
+			resultGlyph.setScene(getScene());
+			double saveY = resultGlyph.getCoordBox().y;
+//				if (resultGlyph.getScene() != null) {
+//					resultGlyph.pack(view);
+//				}
+			if (resultGlyph.getCoordBox().y != saveY) {
+				resultGlyph.moveAbsolute(resultGlyph.getCoordBox().x, saveY);
+			}
+		}
 				
 		@Override
 		public void setStyle(ITrackStyleExtended style){

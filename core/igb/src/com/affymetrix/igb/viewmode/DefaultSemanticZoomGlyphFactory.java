@@ -29,6 +29,7 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
 			ViewModeGlyph result = factory.getViewModeGlyph(rootSym, style, direction, smv);
 			depthGlyph = depthFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
+			prepareViewModeGlyph(depthGlyph, smv.getSeqMap().getView());
 			return result;
 		}
 		

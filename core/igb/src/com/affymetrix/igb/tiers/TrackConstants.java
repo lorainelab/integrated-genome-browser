@@ -43,8 +43,8 @@ public interface TrackConstants {
 	static final boolean default_draw_collapse_icon = true;
 	static final boolean default_show_igb_track_mark = true;
 	static final int default_max_depth = 10;
-	static final Color default_foreground = Color.CYAN;
-	static final Color default_background = Color.BLACK;
+	static final Color default_foreground = Color.decode("0x333399"); //Color.CYAN;
+	static final Color default_background = Color.decode("0xDEE0E0"); //Color.BLACK;
 	static final Color default_start = new Color(204, 255, 255);
 	static final Color default_end = new Color(51, 255, 255);
 	static final String default_label_field = "";

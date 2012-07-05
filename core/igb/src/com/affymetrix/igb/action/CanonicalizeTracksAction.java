@@ -12,6 +12,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -56,11 +57,11 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 	}
 
 	private CanonicalizeTracksAction() {
-		super("Canonicalize Tracks...",
+		super(BUNDLE.getString("canonicalizeTracks"),
 				"16x16/actions/equalizer.png",
 				"22x22/actions/equalizer.png");
 		putValue(Action.SHORT_DESCRIPTION,
-			"Make the scales of the selected tracks match so they can be readily compared.");
+			BUNDLE.getString("canonicalizeTracksTooltip"));
 	}
 
 	private List<TierGlyph> graphTracks = new ArrayList<TierGlyph>();

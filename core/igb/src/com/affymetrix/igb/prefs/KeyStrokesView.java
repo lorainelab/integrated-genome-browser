@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.JRPStyledTable;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -284,7 +285,6 @@ public final class KeyStrokesView implements ListSelectionListener,
 						KeyStroke ks = KeyStroke.getKeyStroke(keyCode, modifiers);
 						if (ks.getKeyCode() == KeyEvent.VK_ENTER) {
 							textEditor.stopCellEditing();
-							edit_panel.key_field.removeKeyListener(this);
 						}
 					}
 
@@ -294,7 +294,23 @@ public final class KeyStrokesView implements ListSelectionListener,
 					public void keyReleased(KeyEvent ke) {
 					}
 				};
+				
+				final FocusListener lois = new FocusListener() {
+					
+					@Override
+					public void focusGained(java.awt.event.FocusEvent fe) {
+					}
+
+					@Override
+					public void focusLost(java.awt.event.FocusEvent evt) {
+						edit_panel.key_field.removeFocusListener(this);
+						edit_panel.key_field.removeKeyListener(listener);
+					}
+				};
+				
 				edit_panel.key_field.addKeyListener(listener);
+				edit_panel.key_field.addFocusListener(lois);
+				
 				selected = row;
 				textEditor.setClickCountToStart(1);
 				return textEditor;

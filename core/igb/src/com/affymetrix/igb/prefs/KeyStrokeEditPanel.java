@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
-import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -96,11 +95,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 						else { // cancelled
 							the_keystroke_node.put(useCommand, "");
 							key_field.setText(command);
-							try {
-								applyAction();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+							applyAction();
 						}
 //						key_field.addFocusListener(lois);
 						return;
@@ -249,7 +244,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 		}
 		key_field.setText("");
 	    toolbar_field.setSelected(false);
-		this.the_keystroke_node.put(this.the_key, "");
+//		this.the_keystroke_node.put(this.the_key, "");
 		//TO DO:  Fix cell update 
 		//KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeyStrokeColumn);
 	}

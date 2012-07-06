@@ -5,6 +5,9 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
@@ -335,10 +338,27 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		}
 	}
 
+	private int getStretchableCount() {
+		int stretchableCount = 0;
+		for (Glyph glyph : igbService.getVisibleTierGlyphs()) {
+			FileTypeCategory category = ((TierGlyph)glyph).getAnnotStyle().getFileTypeCategory();
+			if (category == null) {
+				RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry)glyph.getInfo();
+				if (rootSeqSymmetry != null) {
+					category = rootSeqSymmetry.getCategory();
+				}
+			}
+			if (category != null && category != FileTypeCategory.Sequence) {
+				stretchableCount++;
+			}
+		}
+		return stretchableCount;
+	}
+
 	private void resetAll() {
 		is_listening = false;
 		boolean enabled = graphGlyphs.size() > 0 && graphGlyphs.size() == allGlyphs.size();
-		boolean heightEnabled = enabled && igbService.getVisibleTierGlyphs().size() > 2; // axis tier and 1 graph tier only - height slider disabled
+		boolean heightEnabled = enabled && getStretchableCount() > 1;
 		setByLabel.setEnabled(enabled);
 	    by_percentileRB_val.setEnabled(enabled);
 	    by_valRB_val.setEnabled(enabled);

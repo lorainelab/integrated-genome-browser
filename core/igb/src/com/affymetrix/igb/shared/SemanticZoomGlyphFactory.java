@@ -96,6 +96,14 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		@Override
+		public int getSlotsNeeded(ViewI theView) {
+			if(detailGlyph != null){
+				return detailGlyph.getSlotsNeeded(theView);
+			}
+			return lastUsedGlyph.getSlotsNeeded(theView);
+		}
+		
+		@Override
 		protected void rangeChanged(SeqMapViewExtendedI smv){
 			ViewModeGlyph saveGlyph = lastUsedGlyph;
 			setLastUsedGlyph(getGlyph(smv));

@@ -17,7 +17,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * An editor to support the three valued logic of {@link ExistentialTriad}.
- * For things that can never be a label with a hyphen is displayed
+ * For things that can never be, a label with a hyphen is displayed
  * and it cannot be changed.
  * For is/is not a check box is use.
  * @author Eric Blossom

@@ -170,11 +170,12 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 
 	// disables the sliced view while the slicing thread works
-	private void enableSeqMap(boolean b) {
+	protected void enableSeqMap(boolean b) {
 		seqmap.setVisible(b);
 		if (map_range_box != null) {
 			if (!b) {
-				map_range_box.range_box.setText("Working...");
+//				map_range_box.range_box.setText("Working...");
+				map_range_box.range_box.setText("");
 			}else{
 				SeqSpan span = this.getVisibleSpan();
 				if(span != null){

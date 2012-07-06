@@ -319,4 +319,11 @@ public final class OrfAnalyzer extends JComponent
 		});
 
 	}
+	
+	public void enableView(boolean enable){
+		orf_thresh_slider.setEnabled(enable);
+		showCB.setEnabled(enable);
+		orf_threshL.setEnabled(enable);
+		orfL.setEnabled(enable);
+	}
 }

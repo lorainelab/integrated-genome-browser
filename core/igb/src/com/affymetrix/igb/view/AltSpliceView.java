@@ -22,16 +22,13 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -42,7 +39,7 @@ import java.util.prefs.PreferenceChangeListener;
 public class AltSpliceView extends IGBTabPanel
 		implements ActionListener, ComponentListener, ItemListener,
 		SymSelectionListener, SeqSelectionListener, PreferenceChangeListener,
-		TierLabelManager.PopupListener {
+		TierLabelManager.PopupListener ,SeqMapRefreshed{
 
 	private static AltSpliceView singleton;
 	private static final long serialVersionUID = 1L;
@@ -50,6 +47,7 @@ public class AltSpliceView extends IGBTabPanel
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
 	private final JRPTextField buffer_sizeTF;
+	private final JLabel buffer_sizeL;
 	private final JRPCheckBox slice_by_selectionCB;
 	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
 	private BioSeq last_seq_changed = null;
@@ -76,7 +74,8 @@ public class AltSpliceView extends IGBTabPanel
 		slice_by_selectionCB = new JRPCheckBox("AltSpliceView_slice_by_selectionCB", "Slice By Selection", true);
 
 		JPanel buf_adjustP = new JPanel(new FlowLayout());
-		buf_adjustP.add(new JLabel("Slice Buffer: "));
+		buffer_sizeL = new JLabel("Slice Buffer: ");
+		buf_adjustP.add(buffer_sizeL);
 		buf_adjustP.add(buffer_sizeTF);
 
 		JPanel pan1 = new JPanel(new GridLayout(1, 2));
@@ -107,6 +106,7 @@ public class AltSpliceView extends IGBTabPanel
 		if (tlman != null) {
 			tlman.addPopupListener(this);
 		}
+		IGB.getSingleton().getMapView().addToRefreshList(this);
 	}
 
 	/**
@@ -316,5 +316,19 @@ public class AltSpliceView extends IGBTabPanel
 
 	public void refreshView() {
 		orf_analyzer.redoOrfs();
+	}
+	
+	public void resetAll(){
+		boolean enable = igbService != null && igbService.getVisibleTierGlyphs() != null && igbService.getVisibleTierGlyphs().size() > 1;
+		buffer_sizeL.setEnabled(enable);
+		buffer_sizeTF.setEnabled(enable);
+		orf_analyzer.setEnabled(enable);
+		slice_by_selectionCB.setEnabled(enable);
+		spliced_view.enableSeqMap(enable);
+		orf_analyzer.enableView(enable);
+	}
+
+	public void mapRefresh() {
+		resetAll();
 	}
 }

@@ -862,25 +862,26 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void stackDepthTextFieldReset() {
 		JTextField stackDepthTextField = getStackDepthTextField();
-		stackDepthTextField.setEnabled(annotGlyphs.size() > 0);
-		getStackDepthLabel().setEnabled(annotGlyphs.size() > 0);
-		Integer stackDepth = -1;
-		boolean stackDepthSet = false;
-		for (ViewModeGlyph ag : annotGlyphs) {
-			if (stackDepth == -1 && !stackDepthSet) {
-				stackDepth = ag.getAnnotStyle().getMaxDepth();
-				stackDepthSet = true;
+		boolean enabled = annotGlyphs.size() > 0 && isAllAnnot();
+		stackDepthTextField.setEnabled(enabled);
+		getStackDepthLabel().setEnabled(enabled);
+		stackDepthTextField.setText("");
+		if (enabled) {
+			Integer stackDepth = -1;
+			boolean stackDepthSet = false;
+			for (ViewModeGlyph ag : annotGlyphs) {
+				if (stackDepth == -1 && !stackDepthSet) {
+					stackDepth = ag.getAnnotStyle().getMaxDepth();
+					stackDepthSet = true;
+				}
+				else if (stackDepth != ag.getAnnotStyle().getMaxDepth()) {
+					stackDepth = -1;
+					break;
+				}
 			}
-			else if (stackDepth != ag.getAnnotStyle().getMaxDepth()) {
-				stackDepth = -1;
-				break;
+			if (stackDepth != -1) {
+				stackDepthTextField.setText("" + stackDepth);
 			}
-		}
-		if (stackDepth == -1) {
-			stackDepthTextField.setText("");
-		}
-		else {
-			stackDepthTextField.setText("" + stackDepth);
 		}
 	}
 
@@ -907,13 +908,13 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void stackDepthGoButtonReset() {
 		JButton stackDepthGoButton = getStackDepthGoButton();
-		stackDepthGoButton.setEnabled(annotGlyphs.size() > 0);
+		stackDepthGoButton.setEnabled(annotGlyphs.size() > 0 && isAllAnnot());
 	}
 
 	@Override
 	protected void stackDepthAllButtonReset() {
 		JButton stackDepthAllButton = getStackDepthAllButton();
-		stackDepthAllButton.setEnabled(annotGlyphs.size() > 0);
+		stackDepthAllButton.setEnabled(annotGlyphs.size() > 0 && isAllAnnot());
 	}
 
 	@Override

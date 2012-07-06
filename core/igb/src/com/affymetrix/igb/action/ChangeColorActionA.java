@@ -87,6 +87,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 							}
 						}
 					}
+					setStyleColor(color, vg.getAnnotStyle());
 				}else{
 					ITrackStyleExtended style = vg.getAnnotStyle();
 					if (style != null) {

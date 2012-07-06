@@ -5,7 +5,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 public class SetDirectionStyleColorAction extends SetDirectionStyleActionA {
 	private static final long serialVersionUID = 1L;
-	private static final SetDirectionStyleColorAction ACTION = new SetDirectionStyleColorAction();
+	private static final SetDirectionStyleColorAction ACTION
+			= new SetDirectionStyleColorAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -16,11 +17,21 @@ public class SetDirectionStyleColorAction extends SetDirectionStyleActionA {
 	}
 
 	private SetDirectionStyleColorAction() {
-		super("Set Direction Style Color", null, null);
+		super("Set Direction Style Color", 
+				"16x16/actions/strandscoloreddifferently.png",
+				"22x22/actions/strandscoloreddifferently.png");
 	}
 
 	@Override
 	protected boolean isColorStyle(ITrackStyleExtended style) {
 		return true;
 	}
+
+	@Override
+	public void actionPerformed(java.awt.event.ActionEvent e) {
+		super.actionPerformed(e);
+		UnsetDirectionStyleColorAction.getAction().setEnabled(true);
+		this.setEnabled(false);
+	}
+
 }

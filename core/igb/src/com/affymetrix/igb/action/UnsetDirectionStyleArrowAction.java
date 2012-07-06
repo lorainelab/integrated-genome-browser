@@ -5,7 +5,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 	private static final long serialVersionUID = 1L;
-	private static final UnsetDirectionStyleArrowAction ACTION = new UnsetDirectionStyleArrowAction();
+	private static final UnsetDirectionStyleArrowAction ACTION
+			= new UnsetDirectionStyleArrowAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -16,11 +17,21 @@ public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 	}
 
 	private UnsetDirectionStyleArrowAction() {
-		super("Unset Direction Style Arrow", null, null);
+		super("Unset Direction Style Arrow",
+				"16x16/actions/blunt.png",
+				"22x22/actions/blunt.png");
 	}
 
 	@Override
 	protected boolean isArrowStyle(ITrackStyleExtended style) {
 		return false;
 	}
+
+	@Override
+	public void actionPerformed(java.awt.event.ActionEvent e) {
+		super.actionPerformed(e);
+		SetDirectionStyleArrowAction.getAction().setEnabled(true);
+		this.setEnabled(false);
+	}
+
 }

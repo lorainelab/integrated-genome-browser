@@ -1010,12 +1010,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 */
 	@Override
 	public void setGraphTier(boolean b) {
-		if (view_mode == null || MapViewModeHolder.getInstance().getViewFactory(view_mode).isCategorySupported(FileTypeCategory.Graph)) {
+		//if (view_mode == null || MapViewModeHolder.getInstance().getViewFactory(view_mode).isCategorySupported(FileTypeCategory.Graph)) {
 			is_graph = b;
 			if (is_graph) {
 				setSeparate(false);
 			}
-		}
+		//}
 	}
 
 	public Map<String, Object> getTransientPropertyMap() {

@@ -23,8 +23,8 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	/** for height on the reverse strand. To help with track resizing. */
 	private double reverseHeight;
 	private float track_name_size;
-	private Color label_foreGround = new Color(0,0,0);
-	private Color label_backGround = new Color(255,255,255);
+	private Color label_foreGround = null;
+	private Color label_backGround = null;
 	private int directionType;
 	private Color forwardColor, reverseColor;
 	@Override
@@ -242,14 +242,20 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 
 	@Override
 	public Color getLabelForeground() {
+		if (label_foreGround == null) {
+			return getForeground();
+		}
 		return label_foreGround;
 	}
 
 	@Override
 	public Color getLabelBackground() {
+		if (label_backGround == null) {
+			return getBackground();
+		}
 		return label_backGround;
 	}
-
+	
 	@Override
 	public void setLabelForeground(Color c) {
 		label_foreGround = c;

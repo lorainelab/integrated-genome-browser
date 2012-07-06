@@ -277,9 +277,9 @@ public abstract class BookmarkController {
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
-				combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
+				//combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
 				combo_style.setBackground(igbService.getDefaultBackgroundColor());
-				combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
+				//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
 				combo_style.setForeground(igbService.getDefaultForegroundColor());
 				combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
 				combos.put(combo_name, combo_style);

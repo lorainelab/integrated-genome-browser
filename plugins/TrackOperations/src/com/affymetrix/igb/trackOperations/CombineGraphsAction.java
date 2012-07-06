@@ -68,7 +68,7 @@ public class CombineGraphsAction extends GenericAction {
 			combo_style.setTrackName("Joined Graphs");
 			combo_style.setExpandable(true);
 			//	combo_style.setCollapsed(true);
-			combo_style.setLabelForeground(igbService.getDefaultForegroundColor());
+			//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());
 			combo_style.setForeground(igbService.getDefaultForegroundColor());
 			Color background = igbService.getDefaultBackgroundColor();
 			int c = -1;
@@ -77,7 +77,7 @@ public class CombineGraphsAction extends GenericAction {
 					background = color.getKey();
 				}
 			}
-			combo_style.setLabelBackground(background);
+			//combo_style.setLabelBackground(background);
 			combo_style.setBackground(background);
 			combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
 			combo_style.setViewMode(viewMode);

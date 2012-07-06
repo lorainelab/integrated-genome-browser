@@ -341,24 +341,35 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private int getStretchableCount() {
 		int stretchableCount = 0;
 		for (Glyph glyph : igbService.getVisibleTierGlyphs()) {
-			FileTypeCategory category = ((TierGlyph)glyph).getAnnotStyle().getFileTypeCategory();
-			if (category == null) {
-				RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry)glyph.getInfo();
-				if (rootSeqSymmetry != null) {
-					category = rootSeqSymmetry.getCategory();
+			if (!((TierGlyph)glyph).getAnnotStyle().getFloatTier()) {
+				FileTypeCategory category = ((TierGlyph)glyph).getAnnotStyle().getFileTypeCategory();
+				if (category == null) {
+					RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry)glyph.getInfo();
+					if (rootSeqSymmetry != null) {
+						category = rootSeqSymmetry.getCategory();
+					}
 				}
-			}
-			if (category != null && category != FileTypeCategory.Sequence) {
-				stretchableCount++;
+				if (category != null && category != FileTypeCategory.Sequence) {
+					stretchableCount++;
+				}
 			}
 		}
 		return stretchableCount;
 	}
 
+	private boolean isAllFloat() {
+		for (ViewModeGlyph vg : allGlyphs) {
+			if (!vg.getAnnotStyle().getFloatTier()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private void resetAll() {
 		is_listening = false;
 		boolean enabled = graphGlyphs.size() > 0 && graphGlyphs.size() == allGlyphs.size();
-		boolean heightEnabled = enabled && getStretchableCount() > 1;
+		boolean heightEnabled = enabled && (getStretchableCount() > 1 || isAllFloat());
 		setByLabel.setEnabled(enabled);
 	    by_percentileRB_val.setEnabled(enabled);
 	    by_valRB_val.setEnabled(enabled);

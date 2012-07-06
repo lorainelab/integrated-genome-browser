@@ -37,6 +37,14 @@ public interface ISearchMode {
 	 */
 	public boolean useOption();
 	/**
+	 * Set option state
+	 */
+	public void setOptionState(boolean selected);
+	/**
+	 * @return if option state
+	 */
+	public boolean getOptionState();
+	/**
 	 * @return if whole genome is allowed instead of selecting a chromosome
 	 */
 	public boolean useGenomeInSeqList();

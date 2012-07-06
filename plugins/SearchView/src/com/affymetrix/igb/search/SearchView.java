@@ -49,6 +49,8 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
@@ -171,6 +173,17 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 	
+	ItemListener itemListener = new ItemListener(){
+
+		public void itemStateChanged(ItemEvent e) {
+			if(selectedSearchMode != null && selectedSearchMode.useOption()){
+				JCheckBox checkbox = (JCheckBox)e.getSource();
+				selectedSearchMode.setOptionState(checkbox.isSelected());
+			}
+		}
+		
+	};
+	
 	private ClearAction clearAction = new ClearAction();
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -262,6 +275,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchTF.addActionListener(searchAction);
 		searchButton.addActionListener(searchAction);
 		clearButton.addActionListener(clearAction);
+		optionCheckBox.addItemListener(itemListener);
 		igbService.addServerInitListener(this);
 		igbService.addSearchListener(this);
 	}
@@ -280,6 +294,8 @@ public final class SearchView extends IGBTabPanel implements
 			optionCheckBox.setEnabled(enabled);
 			if(!enabled){
 				optionCheckBox.setSelected(false);
+			}else{
+				optionCheckBox.setSelected(selectedSearchMode.getOptionState());
 			}
 		}else{
 			optionCheckBox.setEnabled(false);

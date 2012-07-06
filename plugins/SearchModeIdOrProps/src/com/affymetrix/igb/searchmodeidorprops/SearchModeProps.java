@@ -40,6 +40,16 @@ public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeS
 	}
 	
 	@Override
+	public void setOptionState(boolean selected){
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public boolean getOptionState(){
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
 	public boolean useOption() {
 		return false;
 	}

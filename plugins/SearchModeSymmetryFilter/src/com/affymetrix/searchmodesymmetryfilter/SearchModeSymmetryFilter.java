@@ -17,6 +17,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	private final int searchAllOrdinal;
 	private final IGBService igbService;
 	private final SymmetryFilterI filter;
+	private boolean optionSelected;
 	
 	public SearchModeSymmetryFilter(IGBService igbService, SymmetryFilterI filter, int searchAllOrdinal) {
 		super();
@@ -55,6 +56,16 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 		return false;
 	}
 
+	@Override
+	public void setOptionState(boolean selected){
+		
+	}
+	
+	@Override
+	public boolean getOptionState(){
+		return false;
+	}
+	
 	@Override
 	public boolean useOption() {
 		return false;

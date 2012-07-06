@@ -48,6 +48,7 @@ public class SearchModeResidue implements ISearchMode,
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private IGBService igbService;
 	private int color = 0;
+	private boolean optionSelected;
 	
 	public SearchModeResidue(IGBService igbService) {
 		super();
@@ -147,7 +148,17 @@ public class SearchModeResidue implements ISearchMode,
 	public boolean getOptionEnable() {
 		return hitcolors.length - 1 > color;
 	}
-		
+	
+	@Override
+	public void setOptionState(boolean selected){
+		optionSelected = selected;
+	}
+	
+	@Override
+	public boolean getOptionState(){
+		return optionSelected;
+	}
+	
 	public void valueChanged(GlyphI glyph, String seq) {
 		for(GlyphI g : glyphs){
 			igbService.getSeqMap().deselect(g);

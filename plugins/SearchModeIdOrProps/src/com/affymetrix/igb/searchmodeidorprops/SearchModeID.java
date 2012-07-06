@@ -19,6 +19,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 	private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("optionCheckBoxTT");
 	private static final String REMOTESERVERSEARCHSINGULAR = BUNDLE.getString("remoteServerSearchSingular");
 	private static final String REMOTESERVERSEARCHPLURAL = BUNDLE.getString("remoteServerSearchPlural");
+	private boolean optionSelected;
 	
 	public SearchModeID(IGBService igbService) {
 		super(igbService);
@@ -64,6 +65,16 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 		return true;
 	}
 
+	@Override
+	public void setOptionState(boolean selected){
+		optionSelected = selected;
+	}
+	
+	@Override
+	public boolean getOptionState(){
+		return optionSelected;
+	}
+	
 	@Override
 	public int searchAllUse() {
 		return SEARCH_ALL_ORDINAL;

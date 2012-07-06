@@ -23,6 +23,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private static final long serialVersionUID = 1L;
 	private final IGBService igbService;
 	private GraphVisibleBoundsSetter vis_bounds_setter;
+	private final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
 	private final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
 	private boolean is_listening = true; // used to turn on and off listening to GUI events
 
@@ -34,7 +35,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		this.igbService = igbService;
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 		initComponents();
-		resetAll(new ArrayList<AbstractGraphGlyph>());
+		resetAll();
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
@@ -304,37 +305,39 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		loadGlyphs();
-		resetAll(graphGlyphs);
+		resetAll();
 	}
 
 	@Override
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		loadGlyphs();
-		resetAll(graphGlyphs);
+		resetAll();
 	}
 
 	@Override
 	public void trackstylePropertyChanged(EventObject eo) { // this is redundant when the source of the style change is this panel
 		loadGlyphs();
-		resetAll(graphGlyphs);
+		resetAll();
 	}
 
 	private void loadGlyphs() {
+		allGlyphs.clear();
 		graphGlyphs.clear();
 		for (GlyphI glyph : igbService.getSeqMapView().getAllSelectedTiers()) {
 			ViewModeGlyph useGlyph = (ViewModeGlyph)glyph;
 			if (useGlyph instanceof SemanticZoomGlyph) {
 				useGlyph = ((SemanticZoomGlyph)useGlyph).getLastUsedGlyph();
 			}
+			allGlyphs.add(useGlyph);
 			if(useGlyph instanceof AbstractGraphGlyph){
 				graphGlyphs.add((AbstractGraphGlyph)useGlyph);
 			}
 		}
 	}
 
-	private void resetAll(List<AbstractGraphGlyph> graphGlyphs) {
+	private void resetAll() {
 		is_listening = false;
-		boolean enabled = graphGlyphs.size() > 0;
+		boolean enabled = graphGlyphs.size() > 0 && graphGlyphs.size() == allGlyphs.size();
 		boolean heightEnabled = enabled && igbService.getVisibleTierGlyphs().size() > 2; // axis tier and 1 graph tier only - height slider disabled
 		setByLabel.setEnabled(enabled);
 	    by_percentileRB_val.setEnabled(enabled);
@@ -346,8 +349,8 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	    rangeSlider.setEnabled(enabled);
 	    heightSlider.setEnabled(heightEnabled);
 	    heightLabel.setEnabled(heightEnabled);
-	    vis_bounds_setter.setGraphs(graphGlyphs);
-		if (graphGlyphs.size() == 1) {
+	    vis_bounds_setter.setGraphs(enabled ? graphGlyphs : null);
+		if (enabled && graphGlyphs.size() == 1) {
 			double the_height = graphGlyphs.get(0).getAnnotStyle().getHeight();
 			heightSlider.setValue((int) the_height);
 		}

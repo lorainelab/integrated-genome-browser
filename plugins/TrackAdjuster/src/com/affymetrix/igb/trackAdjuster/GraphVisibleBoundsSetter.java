@@ -179,12 +179,13 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	public void setGraphs(List<AbstractGraphGlyph> newgraphs) {
 		turnOffListening();
 		graphs.clear();
-		int gcount = newgraphs.size();
-		for (int i = 0; i < gcount; i++) {
-			AbstractGraphGlyph gl = newgraphs.get(i);
-			graphs.add(gl);
+		if (newgraphs != null) {
+			int gcount = newgraphs.size();
+			for (int i = 0; i < gcount; i++) {
+				AbstractGraphGlyph gl = newgraphs.get(i);
+				graphs.add(gl);
+			}
 		}
-
 		if (includePercentileControls) {
 			initPercents();
 		}

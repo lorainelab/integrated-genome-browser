@@ -1,6 +1,7 @@
 package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,10 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 	private double amount = 0.2;
 	private boolean lastStep;
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static TweeningZoomAction getAction() {
 		return ACTION;
 	}

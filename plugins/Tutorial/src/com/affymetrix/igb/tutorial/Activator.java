@@ -109,12 +109,18 @@ public class Activator implements BundleActivator {
 			};
 			serviceTracker.open();
 		}
+		initActions();
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 	}
 
+	private void initActions(){
+		TweeningZoomAction.getAction();
+		VerticalStretchZoomAction.getAction();
+	}
+	
 	private void loadDefaultTutorialPrefs() {
 //		// Return if there are already Preferences defined.
 //		// Since we define keystroke shortcuts, this is a reasonable test.

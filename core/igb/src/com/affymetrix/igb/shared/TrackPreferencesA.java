@@ -333,13 +333,18 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void trackNameTextFieldActionPerformedA(ActionEvent evt) {
 		final JTextField trackNameTextField = getTrackNameTextField();
 		String name = trackNameTextField.getText();
-		if (igbService.getSeqMapView() == null || allGlyphs.isEmpty()) {
+		if (igbService.getSeqMapView() == null || allGlyphs == null || allGlyphs.isEmpty()) {
 			return;
 		}
-		if (allGlyphs != null) {
+		if (allGlyphs.size() == 1) {
 			igbService.getSeqMapView().renameTier(allGlyphs.get(0), name);
+			updateDisplay();
+		} else if (isAllGraph()){ // Special case for joined graph
+			if(isOneJoined()){
+				igbService.getSeqMapView().renameTier(graphGlyphs.get(0).getParent(), name);
+				updateDisplay();
+			}
 		}
-		updateDisplay();
 	}
 
 	@Override
@@ -392,6 +397,23 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 		}
 		return false;
+	}
+	
+	private boolean isOneJoined(){
+		if(graphGlyphs.size() < 2)
+			return false;
+		
+		Object comboStyle = graphGlyphs.get(0).getGraphState().getComboStyle();
+		if(comboStyle == null)
+			return false;
+		
+		for(int i=1; i<graphGlyphs.size(); i++){
+			if(graphGlyphs.get(i).getGraphState().getComboStyle() != comboStyle){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	private boolean isAnyFloat() {
@@ -865,11 +887,19 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void trackNameTextFieldReset() {
 		JTextField trackNameTextField = getTrackNameTextField();
-		trackNameTextField.setEnabled(allGlyphs.size() == 1);
 		if (allGlyphs.size() == 1) {
+			trackNameTextField.setEnabled(true);
 			trackNameTextField.setText(allGlyphs.get(0).getLabel());
-		}
-		else {
+		} else if (isAllGraph()){ // Special case for joined graph
+			if(isOneJoined()){
+				trackNameTextField.setEnabled(true);
+				trackNameTextField.setText(graphGlyphs.get(0).getGraphState().getComboStyle().getTrackName());
+			}else{
+				trackNameTextField.setEnabled(false);
+				trackNameTextField.setText("");
+			}
+		}else{
+			trackNameTextField.setEnabled(false);
 			trackNameTextField.setText("");
 		}
 	}

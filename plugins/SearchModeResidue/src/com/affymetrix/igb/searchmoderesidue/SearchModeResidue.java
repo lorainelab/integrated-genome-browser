@@ -54,7 +54,8 @@ public class SearchModeResidue implements ISearchMode,
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private IGBService igbService;
 	private int color = 0;
-
+	private boolean optionSelected;
+	
 	@SuppressWarnings("serial")
 	private class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 		private final int[] colWidth = {20,8,10,10,5,10,65};
@@ -356,7 +357,17 @@ public class SearchModeResidue implements ISearchMode,
 	public boolean getOptionEnable(int i) {
 		return hitcolors.length - 1 > color;
 	}
-		
+	
+	@Override
+	public void setOptionState(boolean selected){
+		optionSelected = selected;
+	}
+	
+	@Override
+	public boolean getOptionState(){
+		return optionSelected;
+	}
+	
 	@Override
 	public void valueChanged(SearchResultsTableModel model, int srow) {
 		GlyphI glyph = ((GlyphSearchResultsTableModel)model).get(srow);

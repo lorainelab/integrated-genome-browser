@@ -101,6 +101,8 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		@Override public void valueChanged(SearchResultsTableModel model, int srow) { }
 		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
 		@Override public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
+		@Override public void setOptionState(boolean selected){ }
+		@Override public boolean getOptionState(){ return false; }
 	}
 	private static class ChromStartEndSearch extends EmptySearch {
 		// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"

@@ -44,6 +44,14 @@ public interface ISearchMode {
 	 */
 	public boolean useOption();
 	/**
+	 * Set option state
+	 */
+	public void setOptionState(boolean selected);
+	/**
+	 * @return if option state
+	 */
+	public boolean getOptionState();
+	/**
 	 * slear results
 	 */
 	public void clear();

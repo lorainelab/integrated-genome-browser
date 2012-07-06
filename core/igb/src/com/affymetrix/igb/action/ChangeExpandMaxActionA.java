@@ -1,25 +1,34 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.shared.RepackTiersAction;
-import java.util.List;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.ParameteredAction;
+import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.MaxSlotsChooser;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import java.util.List;
 
-public abstract class ChangeExpandMaxActionA extends RepackTiersAction implements ParameteredAction{
+public abstract class ChangeExpandMaxActionA
+extends RepackTiersAction
+implements ParameteredAction {
 	private static final long serialVersionUID = 1L;
 
 	protected ChangeExpandMaxActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
 
+	/**
+	 * Subclasses can return all tracks or selected tracks.
+	 * This is the list that will be considered
+	 * and operated on.
+	 */
 	protected abstract List<TierLabelGlyph> getTiers();
-	
+
+	/**
+	 * Sets the maximum stack depth for all tiers
+	 * returned by {@link #getTiers}.
+	 */
 	public void changeExpandMax(int max) {
 		List<TierLabelGlyph> tier_label_glyphs = getTiers();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
@@ -45,62 +54,69 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction implement
 	}
 
 	@Override
-	public void performAction(Object parameter){
-		if(parameter.getClass() != Integer.class)
-			return; 
-		
+	public void performAction(Object parameter) {
+		System.out.println(this.getClass().getName() + ": action performed");
+		if(parameter.getClass() != Integer.class) {
+			return;
+		}
 		changeExpandMax((Integer)parameter);
 	}
 	
-	
+	/**
+	 * Get the optimal limit considering all tiers,
+	 * not just those returned by {@link #getTiers}.
+	 */
 	public int getOptimum() {
 		List<TierLabelGlyph> theTiers = getTierManager().getAllTierLabels();
 		int ourOptimum = 1;
 		for (TierLabelGlyph tlg : theTiers) {
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			if(tg.getAnnotStyle().isGraphTier())
+			if(tg.getAnnotStyle().isGraphTier()) {
 				continue;
-			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));
+			}
+			int slotsNeeded = tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView());
+			ourOptimum = Math.max(ourOptimum, slotsNeeded);
 		}
 		return ourOptimum;
 	}
 
+	/**
+	 * Figure out the actual and optimal limit for the tiers
+	 * and present a dialog to choose a value.
+	 */
 	protected void changeExpandMax() {
-		List<TierLabelGlyph> theTiers = getTiers();
-		if (theTiers == null || theTiers.isEmpty()) {
-			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
-			return;
-		}
-
-		int ourLimit = 0;
-		// Shouldn't we set the limit to the max of the limits in the tiers (remember n < 0 for all n).
-		// Then we could combine this with the loop below.
-		if (theTiers.size() == 1) {
-			TierLabelGlyph tlg = theTiers.get(0);
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
+		List<TierLabelGlyph> l = getTiers();
+		int actualLimit = -1;
+		int optimalLimit = 0;
+		for (TierLabelGlyph tlg : l) {
+			TierGlyph tg = tlg.getReferenceTier();
+			int tierLimit = -1;
 			ITrackStyleExtended style = tg.getAnnotStyle();
 			if (style != null) {
 				switch (tg.getDirection()) {
 					case FORWARD:
-						ourLimit = style.getForwardMaxDepth();
+						tierLimit = style.getForwardMaxDepth();
 						break;
 					case REVERSE:
-						ourLimit = style.getReverseMaxDepth();
+						tierLimit = style.getReverseMaxDepth();
 						break;
 					default:
-						ourLimit = style.getMaxDepth();
+						tierLimit = style.getMaxDepth();
 				}
 			}
+			if (0 == tierLimit) {
+				actualLimit = 0;
+			}
+			else if (0 != actualLimit) {
+				actualLimit = Math.max(actualLimit, tierLimit);
+			}
+			int slotsNeeded = tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView());
+			optimalLimit = Math.max(optimalLimit, slotsNeeded);
 		}
-
-		int ourOptimum = getOptimum();
-		for (TierLabelGlyph tlg : theTiers) {
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));
-		}
-
-		MaxSlotsChooser chooser = new MaxSlotsChooser(IGBConstants.BUNDLE.getString("maxHeight"), ourLimit, ourOptimum, this);
+		MaxSlotsChooser chooser = new MaxSlotsChooser(
+				IGBConstants.BUNDLE.getString("maxHeight"),
+				actualLimit, optimalLimit, this);
 		chooser.setVisible(true);
-		
 	}
+
 }

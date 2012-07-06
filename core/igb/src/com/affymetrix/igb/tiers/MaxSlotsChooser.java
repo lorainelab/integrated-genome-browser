@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -10,6 +6,10 @@ import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+
+/**
+ * Dialog to choose a maximum "depth" for annotation tracks.
+ */
 public class MaxSlotsChooser extends javax.swing.JFrame {
 
 	private Integer optimum = 5;
@@ -17,10 +17,12 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 	private Integer initial = 0;
 	private String theMessage ="";
 	private ChangeExpandMaxActionA ac;
+
 	/**
 	 * Creates new form MaxSlotsChooser
 	 */
-	public MaxSlotsChooser(String theMessage, int theInitialValue, int theOptimalValue, ChangeExpandMaxActionA ac) {
+	public MaxSlotsChooser(String theMessage, int theInitialValue,
+			int theOptimalValue, ChangeExpandMaxActionA ac) {
 		this.theMessage = theMessage;
 		this.initial = theInitialValue;
 		this.optimum = theOptimalValue;
@@ -28,6 +30,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 		setLocationRelativeTo(IGB.getSingleton().getFrame());
 		init();
 	}
+
 	private void init(){
 		SwingUtilities.invokeLater(new Runnable(){
 			@Override
@@ -38,6 +41,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 			}
 		});
 	}
+
 	@Override
 	public String toString() {
 		return this.maxSlots.getText();

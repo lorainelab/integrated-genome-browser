@@ -55,7 +55,6 @@ implements ParameteredAction {
 
 	@Override
 	public void performAction(Object parameter) {
-		System.out.println(this.getClass().getName() + ": action performed");
 		if(parameter.getClass() != Integer.class) {
 			return;
 		}

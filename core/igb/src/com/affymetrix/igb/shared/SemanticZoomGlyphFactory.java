@@ -83,7 +83,10 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {
 			summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(viewmode);
 			if (isLastSummary()) {
+				Rectangle2D.Double coordbox = this.getCoordBox();
 				lastUsedGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)lastUsedGlyph.getInfo(), style, Direction.NONE, smv);
+				this.processParentCoordBox(coordbox);
+				lastUsedGlyph.setCoordBox(coordbox);
 			}
 		}
 
@@ -91,7 +94,10 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			detailGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(viewmode);
 			detailGlyph = detailGlyphFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
 			if (!isLastSummary()) {
+				Rectangle2D.Double coordbox = this.getCoordBox();
 				lastUsedGlyph = detailGlyph;
+				this.processParentCoordBox(coordbox);
+				lastUsedGlyph.setCoordBox(coordbox);
 			}
 		}
 

@@ -405,6 +405,9 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 			if (isTierGlyph(parentgl)) {
 				parentgl.pack(igbService.getView());
 			}
+			if (gl.getAnnotStyle().getFloatTier()) {
+				gl.getAnnotStyle().setHeight(height);
+			}
 		}
 		igbService.packMap(false, true);
 	}

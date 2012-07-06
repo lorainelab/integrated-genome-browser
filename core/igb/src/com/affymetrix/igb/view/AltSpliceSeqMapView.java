@@ -107,6 +107,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 			// Apply retained properties.
 			style_copy.setShow(show);
 		}
+		style_copy.setGraphTier(style.isGraphTier());
 		
 		return style_copy;
 	}

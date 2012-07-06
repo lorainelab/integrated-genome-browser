@@ -47,6 +47,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import javax.swing.event.ChangeEvent;
@@ -176,9 +177,9 @@ public final class SearchView extends IGBTabPanel implements
 	ItemListener itemListener = new ItemListener(){
 
 		public void itemStateChanged(ItemEvent e) {
-			if(selectedSearchMode != null && selectedSearchMode.useOption()){
+			if(selectedSearchMode != null && selectedSearchMode instanceof ISearchModeExtended){
 				JCheckBox checkbox = (JCheckBox)e.getSource();
-				selectedSearchMode.setOptionState(checkbox.isSelected());
+				((ISearchModeExtended)selectedSearchMode).setOptionState(checkbox.isSelected());
 			}
 		}
 		
@@ -287,15 +288,16 @@ public final class SearchView extends IGBTabPanel implements
 		if(selectedSearchMode == null)
 			return;
 		
-		if(selectedSearchMode.useOption()){
-			optionCheckBox.setText(selectedSearchMode.getOptionName());
-			optionCheckBox.setToolTipText(selectedSearchMode.getOptionTooltip());
-			boolean enabled = selectedSearchMode.getOptionEnable();
+		if(selectedSearchMode instanceof ISearchModeExtended){
+			ISearchModeExtended extenedSearch = (ISearchModeExtended)selectedSearchMode;
+			optionCheckBox.setText(extenedSearch.getOptionName());
+			optionCheckBox.setToolTipText(extenedSearch.getOptionTooltip());
+			boolean enabled = extenedSearch.getOptionEnable();
 			optionCheckBox.setEnabled(enabled);
 			if(!enabled){
 				optionCheckBox.setSelected(false);
 			}else{
-				optionCheckBox.setSelected(selectedSearchMode.getOptionState());
+				optionCheckBox.setSelected(extenedSearch.getOptionState());
 			}
 		}else{
 			optionCheckBox.setEnabled(false);

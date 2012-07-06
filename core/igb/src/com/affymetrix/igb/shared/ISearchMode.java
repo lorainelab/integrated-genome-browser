@@ -21,30 +21,6 @@ public interface ISearchMode {
 	 */
 	public String getTooltip();
 	/**
-	 * @return the name of the option at the specified index
-	 */
-	public String getOptionName();
-	/**
-	 * @return the tooltip of the option at the specified index
-	 */
-	public String getOptionTooltip();
-	/**
-	 * @return if the option at the specified index is enabled
-	 */
-	public boolean getOptionEnable();
-	/**
-	 * @return if options are used for this search mode
-	 */
-	public boolean useOption();
-	/**
-	 * Set option state
-	 */
-	public void setOptionState(boolean selected);
-	/**
-	 * @return if option state
-	 */
-	public boolean getOptionState();
-	/**
 	 * @return if whole genome is allowed instead of selecting a chromosome
 	 */
 	public boolean useGenomeInSeqList();

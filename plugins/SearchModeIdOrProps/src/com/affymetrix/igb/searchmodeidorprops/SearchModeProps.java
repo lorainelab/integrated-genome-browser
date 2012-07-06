@@ -23,37 +23,7 @@ public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeS
 	public String getTooltip() {
 		return BUNDLE.getString("searchRegexPropsTF");
 	}
-
-	@Override
-	public String getOptionName() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public String getOptionTooltip() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	
-	@Override
-	public boolean getOptionEnable() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	
-	@Override
-	public void setOptionState(boolean selected){
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	
-	@Override
-	public boolean getOptionState(){
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	
-	@Override
-	public boolean useOption() {
-		return false;
-	}
-
+		
 	@Override
 	public boolean useGenomeInSeqList() {
 		return true;

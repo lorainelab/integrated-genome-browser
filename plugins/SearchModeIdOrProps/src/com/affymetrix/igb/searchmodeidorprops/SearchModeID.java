@@ -10,10 +10,11 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 
-public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym {
+public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended{
 	private static final int SEARCH_ALL_ORDINAL = -9000;
 	private static final String REMOTESERVERSEARCH = BUNDLE.getString("optionCheckBox");
 	private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("optionCheckBoxTT");
@@ -36,6 +37,11 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 	}
 
 	@Override
+	public boolean useGenomeInSeqList() {
+		return true;
+	}
+			
+	@Override
 	public String getOptionName() {
 		int i = getRemoteServerCount();
 		String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
@@ -55,16 +61,6 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 		return i > 0;
 	}
 	
-	@Override
-	public boolean useOption() {
-		return true;
-	}
-
-	@Override
-	public boolean useGenomeInSeqList() {
-		return true;
-	}
-
 	@Override
 	public void setOptionState(boolean selected){
 		optionSelected = selected;

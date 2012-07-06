@@ -22,10 +22,10 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 
-public class SearchModeResidue implements ISearchMode, 
+public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {
 	
 	private static final int SEARCH_ALL_ORDINAL = -1;
@@ -133,7 +133,7 @@ public class SearchModeResidue implements ISearchMode,
 	public String getTooltip() {
 		return BUNDLE.getString("searchRegexResidueTF");
 	}
-
+	
 	@Override
 	public String getOptionName() {
 		return BUNDLE.getString("optionCheckBox");
@@ -170,11 +170,6 @@ public class SearchModeResidue implements ISearchMode,
 			igbService.zoomToCoord(seq, start, end);
 			igbService.getSeqMapView().centerAtHairline();
 		}
-	}
-
-	@Override
-	public boolean useOption() {
-		return true;
 	}
 
 	@Override

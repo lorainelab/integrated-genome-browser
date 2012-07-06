@@ -42,36 +42,6 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 
 	@Override
-	public String getOptionName() {
-		return null;
-	}
-
-	@Override
-	public String getOptionTooltip() {
-		return null;
-	}
-
-	@Override
-	public boolean getOptionEnable() {
-		return false;
-	}
-
-	@Override
-	public void setOptionState(boolean selected){
-		
-	}
-	
-	@Override
-	public boolean getOptionState(){
-		return false;
-	}
-	
-	@Override
-	public boolean useOption() {
-		return false;
-	}
-
-	@Override
 	public boolean useGenomeInSeqList() {
 		return false;
 	}

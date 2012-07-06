@@ -58,7 +58,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				performAction(chooser.getColor());
-				getSeqMapView().getSeqMap().updateWidget();
+				getSeqMapView().updatePanel();
 			}
 
 		};

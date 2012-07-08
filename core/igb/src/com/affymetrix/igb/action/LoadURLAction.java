@@ -37,7 +37,11 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	private JDialog dialog = null;
 
 	private LoadURLAction() {
-		super(BUNDLE.getString("openURL"), null, "16x16/status/network-receive.png", "22x22/status/network-receive.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("openURL"), null,
+				"16x16/status/network-receive.png",
+				"22x22/status/network-receive.png",
+				KeyEvent.VK_UNDEFINED, null, true);
+		this.ordinal = -9004000;
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 
@@ -108,8 +112,4 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 		return "loadURL";
 	}
 
-	@Override
-	public int getOrdinal() {
-		return -9004000;
-	}
 }

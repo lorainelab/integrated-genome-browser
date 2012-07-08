@@ -28,7 +28,11 @@ public class ExportImageAction extends GenericAction {
 	}
 
 	private ExportImageAction() {
-		super(BUNDLE.getString("exportImage"), null, "16x16/mimetypes/image-x-generic.png", "22x22/mimetypes/image-x-generic.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("exportImage"), null,
+				"16x16/mimetypes/image-x-generic.png",
+				"22x22/mimetypes/image-x-generic.png",
+				KeyEvent.VK_UNDEFINED, null, true);
+		this.ordinal = -9002000;
 	}
 
 	@Override
@@ -42,8 +46,4 @@ public class ExportImageAction extends GenericAction {
 		}
 	}
 
-	@Override
-	public int getOrdinal() {
-		return -9002000;
-	}
 }

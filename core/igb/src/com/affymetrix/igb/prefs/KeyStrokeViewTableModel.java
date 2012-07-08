@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.igb.IGB;
-
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
@@ -94,9 +93,11 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 				bValue = (Boolean) aValue;
 			}
 			PreferenceUtils.getToolbarNode().putBoolean(pref_name, bValue);
-			GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(pref_name);
+			GenericAction genericAction = GenericActionHolder.getInstance()
+					.getGenericAction(pref_name);
 			if (genericAction == null) {
-				
+				System.err.println(this.getClass().getName() + ".setValueAt: "
+						+ pref_name + " action not found.");
 			}
 			else {
 				if (bValue) {

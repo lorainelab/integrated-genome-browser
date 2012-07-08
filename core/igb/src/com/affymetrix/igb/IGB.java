@@ -346,12 +346,19 @@ public final class IGB extends Application
 		if (tool_bar == null) {
 			return;
 		}
+		boolean removed = false;
 		for (int i = 0; i < tool_bar.getComponentCount(); i++) {
 			if (((JButton)tool_bar.getComponent(i)).getAction() == action) {
 				tool_bar.remove(i);
 				tool_bar.validate();
+				tool_bar.repaint(); // to really make it gone.
+				removed = true;
 				break;
 			}
+		}
+		if (!removed) {
+			System.err.println(this.getClass().getName()
+					+ ".removeToolbarAction: Could not find " + action);
 		}
 	}
 

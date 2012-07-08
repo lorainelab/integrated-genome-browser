@@ -136,6 +136,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 				"16x16/actions/document-open.png",
 				"22x22/actions/document-open.png",
 				KeyEvent.VK_O, null, true);
+		this.ordinal = -9009000;
 		this.gviewerFrame.setTransferHandler(fdh);
 	}
 
@@ -144,8 +145,4 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		return "loadFile";
 	}
 
-	@Override
-	public int getOrdinal() {
-		return -9009000;
-	}
 }

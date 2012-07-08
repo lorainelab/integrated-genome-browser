@@ -28,7 +28,14 @@ public abstract class GenericAction extends AbstractAction {
 	private final Object extraInfo;
 	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
-	
+
+	/**
+	 * For ordering buttons in the toolbar.
+	 * Subclasses should assign different numbers
+	 * in the constructor or static initializer.
+	 */
+	protected int ordinal = 0;
+
 	public GenericAction(String text, int mnemonic) {
 		this(text, null, null, null, mnemonic);
 	}
@@ -133,7 +140,7 @@ public abstract class GenericAction extends AbstractAction {
 			doneCallback.actionDone(this);
 		}
 	}
-	public int getOrdinal() {
-		return 0;
+	public final int getOrdinal() {
+		return this.ordinal;
 	}
 }

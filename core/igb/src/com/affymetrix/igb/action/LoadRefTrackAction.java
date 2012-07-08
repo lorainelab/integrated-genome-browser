@@ -26,7 +26,11 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	}
 
 	protected LoadRefTrackAction() {
-		super(BUNDLE.getString("openRefTrackFile"), null, "16x16/apps/preferences-system-windows.png", "22x22/apps/preferences-system-windows.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("openRefTrackFile"), null,
+				"16x16/apps/preferences-system-windows.png",
+				"22x22/apps/preferences-system-windows.png",
+				KeyEvent.VK_UNDEFINED, null, true);
+		this.ordinal = -9009200;
 	}
 
 	@Override

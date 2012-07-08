@@ -37,7 +37,7 @@ public class PreferencesAction extends GenericAction {
 				"16x16/categories/preferences-system.png",
 				"22x22/categories/preferences-system.png",
 				KeyEvent.VK_E, null, true);
-		this.ordinal = -9009900;
+		this.ordinal = -9006100;
 	}
 
 	@Override

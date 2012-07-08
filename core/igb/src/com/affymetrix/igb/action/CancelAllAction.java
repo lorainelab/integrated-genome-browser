@@ -27,6 +27,7 @@ public class CancelAllAction extends GenericAction {
 			  "16x16/actions/stop.png",
 			  "16x16/actions/stop.png", // just so it's eligible for the tool bar.
 			  KeyEvent.VK_UNDEFINED);
+		this.ordinal = -9006200;
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

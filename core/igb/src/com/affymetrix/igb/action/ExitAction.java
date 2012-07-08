@@ -29,7 +29,11 @@ public class ExitAction extends GenericAction {
 	}
 
 	private ExitAction() {
-		super(BUNDLE.getString("exit"), null, "16x16/actions/process-stop.png", "22x22/actions/process-stop.png", KeyEvent.VK_X);
+		super(BUNDLE.getString("exit"), null,
+				"16x16/actions/process-stop.png",
+				"22x22/actions/process-stop.png",
+				KeyEvent.VK_X);
+		this.ordinal = -9009000;
 	}
 
 	@Override

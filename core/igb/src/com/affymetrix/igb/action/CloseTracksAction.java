@@ -31,6 +31,7 @@ extends SeqMapViewActionA implements SymSelectionListener {
 		super(IGBConstants.BUNDLE.getString("closeTracksAction"),
 				"16x16/status/image-missing.png",
 				"22x22/status/image-missing.png");
+		this.ordinal = -9007200;
 	}
 
 	@Override

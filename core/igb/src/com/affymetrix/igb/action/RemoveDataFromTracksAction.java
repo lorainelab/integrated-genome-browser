@@ -30,7 +30,10 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 	}
 
 	protected RemoveDataFromTracksAction() {
-		super(IGBConstants.BUNDLE.getString("deleteAction"), null, "16x16/actions/edit-clear.png", "22x22/actions/edit-clear.png", KeyEvent.VK_UNDEFINED);
+		super(IGBConstants.BUNDLE.getString("deleteAction"), null,
+				"16x16/actions/edit-clear.png",
+				"22x22/actions/edit-clear.png", KeyEvent.VK_UNDEFINED);
+		this.ordinal = -9007300;
 	}
 
 	@Override

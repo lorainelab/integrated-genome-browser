@@ -41,7 +41,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 				"16x16/status/network-receive.png",
 				"22x22/status/network-receive.png",
 				KeyEvent.VK_UNDEFINED, null, true);
-		this.ordinal = -9004000;
+		this.ordinal = -9009100;
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 

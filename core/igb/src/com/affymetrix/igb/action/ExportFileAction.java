@@ -29,7 +29,11 @@ extends AbstractExportFileAction {
 	}
 
 	private ExportFileAction() {
-		super(BUNDLE.getString("saveTrackAction"), null, "16x16/actions/document-save.png", "22x22/actions/document-save.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("saveTrackAction"), null,
+				"16x16/actions/document-save.png",
+				"22x22/actions/document-save.png",
+				KeyEvent.VK_UNDEFINED, null, true);
+		this.ordinal = -9007100;
 	}
 
 	@Override

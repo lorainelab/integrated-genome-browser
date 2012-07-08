@@ -51,7 +51,7 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="stylePanel" min="-2" pref="161" max="-2" attributes="1"/>
+                          <Component id="stylePanel" min="-2" max="-2" attributes="1"/>
                           <Component id="viewModePanel" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -124,19 +124,19 @@
                           <EmptySpace pref="0" max="-2" attributes="0"/>
                           <Component id="floatCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="graphStyleStairStepRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="graphStyleLineRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="graphStyleBarRadioButton" min="-2" max="-2" attributes="0"/>
                                   <Component id="graphStyleDotRadioButton" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="jSeparator1" alignment="0" min="-2" pref="194" max="-2" attributes="0"/>
+                          <Component id="jSeparator1" min="-2" pref="194" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -170,7 +170,7 @@
                       <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleHeatMapComboBox" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="13" max="32767" attributes="0"/>
+                  <EmptySpace pref="36" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

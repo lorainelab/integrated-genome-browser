@@ -249,6 +249,9 @@ public class IGBScriptEngine implements ScriptEngine {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 			}
 		}
+		if (action.startsWith("homescreen")) {
+			igbService.setHome();
+		}
 	}
 
 	private void goToGenome(String genomeVersion) {

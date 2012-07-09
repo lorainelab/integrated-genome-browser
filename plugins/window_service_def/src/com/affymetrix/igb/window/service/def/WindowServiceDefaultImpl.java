@@ -305,7 +305,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	 * @param tabState the new tab state
 	 */
 	private void setTabState(IGBTabPanel panel, TabState tabState) {
-		if (panel == null || tabState == getTabState(panel)) {
+		if (panel == null){// || tabState == getTabState(panel)) {
 			return;
 		}
 		TabState oldTabState = getTabState(panel);

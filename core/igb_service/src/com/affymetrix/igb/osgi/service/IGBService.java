@@ -205,4 +205,5 @@ public interface IGBService {
 	public void openPreferencesOtherPanel();
 	public float getDefaultTrackSize();
 	public void deselect(GlyphI tierGlyph);
+	public void setHome();
 }

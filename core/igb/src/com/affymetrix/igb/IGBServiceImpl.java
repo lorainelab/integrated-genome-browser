@@ -515,4 +515,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void deselect(GlyphI tierGlyph) {
 		Application.getSingleton().getMapView().getTierManager().deselect(tierGlyph);
 	}
+
+	@Override
+	public void setHome() {
+		SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+	}
 }

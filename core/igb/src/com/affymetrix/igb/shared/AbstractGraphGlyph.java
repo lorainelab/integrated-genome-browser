@@ -286,6 +286,19 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		
 	}
 
+	public void resetVisibleMinYAndMaxY(){
+		float[] range = graf.getVisibleYRange();
+		point_max_ycoord = range[1];
+		point_min_ycoord = range[0];
+		if (point_max_ycoord < point_min_ycoord) {
+			point_min_ycoord = point_max_ycoord - 1;
+		}
+		setVisibleMinY(point_min_ycoord);
+		if(point_max_ycoord > 0){
+			setVisibleMaxY(point_max_ycoord);
+		}
+	}
+	
 	public GraphState getGraphState() {
 		return state;
 	}

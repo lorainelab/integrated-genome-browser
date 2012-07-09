@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
@@ -28,6 +29,9 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
 			ViewModeGlyph result = factory.getViewModeGlyph(rootSym, style, direction, smv);
 			summaryGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
+			if(summaryGlyph instanceof AbstractGraphGlyph){
+				((AbstractGraphGlyph)summaryGlyph).resetVisibleMinYAndMaxY();
+			}
 			prepareViewModeGlyph(summaryGlyph, smv.getSeqMap().getView());
 			return result;
 		}
@@ -55,6 +59,9 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 			viewModeGlyphs.put(summaryGlyphFactory.getName(), summaryGlyph);
 			detailGlyph = detailGlyphFactory.getViewModeGlyph(sym, style, direction, smv);
 			viewModeGlyphs.put(detailGlyphFactory.getName(), detailGlyph);
+			if(summaryGlyph instanceof AbstractGraphGlyph){
+				((AbstractGraphGlyph)summaryGlyph).resetVisibleMinYAndMaxY();
+			}
 		}
 
 		@Override

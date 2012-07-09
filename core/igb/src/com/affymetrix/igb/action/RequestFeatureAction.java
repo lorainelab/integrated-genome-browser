@@ -33,7 +33,11 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 	}
 
 	private RequestFeatureAction() {
-		super(BUNDLE.getString("requestAFeature"), null, "16x16/actions/mail-forward.png", "22x22/actions/mail-forward.png", KeyEvent.VK_R, null, true);
+		super(BUNDLE.getString("requestAFeature"), null,
+				"16x16/actions/mail-forward.png",
+				"22x22/actions/mail-forward.png",
+				KeyEvent.VK_R, null, true);
+		this.ordinal = 140;
 	}
 
 	@Override

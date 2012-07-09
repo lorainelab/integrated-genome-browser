@@ -48,7 +48,11 @@ public class AboutIGBAction extends GenericAction {
 	}
 
 	private AboutIGBAction() {
-		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null, "16x16/status/dialog-information.png", "22x22/status/dialog-information.png", KeyEvent.VK_A, null, true);
+		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null,
+				"16x16/status/dialog-information.png",
+				"22x22/status/dialog-information.png",
+				KeyEvent.VK_A, null, true);
+		this.ordinal = 100;
 	}
 
 	@Override

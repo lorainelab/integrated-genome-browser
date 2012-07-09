@@ -22,6 +22,7 @@ public class ToggleToolTipAction extends GenericAction {
 				"toolbarButtonGraphics/general/ContextualHelp16.gif",
 				"toolbarButtonGraphics/general/ContextualHelp16.gif", // for tool bar
 				KeyEvent.VK_H);
+		this.ordinal = 160;
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 

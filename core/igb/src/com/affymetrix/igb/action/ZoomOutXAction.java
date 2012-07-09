@@ -23,6 +23,7 @@ public class ZoomOutXAction extends SeqMapViewActionA {
 				"toolbarButtonGraphics/general/ZoomOut16.gif",
 				"toolbarButtonGraphics/general/ZoomOut16.gif" // for tool bar
 				);
+		this.ordinal = -4004020;
 	}
 
 	@Override

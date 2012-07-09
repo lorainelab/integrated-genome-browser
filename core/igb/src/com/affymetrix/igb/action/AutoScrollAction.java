@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -21,8 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *

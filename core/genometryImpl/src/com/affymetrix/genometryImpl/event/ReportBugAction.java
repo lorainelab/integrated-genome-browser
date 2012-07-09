@@ -23,7 +23,11 @@ public class ReportBugAction extends GenericAction {
 	}
 
 	private ReportBugAction() {
-		super("Report a bug", null, "16x16/apps/accessories-text-editor.png", "22x22/apps/accessories-text-editor.png", KeyEvent.VK_R, null, true);
+		super("Report a bug", null,
+				"16x16/apps/accessories-text-editor.png",
+				"22x22/apps/accessories-text-editor.png",
+				KeyEvent.VK_R, null, true);
+		this.ordinal = 130;
 	}
 
 	@Override

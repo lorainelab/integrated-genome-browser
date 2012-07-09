@@ -27,7 +27,11 @@ public class ShowConsoleAction extends GenericAction {
 	}
 
 	private ShowConsoleAction() {
-		super(BUNDLE.getString("showConsole"), null, "16x16/apps/utilities-terminal.png", "22x22/apps/utilities-terminal.png", KeyEvent.VK_C, null, true);
+		super(BUNDLE.getString("showConsole"), null,
+				"16x16/apps/utilities-terminal.png",
+				"22x22/apps/utilities-terminal.png",
+				KeyEvent.VK_C, null, true);
+		this.ordinal = 150;
 	}
 
 	@Override

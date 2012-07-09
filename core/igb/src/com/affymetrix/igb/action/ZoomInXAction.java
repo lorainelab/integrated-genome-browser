@@ -23,6 +23,7 @@ public class ZoomInXAction extends SeqMapViewActionA {
 				"toolbarButtonGraphics/general/ZoomIn16.gif",
 				"toolbarButtonGraphics/general/ZoomIn16.gif" // for tool bar
 				);
+		this.ordinal = -4004010;
 	}
 
 	@Override

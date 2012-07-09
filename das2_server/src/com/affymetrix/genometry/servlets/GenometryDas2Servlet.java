@@ -243,7 +243,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String refresh_query = "refresh";
 	private static final String default_feature_format = "das2feature";
 	// Determines if DAS2 uses file system, genopub db, or gnomex db to load data track information
-	private static String genometry_mode = Constants.GENOMETRY_MODE;
+	private static String genometry_mode			= Constants.GENOMETRY_MODE;
+	private static final String MAINTAINER_EMAIL	= "maintainer_email";
+	private static final String XML_BASE			= "xml_base";
 	// static String that indicates where annotation files are served from
 	// when data track info comes from db
 	private static String genometry_server_dir;
@@ -360,31 +362,30 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		if (context.getInitParameter(Constants.GENOMETRY_MODE) != null ) {
 			genometry_mode = context.getInitParameter(Constants.GENOMETRY_MODE);
 		}
-		
-		if (genometry_server_dir != null  && !genometry_server_dir.endsWith("/")) {
-			genometry_server_dir += "/";      
-		}
-		
+			
 		// When we are getting the datatracks from gnomex, use the gnomex db property to
 		// get the genometry_server_dir.
 		if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
-	    Session sess = null;
-	    try {
-	      String gnomex_server_name = context.getInitParameter(Constants.GNOMEX_SERVER_NAME);
-	      sess = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();
-	      genometry_server_dir = PropertyDictionaryHelper.getInstance(sess).getDataTrackReadDirectory(gnomex_server_name);
-	      gnomex_analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisReadDirectory(gnomex_server_name);
-	    } catch (Exception e) {
-	        System.out.println("\nERROR: Cannot open hibernate session to obtain gnomex property " + e.toString());
-	    } finally {
-	      com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().close();
-	    }   
-		  
+			Session sess = null;
+			try {
+				String gnomex_server_name = context.getInitParameter(Constants.GNOMEX_SERVER_NAME);
+				sess = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();
+				genometry_server_dir = PropertyDictionaryHelper.getInstance(sess).getDataTrackReadDirectory(gnomex_server_name);
+				gnomex_analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisReadDirectory(gnomex_server_name);
+			} catch (Exception e) {
+				System.out.println("\nERROR: Cannot open hibernate session to obtain gnomex property " + e.toString());
+			} finally {
+				com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().close();
+			}
+
+		} else if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
+			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
+		} else {
+			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 		}
 
-
-		maintainer_email = context.getInitParameter("maintainer_email");
-		xml_base = context.getInitParameter("xml_base");
+		maintainer_email = context.getInitParameter(MAINTAINER_EMAIL);
+		xml_base = context.getInitParameter(XML_BASE);
 
 
 		//attempt to get from System.properties
@@ -394,8 +395,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			} else {
 				genometry_server_dir = System.getProperty("das2_" + Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 			}
-			maintainer_email = System.getProperty("das2_maintainer_email");
-			xml_base = System.getProperty("das2_xml_base");
+			maintainer_email = System.getProperty("das2_" + MAINTAINER_EMAIL);
+			xml_base = System.getProperty("das2_" + XML_BASE);
 		}
 
 		//attempt to load from file?
@@ -434,11 +435,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					genometry_server_dir = prop.get(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 				}				
 			}
-			if (maintainer_email == null && prop.containsKey("maintainer_email")) {
-				maintainer_email = prop.get("maintainer_email");
+			if (maintainer_email == null && prop.containsKey(MAINTAINER_EMAIL)) {
+				maintainer_email = prop.get(MAINTAINER_EMAIL);
 			}
-			if (xml_base == null && prop.containsKey("xml_base")) {
-				xml_base = prop.get("xml_base");
+			if (xml_base == null && prop.containsKey(XML_BASE)) {
+				xml_base = prop.get(XML_BASE);
 			}
 			//check for data dir and xml base, email is apparently optional
 			if (genometry_server_dir == null || xml_base == null) {
@@ -447,6 +448,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
+		if (genometry_server_dir != null  && !genometry_server_dir.endsWith("/")) {
+			genometry_server_dir += "/";      
+		}
+		
 		//set data root
 		// We have two possible data roots:  if running in "db" mode, use the
 		// db annotations dir as data root; if running in "filesystem" mode,

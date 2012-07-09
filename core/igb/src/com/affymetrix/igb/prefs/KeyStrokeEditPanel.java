@@ -36,7 +36,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 	public final JLabel key_label
 			= new JLabel("Type a shortcut: ");
 	public final JLabel note_label
-			= new JLabel("Changes will take effect next time you launch IGB");
+			= new JLabel();
 	public final JRPButton clear_button
 			= new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
 	private Preferences the_keystroke_node = null;

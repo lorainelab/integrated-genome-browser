@@ -11,18 +11,42 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.ImageObserver;
+import java.net.URL;
 
 /**
  * A glyph used to display a label for a TierGlyph.
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
-
+	private static final double FUDGE_FACTOR = 0.05;
+	private static final String LOADING_IMG_NAME = "images/hourglass.png";
+	private static final Image LOADING_IMG;
+	static {
+		ClassLoader loader = ClassLoader.getSystemClassLoader();
+		if(loader == null) {
+			LOADING_IMG = null;
+		}
+		else {
+			URL url = loader.getResource(LOADING_IMG_NAME);
+			if(url == null) {
+				url = loader.getResource("/"+LOADING_IMG_NAME);
+			}
+			if(url == null) {
+				LOADING_IMG = null;
+			}
+			else {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				LOADING_IMG = tk.getImage(url);
+			}
+		}
+	}
 	private static int pbBuffer_x = 5;
 	private static Color IGBTrackMakerColor = Color.YELLOW;
 	private int position;
 	private static final int placement = CENTER;
 	private boolean isIGBTrack;
 	private final TierGlyph reference_tier;
+	private boolean isLoading;
 
 	@Override
 	public String toString() {
@@ -108,13 +132,27 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		return reference_tier.getLabel() + direction_str;
 	}
 
+	public boolean isLoading() {
+		return isLoading;
+	}
+
+	public void setLoading(boolean isLoading) {
+		if (isLoading == this.isLoading) {
+			return;
+		}
+		this.isLoading = isLoading;
+		for (ViewI view : getScene().getViews()) {
+			draw(view);
+		}
+	}
+
 	@Override
 	public void draw(ViewI view) {
 		TierGlyph reftier = this.getReferenceTier();
 		Color fgcolor = reftier.getForegroundColor();
 		Color bgcolor = reftier.getFillColor();
 
-		Graphics g = view.getGraphics();
+		final Graphics g = view.getGraphics();
 		g.setPaintMode();
 
 		ITrackStyleExtended trackStyle = reftier.getAnnotStyle();
@@ -123,7 +161,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
 		g.setFont(newfnt);
 
-		Rectangle pixelbox = new Rectangle();
+		final Rectangle pixelbox = new Rectangle();
 		view.transformToPixels(getCoordBox(), pixelbox);
 
 		if (bgcolor != null) {
@@ -150,12 +188,39 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 
 		drawLabel(g, view.getPixelBox(), pixelbox);
+		if (isLoading) {
+			drawLoading(g, pixelbox);
+		}
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
-
 		super.draw(view);
 	}
 	private int textPixelHeight;
 	private double textCoordHeight;
+
+	private void drawLoading(final Graphics g, Rectangle pixelbox) {
+		if (LOADING_IMG == null || pixelbox.width == 0 || pixelbox.height == 0) {
+			return;
+		}
+		int clockWidth = LOADING_IMG.getWidth(null);
+		int clockHeight = LOADING_IMG.getHeight(null);
+		if (clockWidth == -1 || clockHeight == -1) {
+			return;
+		}
+		double ratio = ((double)clockWidth) / ((double)clockHeight);
+		int width = Math.min(clockWidth, pixelbox.width / 2);
+		int height = Math.min(clockHeight, pixelbox.height / 2);
+		double currentRatio = ((double)width) / ((double)height);
+		if (currentRatio < (ratio - FUDGE_FACTOR)) {
+			height = (int)Math.round(width / ratio);
+		}
+		else if (currentRatio > (ratio + FUDGE_FACTOR)) {
+			width = (int)Math.round(ratio * height);
+		}
+		int x = (pixelbox.width - width) / 2; // pixelbox.x + ... does not work
+		int y = pixelbox.y + (pixelbox.height - height) / 2;
+        ImageObserver observer = null;
+		g.drawImage(LOADING_IMG, x, y, width, height, observer);
+	}
 
 	private void drawLabel(Graphics g, Rectangle boundingPixelBox, Rectangle pixelbox) {
 		// assumes that pixelbox coordinates are already computed

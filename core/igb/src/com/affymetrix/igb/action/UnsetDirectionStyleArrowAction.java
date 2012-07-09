@@ -20,6 +20,7 @@ public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 		super("Unset Direction Style Arrow",
 				"16x16/actions/blunt.png",
 				"22x22/actions/blunt.png");
+		this.ordinal = -8006512;
 	}
 
 	@Override

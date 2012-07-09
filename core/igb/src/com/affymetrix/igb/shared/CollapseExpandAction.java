@@ -30,8 +30,9 @@ public class CollapseExpandAction extends SeqMapToggleAction {
 				|| ExpandAction.getAction().isEnabled());
 	}
 
-	protected CollapseExpandAction(SeqMapViewActionA a, SeqMapViewActionA b) {
-		super(a, b);
+	protected CollapseExpandAction(SeqMapViewActionA one, SeqMapViewActionA two) {
+		super(one, two);
+		this.ordinal = Math.min(one.getOrdinal(), two.getOrdinal()) - 1;
 	}
 
 }

@@ -84,7 +84,10 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	}
 
 	public UnFloatTiersAction() {
-		super("Anchor Floating Track", "16x16/actions/anchor.png", "22x22/actions/anchor.png");
+		super("Anchor Floating Track",
+				"16x16/actions/anchor.png",
+				"22x22/actions/anchor.png");
+		this.ordinal = -6006512;
 	}
 
 	@Override

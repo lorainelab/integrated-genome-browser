@@ -19,7 +19,9 @@ public class ScrollDownAction extends SeqMapViewActionA {
 	}
 
 	public ScrollDownAction() {
-		super("Scroll Down", "16x16/actions/go-down.png", "22x22/actions/go-down.png" );
+		super("Scroll Down", "16x16/actions/go-down.png",
+				"22x22/actions/go-down.png");
+		this.ordinal = -4007040;
 	}
 
 	@Override

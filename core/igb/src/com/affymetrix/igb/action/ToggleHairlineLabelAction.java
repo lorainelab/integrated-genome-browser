@@ -26,6 +26,7 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label));
+		this.ordinal = -4003100;
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
 	

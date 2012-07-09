@@ -20,6 +20,7 @@ public class SetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 		super("Set Direction Style Arrow",
 				"16x16/actions/pointed.png",
 				"22x22/actions/pointed.png");
+		this.ordinal = -8006611;
 	}
 
 	@Override

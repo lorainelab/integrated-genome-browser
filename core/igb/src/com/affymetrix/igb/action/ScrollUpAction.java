@@ -19,7 +19,8 @@ public class ScrollUpAction extends SeqMapViewActionA {
 	}
 
 	public ScrollUpAction() {
-		super("Scroll Up","16x16/actions/go-up.png", "22x22/actions/go-up.png" );
+		super("Scroll Up","16x16/actions/go-up.png", "22x22/actions/go-up.png");
+		this.ordinal = -4007030;
 	}
 
 	@Override

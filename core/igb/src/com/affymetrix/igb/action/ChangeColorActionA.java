@@ -24,7 +24,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
-		this.ordinal = -6000000;
+		this.ordinal = -6008000;
 	}
 	
 	@Override

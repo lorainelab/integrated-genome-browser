@@ -25,7 +25,10 @@ public class HideAction extends RepackTiersAction {
 	}
 
 	private HideAction() {
-		super(BUNDLE.getString("hideAction"), "16x16/actions/visible.png", "16x16/actions/visible.png");
+		super(BUNDLE.getString("hideAction"),
+				"16x16/actions/visible.png",
+				"16x16/actions/visible.png");
+		this.ordinal = -6008400;
 	}
 
 	/**

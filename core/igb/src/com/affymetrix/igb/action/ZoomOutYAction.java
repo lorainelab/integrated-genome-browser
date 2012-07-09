@@ -23,6 +23,7 @@ public class ZoomOutYAction extends SeqMapViewActionA {
 				"16x16/actions/list-remove.png",
 				"22x22/actions/list-remove.png"
 				);
+		this.ordinal = -4004220;
 	}
 
 	@Override

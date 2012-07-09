@@ -21,7 +21,9 @@ public class ZoomOutFullyAction extends SeqMapViewActionA {
 	}
 
 	public ZoomOutFullyAction() {
-		super("Home Position", "Zoom out fully", "16x16/actions/go-home.png", "22x22/actions/go-home.png", KeyEvent.VK_UNDEFINED);
+		super("Home Position", "Zoom out fully", "16x16/actions/go-home.png",
+				"22x22/actions/go-home.png", KeyEvent.VK_UNDEFINED);
+		this.ordinal = -4008000;
 	}
 
 	@Override

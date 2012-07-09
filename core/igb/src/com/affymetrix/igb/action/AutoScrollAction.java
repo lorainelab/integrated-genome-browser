@@ -49,7 +49,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 			"toolbarButtonGraphics/media/Movie16.gif",
 			"toolbarButtonGraphics/media/Movie16.gif", // tool bar eligible
 			KeyEvent.VK_A, null, true);
-
+		this.ordinal = -4009000;
 	}
 	
 	static{

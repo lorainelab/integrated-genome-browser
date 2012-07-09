@@ -20,6 +20,7 @@ public class UnsetDirectionStyleColorAction extends SetDirectionStyleActionA {
 		super("Unset Direction Style Color", 
 				"16x16/actions/strandscoloredsame.png",
 				"22x22/actions/strandscoloredsame.png");
+		this.ordinal = -6006412;
 	}
 
 	@Override

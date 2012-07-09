@@ -40,6 +40,7 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 	protected SetSummaryThresholdAction() {
 		super(IGBConstants.BUNDLE.getString("setSummaryThresholdAction"),
 			"16x16/actions/summary.png", "22x22/actions/summary.png");
+		this.ordinal = -4006000;
 	}
 
 	public boolean isDetail(ITrackStyleExtended style) {

@@ -202,7 +202,7 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 	 */
 	@Override
 	public void draw(ViewI view) {
-		drawMiddle(view);
+		//drawMiddle(view);
 
 		if (shouldDrawLabel()) {
 			drawLabelLeft(view);

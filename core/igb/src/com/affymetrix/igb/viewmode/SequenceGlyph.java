@@ -57,7 +57,7 @@ public class SequenceGlyph extends AbstractViewModeGlyph {
 	 */
 	@Override
 	public void draw(ViewI view) {
-		drawMiddle(view);
+		//drawMiddle(view);
 		super.draw(view);
 	}
 

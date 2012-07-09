@@ -87,6 +87,10 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 				lastUsedGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)lastUsedGlyph.getInfo(), style, Direction.NONE, smv);
 				this.processParentCoordBox(coordbox);
 				lastUsedGlyph.setCoordBox(coordbox);
+				if (lastUsedGlyph instanceof AbstractGraphGlyph) {
+					((AbstractGraphGlyph)lastUsedGlyph).drawHandle(false);
+				}
+				lastUsedGlyph.setTierGlyph(getTierGlyph());
 			}
 		}
 

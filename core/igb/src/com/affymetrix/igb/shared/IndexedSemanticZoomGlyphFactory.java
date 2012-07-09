@@ -137,12 +137,19 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				if (resultGlyph == null) {
 					resultGlyph = getEmptyGraphGlyph(style, smv);
 				}
-				if(resultGlyph == lastUsedGlyph)
+				if (resultGlyph == lastUsedGlyph) {
 					return resultGlyph;
+				}
 				
 				prepareViewModeGlyph(resultGlyph, view);
 				
 //				saveSpan = span;
+				if (isDetail(view)) {
+					viewModeGlyphs.put("detail", resultGlyph);
+				}
+				else {
+					viewModeGlyphs.put("summary", resultGlyph);
+				}
 				lastUsedGlyph = resultGlyph;
 				viewModeGlyphs.put("lastUsed", lastUsedGlyph);
 				return resultGlyph;

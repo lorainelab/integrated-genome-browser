@@ -107,6 +107,7 @@ public class AltSpliceView extends IGBTabPanel
 			tlman.addPopupListener(this);
 		}
 		IGB.getSingleton().getMapView().addToRefreshList(this);
+		resetAll();
 	}
 
 	/**
@@ -318,7 +319,7 @@ public class AltSpliceView extends IGBTabPanel
 		orf_analyzer.redoOrfs();
 	}
 	
-	public void resetAll(){
+	protected final void resetAll(){
 		boolean enable = igbService != null && igbService.getVisibleTierGlyphs() != null && igbService.getVisibleTierGlyphs().size() > 1;
 		buffer_sizeL.setEnabled(enable);
 		buffer_sizeTF.setEnabled(enable);

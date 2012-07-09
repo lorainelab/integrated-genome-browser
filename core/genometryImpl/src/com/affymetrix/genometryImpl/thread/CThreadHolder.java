@@ -110,7 +110,7 @@ public class CThreadHolder implements WaitHelperI {
 				thread2CThreadWorker.remove(thread);
 			}
 		}
-		notifyEndThread(worker);
+//		notifyEndThread(worker);
 	}
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){

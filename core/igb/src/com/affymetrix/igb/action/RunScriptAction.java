@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.util.*;
@@ -24,6 +22,7 @@ import javax.swing.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
@@ -126,21 +125,21 @@ public final class RunScriptAction extends GenericAction {
 			if (igb.getScriptWorker() != null) {
 				ErrorHandler.errorPanel("script error", "another script is running, only one can run at a time", Level.SEVERE);
 			} else {
-				CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(IGBConstants.SCRIPTING) {
+				SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 					@Override
-					protected Void runInBackground() {
+					protected Void doInBackground() {
 						ScriptManager.getInstance().runScript(filePath);
 						return null;
 					}
 
 					@Override
-					protected void finished() {
+					protected void done() {
 						igb.setScriptWorker(null);
 					}
 				};
 				igb.setScriptWorker(worker);
-				CThreadHolder.getInstance().execute(igb, worker);
+				ThreadUtils.getPrimaryExecutor(IGBConstants.SCRIPTING).execute(worker);
 			}
 		}
 	}

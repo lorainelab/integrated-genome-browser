@@ -6,9 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 
+import javax.swing.SwingWorker;
+
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -38,7 +39,7 @@ public class CancelScriptAction extends GenericAction {
 		super.actionPerformed(e);
 		final IGB igb = ((IGB)Application.getSingleton());
 		synchronized(igb) {
-			CThreadWorker<Void, Void> igbScriptWorker = igb.getScriptWorker();
+			SwingWorker<Void, Void> igbScriptWorker = igb.getScriptWorker();
 			if (igbScriptWorker == null) {
 				ErrorHandler.errorPanel("script error", "no script is running", Level.SEVERE);
 			}

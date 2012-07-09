@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 public class CThreadHolder implements WaitHelperI {
 	private static final boolean DEBUG = false;
+	private final Set<CThreadWorker<?,?>> RUNNING_CTHREADWORKERS = new HashSet<CThreadWorker<?,?>>();
 	private static final CThreadWorker<?,?> NOOP = new CThreadWorker<Void,Void>("noop") {
 		@Override protected Void runInBackground() { return null; }
 		@Override protected void finished() {}
@@ -20,7 +21,6 @@ public class CThreadHolder implements WaitHelperI {
 	private final Map<Thread, CThreadWorker<?,?>> thread2CThreadWorker = new HashMap<Thread, CThreadWorker<?,?>>();
 	private static CThreadHolder singleton;
 	private final Set<CThreadListener> listeners;
-	private Object threadLatchLock = new Object();
 	private CountDownLatch threadLatch;
 	
 	public static CThreadHolder getInstance(){
@@ -77,6 +77,9 @@ public class CThreadHolder implements WaitHelperI {
 	}
 
 	public void notifyStartThread(CThreadWorker<?,?> worker) {
+		if (DEBUG) System.out.println("))))) notifyStartThread CThreadWorker = " + worker.getMessage());
+		RUNNING_CTHREADWORKERS.add(worker);
+		if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.add Thread = " + Thread.currentThread() + "=" + worker.getMessage());
 		synchronized(thread2CThreadWorker) {
 			if (thread2CThreadWorker.get(Thread.currentThread()) != null) {
 				Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
@@ -90,6 +93,7 @@ public class CThreadHolder implements WaitHelperI {
 	}
 
 	public void notifyBackgroundDone (CThreadWorker<?,?> worker){
+		if (DEBUG) System.out.println("))))) notifyBackgroundDone CThreadWorker = " + worker.getMessage());
 		synchronized(thread2CThreadWorker) {
 			Thread thread = null;
 			for (Thread threadLoop : thread2CThreadWorker.keySet()) {
@@ -102,14 +106,8 @@ public class CThreadHolder implements WaitHelperI {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "could not find thread for " + worker.getMessage());
 			}
 			else {
+				if (DEBUG) System.out.println("))))) notifyBackgroundDone thread2CThreadWorker.remove Thread = " + Thread.currentThread() + "=" + thread2CThreadWorker.get(Thread.currentThread()).getMessage());
 				thread2CThreadWorker.remove(thread);
-				synchronized (threadLatchLock) {
-					if (thread2CThreadWorker.size() == 0 && threadLatch != null) {
-						if (DEBUG) System.out.println("))))) notifyEndThread countDown Thread = " + Thread.currentThread());
-						threadLatch.countDown();
-						if (DEBUG) System.out.println("))))) notifyEndThread countDown returned, Thread = " + Thread.currentThread());
-					}
-				}
 			}
 		}
 		notifyEndThread(worker);
@@ -117,6 +115,22 @@ public class CThreadHolder implements WaitHelperI {
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){
 		fireThreadEvent(worker, CThreadEvent.ENDED);
+		synchronized (RUNNING_CTHREADWORKERS) {
+			if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.remove Thread = " + Thread.currentThread() + "=" + worker.getMessage());
+			RUNNING_CTHREADWORKERS.remove(worker);
+			if (RUNNING_CTHREADWORKERS.size() == 0 && threadLatch != null) {
+				ThreadUtils.runOnEventQueue(
+					new Runnable() {
+						@Override
+						public void run() {
+							if (DEBUG) System.out.println("))))) notifyBackgroundDone countDown Thread = " + Thread.currentThread());
+							threadLatch.countDown();
+							if (DEBUG) System.out.println("))))) notifyBackgroundDone countDown returned, Thread = " + Thread.currentThread());
+						}
+					}
+				);
+			}
+		}
 	}
 
 	private void fireThreadEvent(CThreadWorker<?,?> worker, int state){		
@@ -127,28 +141,31 @@ public class CThreadHolder implements WaitHelperI {
 	}
 
 	public Boolean waitForAll() {
-		if (DEBUG) System.out.println("))))) get wait helper Thread = " + Thread.currentThread());
-		if (DEBUG) System.out.println("))))) get wait helper run() Thread = " + Thread.currentThread());
+		if (DEBUG) System.out.println("))))) waitForAll Thread = " + Thread.currentThread());
 		
-		if(getCThreadWorkerCount() == 0){
-			if (DEBUG) System.out.println("))))) no active thread.");
-			return Boolean.TRUE;
-		}
-		
-		synchronized (threadLatchLock) {
-			if (threadLatch == null) {
+		synchronized (RUNNING_CTHREADWORKERS) {
+			if (DEBUG) System.out.println("))))) RUNNING_CTHREADWORKERS.size() = " + RUNNING_CTHREADWORKERS.size());
+			if (DEBUG) {
+				for (CThreadWorker<?, ?> worker : RUNNING_CTHREADWORKERS) {
+					System.out.println("))))) worker = " + worker.getMessage());
+				}
+			}
+			if (RUNNING_CTHREADWORKERS.size() == 0){
+				if (DEBUG) System.out.println("))))) no active thread.");
+				return Boolean.TRUE;
+			}
+			if (threadLatch == null || threadLatch.getCount() == 0) {
 				threadLatch = new CountDownLatch(1);
 			}
 		}
 		try {
-			if (DEBUG) System.out.println("))))) get wait helper await() Thread = " + Thread.currentThread());
+			if (DEBUG) System.out.println("))))) waitForAll await() Thread = " + Thread.currentThread());
 			threadLatch.await();
-			if (DEBUG) System.out.println("))))) get wait helper await() returned, Thread = " + Thread.currentThread());
+			if (DEBUG) System.out.println("))))) waitForAll await() returned, Thread = " + Thread.currentThread());
 		} catch (InterruptedException x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Script getWaitHelper().run() interrupted", x);
 		}
-		if (DEBUG) System.out.println("))))) get wait helper run() returned, Thread = " + Thread.currentThread());
-
+		if (DEBUG) System.out.println("))))) waitForAll returned, Thread = " + Thread.currentThread());
 		return Boolean.TRUE;
 	}
 }

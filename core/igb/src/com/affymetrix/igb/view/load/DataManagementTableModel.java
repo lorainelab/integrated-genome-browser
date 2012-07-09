@@ -13,6 +13,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -312,7 +313,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		switch (col) {
 			case DELETE_FEATURE_COLUMN:
 				String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
-				if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+				if (ScriptManager.SCRIPTING.equals(value) || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 					for (GenericFeature gFeature : features) {
 						if (gFeature.equals(vFeature.getFeature())) {

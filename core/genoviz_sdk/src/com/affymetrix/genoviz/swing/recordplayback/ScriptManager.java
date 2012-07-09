@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import com.affymetrix.common.ExtensionPointHandler;
 
 public class ScriptManager {
+	public final static String SCRIPTING = "scripting";
 	private static final ScriptManager instance = new ScriptManager();
 	private List<Operation> operations = new ArrayList<Operation>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();

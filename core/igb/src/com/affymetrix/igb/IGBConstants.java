@@ -46,5 +46,4 @@ public interface IGBConstants {
 
 	public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;
 	public final static String ENCODE_REGIONS_ID = "encode_regions";
-	public final static String SCRIPTING = "scripting";
 }

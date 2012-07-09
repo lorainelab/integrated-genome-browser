@@ -29,7 +29,6 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.IGBConstants;
 
 import com.affymetrix.igb.shared.FileTracker;
 
@@ -139,7 +138,7 @@ public final class RunScriptAction extends GenericAction {
 					}
 				};
 				igb.setScriptWorker(worker);
-				ThreadUtils.getPrimaryExecutor(IGBConstants.SCRIPTING).execute(worker);
+				ThreadUtils.getPrimaryExecutor(ScriptManager.SCRIPTING).execute(worker);
 			}
 		}
 	}

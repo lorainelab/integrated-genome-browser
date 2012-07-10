@@ -336,13 +336,13 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (igbService.getSeqMapView() == null || allGlyphs == null || allGlyphs.isEmpty()) {
 			return;
 		}
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.RenameTierAction");
 		if (allGlyphs.size() == 1) {
-			igbService.getSeqMapView().renameTier(allGlyphs.get(0), name);
-			updateDisplay();
+			action.performAction(allGlyphs.get(0).getAnnotStyle(), name);
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
-				igbService.getSeqMapView().renameTier(graphGlyphs.get(0).getParent(), name);
-				updateDisplay();
+				action.performAction((graphGlyphs.get(0)).getGraphState().getComboStyle(), name);
 			}
 		}
 	}

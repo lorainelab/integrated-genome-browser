@@ -67,41 +67,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class SeqMapView extends JPanel
 		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
-
-	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
-	public static final boolean default_auto_change_view = false;
 	private static final long serialVersionUID = 1L;
-	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
-
-	static {
-		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
-		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
-	}
-
-	
-	public void setTierStyles() {
-		seqmap.setTierStyles();
-	}
-
-	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
-		seqmap.repackTheTiers(full_repack, stretch_vertically);
-	}
-
-	@Override
-	public void renameTier(GlyphI glyph, String new_label){
-		ViewModeGlyph vg = (ViewModeGlyph)glyph;
-		ITrackStyleExtended style = vg.getAnnotStyle();	
-		if (new_label != null && new_label.length() > 0) {
-			style.setTrackName(new_label);
-			if (vg.getTierGlyph() != null) {
-				vg.getTierGlyph().setLabel(new_label);
-			}
-			getSeqMap().setTierLabels();
-		}
-		getSeqMap().updateWidget();
-	}
-		
 	public static enum MapMode {
 
 		MapSelectMode(true, false, defaultCursor, defaultCursor),
@@ -117,8 +83,20 @@ public class SeqMapView extends JPanel
 			this.pressedCursor = pressedCursor;
 		}
 	}
-	private static final boolean DEBUG_TIERS = false;
+		
+	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
 	private final static String SEQ_MODE = "SEQ_MODE";
+	public static final boolean default_auto_change_view = false;
+	private static final boolean DEBUG_TIERS = false;
+	
+	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
+
+	static {
+		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
+	}
+
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
@@ -2585,5 +2563,15 @@ public class SeqMapView extends JPanel
 	public void updatePanel() {
 		this.updatePanel(true, true);
 	}
+	
+	@Override
+	public void setTierStyles() {
+		seqmap.setTierStyles();
+	}
 
+	@Override
+	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+		seqmap.repackTheTiers(full_repack, stretch_vertically);
+	}
+		
 }

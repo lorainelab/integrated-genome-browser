@@ -370,7 +370,7 @@ public class Activator implements BundleActivator {
 				new SeqMapToggleAction(
 				FloatTiersAction.getAction(),
 				UnFloatTiersAction.getAction()));
-
+		RenameTierAction.getAction();
 		// These are not in the toolbar,
 		// but they have keyboard shortcuts (accelerators)
 		// defined in the preferences.

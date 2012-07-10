@@ -393,6 +393,7 @@ public final class IGB extends Application
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_seq = selected_seq;
+		getFrame().setTitle(getTitleBar(selected_seq));
 	}
 
 	public int searchForRegexInResidues(
@@ -518,4 +519,52 @@ public final class IGB extends Application
 		}
 	}
 
+	private static String getTitleBar(BioSeq seq) {
+		StringBuilder title = new StringBuilder(128);
+		if (seq != null) {
+			if (title.length() > 0) {
+				title.append(" - ");
+			}
+			String seqid = seq.getID().trim();
+			Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
+			if (pattern.matcher(seqid).matches()) {
+				seqid = seqid.replace("chr", "Chromosome ");
+			}
+
+			title.append(seqid);
+			String version_info = getVersionInfo(seq);
+			if (version_info != null) {
+				title.append("  (").append(version_info).append(')');
+			}
+		}
+		if (title.length() > 0) {
+			title.append(" - ");
+		}
+		title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
+		return title.toString();
+	}
+	
+	private static String getVersionInfo(BioSeq seq) {
+		if (seq == null) {
+			return null;
+		}
+		String version_info = null;
+		if (seq.getSeqGroup() != null) {
+			AnnotatedSeqGroup group = seq.getSeqGroup();
+			if (group.getDescription() != null) {
+				version_info = group.getDescription();
+			} else {
+				version_info = group.getID();
+			}
+		}
+		if (version_info == null) {
+			version_info = seq.getVersion();
+		}
+		if ("hg17".equals(version_info)) {
+			version_info = "hg17 = NCBI35";
+		} else if ("hg18".equals(version_info)) {
+			version_info = "hg18 = NCBI36";
+		}
+		return version_info;
+	}
 }

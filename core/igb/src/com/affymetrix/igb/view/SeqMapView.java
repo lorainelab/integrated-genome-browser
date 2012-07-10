@@ -656,8 +656,6 @@ public class SeqMapView extends JPanel
 	//
 	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
-		Application.getSingleton().getFrame().setTitle(getTitleBar(seq));
-
 		if (seq == null) {
 			//clear();
 			return;
@@ -994,55 +992,6 @@ public class SeqMapView extends JPanel
 			SeqSpan view_bounds = sym.getSpan(viewseq);
 			seqmap.setMapRange(view_bounds.getMin(), view_bounds.getMax());
 		}
-	}
-
-	private static String getTitleBar(BioSeq seq) {
-		StringBuilder title = new StringBuilder(128);
-		if (seq != null) {
-			if (title.length() > 0) {
-				title.append(" - ");
-			}
-			String seqid = seq.getID().trim();
-			Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
-			if (pattern.matcher(seqid).matches()) {
-				seqid = seqid.replace("chr", "Chromosome ");
-			}
-
-			title.append(seqid);
-			String version_info = getVersionInfo(seq);
-			if (version_info != null) {
-				title.append("  (").append(version_info).append(')');
-			}
-		}
-		if (title.length() > 0) {
-			title.append(" - ");
-		}
-		title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
-		return title.toString();
-	}
-
-	private static String getVersionInfo(BioSeq seq) {
-		if (seq == null) {
-			return null;
-		}
-		String version_info = null;
-		if (seq.getSeqGroup() != null) {
-			AnnotatedSeqGroup group = seq.getSeqGroup();
-			if (group.getDescription() != null) {
-				version_info = group.getDescription();
-			} else {
-				version_info = group.getID();
-			}
-		}
-		if (version_info == null) {
-			version_info = seq.getVersion();
-		}
-		if ("hg17".equals(version_info)) {
-			version_info = "hg17 = NCBI35";
-		} else if ("hg18".equals(version_info)) {
-			version_info = "hg18 = NCBI36";
-		}
-		return version_info;
 	}
 
 	/**

@@ -201,7 +201,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 
 	public void bgColorComboBox() {
 		if (applyChanged) {
-			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
+			model.setValueAt(bgColorComboBox.getSelectedColor(), 0, COL_BACKGROUND);
 		}
 	}
 

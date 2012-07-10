@@ -62,16 +62,23 @@ implements ParameteredAction {
 	}
 	
 	/**
-	 * Get the optimal limit considering all tiers,
-	 * not just those returned by {@link #getTiers}.
+	 * Get the optimal limit considering all tiers
+	 * returned by {@link #getTiers}.
+	 * We were excluding graph tracks,
+	 * but that caused some trouble.
 	 */
 	public int getOptimum() {
-		List<TierLabelGlyph> theTiers = getTierManager().getAllTierLabels();
+		List<TierLabelGlyph> theTiers = getTiers();
 		int ourOptimum = 1;
 		for (TierLabelGlyph tlg : theTiers) {
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			if(tg.getAnnotStyle().isGraphTier()) {
-				continue;
+			TierGlyph tg = tlg.getReferenceTier();
+			if (tg.getAnnotStyle().isGraphTier()) {
+				if (!tg.isVisible()) {
+					continue;
+				}
+				System.out.println(this.getClass().getName()
+						+ ".getOptimum: found a graph tier: " + tg.getLabel());
+//				continue;
 			}
 			int slotsNeeded = tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView());
 			ourOptimum = Math.max(ourOptimum, slotsNeeded);

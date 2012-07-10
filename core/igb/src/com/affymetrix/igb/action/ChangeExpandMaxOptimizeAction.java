@@ -2,9 +2,11 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,9 +30,25 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 		putValue(SHORT_DESCRIPTION, BUNDLE.getString("changeExpandMaxOptimizeActionTooltip"));
 	}
 
+	/**
+	 * @return visible selected tiers.
+	 */
 	@Override
 	protected List<TierLabelGlyph> getTiers() {
-		return getTierManager().getSelectedTierLabels();
+		List<TierLabelGlyph> answer = new ArrayList<TierLabelGlyph>();
+		List<TierLabelGlyph> theTiers = getTierManager().getSelectedTierLabels();
+		for (TierLabelGlyph tlg : theTiers) {
+			TierGlyph tg = tlg.getReferenceTier();
+//			if (!tg.getAnnotStyle().isGraphTier()) {
+//				System.out.println(this.getClass().getName()
+//						+ ".getOptimum: found a graph tier: " + tg.getLabel());
+//				answer.add(tlg);
+//			}
+			if (tg.isVisible()) {
+				answer.add(tlg);
+			}
+		}
+		return answer;
 	}
 	
 	@Override

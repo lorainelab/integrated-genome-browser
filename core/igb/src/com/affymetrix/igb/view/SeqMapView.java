@@ -265,12 +265,7 @@ public class SeqMapView extends JPanel
 
 		@Override
 		public void rangeChanged(NeoRangeEvent evt) {
-			NeoRangeEvent newevt = new NeoRangeEvent(SeqMapView.this, evt.getVisibleStart(), evt.getVisibleEnd());
-			for (TierGlyph tier : seqmap.getTiers()) {
-				if (tier.getViewModeGlyph() instanceof NeoRangeListener) {
-					((NeoRangeListener) tier.getViewModeGlyph()).rangeChanged(newevt);
-				}
-			}
+			fireRangeChanged(evt.getVisibleStart(), evt.getVisibleEnd());
 		}
 	};
 	private final SeqSelectionListener seqSelectionListener = new SeqSelectionListener() {
@@ -2480,5 +2475,13 @@ public class SeqMapView extends JPanel
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
 	}
-		
+	
+	public void fireRangeChanged(double start, double end) {
+		NeoRangeEvent evt = new NeoRangeEvent(SeqMapView.this, start, end);
+		for (TierGlyph tier : seqmap.getTiers()) {
+			if (tier.getViewModeGlyph() instanceof NeoRangeListener) {
+				((NeoRangeListener) tier.getViewModeGlyph()).rangeChanged(evt);
+			}
+		}
+	}
 }

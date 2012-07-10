@@ -461,8 +461,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	private void updatedStrategy(int row, int col, GenericFeature gFeature) {
 		fireTableCellUpdated(row, col);
 
-		if (gFeature.getLoadStrategy() == LoadStrategy.GENOME || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.GENOME) {
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+		}else if (gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD){
+			// This would trigger auto load
+			smv.fireRangeChanged(smv.getVisibleSpan().getStart(), smv.getVisibleSpan().getEnd());
 		}
 
 		//  Whatever feature strategy changed, it may have affected

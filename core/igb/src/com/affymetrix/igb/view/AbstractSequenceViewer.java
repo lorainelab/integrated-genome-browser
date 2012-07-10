@@ -824,7 +824,7 @@ class CopyTransFromSeqViewer extends GenericAction{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		sv.copyTransAction(DNAUtils.FRAME_ONE);
+		sv.copyTransAction(frameType);
 	}
 	
 }

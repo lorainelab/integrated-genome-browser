@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.IndexedSemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -100,7 +101,12 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		@Override
 		public void seqSelectionChanged(SeqSelectionEvent evt) {
 			saveSummaryGlyph = null;
-			saveSummaryCoordbox = null;
+			try {
+				lastUsedGlyph = getSummaryGlyph(((IGB)IGB.getSingleton()).getMapView());
+			}
+			catch (Exception x) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error creating index glyph", x);
+			}
 		}
 
 		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {

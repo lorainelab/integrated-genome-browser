@@ -214,7 +214,6 @@ public class SeqMapView extends JPanel
 	private final static int[] default_offset = new int[]{0, 100};
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TransformTierGlyph axis_tier;
-	private AutoLoadThresholdHandler autoLoadThresholdHandler;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -457,8 +456,7 @@ public class SeqMapView extends JPanel
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
-		autoLoadThresholdHandler = new AutoLoadThresholdHandler(this);
-
+		
 	}
 
 	protected void addRefreshButton(String id) {
@@ -470,10 +468,6 @@ public class SeqMapView extends JPanel
 
 	protected Adjustable getXZoomer(String id) {
 		return new ThresholdXZoomer(id, this);
-	}
-
-	public AutoLoadThresholdHandler getAutoLoad() {
-		return autoLoadThresholdHandler;
 	}
 
 	public final class SeqMapViewComponentListener extends ComponentAdapter {

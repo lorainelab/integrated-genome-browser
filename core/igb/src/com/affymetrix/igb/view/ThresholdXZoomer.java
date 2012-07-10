@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -18,35 +21,52 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class ThresholdXZoomer extends RPAdjustableJSlider implements TrackstylePropertyMonitor.TrackStylePropertyListener {
+public class ThresholdXZoomer extends RPAdjustableJSlider{
 
 	private static final long serialVersionUID = 1L;
 	private final SeqMapView smv;
+	public int threshold = ThresholdReader.default_threshold;
+	
+	PreferenceChangeListener prefListener = new PreferenceChangeListener() {
+		public void preferenceChange(PreferenceChangeEvent pce) {
+			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+				return;
+			}
+
+			if (pce.getKey().equals(PreferenceUtils.PREFS_THRESHOLD)) {
+				threshold = ThresholdReader.getInstance().getCurrentThresholdValue();
+			}
+		}
+	};
+	
+	TrackstylePropertyMonitor.TrackStylePropertyListener trackPropertyListener = new TrackstylePropertyMonitor.TrackStylePropertyListener() {
+		@Override
+		public void trackstylePropertyChanged(EventObject eo) {
+			smv.getSeqMap().updateWidget();
+		}
+	};
+	
 	public ThresholdXZoomer(String id, SeqMapView smv) {
 		super(id + "_xzoomer", Adjustable.HORIZONTAL);
 		this.smv = smv;
-		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
-	}
-
-	@Override
-	public void trackstylePropertyChanged(EventObject eo) {
-		smv.getSeqMap().updateWidget();
+		threshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, ThresholdReader.default_threshold);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(trackPropertyListener);
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(prefListener);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		if (smv.getAutoLoad() != null) {
-			drawAutoLoadPoint(g);
-		}
+		drawAutoLoadPoint(g);
+		
 		for (TierGlyph tierGlyph : smv.getTierManager().getVisibleTierGlyphs()) {
 			drawTrackThresholdPoint(g, tierGlyph);
 		}
 	}
 
 	private void drawAutoLoadPoint(Graphics g) {
-		drawThresholdPoint(g, Color.BLACK, Color.WHITE, smv.getAutoLoad().threshold);
+		drawThresholdPoint(g, Color.BLACK, Color.WHITE, threshold);
 	}
 
 	private void drawTrackThresholdPoint(Graphics g, TierGlyph tier) {
@@ -83,8 +103,8 @@ public class ThresholdXZoomer extends RPAdjustableJSlider implements TrackstyleP
 
 	@Override
 	public String getToolTipText(MouseEvent me) {
-		if (me != null && smv.getAutoLoad() != null) {
-			int threshValue = (smv.getAutoLoad().threshold * getMaximum() / 100);
+		if (me != null) {
+			int threshValue = threshold * getMaximum() / 100;
 			int xp = xPositionForValue(threshValue);
 			if (me.getX() > xp - 5 && me.getX() < xp + 5) {
 				return BUNDLE.getString("autoloadToolTip");

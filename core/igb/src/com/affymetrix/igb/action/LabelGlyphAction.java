@@ -34,10 +34,10 @@ public class LabelGlyphAction extends SeqMapViewActionA implements ParameteredAc
 	}
 	
 	@Override
-	public void performAction(Object parameter) {
-		if(parameter.getClass() != String.class)
+	public void performAction(Object... parameters) {
+		if(parameters.length < 1 || parameters[0].getClass() != String.class)
 			return;
 		
-		setLabel((String)parameter);
+		setLabel((String)parameters[0]);
 	}
 }

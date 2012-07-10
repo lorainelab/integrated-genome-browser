@@ -35,10 +35,10 @@ public class TierFontSizeAction extends SeqMapViewActionA implements Parametered
 	}
 	
 	@Override
-	public void performAction(Object parameter) {
-		if(parameter.getClass() != Integer.class)
+	public void performAction(Object... parameters) {
+		if(parameters.length < 1 || parameters[0].getClass() != Integer.class)
 			return;
 		
-		setFontSize((Integer)parameter);
+		setFontSize((Integer)parameters[0]);
 	}
 }

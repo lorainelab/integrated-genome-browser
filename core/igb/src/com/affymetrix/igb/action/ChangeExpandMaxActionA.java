@@ -54,11 +54,11 @@ implements ParameteredAction {
 	}
 
 	@Override
-	public void performAction(Object parameter) {
-		if(parameter.getClass() != Integer.class) {
+	public void performAction(Object... parameters) {
+		if(parameters.length < 1 || parameters[0].getClass() != Integer.class) {
 			return;
 		}
-		changeExpandMax((Integer)parameter);
+		changeExpandMax((Integer)parameters[0]);
 	}
 	
 	/**

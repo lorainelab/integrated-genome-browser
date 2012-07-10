@@ -668,6 +668,16 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return handle_pixbox;
 	}
 
+	@Override
+	public void setCoords(double x, double y, double width, double height)  {
+		super.setCoords(x, y, width, height);
+	}
+	
+	@Override
+	public void setCoordBox(Rectangle2D.Double coordbox)   {
+		super.setCoordBox(coordbox);
+	}
+	
 	/**
 	 * This number is calculated in {@link #checkVisibleBoundsY}
 	 * directly from y coordinates, and cannot be modified

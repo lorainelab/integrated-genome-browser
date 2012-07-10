@@ -100,7 +100,7 @@ public abstract class PrefsLoader {
 	private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName, String prefsMode) {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
 		try {
-			if (aNodeName != null && (PreferenceUtils.getTopNode()).nodeExists(aNodeName)) {
+			if (aNodeName != null && (PreferenceUtils.getTopNode()).nodeExists(aNodeName) && (PreferenceUtils.getTopNode()).node(aNodeName).childrenNames().length > 0) {
 				return;
 			}
 		} catch (BackingStoreException ex) {

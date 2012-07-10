@@ -416,7 +416,7 @@ public abstract class SymLoader implements LineTrackerI {
 	
 	public static void addAnnotations(
 			List<? extends SeqSymmetry> filteredFeats, SeqSpan span, URI uri, GenericFeature feature) {
-		if (filteredFeats.get(0) instanceof GraphSym) {
+		if (filteredFeats.size() > 0 && filteredFeats.get(0) instanceof GraphSym) {
 			GraphSym graphSym = (GraphSym)filteredFeats.get(0);
 			if (filteredFeats.size() == 1 && graphSym.isSpecialGraph()) {
 				BioSeq seq = graphSym.getGraphSeq();

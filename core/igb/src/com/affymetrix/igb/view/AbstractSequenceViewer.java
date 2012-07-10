@@ -28,11 +28,11 @@ import java.io.*;
 import java.util.*;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
 import com.affymetrix.igb.shared.FileTracker;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -537,15 +537,28 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
 	JRPMenuItem exportRComplementFasta = new JRPMenuItem("sequenceViewer_exportRComplementFasta", "Save As Fasta (Reverse Complement)");
+	JRPMenuItem copyTransp1MenuItem = new JRPMenuItem("sequenceViewer_copyTransp1", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_ONE));
+	JRPMenuItem copyTransp2MenuItem = new JRPMenuItem("sequenceViewer_copyTransp2", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_TWO));
+	JRPMenuItem copyTransp3MenuItem = new JRPMenuItem("sequenceViewer_copyTransp3", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_THREE));
+	JRPMenuItem copyTransn1MenuItem = new JRPMenuItem("sequenceViewer_copyTransn1", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_NEG_ONE));
+	JRPMenuItem copyTransn2MenuItem = new JRPMenuItem("sequenceViewer_copyTransn2", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_NEG_TWO));
+	JRPMenuItem copyTransn3MenuItem = new JRPMenuItem("sequenceViewer_copyTransn3", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_NEG_THREE));
 	JRPMenu showMenu = new JRPMenu("sequenceViewer_show", "Show");
 	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
 	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
 	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
+	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation to ClipBoard");
 	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
 
 	public JFrame setupMenus(JFrame dock) {
 
 		copyAction.setEnabled(false);
+		copyToClipMenu.add(copyTransp1MenuItem);
+		copyToClipMenu.add(copyTransp2MenuItem);
+		copyToClipMenu.add(copyTransp3MenuItem);
+		copyToClipMenu.add(copyTransn1MenuItem);
+		copyToClipMenu.add(copyTransn2MenuItem);
+		copyToClipMenu.add(copyTransn3MenuItem);
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportFastaSequence", new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
 		fileMenu.addSeparator();
@@ -553,6 +566,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		fileMenu.addSeparator();
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));
+		editMenu.add(copyToClipMenu);
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);
@@ -621,7 +635,24 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 					+ "Please load sequence residues for this region.", Level.WARNING);
 		}
 	}
-
+	
+	public void copyTransAction(int frametype){
+		String residues = seqview.getResidues().trim();
+		if(residues == null)
+			return;
+		residues = DNAUtils.translate(residues, frametype, DNAUtils.ONE_LETTER_CODE);
+		if(residues != null){
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			StringBuffer hackbuf = new StringBuffer(residues);
+			String hackstr = new String(hackbuf);
+			StringSelection data = new StringSelection(hackstr);
+			clipboard.setContents(data, null);
+		}else {
+			ErrorHandler.errorPanel("Missing Sequence Residues",
+					"Don't have all the needed residues, can't copy to clipboard.\n"
+					+ "Please load sequence residues for this region.", Level.WARNING);
+		}
+	}
 	/** ItemListener Implementation */
 	public void itemStateChanged(ItemEvent e) {
 		Object theItem = e.getSource();
@@ -762,4 +793,38 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 	public void menuCanceled(MenuEvent me) {
 	}
+}	
+
+class CopyFromSeqViewerAction extends GenericAction {
+	private static final long serialVersionUID = 1l;
+
+	AbstractSequenceViewer sv;
+	public CopyFromSeqViewerAction(AbstractSequenceViewer sv) {
+		super(BUNDLE.getString("copySelectedResiduesToClipboard"), KeyEvent.VK_C);
+		this.sv=sv;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		sv.copyAction();
+	}
+}
+
+class CopyTransFromSeqViewer extends GenericAction{
+	
+	AbstractSequenceViewer sv;
+	public int frameType;
+	public CopyTransFromSeqViewer(AbstractSequenceViewer sv,int frameType) {
+		super(BUNDLE.getString("copyTranslation"+frameType+"ToClipBoard"), KeyEvent.VK_C);
+		this.sv=sv;
+		this.frameType = frameType;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		sv.copyTransAction(DNAUtils.FRAME_ONE);
+	}
+	
 }

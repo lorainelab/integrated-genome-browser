@@ -390,9 +390,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public void pack(ViewI view) {
-			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
-				vmg.pack(view);
-			}
+			lastUsedGlyph.pack(view);
 		}
 		@Override
 		public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {

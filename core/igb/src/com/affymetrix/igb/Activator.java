@@ -287,7 +287,6 @@ public class Activator implements BundleActivator {
 				GenericActionHolder h = GenericActionHolder.getInstance();
 				GenericAction a = h.getGenericAction(k);
 				if (null == a) { // what can we do?
-					System.err.println("need to make a generic action: " + k);
 					try {
 						Class<?> type = ClassLoader.getSystemClassLoader().loadClass(k);
 						Object o = type.newInstance();

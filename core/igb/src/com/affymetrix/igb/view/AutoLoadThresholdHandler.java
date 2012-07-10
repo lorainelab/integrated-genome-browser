@@ -95,10 +95,6 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 
 		loadData();
 	}
-
-	public void mapZoomed(){
-		update(zoomer);
-	}
 	
 	public void mouseDragged(MouseEvent e) {
 		was_dragging = true;

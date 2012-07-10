@@ -605,9 +605,6 @@ public final class GeneralLoadUtils {
 			return;
 		}
 		SeqSpan overlap = null;
-		if (gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD && !gviewer.getAutoLoad().shouldAutoLoad()) {
-			return;
-		}
 		if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();
 			// TODO: Investigate edge case at max

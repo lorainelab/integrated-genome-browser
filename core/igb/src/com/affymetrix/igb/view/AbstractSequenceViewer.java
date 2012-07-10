@@ -537,12 +537,12 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
 	JRPMenuItem exportRComplementFasta = new JRPMenuItem("sequenceViewer_exportRComplementFasta", "Save As Fasta (Reverse Complement)");
-	JRPMenuItem copyTransp1MenuItem = new JRPMenuItem("sequenceViewer_copyTransp1", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_ONE));
-	JRPMenuItem copyTransp2MenuItem = new JRPMenuItem("sequenceViewer_copyTransp2", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_TWO));
-	JRPMenuItem copyTransp3MenuItem = new JRPMenuItem("sequenceViewer_copyTransp3", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_THREE));
-	JRPMenuItem copyTransn1MenuItem = new JRPMenuItem("sequenceViewer_copyTransn1", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_NEG_ONE));
-	JRPMenuItem copyTransn2MenuItem = new JRPMenuItem("sequenceViewer_copyTransn2", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_NEG_TWO));
-	JRPMenuItem copyTransn3MenuItem = new JRPMenuItem("sequenceViewer_copyTransn3", new CopyTransFromSeqViewer(this, DNAUtils.FRAME_NEG_THREE));
+	JRPMenuItem copyTransp1MenuItem = new JRPMenuItem("sequenceViewer_copyTransp1", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_ONE));
+	JRPMenuItem copyTransp2MenuItem = new JRPMenuItem("sequenceViewer_copyTransp2", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_TWO));
+	JRPMenuItem copyTransp3MenuItem = new JRPMenuItem("sequenceViewer_copyTransp3", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_THREE));
+	JRPMenuItem copyTransn1MenuItem = new JRPMenuItem("sequenceViewer_copyTransn1", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_NEG_ONE));
+	JRPMenuItem copyTransn2MenuItem = new JRPMenuItem("sequenceViewer_copyTransn2", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_NEG_TWO));
+	JRPMenuItem copyTransn3MenuItem = new JRPMenuItem("sequenceViewer_copyTransn3", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_NEG_THREE));
 	JRPMenu showMenu = new JRPMenu("sequenceViewer_show", "Show");
 	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
 	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
@@ -811,11 +811,11 @@ class CopyFromSeqViewerAction extends GenericAction {
 	}
 }
 
-class CopyTransFromSeqViewer extends GenericAction{
+class CopyTransFromSeqViewerAction extends GenericAction{
 	
 	AbstractSequenceViewer sv;
 	public int frameType;
-	public CopyTransFromSeqViewer(AbstractSequenceViewer sv,int frameType) {
+	public CopyTransFromSeqViewerAction(AbstractSequenceViewer sv,int frameType) {
 		super(BUNDLE.getString("copyTranslation"+frameType+"ToClipBoard"), KeyEvent.VK_C);
 		this.sv=sv;
 		this.frameType = frameType;

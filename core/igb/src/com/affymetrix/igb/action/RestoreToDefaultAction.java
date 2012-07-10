@@ -29,11 +29,10 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		if (getSeqMapView().getSelectedTiers() == null) {
+		if (getTierManager().getSelectedTiers() == null) {
 			return;
 		}
-		for (GlyphI glyph : getSeqMapView().getSelectedTiers()) {
-			TierGlyph tierGlyph = (TierGlyph)glyph;
+		for (TierGlyph tierGlyph : getTierManager().getSelectedTiers()) {
 			if (tierGlyph.getAnnotStyle() instanceof TrackStyle) {
 				((TrackStyle)tierGlyph.getAnnotStyle()).restoreToDefault();
 			}

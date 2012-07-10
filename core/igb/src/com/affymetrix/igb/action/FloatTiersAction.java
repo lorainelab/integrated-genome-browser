@@ -37,9 +37,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 				return;
 			}
 
-			@SuppressWarnings("unchecked")
-			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
+			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
@@ -79,7 +77,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean something_changed = false;
-		List<? extends GlyphI> selectedTiers = getSeqMapView().getSelectedTiers();
+		List<? extends GlyphI> selectedTiers = getTierManager().getSelectedTiers();
 		for (GlyphI tg : selectedTiers) {
 			ViewModeGlyph gl = ((TierGlyph)tg).getViewModeGlyph();
 			if (gl instanceof AbstractGraphGlyph) { // for now, eventually all tracks should float

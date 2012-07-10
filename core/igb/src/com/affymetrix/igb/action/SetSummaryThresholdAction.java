@@ -55,8 +55,8 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		int summaryThreshold;
-		for (GlyphI glyph : getSeqMapView().getSelectedTiers()) {
-			TierGlyph tierGlyph = (TierGlyph)glyph;
+		for (TierGlyph tierGlyph : getTierManager().getSelectedTiers()) {
+			
 			ITrackStyleExtended style = tierGlyph.getAnnotStyle();
 			if (style != null && style instanceof TrackStyle) {
 				boolean isDetail = isDetail(style);

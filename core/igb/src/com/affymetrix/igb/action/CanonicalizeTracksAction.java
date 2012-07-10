@@ -71,7 +71,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 	 * or that no tracks are selected.
 	 */
 	public boolean shouldBeEnabled() {
-		List<? extends GlyphI> l = this.getSeqMapView().getSelectedTiers();
+		List<? extends GlyphI> l = getTierManager().getSelectedTiers();
 		if (0 == l.size()) {
 			l = this.getSeqMapView().getTierManager().getAllTierGlyphs();
 		}

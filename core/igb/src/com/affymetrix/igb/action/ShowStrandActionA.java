@@ -46,9 +46,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		setTwoTiers(getTierManager().getSelectedTierLabels(), separateStrands);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		SeqMapView gviewer = getSeqMapView();
-		@SuppressWarnings("unchecked")
-		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 		changeStrandActionDisplay(selected_syms);
 	}
 
@@ -56,7 +54,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		SeqMapView gviewer = getSeqMapView();
-		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms((List<GlyphI>)gviewer.getSelectedTiers());
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 
@@ -94,9 +92,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 	public void trackstylePropertyChanged(EventObject eo) {
 		List<SeqSymmetry> selected_syms;
 		SeqMapView gviewer = getSeqMapView();		
-		@SuppressWarnings("unchecked")
-		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-		selected_syms = SeqMapView.glyphsToSyms(tiers);
+		selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 		changeStrandActionDisplay(selected_syms);
 	}
 

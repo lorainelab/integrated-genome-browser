@@ -49,9 +49,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				return;
 			}
 
-			@SuppressWarnings("unchecked")
-			List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
+			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 
 			boolean hasFloater = false;
 			boolean hasAnchored = false;

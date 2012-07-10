@@ -39,9 +39,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		setTiersCollapsed(getTierManager().getSelectedTierLabels(), collapsedTracks);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		SeqMapView gviewer = getSeqMapView();
-		@SuppressWarnings("unchecked")
-		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 		changeActionDisplay(selected_syms);
 	}
 
@@ -59,10 +57,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 			return;
 		}
 
-		@SuppressWarnings("unchecked")
-		List<GlyphI> tiers = (List<GlyphI>) gviewer.getSelectedTiers();
-		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(tiers);
-
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
 		changeActionDisplay(selected_syms);
 	}
 

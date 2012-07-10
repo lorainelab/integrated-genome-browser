@@ -1355,7 +1355,7 @@ public class SeqMapView extends JPanel
 	@Override
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
-		gmodel.setSelectedSymmetries(glyphsToRootSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
+		gmodel.setSelectedSymmetries(glyphsToRootSyms(tier_manager.getSelectedTiers()), getSelectedSyms(), this);
 	}
 
 	public void trackstylePropertyChanged(EventObject eo) {
@@ -1416,11 +1416,6 @@ public class SeqMapView extends JPanel
 		return allSelectedTiers;
 	}
 
-	@Override
-	public List<? extends GlyphI> getSelectedTiers() {
-		return tier_manager.getSelectedTiers();
-	}
-
 	/**
 	 * Determines which SeqSymmetry's are selected by looking at which Glyph's
 	 * are currently selected. The list will not include the selected sequence
@@ -1436,7 +1431,7 @@ public class SeqMapView extends JPanel
 	 * Given a list of glyphs, returns a list of syms that those glyphs
 	 * represent.
 	 */
-	public static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
+	public static List<SeqSymmetry> glyphsToSyms(List<? extends GlyphI> glyphs) {
 		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
 		for (GlyphI gl : glyphs) {
 			if (gl.getInfo() instanceof SeqSymmetry) {
@@ -1450,7 +1445,7 @@ public class SeqMapView extends JPanel
 	 * Given a list of glyphs, returns a list of root syms that those glyphs
 	 * represent.
 	 */
-	public static List<RootSeqSymmetry> glyphsToRootSyms(List<GlyphI> glyphs) {
+	public static List<RootSeqSymmetry> glyphsToRootSyms(List<? extends GlyphI> glyphs) {
 		Set<RootSeqSymmetry> symSet = new LinkedHashSet<RootSeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
 		for (GlyphI gl : glyphs) {
 			if (gl.getInfo() instanceof RootSeqSymmetry) {
@@ -2050,9 +2045,7 @@ public class SeqMapView extends JPanel
 				}
 			}
 		}
-		@SuppressWarnings("unchecked")
-		List<GlyphI> selectedTiers = (List<GlyphI>)getSelectedTiers();
-		gmodel.setSelectedSymmetries(glyphsToRootSyms(selectedTiers), getSelectedSyms(), this);
+		gmodel.setSelectedSymmetries(glyphsToRootSyms(tier_manager.getSelectedTiers()), getSelectedSyms(), this);
 		seqmap.updateWidget();
 	}
 

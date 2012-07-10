@@ -29,7 +29,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		protected ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv) {
 			ViewModeGlyph result = factory.getViewModeGlyph(rootSym, style, direction, smv);
 			summaryGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)detailGlyph.getInfo(), style, direction, smv);
-			if(summaryGlyph instanceof AbstractGraphGlyph){
+			if (summaryGlyph instanceof AbstractGraphGlyph) {
+				((AbstractGraphGlyph)summaryGlyph).drawHandle(false);
 				((AbstractGraphGlyph)summaryGlyph).resetVisibleMinYAndMaxY();
 			}
 			prepareViewModeGlyph(summaryGlyph, smv.getSeqMap().getView());
@@ -48,6 +49,9 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 			if (style.getSummaryViewMode() != null && !summaryGlyphFactory.getName().equals(style.getSummaryViewMode())) {
 				summaryGlyphFactory = MapViewModeHolder.getInstance().getViewFactory(style.getSummaryViewMode());
 				summaryGlyph = summaryGlyphFactory.getViewModeGlyph((SeqSymmetry)summaryGlyph.getInfo(), style, direction, smv);
+				if (summaryGlyph instanceof AbstractGraphGlyph) {
+					((AbstractGraphGlyph)summaryGlyph).drawHandle(false);
+				}
 			}
 			return summaryGlyph;
 		}
@@ -59,7 +63,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 			viewModeGlyphs.put(summaryGlyphFactory.getName(), summaryGlyph);
 			detailGlyph = detailGlyphFactory.getViewModeGlyph(sym, style, direction, smv);
 			viewModeGlyphs.put(detailGlyphFactory.getName(), detailGlyph);
-			if(summaryGlyph instanceof AbstractGraphGlyph){
+			if (summaryGlyph instanceof AbstractGraphGlyph) {
+				((AbstractGraphGlyph)summaryGlyph).drawHandle(false);
 				((AbstractGraphGlyph)summaryGlyph).resetVisibleMinYAndMaxY();
 			}
 		}

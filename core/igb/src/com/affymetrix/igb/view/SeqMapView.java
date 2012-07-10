@@ -2354,26 +2354,6 @@ public class SeqMapView extends JPanel
 //		}
 	}
 
-	public void focusTrack(TierGlyph selectedTier) {
-		// set zoom to height of selected track
-		double tierCoordHeight = selectedTier.getCoordBox().getHeight();
-		int totalHeight = seqmap.getView().getPixelBox().height;
-		double zoom_scale = totalHeight / tierCoordHeight;
-		seqmap.zoom(NeoMap.Y, zoom_scale);
-		// set scroll to top of selected track
-		double coord_value = 0;
-		// add up height of all tiers up to selected tier
-		for (TierGlyph tierGlyph : seqmap.getTiers()) {
-			if (tierGlyph == selectedTier) {
-				break;
-			}
-			coord_value += tierGlyph.getCoordBox().getHeight();
-		}
-		coord_value += 1; // fudge factor
-		seqmap.scroll(NeoMap.Y, coord_value);
-		seqmap.updateWidget();
-	}
-
 	@Override
 	public void setRegion(int start, int end, BioSeq seq) {
 		if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {

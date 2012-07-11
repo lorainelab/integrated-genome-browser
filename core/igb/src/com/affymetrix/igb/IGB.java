@@ -176,7 +176,7 @@ public final class IGB extends Application
 		ConsoleView.init(APP_NAME);
 
 		// Initialize statusbar output logger.
-		StatusBarOutput.initStatuBarOutput();
+		StatusBarOutput.initStatusBarOutput();
 		
 		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
 		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());

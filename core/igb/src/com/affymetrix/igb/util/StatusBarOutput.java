@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class StatusBarOutput extends Handler {
 	private static StatusBarOutput singleton = new StatusBarOutput();
 	
-	public static void initStatuBarOutput(){
+	public static void initStatusBarOutput(){
 		Logger.getLogger(StatusBarOutput.class.getName()).log(Level.INFO, "Initializing statusbar output messages");
 		
 		Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);

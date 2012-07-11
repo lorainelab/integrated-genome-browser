@@ -95,6 +95,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 								+ useCommand + ".\n"
 								+ "Do you want to proceed?")) {
 							key_field.setText(lastTimeFocusGained);
+							lastCommand = null;
 						}
 						else { // cancelled
 							the_keystroke_node.put(useCommand, "");

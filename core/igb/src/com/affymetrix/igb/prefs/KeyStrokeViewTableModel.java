@@ -28,7 +28,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 		columnNames[KeyStrokesView.IconColumn] = "";
 		columnNames[KeyStrokesView.ToolbarColumn] = "Toolbar ?";
 		columnNames[KeyStrokesView.ActionColumn] = "Action";
-		columnNames[KeyStrokesView.KeyStrokeColumn] = "Key Stroke (Double Click to Edit)";
+		columnNames[KeyStrokesView.KeyStrokeColumn] = "Key Stroke";
 	}
 	private Object[][] rows;
 

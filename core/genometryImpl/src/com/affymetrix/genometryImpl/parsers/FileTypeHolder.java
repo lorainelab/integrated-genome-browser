@@ -498,7 +498,7 @@ public class FileTypeHolder {
 		return map;
 	}
 
-	private static final List<String> TABIX_FILE_TYPES = Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx"});
+	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx"}));
 	public List<String> getTabixFileTypes() {
 		return TABIX_FILE_TYPES;
 	}

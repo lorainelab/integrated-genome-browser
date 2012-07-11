@@ -24,6 +24,8 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class ThresholdXZoomer extends RPAdjustableJSlider{
 
 	private static final long serialVersionUID = 1L;
+	private static final Color LEMON_CHIFFON = new Color(255,250,205);
+	
 	private final SeqMapView smv;
 	public int threshold = ThresholdReader.default_threshold;
 	
@@ -66,7 +68,7 @@ public class ThresholdXZoomer extends RPAdjustableJSlider{
 	}
 
 	private void drawAutoLoadPoint(Graphics g) {
-		drawThresholdPoint(g, Color.BLACK, Color.WHITE, threshold);
+		drawThresholdPoint(g, Color.BLACK, LEMON_CHIFFON, threshold);
 	}
 
 	private void drawTrackThresholdPoint(Graphics g, TierGlyph tier) {

@@ -604,7 +604,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				return renderServer((GenericServer) genericData, tree, sel, expanded, leaf, row, hasFocus);
 			}
 			if (leaf && genericData instanceof GenericFeature) {
-				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
+				FeatureCheckBox checkbox = (FeatureCheckBox)renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
+				if (!checkbox.isFeatureLoadActionSet()) {
+					checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo(node), node));
+				}
+				return checkbox;
 			}
 
 			return super.getTreeCellRendererComponent(
@@ -663,71 +667,16 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 	}
 
-	public final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+	public static class FeatureLoadAction extends GenericAction {
 
 		private static final long serialVersionUID = 1L;
-		FeatureTreeCellRenderer renderer;
-		DefaultMutableTreeNode editedNode;
+		private final FeatureCheckBox checkbox;
+		private final DefaultMutableTreeNode editedNode;
 
-		public class FeatureLoadAction extends GenericAction {
-
-			private static final long serialVersionUID = 1L;
-			private final FeatureCheckBox checkbox;
-
-			private FeatureLoadAction(FeatureCheckBox checkbox, Object extraInfo) {
-				super(null, null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
-				this.checkbox = checkbox;
-			}
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				super.actionPerformed(e);
-				Object nodeData = editedNode.getUserObject();
-				if (nodeData instanceof TreeNodeUserInfo) {
-					((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
-					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-					if (tn.genericObject instanceof GenericFeature) {
-						GenericFeature feature = (GenericFeature) tn.genericObject;
-						if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-							String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
-							FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
-							if (fth == null) {
-								ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
-								return;
-							}
-						}
-						String message;
-						if (checkbox.isSelected()) {
-							// check whether the selected feature url is reachable or not
-							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
-									&& !isURLReachable(feature.getURI())) {
-								message = "The feature " + feature.getURI() + " is not reachable.";
-								ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
-								tn.setChecked(false);
-								return;
-							}
-
-							// prevent from adding duplicated features
-							if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
-								message = "The feature " + feature.getURI() + " has already been added.";
-								ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
-								tn.setChecked(false);
-							} else {
-								GeneralLoadView.getLoadView().addFeature(feature);
-							}
-						} else {
-							message = "Unchecking " + feature.featureName
-									+ " will remove all loaded data. \nDo you want to continue? ";
-							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-									PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-								GeneralLoadView.getLoadView().removeFeature(feature, true, false);
-							} else {
-								tn.setChecked(true);
-							}
-						}
-					}
-				}
-			}
+		private FeatureLoadAction(FeatureCheckBox checkbox, Object extraInfo, DefaultMutableTreeNode editedNode) {
+			super(null, null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
+			this.checkbox = checkbox;
+			this.editedNode = editedNode;
 		}
 
 		private boolean isURLReachable(URI uri) {
@@ -743,18 +692,74 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			return true;
 		}
 
-		public Object getExtraInfo() {
-			String extraInfo = "";
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			Object nodeData = editedNode.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
+				((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
 				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
 				if (tn.genericObject instanceof GenericFeature) {
 					GenericFeature feature = (GenericFeature) tn.genericObject;
-					extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
+					if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+						String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
+						FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+						if (fth == null) {
+							ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
+							return;
+						}
+					}
+					String message;
+					if (checkbox.isSelected()) {
+						// check whether the selected feature url is reachable or not
+						if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
+								&& !isURLReachable(feature.getURI())) {
+							message = "The feature " + feature.getURI() + " is not reachable.";
+							ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
+							tn.setChecked(false);
+							return;
+						}
+
+						// prevent from adding duplicated features
+						if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
+							message = "The feature " + feature.getURI() + " has already been added.";
+							ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
+							tn.setChecked(false);
+						} else {
+							GeneralLoadView.getLoadView().addFeature(feature);
+						}
+					} else {
+						message = "Unchecking " + feature.featureName
+								+ " will remove all loaded data. \nDo you want to continue? ";
+						if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+								PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+							GeneralLoadView.getLoadView().removeFeature(feature, true, false);
+						} else {
+							tn.setChecked(true);
+						}
+					}
 				}
 			}
-			return extraInfo;
 		}
+	}
+
+	public static Object getExtraInfo(DefaultMutableTreeNode editedNode) {
+		String extraInfo = "";
+		Object nodeData = editedNode.getUserObject();
+		if (nodeData instanceof TreeNodeUserInfo) {
+			TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+			if (tn.genericObject instanceof GenericFeature) {
+				GenericFeature feature = (GenericFeature) tn.genericObject;
+				extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
+			}
+		}
+		return extraInfo;
+	}
+
+	public final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+		private static final long serialVersionUID = 1L;
+		FeatureTreeCellRenderer renderer;
+		DefaultMutableTreeNode editedNode;
 
 		@Override
 		public boolean isCellEditable(EventObject e) {
@@ -780,9 +785,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 								renderer = new FeatureTreeCellRenderer();
 							}
 							FeatureCheckBox checkbox = renderer.getLeafCheckBox((GenericFeature)nodeData);
-							if (!checkbox.isFeatureLoadActionSet()) {
-								checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
-							}
 							checkbox.setText("");
 							returnValue = editedNode.isLeaf() && x > 0 && x < checkbox.getPreferredSize().width;
 						}

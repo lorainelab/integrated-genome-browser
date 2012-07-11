@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
-import com.affymetrix.igb.view.load.FeatureTreeView.FeatureTreeCellEditor.FeatureLoadAction;
+import com.affymetrix.igb.view.load.FeatureTreeView.FeatureLoadAction;
 
 public class FeatureCheckBox extends JRPCheckBox {
 	private static final long serialVersionUID = 1L;

@@ -46,17 +46,21 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private void updateDisplay() {
+		updateDisplay(true, true);
+	}
+
+	private void updateDisplay(final boolean preserveX, final boolean preserveY){
 		ThreadUtils.runOnEventQueue(new Runnable() {
 	
 			public void run() {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-				igbService.getSeqMapView().updatePanel();
+				igbService.getSeqMapView().updatePanel(preserveX, preserveY);
 			}
 		});
 	}
-
+	
 	@Override
 	protected void viewModeComboBoxActionPerformedA(ActionEvent evt) {
 	    final JComboBox viewModeComboBox = getViewModeComboBox();
@@ -318,7 +322,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				.getGenericAction("com.affymetrix.igb.action.ChangeExpandMaxAction");
 		try{
 			action.performAction(Integer.parseInt(mdepth_string));
-			updateDisplay();
+			updateDisplay(true, false);
 		}catch(Exception ex){
 			ErrorHandler.errorPanel("Invalid value "+mdepth_string);
 		}

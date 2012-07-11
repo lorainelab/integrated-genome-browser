@@ -99,11 +99,13 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 			if (is_floating) {
 				//GraphGlyphUtils.attachGraph(gl, gviewer);
 				// figure out correct height
-				Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
-				Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
-				Rectangle2D.Double coordbox = new Rectangle2D.Double();
-				getSeqMapView().getSeqMap().getView().transformToCoords(pixbox, coordbox);
-				style.setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
+//				Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
+//				Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
+//				Rectangle2D.Double coordbox = new Rectangle2D.Double();
+//				getSeqMapView().getSeqMap().getView().transformToCoords(pixbox, coordbox);
+				
+				Rectangle2D.Double coordbox = gl.getCoordBox();
+				style.setY(coordbox.y);
 				style.setHeight(coordbox.height);
 				style.setFloatTier(false);
 				

@@ -80,7 +80,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (action != null) {
 			action.actionPerformed(evt);
 		}
-		updateDisplay();
+//		updateDisplay();
 	}
 
 	@Override

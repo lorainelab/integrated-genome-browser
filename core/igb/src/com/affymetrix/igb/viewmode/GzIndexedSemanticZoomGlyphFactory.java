@@ -93,7 +93,11 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 			else if (lastUsedGlyph != saveSummaryGlyph && saveSummaryCoordbox != null) {
 				Rectangle2D.Double coordBox = new Rectangle2D.Double(saveSummaryCoordbox.x, saveSummaryCoordbox.y, saveSummaryCoordbox.width, saveSummaryCoordbox.height);
 				saveSummaryGlyph.setCoordBox(coordBox);
+				Rectangle2D.Double coordbox = this.getCoordBox();
 				lastUsedGlyph = saveSummaryGlyph;
+				this.processParentCoordBox(coordbox);
+				lastUsedGlyph.setCoordBox(coordbox);
+				lastUsedGlyph.setTierGlyph(getTierGlyph());
 			}
 			return saveSummaryGlyph;
 		}
@@ -102,7 +106,11 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		public void seqSelectionChanged(SeqSelectionEvent evt) {
 			saveSummaryGlyph = null;
 			try {
+				Rectangle2D.Double coordbox = this.getCoordBox();
 				lastUsedGlyph = getSummaryGlyph(((IGB)IGB.getSingleton()).getMapView());
+				this.processParentCoordBox(coordbox);
+				lastUsedGlyph.setCoordBox(coordbox);
+				lastUsedGlyph.setTierGlyph(getTierGlyph());
 			}
 			catch (Exception x) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error creating index glyph", x);

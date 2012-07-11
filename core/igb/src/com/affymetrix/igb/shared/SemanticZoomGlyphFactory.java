@@ -102,6 +102,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 				lastUsedGlyph = detailGlyph;
 				this.processParentCoordBox(coordbox);
 				lastUsedGlyph.setCoordBox(coordbox);
+				lastUsedGlyph.setTierGlyph(getTierGlyph());
 			}
 		}
 

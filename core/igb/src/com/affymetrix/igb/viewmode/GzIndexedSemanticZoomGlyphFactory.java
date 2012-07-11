@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -23,6 +24,8 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory {
+//	protected final Operator TRANSFORM_OPERATOR = new com.affymetrix.genometryImpl.operator.LogTransform(Math.E);
+	protected final Operator TRANSFORM_OPERATOR = new com.affymetrix.genometryImpl.operator.PowerTransformer(0.5);
 	private MapViewGlyphFactoryI heatMapGraphGlyphFactory;
 	private MapViewGlyphFactoryI graphGlyphFactory;
 
@@ -79,6 +82,11 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 			catch (Exception x) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "TbiSemanticZoom failed reading tbi file", x);
 			}
+		}
+
+		@Override
+		protected Operator getSummaryTransformOperator() {
+			return TRANSFORM_OPERATOR;
 		}
 
 		@Override

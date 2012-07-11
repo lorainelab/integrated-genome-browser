@@ -108,6 +108,7 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 			detailGlyph = factory.getViewModeGlyph(sym, style, Direction.NONE, smv);
 			detailGlyph.setCoordBox(getCoordBox());
 			detailGlyph.setTierGlyph(getTierGlyph());
+			detailGlyph.setStyle(style);
 			return detailGlyph;
 		}
 

@@ -23,9 +23,6 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
-//	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.LogTransform(Math.E);
-	protected final Operator transformOperator = new com.affymetrix.genometryImpl.operator.PowerTransformer(0.5);
-
 	public IndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory) {
 		super(defaultDetailGlyphFactory, summaryGlyphFactory);
 	}
@@ -94,16 +91,27 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected RootSeqSymmetry getRootSym() {
 			return (RootSeqSymmetry)GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
 		}
-				
+
+		protected Operator getSummaryTransformOperator() {
+			return null;
+		}
+
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
 			ViewModeGlyph resultGlyph = null;
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(smv.getVisibleSpan());
 			if (symList.size() > 0) {
 				GraphSym gsym = (GraphSym)symList.get(0);
-				List<SeqSymmetry> operList = new ArrayList<SeqSymmetry>();
-				operList.add(gsym);
-				BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-				GraphSym opersym = (GraphSym)transformOperator.operate(aseq, operList);
+				GraphSym opersym;
+				Operator summaryTransformOperator = getSummaryTransformOperator();
+				if (summaryTransformOperator == null) {
+					opersym = gsym;
+				}
+				else {
+					List<SeqSymmetry> operList = new ArrayList<SeqSymmetry>();
+					operList.add(gsym);
+					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+					opersym = (GraphSym)summaryTransformOperator.operate(aseq, operList);
+				}
 				if (PreferenceUtils.getBooleanParam(PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap)) {
 					HeatMap styleHeatMap = new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, style, 0.0f, 0.5f);
 					opersym.getGraphState().setHeatMap(styleHeatMap);

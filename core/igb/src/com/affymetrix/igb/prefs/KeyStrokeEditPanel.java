@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
+import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -43,22 +44,25 @@ public final class KeyStrokeEditPanel extends JPanel {
 	private Preferences the_toolbar_node = null;
 	private String the_key = null;
 	private String lastTimeFocusGained = "";
-//	private FocusListener lois = new FocusListener() {
-//	
-//			@Override
-//			public void focusGained(java.awt.event.FocusEvent fe) {
-//				Object o = fe.getSource();
-//				if (o instanceof JTextField) {
-//					JTextField tf = (JTextField) o;
-//					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
-//				}
-//			}
-//			@Override
-//			public void focusLost(java.awt.event.FocusEvent evt) {
-//				applyAction();
-//			}
-//
-//	};
+	private String lastCommand = "";
+	private FocusListener lois = new FocusListener() {
+	
+			@Override
+			public void focusGained(java.awt.event.FocusEvent fe) {
+				Object o = fe.getSource();
+				if (o instanceof JTextField) {
+					JTextField tf = (JTextField) o;
+					KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+				}
+			}
+			@Override
+			public void focusLost(java.awt.event.FocusEvent evt) {
+				if(KeyStrokeEditPanel.this.lastCommand != null){
+					applyAction(KeyStrokeEditPanel.this.lastCommand);
+				}
+			}
+
+	};
 
 	/** Creates a new instance of KeyStrokesView */
 	public KeyStrokeEditPanel(){
@@ -74,17 +78,17 @@ public final class KeyStrokeEditPanel extends JPanel {
 					evt.consume();
 					clearAction();
 				} else if (getKeyText(ks.getKeyCode()).equals("ENTER")
-						|| getKeyText(ks.getKeyCode()).equals("RETURN")) {
-					applyAction();
+						|| getKeyText(ks.getKeyCode()).equals("TAB")) {
+					applyAction(key_field.getText().trim());
 				} else {
-//					evt.consume();
+					evt.consume();
 					String command = keyStroke2String(ks);
 					String useCommand = isCommandInUse(command);
 					if (useCommand != null) {
 						// Temorarily remove the focus listener
 						// so that it doesn't try to apply the action
 						// when the confirmation dialog pops up.
-//						key_field.removeFocusListener(lois);
+						key_field.removeFocusListener(lois);
 						if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
 								"This shortcut is currently in use; \n"
 								+ "reassigning this will remove the shortcut for "
@@ -95,12 +99,13 @@ public final class KeyStrokeEditPanel extends JPanel {
 						else { // cancelled
 							the_keystroke_node.put(useCommand, "");
 							key_field.setText(command);
-							applyAction();
+							applyAction(key_field.getText().trim());
 						}
-//						key_field.addFocusListener(lois);
+						key_field.addFocusListener(lois);
 						return;
 					}
 					key_field.setText(command);
+					lastCommand = command;
 				}
 			}
 
@@ -114,7 +119,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 				evt.consume();
 			}
 		});
-//		key_field.addFocusListener(lois);
+		key_field.addFocusListener(lois);
 
 		setEnabled(false);
 	}
@@ -156,14 +161,12 @@ public final class KeyStrokeEditPanel extends JPanel {
 	    toolbar_field.setEnabled(b);
 	}
 
-	private void applyAction() {
+	private void applyAction(String str) {
 		if (the_keystroke_node == null || the_key == null) {
 			//do nothing except disable clear button
 			setEnabled(false);
 			return;
 		}
-		
-		String str = key_field.getText().trim();
 		
 		KeyStroke ks = KeyStroke.getKeyStroke(str);
 		
@@ -197,6 +200,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 					+ this.the_keystroke_node + ": "
 					+ this.the_key + "  -->  " + str);
 		}
+		lastCommand = null;
 		this.the_keystroke_node.put(this.the_key, str);
 		// The following seems to put the accelerator in the menu,
 		// but the action does not seem to be invoked by the key stroke.
@@ -243,6 +247,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 			return;
 		}
 		key_field.setText("");
+		lastCommand = "";
 	    toolbar_field.setSelected(false);
 //		this.the_keystroke_node.put(this.the_key, "");
 		//TO DO:  Fix cell update 

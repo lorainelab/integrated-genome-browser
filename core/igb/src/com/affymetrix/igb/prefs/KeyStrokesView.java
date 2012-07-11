@@ -275,42 +275,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 
 		@Override
 		public TableCellEditor getCellEditor(int row, int col) {
-			final DefaultCellEditor textEditor = new DefaultCellEditor(edit_panel.key_field);
+			final DefaultCellEditor textEditor = new KeyEditor(edit_panel.key_field);
 			if (col == KeyStrokeColumn) {
-				final KeyListener listener = new KeyListener() {
-
-					public void keyPressed(KeyEvent evt) {
-						int keyCode = evt.getKeyCode();
-						int modifiers = evt.getModifiers();
-						KeyStroke ks = KeyStroke.getKeyStroke(keyCode, modifiers);
-						if (ks.getKeyCode() == KeyEvent.VK_ENTER) {
-							textEditor.stopCellEditing();
-						}
-					}
-
-					public void keyTyped(KeyEvent evt) {
-					}
-
-					public void keyReleased(KeyEvent ke) {
-					}
-				};
-				
-				final FocusListener lois = new FocusListener() {
-					
-					@Override
-					public void focusGained(java.awt.event.FocusEvent fe) {
-					}
-
-					@Override
-					public void focusLost(java.awt.event.FocusEvent evt) {
-						edit_panel.key_field.removeFocusListener(this);
-						edit_panel.key_field.removeKeyListener(listener);
-					}
-				};
-				
-				edit_panel.key_field.addKeyListener(listener);
-				edit_panel.key_field.addFocusListener(lois);
-				
 				selected = row;
 				textEditor.setClickCountToStart(1);
 				return textEditor;
@@ -331,4 +297,29 @@ public final class KeyStrokesView implements ListSelectionListener,
 		}
 	}
 
+	private class KeyEditor extends DefaultCellEditor {
+
+		KeyEditor(JTextField tf) {
+			super(tf);
+			tf.addKeyListener(listener);
+		}
+
+		@Override
+		public boolean stopCellEditing() {
+			editorComponent.removeKeyListener(listener);
+			return super.stopCellEditing();
+		}
+		
+		private KeyListener listener = new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				KeyStroke ks = KeyStroke.getKeyStroke(evt.getKeyCode(), evt.getModifiers());
+				if (ks.getKeyCode() == KeyEvent.VK_ENTER) {
+					stopCellEditing();
+				}
+			}
+			public void keyTyped(KeyEvent e) { }
+			public void keyReleased(KeyEvent e) { }
+		};
+	}
 }

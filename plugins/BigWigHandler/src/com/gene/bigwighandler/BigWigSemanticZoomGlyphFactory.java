@@ -12,6 +12,7 @@ import org.broad.tribble.util.SeekableStreamFactory;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -21,6 +22,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.IndexedSemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory {
@@ -93,6 +95,20 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 		@Override
 		public boolean isPreLoaded() {
 			return true;
+		}
+
+		@Override
+		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv, MapViewGlyphFactoryI factory) throws Exception {
+			GenericFeature feature = style.getFeature();
+			List<? extends SeqSymmetry> syms = feature.symL.getRegion(smv.getVisibleSpan());
+			if (syms.size() == 0) {
+				return getEmptyGraphGlyph(style, smv);
+			}
+			SeqSymmetry sym = syms.get(0);
+			detailGlyph = factory.getViewModeGlyph(sym, style, Direction.NONE, smv);
+			detailGlyph.setCoordBox(getCoordBox());
+			detailGlyph.setTierGlyph(getTierGlyph());
+			return detailGlyph;
 		}
 
 		/* from bbiRead.c */

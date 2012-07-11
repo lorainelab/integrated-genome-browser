@@ -38,8 +38,7 @@ public class BigWigSymLoader extends SymLoader {
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
-//		strategyList.add(LoadStrategy.CHROMOSOME);
-		strategyList.add(LoadStrategy.GENOME);
+		strategyList.add(LoadStrategy.AUTOLOAD);
 	}
 	private BBFileReader bbReader;
 	private BBFileHeader bbFileHdr;

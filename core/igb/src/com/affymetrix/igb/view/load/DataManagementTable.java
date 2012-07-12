@@ -87,6 +87,7 @@ public final class DataManagementTable {
 			JComboBox featureCB = new JComboBox(vFeature.getLoadChoices().toArray());
 			featureCB.setRenderer(comboRenderer);
 			featureCB.setEnabled(true);
+			featureCB.setSelectedItem(vFeature.getLoadStrategy());
 			DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
 			choices.addEditorForRow(row, featureEditor);
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);

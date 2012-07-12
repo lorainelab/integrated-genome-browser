@@ -74,6 +74,7 @@ public abstract class AnnotsXmlParser {
 		String friendlyURL = e.getAttributeValue("url");
 		String serverURL = e.getAttributeValue("serverURL");
 		String load_hint = e.getAttributeValue("load_hint");
+		String load_strategy = e.getAttributeValue("load_strategy");
 		String label_field = e.getAttributeValue("label_field");
 		String foreground = e.getAttributeValue("foreground");
 		String background = e.getAttributeValue("background");
@@ -88,7 +89,7 @@ public abstract class AnnotsXmlParser {
 		String view_mode = e.getAttributeValue("view_mode");
 		if (filename != null) {
 			AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc,
-					friendlyURL, serverURL, load_hint, label_field, foreground,
+					friendlyURL, serverURL, load_hint, load_strategy, label_field, foreground,
 					background, max_depth, name_size, connected, collapsed,
 					show2tracks, direction_type, positive_strand_color,
 					negative_strand_color, view_mode);
@@ -114,11 +115,11 @@ public abstract class AnnotsXmlParser {
 		public Map<String, String> props = new HashMap<String, String>();
 
 		public AnnotMapElt(String fileName, String title) {
-			this(fileName, title, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+			this(fileName, title, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 
 		public AnnotMapElt(String fileName, String title, String description,
-				String URL, String serverURL, String load_hint, String label_field,
+				String URL, String serverURL, String load_hint, String load_strategy, String label_field,
 				String foreground, String background, String max_depth, String name_size,
 				String connected, String collapsed, String show2tracks, String direction_type,
 				String positive_strand_color, String negative_strand_color, String view_mode) {
@@ -137,6 +138,10 @@ public abstract class AnnotsXmlParser {
 
 			if (load_hint != null && load_hint.trim().length() > 0) {
 				this.props.put("load_hint", load_hint);
+			}
+
+			if (load_strategy != null && load_strategy.trim().length() > 0) {
+				this.props.put("load_strategy", load_strategy);
 			}
 
 			if (label_field != null && label_field.trim().length() > 0) {

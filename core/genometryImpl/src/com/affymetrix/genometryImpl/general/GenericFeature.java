@@ -80,18 +80,28 @@ public final class GenericFeature {
 			((Das2Type) typeObj).setFeature(this);
 		}
 		this.setFriendlyURL();
-		this.setAutoload(autoload);
+		boolean autoloadSet = this.setAutoload(autoload);
+		if (!autoloadSet && featureProps.get("load_strategy") != null) {
+			try {
+				setLoadStrategy(LoadStrategy.valueOf(featureProps.get("load_strategy")));
+			}
+			catch (IllegalArgumentException x) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, featureProps.get("load_strategy") + " for " + featureName + " is not a valid load strategy");
+			}
+		}
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
 		//methods.add(featureName);
 	}
 
-	public void setAutoload(boolean auto) {
+	public boolean setAutoload(boolean auto) {
 		if (shouldAutoLoad(featureProps) && auto) {
 			setLoadStrategy(LoadStrategy.GENOME);
 			this.setVisible();
+			return true;
 		} else if (!visible) {
 			setLoadStrategy(LoadStrategy.NO_LOAD);
 		}
+		return false;
 	}
 
 	public void setVisible() {

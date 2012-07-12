@@ -248,19 +248,9 @@ public final class BAM extends XAM {
 		init();
 		if (reader != null) {
 			final CloseableIterator<SAMRecord> iter = reader.query(seqs.get(seq), min, max, contained);
-			return new CloseableIterator<SeqSymmetry>() {
-				@Override 
-				public boolean hasNext() { return iter.hasNext(); }
-				
-				@Override // TODO: Skip unmapped read?
-				public SeqSymmetry next() { return convertSAMRecordToSymWithProps(iter.next(), seq, uri.toString()); }
-				
-				@Override 
-				public void remove() { iter.remove(); }
-				
-				@Override 
-				public void close() { iter.close(); }
-			};
+			if(iter != null){
+				return new SeqSymmetryIterator(seq, iter);
+			}
 		}
 		
 		return null;
@@ -431,5 +421,57 @@ public final class BAM extends XAM {
 	public List<? extends SeqSymmetry> parse(InputStream is, boolean annotate_seq)
 	throws Exception  {
 		throw new IllegalStateException(); // should not happen
+	}
+	
+	private class SeqSymmetryIterator implements CloseableIterator<SeqSymmetry> {
+		final BioSeq seq;
+		final CloseableIterator<SAMRecord> iter;
+		private SeqSymmetry next = null;
+		
+		SeqSymmetryIterator(BioSeq seq, CloseableIterator<SAMRecord> iter) {
+			super();
+			this.seq = seq;
+			this.iter = iter;
+			next = next();
+		}
+
+		@Override
+		public final boolean hasNext() {
+			return next != null;
+		}
+
+		@Override
+		public final SeqSymmetry next() {
+			SeqSymmetry sym = next;
+			next = null;
+			while(iter.hasNext() && next == null){
+				next = getNext();
+			}
+			return sym;
+		}
+
+		@Override
+		public final void remove() {
+			iter.remove();
+		}
+
+		@Override
+		public final void close() {
+			iter.close();
+		}
+
+		private SeqSymmetry getNext() {
+			try {
+				SAMRecord sr = iter.next();
+
+				if (skipUnmapped && sr.getReadUnmappedFlag()) {
+					return null;
+				}
+
+				return convertSAMRecordToSymWithProps(sr, seq, uri.toString());
+			} catch (SAMException ex) {
+				return null;
+			}
+		}
 	}
 }

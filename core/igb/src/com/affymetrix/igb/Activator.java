@@ -1,17 +1,5 @@
 package com.affymetrix.igb;
 
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
-import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
-import static com.affymetrix.igb.IGBConstants.USER_AGENT;
-
-import java.util.Arrays;
-import java.util.Locale;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
@@ -25,8 +13,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import static com.affymetrix.igb.IGBConstants.*;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -35,31 +23,20 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
-import com.affymetrix.igb.viewmode.BaiSemanticZoomGlyphFactory;
-import com.affymetrix.igb.viewmode.BarGraphGlyph;
-import com.affymetrix.igb.viewmode.DefaultSemanticZoomGlyphFactory;
-import com.affymetrix.igb.viewmode.DotGraphGlyph;
-import com.affymetrix.igb.viewmode.FillBarGraphGlyph;
-import com.affymetrix.igb.viewmode.GraphGlyphFactory;
-import com.affymetrix.igb.viewmode.HeatMapGraphGlyph;
-import com.affymetrix.igb.viewmode.LineGraphGlyph;
-import com.affymetrix.igb.viewmode.MinMaxAvgGraphGlyph;
-import com.affymetrix.igb.viewmode.MismatchGlyphFactory;
-import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
-import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
-import com.affymetrix.igb.viewmode.ScoredContainerGlyphFactory;
-import com.affymetrix.igb.viewmode.SequenceGlyphFactory;
-import com.affymetrix.igb.viewmode.StairStepGraphGlyph;
-import com.affymetrix.igb.viewmode.TbiSemanticZoomGlyphFactory;
-import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import java.util.logging.Level;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.*;
+import com.affymetrix.igb.window.service.IWindowService;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * OSGi Activator for igb bundle
@@ -68,6 +45,8 @@ public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
     private String commandLineBatchFileStr;
 
+	private static final Logger ourLogger = Logger.getLogger(Activator.class.getName());
+	
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
@@ -84,7 +63,7 @@ public class Activator implements BundleActivator {
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
 				return;
     		}
-    		
+
     		printDetails(args);
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
     		if (prefsMode != null) {
@@ -121,35 +100,40 @@ public class Activator implements BundleActivator {
 			if (CommonUtils.getInstance().isExit(bundleContext)) {
 	    		return;
 	    	}
-    		commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IGBService.SCRIPTFILETAG, args);
-    		// force loading of prefs if hasn't happened yet
-    		// usually since IGB.main() is called first, prefs will have already been loaded
-    		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance
-    		//   is created without call to main(), will force loading of prefs here...
+    		commandLineBatchFileStr = CommonUtils.getInstance().getArg(
+					"-" + IGBService.SCRIPTFILETAG, args);
+    		// Force loading of prefs if hasn't happened yet.
+    		// Usually, since IGB.main() is called first,
+			// prefs will have already been loaded via loadIGBPrefs() call in main().
+			// But if for some reason an IGB instance is created without call to main(),
+			// will force loading of prefs here...
     		PrefsLoader.loadIGBPrefs(args);
         }
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
 			"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-    	ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
+    	ServiceReference<IWindowService> windowServiceReference
+				= bundleContext.getServiceReference(IWindowService.class);
 
-        if (windowServiceReference != null)
-        {
+        if (windowServiceReference != null) {
         	run(windowServiceReference);
         }
-        else
-        {
-        	ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
+        else {
+        	ServiceTracker<IWindowService, Object> serviceTracker
+					= new ServiceTracker<IWindowService, Object>(
+					bundleContext, IWindowService.class, null) {
 				@Override
-        	    public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
+        	    public Object addingService(
+						ServiceReference<IWindowService> windowServiceReference) {
         	    	run(windowServiceReference);
         	        return super.addingService(windowServiceReference);
         	    }
         	};
         	serviceTracker.open();
         }
-		// redisplay FeatureTreeView when FileTypeHandler added / removed
-		ExtensionPointHandler<FileTypeHandler> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
+		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
+		ExtensionPointHandler<FileTypeHandler> extensionPoint
+				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
 		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
 			// note - the FileTypeHolder calls may happen before or after
 			// these, but the refreshTreeView() is a separate thread
@@ -277,55 +261,57 @@ public class Activator implements BundleActivator {
 		JFrame frm = Application.getSingleton().getFrame();
 		JPanel panel = (JPanel) frm.getContentPane();
 		Preferences p = PreferenceUtils.getKeystrokesNode();
+		ourLogger.setLevel(java.util.logging.Level.INFO); // temp
 		try {
 			for (String k : p.keys()) {
-				String v = p.get(k, "");
-				KeyStroke ks = KeyStroke.getKeyStroke(v);
-				if (null == ks) { // nothing we can do.
-					continue; // Skip this one.
+				String preferredKeyStroke = p.get(k, "");
+				if (preferredKeyStroke.equals("")) { // then this ain't our concern.
+					continue;
 				}
 				GenericActionHolder h = GenericActionHolder.getInstance();
 				GenericAction a = h.getGenericAction(k);
-				if (null == a) { // what can we do?
-					try {
-						Class<?> type = ClassLoader.getSystemClassLoader().loadClass(k);
-						Object o = type.newInstance();
-						a = (GenericAction) o;
-						System.out.println("IT WORKED? " + a);
+				if (null == a) { // A keystroke in the preferences has no known action.
+					String message = "key stroke \"" + k
+							+ "\" is not among our generic actions.";
+					ourLogger.config(message);
+					try { // to load the missing class.
+						ClassLoader l = this.getClass().getClassLoader();
+						Class<?> type = l.loadClass(k);
+						if (type.isAssignableFrom(GenericAction.class)) {
+							Class<? extends GenericAction> c = type.asSubclass(GenericAction.class);
+							// Now what?
+						}
+						continue;
 					}
 					catch (ClassNotFoundException cnfe) {
-						String message = "Class " + cnfe.getMessage() + " not found.";
-						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-								message);
-						message = "Keyboard shortcut " + v + " not set.";
-						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-								message);
+						message = "Class " + cnfe.getMessage() + " not found.";
+						ourLogger.config(message);
 						continue; // Skip this one.
 					}
-					catch (InstantiationException ie) {
-						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-								ie.getMessage());
-						continue; // Skip this one.
-					}
-					catch (IllegalAccessException iae) {
-						Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-								iae.getMessage());
-						continue; // Skip this one.
+					finally {
+						message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
+						ourLogger.config(message);
 					}
 				}
 				InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
 				ActionMap am = panel.getActionMap();
 				String actionIdentifier = a.getId();
+				KeyStroke ks = KeyStroke.getKeyStroke(preferredKeyStroke);
+				if (null == ks) { // nothing we can do.
+					String message = "Could not find preferred key stroke: "
+							+ preferredKeyStroke;
+					ourLogger.config(message);
+					continue; // Skip this one.
+				}
 				im.put(ks, actionIdentifier);
 				am.put(actionIdentifier, a);
 			}
 		}
 		catch (BackingStoreException bse) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-					bse.getMessage());
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-					"Some keyboard shortcuts may not be set.");
+			ourLogger.config(bse.getMessage());
+			ourLogger.config("Some keyboard shortcuts may not be set.");
 		}
+		ourLogger.setLevel(ourLogLevel);
 	}
 
 	/**

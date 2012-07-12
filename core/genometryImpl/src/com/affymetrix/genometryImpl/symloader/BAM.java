@@ -245,7 +245,7 @@ public final class BAM extends XAM {
 		return symList;
 	}
 
-	public CloseableIterator<SeqSymmetry> getIterator(final BioSeq seq, final int min, final int max, final boolean contained) throws Exception {
+	public SeqSymmetryIterator getIterator(final BioSeq seq, final int min, final int max, final boolean contained) throws Exception {
 		init();
 		if (reader != null) {
 			CloseableIterator<SAMRecord> iter = reader.query(seqs.get(seq), max - 1, max, contained);

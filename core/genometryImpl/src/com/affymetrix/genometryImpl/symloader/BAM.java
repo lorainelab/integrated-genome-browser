@@ -247,12 +247,16 @@ public final class BAM extends XAM {
 	public CloseableIterator<SeqSymmetry> getIterator(final BioSeq seq, final int min, final int max, final boolean contained) throws Exception {
 		init();
 		if (reader != null) {
-			final CloseableIterator<SAMRecord> iter = reader.query(seqs.get(seq), min, max, contained);
-			if(iter != null){
-				return new SeqSymmetryIterator(seq, iter);
+			CloseableIterator<SAMRecord> iter = reader.query(seqs.get(seq), max - 1, max, contained);
+			while (iter.hasNext()) { 
+				iter.next();
 			}
+			long endPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
+			iter = reader.query(seqs.get(seq), min, max, contained);
+			long startPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
+			return new SeqSymmetryIterator(seq, iter, startPosition, endPosition);
 		}
-		
+
 		return null;
 	}
 	
@@ -423,15 +427,17 @@ public final class BAM extends XAM {
 		throw new IllegalStateException(); // should not happen
 	}
 	
-	private class SeqSymmetryIterator implements CloseableIterator<SeqSymmetry> {
+	private class SeqSymmetryIterator implements CloseableIterator<SeqSymmetry>{
 		final BioSeq seq;
 		final CloseableIterator<SAMRecord> iter;
 		private SeqSymmetry next = null;
+		final ProgressUpdater progressUpdater;
 		
-		SeqSymmetryIterator(BioSeq seq, CloseableIterator<SAMRecord> iter) {
+		SeqSymmetryIterator(BioSeq seq, CloseableIterator<SAMRecord> iter, long startPosition, long endPosition) {
 			super();
 			this.seq = seq;
 			this.iter = iter;
+			progressUpdater = getProgressUpdater(startPosition, endPosition);
 			next = getNext();
 		}
 
@@ -475,6 +481,27 @@ public final class BAM extends XAM {
 				System.err.print("!!! Error:" +ex.getMessage());
 			}
 			return null;
+		}
+		
+		public double getProgress() {
+			return (progressUpdater.getPositionCalculator().getCurrentPosition() - 
+					progressUpdater.getStartPosition()) / (double) (progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
+		}
+
+		private ProgressUpdater getProgressUpdater(final long startPosition, final long endPosition) {
+			return new ProgressUpdater("BAM parse " + uri + " - " + seq, startPosition, endPosition,
+					new PositionCalculator() {
+						@Override
+						public long getCurrentPosition() {
+							long currentPosition = startPosition;
+							try {
+								currentPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
+							} catch (Exception x) {
+								// log error here
+							}
+							return currentPosition;
+						}
+					});
 		}
 	}
 }

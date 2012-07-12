@@ -122,7 +122,9 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 		if (spans == null) {
 			if (other.spans != null)
 				return false;
-		} else if (!(new CopyOnWriteArrayList<SeqSpan>(spans)).equals(new CopyOnWriteArrayList<SeqSpan>(other.spans)))
+		} else if(other.spans == null){
+			return false;
+		} else if(!(new CopyOnWriteArrayList<SeqSpan>(spans)).equals(new CopyOnWriteArrayList<SeqSpan>(other.spans)))
 			return false;
 		return true;
 	}

@@ -283,7 +283,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					return false;
 				}
 			}
-		} else if ((vFeature.getStyle() != null && vFeature.getStyle().isGraphTier())
+		} else if ((vFeature.getStyle() != null && (vFeature.getStyle().isGraphTier() || !vFeature.getStyle().getSeparable()))
 				&& (col == SEPARATE_COLUMN)) {
 			return false;
 		}

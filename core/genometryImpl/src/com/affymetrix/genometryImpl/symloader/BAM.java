@@ -244,6 +244,28 @@ public final class BAM extends XAM {
 		return symList;
 	}
 
+	public CloseableIterator<SeqSymmetry> getIterator(final BioSeq seq, final int min, final int max, final boolean contained) throws Exception {
+		init();
+		if (reader != null) {
+			final CloseableIterator<SAMRecord> iter = reader.query(seqs.get(seq), min, max, contained);
+			return new CloseableIterator<SeqSymmetry>() {
+				@Override 
+				public boolean hasNext() { return iter.hasNext(); }
+				
+				@Override // TODO: Skip unmapped read?
+				public SeqSymmetry next() { return convertSAMRecordToSymWithProps(iter.next(), seq, uri.toString()); }
+				
+				@Override 
+				public void remove() { iter.remove(); }
+				
+				@Override 
+				public void close() { iter.close(); }
+			};
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Write annotations from min-max on the given chromosome to stream.
 	 * @param seq -- chromosome

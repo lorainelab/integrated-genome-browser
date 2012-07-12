@@ -30,7 +30,7 @@
                             <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift DOWN"/>
                             <entry key="com.affymetrix.igb.action.CopyResiduesAction" value="ctrl C"/>
                             <entry key="com.affymetrix.igb.action.ToggleEdgeMatchingAction" value="ctrl M"/>
-                            <entry key="com.affymetrix.igb.action.UCSCViewAction" value="ctrl U"/>
+                            <entry key="com.affymetrix.igb.external.UCSCViewAction" value="ctrl U"/>
                             <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>
                             <entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction" value="ctrl B"/>
                             <entry key="com.affymetrix.igb.action.RefreshDataAction" value="ctrl R"/>

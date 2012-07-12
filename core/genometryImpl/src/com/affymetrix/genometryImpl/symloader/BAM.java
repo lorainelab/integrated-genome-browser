@@ -432,7 +432,7 @@ public final class BAM extends XAM {
 			super();
 			this.seq = seq;
 			this.iter = iter;
-			next = next();
+			next = getNext();
 		}
 
 		@Override
@@ -443,7 +443,7 @@ public final class BAM extends XAM {
 		@Override
 		public final SeqSymmetry next() {
 			SeqSymmetry sym = next;
-			next = null;
+			next = getNext();
 			while(iter.hasNext() && next == null){
 				next = getNext();
 			}

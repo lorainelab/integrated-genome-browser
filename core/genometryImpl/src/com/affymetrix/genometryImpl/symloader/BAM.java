@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -251,6 +252,7 @@ public final class BAM extends XAM {
 			while (iter.hasNext()) { 
 				iter.next();
 			}
+			iter.close();
 			long endPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
 			iter = reader.query(seqs.get(seq), min, max, contained);
 			long startPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
@@ -427,7 +429,7 @@ public final class BAM extends XAM {
 		throw new IllegalStateException(); // should not happen
 	}
 	
-	private class SeqSymmetryIterator implements CloseableIterator<SeqSymmetry>{
+	public class SeqSymmetryIterator implements CloseableIterator<SeqSymmetry>{
 		final BioSeq seq;
 		final CloseableIterator<SAMRecord> iter;
 		private SeqSymmetry next = null;
@@ -477,7 +479,9 @@ public final class BAM extends XAM {
 				return convertSAMRecordToSymWithProps(sr, seq, uri.toString());
 			} catch (SAMException ex) {
 				System.err.print("!!! SAM Record Error:" +ex.getMessage());
-			} catch (Exception ex){
+			} catch (NoSuchElementException ex){
+				//FIXME: This exception occurs at the end of query
+			}catch (Exception ex){
 				System.err.print("!!! Error:" +ex.getMessage());
 			}
 			return null;

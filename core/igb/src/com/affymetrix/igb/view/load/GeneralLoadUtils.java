@@ -53,6 +53,7 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
@@ -411,7 +412,11 @@ public final class GeneralLoadUtils {
 			}
 		}
 		if (needToDisplay) {
-			gviewer.updatePanel(true, false);
+			ThreadUtils.runOnEventQueue(new Runnable() {
+				public void run() {
+					gviewer.getSeqMap().updateWidget();
+				}
+			});
 		}
 	}
 

@@ -79,6 +79,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private int colorIntervals = 255;
 	public boolean customise = false;
 	private int summaryThreshold;
+	private boolean separable = true;
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
@@ -115,7 +116,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		return style;
 	}
-
+	
 	public void restoreToDefault() {
 		TrackStyle template = getDefaultInstance();
 
@@ -1202,6 +1203,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		customizable = b;
 	}
 
+	public boolean getSeparable(){
+		return separable;
+	}
+	
+	public void setSeparable(boolean b){
+		separable = b;
+	}
+	
 	@Override
 	public String toString() {
 		String s = "AnnotStyle: (" + Integer.toHexString(this.hashCode()) + ")"

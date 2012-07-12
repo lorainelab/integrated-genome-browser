@@ -107,6 +107,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	@Override
 	public boolean getSeparate() { return this.separate; }
 
+	boolean separable = true;
+	@Override
+	public void setSeparable(boolean b) { this.separable = b;}
+	@Override
+	public boolean getSeparable(){ return this.separable; }
+	
 	String labelField = "id";
 	@Override
 	public void setLabelField(String s) { this.labelField = s; }

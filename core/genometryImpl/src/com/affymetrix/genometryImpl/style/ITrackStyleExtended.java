@@ -35,6 +35,10 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setSeparate(boolean b);
 	boolean getSeparate();
 
+	/** Controls whether strands can be separated */
+	void setSeparable(boolean b);
+	boolean getSeparable();
+	
 	/** Determines which data field in the symmetries will be used to pick the labels. */
 	void setLabelField(String s);
 	String getLabelField();

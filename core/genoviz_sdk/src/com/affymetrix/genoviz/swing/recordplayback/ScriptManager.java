@@ -21,6 +21,7 @@ import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import javax.script.ScriptException;
 
 public class ScriptManager {
 	public final static String SCRIPTING = "scripting";
@@ -111,10 +112,9 @@ public class ScriptManager {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "igb script engine is not loaded");
 				return;
 			}
-			Reader reader = new StringReader(scriptText + '\n');
-			engine.eval(reader);
+			engine.eval(scriptText);
 		}
-		catch (Exception ex) {
+		catch (ScriptException ex) {
 			ex.printStackTrace();
 		}
 	}

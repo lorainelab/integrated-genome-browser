@@ -1,25 +1,4 @@
-/*
- * http://today.java.net/pub/a/today/2006/09/21/making-scripting-languages-jsr-223-aware.html
- */
-
 package com.gene.igbscript;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
-import javax.script.SimpleScriptContext;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -29,54 +8,70 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.osgi.service.IGBService;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.script.*;
 
 /**
- * java ScriptEngine to run scripts written in IGB scripting language
+ * Java ScriptEngine to run scripts written in the IGB scripting language.
+ * @see http://today.java.net/pub/a/today/2006/09/21/making-scripting-languages-jsr-223-aware.html
  */
 public class IGBScriptEngine implements ScriptEngine {
-    
-    private static final String __ENGINE_VERSION__ = "V0.01a";
-    private static final String IGB_NAME = "IGBLanguage";
-    private static final String IGB_SHORT_NAME = "IGBLanguage";
-    private static final String STR_DUMMYLANGUAGE = "igb language";
     
     private final ScriptEngineFactory igbFactory;
 
 	private static String splitter = "\\s";
 	private final IGBService igbService;
+	private static final Logger LOG
+			= Logger.getLogger(IGBScriptEngine.class.getPackage().getName());
+	static {
+//		LOG.setLevel(Level.FINER); // FINER or FINEST for debugging.
+		LOG.addHandler(new ConsoleHandler());
+	}
 
     private ScriptContext defaultContext;
     
     public IGBScriptEngine(IGBScriptEngineFactory factory, IGBService igbService) {
     	super();
     	this.igbService = igbService;
-    	igbFactory = factory;
-        setContext(new SimpleScriptContext());
-        // set special values
-        put(LANGUAGE_VERSION, "???");
-        put(LANGUAGE, STR_DUMMYLANGUAGE);
-        put(ENGINE, IGB_NAME);
-        put(ENGINE_VERSION, __ENGINE_VERSION__);
-        put(ARGV, ""); // TO DO: set correct value
-        put(FILENAME, ""); // TO DO: set correct value
-        put(NAME, IGB_SHORT_NAME);
+    	this.igbFactory = factory;
+		SimpleScriptContext c = new SimpleScriptContext();
+		Bindings b = c.getBindings(ScriptContext.ENGINE_SCOPE);
+        b.put(ENGINE, "IGB Scripting Language");
+        b.put(ENGINE_VERSION, "0.2");
+        b.put(LANGUAGE, "IGBScript");
+        b.put(LANGUAGE_VERSION, "1.0");
+        b.put(ARGV, ""); // TO DO: set correct value
+        b.put(FILENAME, ""); // TO DO: set correct value
+        b.put(NAME, "IGBScript");
         /*
          * I am not sure if this is correct; we need to check if
          * the name really is THREADING. I have no idea why there is
          * no constant as for the other keys
          */
-        put("THREADING", null);
+        b.put("THREADING", null);
+		this.defaultContext = c;
     }
     
+	@Override
     public Object eval(String script) throws ScriptException {
         return eval(script, getContext());
     }
     
+	@Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
     	doActions(script);
         return null;
     }
     
+	@Override
     public Object eval(String script, Bindings bindings) throws ScriptException {
         Bindings current = getContext().getBindings(ScriptContext.ENGINE_SCOPE);
         getContext().setBindings(bindings, ScriptContext.ENGINE_SCOPE);
@@ -85,55 +80,63 @@ public class IGBScriptEngine implements ScriptEngine {
         return result;
     }
     
+	@Override
     public Object eval(Reader reader) throws ScriptException {
         return eval(getScriptFromReader(reader));
     }
     
+	@Override
     public Object eval(Reader reader, ScriptContext scriptContext) throws ScriptException {
         return eval(getScriptFromReader(reader), scriptContext);
     }
     
+	@Override
     public Object eval(Reader reader, Bindings bindings) throws ScriptException {
         return eval(getScriptFromReader(reader), bindings);
     }
     
+	@Override
     public void put(String key, Object value) {
         getBindings(ScriptContext.ENGINE_SCOPE).put(key, value);
     }
     
+	@Override
     public Object get(String key) {
         return getBindings(ScriptContext.ENGINE_SCOPE).get(key);
     }
     
+	@Override
     public Bindings getBindings(int scope) {
         return getContext().getBindings(scope);
     }
     
+	@Override
     public void setBindings(Bindings bindings, int scope) {
         getContext().setBindings(bindings, scope);
     }
     
+	@Override
     public Bindings createBindings() {
         return new SimpleBindings();
     }
     
+	@Override
     public ScriptContext getContext() {
         return defaultContext;
     }
     
+	@Override
     public void setContext(ScriptContext context) {
         defaultContext = context;
     }
     
+	@Override
     public ScriptEngineFactory getFactory() {
         return igbFactory;
     }
-    
-    /*
-     * private methods
-     */
-    
-    private static String getScriptFromReader(Reader reader) {
+
+
+	private static String getScriptFromReader(Reader reader) {
         try {
             StringWriter script = new StringWriter();
             int data;
@@ -151,34 +154,34 @@ public class IGBScriptEngine implements ScriptEngine {
 
 	/**
 	 * Read and execute the actions from the stream.
-	 *
-	 * @param bis
 	 */
 	private void doActions(String scriptString) {
 		try {
 			String[] lines = scriptString.split("\n");
 			for (String line : lines) {
-				//Ignore comments.
+				// Ignore comments and blank lines.
 				if (line.startsWith("#") || line.trim().length() == 0) {
 					continue;
 				}
 
 				try {
 					igbService.addNotLockedUpMsg("Executing script line: " + line);
-					Logger.getLogger(this.getClass().getName()).log(
-							Level.INFO, "line: {0}", line);
 					doSingleAction(line);
-					Thread.sleep(1000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
+					// User actions don't happen instantaneously.
+					// So, give a short sleep time between batch actions.
+					Thread.sleep(1000);
 				} finally {
 					igbService.removeNotLockedUpMsg("Executing script line: " + line);
 				}
 			}
 		} catch (Exception ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+			LOG.logp(Level.SEVERE, this.getClass().getName(), "doActions", "", ex);
 		}
 	}
 
 	public void doSingleAction(String line) {
+		LOG.logp(Level.INFO, this.getClass().getName(), "doSingleAction",
+				"line: {0}", line);
 		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
 		if (action.equalsIgnoreCase("genome") && fields.length >= 2) {
@@ -199,7 +202,8 @@ public class IGBScriptEngine implements ScriptEngine {
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException ex) {
-						Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+						LOG.logp(Level.SEVERE, this.getClass().getName(),
+								"doSingleAction", "waiting", ex);
 					}
 				}
 				loadFile(loadFiles[i]);
@@ -211,11 +215,13 @@ public class IGBScriptEngine implements ScriptEngine {
 				loadData(fields[1], join(fields, 2));
 				return;
 			}
+			return;
 		}
 		if (action.equalsIgnoreCase("loadmode")) {
 			if (fields.length >= 2) {
 				loadMode(fields[1], join(fields, 2));
 			}
+			return;
 		}
 		if (action.equalsIgnoreCase("print")) {
 			if (fields.length == 1) {
@@ -226,32 +232,40 @@ public class IGBScriptEngine implements ScriptEngine {
 				}
 				return;
 			}
+			return;
 		}
 		if (action.equalsIgnoreCase("refresh")) {
 			igbService.loadVisibleFeatures();
+			return;
 		}
 		if (action.equalsIgnoreCase("select") && fields.length >= 2) {
 			igbService.performSelection(join(fields, 1));
+			return;
 		}
 		if (action.equalsIgnoreCase("selectfeature") && fields.length >= 2) {
 			igbService.selectFeatureAndCenterZoomStripe(join(fields, 1));
+			return;
 		}
 		if (action.equalsIgnoreCase("setZoomStripePosition") && fields.length >= 2) {
 			double position = Double.parseDouble(join(fields, 1));
 			igbService.getSeqMapView().setZoomSpotX(position);
 			igbService.getSeqMapView().setZoomSpotY(0);
+			return;
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
 				int sleepTime = Integer.parseInt(fields[1]);
 				Thread.sleep(sleepTime);
 			} catch (Exception ex) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+				LOG.logp(Level.SEVERE, this.getClass().getName(), "doActions", "", ex);
 			}
+			return;
 		}
 		if (action.startsWith("homescreen")) {
 			igbService.setHome();
+			return;
 		}
+		LOG.log(Level.WARNING, "Unrecognized or invalid command: {0}", action);
 	}
 
 	private void goToGenome(String genomeVersion) {
@@ -262,13 +276,14 @@ public class IGBScriptEngine implements ScriptEngine {
 		for (int i = 0; i < 100; i++) {
 			// sleep until versions are initialized
 			for (GenericVersion version : group.getEnabledVersions()) {
-				if (version.isInitialized() && group == GenometryModel.getGenometryModel().getSelectedSeqGroup()) {
+				if (version.isInitialized()
+						&& group == GenometryModel.getGenometryModel().getSelectedSeqGroup()) {
 					continue;
 				}
 				try {
 					Thread.sleep(300); // not finished initializing versions
 				} catch (InterruptedException ex) {
-					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+					LOG.logp(Level.SEVERE, this.getClass().getName(), "goToGenome", "", ex);
 				}
 			}
 		}
@@ -280,7 +295,9 @@ public class IGBScriptEngine implements ScriptEngine {
 
 	private void loadData(String serverURIorName, String feature_url) {
 		GenericServer server = igbService.loadServer(serverURIorName);
-		GenericFeature feature = igbService.getFeature(GenometryModel.getGenometryModel().getSelectedSeqGroup(), server, feature_url);
+		GenericFeature feature = igbService.getFeature(
+				GenometryModel.getGenometryModel().getSelectedSeqGroup(),
+				server, feature_url);
 
 		if (feature != null) {
 			feature.setVisible();
@@ -297,7 +314,7 @@ public class IGBScriptEngine implements ScriptEngine {
 			try {
 				uri = new URI(fileName);
 			} catch (URISyntaxException ex) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+				LOG.logp(Level.SEVERE, this.getClass().getName(), "loadFile", "", ex);
 				return;
 			}
 		} else {
@@ -309,7 +326,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
 	private void loadMode(String loadMode, String featureURIStr) {
 
-		URI featureURI = null;
+		URI featureURI;
 		File featureFile = new File(featureURIStr.trim());
 		if (featureFile.exists()) {
 			featureURI = featureFile.toURI();
@@ -319,7 +336,8 @@ public class IGBScriptEngine implements ScriptEngine {
 		LoadStrategy s = LoadStrategy.NO_LOAD;
 		if (loadMode.equalsIgnoreCase("no_load")) {
 			s = LoadStrategy.NO_LOAD;
-		} else if (loadMode.equalsIgnoreCase("region_in_view") || loadMode.equalsIgnoreCase("visible")) {
+		} else if (loadMode.equalsIgnoreCase("region_in_view")
+				|| loadMode.equalsIgnoreCase("visible")) {
 			s = LoadStrategy.VISIBLE;
 //		} else if (loadMode.equalsIgnoreCase("chromosome")) {
 //			s = LoadStrategy.CHROMOSOME;
@@ -348,8 +366,7 @@ public class IGBScriptEngine implements ScriptEngine {
 		if (feature != null) {
 			feature.setPreferredLoadStrategy(s);
 		} else {
-			Logger.getLogger(this.getClass().getName()).log(
-					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);
+			LOG.log(Level.SEVERE, "Could not find feature: {0}", featureURIStr);
 		}
 	}
 
@@ -367,10 +384,6 @@ public class IGBScriptEngine implements ScriptEngine {
 
 	/**
 	 * Join fields from startField to end of fields.
-	 *
-	 * @param fields
-	 * @param startField
-	 * @return
 	 */
 	private String join(String[] fields, int startField) {
 		StringBuilder buffer = new StringBuilder("");

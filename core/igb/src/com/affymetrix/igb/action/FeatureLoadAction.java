@@ -47,12 +47,13 @@ public class FeatureLoadAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		Object source = (e == null) ? null : e.getSource();
 		if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
 			String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
 			FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
 			if (fth == null) {
 				ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
-				GenometryModel.getGenometryModel().setFeatureLoaded(e.getSource(), feature, false);
+				GenometryModel.getGenometryModel().setFeatureLoaded(source, feature, false);
 				return;
 			}
 		}
@@ -62,7 +63,7 @@ public class FeatureLoadAction extends GenericAction {
 				&& !isURLReachable(feature.getURI())) {
 			message = "The feature " + feature.getURI() + " is not reachable.";
 			ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
-			GenometryModel.getGenometryModel().setFeatureLoaded(e.getSource(), feature, false);
+			GenometryModel.getGenometryModel().setFeatureLoaded(source, feature, false);
 			return;
 		}
 
@@ -70,7 +71,7 @@ public class FeatureLoadAction extends GenericAction {
 		if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
 			message = "The feature " + feature.getURI() + " has already been added.";
 			ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
-			GenometryModel.getGenometryModel().setFeatureLoaded(e.getSource(), feature, false);
+			GenometryModel.getGenometryModel().setFeatureLoaded(source, feature, false);
 		} else {
 			GeneralLoadView.getLoadView().addFeature(feature);
 		}

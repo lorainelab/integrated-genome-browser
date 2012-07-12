@@ -70,6 +70,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.action.FeatureLoadAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -397,11 +398,20 @@ public final class GeneralLoadUtils {
 			}
 			return;
 		}
-
+		boolean needToDisplay = false; 
 		if (gVersion.gServer.serverType == null) {
 			System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
 		} else {
 			gVersion.gServer.serverType.discoverFeatures(gVersion, autoload);
+			for (GenericFeature feature : gVersion.getFeatures()) {
+				if (!feature.isVisible() && feature.featureProps != null && "select".equalsIgnoreCase(feature.featureProps.get("load_hint"))) {
+					new FeatureLoadAction(feature).actionPerformed(null);
+					needToDisplay = true;
+				}
+			}
+		}
+		if (needToDisplay) {
+			gviewer.updatePanel(true, false);
 		}
 	}
 

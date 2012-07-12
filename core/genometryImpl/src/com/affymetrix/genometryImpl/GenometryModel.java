@@ -1,11 +1,14 @@
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.event.FeatureLoadEvent;
+import com.affymetrix.genometryImpl.event.FeatureLoadListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
@@ -43,6 +46,7 @@ public final class GenometryModel {
 	private final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
 	private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
 	private final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
+	private final Set<FeatureLoadListener> feature_load_listeners = new CopyOnWriteArraySet<FeatureLoadListener>();
 
 	private AnnotatedSeqGroup selected_group = null;
 	private BioSeq selected_seq = null;
@@ -65,6 +69,7 @@ public final class GenometryModel {
 		this.seq_selection_listeners.clear();
 		group_selection_listeners.clear();
 		sym_selection_listeners.clear();
+		feature_load_listeners.clear();
 
 		selected_group = null;
 		selected_seq = null;
@@ -224,6 +229,25 @@ public final class GenometryModel {
 		SymSelectionEvent sevt = new SymSelectionEvent(src, all_syms, graph_syms);
 		for (SymSelectionListener listener : sym_selection_listeners) {
 			listener.symSelectionChanged(sevt);
+		}
+	}
+
+	public void setFeatureLoaded(Object src, GenericFeature feature, boolean loaded) {
+		fireFeatureLoadEvent(src, feature, loaded);
+	}
+
+	public void addFeatureLoadListener(FeatureLoadListener listener) {
+		feature_load_listeners.add(listener);
+	}
+
+	public void removeFeatureLoadListener(FeatureLoadListener listener) {
+		feature_load_listeners.remove(listener);
+	}
+	
+	private void fireFeatureLoadEvent(Object src, GenericFeature feature, boolean loaded) {
+		FeatureLoadEvent fevt = new FeatureLoadEvent(src == null ? this : src, feature, loaded);
+		for (FeatureLoadListener listener : feature_load_listeners) {
+			listener.featureLoaded(fevt);
 		}
 	}
 

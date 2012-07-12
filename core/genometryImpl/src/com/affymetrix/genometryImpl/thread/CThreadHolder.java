@@ -161,11 +161,11 @@ public class CThreadHolder implements WaitHelperI {
 		try {
 			if (DEBUG) System.out.println("))))) waitForAll await() Thread = " + Thread.currentThread());
 			threadLatch.await();
-			threadLatch = null; // !!! this means that that waitForAll() is not multithreaded
 			if (DEBUG) System.out.println("))))) waitForAll await() returned, Thread = " + Thread.currentThread());
 		} catch (InterruptedException x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Script getWaitHelper().run() interrupted", x);
 		}
+		threadLatch = null; // !!! this means that that waitForAll() is not multithreaded
 		if (DEBUG) System.out.println("))))) waitForAll returned, Thread = " + Thread.currentThread());
 		return Boolean.TRUE;
 	}

@@ -136,7 +136,13 @@ public abstract class XAM extends SymLoader {
 	 * @return SimpleSymWithProps
 	 */
 	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth) {
-		SimpleSeqSpan span = null;
+		SymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, meth, true, false);
+		addAllSAMRecordProperties(sym, sr);
+		return sym;
+	}
+	
+	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth, boolean includeResidues, boolean includeNH){
+		SimpleSeqSpan span;
 		int start = sr.getAlignmentStart() - 1; // convert to interbase
 		int end = sr.getAlignmentEnd();
 		if (!sr.getReadNegativeStrandFlag()) {
@@ -171,10 +177,18 @@ public abstract class XAM extends SymLoader {
 			blockMaxs[0] = span.getEnd();
 		}
 
-		BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
-				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar(), sr.getReadString());
-		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
+		SymWithProps sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
+				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null);
 		sym.setProperty("id", sr.getReadName());
+		sym.setProperty("method", meth);
+		if(includeNH){
+			sym.setProperty("NH", sr.getStringAttribute("NH"));
+		}
+		return sym;
+	}
+
+	private static void addAllSAMRecordProperties(SymWithProps sym, SAMRecord sr){
+		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);
 		}
@@ -190,13 +204,9 @@ public abstract class XAM extends SymLoader {
 //			sym.setProperty("SEQ", SEQ);
 //		}
 		
-		sym.setProperty("method", meth);
-
 		getFileHeaderProperties(sr.getHeader(), sym);
-
-		return sym;
 	}
-
+		
 	private static List<SimpleSymWithProps> getChildren(BioSeq seq, Cigar cigar, boolean isNegative, List<SimpleSymWithProps> insertChilds) {
 		List<SimpleSymWithProps> results = new ArrayList<SimpleSymWithProps>();
 		if (cigar == null || cigar.numCigarElements() == 0) {

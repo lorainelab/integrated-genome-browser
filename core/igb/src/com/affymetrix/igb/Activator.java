@@ -29,6 +29,7 @@ import com.affymetrix.igb.viewmode.*;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -311,7 +312,8 @@ public class Activator implements BundleActivator {
 			ourLogger.config(bse.getMessage());
 			ourLogger.config("Some keyboard shortcuts may not be set.");
 		}
-		ourLogger.setLevel(ourLogLevel);
+//		ourLogger.setLevel(ourLogLevel);
+		ourLogger.setLevel(Level.INFO); // to get it to compile
 	}
 
 	/**

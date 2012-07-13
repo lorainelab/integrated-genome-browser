@@ -7,10 +7,14 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 import javax.swing.JMenuItem;
 import org.osgi.framework.BundleActivator;
@@ -22,6 +26,8 @@ public class Activator implements BundleActivator {
 
 	private BundleContext bundleContext;
 	private static final String DEFAULT_PREFS_TUTORIAL_RESOURCE = "/tutorial_default_prefs.xml";
+	private static final Logger ourLogger =
+			Logger.getLogger(Activator.class.getPackage().getName());
 
 	private void handleWindowService(JRPMenu help_menu, ServiceReference<IWindowService> windowServiceReference) {
 		loadDefaultTutorialPrefs();
@@ -50,16 +56,18 @@ public class Activator implements BundleActivator {
 				}
 				help_menu.add(tutorialMenu);
 			} catch (FileNotFoundException fnfe) {
-				System.out.println("Activator.handleWindowService: " + fnfe);
-				System.out.println("          continuing...");
+				ourLogger.log(Level.WARNING,
+						"Could not find file {0}.\n          coninuing...",
+						fnfe.getMessage());
 			} catch (java.net.ConnectException ce) {
-				System.out.println("Activator.handleWindowService: " + ce);
-				System.out.println("          continuing...");
+				ourLogger.log(Level.WARNING,
+						"Could not connect: {0}.\n          coninuing...",
+						ce.getMessage());
 			}
 		} catch (Exception ex) {
-			System.out.println(this.getClass().getName() + " - Exception in handleWindowService() -> " + ex.getMessage());
-			ex.printStackTrace(System.out);
-			System.out.println("          continuing...");
+			ourLogger.logp(Level.SEVERE, this.getClass().getName(),
+					"handleWindowService", "?", ex);
+			ourLogger.severe("          continuing...");
 		}
 	}
 
@@ -83,8 +91,9 @@ public class Activator implements BundleActivator {
 				serviceTracker.open();
 			}
 		} catch (Exception ex) {
-			System.out.println(this.getClass().getName() + " - Exception in handleIGBService() -> " + ex.getMessage());
-			ex.printStackTrace(System.out);
+			ourLogger.logp(Level.SEVERE, this.getClass().getName(),
+					"handleIGBService", "?", ex);
+			ourLogger.severe("          continuing...");
 		}
 	}
 
@@ -121,33 +130,24 @@ public class Activator implements BundleActivator {
 		VerticalStretchZoomAction.getAction();
 	}
 	
+	/**
+	 * Load default prefs from jar (with Preferences API).
+	 * This will be the standard method soon.
+	 */
 	private void loadDefaultTutorialPrefs() {
-//		// Return if there are already Preferences defined.
-//		// Since we define keystroke shortcuts, this is a reasonable test.
-//		try {
-//			if ((getTopNode()).nodeExists("tutorials")) {
-//				return;
-//			}
-//		} catch (BackingStoreException ex) {
-//		}
 
 		InputStream default_prefs_stream = null;
-		/**
-		 * load default prefs from jar (with Preferences API). This will be the
-		 * standard method soon.
-		 */
 		try {
+			ourLogger.log(Level.INFO, "loading default tutorial preferences from: {0}",
+					DEFAULT_PREFS_TUTORIAL_RESOURCE);
 			default_prefs_stream = Activator.class.getResourceAsStream(DEFAULT_PREFS_TUTORIAL_RESOURCE);
-			System.out.println("loading default tutorial preferences from: "
-					+ DEFAULT_PREFS_TUTORIAL_RESOURCE);
 			Preferences.importPreferences(default_prefs_stream);
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
-		} catch (Exception ex) {
-			System.out.println("Problem parsing prefs from: "
-					+ DEFAULT_PREFS_TUTORIAL_RESOURCE
-					+ ": " + ex);
-			ex.printStackTrace();
-			System.out.println("          continuing...");
+		} catch (InvalidPreferencesFormatException ex) {
+			ourLogger.log(Level.SEVERE, DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
+		} catch (IOException ex) {
+			ourLogger.log(Level.SEVERE,	DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
+			ourLogger.log(Level.INFO, "          continuing...");
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}

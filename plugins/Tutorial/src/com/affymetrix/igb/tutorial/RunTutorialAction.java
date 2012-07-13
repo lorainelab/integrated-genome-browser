@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Action;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class RunTutorialAction extends GenericAction {
@@ -17,6 +16,9 @@ public class RunTutorialAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final String TUTORIAL_EXT = "txt";
 	private static final String SESSION_EXT = "xml";
+	private static final Logger ourLogger =
+			Logger.getLogger(RunTutorialAction.class.getPackage().getName());
+
 	private final TutorialManager tutorialManager;
 	private String name;
 	private String uri;
@@ -51,7 +53,7 @@ public class RunTutorialAction extends GenericAction {
 			}
 			rdr.close();
 		} catch (Exception x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load tutorial " + uri, x);
+			ourLogger.log(Level.SEVERE,	"Unable to load tutorial.", x);
 			ErrorHandler.errorPanel("Tutorial Error", "Unable to load tutorial " + uri, Level.SEVERE);
 		}
 	}
@@ -62,7 +64,7 @@ public class RunTutorialAction extends GenericAction {
 		try {
 			tutorial = mapper.readValue(reader, TutorialStep[].class);
 		} catch (Exception x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load tutorial " + uri, x);
+			ourLogger.log(Level.SEVERE,	"Unable to load tutorial.", x);
 			ErrorHandler.errorPanel("Tutorial Error", "Unable to load tutorial " + uri, Level.SEVERE);
 		}
 		return tutorial;

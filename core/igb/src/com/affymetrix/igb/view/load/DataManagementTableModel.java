@@ -232,6 +232,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (style == null || style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
 					return false;
 				}
+				if(style.isGraphTier() || !style.getSeparable()){
+					return false;
+				}
 				return style.getSeparate();
 			case DELETE_FEATURE_COLUMN:
 				return "";

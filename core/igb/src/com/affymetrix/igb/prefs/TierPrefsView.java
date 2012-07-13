@@ -290,6 +290,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	private void resetValueBySelectedRows() {
+	
+		setEnableByAxisOrGraphForRows(((TierPrefsTableModel) model).getStyles());
+		
 		displayNameTextField.setText("");
 		displayNameTextField.setEnabled(false);
 
@@ -357,6 +360,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				case COL_MAX_DEPTH:
 					object = checkDepth(style, temp);
 					if (object == null) {
+						object = "";
 						break;
 					}
 					break;
@@ -444,7 +448,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	private Boolean check2Tracks(TrackStyle style, TrackStyle temp) {
-		Boolean value = style.getSeparate();
+		Boolean value = (style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate();
 		if (value != temp.getSeparate()) {
 			return null;
 		}
@@ -501,8 +505,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		fgColorComboBox.setSelectedColor(style.getForeground());
 		trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
 		labelFieldComboBox.setSelectedItem(style.getLabelField());
-		maxDepthTextField.setText(String.valueOf(style.getMaxDepth()));
-		show2TracksCheckBox.setSelected(style.getSeparate());
+		maxDepthTextField.setText((style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || style.isGraphTier()) ? "" : String.valueOf(style.getMaxDepth()));
+		show2TracksCheckBox.setSelected((style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate());
 		collapsedCheckBox.setSelected(style.getCollapsed());
 
 		setSelectedByDirection(style.getDirectionName());
@@ -533,14 +537,18 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	private void setEnabledByAxisOrGraph(TrackStyle style) {
 		if (style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
-				|| style.isGraphTier()) {
-			if (!style.isGraphTier()) {
-				displayNameTextField.setEnabled(false);
+				|| (style.isGraphTier() || !style.getSeparable())) {
+			if(style.isGraphTier() || style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)){
 				maxDepthTextField.setEnabled(false);
+				applyToAllButton.setEnabled(false);
+				collapsedCheckBox.setEnabled(false);
+				if(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)){
+					displayNameTextField.setEnabled(false);
+				}
 			}
+			
 			viewModeCB.setEnabled(false);
 			labelFieldComboBox.setEnabled(false);
-			collapsedCheckBox.setEnabled(false);
 			colorCheckBox.setEnabled(false);
 			arrowCheckBox.setEnabled(false);
 			possitiveColorComboBox.setEnabled(false);
@@ -550,6 +558,14 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			resetViewModeCB(style);
 
 			resetLabelField(style);
+		}
+	}
+	
+	private void setEnableByAxisOrGraphForRows(List<TrackStyle> rows){
+
+		for (int i = 0; i < selectedRows.length; i++) {
+			TrackStyle style = rows.get(selectedRows[i]);
+			setEnabledByAxisOrGraph(style);
 		}
 	}
 

@@ -91,6 +91,9 @@ public abstract class SymLoader implements LineTrackerI {
 	 */
 	protected class ParseLinesProgressUpdater extends ProgressUpdater {
 		public ParseLinesProgressUpdater(String name) {
+			this(name, uri);
+		}
+		public ParseLinesProgressUpdater(String name, URI uri) {
 			this(name, 0, GeneralUtils.getUriLength(uri));
 		}
 		public ParseLinesProgressUpdater(String name, long startPosition, long endPosition) {

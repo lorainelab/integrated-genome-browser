@@ -28,7 +28,7 @@ public class ProgressUpdater {
 			ctw = CThreadHolder.getInstance().getCurrentCThreadWorker();
 		}
 		public void run() {
-			double progress = (double)(progressUpdater.getPositionCalculator().getCurrentPosition() - progressUpdater.getStartPosition()) / (double)(progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
+			double progress = progressUpdater.getProgress();
 			if (DEBUG) Logger.getLogger(this.getClass().getName()).log(Level.INFO, "))))) called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
 			ctw.setProgressAsPercent(progress);
 		}
@@ -54,6 +54,11 @@ public class ProgressUpdater {
 		return endPosition;
 	}
 
+	public double getProgress(){
+		return (double)(positionCalculator.getCurrentPosition() - getStartPosition()) / (double)(getEndPosition() - getStartPosition());
+	}
+	
+	//TODO: Remove this.
 	public PositionCalculator getPositionCalculator() {
 		return positionCalculator;
 	}

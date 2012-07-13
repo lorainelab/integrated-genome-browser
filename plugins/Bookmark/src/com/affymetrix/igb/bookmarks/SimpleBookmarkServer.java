@@ -15,18 +15,12 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.osgi.service.IGBService;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.SwingUtilities;
 
 /**
@@ -53,6 +47,8 @@ public final class SimpleBookmarkServer {
 	public static final String DEFAULT_SERVLET_URL = "http://localhost:"
       + default_server_port + "/" + SERVLET_NAME_OLD;
 	private static int server_port = NO_PORT;
+	private static final Logger ourLogger
+			= Logger.getLogger(SimpleBookmarkServer.class.getPackage().getName());
 
 	static {
 		try {
@@ -68,11 +64,12 @@ public final class SimpleBookmarkServer {
 				server_port = port;
 			}
 			else {
-				Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE, "Invalid port number " + port + ", must be between 0 and 65535");
+				ourLogger.log(Level.SEVERE,
+						"Invalid port number {0}, must be between 0 and 65535", port);
 			}
 		}
 		catch (NumberFormatException x) {
-			Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE, "Invalid number " + portString + " for server_port");
+			ourLogger.log(Level.SEVERE, "Invalid number {0} for server_port", portString);
 		}
 	}
 	
@@ -80,7 +77,7 @@ public final class SimpleBookmarkServer {
 		try {
 			while (true) {
 				Socket socket = server.accept();
-				Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.FINE, "Connection accepted {0}:{1}",
+				ourLogger.log(Level.FINE, "Connection accepted {0}:{1}",
 						new Object[]{socket.getInetAddress(), socket.getPort()});
 				BookmarkHttpRequestHandler request = new BookmarkHttpRequestHandler(igbService, socket);
 				Thread thread = new Thread(request);
@@ -104,17 +101,17 @@ public final class SimpleBookmarkServer {
 
 	public static void startServerSocket(final IGBService igbService, int startPort) {
 		try {
-			int server_port = findAvailablePort(startPort);
+			int serverPort = findAvailablePort(startPort);
 			
-			if (server_port == NO_PORT) {
-				Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE,
-						"Couldn't find an available port for IGB to listen to control requests on port " + startPort + "!\n"
-						+ "Turning off IGB's URL-based control features");
+			if (serverPort == NO_PORT) {
+				ourLogger.log(Level.SEVERE,
+						"Couldn't find an available port for IGB to listen to control requests on port {0}!\nTurning off IGB's URL-based control features", startPort);
 			}
 			else {
-				final ServerSocket serverSocket = new ServerSocket(server_port);
+				final ServerSocket serverSocket = new ServerSocket(serverPort);
 				Runnable r = new Runnable() {
 					
+					@Override
 					public void run() {
 						new SimpleBookmarkServer(igbService, serverSocket);
 					}
@@ -124,6 +121,7 @@ public final class SimpleBookmarkServer {
 		
 				SwingUtilities.invokeLater(new Runnable() {
 		
+					@Override
 					public void run() {
 						t.start();
 					}
@@ -131,25 +129,25 @@ public final class SimpleBookmarkServer {
 			}
 			
 		} catch (IOException ex) {
-			Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE, null, ex);
+			ourLogger.log(Level.SEVERE, "I/O Problem", ex);
 		}
 	}
 
 	/**
-	 * find an available port, starting with the default_server_point and
-	 * incrementing up from there...
-	 * @return found port
+	 * Find an available port.
+	 * Start with the default_server_point and incrementing up from there.
+	 * @return port found
 	 */
 	private static int findAvailablePort(int startPort) {
 		// 
 		int ports_tried = 0;
-		int server_port = startPort - 1;
+		int serverPort = startPort - 1;
 		boolean available_port_found = false;
 		while ((!available_port_found) && (ports_tried < ports_to_try)) {
-			server_port++;
+			serverPort++;
 			URL test_url;
 			try {
-				test_url = new URL("http://localhost:" + server_port
+				test_url = new URL("http://localhost:" + serverPort
 						+ "/" + SERVLET_NAME + "?ping=yes");
 			} catch (MalformedURLException mfe) {
 				return SimpleBookmarkServer.NO_PORT;
@@ -165,14 +163,14 @@ public final class SimpleBookmarkServer {
 				// and must try another one.
 				ports_tried++;
 			} catch (IOException ex) {
-				Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.INFO,
-						"Found available port for bookmark server: " + server_port);
+				ourLogger.log(Level.INFO,
+						"Found available port for bookmark server: {0}", serverPort);
 				available_port_found = true;
 			}
 		}
 
 		if (available_port_found) {
-			return server_port;
+			return serverPort;
 		} else {
 			return SimpleBookmarkServer.NO_PORT;
 		}

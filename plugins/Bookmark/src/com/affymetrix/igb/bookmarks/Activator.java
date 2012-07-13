@@ -1,16 +1,5 @@
 package com.affymetrix.igb.bookmarks;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -22,9 +11,20 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.window.service.WindowActivator;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 public class Activator extends WindowActivator implements BundleActivator {
 	private BookmarkActionManager bmark_action;
+	private static final Logger ourLogger
+		  = Logger.getLogger(Activator.class.getPackage().getName());
 
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
@@ -36,12 +36,12 @@ public class Activator extends WindowActivator implements BundleActivator {
         String[] args = CommonUtils.getInstance().getArgs(bundleContext);
 		String url = CommonUtils.getInstance().getArg("-href", args);
 		if (url != null && url.length() > 0) {
-			Logger.getLogger(Activator.class.getName()).log(Level.INFO,"Loading bookmark {0}",url);
+			ourLogger.log(Level.INFO, "Loading bookmark {0}", url);
 			new BookMarkCommandLine(igbService, url, true);
 		}else{
 			url = CommonUtils.getInstance().getArg("-home", args);
 			if (url != null && url.length() > 0) {
-				Logger.getLogger(Activator.class.getName()).log(Level.INFO,"Loading home {0}",url);
+				ourLogger.log(Level.INFO, "Loading home {0}", url);
 				new BookMarkCommandLine(igbService, url, false);
 			}
 		}

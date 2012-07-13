@@ -24,6 +24,8 @@ public final class BookmarkData {
 
 	private static BookmarkData singleton;
 	private static BookmarkList bookmarkList;
+	private static final Logger ourLogger
+		  = Logger.getLogger(BookmarkData.class.getPackage().getName());
 	private final BookmarkPropertyTableModel propertyModel;
 	private final BookmarkPropertyTableModel infoModel;
 	private final BookmarkPropertyTableModel datalistModel;
@@ -44,6 +46,7 @@ public final class BookmarkData {
 			 * Any values changed in property table will trigger to update info
 			 * or data list table
 			 */
+			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (bookmarkList != null) {
 					Bookmark bm = (Bookmark) bookmarkList.getUserObject();
@@ -64,7 +67,7 @@ public final class BookmarkData {
 					try {
 						url = new URL(str);
 					} catch (MalformedURLException ex) {
-						Logger.getLogger(BookmarkData.class.getName()).log(Level.SEVERE, null, ex);
+						ourLogger.log(Level.SEVERE, "Malformed URL", ex);
 					}
 					bm.setURL(url);
 

@@ -10,14 +10,17 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,13 +28,15 @@ class BookmarkHttpRequestHandler implements Runnable {
 
   private final Socket socket;
   private final IGBService igbService;
+  private static final Logger ourLogger
+		  = Logger.getLogger(BookmarkHttpRequestHandler.class.getPackage().getName());
 
   public BookmarkHttpRequestHandler(IGBService igbService, Socket socket) {
     this.socket = socket;
     this.igbService = igbService;
   }
 
-
+  @Override
   public void run() {
     try {
       processRequest();
@@ -89,16 +94,14 @@ class BookmarkHttpRequestHandler implements Runnable {
 	}
 
 	private void parseAndGoToBookmark(String command) throws NumberFormatException {
-		Logger.getLogger(BookmarkHttpRequestHandler.class.getName()).log(Level.FINE,
-				"Command = " + command);
+		ourLogger.log(Level.FINE, "Command = {0}", command);
 		// at this point, the command will look something like this:
 		// '/IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310'
 		//TODO: We could check to see that the command is "IGBControl" or "UnibrowControl",
 		// but since that is the only command we ever expect, we can just assume for now.
-		String params = null;
 		int index = command.indexOf('?');
 		if (index >= 0 && index < command.length()) {
-			params = command.substring(index + 1);
+			String params = command.substring(index + 1);
 			Map<String, String[]> paramMap = new HashMap<String, String[]>();
 			Bookmark.parseParametersFromQuery(paramMap, params, true);
 			BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap);

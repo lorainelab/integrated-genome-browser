@@ -12,28 +12,25 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import java.net.*;
-import java.io.*;
-import javax.swing.*;
-import java.net.URI;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.io.*;
+import java.net.URI;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,6 +42,9 @@ import org.xml.sax.SAXException;
 public final class UrlLoaderThread extends Thread {
 
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static final Logger ourLogger
+			= Logger.getLogger(UrlLoaderThread.class.getPackage().getName());
+
 	private final URL[] urls;
 	private final String[] tier_names;
 	private final IGBService igbService;
@@ -96,7 +96,7 @@ public final class UrlLoaderThread extends Thread {
 				URL url = urls[i];
 
 
-				String tier_name = null;
+				String tier_name;
 				if (tier_names != null) {
 					tier_name = tier_names[i];
 				} else {
@@ -107,7 +107,8 @@ public final class UrlLoaderThread extends Thread {
 					file_extension = file_extensions[i];
 				}
 
-				Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Attempting to load data from URL: {0}", url.toExternalForm());
+				ourLogger.log(Level.INFO, "Attempting to load data from URL: {0}",
+						url.toExternalForm());
 				try {
 					try {
 						parseDataFromURL(url, file_extension, tier_name);
@@ -139,6 +140,7 @@ public final class UrlLoaderThread extends Thread {
 	private void handleException(final Exception e) {
 		SwingUtilities.invokeLater(new Runnable() {
 
+			@Override
 			public void run() {
 				if (e instanceof UnknownHostException) {
 					igbService.setStatus("Unknown host: " + e.getMessage());
@@ -155,6 +157,7 @@ public final class UrlLoaderThread extends Thread {
 	private void updateViewer(final BioSeq seq) {
 		SwingUtilities.invokeLater(new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					igbService.getSeqMapView().setAnnotatedSeq(seq, true, true);
@@ -182,6 +185,7 @@ public final class UrlLoaderThread extends Thread {
 		// (potentially freezing the GUI)
 		SwingUtilities.invokeLater(new Runnable() {
 
+			@Override
 			public void run() {
 				start();
 			}
@@ -259,7 +263,7 @@ public final class UrlLoaderThread extends Thread {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
-			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Attempting to load data from file: {0}", url.toExternalForm());
+			ourLogger.log(Level.INFO, "Attempting to load data from file: {0}", url.toExternalForm());
 
 			// Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
 			// url.getPath() is OK for this purpose, url.getFile() is not because
@@ -270,8 +274,8 @@ public final class UrlLoaderThread extends Thread {
 				|| content_type.startsWith("content/unknown")
 				|| content_type.startsWith("application/zip")
 				|| content_type.startsWith("application/octet-stream")) {
-			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Attempting to load data from: {0}", url.toExternalForm());
-			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Using file extension: {0}", file_extension);
+			ourLogger.log(Level.INFO, "Attempting to load data from: {0}", url.toExternalForm());
+			ourLogger.log(Level.INFO, "Using file extension: {0}", file_extension);
 
 			String filename = url.getPath();
 			if (file_extension != null && !"".equals(file_extension.trim())) {
@@ -317,7 +321,7 @@ public final class UrlLoaderThread extends Thread {
 				DASFeatureParser das_parser = new DASFeatureParser();
 				das_parser.parse(bis, group);
 			} catch (XMLStreamException ex) {
-				Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.SEVERE, "Unable to parse DAS response", ex);
+				ourLogger.log(Level.SEVERE, "Unable to parse DAS response", ex);
 			} finally {
 				GeneralUtils.safeClose(bis);
 			}
@@ -350,7 +354,7 @@ public final class UrlLoaderThread extends Thread {
 			throw new IOException("Must select a genome before loading a file");
 		}
 
-		Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "loading file: {0}", stream_name);
+		ourLogger.log(Level.INFO, "loading file: {0}", stream_name);
 
 		Exception the_exception = null;
 		InputStream str = null;
@@ -403,7 +407,7 @@ public final class UrlLoaderThread extends Thread {
 		String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
 		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name);
 		if (fileTypeHandler == null) {
-			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.WARNING,
+			ourLogger.log(Level.WARNING,
 					"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", stream_name);
 		}
 		else {

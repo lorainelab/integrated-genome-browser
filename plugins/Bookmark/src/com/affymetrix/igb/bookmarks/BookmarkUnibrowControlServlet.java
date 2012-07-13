@@ -12,22 +12,16 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import java.net.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.*;
-
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -36,6 +30,14 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -57,6 +59,8 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
 public final class BookmarkUnibrowControlServlet {
 
 	private static final BookmarkUnibrowControlServlet instance = new BookmarkUnibrowControlServlet();
+	private static final Logger ourLogger
+			= Logger.getLogger(BookmarkUnibrowControlServlet.class.getPackage().getName());
 
 	private BookmarkUnibrowControlServlet() {
 		super();
@@ -223,6 +227,7 @@ public final class BookmarkUnibrowControlServlet {
 							if (feature != null && graph_urls.contains(feature.getURI().toString())) {
 								ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
+									@Override
 									public void run() {
 										BookmarkController.applyProperties(igbService, seq, parameters, feature);
 									}

@@ -1,16 +1,13 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import java.net.MalformedURLException;
-
-import javax.swing.SwingUtilities;
-
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-
 import com.affymetrix.igb.osgi.service.IGBService;
+import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -21,27 +18,28 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 	private final IGBService igbService;
 	private final String url;
 	private final boolean force;
+	private static final Logger ourLogger
+		  = Logger.getLogger(BookMarkCommandLine.class.getPackage().getName());
 
 	BookMarkCommandLine(IGBService igbService, String url, boolean force){
 		this.igbService = igbService;
 		this.url = url;
 		this.force = force;
-		// If all server are not initintialized then add listener else load bookmark.
-		if(!igbService.areAllServersInited()){
-			igbService.addServerInitListener(this);
-		}else{
+		if (igbService.areAllServersInited()) {
 			gotoBookmark();
+		}
+		else {
+			igbService.addServerInitListener(this);
 		}
 	}
 
+	@Override
 	public void genericServerInit(GenericServerInitEvent evt) {
 		boolean areAllServersInited = igbService.areAllServersInited();	// do this first to avoid race condition
-
-		if(!areAllServersInited)
+		if (!areAllServersInited) {
 			return;
-
+		}
 		igbService.removeServerInitListener(this);
-
 		gotoBookmark();
 	}
 
@@ -51,8 +49,9 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 		// If it is -home then do not force to switch unless no species is selected.
-		if(!force && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeq() != null){
-			Logger.getLogger(BookMarkCommandLine.class.getName()).log(Level.WARNING,"Previous speceis already loaded. Home {0} will be not loaded", url);
+		if(!force && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeq() != null) {
+			ourLogger.log(Level.WARNING,
+					"Previous species already loaded. Home {0} will be not loaded", url);
 			return;
 		}
 
@@ -61,13 +60,15 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 			if (bm.isUnibrowControl()) {
 				SwingUtilities.invokeLater(new Runnable() {
 
+					@Override
 					public void run() {
-						Logger.getLogger(BookMarkCommandLine.class.getName()).log(Level.INFO, "Loading bookmark: {0}", url);
+						ourLogger.log(Level.INFO, "Loading bookmark: {0}", url);
 						BookmarkController.viewBookmark(igbService, bm);
 					}
 				});
 			} else {
-				Logger.getLogger(BookMarkCommandLine.class.getName()).log(Level.SEVERE, "ERROR: URL given with -href argument is not a valid bookmark: \n{0}", url);
+				ourLogger.log(Level.SEVERE,
+						"Invalid bookmark given with -href argument: \n{0}", url);
 			}
 		} catch (MalformedURLException mue) {
 			mue.printStackTrace(System.err);

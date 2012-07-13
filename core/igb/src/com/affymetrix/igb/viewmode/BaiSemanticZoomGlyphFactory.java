@@ -17,6 +17,11 @@ public class BaiSemanticZoomGlyphFactory extends GzIndexedSemanticZoomGlyphFacto
 	}
 
 	@Override
+	public String getName() {
+		return BAI_ZOOM_DISPLAYER_EXTENSION + "_semantic_zoom";
+	}
+
+	@Override
 	public String getExtension() {
 		return BAI_ZOOM_DISPLAYER_EXTENSION;
 	}

@@ -43,11 +43,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	}
 	
 	@Override
-	public String getName() {
-		return getExtension() + "_semantic_zoom";
-	}
-
-	@Override
 	public String getIndexedFileName(String method, Direction direction) {
 		return method + "." + getExtension();
 	}

@@ -11,9 +11,16 @@ import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 public class TbiSemanticZoomGlyphFactory extends GzIndexedSemanticZoomGlyphFactory {
 	public static final String TBI_ZOOM_DISPLAYER_EXTENSION = "tbi";
+	private final FileTypeCategory category;
 
-	public TbiSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI heatMapGraphGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
+	public TbiSemanticZoomGlyphFactory(FileTypeCategory category, MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI heatMapGraphGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
 		super(defaultDetailGlyphFactory, heatMapGraphGlyphFactory, graphGlyphFactory);
+		this.category = category;
+	}
+
+	@Override
+	public String getName() {
+		return TBI_ZOOM_DISPLAYER_EXTENSION + "_semantic_zoom_" + category.toString().toLowerCase();
 	}
 
 	@Override
@@ -23,7 +30,7 @@ public class TbiSemanticZoomGlyphFactory extends GzIndexedSemanticZoomGlyphFacto
 
 	@Override
 	protected FileTypeCategory getFileTypeCategory() {
-		return FileTypeCategory.Annotation;
+		return category;
 	}
 
 	@Override

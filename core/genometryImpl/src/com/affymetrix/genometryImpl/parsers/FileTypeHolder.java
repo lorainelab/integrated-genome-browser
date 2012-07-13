@@ -42,6 +42,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.symloader.SymLoaderTabix;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.symloader.USeq;
+import com.affymetrix.genometryImpl.symloader.VCF;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
@@ -305,6 +306,29 @@ public class FileTypeHolder {
 				}
 			}
 		);
+		addFileTypeHandler(
+			new FileTypeHandler() {
+				String[] extensions = new String[]{"vcf"};
+				@Override
+				public String getName() { return "VCF"; }
+				@Override
+				public String[] getExtensions() { return extensions; }
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+					return SymLoaderTabix.getSymLoader(new VCF(uri, featureName, group));
+				}
+				@Override
+				public Parser getParser() { return null; }
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return null;
+				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Alignment;
+				}
+			}
+		);
 	}
 
 	private void addFileTypeHandler(final String name, final String[] extensions, final FileTypeCategory category, final Class<? extends Parser> parserClass, final Class<? extends SymLoader> symLoaderClass) {
@@ -498,7 +522,7 @@ public class FileTypeHolder {
 		return map;
 	}
 
-	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx"}));
+	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx", "vcf"}));
 	public List<String> getTabixFileTypes() {
 		return TABIX_FILE_TYPES;
 	}

@@ -405,7 +405,7 @@ public final class GeneralLoadUtils {
 		} else {
 			gVersion.gServer.serverType.discoverFeatures(gVersion, autoload);
 			for (GenericFeature feature : gVersion.getFeatures()) {
-				if (!feature.isVisible() && feature.featureProps != null && "select".equalsIgnoreCase(feature.featureProps.get("load_hint"))) {
+				if (!feature.isVisible() && feature.featureProps != null && "yes".equalsIgnoreCase(feature.featureProps.get("auto_select"))) {
 					new FeatureLoadAction(feature).actionPerformed(null);
 					needToDisplay = true;
 				}

@@ -9,6 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.jdom.input.SAXBuilder;
 import org.jdom.*;
 
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+
 /**
  * This class is specifically for parsing the annots.xml file used by IGB and
  * the DAS/2 server.
@@ -20,6 +22,7 @@ public abstract class AnnotsXmlParser {
 	static Element root;
 	static final String folder = "folder";
 	static final String file = "file";
+	static final String LEGACY_GENOME = "Whole Sequence";
 
 	/**
 	 * @param istr - stream of annots file
@@ -74,7 +77,10 @@ public abstract class AnnotsXmlParser {
 		String friendlyURL = e.getAttributeValue("url");
 		String serverURL = e.getAttributeValue("serverURL");
 		String load_hint = e.getAttributeValue("load_hint");
-		String load_strategy = e.getAttributeValue("load_strategy");
+		if (LEGACY_GENOME.equals(load_hint)) {
+			load_hint = LoadStrategy.GENOME.name();
+		}
+		String auto_select = e.getAttributeValue("auto_select");
 		String label_field = e.getAttributeValue("label_field");
 		String foreground = e.getAttributeValue("foreground");
 		String background = e.getAttributeValue("background");
@@ -89,7 +95,7 @@ public abstract class AnnotsXmlParser {
 		String view_mode = e.getAttributeValue("view_mode");
 		if (filename != null) {
 			AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc,
-					friendlyURL, serverURL, load_hint, load_strategy, label_field, foreground,
+					friendlyURL, serverURL, load_hint, auto_select, label_field, foreground,
 					background, max_depth, name_size, connected, collapsed,
 					show2tracks, direction_type, positive_strand_color,
 					negative_strand_color, view_mode);
@@ -119,7 +125,7 @@ public abstract class AnnotsXmlParser {
 		}
 
 		public AnnotMapElt(String fileName, String title, String description,
-				String URL, String serverURL, String load_hint, String load_strategy, String label_field,
+				String URL, String serverURL, String load_hint, String auto_select, String label_field,
 				String foreground, String background, String max_depth, String name_size,
 				String connected, String collapsed, String show2tracks, String direction_type,
 				String positive_strand_color, String negative_strand_color, String view_mode) {
@@ -140,8 +146,8 @@ public abstract class AnnotsXmlParser {
 				this.props.put("load_hint", load_hint);
 			}
 
-			if (load_strategy != null && load_strategy.trim().length() > 0) {
-				this.props.put("load_strategy", load_strategy);
+			if (auto_select != null && auto_select.trim().length() > 0) {
+				this.props.put("auto_select", auto_select);
 			}
 
 			if (label_field != null && label_field.trim().length() > 0) {

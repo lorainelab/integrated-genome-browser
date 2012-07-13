@@ -81,12 +81,12 @@ public final class GenericFeature {
 		}
 		this.setFriendlyURL();
 		boolean autoloadSet = this.setAutoload(autoload);
-		if (!autoloadSet && featureProps != null && featureProps.get("load_strategy") != null) {
+		if (!autoloadSet && featureProps != null && featureProps.get("load_hint") != null) {
 			try {
-				setLoadStrategy(LoadStrategy.valueOf(featureProps.get("load_strategy")));
+				setLoadStrategy(LoadStrategy.valueOf(featureProps.get("load_hint")));
 			}
 			catch (IllegalArgumentException x) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, featureProps.get("load_strategy") + " for " + featureName + " is not a valid load strategy");
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, featureProps.get("load_hint") + " for " + featureName + " is not a valid load strategy");
 			}
 		}
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
@@ -164,7 +164,7 @@ public final class GenericFeature {
 	private static boolean shouldAutoLoad(Map<String, String> featureProps) {
 		return (featureProps != null
 				&& featureProps.containsKey("load_hint")
-				&& featureProps.get("load_hint").equals("Whole Sequence"));
+				&& featureProps.get("load_hint").equals(LoadStrategy.GENOME.toString()));
 	}
 
 	private void setFriendlyURL() {

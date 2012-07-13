@@ -488,8 +488,7 @@ public final class BAM extends XAM {
 		}
 		
 		public double getProgress() {
-			return (progressUpdater.getPositionCalculator().getCurrentPosition() - 
-					progressUpdater.getStartPosition()) / (double) (progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
+			return progressUpdater.getProgress();
 		}
 
 		private ProgressUpdater getProgressUpdater(final long startPosition, final long endPosition) {

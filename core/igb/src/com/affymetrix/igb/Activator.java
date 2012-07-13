@@ -262,7 +262,10 @@ public class Activator implements BundleActivator {
 		JFrame frm = Application.getSingleton().getFrame();
 		JPanel panel = (JPanel) frm.getContentPane();
 		Preferences p = PreferenceUtils.getKeystrokesNode();
-		ourLogger.setLevel(java.util.logging.Level.INFO); // temp
+		Level ourLogLevel = ourLogger.getLevel();
+		if (null == ourLogLevel) {
+			ourLogger.setLevel(java.util.logging.Level.INFO); // temp
+		}
 		try {
 			for (String k : p.keys()) {
 				String preferredKeyStroke = p.get(k, "");
@@ -312,8 +315,7 @@ public class Activator implements BundleActivator {
 			ourLogger.config(bse.getMessage());
 			ourLogger.config("Some keyboard shortcuts may not be set.");
 		}
-//		ourLogger.setLevel(ourLogLevel);
-		ourLogger.setLevel(Level.INFO); // to get it to compile
+		ourLogger.setLevel(ourLogLevel);
 	}
 
 	/**

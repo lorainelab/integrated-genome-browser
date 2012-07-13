@@ -1,16 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.view.welcome;
 
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.SeqGroupView;
-import com.affymetrix.igb.view.SeqMapView;
-import java.awt.CardLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import javax.swing.JPanel;
 import be.pwnt.jflow.JFlowPanel;
 import be.pwnt.jflow.event.ShapeEvent;
 import be.pwnt.jflow.event.ShapeListener;
@@ -19,9 +8,16 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPJPanel;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.view.SeqGroupView;
+import com.affymetrix.igb.view.SeqMapView;
+import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.logging.Level;
+import javax.swing.JPanel;
 
 /**
  * This class manages the cover flow visualization.  It has a card layout where
@@ -114,12 +110,13 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	 * Receives state update from the genus/species combo boxes. 
 	 * @param e 
 	 */
+	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null)
 			return;
 		
 		CardLayout layout = (CardLayout) getLayout();
-		System.out.println("MainWorkspaceManager:itemStateChanged hit");
+//		System.out.println("MainWorkspaceManager:itemStateChanged hit");
 		String species = e.getItem().toString();
 		if(gmodel.getSelectedSeqGroup() == null && SELECT_SPECIES.equals(species)){
 			layout.show( this, WELCOME_PANE );

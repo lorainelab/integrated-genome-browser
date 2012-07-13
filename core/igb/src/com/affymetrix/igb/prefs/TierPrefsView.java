@@ -59,7 +59,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public int selectedRow;
 	public List<TierGlyph> currentTiers;
 	public List<TrackStyle> currentStyles;
-	public JRPButton applyToAllButton;
 	public JRPTextField displayNameTextField;
 	public JButton applyDisplayNameButton;
 	public ButtonGroup showStrandButtonGroup;
@@ -95,7 +94,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
 		viewModeCB = new JRPStyledJComboBox("TierPrefsView_viewModeCB");
-		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
 
 		setEnabled(false);
@@ -259,8 +257,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		bgColorComboBox.setEnabled(b);
 		fgColorComboBox.setEnabled(b);
 		trackNameSizeComboBox.setEnabled(b);
-		applyToAllButton.setEnabled(b);
-		maxDepthTextField.setEnabled(b);
+		applyButton.setEnabled(b);
 	}
 
 	/**
@@ -540,7 +537,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				|| (style.isGraphTier() || !style.getSeparable())) {
 			if(style.isGraphTier() || style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)){
 				maxDepthTextField.setEnabled(false);
-				applyToAllButton.setEnabled(false);
+				applyButton.setEnabled(false);
 				collapsedCheckBox.setEnabled(false);
 				if(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)){
 					displayNameTextField.setEnabled(false);

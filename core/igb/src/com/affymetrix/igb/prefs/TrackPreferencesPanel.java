@@ -81,7 +81,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         jSeparator2 = new javax.swing.JSeparator();
         jLabel6 = new javax.swing.JLabel();
         maxStackDepthTextField = tdv.maxDepthTextField;
-        applyButton = new javax.swing.JButton();
+        applyButton = tdv.applyButton;
         show2TracksCheckBox = tdv.show2TracksCheckBox;
         collapsedCheckBox = tdv.collapsedCheckBox;
         labelFieldComboBox = tdv.labelFieldComboBox;

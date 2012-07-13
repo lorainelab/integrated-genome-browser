@@ -35,6 +35,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public JComboBox labelFieldComboBox;
 	public JRPCheckBox show2TracksCheckBox;
 	public JTextField maxDepthTextField;
+	public JRPButton applyButton;
 	public JRPCheckBox collapsedCheckBox;
 	public JComboBox trackNameSizeComboBox;
 	public ColorComboBox possitiveColorComboBox;
@@ -105,6 +106,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		fgColorComboBox = new ColorComboBox();
 		labelFieldComboBox = new JComboBox();
 		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName() + "_maxDepth");
+		applyButton = new JRPButton(this.getClass().getCanonicalName() + "_applyButton");
 		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_show2TracksCheckBox");
 		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_collapsedCheckBox");
 		colorCheckBox.setText("Color");
@@ -189,6 +191,10 @@ public abstract class TrackPreferences implements ListSelectionListener {
 
 	public JTextField getMaxDepthTextField() {
 		return maxDepthTextField;
+	}
+	
+	public JRPButton getApplyButton(){
+		return applyButton;
 	}
 
 	public JCheckBox getShow2TracksCheckBox() {

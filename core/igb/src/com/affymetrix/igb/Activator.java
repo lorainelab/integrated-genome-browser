@@ -29,7 +29,6 @@ import com.affymetrix.igb.viewmode.*;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

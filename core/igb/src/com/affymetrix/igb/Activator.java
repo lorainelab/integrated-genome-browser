@@ -46,7 +46,7 @@ public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
     private String commandLineBatchFileStr;
 
-	private static final Logger ourLogger = Logger.getLogger(Activator.class.getName());
+	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 	
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {

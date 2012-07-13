@@ -95,6 +95,7 @@ public final class IGB extends Application
 	private IWindowService windowService;
 	private HashSet<IStopRoutine> stopRoutines;
 	private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
+	private static final Logger ourLogger = Logger.getLogger(IGB.class.getPackage().getName());
 
 	public IGB() {
 		super();
@@ -117,7 +118,8 @@ public final class IGB extends Application
 			istr = IGB.class.getResourceAsStream(file);
 			lookup.loadSynonyms(IGB.class.getResourceAsStream(file), true);
 		} catch (IOException ex) {
-			Logger.getLogger(IGB.class.getName()).log(Level.FINE, "Problem loading default synonyms file " + file, ex);
+			ourLogger.log(Level.FINE,
+					"Problem loading default synonyms file " + file, ex);
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
@@ -462,7 +464,7 @@ public final class IGB extends Application
 			}
 		}
 		String message = getClass().getName() + ".getView() failed for " + viewName;
-		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, message);
+		ourLogger.severe(message);
 		return null;
 	}
 
@@ -482,10 +484,10 @@ public final class IGB extends Application
 		}
 		String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";
 		try {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, message);
+			ourLogger.severe(message);
 		}
 		catch (Exception x) {
-			System.out.println(message);
+			System.err.println(message);
 		}
 		return null;
 	}

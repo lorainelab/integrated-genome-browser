@@ -24,6 +24,8 @@ public final class MacIntegration {
 	private static MacIntegration instance = null;
 	private  Class<?> applicationClass;
 	private Object application;
+	private static final Logger ourLogger
+			= Logger.getLogger(MacIntegration.class.getPackage().getName());
 
 	/**
 	 * Private constructor to enforce singleton pattern
@@ -49,7 +51,7 @@ public final class MacIntegration {
 			addApplicationListener.invoke(application, proxy);
 
 		} catch (Exception ex) {
-			Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
+			ourLogger.log(Level.SEVERE, "?", ex);
 		}
 	}
 
@@ -78,13 +80,15 @@ public final class MacIntegration {
 			Method setDockIconImage = applicationClass.getDeclaredMethod("setDockIconImage", Image.class);
 			setDockIconImage.invoke(application, image);
 		} catch (Exception ex) {
-			Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
+			ourLogger.log(Level.SEVERE, "?", ex);
 		}
 	}
 }
 
 final class ApplicationListenerProxy implements InvocationHandler {
 	private final Object o;
+	private static final Logger ourLogger
+			= Logger.getLogger(ApplicationListenerProxy.class.getPackage().getName());
 
 	public static Object newInstance(Object o) {
 		return Proxy.newProxyInstance(
@@ -97,6 +101,7 @@ final class ApplicationListenerProxy implements InvocationHandler {
 		this.o = o;
 	}
 
+	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object result = null;
 		try {
@@ -116,7 +121,7 @@ final class ApplicationListenerProxy implements InvocationHandler {
 				result = method.invoke(o, args);
 			}
 		} catch (Exception ex) {
-			Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
+			ourLogger.log(Level.SEVERE, "?", ex);
 		}
 		return result;
 	}

@@ -452,9 +452,6 @@ public final class BAM extends XAM {
 		public final SeqSymmetry next() {
 			SeqSymmetry sym = next;
 			next = getNext();
-			while(iter.hasNext() && next == null){
-				next = getNext();
-			}
 			return sym;
 		}
 
@@ -469,20 +466,22 @@ public final class BAM extends XAM {
 		}
 
 		private SeqSymmetry getNext() {
-			try {
-				SAMRecord sr = iter.next();
+			while (iter.hasNext()) {
+				try {
+					SAMRecord sr = iter.next();
 
-				if (skipUnmapped && sr.getReadUnmappedFlag()) {
-					return null;
+					if (skipUnmapped && sr.getReadUnmappedFlag()) {
+						continue;
+					}
+
+					return convertSAMRecordToSymWithProps(sr, seq, uri.toString(), false, true);
+				} catch (SAMException ex) {
+					System.err.print("!!! SAM Record Error:" + ex.getMessage());
+				} catch (NoSuchElementException ex) {
+					//FIXME: This exception occurs at the end of query
+				} catch (Exception ex) {
+					System.err.print("!!! Error:" + ex.getMessage());
 				}
-
-				return convertSAMRecordToSymWithProps(sr, seq, uri.toString(), false, true);
-			} catch (SAMException ex) {
-				System.err.print("!!! SAM Record Error:" +ex.getMessage());
-			} catch (NoSuchElementException ex){
-				//FIXME: This exception occurs at the end of query
-			}catch (Exception ex){
-				System.err.print("!!! Error:" +ex.getMessage());
 			}
 			return null;
 		}

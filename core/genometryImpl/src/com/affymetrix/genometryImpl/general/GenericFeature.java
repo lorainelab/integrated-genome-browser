@@ -81,12 +81,13 @@ public final class GenericFeature {
 		}
 		this.setFriendlyURL();
 		boolean autoloadSet = this.setAutoload(autoload);
-		if (!autoloadSet && featureProps != null && featureProps.get("load_hint") != null) {
+		String load_hint = (featureProps == null) ? null : featureProps.get("load_hint");
+		if (!autoloadSet && load_hint != null && !(load_hint.equals(LoadStrategy.GENOME.name()) && !autoload)) {
 			try {
-				setLoadStrategy(LoadStrategy.valueOf(featureProps.get("load_hint")));
+				setLoadStrategy(LoadStrategy.valueOf(load_hint));
 			}
 			catch (IllegalArgumentException x) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, featureProps.get("load_hint") + " for " + featureName + " is not a valid load strategy");
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, load_hint + " for " + featureName + " is not a valid load strategy");
 			}
 		}
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;

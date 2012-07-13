@@ -181,7 +181,7 @@ public abstract class XAM extends SymLoader {
 				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null);
 		sym.setProperty("id", sr.getReadName());
 		sym.setProperty("method", meth);
-		if(includeNH){
+		if(includeNH && sr.getStringAttribute("NH") != null){
 			sym.setProperty("NH", sr.getStringAttribute("NH"));
 		}
 		return sym;

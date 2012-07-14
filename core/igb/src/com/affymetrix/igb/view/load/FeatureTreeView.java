@@ -1,15 +1,17 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.FeatureLoadEvent;
-import com.affymetrix.genometryImpl.event.FeatureLoadListener;
+import com.affymetrix.genometryImpl.GenometryConstants;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.genoviz.util.Idable;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
@@ -33,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -40,6 +43,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -62,23 +66,25 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
 import java.net.*;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * View of genome features as a tree.
  */
-public final class FeatureTreeView extends JComponent implements ActionListener, DragSourceListener, FeatureLoadListener {
+public final class FeatureTreeView extends JComponent implements ActionListener, DragSourceListener {
 
 	private static final long serialVersionUID = 1L;
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
 	private final JRPButton serverPrefsB;
-	private final FeatureTreeCellRenderer tcr;
 	public static final String path_separator = "/";
 
 	public FeatureTreeView() {
@@ -106,10 +112,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		//Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
 
-		tcr = new FeatureTreeCellRenderer();
+		TreeCellRenderer tcr = new FeatureTreeCellRenderer();
 		tree.setCellRenderer(tcr);
 
-		TreeCellEditor tce = new FeatureTreeCellEditor(tcr);
+		TreeCellEditor tce = new FeatureTreeCellEditor();
 		tree.setCellEditor(tce);
 
 		tree.setEditable(true);
@@ -136,7 +142,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(featuresLabel).addComponent(serverPrefsB)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(tree_scroller)));
 
 		this.add(tree_panel);
-		GenometryModel.getGenometryModel().addFeatureLoadListener(this);
 	}
 
 	/**
@@ -563,7 +568,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			}
 		}
 
-		public FeatureCheckBox getLeafCheckBox(GenericFeature gFeature) {
+		private FeatureCheckBox getLeafCheckBox(GenericFeature gFeature) {
 			FeatureCheckBox leafCheckBox = leafCheckBoxes.get(gFeature);
 			if (leafCheckBox == null) {
 				leafCheckBox = new FeatureCheckBox(gFeature);
@@ -599,8 +604,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				return renderServer((GenericServer) genericData, tree, sel, expanded, leaf, row, hasFocus);
 			}
 			if (leaf && genericData instanceof GenericFeature) {
-				FeatureCheckBox checkbox = (FeatureCheckBox)renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
-				return checkbox;
+				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
 			}
 
 			return super.getTreeCellRendererComponent(
@@ -659,28 +663,97 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 	}
 
-
-	public static Object getExtraInfo(DefaultMutableTreeNode editedNode) {
-		String extraInfo = "";
-		Object nodeData = editedNode.getUserObject();
-		if (nodeData instanceof TreeNodeUserInfo) {
-			TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-			if (tn.genericObject instanceof GenericFeature) {
-				GenericFeature feature = (GenericFeature) tn.genericObject;
-				extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
-			}
-		}
-		return extraInfo;
-	}
-
 	public final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+
 		private static final long serialVersionUID = 1L;
-		private final FeatureTreeCellRenderer renderer;
+		FeatureTreeCellRenderer renderer;
 		DefaultMutableTreeNode editedNode;
 
-		public FeatureTreeCellEditor(FeatureTreeCellRenderer renderer) {
-			super();
-			this.renderer = renderer;
+		public class FeatureLoadAction extends GenericAction {
+
+			private static final long serialVersionUID = 1L;
+			private final FeatureCheckBox checkbox;
+
+			private FeatureLoadAction(FeatureCheckBox checkbox, Object extraInfo) {
+				super(null, null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
+				this.checkbox = checkbox;
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				super.actionPerformed(e);
+				Object nodeData = editedNode.getUserObject();
+				if (nodeData instanceof TreeNodeUserInfo) {
+					((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
+					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+					if (tn.genericObject instanceof GenericFeature) {
+						GenericFeature feature = (GenericFeature) tn.genericObject;
+						if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+							String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
+							FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+							if (fth == null) {
+								ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
+								return;
+							}
+						}
+						String message;
+						if (checkbox.isSelected()) {
+							// check whether the selected feature url is reachable or not
+							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
+									&& !isURLReachable(feature.getURI())) {
+								message = "The feature " + feature.getURI() + " is not reachable.";
+								ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
+								tn.setChecked(false);
+								return;
+							}
+
+							// prevent from adding duplicated features
+							if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
+								message = "The feature " + feature.getURI() + " has already been added.";
+								ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
+								tn.setChecked(false);
+							} else {
+								GeneralLoadView.getLoadView().addFeature(feature);
+							}
+						} else {
+							message = "Unchecking " + feature.featureName
+									+ " will remove all loaded data. \nDo you want to continue? ";
+							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+									PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+								GeneralLoadView.getLoadView().removeFeature(feature, true, false);
+							} else {
+								tn.setChecked(true);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private boolean isURLReachable(URI uri) {
+			try {
+				if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
+					return false;
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
+
+			return true;
+		}
+
+		public Object getExtraInfo() {
+			String extraInfo = "";
+			Object nodeData = editedNode.getUserObject();
+			if (nodeData instanceof TreeNodeUserInfo) {
+				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+				if (tn.genericObject instanceof GenericFeature) {
+					GenericFeature feature = (GenericFeature) tn.genericObject;
+					extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
+				}
+			}
+			return extraInfo;
 		}
 
 		@Override
@@ -703,10 +776,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 						if (nodeData instanceof GenericFeature) {
 							Rectangle r = thetree.getPathBounds(path);
 							int x = mouseEvent.getX() - r.x;
-							//if (renderer == null) {
-							//	renderer = new FeatureTreeCellRenderer();
-							//}
+							if (renderer == null) {
+								renderer = new FeatureTreeCellRenderer();
+							}
 							FeatureCheckBox checkbox = renderer.getLeafCheckBox((GenericFeature)nodeData);
+							if (!checkbox.isFeatureLoadActionSet()) {
+								checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
+							}
 							checkbox.setText("");
 							returnValue = editedNode.isLeaf() && x > 0 && x < checkbox.getPreferredSize().width;
 						}
@@ -898,41 +974,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					}
 				}
 			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private TreeNodeUserInfo getTreeNodeUserInfo(GenericFeature feature) {
-		if (feature == null) {
-			return null;
-		}
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-		DefaultMutableTreeNode node;
-		Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
-		while (nodes.hasMoreElements()) {
-			node = nodes.nextElement();
-			Object nodeData = node.getUserObject();
-			if (nodeData instanceof TreeNodeUserInfo) {
-				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-				if (feature == tn.genericObject) {
-					return tn;
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void featureLoaded(FeatureLoadEvent evt) {
-		GenericFeature feature = evt.getFeature();
-		boolean loaded = evt.isLoaded();
-		TreeNodeUserInfo tn = getTreeNodeUserInfo(feature);
-		if (tn != null) {
-			tn.setChecked(loaded);
-		}
-		FeatureCheckBox leafCheckBox = tcr.getLeafCheckBox(feature);
-		if (leafCheckBox != null) {
-			leafCheckBox.setSelected(loaded);
 		}
 	}
 }

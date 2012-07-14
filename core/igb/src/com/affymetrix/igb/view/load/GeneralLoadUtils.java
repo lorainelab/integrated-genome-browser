@@ -53,7 +53,6 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
@@ -71,7 +70,6 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
-import com.affymetrix.igb.action.FeatureLoadAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -399,24 +397,10 @@ public final class GeneralLoadUtils {
 			}
 			return;
 		}
-		boolean needToDisplay = false; 
 		if (gVersion.gServer.serverType == null) {
 			System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
 		} else {
 			gVersion.gServer.serverType.discoverFeatures(gVersion, autoload);
-			for (GenericFeature feature : gVersion.getFeatures()) {
-				if (!feature.isVisible() && feature.featureProps != null && "yes".equalsIgnoreCase(feature.featureProps.get("auto_select"))) {
-					new FeatureLoadAction(feature).actionPerformed(null);
-					needToDisplay = true;
-				}
-			}
-		}
-		if (needToDisplay) {
-			ThreadUtils.runOnEventQueue(new Runnable() {
-				public void run() {
-					gviewer.getSeqMap().updateWidget();
-				}
-			});
 		}
 	}
 

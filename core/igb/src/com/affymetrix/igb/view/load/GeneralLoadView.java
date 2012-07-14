@@ -562,7 +562,6 @@ public final class GeneralLoadView {
 		}
 
 		refreshDataManagementView();
-		GenometryModel.getGenometryModel().setFeatureLoaded(null, feature, true);
 	}
 
 	public static void addFeatureTier(final GenericFeature feature) {
@@ -642,7 +641,7 @@ public final class GeneralLoadView {
 						}
 					}
 				}
-				GenometryModel.getGenometryModel().setFeatureLoaded(null, feature, false);
+
 				return null;
 			}
 

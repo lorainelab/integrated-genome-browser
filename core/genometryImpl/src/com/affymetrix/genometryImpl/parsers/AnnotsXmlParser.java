@@ -22,7 +22,6 @@ public abstract class AnnotsXmlParser {
 	static Element root;
 	static final String folder = "folder";
 	static final String file = "file";
-	static final String LEGACY_GENOME = "Whole Sequence";
 
 	/**
 	 * @param istr - stream of annots file
@@ -77,9 +76,6 @@ public abstract class AnnotsXmlParser {
 		String friendlyURL = e.getAttributeValue("url");
 		String serverURL = e.getAttributeValue("serverURL");
 		String load_hint = e.getAttributeValue("load_hint");
-		if (LEGACY_GENOME.equals(load_hint)) {
-			load_hint = LoadStrategy.GENOME.name();
-		}
 		String auto_select = e.getAttributeValue("auto_select");
 //		if ("RNA-Seq / Loraine Lab / Mixed Cold / SM / Reads / Control, alignments".equals(title)) {
 //			auto_select = "yes";

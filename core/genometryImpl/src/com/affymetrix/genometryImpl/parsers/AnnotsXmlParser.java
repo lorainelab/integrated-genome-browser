@@ -81,6 +81,9 @@ public abstract class AnnotsXmlParser {
 			load_hint = LoadStrategy.GENOME.name();
 		}
 		String auto_select = e.getAttributeValue("auto_select");
+//		if ("RNA-Seq / Loraine Lab / Mixed Cold / SM / Reads / Control, alignments".equals(title)) {
+//			auto_select = "yes";
+//		}
 		String label_field = e.getAttributeValue("label_field");
 		String foreground = e.getAttributeValue("foreground");
 		String background = e.getAttributeValue("background");

@@ -320,6 +320,9 @@ public final class GeneralLoadView {
 
 	public synchronized static void AutoloadQuickloadFeature() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (gFeature.featureProps != null && "yes".equals(gFeature.featureProps.get("auto_select"))) {
+				gFeature.setVisible();
+			}
 			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
 					|| gFeature.gVersion.gServer.serverType != ServerTypeI.QuickLoad) {
 				continue;

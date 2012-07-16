@@ -88,8 +88,8 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 			this.shownAction = a;
 		}
 		else {
-			//Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-			//		"What!? switching to shown action?");
+			//java.util.logging.Logger.getLogger(this.getClass().getPackage().getName())
+			//		.warning("What!? switching to shown action?");
 			return;
 		}
 		this.putValue(Action.NAME, this.shownAction.getValue(Action.NAME));

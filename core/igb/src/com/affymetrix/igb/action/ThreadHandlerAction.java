@@ -1,6 +1,14 @@
-
 package com.affymetrix.igb.action;
 
+import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.thread.CThreadEvent;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadListener;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.Application;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,38 +20,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-
-import com.affymetrix.igb.Application;
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.thread.CThreadEvent;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadListener;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-
+import javax.swing.*;
 
 /**
- *
+ * Display a pop up menu of all the running threads
+ * with a progress bar and cancel button for each thread.
  * @author hiralv
- * this Action will display a popup menu of all the running threads with a
- * progress bar and cancel button for each thread.
  */
 public class ThreadHandlerAction extends GenericAction implements CThreadListener{
 	private static final long serialVersionUID = 1L;
 	private static final ThreadHandlerAction ACTION = new ThreadHandlerAction();
+	private static final Logger ourLogger =
+			Logger.getLogger(ThreadHandlerAction.class.getPackage().getName());
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		CThreadHolder.getInstance().addListener(ACTION);
 	}
 	public static ThreadHandlerAction getAction() {
 		return ACTION;
@@ -59,7 +50,6 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 		super("Handle Threads", null, null);
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-		CThreadHolder.getInstance().addListener(this);
 	}
 
 	@Override
@@ -95,11 +85,12 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 			cancelTask.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 			cancelTask.addActionListener(new ActionListener() {
 
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					box.setVisible(false);
 					if(worker != null && !worker.isCancelled() && !worker.isDone()){
 						worker.cancelThread(true);
-						Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cancelled thread " + worker.getMessage());
+						ourLogger.log(Level.INFO, "Cancelled thread {0}", worker.getMessage());
 					}
 				}
 			});
@@ -109,6 +100,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 
 			worker.addPropertyChangeListener(
 			     new PropertyChangeListener() {
+					 @Override
 			         public void propertyChange(PropertyChangeEvent evt) {
 			             if ("progress".equals(evt.getPropertyName())) {
 			         		if (runningTasks != null && runningTasks.isShowing()) {

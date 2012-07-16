@@ -1,19 +1,18 @@
 package com.affymetrix.igb.action;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
-
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 
 public class CancelAllAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final CancelAllAction ACTION = new CancelAllAction();
+	private static final Logger ourLogger =
+			Logger.getLogger(CancelAllAction.class.getPackage().getName());
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -33,6 +32,6 @@ public class CancelAllAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		CThreadHolder.getInstance().cancelAllTasks();
-		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cancelled all threads");
+		ourLogger.info("Cancelled all threads.");
 	}
 }

@@ -41,6 +41,9 @@ public final class GenericFeature {
 	public static final String show_how_to_load = GenometryConstants.BUNDLE.getString("show_how_to_load");
 	public static final boolean default_show_how_to_load = true;
 	
+	private static final String WHOLE_GENOME = "Whole Sequence";
+	private static final String AUTOLOAD = LoadStrategy.AUTOLOAD.name();
+	
 	public final String featureName;      // friendly name of the feature.
 	public final Map<String, String> featureProps;
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
@@ -80,20 +83,21 @@ public final class GenericFeature {
 			((Das2Type) typeObj).setFeature(this);
 		}
 		this.setFriendlyURL();
-		boolean autoloadSet = this.setAutoload(autoload);
-		if (autoload && !autoloadSet && featureProps != null && LoadStrategy.AUTOLOAD.name().equals(featureProps.get("load_hint"))) {
-			setLoadStrategy(LoadStrategy.AUTOLOAD);
-		}
+		this.setAutoload(autoload);
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
 		//methods.add(featureName);
 	}
 
 	public boolean setAutoload(boolean auto) {
-		if (shouldAutoLoad(featureProps) && auto) {
+		if (shouldAutoLoad(featureProps,WHOLE_GENOME) && auto) {
 			setLoadStrategy(LoadStrategy.GENOME);
 			this.setVisible();
 			return true;
-		} else if (!visible) {
+		} if (shouldAutoLoad(featureProps,AUTOLOAD) && auto) {
+			setLoadStrategy(LoadStrategy.AUTOLOAD);
+			this.setVisible();
+			return true;
+		}else if (!visible) {
 			setLoadStrategy(LoadStrategy.NO_LOAD);
 		}
 		return false;
@@ -156,12 +160,12 @@ public final class GenericFeature {
 	 * @param featureProps feature properties
 	 * @return true if feature should be loaded automatically
 	 */
-	private static boolean shouldAutoLoad(Map<String, String> featureProps) {
+	private static boolean shouldAutoLoad(Map<String, String> featureProps, String loadStrategy) {
 		return (featureProps != null
 				&& featureProps.containsKey("load_hint")
-				&& featureProps.get("load_hint").equals("Whole Sequence"));
+				&& featureProps.get("load_hint").equals(loadStrategy));
 	}
-
+	
 	private void setFriendlyURL() {
 		if (this.featureProps == null || !this.featureProps.containsKey("url") || this.featureProps.get("url").length() == 0) {
 			return;

@@ -23,6 +23,8 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
+	private static final Logger ourLogger =
+			Logger.getLogger(IndexedSemanticZoomGlyphFactory.class.getPackage().getName());
 	public IndexedSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultDetailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory) {
 		super(defaultDetailGlyphFactory, summaryGlyphFactory);
 	}
@@ -164,8 +166,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				return resultGlyph;
 			}
 			catch (Exception x) {
-				Logger logger = Logger.getLogger(this.getClass().getName());
-				logger.log(Level.SEVERE, "Error in Indexed Semantic zoom", x);
+				ourLogger.log(Level.SEVERE, "Error in Indexed Semantic zoom", x);
 				return null;
 			}
 		}

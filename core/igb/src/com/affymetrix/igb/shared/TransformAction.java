@@ -1,18 +1,12 @@
-
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.action.SeqMapViewActionA;
-
 import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
  * @author hiralv
  */
 public class TransformAction extends SeqMapViewActionA {
@@ -52,7 +46,8 @@ public class TransformAction extends SeqMapViewActionA {
 //				getTierMap().updateWidget();
 //			}
 //			catch (Exception ex) {
-//				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());
+//				Logger.getLogger(this.getClass().getPackage().getName()).log(
+//						Level.WARNING, "Transform error.", ex);
 //			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);

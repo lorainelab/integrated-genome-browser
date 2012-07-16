@@ -48,7 +48,8 @@ public class UseAsReferenceSeqAction extends SeqMapViewActionA {
 			}
 			useTrackAsReferenceSequence(current_tiers.get(0));
 		} catch (Exception ex) {
-			Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(SeqMapViewPopup.class.getPackage().getName()).log(
+					Level.SEVERE, null, ex);
 		}
 	}
 

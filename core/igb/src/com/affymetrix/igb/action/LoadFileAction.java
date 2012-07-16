@@ -73,7 +73,8 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 					GeneralLoadView.getLoadView().getFeatureTree().updateTree(url);
 					GeneralLoadView.getLoadView().refreshTreeView();
 				} catch (URISyntaxException ex) {
-					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+					Logger.getLogger(LoadFileAction.class.getPackage().getName())
+							.log(Level.SEVERE, null, ex);
 				}
 			} else {
 				try {

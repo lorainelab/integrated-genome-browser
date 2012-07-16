@@ -274,9 +274,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		setEnabled(true);
 
-		if (selectedRows.length > 1) {
+		if (selectedRows.length > 1 && ((TierPrefsTableModel) model).getStyles().size() >= selectedRows.length) {
 			resetValueBySelectedRows();
-		} else if (selectedRows.length == 1) {
+		} else if (selectedRows.length == 1 && ((TierPrefsTableModel) model).getStyles().size() >= selectedRows[0]) {
 			resetValueBySelectedRow();
 		} else {
 			setEnabled(false);
@@ -287,7 +287,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	private void resetValueBySelectedRows() {
-	
+		
 		setEnableByAxisOrGraphForRows(((TierPrefsTableModel) model).getStyles());
 		
 		displayNameTextField.setText("");

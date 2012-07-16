@@ -81,7 +81,7 @@ public final class GenericFeature {
 		}
 		this.setFriendlyURL();
 		boolean autoloadSet = this.setAutoload(autoload);
-		if (autoload && !autoloadSet && featureProps != null && !(LoadStrategy.AUTOLOAD.name().equals(featureProps.get("load_hint")))) {
+		if (autoload && !autoloadSet && featureProps != null && LoadStrategy.AUTOLOAD.name().equals(featureProps.get("load_hint"))) {
 			setLoadStrategy(LoadStrategy.AUTOLOAD);
 		}
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;

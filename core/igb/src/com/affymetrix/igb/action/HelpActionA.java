@@ -1,37 +1,24 @@
 package com.affymetrix.igb.action;
 
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 
 public abstract class HelpActionA extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final String HELP_WINDOW_NAME = " Help Window";
+	private static final Logger ourLogger =
+			Logger.getLogger(HelpActionA.class.getPackage().getName());
 
 	public HelpActionA(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic,Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
@@ -111,13 +98,12 @@ public abstract class HelpActionA extends GenericAction {
 			showHelp(parentPanel, text);
 
 		} catch (UnsupportedEncodingException ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+			ourLogger.log(Level.SEVERE,
 					"UTF-8 is not a supported encoding?!", ex);
 		} catch (IOException ex) {
-			Logger.getLogger(this.getClass().getName())
-					.log(Level.SEVERE,
-							"Unable to load help file for "
-									+ this.getClass().getName(), ex);
+			ourLogger.log(Level.SEVERE,
+					"Unable to load help file for "
+					+ this.getClass().getName(), ex);
 		} finally {
 			GeneralUtils.safeClose(reader);
 			GeneralUtils.safeClose(stream);

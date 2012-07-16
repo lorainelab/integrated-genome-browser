@@ -75,7 +75,8 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 				summarySymL = createSummarySymLoader(indexUri, method, GenometryModel.getGenometryModel().getSelectedSeqGroup());
 			}
 			catch (Exception x) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "TbiSemanticZoom failed reading tbi file", x);
+				Logger.getLogger(this.getClass().getPackage().getName()).log(
+						Level.SEVERE, "TbiSemanticZoom failed reading tbi file", x);
 			}
 		}
 
@@ -116,7 +117,8 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 				lastUsedGlyph.setTierGlyph(getTierGlyph());
 			}
 			catch (Exception x) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error creating index glyph", x);
+				Logger.getLogger(this.getClass().getPackage().getName()).log(
+						Level.SEVERE, "error creating index glyph", x);
 			}
 		}
 

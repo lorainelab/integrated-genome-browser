@@ -19,6 +19,9 @@ import com.affymetrix.igb.shared.*;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
+	private static final Logger ourLogger =
+			Logger.getLogger(AbstractGraphGlyphFactory.class.getPackage().getName());
+
 	private boolean check_same_seq = true;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
 	 *  Determines whether the glyph factory will try to determine whether the GraphSym
@@ -27,12 +30,12 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	 *  has a different ID without checking to see if the IDs match.
 	 */
 	private static final String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
-
 	/** Name of a parameter for the init() method.  Set to an instance of Double.
 	 *  Controls a parameter of the GraphGlyph.
 	 *  @see GraphGlyph#setTransitionScale(double)
 	 */
 	/** Allows you to set the parameter CHECK_SAME_SEQ_OPTION. */
+	@Override
 	public void init(Map<String, Object> options) {
 		Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
 		if (ccs != null) {
@@ -190,8 +193,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 				}
 			}
 		} else {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
-					"GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry " + "passed in is NOT a GraphSym: {0}", sym);
+			ourLogger.log(Level.SEVERE, 
+					"GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry passed in is NOT a GraphSym: {0}", sym);
 		}
 		return result;
 	}

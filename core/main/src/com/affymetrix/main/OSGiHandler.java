@@ -1,34 +1,23 @@
 package com.affymetrix.main;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.ServiceLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import com.affymetrix.common.CommonUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
-
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
-
-//import org.apache.felix.main.AutoProcessor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-
-import com.affymetrix.common.CommonUtils;
 
 /**
  * all OSGi functionality is handled here. Singleton pattern.
@@ -36,6 +25,8 @@ import com.affymetrix.common.CommonUtils;
 public class OSGiHandler {
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
+	private static final Logger ourLogger =
+			Logger.getLogger(OSGiHandler.class.getPackage().getName());
 	private Framework m_fwk;
 	private String bundlePathToInstall;
 	private String bundleSymbolicNameToUninstall;
@@ -103,7 +94,7 @@ public class OSGiHandler {
 		return it.next();
 	}
 
-	private final void loadFramework(String argArray) {
+	private void loadFramework(String argArray) {
 		try
 	    {
 			Map<String, String> configProps = new HashMap<String, String>();
@@ -124,10 +115,9 @@ public class OSGiHandler {
 	        }
             m_fwk.start();
 	    }
-	    catch (Exception ex)
-	    {
+	    catch (Exception ex) {
 	        System.err.println("Could not create framework: " + ex);
-	        ex.printStackTrace();
+	        ex.printStackTrace(System.err);
 	        System.exit(0);
 	    }
 	}
@@ -159,12 +149,14 @@ public class OSGiHandler {
     		for (Bundle bundle : bundleContext.getBundles()) {
     			bundle.start();
     		}
-          	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started with " + m_fwk.getSymbolicName() + " version " + m_fwk.getVersion());
+			ourLogger.log(Level.INFO, "OSGi is started with {0} version {1}",
+					new Object[]{m_fwk.getSymbolicName(), m_fwk.getVersion()});
         }
         catch (Exception ex)
         {
         	ex.printStackTrace(System.err);
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
+			ourLogger.log(Level.WARNING,
+					"Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
 
@@ -173,7 +165,7 @@ public class OSGiHandler {
 			for (Bundle bundle : bundleContext.getBundles()) {
 				if (uninstall_bundle.equals(bundle.getSymbolicName())) {
 					bundle.uninstall();
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", uninstall_bundle);
+					ourLogger.log(Level.INFO, "uninstalled bundle: {0}", uninstall_bundle);
 				}
 			}
 		}
@@ -181,7 +173,7 @@ public class OSGiHandler {
 			for (Bundle bundle : bundleContext.getBundles()) {
 				if (bundleSymbolicNameToUninstall.equals(bundle.getSymbolicName())) {
 					bundle.uninstall();
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", bundleSymbolicNameToUninstall);
+					ourLogger.log(Level.INFO, "uninstalled bundle: {0}", bundleSymbolicNameToUninstall);
 				}
 			}
 		}
@@ -191,13 +183,13 @@ public class OSGiHandler {
 		if (install_bundle != null) {
 			Bundle bundle = bundleContext.installBundle(install_bundle);
 			if (bundle != null) {
-				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", install_bundle);
+				ourLogger.log(Level.INFO, "installed bundle: {0}", install_bundle);
 			}
 		}
 		if (bundlePathToInstall != null) {
 			Bundle bundle = bundleContext.installBundle(bundlePathToInstall);
 			if (bundle != null) {
-				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", bundlePathToInstall);
+				ourLogger.log(Level.INFO, "installed bundle: {0}", bundlePathToInstall);
 			}
 		}
 	}
@@ -208,16 +200,16 @@ public class OSGiHandler {
 			if (locationURL != null){
 				try {
 					bundleContext.installBundle(locationURL.toString());
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
+					ourLogger.log(Level.INFO, "loading {0}",new Object[]{fileName});
 				}
     	        catch (Exception ex)
     	        {
     	        	ex.printStackTrace(System.err);
-					Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
+					ourLogger.log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
     	        }
 			}
 			else{
-				Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
+				ourLogger.log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
 			}
 		}
 	}
@@ -227,8 +219,8 @@ public class OSGiHandler {
         List<String> entries = new ArrayList<String>();
 		URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
 		if (codesource.toString().endsWith(".jar")) { // ant exe or webstart
-	    	ZipInputStream zipinputstream = null;
-	        zipinputstream = new ZipInputStream(codesource.openStream());
+	    	ZipInputStream zipinputstream
+					= new ZipInputStream(codesource.openStream());
 	        ZipEntry zipentry = zipinputstream.getNextEntry();
 	        while (zipentry != null)
 	        {
@@ -253,6 +245,7 @@ public class OSGiHandler {
 		else { // ant run
 			File dir = new File("bundles");
 			FilenameFilter ff = new FilenameFilter() {
+				@Override
 				public boolean accept(File dir, String name) {
 					return name.endsWith(".jar");
 				}
@@ -317,11 +310,11 @@ public class OSGiHandler {
 				bundle.start();
 			}
 			catch(Exception x) {
-				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error installing bundle", x);
+				ourLogger.log(Level.SEVERE, "error installing bundle", x);
 				bundle = null;
 			}
 			if (bundle != null) {
-				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", filePath);
+				ourLogger.log(Level.INFO, "installed bundle: {0}", filePath);
 			}
 		}
 		return bundle != null;
@@ -339,11 +332,11 @@ public class OSGiHandler {
 				if (symbolicName.equals(bundle.getSymbolicName())) {
 					try {
 						bundle.uninstall();
-						Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
+						ourLogger.log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
 						found = true;
 					}
 					catch(Exception x) {
-						Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error uninstalling bundle", x);
+						ourLogger.log(Level.SEVERE, "error uninstalling bundle", x);
 						found = false;
 					}
 				}

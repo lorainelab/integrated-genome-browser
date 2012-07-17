@@ -216,6 +216,7 @@ public class Activator implements BundleActivator {
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
 		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
+		bundleContext.registerService(GeneralLoadView.class, GeneralLoadView.getLoadView(), null);
 		// register tabs created in IGB itself - IGBTabPanel is an extension point
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);

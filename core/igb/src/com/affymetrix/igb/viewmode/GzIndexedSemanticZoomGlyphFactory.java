@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
@@ -87,7 +88,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 
 		@Override
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
-			if (saveSummaryGlyph == null /* || !span.getBioSeq().equals(saveSpan.getBioSeq()) */) {
+			if (saveSummaryGlyph == null || ((GraphSym)saveSummaryGlyph.getInfo()).getGraphSeq() != smv.getAnnotatedSeq()/* || !span.getBioSeq().equals(saveSpan.getBioSeq()) */) {
 				saveSummaryGlyph = super.getSummaryGlyph(smv);
 				saveSummaryGlyph.setPreferredHeight(
 						saveSummaryGlyph.getStyleDepth() * saveSummaryGlyph.getChildHeight()
@@ -104,22 +105,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 				lastUsedGlyph.setTierGlyph(getTierGlyph());
 			}
 			return saveSummaryGlyph;
-		}
-
-		@Override
-		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			saveSummaryGlyph = null;
-			try {
-				Rectangle2D.Double coordbox = this.getCoordBox();
-				lastUsedGlyph = getSummaryGlyph(((IGB)IGB.getSingleton()).getMapView());
-				this.processParentCoordBox(coordbox);
-				lastUsedGlyph.setCoordBox(coordbox);
-				lastUsedGlyph.setTierGlyph(getTierGlyph());
-			}
-			catch (Exception x) {
-				Logger.getLogger(this.getClass().getPackage().getName()).log(
-						Level.SEVERE, "error creating index glyph", x);
-			}
 		}
 
 		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {

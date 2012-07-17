@@ -145,7 +145,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 						cdsMax = cdsSpan.getEnd();
 					}
 				}
-	 this.isGenomicRequest = false;
+				this.isGenomicRequest = false;
 			} else {
 				if (syms.size() > 1 || seqmapview.getSeqSymmetry() != null) {
 					this.errorMessage = "Multiple selections, please select only one feature at a time";
@@ -380,16 +380,20 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			if (cv.getSi().getCdsStart() >= 0) {
 				if (toggle_Reverse_Complement) {
 					seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, Color.green);
+					seqview.setCdsStart(start + revCdsStart - 3);
 				} else {
 					seqview.addOutlineAnnotation(start + cdsStart, start + cdsStart + 2, Color.green);
+					seqview.setCdsStart(start + cdsStart);
 				}
 			}
 
 			if (cv.getSi().getCdsEnd() >= 0) {
 				if (toggle_Reverse_Complement) {
 					seqview.addOutlineAnnotation(start + revCdsEnd, start + revCdsEnd + 2, Color.red);
+					seqview.setCdsEnd(start + revCdsEnd);
 				} else {
 					seqview.addOutlineAnnotation(start + cdsEnd - 3, start + cdsEnd - 1, Color.red);
+					seqview.setCdsEnd(start + cdsEnd - 3);
 				}
 			}
 			start += cv.getSi().getResidues().length();
@@ -543,6 +547,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JRPMenuItem copyTransn1MenuItem = new JRPMenuItem("sequenceViewer_copyTransn1", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_NEG_ONE));
 	JRPMenuItem copyTransn2MenuItem = new JRPMenuItem("sequenceViewer_copyTransn2", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_NEG_TWO));
 	JRPMenuItem copyTransn3MenuItem = new JRPMenuItem("sequenceViewer_copyTransn3", new CopyTransFromSeqViewerAction(this, DNAUtils.FRAME_NEG_THREE));
+	CopyAnnotatedTranslationToClipBoardAction copyAnnotAction = new CopyAnnotatedTranslationToClipBoardAction(this);
 	JRPMenu showMenu = new JRPMenu("sequenceViewer_show", "Show");
 	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
 	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
@@ -553,6 +558,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	public JFrame setupMenus(JFrame dock) {
 
 		copyAction.setEnabled(false);
+		copyAnnotAction.setEnabled(false);
 		copyToClipMenu.add(copyTransp1MenuItem);
 		copyToClipMenu.add(copyTransp2MenuItem);
 		copyToClipMenu.add(copyTransp3MenuItem);
@@ -567,6 +573,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));
 		editMenu.add(copyToClipMenu);
+		editMenu.add(copyAnnotAction);
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);
@@ -644,6 +651,26 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		if(residues != null){
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			StringBuffer hackbuf = new StringBuffer(residues);
+			String hackstr = new String(hackbuf);
+			StringSelection data = new StringSelection(hackstr);
+			clipboard.setContents(data, null);
+		}else {
+			ErrorHandler.errorPanel("Missing Sequence Residues",
+					"Don't have all the needed residues, can't copy to clipboard.\n"
+					+ "Please load sequence residues for this region.", Level.WARNING);
+		}
+	}
+	
+	public void copyAnnotatedTransAction(){
+		String residues = seqview.getResidues().trim();
+		int cdsMinOffset = seqview.getCdsStart();
+		int cdsMaxOffset = seqview.getCdsEnd();
+		String annotatedResidues = residues.substring(cdsMinOffset, cdsMaxOffset+3);
+		System.out.println(annotatedResidues);
+		annotatedResidues = DNAUtils.translate(annotatedResidues, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
+		if(annotatedResidues != null){
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			StringBuffer hackbuf = new StringBuffer(annotatedResidues);
 			String hackstr = new String(hackbuf);
 			StringSelection data = new StringSelection(hackstr);
 			clipboard.setContents(data, null);
@@ -751,9 +778,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			if (text.equals("Show cDNA")) {
 				showcDNASwitch = true;	
 				showcDNAButton.setText("Show genomic");
+				copyAnnotAction.setEnabled(true);
 			} else {
 				showcDNASwitch = false;
 				showcDNAButton.setText("Show cDNA");
+				copyAnnotAction.setEnabled(false);
 			}
 			seqview.clearWidget();
 			addFormattedResidues();
@@ -828,3 +857,18 @@ class CopyTransFromSeqViewerAction extends GenericAction{
 	}
 	
 }
+
+class CopyAnnotatedTranslationToClipBoardAction extends GenericAction{
+	
+	AbstractSequenceViewer sv;
+	public CopyAnnotatedTranslationToClipBoardAction(AbstractSequenceViewer sv){
+		super(BUNDLE.getString("copyAnnotatedTranslationToClipBoard"),KeyEvent.VK_C);
+		this.sv = sv;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e){
+		super.actionPerformed(e);
+		sv.copyAnnotatedTransAction();
+	}
+} 

@@ -178,6 +178,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected JScrollBar offset_scroll;
 
 	// locations for scrollbars, consensus, and labels
+	protected int cdsStart, cdsEnd;
 	protected int offset_scroll_loc = PLACEMENT_RIGHT;
 	protected int residue_loc = PLACEMENT_RIGHT;
 	protected int num_loc = PLACEMENT_LEFT;
@@ -937,6 +938,21 @@ public class NeoSeq extends NeoContainerWidget
 	 * @param annotation an item added with the addAnnotation method.
 	 * @return the Range (start to end) of the annotation.
 	 */
+	public void setCdsStart(int cdsStart){
+		this.cdsStart = cdsStart;
+	}
+	
+	public void setCdsEnd(int cdsEnd){
+		this.cdsEnd = cdsEnd;
+	}
+	
+	public int getCdsStart(){
+		return cdsStart;
+	}
+	
+	public int getCdsEnd(){
+		return cdsEnd;
+	}
 	public Range getAnnotationRange(GlyphI annotation) {
 		Range r = new Range(0,0);
 		if (annotation instanceof AnnotationGlyph) {

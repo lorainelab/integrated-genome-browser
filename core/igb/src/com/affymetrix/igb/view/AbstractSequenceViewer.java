@@ -774,10 +774,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		Object evtSource = e.getSource();
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
+			boolean copyAnnotEnabled = (seqview.getCdsStart() < seqview.getCdsEnd())?true:false;
 			if (text.equals("Show cDNA")) {
 				showcDNASwitch = true;	
 				showcDNAButton.setText("Show genomic");
-				copyAnnotAction.setEnabled(true);
+				copyAnnotAction.setEnabled(copyAnnotEnabled);
 			} else {
 				showcDNASwitch = false;
 				showcDNAButton.setText("Show cDNA");

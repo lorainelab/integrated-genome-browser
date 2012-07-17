@@ -666,7 +666,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		int cdsMinOffset = seqview.getCdsStart();
 		int cdsMaxOffset = seqview.getCdsEnd();
 		String annotatedResidues = residues.substring(cdsMinOffset, cdsMaxOffset+3);
-		System.out.println(annotatedResidues);
 		annotatedResidues = DNAUtils.translate(annotatedResidues, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
 		if(annotatedResidues != null){
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

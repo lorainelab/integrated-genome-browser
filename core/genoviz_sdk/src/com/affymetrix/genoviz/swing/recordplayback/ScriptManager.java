@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,6 +156,14 @@ public class ScriptManager {
 
 	public void pause() {
 		JOptionPane.showMessageDialog(null, "script paused ...");
+	}
+
+	public void sleep(int seconds) {
+		try {
+			Thread.sleep(1000 * seconds);
+		} catch (InterruptedException e) {
+			//e.printStackTrace();
+		}
 	}
 
 	public synchronized void addDecorator(JRPWidgetDecorator decorator) {

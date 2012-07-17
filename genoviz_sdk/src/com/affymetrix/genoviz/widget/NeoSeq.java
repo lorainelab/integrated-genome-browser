@@ -176,6 +176,8 @@ public class NeoSeq extends NeoContainerWidget
 	protected Selection sel_range;
 
 	protected JScrollBar offset_scroll;
+	
+	protected int cdsStart, cdsEnd;
 
 	// locations for scrollbars, consensus, and labels
 	protected int offset_scroll_loc = PLACEMENT_RIGHT;
@@ -1440,7 +1442,23 @@ public class NeoSeq extends NeoContainerWidget
 		Font new_font = new Font(residue_font.getFamily(), residue_font.getStyle(), size);
 		setFont(new_font);
 	}
-
+	
+	
+	public void setCdsStart(int cdsStart){
+		this.cdsStart = cdsStart;
+	}
+	
+	public void setCdsEnd(int cdsEnd){
+		this.cdsEnd = cdsEnd;
+	}
+	
+	public int getCdsStart(){
+		return cdsStart;
+	}
+	
+	public int getCdsEnd(){
+		return cdsEnd;
+	}
 	/**
 	 * indicate the minimum grouping size with respect to line breaking.
 	 * Lines will be wrapped such that the number of residues on a line

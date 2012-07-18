@@ -1,9 +1,5 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +25,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -244,40 +238,6 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
 	@Override
 	public void init(URI uri) {
-		BufferedReader br = null;
-		try {
-			InputStream is;
-			is = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			br = new BufferedReader(new InputStreamReader(is));
-			String line = null;
-			Thread thread = Thread.currentThread();
-			boolean started = false;
-			while ((!thread.isInterrupted()) && ((line = br.readLine()) != null)) {
-				if (!started && !(line.startsWith("##fileformat=VCFv") || line.startsWith("##format=VCFv"))) {
-					Logger.getLogger(this.getClass().getName()).log(
-						Level.SEVERE, "VCF - first line must be ##fileformat or ##format");
-				}
-				started = true;
-				if (line.startsWith("##")) {
-					processMetaInformationLine(line.substring(2));
-				}
-				else if (line.startsWith("#")) {
-					processHeaderLine(line.substring(1));
-				}
-				else {
-					break;
-				}
-			}
-			if (version < 0) {
-				throw new UnsupportedOperationException("file version not supported");
-			}
-		}
-		catch (IOException x) {
-			Logger.getLogger(this.getClass().getName()).log(
-				Level.SEVERE, "Error loading headers from vcf file", x);
-		} finally {
-			GeneralUtils.safeClose(br);
-		}
 	}
 
 	public void setCombineGenotype(boolean combineGenotype) {
@@ -407,7 +367,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 		return new FORMAT(getID(dataline), getNumber(dataline), getType(dataline), getDescription(dataline));
 	}
 
-	private void processMetaInformationLine(String line) throws IOException {
+	private void processMetaInformationLine(String line) {
 		if (line.startsWith("fileformat=")) {
 			String format = line.substring("fileformat=".length());
 			if (format.equals("VCFv4.0")) {
@@ -420,6 +380,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 				ErrorHandler.errorPanel("file version not supported " + format);
 				throw new UnsupportedOperationException("file version not supported " + format);
 			}
+			Logger.getLogger("com.affymetrix.genometryImpl.symloader").log(Level.INFO, "vcf file version " + version);
 		}
 		else if (line.startsWith("format=")) {
 			String format = line.substring("format=".length());
@@ -730,8 +691,13 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
 	@Override
 	public boolean processInfoLine(String line, List<String> infoLines) {
-		if (line.startsWith("#")) {
-			return true; // handled in init()
+		if (line.startsWith("##")) {
+			processMetaInformationLine(line.substring(2));
+			return true;
+		}
+		else if (line.startsWith("#")) {
+			processHeaderLine(line.substring(1));
+			return true;
 		}
 		return false;
 	}

@@ -126,9 +126,9 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
 		JRPMenu scripts_menu = new JRPMenu(id + "_main_toolsMenu_scripts", BUNDLE.getString("scripts"));
 		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_runScript", RunScriptAction.getAction()));
-		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_saveScript", SaveScriptAction.getAction()));
+//		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_saveScript", SaveScriptAction.getAction()));
 		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_cancelScript", CancelScriptAction.getAction()));
-		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_clearScript", ClearScriptAction.getAction()));
+//		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_clearScript", ClearScriptAction.getAction()));
 		tools_menu.add(scripts_menu);
 	}
 

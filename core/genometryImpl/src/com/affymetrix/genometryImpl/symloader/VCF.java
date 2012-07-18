@@ -696,6 +696,10 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 			return true;
 		}
 		else if (line.startsWith("#")) {
+			if (version < 0) {
+				ErrorHandler.errorPanel("version error", "file version not supported or not found for " + uri, Level.SEVERE);
+				throw new UnsupportedOperationException("file version not supported or not found");
+			}
 			processHeaderLine(line.substring(1));
 			return true;
 		}

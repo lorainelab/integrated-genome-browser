@@ -9,14 +9,13 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.IndexedSemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -107,19 +106,11 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		}
 
 		@Override
-		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			saveSummaryGlyph = null;
-			try {
-				Rectangle2D.Double coordbox = this.getCoordBox();
-				lastUsedGlyph = getSummaryGlyph(((IGB)IGB.getSingleton()).getMapView());
-				this.processParentCoordBox(coordbox);
-				lastUsedGlyph.setCoordBox(coordbox);
-				lastUsedGlyph.setTierGlyph(getTierGlyph());
+		protected void rangeChanged(SeqMapViewExtendedI smv){
+			if (saveSummaryGlyph != null && ((GraphSym)saveSummaryGlyph.getInfo()).getGraphSeq() != smv.getAnnotatedSeq()) {
+				saveSummaryGlyph = null;
 			}
-			catch (Exception x) {
-				Logger.getLogger(this.getClass().getPackage().getName()).log(
-						Level.SEVERE, "error creating index glyph", x);
-			}
+			super.rangeChanged(smv);
 		}
 
 		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {

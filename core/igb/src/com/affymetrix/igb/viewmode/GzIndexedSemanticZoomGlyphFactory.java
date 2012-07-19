@@ -99,7 +99,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 
 		@Override
 		protected void rangeChanged(SeqMapViewExtendedI smv){
-			if (saveSummaryGlyph != null && ((GraphSym)saveSummaryGlyph.getInfo()).getGraphSeq() != smv.getAnnotatedSeq()) {
+			if (saveSummaryGlyph != null && (saveSummaryGlyph.getInfo() == null || ((GraphSym)saveSummaryGlyph.getInfo()).getGraphSeq() != smv.getAnnotatedSeq())) {
 				saveSummaryGlyph = null;
 			}
 			super.rangeChanged(smv);

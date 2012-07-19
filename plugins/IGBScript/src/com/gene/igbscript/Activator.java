@@ -16,8 +16,8 @@ public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
 
 	/**
-	 * once the IGBService is available, we can create the page, and
-	 * register it with OSGi, so that the tab can be added.
+	 * once the IGBService is available, we can create the script processor, and
+	 * register it with OSGi, so that the scripting language can be added.
 	 * @param igbServiceReference the ServiceReference for the IGBService
 	 */
 	private void createFactory(ServiceReference<IGBService> igbServiceReference) {
@@ -32,7 +32,7 @@ public class Activator implements BundleActivator {
         }
 	}
 	/**
-	 * waits (if necessary) for the igbService, and then calls createPage 
+	 * waits (if necessary) for the igbService, and then calls createFactory 
 	 * @throws Exception
 	 */
 	@Override

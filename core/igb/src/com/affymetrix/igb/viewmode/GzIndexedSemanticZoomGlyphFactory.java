@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.IndexedSemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -51,7 +52,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 
 	// glyph class
 	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph{
-		private ViewModeGlyph saveSummaryGlyph;
+		private AbstractGraphGlyph saveSummaryGlyph;
 
 		public GzIndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
 			super(detailGlyphFactory, summaryGlyphFactory, sym);
@@ -86,7 +87,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		@Override
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
 			if (saveSummaryGlyph == null /* || !span.getBioSeq().equals(saveSpan.getBioSeq()) */) {
-				saveSummaryGlyph = super.getSummaryGlyph(smv);
+				saveSummaryGlyph = (AbstractGraphGlyph)super.getSummaryGlyph(smv);
 				saveSummaryGlyph.setPreferredHeight(
 						saveSummaryGlyph.getStyleDepth() * saveSummaryGlyph.getChildHeight()
 						, smv.getSeqMap().getView());
@@ -108,7 +109,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		public void setSummaryViewMode(String viewmode, SeqMapViewExtendedI smv) {
 			super.setSummaryViewMode(viewmode, smv);
 			if (isLastSummary()) {
-				saveSummaryGlyph = lastUsedGlyph;
+				saveSummaryGlyph = (AbstractGraphGlyph)lastUsedGlyph;
 			}
 		}
 	}

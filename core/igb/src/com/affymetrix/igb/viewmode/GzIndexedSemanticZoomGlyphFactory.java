@@ -52,7 +52,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	// glyph class
 	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph{
 		private ViewModeGlyph saveSummaryGlyph;
-		private Rectangle2D.Double saveSummaryCoordbox;
 
 		public GzIndexedSemanticZoomGlyph(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI summaryGlyphFactory, SeqSymmetry sym) {
 			super(detailGlyphFactory, summaryGlyphFactory, sym);
@@ -91,17 +90,10 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 				saveSummaryGlyph.setPreferredHeight(
 						saveSummaryGlyph.getStyleDepth() * saveSummaryGlyph.getChildHeight()
 						, smv.getSeqMap().getView());
-				saveSummaryCoordbox = new Rectangle2D.Double(saveSummaryGlyph.getCoordBox().x, saveSummaryGlyph.getCoordBox().y, saveSummaryGlyph.getCoordBox().width, saveSummaryGlyph.getCoordBox().height);
 			}
-			else if (lastUsedGlyph != saveSummaryGlyph && saveSummaryCoordbox != null) {
-				Rectangle2D.Double coordBox = new Rectangle2D.Double(saveSummaryCoordbox.x, saveSummaryCoordbox.y, saveSummaryCoordbox.width, saveSummaryCoordbox.height);
-				saveSummaryGlyph.setCoordBox(coordBox);
-				Rectangle2D.Double coordbox = this.getCoordBox();
-				lastUsedGlyph = saveSummaryGlyph;
-				this.processParentCoordBox(coordbox);
-				lastUsedGlyph.setCoordBox(coordbox);
-				lastUsedGlyph.setTierGlyph(getTierGlyph());
-			}
+			BioSeq seq = smv.getAnnotatedSeq();
+			Rectangle2D.Double coordBox = saveSummaryGlyph.getCoordBox();
+			coordBox.setRect(seq.getMin(), coordBox.getY(), seq.getMax(), coordBox.getHeight());
 			return saveSummaryGlyph;
 		}
 
@@ -117,7 +109,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 			super.setSummaryViewMode(viewmode, smv);
 			if (isLastSummary()) {
 				saveSummaryGlyph = lastUsedGlyph;
-				saveSummaryCoordbox = new Rectangle2D.Double(saveSummaryGlyph.getCoordBox().x, saveSummaryGlyph.getCoordBox().y, saveSummaryGlyph.getCoordBox().width, saveSummaryGlyph.getCoordBox().height);
 			}
 		}
 	}

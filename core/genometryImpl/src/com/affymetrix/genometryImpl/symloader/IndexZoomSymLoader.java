@@ -123,7 +123,7 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 	private static long getUncompressedLength(long chunkStart, long chunkEnd) {
 		BlockCompressedStreamPosition start = new BlockCompressedStreamPosition(BlockCompressedFilePointerUtil.getBlockAddress(chunkStart), BlockCompressedFilePointerUtil.getBlockOffset(chunkStart));
 		BlockCompressedStreamPosition end = new BlockCompressedStreamPosition(BlockCompressedFilePointerUtil.getBlockAddress(chunkEnd), BlockCompressedFilePointerUtil.getBlockOffset(chunkEnd));
-		return end.getApproximatePosition() - start.getApproximatePosition();
+		return Math.max(0, end.getApproximatePosition() - start.getApproximatePosition());
 	}
 
 	private static int[] getRegion(int binno) {

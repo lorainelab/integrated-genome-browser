@@ -43,7 +43,6 @@ public class BigWigZoomSymLoader extends SymLoader {
 	private BBFileReader bbReader;
 	private BBFileHeader bbFileHdr;
 	private final List<BBZoomLevelHeader> levelHeaders;
-	private final List<GraphIntervalSym> graphSyms;
 	private List<BioSeq> chromosomeList;
 	private Map<String, String> igbSeq2bwSeq;
 	private Map<String, String> bwSeq2igbSeq;
@@ -58,7 +57,6 @@ public class BigWigZoomSymLoader extends SymLoader {
 		catch (IOException x) {
 			Logger.getLogger(BigWigZoomSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
 			levelHeaders = null;
-			graphSyms = null;
 			return;
 		}
         if (!bbReader.isBigWigFile()) {
@@ -70,10 +68,6 @@ public class BigWigZoomSymLoader extends SymLoader {
 			throw new UnsupportedOperationException("file version not supported " + bbFileHdr.getVersion());
         }
 		levelHeaders = bbReader.getZoomLevels().getZoomLevelHeaders();
-		graphSyms = new ArrayList<GraphIntervalSym>(levelHeaders.size());
-		for (int i = 0; i < levelHeaders.size(); i++) {
-			graphSyms.add(null);
-		}
 		defaultSymLoader = new BigWigSymLoader(uri, featureName, group);
 	}
 
@@ -226,12 +220,8 @@ public class BigWigZoomSymLoader extends SymLoader {
         	return defaultSymLoader.getRegion(span);
         }
         final int level = bestZoom.getZoomLevel();
-        GraphIntervalSym gsym = (level >= graphSyms.size()) ? null : graphSyms.get(level);
-        if (gsym == null || gsym.getMinXCoord() > startBase || gsym.getMaxXCoord() < endBase) {
-        	gsym = getSym(level, span);
-    		graphSyms.set(level, gsym);
-        }
-		List<SeqSymmetry> regions = new ArrayList<SeqSymmetry>();
+        GraphIntervalSym gsym = getSym(level, span);
+ 		List<SeqSymmetry> regions = new ArrayList<SeqSymmetry>();
         regions.add(gsym);
 		return regions;
 	}

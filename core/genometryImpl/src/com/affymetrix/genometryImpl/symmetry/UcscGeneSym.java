@@ -51,7 +51,7 @@ import java.util.*;
  * </pre>
  *
  */
-public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymWithProps {
+public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, SymWithProps {
 
 	String geneName;
 	String name;

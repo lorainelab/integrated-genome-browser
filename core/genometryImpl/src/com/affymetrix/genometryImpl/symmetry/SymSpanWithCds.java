@@ -7,5 +7,5 @@ import com.affymetrix.genometryImpl.SupportsCdsSpan;
  * 
  * @author hiralv
  */
-public interface SymSpanWithCds extends SeqSpan, SupportsCdsSpan{
+public interface SymSpanWithCds extends SeqSpan, SupportsCdsSpan, SymWithProps{
 }

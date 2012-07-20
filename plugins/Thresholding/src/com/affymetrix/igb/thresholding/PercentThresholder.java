@@ -24,7 +24,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.*;
-import java.text.MessageFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -173,7 +172,9 @@ public final class PercentThresholder extends JPanel
     graphs.clear();
 		for (AbstractGraphGlyph gl : newgraphs) {
       Object info = gl.getInfo();
-      if (info == null) { System.err.println(MessageFormat.format(BUNDLE.getString("noInfoError"), gl)); }
+//    if (info == null) {
+//       Logger.getLogger(this.getClass().getPackage().getName()).log(Level.INFO, MessageFormat.format(BUNDLE.getString("noInfoError"), gl));
+//    }
       float[] p2score = info2pscores.get(info);
       if (p2score == null) {
 	p2score = calcPercents2Scores(gl);

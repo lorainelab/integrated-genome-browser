@@ -130,9 +130,9 @@ public final class GraphGlyphUtils {
 	 */
 	private static float[] getPercents2Scores(AbstractGraphGlyph gl) {
 		Object info = gl.getInfo();
-		if (info == null && !(gl instanceof MultiGraphGlyph)) {
-			System.err.println("Graph has no info! " + gl);
-		}
+//		if (info == null && !(gl instanceof MultiGraphGlyph)) {
+//            Logger.getLogger("com.affymetrix.igb.shared").log(Level.INFO, "Graph has no info! " + gl);
+//		}
 		float[] p2score = info2pscores.get(info);
 
 		if (p2score == null) {

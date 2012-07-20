@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -519,5 +520,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void setHome() {
 		SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+	}
+
+	@Override
+	public GenericServer addServer(ServerTypeI serverType,
+			String serverName, String serverURL, int order) {
+		return GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
+				serverName, serverURL, order, false);
 	}
 }

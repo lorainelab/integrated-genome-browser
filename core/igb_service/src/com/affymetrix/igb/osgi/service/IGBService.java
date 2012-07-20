@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -206,4 +207,5 @@ public interface IGBService {
 	public float getDefaultTrackSize();
 	public void deselect(GlyphI tierGlyph);
 	public void setHome();
+	public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order);
 }

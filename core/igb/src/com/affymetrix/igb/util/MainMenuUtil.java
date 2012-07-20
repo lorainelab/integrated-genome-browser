@@ -120,7 +120,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, track_resize_behavior);
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAllTrack", ToggleTrackResizingAction.getAction().getAdjustAllAction()));
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAdjacentTrack", ToggleTrackResizingAction.getAction().getAdjustAdjacentAction()));
-		view_menu.addSeparator();
+//		view_menu.addSeparator();
 		
 		ButtonGroup codonDisplayMenuItemGroup = new ButtonGroup();
 		JRPRadioButtonMenuItem threeLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_threeLetter", ShowCodonGlyphAction.getThreeLetterAction());

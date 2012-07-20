@@ -36,6 +36,7 @@ import javax.swing.*;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -131,6 +132,7 @@ public class Activator implements BundleActivator {
         	};
         	serviceTracker.open();
         }
+		//bundleContext.registerService(GlyphProcessor.class, new CodonGlyphProcessor(), null);
 		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
 		ExtensionPointHandler<FileTypeHandler> extensionPoint
 				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
@@ -371,7 +373,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
 	}
-
+	
 	private void initMapViewGlyphFactorys() {
 		ExtensionPointHandler<MapViewGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapViewGlyphFactoryI.class);
 		mapViewGlyphFactoryExtensionPoint.addListener(

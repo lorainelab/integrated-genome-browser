@@ -10,6 +10,7 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.DeselectAllAction;
@@ -20,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import javax.swing.ButtonGroup;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -118,6 +120,20 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, track_resize_behavior);
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAllTrack", ToggleTrackResizingAction.getAction().getAdjustAllAction()));
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAdjacentTrack", ToggleTrackResizingAction.getAction().getAdjustAdjacentAction()));
+		view_menu.addSeparator();
+		
+		ButtonGroup codonDisplayMenuItemGroup = new ButtonGroup();
+		JRPRadioButtonMenuItem threeLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_threeLetter", ShowCodonGlyphAction.getThreeLetterAction());
+		JRPRadioButtonMenuItem oneLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_oneLetter", ShowCodonGlyphAction.getOneLetterAction());
+		JRPRadioButtonMenuItem hideLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_hideLetter", ShowCodonGlyphAction.getHideCodonAction());
+		JRPMenu codon_display_menu = new JRPMenu(id + "_main_viewMenu_codonDisplay", BUNDLE.getString("codonDisplay"));
+		codon_display_menu.add(threeLetterMenuItem);
+		codon_display_menu.add(oneLetterMenuItem);
+		codon_display_menu.add(hideLetterMenuItem);
+		codonDisplayMenuItemGroup.add(threeLetterMenuItem);
+		codonDisplayMenuItemGroup.add(oneLetterMenuItem);
+		codonDisplayMenuItemGroup.add(hideLetterMenuItem);
+//		view_menu.add(codon_display_menu);
 	}
 
 	private void toolMenu(JMenuBar menuBar, String id) {

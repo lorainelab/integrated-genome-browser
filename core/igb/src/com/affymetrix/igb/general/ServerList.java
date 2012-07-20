@@ -442,7 +442,7 @@ public final class ServerList {
 	public void addServerToPrefs(GenericServer server, int order) {
 		if (server.serverType == null) {
 			addRepositoryToPrefs(server.URL, server.serverName);
-		} else {
+		} else if (server.serverType.isSaveServersInPrefs()) {
 			addServerToPrefs(server.URL, server.serverName,
 					server.serverType, order, server.isDefault());
 		}

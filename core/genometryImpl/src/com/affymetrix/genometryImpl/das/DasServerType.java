@@ -393,4 +393,9 @@ public class DasServerType implements ServerTypeI {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isSaveServersInPrefs() {
+		return true;
+	}
 }

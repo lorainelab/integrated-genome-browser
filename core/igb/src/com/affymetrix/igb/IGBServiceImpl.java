@@ -43,6 +43,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.ServiceUtils;
@@ -525,7 +526,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public GenericServer addServer(ServerTypeI serverType,
 			String serverName, String serverURL, int order) {
-		return GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
+		GenericServer server = GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
 				serverName, serverURL, order, false);
+		DataLoadPrefsView.getSingleton().refreshServers();
+		return server;
 	}
 }

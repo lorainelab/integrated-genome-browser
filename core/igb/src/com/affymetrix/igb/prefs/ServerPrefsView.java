@@ -76,6 +76,10 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 				true);
 	}
 
+	public void refreshServers() {
+		((SourceTableModel)sourcesTable.getModel()).init();
+	}
+
 	protected JPanel initSourcePanel(String viewName) {
 		final JPanel sourcePanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(sourcePanel);

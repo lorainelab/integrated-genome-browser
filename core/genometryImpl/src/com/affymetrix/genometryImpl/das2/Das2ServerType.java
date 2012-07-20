@@ -657,4 +657,9 @@ public class Das2ServerType implements ServerTypeI {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isSaveServersInPrefs() {
+		return true;
+	}
 }

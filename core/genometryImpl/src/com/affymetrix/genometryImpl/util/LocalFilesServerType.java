@@ -110,4 +110,9 @@ public class LocalFilesServerType implements ServerTypeI {
 			BioSeq aseq, int min, int max, SeqSpan span) {
 		return false;
 	}
+
+	@Override
+	public boolean isSaveServersInPrefs() {
+		return false;
+	}
 }

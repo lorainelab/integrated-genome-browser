@@ -130,4 +130,5 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 * @return true if successful, false otherwise
 	 */
 	public boolean processServer(GenericServer gServer, String path);
+	public boolean isSaveServersInPrefs();
 }

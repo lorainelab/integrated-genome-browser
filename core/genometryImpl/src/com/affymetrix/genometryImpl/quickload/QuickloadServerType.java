@@ -499,4 +499,9 @@ public class QuickloadServerType implements ServerTypeI {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isSaveServersInPrefs() {
+		return true;
+	}
 }

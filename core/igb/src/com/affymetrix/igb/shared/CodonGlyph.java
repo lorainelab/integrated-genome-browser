@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -124,17 +125,17 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 
 	private ResidueRange getResidueRange() {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		SeqSymmetry parentSym = (SeqSymmetry)getParent().getParent().getInfo();
+		SymSpanWithCds parentSym = (SymSpanWithCds)getParent().getParent().getInfo();
 		SeqSymmetry exonSym = (SeqSymmetry)getParent().getInfo();
 		SeqSpan exonSpan = exonSym.getSpan(seq);
-		if (((SeqSpan)parentSym).isForward() && exonSpan.getStart() > exonSpan.getEnd()) {
+		if (parentSym.isForward() && exonSpan.getStart() > exonSpan.getEnd()) {
 			exonSpan = new SimpleSeqSpan(exonSpan.getEnd(), exonSpan.getStart(), seq);
 		}
-		else if (!((SeqSpan)parentSym).isForward() && exonSpan.getStart() < exonSpan.getEnd()) {
+		else if (!parentSym.isForward() && exonSpan.getStart() < exonSpan.getEnd()) {
 			exonSpan = new SimpleSeqSpan(exonSpan.getEnd(), exonSpan.getStart(), seq);
 		}
 		StringBuffer codesSB = new StringBuffer("");
-		SeqSpan cdsSpan = ((SupportsCdsSpan)parentSym).getCdsSpan();
+		SeqSpan cdsSpan = parentSym.getCdsSpan();
 		int startPos = 0;
 		int endPos = 0;
 		for (int index = 0; index < parentSym.getChildCount(); index++) {
@@ -151,7 +152,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 				}
 			}
 			residue = seq.substring(span.getStart(), span.getEnd());
-			if (((SeqSpan)parentSym).isForward()) {
+			if (parentSym.isForward()) {
 				if (exonSpan.getStart() == span.getStart()) {
 					startPos = codesSB.length();
 				}
@@ -175,7 +176,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 
 	private String getResidue(ViewI view) {
 		String errorMessage = null;
-		SeqSymmetry parentSym = (SeqSymmetry)getParent().getParent().getInfo();
+		SymSpanWithCds parentSym = (SymSpanWithCds)getParent().getParent().getInfo();
 //		SeqSpan exonSpan = ((SeqSymmetry)getParent().getInfo()).getSpan(GenometryModel.getGenometryModel().getSelectedSeq());
 		if (PreferenceUtils.getIntParam(CODON_GLYPH_CODE_SIZE, default_codon_glyph_code_size) == 0 || drawCodonGlyph != null) {
 			return null;
@@ -238,7 +239,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			else if (codeSize == 1)  {
 				aaCode = " " + aminoAcid.getLetter() + " ";
 			}
-			if (((SeqSpan)parentSym).isForward()) {
+			if (parentSym.isForward()) {
 				aminoAcidsSB.append(aaCode);
 			}
 			else {

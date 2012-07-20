@@ -3,7 +3,6 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -21,7 +20,7 @@ public class CodonGlyphProcessor implements GlyphProcessor {
 		if (glyph.getParent() != null && 
 				(glyph.getParent().getInfo() instanceof UcscGeneSym || glyph.getParent().getInfo() instanceof UcscBedSym)) {
 			CodonGlyph codonGlyph = new CodonGlyph();
-			if (hasUTR((SupportsCdsSpan)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo())) {
+			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo())) {
 				if (saveCodonGlyph != null) {
 					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);
 				}
@@ -33,16 +32,16 @@ public class CodonGlyphProcessor implements GlyphProcessor {
 			glyph.addChild(codonGlyph);
 		}
 	}
-	private boolean hasUTR(SupportsCdsSpan parentSym, SeqSymmetry exonSym) {
+	private boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		SeqSpan cdsSpan = parentSym.getCdsSpan();
 		if (cdsSpan != null) {
-		if (((SeqSpan)parentSym).isForward() && exonSym.getSpan(seq) != null &&
+		if (parentSym.isForward() && exonSym.getSpan(seq) != null &&
 			(cdsSpan.getStart() > exonSym.getSpan(seq).getStart() ||
 			 cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
 				return true;
 		}
-		if (!((SeqSpan)parentSym).isForward() && exonSym.getSpan(seq) != null &&
+		if (!parentSym.isForward() && exonSym.getSpan(seq) != null &&
 			(cdsSpan.getStart() < exonSym.getSpan(seq).getStart() ||
 			 cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
 				return true;

@@ -932,12 +932,6 @@ public class NeoSeq extends NeoContainerWidget
 		return getResidueGlyph().addAnnotation(start, end, color);
 	}
 
-	/**
-	 * gets the range of an annotation.
-	 *
-	 * @param annotation an item added with the addAnnotation method.
-	 * @return the Range (start to end) of the annotation.
-	 */
 	public void setCdsStart(int cdsStart){
 		this.cdsStart = cdsStart;
 	}
@@ -953,6 +947,13 @@ public class NeoSeq extends NeoContainerWidget
 	public int getCdsEnd(){
 		return cdsEnd;
 	}
+
+	/**
+	 * gets the range of an annotation.
+	 *
+	 * @param annotation an item added with the addAnnotation method.
+	 * @return the Range (start to end) of the annotation.
+	 */
 	public Range getAnnotationRange(GlyphI annotation) {
 		Range r = new Range(0,0);
 		if (annotation instanceof AnnotationGlyph) {

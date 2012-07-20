@@ -147,6 +147,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				}
 				if (resultGlyph == null) {
 					resultGlyph = getEmptyGraphGlyph(style, smv);
+					((AbstractGraphGlyph)resultGlyph).drawHandle(false);
 				}
 				if (resultGlyph == lastUsedGlyph) {
 					return resultGlyph;

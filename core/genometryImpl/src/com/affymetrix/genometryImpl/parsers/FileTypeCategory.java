@@ -5,7 +5,6 @@ public enum FileTypeCategory {
 	Alignment(true),
 	Graph(false),
 	Sequence(false),
-	Variant(true),
 	Mismatch(false),
 	ProbeSet(true),
 	ScoredContainer(false);

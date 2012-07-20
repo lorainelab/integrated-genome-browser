@@ -168,6 +168,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
 		try {
 			while ((line = lineReader.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
+				if (lineTracker != null) {
+					lineTracker.notifyReadLine(line.length());
+				}
 				if (line.startsWith("#")) {
 					line_count++;
 					continue;

@@ -5,16 +5,17 @@
 package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symloader.TwoBit;
-import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
 import com.affymetrix.genometryImpl.filter.NoIntronFilter;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.*;
 
 
@@ -29,33 +30,34 @@ public class FindJunctionOperator implements Operator{
     private SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
     private int threshold = default_threshold;
     private boolean twoTracks, uniqueness;
-    private TwoBit twoBit;
-    private String residueString;
     private int random = 1;
-    public FindJunctionOperator(int threshold, boolean twoTracks, TwoBit twoBit, boolean uniqueness){
-        this.threshold = threshold;
-        this.twoTracks = twoTracks;
-        this.twoBit = twoBit;
-        this.uniqueness = uniqueness;
+    public FindJunctionOperator(){
+        this.threshold = default_threshold;
+        this.twoTracks = true;
+        this.uniqueness = true;
     }   
     
     @Override
     public String getName() {
-        return "findJunction";
+        return "findjunction";
     }
 
     @Override
     public String getDisplay() {
-        return "Find Junction";
-    }
-    
-    public void setResidueString(String residueString){
-        this.residueString = residueString;
+        return GenometryConstants.BUNDLE.getString("operator_" + getName());
     }
     
     @Override
     public SeqSymmetry operate(BioSeq bioseq, List<SeqSymmetry> list) {
-        TypeContainerAnnot container = new TypeContainerAnnot("test", "bed");
+		
+		TypeContainerAnnot container = new TypeContainerAnnot("test", "bed");
+		if(list.isEmpty())
+			return container;
+		SeqSymmetry topSym = list.get(0);
+		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+		for(int i=0; i<topSym.getChildCount(); i++){
+			symList.add(topSym.getChild(i));
+		}
         HashMap<String, JunctionUcscBedSym> map = new HashMap<String , JunctionUcscBedSym>();
         subOperate(bioseq, list, map);
         Collection<JunctionUcscBedSym> symmetrySet = map.values();
@@ -135,6 +137,7 @@ public class FindJunctionOperator implements Operator{
         int blockMins[] = new int[2];
         int blockMaxs[] = new int[2];
         boolean canonical = true;
+		String residueString;
         String rightResidues= "",leftResidues= "";
         SeqSpan span = intronSym.getSpan(bioseq);
         blockMins[0] = span.getMin() - threshold;
@@ -147,6 +150,7 @@ public class FindJunctionOperator implements Operator{
         int minimum = span.getMin();
         int maximum = span.getMax();
         if(!twoTracks){
+			residueString = bioseq.getResidues(minimum, maximum);
             if(minimum >= residueString.length() || maximum >= residueString.length()){
                 for(int j=residueString.length();j<maximum;j++)
                     residueString = residueString.concat("-");

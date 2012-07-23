@@ -132,7 +132,7 @@ public class Activator implements BundleActivator {
         	};
         	serviceTracker.open();
         }
-		//bundleContext.registerService(GlyphProcessor.class, new CodonGlyphProcessor(), null);
+		bundleContext.registerService(GlyphProcessor.class, new CodonGlyphProcessor(), null);
 		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
 		ExtensionPointHandler<FileTypeHandler> extensionPoint
 				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);

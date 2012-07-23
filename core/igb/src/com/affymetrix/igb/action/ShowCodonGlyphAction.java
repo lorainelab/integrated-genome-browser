@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.CodonGlyph;
+import javax.swing.event.MouseInputAdapter;
 
 /**
  */
@@ -39,6 +40,9 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
 	public ShowCodonGlyphAction(String text, int size){
 		super(text, null, null);
 		this.size = size;
+		if(size == PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size)){
+			this.putValue(SELECTED_KEY, true);
+		}
 	}
 
 	@Override
@@ -52,4 +56,4 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		seqMapView.setAnnotatedSeq(seq, true, true, true);
 	}
-}
+	}

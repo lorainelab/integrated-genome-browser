@@ -27,9 +27,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	public static final int default_codon_glyph_code_size = 3;
 
 	public CodonGlyph() {
-	super();
-	//*	
-		PreferenceUtils.getTopNode().putInt(CODON_GLYPH_CODE_SIZE, PreferenceUtils.getIntParam(CODON_GLYPH_CODE_SIZE, default_codon_glyph_code_size));
+		super();
 	}
 
 	@Override

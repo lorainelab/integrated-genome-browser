@@ -120,20 +120,21 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, track_resize_behavior);
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAllTrack", ToggleTrackResizingAction.getAction().getAdjustAllAction()));
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAdjacentTrack", ToggleTrackResizingAction.getAction().getAdjustAdjacentAction()));
-//		view_menu.addSeparator();
+		view_menu.addSeparator();
 		
 		ButtonGroup codonDisplayMenuItemGroup = new ButtonGroup();
+		JRPMenu codon_display_menu = new JRPMenu(id + "_main_viewMenu_codonDisplay", BUNDLE.getString("codonDisplay"));
+		MenuUtil.addToMenu(view_menu, codon_display_menu);
 		JRPRadioButtonMenuItem threeLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_threeLetter", ShowCodonGlyphAction.getThreeLetterAction());
 		JRPRadioButtonMenuItem oneLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_oneLetter", ShowCodonGlyphAction.getOneLetterAction());
 		JRPRadioButtonMenuItem hideLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_hideLetter", ShowCodonGlyphAction.getHideCodonAction());
-		JRPMenu codon_display_menu = new JRPMenu(id + "_main_viewMenu_codonDisplay", BUNDLE.getString("codonDisplay"));
-		codon_display_menu.add(threeLetterMenuItem);
-		codon_display_menu.add(oneLetterMenuItem);
-		codon_display_menu.add(hideLetterMenuItem);
+		MenuUtil.addToMenu(codon_display_menu, threeLetterMenuItem);
+		MenuUtil.addToMenu(codon_display_menu, oneLetterMenuItem);
+		MenuUtil.addToMenu(codon_display_menu, hideLetterMenuItem);
 		codonDisplayMenuItemGroup.add(threeLetterMenuItem);
 		codonDisplayMenuItemGroup.add(oneLetterMenuItem);
 		codonDisplayMenuItemGroup.add(hideLetterMenuItem);
-//		view_menu.add(codon_display_menu);
+		view_menu.add(codon_display_menu);
 	}
 
 	private void toolMenu(JMenuBar menuBar, String id) {

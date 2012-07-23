@@ -208,4 +208,5 @@ public interface IGBService {
 	public void deselect(GlyphI tierGlyph);
 	public void setHome();
 	public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order);
+	public void removeServer(GenericServer gServer);
 }

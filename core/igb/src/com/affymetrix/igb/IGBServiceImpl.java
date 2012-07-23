@@ -531,4 +531,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		DataLoadPrefsView.getSingleton().refreshServers();
 		return server;
 	}
+
+	@Override
+	public void removeServer(GenericServer gServer) {
+		GeneralLoadUtils.removeServer(gServer);
+	}
 }

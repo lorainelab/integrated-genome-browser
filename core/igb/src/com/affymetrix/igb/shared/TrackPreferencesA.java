@@ -464,7 +464,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void floatCheckBoxReset() {
 		JCheckBox floatCheckBox = getFloatCheckBox();
-		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined() && !isAnySemanticZoomGraph());
+
 		boolean allFloat = isAllGraph();
 		for (AbstractGraphGlyph glyph : graphGlyphs) {
 			if (!glyph.getAnnotStyle().getFloatTier()) {
@@ -472,6 +472,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				break;
 			}
 		}
+
+		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined() && !isAnySemanticZoomGraph() 
+			// Floating is not allowed if only one track loaded
+			&& ((igbService != null && igbService.getVisibleTierGlyphs() != null && igbService.getVisibleTierGlyphs().size() > 2) || allFloat)
+		);
 		floatCheckBox.setSelected(allFloat);
 	}
 

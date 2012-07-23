@@ -6,7 +6,6 @@ package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -35,7 +34,7 @@ public class ChildThresholdFilter implements SymmetryFilterI{
 
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
-        SeqSpan span = ss.getSpan(bioseq);
+		SeqSpan span = ss.getSpan(bioseq);
         if((span.getMax() - span.getMin()) < threshold)
             return false;
         else

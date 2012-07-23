@@ -31,6 +31,9 @@ public class FindJunctionOperator implements Operator{
     private SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
     private int threshold = default_threshold;
     private boolean twoTracks, uniqueness;
+	private static final String thresholdString = "threshold";
+	private static final String twoTracksString = "twoTracks";
+	private static final String uniquenessString = "uniqueness";
     public FindJunctionOperator(){
         this.threshold = default_threshold;
         this.twoTracks = true;
@@ -39,7 +42,7 @@ public class FindJunctionOperator implements Operator{
     
     @Override
     public String getName() {
-        return "findjunction";
+        return "findjunctions";
     }
 
     @Override
@@ -98,11 +101,11 @@ public class FindJunctionOperator implements Operator{
         if(map.size() <= 0)
             return false;                
         for(String s: map.keySet()){
-            if(s.equalsIgnoreCase("threshold"))
+            if(s.equalsIgnoreCase(thresholdString))
                 threshold = (Integer)map.get(s);
-            else if(s.equalsIgnoreCase("twoTracks"))
+            else if(s.equalsIgnoreCase(twoTracksString))
                 twoTracks = (Boolean)map.get(s);
-            else if(s.equalsIgnoreCase("uniqueness"))
+            else if(s.equalsIgnoreCase(uniquenessString))
                 uniqueness = (Boolean)map.get(s);
         }
         return true;

@@ -118,5 +118,6 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.UnionOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.XorOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.GraphMultiplexer(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FindJunctionOperator(), null);
 	}
 }

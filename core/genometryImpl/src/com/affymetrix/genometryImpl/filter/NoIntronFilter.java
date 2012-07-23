@@ -5,7 +5,6 @@
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -31,7 +30,7 @@ public class NoIntronFilter implements SymmetryFilterI{
 
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
-        if(ss.getChildCount() <= 1)
+		if(ss.getChildCount() <= 1)
             return false;
         return true;
     }

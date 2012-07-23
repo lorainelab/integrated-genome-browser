@@ -33,7 +33,13 @@ public class UniqueLocationFilter implements SymmetryFilterI{
 
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
-        int currentNH = (Integer)(((BAMSym)ss).getProperty("NH"));
+        if (!(ss instanceof BAMSym)) {
+            return false;
+        }
+		if((((BAMSym)ss).getProperty("NH")) == null){
+			return false;
+		}
+		int currentNH = (Integer)(((BAMSym)ss).getProperty("NH"));
         if(currentNH != 1)
             return false;
         return true;

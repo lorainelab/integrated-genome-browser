@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -30,7 +31,6 @@ public class FindJunctionOperator implements Operator{
     private SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
     private int threshold = default_threshold;
     private boolean twoTracks, uniqueness;
-    private int random = 1;
     public FindJunctionOperator(){
         this.threshold = default_threshold;
         this.twoTracks = true;
@@ -50,7 +50,7 @@ public class FindJunctionOperator implements Operator{
     @Override
     public SeqSymmetry operate(BioSeq bioseq, List<SeqSymmetry> list) {
 		
-		TypeContainerAnnot container = new TypeContainerAnnot("test", "bed");
+		SimpleSymWithProps container = new SimpleSymWithProps();
 		if(list.isEmpty())
 			return container;
 		SeqSymmetry topSym = list.get(0);
@@ -59,7 +59,7 @@ public class FindJunctionOperator implements Operator{
 			symList.add(topSym.getChild(i));
 		}
         HashMap<String, JunctionUcscBedSym> map = new HashMap<String , JunctionUcscBedSym>();
-        subOperate(bioseq, list, map);
+        subOperate(bioseq, symList, map);
         Collection<JunctionUcscBedSym> symmetrySet = map.values();
         Object syms[] = symmetrySet.toArray();
         for(int i=0;i<syms.length;i++){
@@ -95,12 +95,19 @@ public class FindJunctionOperator implements Operator{
 
     @Override
     public boolean setParameters(Map<String, Object> map) {
-        if(map.size() == 1 && map.get(0) instanceof Integer){
-            threshold = (Integer)map.get(0);
-            return true;
+        if(map.size() <= 0)
+            return false;                
+        for(String s: map.keySet()){
+            if(s.equalsIgnoreCase("threshold"))
+                threshold = (Integer)map.get(s);
+            else if(s.equalsIgnoreCase("twoTracks"))
+                twoTracks = (Boolean)map.get(s);
+            else if(s.equalsIgnoreCase("uniqueness"))
+                uniqueness = (Boolean)map.get(s);
         }
-        return false;
+        return true;
     }
+
 
     @Override
     public boolean supportsTwoTrack() {
@@ -151,12 +158,8 @@ public class FindJunctionOperator implements Operator{
         int maximum = span.getMax();
         if(!twoTracks){
 			residueString = bioseq.getResidues(minimum, maximum);
-            if(minimum >= residueString.length() || maximum >= residueString.length()){
-                for(int j=residueString.length();j<maximum;j++)
-                    residueString = residueString.concat("-");
-            }
-            leftResidues = residueString.substring(minimum, minimum+2);
-            rightResidues = residueString.substring(maximum-2,maximum);
+            leftResidues = residueString.substring(0, 2);
+            rightResidues = residueString.substring(maximum-minimum-2,maximum-minimum);
             boolean c;
             if(leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AG")){
                 canonical = true;

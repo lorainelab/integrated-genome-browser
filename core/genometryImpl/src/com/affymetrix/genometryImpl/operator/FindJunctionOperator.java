@@ -73,11 +73,11 @@ public class FindJunctionOperator implements Operator{
     public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, JunctionUcscBedSym> map){
       for(SeqSymmetry sym : list){
             if(noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))){
-                updateIntronHashMap(sym , bioseq, map);
+                updateIntronHashMap(sym , bioseq, map, threshold, twoTracks);
             }
-
         }
-    }    
+    }
+	
     @Override
     public int getOperandCountMin(FileTypeCategory ftc) {
         return ftc == FileTypeCategory.Alignment ? 1 : 0;
@@ -122,7 +122,7 @@ public class FindJunctionOperator implements Operator{
     }
     
     //This method splits the given Sym into introns and filters out the qualified Introns
-    private void updateIntronHashMap(SeqSymmetry sym , BioSeq bioseq, HashMap<String, JunctionUcscBedSym> map){
+    private static void updateIntronHashMap(SeqSymmetry sym , BioSeq bioseq, HashMap<String, JunctionUcscBedSym> map, int threshold, boolean twoTracks){
         List<Integer> childIntronIndices = new ArrayList<Integer>();
         int childCount = sym.getChildCount();
         SeqSymmetry intronChild, intronSym;
@@ -137,12 +137,12 @@ public class FindJunctionOperator implements Operator{
             for(Integer i : childIntronIndices){
                 intronChild = intronSym.getChild(i);
                 if(intronChild != null)
-                    addToMap(intronChild, map, bioseq);
+                    addToMap(intronChild, map, bioseq, threshold, twoTracks);
             }
         }
     }
     
-    private void addToMap(SeqSymmetry intronSym , HashMap<String, JunctionUcscBedSym> map, BioSeq bioseq){
+    private static void addToMap(SeqSymmetry intronSym , HashMap<String, JunctionUcscBedSym> map, BioSeq bioseq, int threshold, boolean twoTracks){
         int blockMins[] = new int[2];
         int blockMaxs[] = new int[2];
         boolean canonical = true;
@@ -202,7 +202,7 @@ public class FindJunctionOperator implements Operator{
     }
     
 	//Helper seqsymmetry class
-	private class JunctionUcscBedSym extends UcscBedSym {
+	private static class JunctionUcscBedSym extends UcscBedSym {
 
 		int positiveScore, negativeScore;
 		float localScore = 1;

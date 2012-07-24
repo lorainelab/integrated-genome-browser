@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genometryImpl.operator;
 
+import java.util.*;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -14,27 +11,31 @@ import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.util.*;
-
 
 /**
  *
  * @author Anuj
  */
 public class FindJunctionOperator implements Operator{
+	public static final String THRESHOLD = "threshold";
+	public static final String TWOTRACKS = "twoTracks";
+	public static final String UNIQUENESS = "uniqueness";
+	
     private static final int default_threshold = 5;
-    private SymmetryFilterI noIntronFilter = new NoIntronFilter();
-    private SymmetryFilterI childThresholdFilter = new ChildThresholdFilter();
-    private SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
-    private int threshold = default_threshold;
-    private boolean twoTracks, uniqueness;
-	private static final String thresholdString = "threshold";
-	private static final String twoTracksString = "twoTracks";
-	private static final String uniquenessString = "uniqueness";
+	private static final boolean default_twoTracks = true;
+	private static final boolean default_uniqueness = true;
+	private static final SymmetryFilterI noIntronFilter = new NoIntronFilter();
+    private static final SymmetryFilterI childThresholdFilter = new ChildThresholdFilter();
+    private static final SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
+    
+    private int threshold;
+    private boolean twoTracks;
+	private boolean uniqueness;
+	
     public FindJunctionOperator(){
-        this.threshold = default_threshold;
-        this.twoTracks = true;
-        this.uniqueness = true;
+		threshold = default_threshold;
+		twoTracks = default_twoTracks;
+		uniqueness = default_uniqueness;
     }   
     
     @Override
@@ -90,7 +91,9 @@ public class FindJunctionOperator implements Operator{
 
     @Override
     public Map<String, Class<?>> getParameters() {
-        return null;
+		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		parameters.put(THRESHOLD, Integer.class);
+        return parameters;
     }
 
     @Override
@@ -98,11 +101,11 @@ public class FindJunctionOperator implements Operator{
         if(map.size() <= 0)
             return false;                
         for(String s: map.keySet()){
-            if(s.equalsIgnoreCase(thresholdString))
+            if(s.equalsIgnoreCase(THRESHOLD))
                 threshold = (Integer)map.get(s);
-            else if(s.equalsIgnoreCase(twoTracksString))
+            else if(s.equalsIgnoreCase(TWOTRACKS))
                 twoTracks = (Boolean)map.get(s);
-            else if(s.equalsIgnoreCase(uniquenessString))
+            else if(s.equalsIgnoreCase(UNIQUENESS))
                 uniqueness = (Boolean)map.get(s);
         }
         return true;

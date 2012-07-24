@@ -141,6 +141,7 @@ public class AltSpliceView extends IGBTabPanel
 				}
 			}
 		}
+		resetAll();
 	}
 
 	/**
@@ -170,6 +171,7 @@ public class AltSpliceView extends IGBTabPanel
 				pending_sequence_change = true;
 			}
 		}
+		resetAll();
 	}
 
 	private void setSliceBySelection(boolean b) {

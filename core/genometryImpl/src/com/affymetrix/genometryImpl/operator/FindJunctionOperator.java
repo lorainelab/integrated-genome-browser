@@ -21,9 +21,10 @@ public class FindJunctionOperator implements Operator{
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
 	
-    private static final int default_threshold = 5;
-	private static final boolean default_twoTracks = true;
-	private static final boolean default_uniqueness = true;
+    public static final int default_threshold = 5;
+	public static final boolean default_twoTracks = true;
+	public static final boolean default_uniqueness = true;
+	
 	private static final SymmetryFilterI noIntronFilter = new NoIntronFilter();
     private static final SymmetryFilterI childThresholdFilter = new ChildThresholdFilter();
     private static final SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();

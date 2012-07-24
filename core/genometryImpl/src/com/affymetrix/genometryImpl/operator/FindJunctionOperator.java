@@ -61,13 +61,12 @@ public class FindJunctionOperator implements Operator{
 		}
         HashMap<String, JunctionUcscBedSym> map = new HashMap<String , JunctionUcscBedSym>();
         subOperate(bioseq, symList, map);
-        Collection<JunctionUcscBedSym> symmetrySet = map.values();
-        Object syms[] = symmetrySet.toArray();
-        for(int i=0;i<syms.length;i++){
-            container.addChild((JunctionUcscBedSym)syms[i]);
-        }
+		for(SeqSymmetry sym : map.values()){
+			container.addChild(sym);
+		}
         map.clear();
-        symmetrySet.clear();
+        symList.clear();
+		
         return container;
     }
     

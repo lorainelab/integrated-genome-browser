@@ -107,7 +107,7 @@ Pseudomonas aeruginosa	P_aeruginosa	P. aeruginosa
 Pteropus vampyrus	Large flying fox	P_vampyrus	pteVam	Pteropus_vampyrus
 Prunus persica	Peach	P_persica
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
-Ricinis communis	Castor oil plant	R_communis
+Ricinus communis	Castor oil plant	R_communis
 Saccharomyces cerevisiae	Budding Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
 Schizosaccharomyces pombe	Fission Yeast	S_pombe
 Selaginella moellendorffii	Spikemoss	S. moellendorffii	S_moellendorffii

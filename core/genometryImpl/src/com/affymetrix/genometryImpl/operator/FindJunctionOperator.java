@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.operator;
 
-import java.util.*;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -9,8 +8,14 @@ import com.affymetrix.genometryImpl.filter.NoIntronFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -60,7 +65,7 @@ public class FindJunctionOperator implements Operator{
 		for(int i=0; i<topSym.getChildCount(); i++){
 			symList.add(topSym.getChild(i));
 		}
-        HashMap<String, JunctionUcscBedSym> map = new HashMap<String , JunctionUcscBedSym>();
+        HashMap<String, SeqSymmetry> map = new HashMap<String ,SeqSymmetry>();
         subOperate(bioseq, symList, map);
 		for(SeqSymmetry sym : map.values()){
 			container.addChild(sym);
@@ -71,7 +76,7 @@ public class FindJunctionOperator implements Operator{
         return container;
     }
     
-    public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, JunctionUcscBedSym> map){
+    public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map){
       for(SeqSymmetry sym : list){
             if(noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))){
                 updateIntronHashMap(sym , bioseq, map, threshold, twoTracks);
@@ -91,9 +96,7 @@ public class FindJunctionOperator implements Operator{
 
     @Override
     public Map<String, Class<?>> getParameters() {
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
-		parameters.put(THRESHOLD, Integer.class);
-        return parameters;
+		return null;
     }
 
     @Override
@@ -123,7 +126,7 @@ public class FindJunctionOperator implements Operator{
     }
     
     //This method splits the given Sym into introns and filters out the qualified Introns
-    private static void updateIntronHashMap(SeqSymmetry sym , BioSeq bioseq, HashMap<String, JunctionUcscBedSym> map, int threshold, boolean twoTracks){
+    private static void updateIntronHashMap(SeqSymmetry sym , BioSeq bioseq, HashMap<String, SeqSymmetry> map, int threshold, boolean twoTracks){
         List<Integer> childIntronIndices = new ArrayList<Integer>();
         int childCount = sym.getChildCount();
         childThresholdFilter.setParam(threshold);
@@ -145,60 +148,64 @@ public class FindJunctionOperator implements Operator{
         }
     }
     
-    private static void addToMap(SeqSpan span , HashMap<String, JunctionUcscBedSym> map, BioSeq bioseq, int threshold, boolean twoTracks){
-        boolean canonical = true;
+    private static void addToMap(SeqSpan span , HashMap<String, SeqSymmetry> map, BioSeq bioseq, int threshold, boolean twoTracks){
+       
         boolean currentForward = false;
-        if(!twoTracks){
-			/*int minimum = span.getMin();
-			int maximum = span.getMax();
-			String residueString = bioseq.getResidues(minimum, maximum);
-            String leftResidues = residueString.substring(0, 2);
-            String rightResidues = residueString.substring(maximum-minimum-2,maximum-minimum);*/
-
-            String leftResidues = bioseq.getResidues(span.getMin(), span.getMin() + 2);
-            String rightResidues = bioseq.getResidues(span.getMax() - 2, span.getMax());
- 
-            if(leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AG")){
-                canonical = true;
-                currentForward = true;
-            }
-            else if(leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("AC")){
-                canonical = true;
-                currentForward = false;
-            }
-            else if((leftResidues.equalsIgnoreCase("AT") && rightResidues.equalsIgnoreCase("AC")) || 
-                    (leftResidues.equalsIgnoreCase("GC") && rightResidues.equalsIgnoreCase("AG"))){
-                canonical = false;
-                currentForward = true;
-            }
-            else if((leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AT")) || 
-                    (leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("GC"))){
-                canonical = false;
-                currentForward = false;
-            }
-            else{
-                canonical = false;
-                currentForward = span.isForward();
-            }
-        }
-        else{
-            currentForward = span.isForward();
-        }
-		
-        String name = "J:" + bioseq.getID() + ":" + span.getMin() + "-" + span.getMax() + ":";
-        if(map.containsKey(name)){
-            map.get(name).updateScore(currentForward);
-        }
-        else{
+		String name = "J:" + bioseq.getID() + ":" + span.getMin() + "-" + span.getMax() + ":";
+		if(map.containsKey(name)){
+			JunctionUcscBedSym sym = (JunctionUcscBedSym)map.get(name);
+			if(!twoTracks){
+				currentForward = sym.isCanonical() ? sym.isForward() : (sym.isRare() ? span.isForward() : sym.isForward());					
+			}
+			else{
+				currentForward = span.isForward();
+			}
+			sym.updateScore(currentForward);
+		}
+		else{
+			boolean canonical = true;
+			boolean rare = false;
+			if(!twoTracks){
+				String leftResidues = bioseq.getResidues(span.getMin(), span.getMin() + 2);
+				String rightResidues = bioseq.getResidues(span.getMax() - 2, span.getMax());
+	            if(leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AG")){
+		            canonical = true;
+			        currentForward = true;
+					rare = false;
+				}
+				else if(leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("AC")){
+					canonical = true;
+					currentForward = false;
+					rare = false;
+				}
+				else if((leftResidues.equalsIgnoreCase("AT") && rightResidues.equalsIgnoreCase("AC")) || 
+					    (leftResidues.equalsIgnoreCase("GC") && rightResidues.equalsIgnoreCase("AG"))){
+					canonical = false;
+					currentForward = true;
+					rare = false;
+				}
+				else if((leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AT")) || 
+					    (leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("GC"))){
+					canonical = false;
+					currentForward = false;
+					rare = false;
+				}
+				else{
+					canonical = false;
+					currentForward = span.isForward();
+					rare = true;
+				}
+			}
+			else
+				currentForward = span.isForward();
 			int parentStart = span.getMin() - threshold;
 			int parentEnd = span.getMax() + threshold;
 			int blockMins[] = new int[]{parentStart, span.getMax()};
 			int blockMaxs[] = new int[]{span.getMin(), parentEnd};
             JunctionUcscBedSym tempSym = new JunctionUcscBedSym("test", bioseq, 
 					parentStart, parentEnd, name, currentForward,  
-					blockMins, blockMaxs, canonical);
-			
-            map.put(name, tempSym);
+					blockMins, blockMaxs, canonical, rare);			
+            map.put(name, (SeqSymmetry)tempSym);
         }
     }
     
@@ -207,15 +214,16 @@ public class FindJunctionOperator implements Operator{
 
 		int positiveScore, negativeScore;
 		float localScore;
-		boolean canonical;
+		boolean canonical, rare;
 
 		private JunctionUcscBedSym(String type, BioSeq seq, int txMin, int txMax, 
-				String name, boolean forward, int[] blockMins, int[] blockMaxs, boolean canonical) {
+				String name, boolean forward, int[] blockMins, int[] blockMaxs, boolean canonical, boolean rare) {
 			super(type, seq, txMin, txMax, name, 1, forward, 0, 0, blockMins, blockMaxs);
 			this.localScore = 1;
 			this.positiveScore = forward? 1 : 0;
 			this.negativeScore = forward? 0 : 1;
 			this.canonical = canonical;
+			this.rare = rare;
 		}
 
 		private void updateScore(boolean isForward) {
@@ -247,6 +255,14 @@ public class FindJunctionOperator implements Operator{
 		@Override
 		public boolean isForward() {
 			return canonical ? super.isForward() : positiveScore > negativeScore ? true : false;
+		}
+		
+		public boolean isCanonical(){
+			return canonical;
+		}
+		
+		public boolean isRare(){
+			return rare;
 		}
 	}
 }

@@ -22,7 +22,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
 	final private int size;
 	
 	static{
-		GenericActionHolder.getInstance().addGenericAction(SHOW_CODON_GLYPH_ACTION_THREE_LETTER);
+		GenericActionHolder.getInstance().addGenericAction(SHOW_CODON_GLYPH_ACTION_ONE_LETTER);
 	}
 	
 	public static ShowCodonGlyphAction getThreeLetterAction() {

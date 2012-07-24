@@ -24,10 +24,13 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 //	private static boolean loading = false;
 	
 	public static final String CODON_GLYPH_CODE_SIZE = "Codon glyph code size";
-	public static final int default_codon_glyph_code_size = 3;
+	public static final int default_codon_glyph_code_size = 1;
+	
+	private int codeSize;
 
-	public CodonGlyph() {
+	public CodonGlyph(int codeSize) {
 		super();
+		this.codeSize = codeSize;
 	}
 
 	@Override
@@ -77,7 +80,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	@Override
 	protected void drawResidueRectangles(
 			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
-		if (PreferenceUtils.getIntParam(CODON_GLYPH_CODE_SIZE, default_codon_glyph_code_size) == 0) {
+		if (codeSize == 0) {
 			return;
 		}
 
@@ -176,7 +179,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		String errorMessage = null;
 		SymSpanWithCds parentSym = (SymSpanWithCds)getParent().getParent().getInfo();
 //		SeqSpan exonSpan = ((SeqSymmetry)getParent().getInfo()).getSpan(GenometryModel.getGenometryModel().getSelectedSeq());
-		if (PreferenceUtils.getIntParam(CODON_GLYPH_CODE_SIZE, default_codon_glyph_code_size) == 0 || drawCodonGlyph != null) {
+		if (codeSize == 0 || drawCodonGlyph != null) {
 			return null;
 		}
 		ResidueRange residueRange = getResidueRange();
@@ -230,7 +233,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 				return null;
 			}
 			String aaCode = "";
-			int codeSize = PreferenceUtils.getIntParam(CODON_GLYPH_CODE_SIZE, default_codon_glyph_code_size);
 			if (codeSize == 3) {
 				aaCode = aminoAcid.getCode();
 			}

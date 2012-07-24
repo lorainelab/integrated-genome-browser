@@ -5,10 +5,18 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import java.util.prefs.PreferenceChangeEvent;
 
-public class CodonGlyphProcessor implements GlyphProcessor {
+public class CodonGlyphProcessor implements GlyphProcessor, java.util.prefs.PreferenceChangeListener{
 	private CodonGlyph saveCodonGlyph;
+	private int codeSize;
+	
+	public CodonGlyphProcessor(){
+		codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+	}
 	
 	/*
 	 * note - if the transcript has UTR, it will have two glyphs, one with the UTR and one without.
@@ -18,8 +26,8 @@ public class CodonGlyphProcessor implements GlyphProcessor {
 	 */
 	@Override
 	public void processGlyph(GlyphI glyph) {
-		if (glyph.getParent() != null && glyph.getParent().getInfo() instanceof SymSpanWithCds) {
-			CodonGlyph codonGlyph = new CodonGlyph();
+		if (glyph.getParent() != null && glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
+			CodonGlyph codonGlyph = new CodonGlyph(codeSize);
 			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo())) {
 				if (saveCodonGlyph != null) {
 					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);
@@ -52,5 +60,14 @@ public class CodonGlyphProcessor implements GlyphProcessor {
 	@Override
 	public AbstractGraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
 		return null;
+	}
+
+	public void preferenceChange(PreferenceChangeEvent pce) {
+		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
+          return;
+        }
+		if (pce.getKey().equals(CodonGlyph.CODON_GLYPH_CODE_SIZE)) {
+			codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
+        }
 	}
 }

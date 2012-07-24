@@ -700,7 +700,9 @@ public final class GeneralLoadUtils {
 							break;
 						}
 						loadOnSequence(seq);
-						currentPosition.setValue(currentPosition.getValue() + current_seq.getLength());
+						if (current_seq != null) {
+							currentPosition.setValue(currentPosition.getValue() + current_seq.getLength());
+						}
 					}
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) feature.symL).logException(ex);

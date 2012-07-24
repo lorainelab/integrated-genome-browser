@@ -147,11 +147,14 @@ public class FindJunctionOperator implements Operator{
         boolean currentForward = false;
         SeqSpan span = intronSym.getSpan(bioseq);
         if(!twoTracks){
-			int minimum = span.getMin();
+			/*int minimum = span.getMin();
 			int maximum = span.getMax();
 			String residueString = bioseq.getResidues(minimum, maximum);
             String leftResidues = residueString.substring(0, 2);
-            String rightResidues = residueString.substring(maximum-minimum-2,maximum-minimum);
+            String rightResidues = residueString.substring(maximum-minimum-2,maximum-minimum);*/
+
+            String leftResidues = bioseq.getResidues(span.getMin(), span.getMin() + 2);
+            String rightResidues = bioseq.getResidues(span.getMax() - 2, span.getMax());
  
             if(leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AG")){
                 canonical = true;
@@ -181,21 +184,19 @@ public class FindJunctionOperator implements Operator{
         }
 		
         String name = "J:" + bioseq.getID() + ":" + span.getMin() + "-" + span.getMax() + ":";
-        String key = name;
-        if(map.containsKey(key)){
-            map.get(key).updateScore(currentForward);
+        if(map.containsKey(name)){
+            map.get(name).updateScore(currentForward);
         }
         else{
-			int blockMins[] = new int[2];
-			int blockMaxs[] = new int[2];
-			blockMins[0] = span.getMin() - threshold;
-			blockMins[1] = span.getMax();
-			blockMaxs[0] = span.getMin();
-			blockMaxs[1] = span.getMax() + threshold;
+			int parentStart = span.getMin() - threshold;
+			int parentEnd = span.getMax() + threshold;
+			int blockMins[] = new int[]{parentStart, span.getMax()};
+			int blockMaxs[] = new int[]{span.getMin(), parentEnd};
+            JunctionUcscBedSym tempSym = new JunctionUcscBedSym("test", bioseq, 
+					parentStart, parentEnd, name, currentForward,  
+					blockMins, blockMaxs, canonical);
 			
-            JunctionUcscBedSym tempSym = new JunctionUcscBedSym("test", bioseq, span.getMin()-threshold,
-               span.getMax()+threshold, name, 1, currentForward, 0, 0, blockMins, blockMaxs, currentForward?1:0, currentForward?0:1, canonical);
-            map.put(key,tempSym);
+            map.put(name, tempSym);
         }
     }
     
@@ -203,14 +204,15 @@ public class FindJunctionOperator implements Operator{
 	private static class JunctionUcscBedSym extends UcscBedSym {
 
 		int positiveScore, negativeScore;
-		float localScore = 1;
+		float localScore;
 		boolean canonical;
 
-		private JunctionUcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score, boolean forward,
-				int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs, int positiveScore, int negativeScore, boolean canonical) {
-			super(type, seq, txMin, txMax, name, score, forward, cdsMin, cdsMax, blockMins, blockMaxs);
-			this.positiveScore = positiveScore;
-			this.negativeScore = negativeScore;
+		private JunctionUcscBedSym(String type, BioSeq seq, int txMin, int txMax, 
+				String name, boolean forward, int[] blockMins, int[] blockMaxs, boolean canonical) {
+			super(type, seq, txMin, txMax, name, 1, forward, 0, 0, blockMins, blockMaxs);
+			this.localScore = 1;
+			this.positiveScore = forward? 1 : 0;
+			this.negativeScore = forward? 0 : 1;
 			this.canonical = canonical;
 		}
 

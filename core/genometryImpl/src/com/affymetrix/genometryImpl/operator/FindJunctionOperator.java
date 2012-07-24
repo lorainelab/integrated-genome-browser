@@ -171,24 +171,20 @@ public class FindJunctionOperator implements Operator{
 	            if(leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AG")){
 		            canonical = true;
 			        currentForward = true;
-					rare = false;
 				}
 				else if(leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("AC")){
 					canonical = true;
 					currentForward = false;
-					rare = false;
 				}
 				else if((leftResidues.equalsIgnoreCase("AT") && rightResidues.equalsIgnoreCase("AC")) || 
 					    (leftResidues.equalsIgnoreCase("GC") && rightResidues.equalsIgnoreCase("AG"))){
 					canonical = false;
 					currentForward = true;
-					rare = false;
 				}
 				else if((leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AT")) || 
 					    (leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("GC"))){
 					canonical = false;
 					currentForward = false;
-					rare = false;
 				}
 				else{
 					canonical = false;
@@ -196,8 +192,10 @@ public class FindJunctionOperator implements Operator{
 					rare = true;
 				}
 			}
-			else
+			else{
 				currentForward = span.isForward();
+			}
+			
 			int parentStart = span.getMin() - threshold;
 			int parentEnd = span.getMax() + threshold;
 			int blockMins[] = new int[]{parentStart, span.getMax()};

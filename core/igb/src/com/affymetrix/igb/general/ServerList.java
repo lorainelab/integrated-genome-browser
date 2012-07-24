@@ -525,7 +525,12 @@ public final class ServerList {
 				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);
-					ErrorHandler.errorPanel(server.serverName, errorText, Level.SEVERE);
+					if (server.serverType != null && server.serverType.isSaveServersInPrefs()) {
+						ErrorHandler.errorPanel(server.serverName, errorText, Level.SEVERE);
+					}
+					else {
+						Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, errorText);
+					}
 				}
 			}
 			if (server.serverType != ServerTypeI.LocalFiles) {

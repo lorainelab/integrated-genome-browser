@@ -136,16 +136,17 @@ public class FindJunctionOperator implements Operator{
             intronSym = SeqUtils.getIntronSym(sym, bioseq);
             for(Integer i : childIntronIndices){
                 intronChild = intronSym.getChild(i);
-                if(intronChild != null)
-                    addToMap(intronChild, map, bioseq, threshold, twoTracks);
+                if(intronChild != null){
+					SeqSpan span = intronSym.getSpan(bioseq);
+                    addToMap(span, map, bioseq, threshold, twoTracks);
+				}
             }
         }
     }
     
-    private static void addToMap(SeqSymmetry intronSym , HashMap<String, JunctionUcscBedSym> map, BioSeq bioseq, int threshold, boolean twoTracks){
+    private static void addToMap(SeqSpan span , HashMap<String, JunctionUcscBedSym> map, BioSeq bioseq, int threshold, boolean twoTracks){
         boolean canonical = true;
         boolean currentForward = false;
-        SeqSpan span = intronSym.getSpan(bioseq);
         if(!twoTracks){
 			/*int minimum = span.getMin();
 			int maximum = span.getMax();

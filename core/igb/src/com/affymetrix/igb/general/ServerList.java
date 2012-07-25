@@ -159,9 +159,11 @@ public final class ServerList {
 			info = serverType == null ? url : serverType.getServerInfo(url, name);
 
 			if (info != null) {
-				Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-				if (node.get(GenericServerPref.NAME, null) != null) {
-					name = node.get(GenericServerPref.NAME, null); //Apply changes users may have made to server name
+				if (serverType == null || serverType.isSaveServersInPrefs()) {
+					Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
+					if (node.get(GenericServerPref.NAME, null) != null) {
+						name = node.get(GenericServerPref.NAME, null); //Apply changes users may have made to server name
+					}
 				}
 				server = new GenericServer(name, url, serverType, enabled, info, primary, isDefault);
 
@@ -513,6 +515,9 @@ public final class ServerList {
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
+			if (!server.serverType.isSaveServersInPrefs()) {
+				removeServer(server.URL);
+			}
 
 			if (!removedManually) {
 				String errorText;

@@ -85,7 +85,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				enabled,
 				false,
 				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-				: PreferenceUtils.getServersNode().node(getHash(URL)),
+				: serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(URL)) : null,
 				serverObj, primary, isDefault);
 	}
 
@@ -139,11 +139,13 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 //		this.referenceOnly = referenceOnly;
 
-		this.setEnabled(this.node.getBoolean(GenericServerPref.ENABLED, enabled));
-		this.setLogin(this.node.get(GenericServerPref.LOGIN, ""));
-		this.setPassword(decrypt(this.node.get(GenericServerPref.PASSWORD, "")));
+		if (this.node != null) {
+			this.setEnabled(this.node.getBoolean(GenericServerPref.ENABLED, enabled));
+			this.setLogin(this.node.get(GenericServerPref.LOGIN, ""));
+			this.setPassword(decrypt(this.node.get(GenericServerPref.PASSWORD, "")));
 
-		this.node.addPreferenceChangeListener(this);
+			this.node.addPreferenceChangeListener(this);
+		}
 		this.primary = primary;
 		this.isDefault = isDefault;
 	}
@@ -188,12 +190,16 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setEnabled(boolean enabled) {
-		node.putBoolean(GenericServerPref.ENABLED, enabled);
+		if (node != null) {
+			node.putBoolean(GenericServerPref.ENABLED, enabled);
+		}
 		this.enabled = enabled;
 	}
 
 	public void setName(String name) {
-		node.put(GenericServerPref.NAME, name);
+		if (node != null) {
+			node.put(GenericServerPref.NAME, name);
+		}
 		this.serverName = name;
 	}
 
@@ -206,7 +212,9 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setLogin(String login) {
-		node.put(GenericServerPref.LOGIN, login);
+		if (node != null) {
+			node.put(GenericServerPref.LOGIN, login);
+		}
 		this.login = login;
 	}
 
@@ -215,12 +223,16 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setEncryptedPassword(String password) {
-		node.put(GenericServerPref.PASSWORD, password);
+		if (node != null) {
+			node.put(GenericServerPref.PASSWORD, password);
+		}
 		this.password = decrypt(password);
 	}
 
 	public void setPassword(String password) {
-		node.put(GenericServerPref.PASSWORD, encrypt(password));
+		if (node != null) {
+			node.put(GenericServerPref.PASSWORD, encrypt(password));
+		}
 		this.password = password;
 	}
 

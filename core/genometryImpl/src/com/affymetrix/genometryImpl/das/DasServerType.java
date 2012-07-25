@@ -47,6 +47,7 @@ import java.util.*;
 
 public class DasServerType implements ServerTypeI {
 	/** boolean to indicate should script continue to run if error occurs **/
+	private static final boolean DEBUG = true;
 	private static final boolean exitOnError = false;
 	private static final String dsn = "dsn.xml";
 	private static final String name = "DAS";
@@ -62,7 +63,7 @@ public class DasServerType implements ServerTypeI {
 		return instance;
 	}
 
-	private DasServerType() {
+	protected DasServerType() {
 		super();
 	}
 
@@ -266,6 +267,12 @@ public class DasServerType implements ServerTypeI {
 		return true;
 	}
 
+	protected String getSegment(SeqSpan span, GenericFeature feature) {
+		BioSeq current_seq = span.getBioSeq();
+		Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
+		return SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
+	}
+
 	/**
 	 * Load annotations from a DAS server.
 	 *
@@ -274,10 +281,7 @@ public class DasServerType implements ServerTypeI {
 	 */
 	@Override
 	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
-
-		BioSeq current_seq = span.getBioSeq();
-		Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
-		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
+		String segment = getSegment(span, feature);
 
 		QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
 		builder.add("segment", segment);
@@ -291,6 +295,7 @@ public class DasServerType implements ServerTypeI {
 		//style.setFeature(feature);
 
 		URI uri = builder.build();
+		if (DEBUG) System.out.println("Loading DAS feature " + feature.featureName + " with uri " + uri);
 		List<DASSymmetry> dassyms = parseData(uri);
 		// Special case : When a feature make more than one Track, set feature for each track.
 		if (dassyms != null) {

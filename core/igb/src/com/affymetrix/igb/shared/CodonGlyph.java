@@ -237,7 +237,11 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 				aaCode = aminoAcid.getCode();
 			}
 			else if (codeSize == 1)  {
-				aaCode = " " + aminoAcid.getLetter() + " ";
+				if(parentSym.isForward()){
+					aaCode = aminoAcid.getLetter() + "  ";
+				}else{
+					aaCode = "  " + aminoAcid.getLetter();
+				}
 			}
 			if (parentSym.isForward()) {
 				aminoAcidsSB.append(aaCode);

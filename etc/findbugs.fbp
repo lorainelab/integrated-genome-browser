@@ -23,10 +23,10 @@
   <AuxClasspathEntry>ext/image4j.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/org.mortbay.jetty.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/flex_sdk/lib</AuxClasspathEntry>
-  <SrcDir>igb/src</SrcDir>
+  <SrcDir>core/igb/src</SrcDir>
   <SrcDir>das2_server/src</SrcDir>
-  <SrcDir>genoviz_sdk/src</SrcDir>
-  <SrcDir>genometryImpl/src</SrcDir>
+  <SrcDir>core/genoviz_sdk/src</SrcDir>
+  <SrcDir>core/genometryImpl/src</SrcDir>
   <SrcDir>protannot/src</SrcDir>
   <SuppressionFilter>
     <LastVersion value="-1" relOp="NEQ"/>

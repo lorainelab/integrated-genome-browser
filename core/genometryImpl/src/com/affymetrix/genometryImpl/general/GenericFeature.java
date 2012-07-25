@@ -93,11 +93,8 @@ public final class GenericFeature {
 			setLoadStrategy(LoadStrategy.GENOME);
 			this.setVisible();
 			return true;
-		} if (shouldAutoLoad(featureProps,AUTOLOAD) && auto) {
-			setLoadStrategy(LoadStrategy.AUTOLOAD);
-			this.setVisible();
-			return true;
-		}else if (!visible) {
+		} 
+		if (!visible) {
 			setLoadStrategy(LoadStrategy.NO_LOAD);
 		}
 		return false;

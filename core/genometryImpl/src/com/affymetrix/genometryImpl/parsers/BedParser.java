@@ -136,7 +136,6 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		}
 		DataInputStream dis = new DataInputStream(bis);
 		parse(dis, gmodel, group, default_type);
-		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 

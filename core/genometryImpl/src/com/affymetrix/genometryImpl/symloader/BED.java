@@ -159,7 +159,6 @@ public class BED extends SymLoader implements LineProcessor {
 		}
 		DataInputStream dis = new DataInputStream(bis);
 		parse(dis, isSorted, min, max);
-		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 

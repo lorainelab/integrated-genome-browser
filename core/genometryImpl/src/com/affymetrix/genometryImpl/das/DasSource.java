@@ -54,7 +54,7 @@ public final class DasSource {
 	private boolean types_initialized = false;
 	private AnnotatedSeqGroup genome = null;	// lazily instantiate
 
-	DasSource(URL server, URL master, URL primary, GenericServer primaryServer){
+	public DasSource(URL server, URL master, URL primary, GenericServer primaryServer){
 		this.server = server;
 		this.master = master;
 		this.primary = primary;

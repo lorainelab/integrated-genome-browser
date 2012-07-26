@@ -244,6 +244,11 @@ public class FindJunctionOperator implements Operator{
 		public Map<String, Object> cloneProperties() {
 			Map<String, Object> tprops = super.cloneProperties();
 			tprops.put("score", new Float(localScore));
+			if(!canonical){
+				tprops.put("canonical", canonical);
+				tprops.put("positive_score", positiveScore);
+				tprops.put("negative_score", negativeScore);
+			}
 			return tprops;
 		}
 

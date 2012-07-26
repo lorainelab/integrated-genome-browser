@@ -211,7 +211,7 @@ public class FindJunctionOperator implements Operator{
 	private static class JunctionUcscBedSym extends UcscBedSym {
 
 		int positiveScore, negativeScore;
-		float localScore;
+		int localScore;
 		boolean canonical, rare;
 
 		private JunctionUcscBedSym(String type, BioSeq seq, int txMin, int txMax, 
@@ -243,8 +243,7 @@ public class FindJunctionOperator implements Operator{
 		@Override
 		public Map<String, Object> cloneProperties() {
 			Map<String, Object> tprops = super.cloneProperties();
-			int intScore = (int)localScore;
-			tprops.put("score", new Integer(intScore));
+			tprops.put("score", localScore);
 			if(!canonical){
 				tprops.put("canonical", canonical);
 				tprops.put("positive_score", positiveScore);
@@ -256,8 +255,7 @@ public class FindJunctionOperator implements Operator{
 		@Override
 		public Object getProperty(String key) {
 			if (key.equals("score")) {
-				int intScore = (int)localScore;
-				return new Integer(intScore);
+				return localScore;
 			}
 			return super.getProperty(key);
 		}

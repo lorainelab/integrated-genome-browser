@@ -80,7 +80,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	@Override
 	protected void drawResidueRectangles(
 			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
-		/*
 		if (codeSize == 0) {
 			return;
 		}
@@ -102,7 +101,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		for (int j = startOffset; j < charArray.length; j += 6) {
 			g.fillRect(x + (int) (j * pixelsPerBase), y, intPixelsPerBase * Math.min(charArray.length - j, 3), height);
 		}
-		**/
 	}
 
 	private class ResidueRange {

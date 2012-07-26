@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.action.FloatTiersAction;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
@@ -27,6 +26,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
@@ -41,7 +41,7 @@ public final class TierLabelManager implements PropertyHolder {
 
 	private final AffyLabelledTierMap tiermap;
 	private final AffyTieredMap labelmap;
-	private final GlyphTransformer gs;
+//	private final GlyphTransformer gs;
 	private final JPopupMenu popup;
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
@@ -210,7 +210,7 @@ public final class TierLabelManager implements PropertyHolder {
 			// Stub out resizing to disable it.
 //		};
 //		resizer = new NewTierResizer(this.tiermap);
-		gs = new GlyphTransformer(map);
+//		gs = new GlyphTransformer(map);
 //		resizer = new TierResizer(this.tiermap);
 //		resizer = new AccordionTierResizer(this.tiermap);
 
@@ -299,7 +299,7 @@ public final class TierLabelManager implements PropertyHolder {
 	
 	/** Returns a list of all TierLabelGlyph items. */
 	public List<TierLabelGlyph> getAllTierLabels() {
-		return tiermap.getTierLabels();
+		return new CopyOnWriteArrayList<TierLabelGlyph>(tiermap.getTierLabels());
 	}
 
 	/** Returns a list of all TierGlyph items. */

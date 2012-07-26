@@ -241,6 +241,21 @@ public class FindJunctionOperator implements Operator{
 		}
 
 		@Override
+		public Map<String, Object> cloneProperties() {
+			Map<String, Object> tprops = super.cloneProperties();
+			tprops.put("score", new Float(localScore));
+			return tprops;
+		}
+
+		@Override
+		public Object getProperty(String key) {
+			if (key.equals("score")) {
+				return new Float(localScore);
+			}
+			return super.getProperty(key);
+		}
+		
+		@Override
 		public String getName() {
 			return getID();
 		}

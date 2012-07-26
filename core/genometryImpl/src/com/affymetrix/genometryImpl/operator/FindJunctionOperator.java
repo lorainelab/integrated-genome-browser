@@ -243,7 +243,8 @@ public class FindJunctionOperator implements Operator{
 		@Override
 		public Map<String, Object> cloneProperties() {
 			Map<String, Object> tprops = super.cloneProperties();
-			tprops.put("score", new Float(localScore));
+			int intScore = (int)localScore;
+			tprops.put("score", new Integer(intScore));
 			if(!canonical){
 				tprops.put("canonical", canonical);
 				tprops.put("positive_score", positiveScore);
@@ -255,7 +256,8 @@ public class FindJunctionOperator implements Operator{
 		@Override
 		public Object getProperty(String key) {
 			if (key.equals("score")) {
-				return new Float(localScore);
+				int intScore = (int)localScore;
+				return new Integer(intScore);
 			}
 			return super.getProperty(key);
 		}

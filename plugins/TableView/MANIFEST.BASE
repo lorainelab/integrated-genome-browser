@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 1
+Bundle-ManifestVersion: 2
 Bundle-Name: TableView
 Bundle-SymbolicName: com.affymetrix.igb.tableview.TableView
 Bundle-Version: @appVersion@

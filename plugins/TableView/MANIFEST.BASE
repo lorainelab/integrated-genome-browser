@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 1
+Bundle-Name: TableView
+Bundle-SymbolicName: com.affymetrix.igb.tableview.TableView
+Bundle-Version: @appVersion@
+Bundle-Activator: com.affymetrix.igb.tableview.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-DocURL: http://www.google.com/
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.util,
+ com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.shared,
+ com.affymetrix.igb.osgi.service,
+ com.affymetrix.igb.window.service,
+ javax.swing,
+ javax.swing.event,
+ org.osgi.framework;version="1.5.0",
+ org.osgi.util.tracker;version="1.4.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ resources/,
+Bundle-Description: Plugin to view data in TableView
+Bundle-Vendor: LoraineLab
+
+

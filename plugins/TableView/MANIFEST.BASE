@@ -25,6 +25,6 @@ Bundle-ClassPath: .,
  resources/,
  lib/TableView.jar
 Bundle-Description: Plugin to view data in TableView
-Bundle-Vendor: LoraineLab
+Bundle-Vendor: Bioviz
 
 

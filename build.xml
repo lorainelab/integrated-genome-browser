@@ -684,6 +684,30 @@
 			<condition property="findbugs">
 				<equals arg1="@{target}" arg2="findbugs" />
 			</condition>
+			<iterate-core target="@{target}" />
+			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
+				<!-- multiple dirsets ensure dependency ordering -->
+				<dirset dir="${basedir}/plugins">
+					<include name="window_service_def" />
+				</dirset>
+				<dirset dir="${basedir}/plugins">
+					<patternset includes="${include.bundles}"/>
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="protannot" />
+					<include name="das2_server" />
+				</dirset>
+				<dirset dir="${basedir}/core">
+					<include name="main" />
+					<include name="igb-i18n" unless="findbugs" />
+				</dirset>
+			</subant>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="iterate-core">
+		<attribute name="target" default=""/>
+		<sequential>
 			<subant	target="@{target}" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
 				<dirset dir="${jar_extensions}">
 					<include name="sam" />
@@ -703,20 +727,6 @@
 				</dirset>
 				<dirset dir="${basedir}/core">
 					<include name="igb" />
-				</dirset>
-				<dirset dir="${basedir}/plugins">
-					<include name="window_service_def" />
-				</dirset>
-				<dirset dir="${basedir}/plugins">
-					<patternset includes="${include.bundles}"/>
-				</dirset>
-				<dirset dir="${basedir}">
-					<include name="protannot" />
-					<include name="das2_server" />
-				</dirset>
-				<dirset dir="${basedir}/core">
-					<include name="main" />
-					<include name="igb-i18n" unless="findbugs" />
 				</dirset>
 			</subant>
 		</sequential>

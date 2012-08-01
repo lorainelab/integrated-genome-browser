@@ -740,7 +740,8 @@
 	</target>
 
 	<target name="-extBundles">
-		<sequential>			
+		<sequential>
+			<property name="igb.ext.bundle.dir" value="${ext.bundle.dir}" />
 			<!-- Now compile external bundles -->
 			<subant target="compile" genericantfile="plugins/ext-build-plugin.xml" inheritall="true">
 				<dirset dir="${basedir}/plugins">

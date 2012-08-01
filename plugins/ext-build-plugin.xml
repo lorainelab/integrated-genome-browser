@@ -3,7 +3,7 @@
 	
 	<target name="check-create-jar" if="plugin-jar">
 		<antcall target="create-jar" >
-			<param name="dist.dir" value="${ext.bundle.dir}" />
+			<param name="dist.dir" value="${igb.ext.bundle.dir}" />
 		</antcall>
 	</target>
 </project>

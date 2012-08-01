@@ -752,8 +752,8 @@
 			<java fork="true" classname="org.osgi.impl.bundle.bindex.Index">
 				<arg line="-n IGB" />
 				<arg line="-q" />
-				<arg line="-r ${ext.bundle.dir}/repository.xml" />
-				<arg line="${ext.bundle.dir}" />
+				<arg line="-r ${igb.ext.bundle.dir}/repository.xml" />
+				<arg line="${igb.ext.bundle.dir}" />
 				<classpath>
 					<pathelement location="${lib.dir}/bindex.jar"/>
 				</classpath>

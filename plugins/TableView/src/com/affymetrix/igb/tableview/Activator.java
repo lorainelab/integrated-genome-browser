@@ -26,7 +26,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator implements BundleActivator {
 	private ServiceRegistration<GlyphProcessor> tableViewRegistration;
 	private BundleContext bundleContext;
-	private JMenuItem mi = new JMenuItem("Open in TableView");
+	private JMenuItem mi = new JMenuItem("Open with TableView...");
 
 
 	private void registerServices(final IGBService igbService) {

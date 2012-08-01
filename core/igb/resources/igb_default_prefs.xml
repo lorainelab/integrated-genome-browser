@@ -24,6 +24,8 @@
 
 <repository name="Bioviz" url="http://bioviz.org/igbserver" enabled="true" default="true"/>
 
+<repository name="Bioviz development" url="http://test.bioviz.org/igbserver" enabled="false" default="true"/>
+
 <repository name="Genentech" url="http://research-pub.gene.com/igb_plugins" enabled="true" default="true"/>
 
 <repository name="Genentech development" url="http://research-pub.gene.com/igb_plugins/development" enabled="false" default="true"/>

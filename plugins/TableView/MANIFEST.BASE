@@ -5,7 +5,7 @@ Bundle-SymbolicName: com.affymetrix.igb.tableview.TableView
 Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.tableview.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-DocURL: http://www.google.com/
+Bundle-DocURL: http://transvar.org/TableView.html
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genoviz.swing,
  com.affymetrix.genoviz.swing.recordplayback,

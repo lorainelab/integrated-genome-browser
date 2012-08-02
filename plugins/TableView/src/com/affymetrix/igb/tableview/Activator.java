@@ -21,21 +21,26 @@ public class Activator implements BundleActivator {
 	private JMenuItem mi = new JMenuItem("Open with TableView...");
 
 	private void registerServices(final IGBService igbService) {
-		MenuUtil.insertIntoMenu(igbService.getMenu("file"), mi, 3);	
+		MenuUtil.insertIntoMenu(igbService.getMenu("file"), mi, 3);
 		final TableView tv = new TableView();
+		final JFrame frame = new JFrame("TableView");
+		frame.getContentPane().add(tv, BorderLayout.CENTER);
+		frame.setLocation(100, 100);
+		frame.pack();
+
 		mi.addActionListener(
-	    	new ActionListener() {
+				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						LoadTable lt = tv.getLoadTable();
 						TableModel newtm = lt.openLoadTableDialog((Frame) tv.getTopLevelAncestor());
-						
+
 						if (newtm != null) {
-							JFrame frame = new JFrame("TableView");
-							frame.getContentPane().add(tv, BorderLayout.CENTER);
-							frame.setLocation(100,100);
-							frame.pack();
-							frame.setVisible(true);
+							if (frame.isVisible()) {
+								frame.toFront();
+							} else {
+								frame.setVisible(true);
+							}
 							tv.setTableModel(newtm, lt.getTableSource());
 						}
 					}

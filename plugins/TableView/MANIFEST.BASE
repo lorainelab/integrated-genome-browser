@@ -18,6 +18,7 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  javax.swing.border,
  javax.imageio,
  javax.swing.text,
+ com.affymetrix.genoviz.swing.MenuUtil,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

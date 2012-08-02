@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.tableview;
 
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.GlyphProcessor;
 import edu.umn.genomics.table.LoadTable;
 import edu.umn.genomics.table.TableView;
 import java.awt.BorderLayout;
@@ -14,25 +9,20 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.table.TableModel;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
-	private ServiceRegistration<GlyphProcessor> tableViewRegistration;
 	private BundleContext bundleContext;
 	private JMenuItem mi = new JMenuItem("Open with TableView...");
 
-
 	private void registerServices(final IGBService igbService) {
-		JMenu file_menu = igbService.getMenu("file");
+		MenuUtil.insertIntoMenu(igbService.getMenu("file"), mi, 3);	
 		final TableView tv = new TableView();
-		file_menu.add(mi, 3);
 		mi.addActionListener(
 	    	new ActionListener() {
 					@Override

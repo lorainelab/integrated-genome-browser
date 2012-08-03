@@ -36,13 +36,20 @@ public class Activator implements BundleActivator {
 						TableModel newtm = lt.openLoadTableDialog((Frame) tv.getTopLevelAncestor());
 
 						if (newtm != null) {
-							if (frame.isVisible()) {
-								frame.toFront();
-							} else {
-								frame.setVisible(true);
-							}
 							tv.setTableModel(newtm, lt.getTableSource());
+							toFront();
 						}
+					}
+
+					private void toFront() {
+						if ((frame.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
+							// de-iconify it while leaving the maximized/minimized state flags alone
+							frame.setExtendedState(frame.getExtendedState() & ~Frame.ICONIFIED);
+						}
+						if (!frame.isShowing()) {
+							frame.setVisible(true);
+						}
+						frame.toFront();
 					}
 				});
 	}

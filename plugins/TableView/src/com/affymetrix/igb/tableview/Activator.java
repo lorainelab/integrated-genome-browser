@@ -3,6 +3,7 @@ package com.affymetrix.igb.tableview;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
+import edu.umn.genomics.table.ExceptionHandler;
 import edu.umn.genomics.table.LoadTable;
 import edu.umn.genomics.table.TableView;
 import java.awt.BorderLayout;
@@ -19,9 +20,10 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private JMenuItem mi = new JMenuItem("Open with TableView...", CommonUtils.getInstance().getIcon(TableView.class, "TableView16.png"));
-
+	private JMenuItem mi;
+	
 	private void registerServices(final IGBService igbService) {
+		mi = new JMenuItem("Open with TableView...", CommonUtils.getInstance().getIcon(TableView.class, "TableView16.png"));
 		MenuUtil.insertIntoMenu(igbService.getMenu("file"), mi, 3);
 		final TableView tv = new TableView();
 		final JFrame frame = new JFrame("TableView");
@@ -33,12 +35,21 @@ public class Activator implements BundleActivator {
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						LoadTable lt = tv.getLoadTable();
-						TableModel newtm = lt.openLoadTableDialog((Frame) tv.getTopLevelAncestor());
+						try {
+							LoadTable lt = tv.getLoadTable();
+							TableModel newtm = lt.openLoadTableDialog((Frame) tv.getTopLevelAncestor());
 
-						if (newtm != null) {
-							tv.setTableModel(newtm, lt.getTableSource());
+							if (newtm != null) {
+								if (frame.isVisible()) {
+									frame.toFront();
+								} else {
+									frame.setVisible(true);
+								}
+								tv.setTableModel(newtm, lt.getTableSource());
 							toFront();
+							}
+						}catch(Exception ex){
+							ExceptionHandler.popupException(""+ex);
 						}
 					}
 

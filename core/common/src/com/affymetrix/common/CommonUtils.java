@@ -142,7 +142,11 @@ public class CommonUtils {
 		return app_dir;
 	}
 
-	/**
+	  public ImageIcon getIcon(String resource_name) {
+	      return getIcon(CommonUtils.class, resource_name);
+	  }
+	  
+	 /**
 	   *  Loads an ImageIcon from the specified system resource.
 	   *  The system resource should be in the classpath, for example,
 	   *  it could be in the jlfgr-1_0.jar file.  If the resource is
@@ -151,8 +155,8 @@ public class CommonUtils {
 	   *  For example: "toolbarButtonGraphics/general/About16.gif".
 	   *  @return An ImageIcon or null if the one specified could not be found.
 	   */
-	  public ImageIcon getIcon(String resource_name) {
-	    ImageIcon icon = null;
+	  public ImageIcon getIcon(Class clazz, String resource_name) {
+		ImageIcon icon = null;
 	    try {
 	      // Note: MenuUtil.class.getResource(resource_name) does not work;
 	      // ClassLoader.getSystemResource(resource_name) works locally, but not with WebStart;
@@ -160,7 +164,7 @@ public class CommonUtils {
 	      // Both of these work locally and with WebStart:
 	      //  MenuUtil.class.getClassLoader().getResource(resource_name)
 	      //  Thread.currentThread().getContextClassLoader().getResource(resource_name)
-	      java.net.URL url = CommonUtils.class.getClassLoader().getResource(resource_name);
+	      java.net.URL url = clazz.getClassLoader().getResource(resource_name);
 	      if (url != null) {
 	        icon = new ImageIcon(url);
 	      }
@@ -173,6 +177,6 @@ public class CommonUtils {
 	      icon = null;
 	    }
 	    
-	    return icon;    
+	    return icon; 
 	  }
 }

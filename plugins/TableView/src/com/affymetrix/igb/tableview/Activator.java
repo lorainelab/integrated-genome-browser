@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tableview;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
 import edu.umn.genomics.table.LoadTable;
@@ -18,7 +19,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private JMenuItem mi = new JMenuItem("Open with TableView...");
+	private JMenuItem mi = new JMenuItem("Open with TableView...", CommonUtils.getInstance().getIcon(TableView.class, "TableView16.png"));
 
 	private void registerServices(final IGBService igbService) {
 		MenuUtil.insertIntoMenu(igbService.getMenu("file"), mi, 3);

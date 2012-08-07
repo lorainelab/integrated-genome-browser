@@ -87,7 +87,7 @@ public final class GraphState {
 	private float graph_visible_max = Float.POSITIVE_INFINITY;  // POSITIVE_INFINITY means hasn't been set yet
 
 	private boolean show_threshold = false;
-	private boolean show_axis = false;
+	private boolean show_axis = true;
 	private boolean show_graph = true;
 	private boolean show_bounds = false;
 	private boolean show_label = false;

@@ -1,5 +1,0 @@
-<project name="TranscriptIsoform" default="dist" basedir=".">
-	<property environment="env" />
-	<property name="plugin" value="TranscriptIsoform" />
-	<import file="${env.IGB_WORKSPACE}/build-plugin.xml" />
-</project>

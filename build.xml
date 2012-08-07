@@ -685,6 +685,13 @@
 				<equals arg1="@{target}" arg2="findbugs" />
 			</condition>
 			<iterate-core target="@{target}" />
+			<iterate-plugins target="@{target}" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="iterate-plugins">
+		<attribute name="target" default=""/>
+		<sequential>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}/plugins">

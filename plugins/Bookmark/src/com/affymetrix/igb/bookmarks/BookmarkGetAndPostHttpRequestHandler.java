@@ -26,13 +26,13 @@ import java.util.logging.Logger;
  *
  * @author Eric Blossom
  */
-class BookmarkPostHttpRequestHandler implements Runnable {
+class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 
 	private final Socket socket;
 	private final IGBService igbService;
-	private static final Logger ourLogger = Logger.getLogger(BookmarkHttpRequestHandler.class.getPackage().getName());
+	private static final Logger ourLogger = Logger.getLogger(BookmarkGetAndPostHttpRequestHandler.class.getPackage().getName());
 
-	public BookmarkPostHttpRequestHandler(IGBService igbService, Socket socket) {
+	public BookmarkGetAndPostHttpRequestHandler(IGBService igbService, Socket socket) {
 		this.socket = socket;
 		this.igbService = igbService;
 	}

@@ -335,10 +335,28 @@ public final class IGB extends Application
 		return ordinal;
 	}
 
+	public void addTextFieldToolbar(){
+		if(tool_bar == null)
+			tool_bar = new JToolBar();
+		tool_bar.addSeparator();
+		tool_bar.add(new JLabel("Selection Info: "));
+		selField.setEditable(false);
+		tool_bar.add(selField);
+	}
+	
+	public void removeTextFieldToolbar(){
+		if(tool_bar == null)
+			return;
+		int count = tool_bar.getComponentCount();
+		tool_bar.remove(count-1);
+		tool_bar.remove(count-2);
+		tool_bar.remove(count-3);
+	}
 	public void addToolbarAction(GenericAction genericAction) {
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
 		}
+		removeTextFieldToolbar();
 		JRPButton button = new JRPButtonTLP(genericAction); // >>>>>>> .r12096
 		button.setHideActionText(true);
 		addAction(genericAction);
@@ -347,6 +365,7 @@ public final class IGB extends Application
 			index++;
 		}
 		tool_bar.add(button, index);
+		addTextFieldToolbar();
 		tool_bar.validate();
 	}
 

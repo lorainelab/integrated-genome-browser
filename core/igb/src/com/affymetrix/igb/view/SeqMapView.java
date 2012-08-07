@@ -1788,6 +1788,7 @@ public class SeqMapView extends JPanel
 			return;
 		}
 		Application.getSingleton().setStatus(title, false);
+		((IGB)Application.getSingleton()).setSelField(title);
 	}
 
 	// Compare the code here with SymTableView.selectionChanged()
@@ -1811,7 +1812,7 @@ public class SeqMapView extends JPanel
 					sym_used_for_title = sym;
 				}
 				if (id == null && sym instanceof SymWithProps) {
-					id = (String) ((SymWithProps) sym).getProperty("id");
+					id = (String) ((SymWithProps) sym).getProperty("name");
 					sym_used_for_title = sym;
 				}
 				if (id == null && sym instanceof DerivedSeqSymmetry) {
@@ -1820,7 +1821,7 @@ public class SeqMapView extends JPanel
 						id = ((LeafSingletonSymmetry) original).getID();
 						sym_used_for_title = original;
 					} else if (original instanceof SymWithProps) {
-						id = (String) ((SymWithProps) original).getProperty("id");
+						id = (String) ((SymWithProps) original).getProperty("name");
 						sym_used_for_title = original;
 					}
 				}

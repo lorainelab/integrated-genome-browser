@@ -106,12 +106,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/SearchModeLength/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchModeLength/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/SearchModeLucene/src</label>
                     <type>java</type>
                     <location>plugins/SearchModeLucene/src</location>
@@ -184,21 +178,15 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/Tutorial/src</label>
+                    <label>plugins/TranscriptIsoform/src</label>
                     <type>java</type>
-                    <location>plugins/Tutorial/src</location>
+                    <location>plugins/TranscriptIsoform/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
                     <label>plugins/TableView/src</label>
                     <type>java</type>
                     <location>plugins/TableView/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/DASRegistryServerType/src</label>
-                    <type>java</type>
-                    <location>plugins/DASRegistryServerType/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -250,21 +238,27 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/ThousandGenomesServerType/src</label>
+                    <label>plugins/Tutorial/src</label>
                     <type>java</type>
-                    <location>plugins/ThousandGenomesServerType/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/TranscriptIsoform/src</label>
-                    <type>java</type>
-                    <location>plugins/TranscriptIsoform/src</location>
+                    <location>plugins/Tutorial/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
                     <label>plugins/TutorialHelper/src</label>
                     <type>java</type>
                     <location>plugins/TutorialHelper/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>plugins/ThousandGenomesServerType/src</label>
+                    <type>java</type>
+                    <location>plugins/ThousandGenomesServerType/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>plugins/DASRegistryServerType/src</label>
+                    <type>java</type>
+                    <location>plugins/DASRegistryServerType/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -532,10 +526,6 @@
                         <location>plugins/SearchModeSymmetryFilter/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/SearchModeLength/src</label>
-                        <location>plugins/SearchModeLength/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/SearchModeLucene/src</label>
                         <location>plugins/SearchModeLucene/src</location>
                     </source-folder>
@@ -584,16 +574,12 @@
                         <location>plugins/IGBScript/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/Tutorial/src</label>
-                        <location>plugins/Tutorial/src</location>
+                        <label>plugins/TranscriptIsoform/src</label>
+                        <location>plugins/TranscriptIsoform/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/TableView/src</label>
                         <location>plugins/TableView/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/DASRegistryServerType/src</label>
-                        <location>plugins/DASRegistryServerType/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/FindAnnotations/src</label>
@@ -628,16 +614,20 @@
                         <location>plugins/TallyHandler/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/ThousandGenomesServerType/src</label>
-                        <location>plugins/ThousandGenomesServerType/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/TranscriptIsoform/src</label>
-                        <location>plugins/TranscriptIsoform/src</location>
+                        <label>plugins/Tutorial/src</label>
+                        <location>plugins/Tutorial/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/TutorialHelper/src</label>
                         <location>plugins/TutorialHelper/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>plugins/ThousandGenomesServerType/src</label>
+                        <location>plugins/ThousandGenomesServerType/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>plugins/DASRegistryServerType/src</label>
+                        <location>plugins/DASRegistryServerType/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>das2_server/src</label>
@@ -747,7 +737,6 @@
                 <package-root>plugins/ThousandGenomesServerType/src</package-root>
                 <package-root>plugins/TranscriptIsoform/src</package-root>
                 <package-root>plugins/TutorialHelper/src</package-root>
-                <package-root>plugins/SearchModeLength/src</package-root>
                 <package-root>plugins/SearchModeLucene/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble-0.1.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:plugins/TableView/lib/TableView.jar:plugins/PythonScript/lib/jython.jar:plugins/RubyScript/lib/asm-2.2.3.jar:plugins/RubyScript/lib/backport-util-concurrent.jar:plugins/RubyScript/lib/jruby-engine.jar:plugins/RubyScript/lib/jruby.jar:plugins/ThousandGenomesServerType/lib/commons-io-2.4.jar:plugins/SearchModeLucene/lib/commons-httpclient-3.1.jar:plugins/SearchModeLucene/lib/commons-vfs2-2.0.jar:plugins/SearchModeLucene/lib/concurrent.jar:plugins/SearchModeLucene/lib/lucene-core-3.6.0.jar</classpath>
                 <built-to>das2_server/build</built-to>

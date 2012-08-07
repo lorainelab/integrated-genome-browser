@@ -372,6 +372,7 @@
 			<fileset file="${etc.dir}/bundles.properties" />
 		</delete>
 		<iterate target="clean" />
+		<iterate-non-plugins target="clean" />
 	</target>
 
 	<target name="docs" depends="common-init" description="Create java documentation for all genoviz subprojects">
@@ -689,29 +690,6 @@
 		</sequential>
 	</macrodef>
 
-	<macrodef name="iterate-plugins">
-		<attribute name="target" default=""/>
-		<sequential>
-			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
-				<!-- multiple dirsets ensure dependency ordering -->
-				<dirset dir="${basedir}/plugins">
-					<include name="window_service_def" />
-				</dirset>
-				<dirset dir="${basedir}/plugins">
-					<patternset includes="${include.bundles}"/>
-				</dirset>
-				<dirset dir="${basedir}">
-					<include name="protannot" />
-					<include name="das2_server" />
-				</dirset>
-				<dirset dir="${basedir}/core">
-					<include name="main" />
-					<include name="igb-i18n" unless="findbugs" />
-				</dirset>
-			</subant>
-		</sequential>
-	</macrodef>
-
 	<macrodef name="iterate-core">
 		<attribute name="target" default=""/>
 		<sequential>
@@ -739,6 +717,40 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="iterate-plugins">
+		<attribute name="target" default=""/>
+		<sequential>
+			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
+				<!-- multiple dirsets ensure dependency ordering -->
+				<dirset dir="${basedir}/plugins">
+					<include name="window_service_def" />
+				</dirset>
+				<dirset dir="${basedir}/plugins">
+					<patternset includes="${include.bundles}"/>
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="protannot" />
+					<include name="das2_server" />
+				</dirset>
+				<dirset dir="${basedir}/core">
+					<include name="main" />
+					<include name="igb-i18n" unless="findbugs" />
+				</dirset>
+			</subant>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="iterate-non-plugins">
+		<attribute name="target" default=""/>
+		<sequential>
+			<subant target="@{target}" genericantfile="plugins/ext-build-plugin.xml" inheritall="true">
+				<dirset dir="${basedir}/plugins">
+					<patternset includes="${not.include.bundles}"/>
+				</dirset>
+			</subant>
+		</sequential>
+ 	</macrodef>
+
 	<target name="externalBundles" depends="common-init">
 		<sequential>
 			<iterate-core target="compile" />
@@ -750,11 +762,7 @@
 		<sequential>
 			<property name="igb.ext.bundle.dir" value="${ext.bundle.dir}" />
 			<!-- Now compile external bundles -->
-			<subant target="compile" genericantfile="plugins/ext-build-plugin.xml" inheritall="true">
-				<dirset dir="${basedir}/plugins">
-					<patternset includes="${not.include.bundles}"/>
-				</dirset>
-			</subant>
+			<iterate-non-plugins target="compile" />
 
 			<java fork="true" classname="org.osgi.impl.bundle.bindex.Index">
 				<arg line="-n IGB" />

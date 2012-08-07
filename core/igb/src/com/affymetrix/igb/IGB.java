@@ -88,7 +88,7 @@ public final class IGB extends Application
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JToolBar tool_bar;
-	private JTextField selField = new JTextField(40);
+	private JTextField selField = new JTextField(30);
 	private SeqMapView map_view;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
@@ -337,6 +337,7 @@ public final class IGB extends Application
 		tool_bar.add(new JLabel("Selection Info: "));
 		selField.setEditable(false);
 		tool_bar.add(selField);
+		tool_bar.add(new JLabel("Click the map below to select Annotations"));
 	}
 	
 	public void removeTextFieldToolbar(){
@@ -346,6 +347,7 @@ public final class IGB extends Application
 		tool_bar.remove(count-1);
 		tool_bar.remove(count-2);
 		tool_bar.remove(count-3);
+		tool_bar.remove(count-4);
 	}
 	public void addToolbarAction(GenericAction genericAction) {
 		if (tool_bar == null) {

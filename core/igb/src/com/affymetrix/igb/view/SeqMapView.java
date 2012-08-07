@@ -1812,7 +1812,7 @@ public class SeqMapView extends JPanel
 					sym_used_for_title = sym;
 				}
 				if (id == null && sym instanceof SymWithProps) {
-					id = (String) ((SymWithProps) sym).getProperty("name");
+					id = (String) ((SymWithProps) sym).getProperty("id");
 					sym_used_for_title = sym;
 				}
 				if (id == null && sym instanceof DerivedSeqSymmetry) {
@@ -1821,7 +1821,7 @@ public class SeqMapView extends JPanel
 						id = ((LeafSingletonSymmetry) original).getID();
 						sym_used_for_title = original;
 					} else if (original instanceof SymWithProps) {
-						id = (String) ((SymWithProps) original).getProperty("name");
+						id = (String) ((SymWithProps) original).getProperty("id");
 						sym_used_for_title = original;
 					}
 				}

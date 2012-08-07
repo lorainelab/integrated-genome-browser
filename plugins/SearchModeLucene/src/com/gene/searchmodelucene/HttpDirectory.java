@@ -113,8 +113,8 @@ public class HttpDirectory extends Directory {
 // the following methods are not implemented since this is a read only implementation
 	@Override public IndexOutput createOutput(String name) throws IOException { return null; }
 	@Override public void deleteFile(String name) throws IOException {}
-	@Override public void touchFile(String name) throws IOException {}
-	@Override public long fileModified(String name) throws IOException { return 0; }
+	@Override @Deprecated @SuppressWarnings("deprecation") public void touchFile(String name) throws IOException {}
+	@Override @Deprecated @SuppressWarnings("deprecation") public long fileModified(String name) throws IOException { return 0; }
 	@Override
     public Lock makeLock(String lockName) {
 		return NoLockFactory.getNoLockFactory().makeLock(lockName);

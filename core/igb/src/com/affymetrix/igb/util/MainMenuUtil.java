@@ -100,8 +100,8 @@ public class MainMenuUtil {
 		view_menu.add(strands_menu);
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_autoscroll", AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewGenomicSequenceInSeqViewer", ViewGenomicSequenceInSeqViewerAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewAlignmentSequenceInSeqViewer", ViewAlignmentSequenceInSeqViewerAction.getAction()));
-		ViewAlignmentSequenceInSeqViewerAction.getAction().setEnabled(false);
+		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewAlignmentSequenceInSeqViewer", ViewReadSequenceInSeqViewerAction.getAction()));
+		ViewReadSequenceInSeqViewerAction.getAction().setEnabled(false);
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
 		NextSearchSpanAction.getAction().setEnabled(false);
 		view_menu.addSeparator();

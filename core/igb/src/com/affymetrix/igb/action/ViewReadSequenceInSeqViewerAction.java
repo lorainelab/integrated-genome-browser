@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.view.AlignmentSequenceViewer;
+import com.affymetrix.igb.view.ReadSequenceViewer;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.util.logging.Level;
@@ -20,20 +20,20 @@ import java.util.logging.Level;
  *
  * @author auser
  */
-public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener{
+public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener{
 	private static final long serialVersionUID = 1l;
-	private static final ViewAlignmentSequenceInSeqViewerAction ACTION = new ViewAlignmentSequenceInSeqViewerAction();
+	private static final ViewReadSequenceInSeqViewerAction ACTION = new ViewReadSequenceInSeqViewerAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
 	
-	public static ViewAlignmentSequenceInSeqViewerAction getAction() {
+	public static ViewReadSequenceInSeqViewerAction getAction() {
 		return ACTION;
 	}
 
-	private ViewAlignmentSequenceInSeqViewerAction() {
-		super(BUNDLE.getString("ViewAlignmentSequenceInSeqViewer"), null, "16x16/apps/internet-news-reader.png", "22x22/apps/internet-news-reader.png", KeyEvent.VK_UNDEFINED, null, true);
+	private ViewReadSequenceInSeqViewerAction() {
+		super(BUNDLE.getString("ViewReadSequenceInSeqViewer"), null, "16x16/apps/internet-news-reader.png", "22x22/apps/internet-news-reader.png", KeyEvent.VK_UNDEFINED, null, true);
 		this.setEnabled(false);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
@@ -46,7 +46,7 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		try {
-			AlignmentSequenceViewer sv = new AlignmentSequenceViewer();
+			ReadSequenceViewer sv = new ReadSequenceViewer();
 			sv.startSequenceViewer();
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex, Level.WARNING);

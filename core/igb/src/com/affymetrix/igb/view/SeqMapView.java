@@ -1931,7 +1931,7 @@ public class SeqMapView extends JPanel
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 			popup.add(selectParentMI);
 			popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
-			popup.add(new JMenuItem(ViewAlignmentSequenceInSeqViewerAction.getAction()));
+			popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
 		}
 
 		for (ContextualPopupListener listener : popup_listeners) {
@@ -1953,7 +1953,7 @@ public class SeqMapView extends JPanel
 					if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
 						popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
 						popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
-						popup.add(new JMenuItem(ViewAlignmentSequenceInSeqViewerAction.getAction()));
+						popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
 					}
 				}
 

@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
  *
  * @author auser
  */
-public class AlignmentSequenceViewer extends AbstractSequenceViewer{
+public class ReadSequenceViewer extends AbstractSequenceViewer{
 
 	@Override
 	public String getResidues(SeqSymmetry sym, BioSeq aseq) {

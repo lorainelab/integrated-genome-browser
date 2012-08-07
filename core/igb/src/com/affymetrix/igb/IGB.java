@@ -164,12 +164,7 @@ public final class IGB extends Application
 	}
 
 	public void init() {
-		if(tool_bar == null)
-			tool_bar = new JToolBar();
-	    tool_bar.addSeparator();
-		tool_bar.add(new JLabel("Selection Info:"));
-		selField.setEditable(false);
-		tool_bar.add(selField);
+		addTextFieldToolbar();
 		setLaf();
 
 		// Set up a custom trust manager so that user is prompted

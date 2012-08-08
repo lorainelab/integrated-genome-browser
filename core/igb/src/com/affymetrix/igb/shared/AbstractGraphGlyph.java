@@ -106,7 +106,8 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph {
 //	ResidueColorHelper helper = null;
 
 	private boolean draw_handle = true;
-	public GraphStyle graphStyle;
+	private GraphStyle graphStyle;
+	private boolean lockGraphStyle;
 	
 	@Override
 	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
@@ -925,8 +926,18 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return false;
 	}
 
+	public void lockGraphStyle(){
+		lockGraphStyle = true;
+	}
+	
+	public boolean isGraphStyleLocked(){
+		return lockGraphStyle;
+	}
+	
 	public void setGraphStyle(GraphStyle style) {
-		this.graphStyle = style;
+		if(!lockGraphStyle){
+			this.graphStyle = style;
+		}
 	}
 	
 	protected void drawHandleAxisAndLabel(ViewI view) {

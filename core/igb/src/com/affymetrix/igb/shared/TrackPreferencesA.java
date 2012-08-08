@@ -455,9 +455,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return true;
 	}
 
-	private boolean isAllGraphStyleNull() {
+	private boolean isAllGraphStyleLocked() {
 		for(AbstractGraphGlyph graphGlyph : graphGlyphs){
-			if(graphGlyph.getGraphStyle() != null){
+			if(!graphGlyph.isGraphStyleLocked()){
 				return false;
 			}
 		}
@@ -787,7 +787,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 			if (graphType == null) {
 				unselectGraphStyle();
-				if (isAllGraphStyleNull()) {
+				if (isAllGraphStyleLocked()) {
 					getGraphStyleLineRadioButton().setEnabled(false);
 					getGraphStyleBarRadioButton().setEnabled(false);
 					getGraphStyleStairStepRadioButton().setEnabled(false);

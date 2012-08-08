@@ -144,6 +144,9 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
 		AbstractGraphGlyph result = new AbstractGraphGlyph(newgraf, gstate);
 		result.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupGlyph(result) : new FillBarGraphGlyph(result));
+		if(newgraf instanceof MisMatchPileupGraphSym){
+			result.lockGraphStyle();
+		}
 		result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 		return result;
 	}

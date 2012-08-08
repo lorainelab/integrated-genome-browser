@@ -26,6 +26,7 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.*;
+import com.affymetrix.igb.graphTypes.*;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.Arrays;
 import java.util.Locale;
@@ -401,19 +402,19 @@ public class Activator implements BundleActivator {
 
 		// Add graph factories
 		GraphGlyphFactory barGraphGlyphFactory = new GraphGlyphFactory(BarGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, barGraphGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, barGraphGlyphFactory, null);
 		GraphGlyphFactory dotGraphGlyphFactory = new GraphGlyphFactory(DotGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, dotGraphGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, dotGraphGlyphFactory, null);
 		GraphGlyphFactory fillBarGraphGlyphFactory = new GraphGlyphFactory(FillBarGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, fillBarGraphGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, fillBarGraphGlyphFactory, null);
 		GraphGlyphFactory heatMapGraphGlyphFactory = new GraphGlyphFactory(HeatMapGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, heatMapGraphGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, heatMapGraphGlyphFactory, null);
 		GraphGlyphFactory lineGraphGlyphFactory = new GraphGlyphFactory(LineGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, lineGraphGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, lineGraphGlyphFactory, null);
 		GraphGlyphFactory minMaxAvgGraphGlyphFactory = new GraphGlyphFactory(MinMaxAvgGraphGlyph.class);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, minMaxAvgGraphGlyphFactory, null);
 		GraphGlyphFactory stairStepGraphGlyphFactory = new GraphGlyphFactory(StairStepGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, stairStepGraphGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, stairStepGraphGlyphFactory, null);
 		
 		// ProbeSet factory
 		ProbeSetGlyphFactory probeSet = new ProbeSetGlyphFactory();

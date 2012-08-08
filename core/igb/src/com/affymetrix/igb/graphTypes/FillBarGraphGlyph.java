@@ -1,6 +1,5 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.graphTypes;
 
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
@@ -12,19 +11,22 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Arrays;
 
-public class FillBarGraphGlyph extends AbstractGraphGlyph {
+public class FillBarGraphGlyph extends AbstractGraphGlyph.GraphStyle {
 
-	public FillBarGraphGlyph(GraphSym graf, GraphState gstate) {
-		super(graf, gstate);
+	public FillBarGraphGlyph(AbstractGraphGlyph graphGlyph){
+		graphGlyph.super();
 	}
-
+	
 	@Override
 	public String getName() {
 		return "fillbargraph";
 	}
 
 	@Override
-	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
+	protected void doBigDraw(Graphics g, GraphSym graphSym, 
+			Point curr_x_plus_width, Point max_x_plus_width, float ytemp, 
+			int draw_end_index, double offset, double yscale, ViewI view, int i) {
+		
 		//			if(helper != null){
 		//			g.setColor(helper.determineResidueColor((char)residues[i]));
 		//		}
@@ -62,7 +64,7 @@ public class FillBarGraphGlyph extends AbstractGraphGlyph {
 			g.setColor(Color.gray);
 			g.drawLine(getPixelBox().x, zero_point.y, getPixelBox().width, zero_point.y);
 		}
-		g.setColor(darker);
+		g.setColor(getDarkerColor());
 		super.DrawPoints(offset, yscale, view, g, plot_bottom_ypixel, plot_top_ypixel, yzero, coords_per_pixel);
 	}
 
@@ -81,7 +83,7 @@ public class FillBarGraphGlyph extends AbstractGraphGlyph {
 		double xpixels_per_coord = (view.getTransform()).getScaleX();
 		double xcoords_per_pixel = 1 / xpixels_per_coord;
 		if (xcoords_per_pixel < mismatch_transition_scale) {
-			this.oldDraw(view);
+			oldDraw(view);
 		} else {
 			drawSmart(view);
 		}
@@ -92,7 +94,7 @@ public class FillBarGraphGlyph extends AbstractGraphGlyph {
 		double xpixels_per_coord = (view.getTransform()).getScaleX();
 		double xcoords_per_pixel = 1 / xpixels_per_coord;
 		if (xcoords_per_pixel < transition_scale) {
-			this.oldDraw(view);
+			oldDraw(view);
 		} else {
 			drawSmart(view);
 		}

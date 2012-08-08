@@ -1,6 +1,5 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.graphTypes;
 
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -10,19 +9,21 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class LineGraphGlyph extends AbstractGraphGlyph {
+public class LineGraphGlyph extends AbstractGraphGlyph.GraphStyle {
 
-	public LineGraphGlyph(GraphSym graf, GraphState gstate) {
-		super(graf, gstate);
+	public LineGraphGlyph(AbstractGraphGlyph graphGlyph){
+		graphGlyph.super();
 	}
-
+	
 	@Override
 	public String getName() {
 		return "linegraph";
 	}
 
 	@Override
-	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
+	protected void doBigDraw(Graphics g, GraphSym graphSym, 
+			Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, 
+			double offset, double yscale, ViewI view, int i) {
 		if (!graphSym.hasWidth()) {
 			g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 		} else {
@@ -48,7 +49,8 @@ public class LineGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void DrawPoints(double offset, double yscale, ViewI view, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, float yzero, double coords_per_pixel) {
+	protected void DrawPoints(double offset, double yscale, 
+		ViewI view, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, float yzero, double coords_per_pixel) {
 		if (yzero == 0) {
 			g.setColor(Color.gray);
 			g.drawLine(getPixelBox().x, zero_point.y, getPixelBox().width, zero_point.y);
@@ -77,7 +79,7 @@ public class LineGraphGlyph extends AbstractGraphGlyph {
 		double xpixels_per_coord = (view.getTransform()).getScaleX();
 		double xcoords_per_pixel = 1 / xpixels_per_coord;
 		if (xcoords_per_pixel < transition_scale) {
-			this.oldDraw(view);
+			oldDraw(view);
 		} else {
 			drawSmart(view);
 		}

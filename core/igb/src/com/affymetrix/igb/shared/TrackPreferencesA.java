@@ -22,7 +22,14 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.action.ChangeGraphTypeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
+import com.affymetrix.igb.graphTypes.BarGraphGlyph;
+import com.affymetrix.igb.graphTypes.DotGraphGlyph;
+import com.affymetrix.igb.graphTypes.HeatMapGraphGlyph;
+import com.affymetrix.igb.graphTypes.LineGraphGlyph;
+import com.affymetrix.igb.graphTypes.MinMaxAvgGraphGlyph;
+import com.affymetrix.igb.graphTypes.StairStepGraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.AbstractGraphGlyph.GraphStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 import com.jidesoft.combobox.ColorComboBox;
@@ -57,6 +64,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
 				igbService.getSeqMapView().updatePanel(preserveX, preserveY);
+			}
+		});
+	}
+	
+	private void refreshView() {
+		ThreadUtils.runOnEventQueue(new Runnable() {	
+			public void run() {
+				igbService.getSeqMap().updateWidget();
 			}
 		});
 	}
@@ -134,7 +149,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				}
 			}
 		}
-		updateDisplay();
+		refreshView();
 	}
 
 	@Override
@@ -213,30 +228,32 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
-		String selectedMode = null;
-		if (getGraphStyleLineRadioButton().isSelected()) {
-			selectedMode = "linegraph";
+		for (AbstractGraphGlyph graphGlyph : graphGlyphs) {
+			GraphStyle selectedMode = null;
+			if (getGraphStyleLineRadioButton().isSelected()) {
+				selectedMode = new LineGraphGlyph(graphGlyph);
+			}
+			if (getGraphStyleBarRadioButton().isSelected()) {
+				selectedMode = new BarGraphGlyph(graphGlyph);
+			}
+			if (getGraphStyleStairStepRadioButton().isSelected()) {
+				selectedMode = new StairStepGraphGlyph(graphGlyph);
+			}
+			if (getGraphStyleDotRadioButton().isSelected()) {
+				selectedMode = new DotGraphGlyph(graphGlyph);
+			}
+			if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
+				selectedMode = new MinMaxAvgGraphGlyph(graphGlyph);
+			}
+			if (getGraphStyleHeatMapRadioButton().isSelected()) {
+				selectedMode = new HeatMapGraphGlyph(graphGlyph);
+			}
+			graphGlyph.setGraphStyle(selectedMode);
 		}
-		if (getGraphStyleBarRadioButton().isSelected()) {
-			selectedMode = "bargraph";
-		}
-		if (getGraphStyleStairStepRadioButton().isSelected()) {
-			selectedMode = "stairstepgraph";
-		}
-		if (getGraphStyleDotRadioButton().isSelected()) {
-			selectedMode = "dotgraph";
-		}
-		if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
-			selectedMode = "minmaxavggraph";
-		}
-		if (getGraphStyleHeatMapRadioButton().isSelected()) {
-			selectedMode = "heatmapgraph";
-		}
-		MapViewGlyphFactoryI viewmode = MapViewModeHolder.getInstance().getViewFactory(selectedMode);
-		GenericAction viewModeAction = new ChangeGraphTypeAction(viewmode);
-		viewModeAction.actionPerformed(evt);
+		
+		buttonGroup1Reset();
 		graphStyleHeatMapComboBoxReset();
-		updateDisplay();
+		refreshView();
 	}
 	
 	@Override

@@ -1,24 +1,23 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.graphTypes;
 
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph.GraphStyle;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 
-public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
-	private final AbstractGraphGlyph tempViewModeBarGraphGlyph;
+public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph.GraphStyle {
+	private final GraphStyle tempViewModeBarGraphGlyph;
 
-	public MinMaxAvgGraphGlyph(GraphSym graf, GraphState gstate) {
-		super(graf, gstate);
-		tempViewModeBarGraphGlyph = new BarGraphGlyph(graf, gstate);
+	public MinMaxAvgGraphGlyph(AbstractGraphGlyph graphGlyph){
+		graphGlyph.super();
+		tempViewModeBarGraphGlyph = new BarGraphGlyph(graphGlyph);
 	}
 
 	@Override
@@ -27,7 +26,9 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void doBigDraw(Graphics g, GraphSym graphSym, Point curr_x_plus_width, Point max_x_plus_width, float ytemp, int draw_end_index, double offset, double yscale, ViewI view, int i) {
+	protected void doBigDraw(Graphics g, GraphSym graphSym, 
+			Point curr_x_plus_width, Point max_x_plus_width, float ytemp, 
+			int draw_end_index, double offset, double yscale, ViewI view, int i) {
 	}
 
 	@Override
@@ -55,7 +56,7 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	private void DrawAvgLine(Graphics g, double coords_per_pixel) {
-		g.setColor(lighter);
+		g.setColor(getLighterColor());
 		int prev_index = 0;
 		// find the first pixel position that has a real value in pixel_cache
 		// find the first pixel position that has a real value in pixel_cache
@@ -81,23 +82,27 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	protected void DrawPoints(double offset, double yscale, ViewI view, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, float yzero, double coords_per_pixel) {
+	protected void DrawPoints(double offset, double yscale, 
+			ViewI view, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, 
+			float yzero, double coords_per_pixel) {
 		if (yzero == 0) {
 			g.setColor(Color.gray);
 			g.drawLine(getPixelBox().x, zero_point.y, getPixelBox().width, zero_point.y);
 		}
-		g.setColor(darker);
+		g.setColor(getDarkerColor());
 		super.DrawPoints(offset, yscale, view, g, plot_bottom_ypixel, plot_top_ypixel, yzero, coords_per_pixel);
 		DrawAvgLine(g, coords_per_pixel);
 	}
 
 	@Override
 	protected void colorChange(Graphics g) {
-		g.setColor(darker);
+		g.setColor(getDarkerColor());
 	}
 
 	@Override
-	protected void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int width, int i) {
+	protected void drawSingleRect(int ymin_pixel, 
+			int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, 
+			Graphics g, int ysum, int points_in_pixel, int width, int i) {
 		// cache for drawing later
 		// cache for drawing later
 		if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
@@ -118,42 +123,30 @@ public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 		}
 	}
 
-	@Override
-	public void setCoords(double x, double y, double width, double height)  {
-		super.setCoords(x, y, width, height);
-		if(tempViewModeBarGraphGlyph != null){
-			tempViewModeBarGraphGlyph.setCoords(x, y, width, height);
-		}
-	}
-	
-	@Override
-	public void setCoordBox(Rectangle2D.Double coordbox)   {
-		super.setCoordBox(coordbox);
-		if(tempViewModeBarGraphGlyph != null){
-			tempViewModeBarGraphGlyph.setCoordBox(coordbox);
-		}
-	}
-	
-	@Override
-	public void setPreferredHeight(double height, ViewI view) {
-		super.setPreferredHeight(height, view);
-		if(tempViewModeBarGraphGlyph != null){
-			tempViewModeBarGraphGlyph.setPreferredHeight(height, view);
-		}
-	}
-	
 //	@Override
-//	public void moveRelative(double diffx, double diffy) {
-//		super.moveRelative(diffy, diffy);
-//		tempViewModeBarGraphGlyph.moveRelative(diffy, diffy);
+//	public void setCoords(double x, double y, double width, double height)  {
+//		super.setCoords(x, y, width, height);
+//		if(tempViewModeBarGraphGlyph != null){
+//			tempViewModeBarGraphGlyph.setCoords(x, y, width, height);
+//		}
 //	}
 //	
 //	@Override
-//	public void moveAbsolute(double x, double y){
-//		super.moveAbsolute(x, y);
-//		tempViewModeBarGraphGlyph.moveAbsolute(x, y);
+//	public void setCoordBox(Rectangle2D.Double coordbox)   {
+//		super.setCoordBox(coordbox);
+//		if(tempViewModeBarGraphGlyph != null){
+//			tempViewModeBarGraphGlyph.setCoordBox(coordbox);
+//		}
 //	}
-	
+//	
+//	@Override
+//	public void setPreferredHeight(double height, ViewI view) {
+//		super.setPreferredHeight(height, view);
+//		if(tempViewModeBarGraphGlyph != null){
+//			tempViewModeBarGraphGlyph.setPreferredHeight(height, view);
+//		}
+//	}
+		
 	@Override
 	public GraphType getGraphStyle() {
 		return GraphType.MINMAXAVG;

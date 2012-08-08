@@ -1,5 +1,6 @@
 package com.affymetrix.igb.viewmode;
 
+import com.affymetrix.igb.graphTypes.FillBarGraphGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -49,18 +50,18 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 			};
 		}
 
-		public MismatchPileupGlyph(GraphSym graf, GraphState gstate) {
-			super(graf, gstate);
+		public MismatchPileupGlyph(AbstractGraphGlyph graphGlyph){
+			super(graphGlyph);
 		}
-
+		
 		public GraphType getGraphStyle() {
 			return GraphType.STAIRSTEP_GRAPH;
 		}
 
 		@Override
-		protected void bigDrawLoop(
-				int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
-				Graphics g, Point max_x_plus_width, GraphSym graphSym) {
+		protected void bigDrawLoop(int draw_beg_index, 
+				int draw_end_index, double offset, double yscale, ViewI view, 
+				Point curr_x_plus_width, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
 			MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
 			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 			if (!mmgs.hasReferenceSequence()) {
@@ -140,12 +141,8 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 
 	@Override
 	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
-		AbstractGraphGlyph result = null;
-		if(newgraf instanceof MisMatchPileupGraphSym){
-			result = new MismatchPileupGlyph(newgraf, gstate);
-		}else{
-			result = new FillBarGraphGlyph(newgraf, gstate); 
-		}
+		AbstractGraphGlyph result = new AbstractGraphGlyph(newgraf, gstate);
+		result.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupGlyph(result) : new FillBarGraphGlyph(result));
 		result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 		return result;
 	}

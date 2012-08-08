@@ -54,8 +54,9 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 			super(graphGlyph);
 		}
 		
+		@Override
 		public GraphType getGraphStyle() {
-			return GraphType.STAIRSTEP_GRAPH;
+			return null;
 		}
 
 		@Override

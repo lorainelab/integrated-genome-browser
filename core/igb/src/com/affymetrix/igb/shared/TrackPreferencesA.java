@@ -455,6 +455,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return true;
 	}
 
+	private boolean isAllGraphStyleNull() {
+		for(AbstractGraphGlyph graphGlyph : graphGlyphs){
+			if(graphGlyph.getGraphStyle() != null){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	protected void viewModeComboBoxReset() {
 		JComboBox viewModeComboBox = getViewModeComboBox();
@@ -778,6 +787,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 			if (graphType == null) {
 				unselectGraphStyle();
+				if (isAllGraphStyleNull()) {
+					getGraphStyleLineRadioButton().setEnabled(false);
+					getGraphStyleBarRadioButton().setEnabled(false);
+					getGraphStyleStairStepRadioButton().setEnabled(false);
+					getGraphStyleDotRadioButton().setEnabled(false);
+					getGraphStyleMinMaxAvgRadioButton().setEnabled(false);
+					getGraphStyleHeatMapRadioButton().setEnabled(false);
+				}
 			}
 			else {
 				if (graphType == GraphType.HEAT_MAP) {

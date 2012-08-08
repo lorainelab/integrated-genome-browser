@@ -154,6 +154,7 @@ public class Delegate extends QuickLoadSymLoader {
 				BioSeq seq = graphSym.getGraphSeq();
 				seq.addAnnotation(graphSym);
 				feature.addMethod(uri.toString());
+				graphSym.getGraphName(); //Temp fix to setGraphTier true in TrackStyle
 			}
 			else {
 				// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.

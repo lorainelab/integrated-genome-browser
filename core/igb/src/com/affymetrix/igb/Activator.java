@@ -390,77 +390,41 @@ public class Activator implements BundleActivator {
 			}
 		);
 		
-		// Add annot factories
+		// Add Annotation factory
 		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Annotation);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationGlyphFactory, null);
+		
+		// Add Alignment factory
 		AnnotationGlyphFactory alignmentGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Alignment);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentGlyphFactory, null);
 
-		// add sequence factory
+		// Add Sequence factory
 		SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, sequenceGlyphFactory, null);
 
-		// Add graph factories
-		GraphGlyphFactory barGraphGlyphFactory = new GraphGlyphFactory(BarGraphGlyph.class);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, barGraphGlyphFactory, null);
-		GraphGlyphFactory dotGraphGlyphFactory = new GraphGlyphFactory(DotGraphGlyph.class);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, dotGraphGlyphFactory, null);
-		GraphGlyphFactory fillBarGraphGlyphFactory = new GraphGlyphFactory(FillBarGraphGlyph.class);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, fillBarGraphGlyphFactory, null);
-		GraphGlyphFactory heatMapGraphGlyphFactory = new GraphGlyphFactory(HeatMapGraphGlyph.class);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, heatMapGraphGlyphFactory, null);
-		GraphGlyphFactory lineGraphGlyphFactory = new GraphGlyphFactory(LineGraphGlyph.class);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, lineGraphGlyphFactory, null);
+		// Add Graph factories
 		GraphGlyphFactory minMaxAvgGraphGlyphFactory = new GraphGlyphFactory(MinMaxAvgGraphGlyph.class);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, minMaxAvgGraphGlyphFactory, null);
-		GraphGlyphFactory stairStepGraphGlyphFactory = new GraphGlyphFactory(StairStepGraphGlyph.class);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, stairStepGraphGlyphFactory, null);
 		
-		// ProbeSet factory
-		ProbeSetGlyphFactory probeSet = new ProbeSetGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSet, null);
+		// Add ProbeSet factory
+		ProbeSetGlyphFactory probeSetGlyphFactory = new ProbeSetGlyphFactory();
+		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSetGlyphFactory, null);
 		
-		// Add ScoredContainer factories
-		ScoredContainerGlyphFactory scoredBar = new ScoredContainerGlyphFactory(barGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredBar, null);
-		ScoredContainerGlyphFactory scoredDot = new ScoredContainerGlyphFactory(dotGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredDot, null);
-		ScoredContainerGlyphFactory scoredFillBar = new ScoredContainerGlyphFactory(fillBarGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredFillBar, null);
-		ScoredContainerGlyphFactory scoredHeatMap = new ScoredContainerGlyphFactory(heatMapGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredHeatMap, null);
-		ScoredContainerGlyphFactory scoredLine = new ScoredContainerGlyphFactory(lineGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredLine, null);
+		// Add ScoredContainer factory
 		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(minMaxAvgGraphGlyphFactory);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredMinMaxAvg, null);
-		ScoredContainerGlyphFactory scoredStairStep = new ScoredContainerGlyphFactory(stairStepGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredStairStep, null);
 		
-		// Add mismatch factories
+		// Add Mismatch factory
 		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchGlyphFactory, null);
 
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
-//		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
-//		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, expandedAnnotGlyphFactory);
-		MapViewGlyphFactoryI alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), stairStepGraphGlyphFactory);
-		MapViewGlyphFactoryI alignmentSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(alignmentGlyphFactory, alignmentDepthFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentSemanticZoomGlyphFactory, null);
-		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
-		MapViewGlyphFactoryI annotationSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationSemanticZoomGlyphFactory, null);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, new BaiSemanticZoomGlyphFactory(alignmentGlyphFactory, heatMapGraphGlyphFactory, stairStepGraphGlyphFactory), null);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, new TbiSemanticZoomGlyphFactory(FileTypeCategory.Annotation, annotationGlyphFactory, heatMapGraphGlyphFactory, stairStepGraphGlyphFactory), null);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, new TbiSemanticZoomGlyphFactory(FileTypeCategory.Alignment, alignmentGlyphFactory, heatMapGraphGlyphFactory, stairStepGraphGlyphFactory), null);
-
-		// Add Default factories
+		// Set Default factory
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, minMaxAvgGraphGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredHeatMap);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);
 	}
 }

@@ -231,18 +231,84 @@ public class TierGlyph extends SolidGlyph {
 		return change;
 	}
 
+	public void setDirection(Direction d) {
+		this.direction = d;
+		viewModeGlyph.setDirection(d);
+	}
+	
+	public Direction getDirection() {
+		return direction;
+	}
+	
+	public boolean isGarbage() {
+		return !unloadedOK && viewModeGlyph.isGarbage();
+	}
+
+	public void setUnloadedOK(boolean unloadedOK) {
+		this.unloadedOK = unloadedOK;
+	}
+
+	public void makeGarbage() {
+		viewModeGlyph.removeAllChildren();
+//		viewModeGlyph.setInfo(null);
+		setUnloadedOK(false);
+	}
+	
+	/*************************** Used Methods *********************************/
+	
+	// TierGlyph methods
+	public ITrackStyleExtended getAnnotStyle() {
+		return viewModeGlyph.getAnnotStyle();
+	}
+	
+	public String getLabel() {
+		return viewModeGlyph.getLabel();
+	}
+
+	public void setLabel(String str) {
+		viewModeGlyph.setLabel(str);
+	}
+	
+	public int getActualSlots(){
+		return viewModeGlyph.getActualSlots();
+	}
+	
+	public int getSlotsNeeded(ViewI theView) {
+		return viewModeGlyph.getSlotsNeeded(theView);
+	}
+	
+	public void setPreferredHeight(double height, ViewI view){
+		viewModeGlyph.setPreferredHeight(height, view);
+	}
+		
+	public List<SeqSymmetry> getSelected(){
+		return viewModeGlyph.getSelected();
+	}
+		
+	public Color getFillColor() {
+		return viewModeGlyph.getFillColor();
+	}
+		
 	public void setFillColor(Color col) {
 		viewModeGlyph.setFillColor(col);
 	}
 
-	public int getActualSlots(){
-		return viewModeGlyph.getActualSlots();
+	public boolean isManuallyResizable() {
+		return viewModeGlyph.isManuallyResizable();
 	}
-
-	public void setPreferredHeight(double height, ViewI view){
-		viewModeGlyph.setPreferredHeight(height, view);
+	
+	public void resizeHeight(double diffy, double height) {
+		Rectangle2D.Double cbox = getCoordBox();
+		setCoords(cbox.x, cbox.y, cbox.width, height);
+		this.moveRelative(0, diffy);
 	}
-
+	
+	public void addMiddleGlyph(GlyphI gl) {
+		viewModeGlyph.addMiddleGlyph(gl);
+	}
+	
+	/*************************** Used Methods *********************************/
+	
 	// Glyph methods
 	@Override
 	public Color getBackgroundColor()  {
@@ -296,9 +362,6 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	public Rectangle2D.Double getSelectedRegion() {
 		return viewModeGlyph.getSelectedRegion();
-	}
-	public int getSlotsNeeded(ViewI theView) {
-		return viewModeGlyph.getSlotsNeeded(theView);
 	}
 	@Override
 	public Scene getScene() {
@@ -521,68 +584,20 @@ public class TierGlyph extends SolidGlyph {
 	public void setHitable(boolean hitable) {
 		viewModeGlyph.setHitable(hitable);
 	}
-
-	// TierGlyph methods
-	public ITrackStyleExtended getAnnotStyle() {
-		return viewModeGlyph.getAnnotStyle();
-	}
-	public Color getFillColor() {
-		return viewModeGlyph.getFillColor();
-	}
-	public Direction getDirection() {
-		return direction;
-	}
-	public String getLabel() {
-		return viewModeGlyph.getLabel();
-	}
-	public void addMiddleGlyph(GlyphI gl) {
-		viewModeGlyph.addMiddleGlyph(gl);
-	}
+	
 	public void setCollapsedPacker(CollapsePacker packer) {
 		System.out.println("!!!!!!!!! setCollapsedPacker(CollapsePacker packer)");
 	}
-	public void setDirection(Direction d) {
-		this.direction = d;
-		viewModeGlyph.setDirection(d);
-	}
+
 	public void setExpandedPacker(FasterExpandPacker packer) {
 		System.out.println("!!!!!!!!! setExpandedPacker(FasterExpandPacker packer)");
-	}
-	public void setLabel(String str) {
-		viewModeGlyph.setLabel(str);
-	}
-	public List<SeqSymmetry> getSelected(){
-		return viewModeGlyph.getSelected();
 	}
 	@Override
 	public void drawChildren(ViewI view) {
 		System.out.println("!!!!!!!!! drawChildren(ViewI view)");
 /////		viewModeGlyph.drawChildren(view);
 	}
-	public void resizeHeight(double diffy, double height) {
-		Rectangle2D.Double cbox = getCoordBox();
-		setCoords(cbox.x, cbox.y, cbox.width, height);
-		this.moveRelative(0, diffy);
-	}
-
-	public boolean isManuallyResizable() {
-		return this.viewModeGlyph.isManuallyResizable();
-	}
-
-	public boolean isGarbage() {
-		return !unloadedOK && viewModeGlyph.isGarbage();
-	}
-
-	public void setUnloadedOK(boolean unloadedOK) {
-		this.unloadedOK = unloadedOK;
-	}
-
-	public void makeGarbage() {
-		viewModeGlyph.removeAllChildren();
-//		viewModeGlyph.setInfo(null);
-		setUnloadedOK(false);
-	}
-
+	
 	@Override
 	public String toString() {
 		return "viewModeGlyph=" + (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? " ###" : " ---") + (unloadedOK ? "y" : "n") + " >;direction=" + getDirection() + ";style=" + (style == null ? "null" : style.toString());

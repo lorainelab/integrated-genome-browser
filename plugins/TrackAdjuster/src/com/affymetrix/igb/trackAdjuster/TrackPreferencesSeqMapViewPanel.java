@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.shared.SemanticZoomGlyphFactory.SemanticZoomGlyph;
 
 public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {
 	private static final long serialVersionUID = 1L;
@@ -33,11 +32,7 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		//allGlyphs.addAll(selected);
 		graphGlyphs.clear();
 		annotGlyphs.clear();
-		for (ViewModeGlyph vg : selected) {
-			ViewModeGlyph useGlyph = vg;
-			if (vg instanceof SemanticZoomGlyph) {
-				useGlyph = ((SemanticZoomGlyph)vg).getLastUsedGlyph();
-			}
+		for (ViewModeGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
 			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
 				category = ((RootSeqSymmetry)useGlyph.getInfo()).getCategory();

@@ -398,15 +398,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return allGlyphs.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
 	}
 
-	private boolean isAnySemanticZoomGraph() {
-		for (AbstractGraphGlyph gg : graphGlyphs) {
-			if (MapViewModeHolder.getInstance().getViewFactory(gg.getAnnotStyle().getViewMode()) instanceof SemanticZoomGlyphFactory) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private boolean isAllAnnot() {
 		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
 	}
@@ -499,7 +490,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			}
 		}
 
-		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined() && !isAnySemanticZoomGraph() 
+		floatCheckBox.setEnabled(isAllGraph() && !isAnyJoined() 
 			// Floating is not allowed if only one track loaded
 			&& ((igbService != null && igbService.getVisibleTierGlyphs() != null && igbService.getVisibleTierGlyphs().size() > 2) || allFloat)
 		);

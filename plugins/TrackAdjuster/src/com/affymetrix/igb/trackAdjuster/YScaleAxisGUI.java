@@ -14,7 +14,6 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.shared.SemanticZoomGlyphFactory.SemanticZoomGlyph;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -324,9 +323,6 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		graphGlyphs.clear();
 		for (GlyphI glyph : igbService.getSeqMapView().getAllSelectedTiers()) {
 			ViewModeGlyph useGlyph = (ViewModeGlyph)glyph;
-			if (useGlyph instanceof SemanticZoomGlyph) {
-				useGlyph = ((SemanticZoomGlyph)useGlyph).getLastUsedGlyph();
-			}
 			allGlyphs.add(useGlyph);
 			if(useGlyph instanceof AbstractGraphGlyph){
 				graphGlyphs.add((AbstractGraphGlyph)useGlyph);

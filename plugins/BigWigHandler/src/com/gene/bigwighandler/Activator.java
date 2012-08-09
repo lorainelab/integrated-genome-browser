@@ -50,30 +50,6 @@ public class Activator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "could not get MapViewGlyphFactoryI service references", x);
 		}
-    	serviceTrackerMapViewGlyphFactoryI = new ServiceTracker<MapViewGlyphFactoryI,Object>(bundleContext, MapViewGlyphFactoryI.class, null) {
-    	    public synchronized Object addingService(ServiceReference<MapViewGlyphFactoryI> mapViewGlyphFactoryIServiceReference) {
-    	    	if (!factoryCreated) {
-    	    		checkReference(mapViewGlyphFactoryIServiceReference);
-					synchronized (this) {
-						if (annotationGlyphFactory != null && alignmentGlyphFactory != null && graphGlyphFactory != null) {
-							serviceTrackerMapViewGlyphFactoryI.close();
-							factoryCreated = true;
-							BigWigSemanticZoomGlyphFactory annotationBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory, graphGlyphFactory);
-//							annotationBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
-							annotationBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, annotationBigWigSemanticZoomGlyphFactory, null);
-							BigWigSemanticZoomGlyphFactory alignmentBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory, graphGlyphFactory);
-//							alignmentBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
-							alignmentBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentBigWigSemanticZoomGlyphFactory, null);
-							BigWigSemanticZoomGlyphFactory graphBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(graphGlyphFactory, graphGlyphFactory);
-//							graphBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
-							graphBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, graphBigWigSemanticZoomGlyphFactory, null);
-						}
-					}
-    	    	}
-    	    	return super.addingService(mapViewGlyphFactoryIServiceReference);
-    	    }
-    	};
-    	serviceTrackerMapViewGlyphFactoryI.open();
 	}
 
 	@Override

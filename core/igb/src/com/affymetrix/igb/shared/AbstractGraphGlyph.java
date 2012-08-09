@@ -48,7 +48,7 @@ import java.util.*;
  * <p><em><strong>This is only meant for graphs on horizontal maps.</strong></em>
  * </p>
  */
-public class AbstractGraphGlyph extends AbstractViewModeGlyph {
+public class AbstractGraphGlyph extends ViewModeGlyph {
 		
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;

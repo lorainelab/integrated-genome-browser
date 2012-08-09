@@ -4,8 +4,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 import java.awt.Color;
 import java.util.*;
@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for sequences
  */
-public class SequenceGlyph extends AbstractViewModeGlyph {
+public class SequenceGlyph extends ViewModeGlyph {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {

@@ -160,43 +160,6 @@ public class TrackView {
 		}
 	}
 
-//	public void changeViewMode(SeqMapView gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
-//		String oldViewMode = style.getViewMode();
-//		if (oldViewMode.equals(viewMode)) {
-//			return;
-//		}
-//		if (comboStyle == null) {
-//			style.setViewMode(viewMode);
-//			if (rootSym != null) {
-//				gviewer.addAnnotationTrackFor(style);
-//			}
-//		}
-//		else {
-//			// must be a GraphGlyph in a ComboGlyph
-//			TierGlyph comboTier = gviewer.getTrack(rootSym, comboStyle, TierGlyph.Direction.NONE, null);
-//			ComboGlyph comboGlyph = (ComboGlyph)comboTier.getViewModeGlyph();
-//			AbstractGraphGlyph oldGlyph = (AbstractGraphGlyph)comboGlyph.getChildWithStyle(style);
-//			AbstractGraphGlyph newGlyph = (AbstractGraphGlyph)MapViewModeHolder.getInstance().getViewFactory(viewMode).getViewModeGlyph((SeqSymmetry)oldGlyph.getInfo(), style, TierGlyph.Direction.NONE, gviewer);
-//			style.setViewMode(viewMode);
-//			comboGlyph.removeChild(oldGlyph);
-//			newGlyph.setScene(oldGlyph.getScene());
-//			newGlyph.setCoordBox(oldGlyph.getCoordBox());
-//			newGlyph.setTierGlyph(oldGlyph.getTierGlyph());
-//			newGlyph.setVisibility(oldGlyph.isVisible());
-//			comboGlyph.addChild(newGlyph);
-//			//gviewer.getSeqMap().packTiers(true, false, false);
-//			gviewer.getSeqMap().updateWidget();
-//		}
-//		
-//		if(rootSym != null){
-//			// kludge to get GraphAdjuster tab to update Style box (graph type)
-//			List<RootSeqSymmetry> all_syms = new ArrayList<RootSeqSymmetry>();
-//			List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>();
-//			graph_syms.add(rootSym);
-//			GenometryModel.getGenometryModel().setSelectedSymmetries(all_syms, graph_syms, gviewer);
-//		}
-//	}
-
 	public void addAnnotationGlyphs(SeqMapView smv, ITrackStyleExtended style){ 
 		String meth = style.getMethodName();
 		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);

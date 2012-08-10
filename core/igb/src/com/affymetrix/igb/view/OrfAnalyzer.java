@@ -234,7 +234,7 @@ public final class OrfAnalyzer extends JComponent
 						return false;
 					}
 				};
-				orf_glyph.setColor(tier.getFillColor());
+				orf_glyph.setColor(tier.getBackgroundColor());
 			}
 			// Make orf_glyph as long as vseq; otherwise, two or more could pack into one line.
 			// The underlying symmetry may be shorter, so "zoom to selected" won't work.

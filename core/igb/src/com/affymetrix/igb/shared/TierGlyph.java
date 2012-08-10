@@ -254,6 +254,15 @@ public class TierGlyph extends SolidGlyph {
 		setUnloadedOK(false);
 	}
 	
+	@Override
+	public Color getBackgroundColor() {
+		return style.getBackground();
+	}
+	
+	@Override
+	public Color getForegroundColor()  {
+		return style.getForeground();
+	}
 	/*************************** Used Methods *********************************/
 	
 	// TierGlyph methods
@@ -285,14 +294,6 @@ public class TierGlyph extends SolidGlyph {
 		return viewModeGlyph.getSelected();
 	}
 		
-	public Color getFillColor() {
-		return viewModeGlyph.getFillColor();
-	}
-		
-	public void setFillColor(Color col) {
-		viewModeGlyph.setFillColor(col);
-	}
-
 	public boolean isManuallyResizable() {
 		return viewModeGlyph.isManuallyResizable();
 	}
@@ -352,17 +353,10 @@ public class TierGlyph extends SolidGlyph {
 	
 	// Glyph methods
 	@Override
-	public Color getBackgroundColor()  {
-		return viewModeGlyph.getBackgroundColor();
-	}
-	@Override
 	public Color getColor()  {
 		return viewModeGlyph.getColor();
 	}
-	@Override
-	public Color getForegroundColor()  {
-		return viewModeGlyph.getForegroundColor();
-	}
+
 	@Override
 	public Font getFont() {
 		return viewModeGlyph.getFont();

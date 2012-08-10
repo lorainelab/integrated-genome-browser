@@ -150,7 +150,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	public void draw(ViewI view) {
 		TierGlyph reftier = this.getReferenceTier();
 		Color fgcolor = reftier.getForegroundColor();
-		Color bgcolor = reftier.getFillColor();
+		Color bgcolor = reftier.getBackgroundColor();
 
 		final Graphics g = view.getGraphics();
 		g.setPaintMode();

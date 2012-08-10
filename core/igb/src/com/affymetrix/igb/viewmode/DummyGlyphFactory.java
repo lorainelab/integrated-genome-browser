@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -29,7 +30,7 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	// glyph class
-	public class DummyGlyph extends ViewModeGlyph {
+	public class DummyGlyph extends AbstractViewModeGlyph implements ViewModeGlyph{
 
 		public DummyGlyph(ITrackStyleExtended style, Direction tier_direction) {
 			super();

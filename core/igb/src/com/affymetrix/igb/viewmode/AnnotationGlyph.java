@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationGlyph extends ViewModeGlyph {
+public class AnnotationGlyph extends AbstractViewModeGlyph implements ViewModeGlyph{
 	private static final int MAX_EXPAND = 0;
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;

@@ -536,30 +536,6 @@ public class AbstractGraphGlyph extends ViewModeGlyph {
 		state.getTierStyle().setForeground(c);
 	}
 
-	@Override
-	public String getLabel() {
-		String lab = state.getTierStyle().getTrackName();
-		// If it has a combo style and that is collapsed, then only use the label
-		// from the combo style.  Otherwise use the individual tier style.
-		if (state.getComboStyle() != null && state.getComboStyle().getCollapsed()) {
-			lab = state.getComboStyle().getTrackName();
-		}
-		if (lab == null) {
-			// if no label was set, try using ID
-			Object mod = this.getInfo();
-			if (mod instanceof SeqSymmetry) {
-				lab = ((SeqSymmetry) mod).getID();
-			}
-			if (lab == null) {
-				lab = state.getTierStyle().getUniqueName();
-			}
-		}
-
-		lab += " (" + nformat.format(state.getVisibleMinY()) + ", " + nformat.format(state.getVisibleMaxY()) + ")";
-
-		return lab;
-	}
-
 	public boolean getShowGraph() {
 		return state.getShowGraph();
 	}
@@ -795,137 +771,11 @@ public class AbstractGraphGlyph extends ViewModeGlyph {
 		return Math.min(0, getVisibleMaxY());
 	}
 
-	@Override
-	public void setPreferredHeight(double height, ViewI view) {
-		GlyphI child = getChild(0);
-		Rectangle2D.Double  c = child.getCoordBox();
-		child.setCoords(c.x, c.y, c.width, height);
-		//Note : Fix to handle height in a view mode.
-		// But this also causes minor change in height while switching back to default view mode.
-		setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
-		this.style.setHeight(height + 2 * getSpacing());
-		child.pack(view);
-	}
-
-	@Override
-	public int getActualSlots() {
-		return 1;
-	}
-
-	@Override
-	public void setLabel(String str) {
-	}
-
-	@Override
-	public Map<String, Class<?>> getPreferences() {
-		return new HashMap<String, Class<?>>(PREFERENCES);
-	}
-
-	@Override
-	public void setPreferences(Map<String, Object> preferences) {
-	}
-	
 	// this should not be here, only for backwards compatibility
 	public GraphType getGraphStyle(){
 		return graphStyle.getGraphStyle();
 	}
-
-	/**
-	 * Determine the extreme values of <var>y</var> in theView.
-	 * We do not need to translate between scene coordinates
-	 * to those of the graph symmetry.
-	 * They are essentially the same thing(?), just different precisions.
-	 * Graph symmetry coordinates are not pixels.
-	 * TODO Maybe this should be a method of GraphSym?
-	 * TODO Could use a "Range" or "Interval" object instead of float[2].
-	 * TODO Should a null view be an illegal argument?
-	 * @param theData containing points (<var>x</var>,<var>y</var>).
-	 * @return the minimum and maximum values of <var>y</var>
-	 *         restricted to the <var>x</var> values in theView.
-	 */
-	private float[] getRangeInView(GraphSym theData, ViewI theView) {
-		if (null == theData) {
-			throw new IllegalArgumentException("theData cannot be null.");
-		}
-		int[] ourDomain = theData.getGraphXCoords();
-		float[] ourRange = theData.getGraphYCoords();
-		assert ourDomain.length == ourRange.length;
-		float[] empty = {0, 0};
-		if (ourDomain.length < 1) {
-			return empty; // Artificial. Maybe should throw illegal arg.
-		}
-		Rectangle2D.Double b = theView.getCoordBox();
-		long lowerBound = Long.MIN_VALUE;
-		long upperBound = Long.MAX_VALUE;
-		if (null != theView) {
-			lowerBound = Math.round(b.x);
-			upperBound = Math.round(Math.floor((lowerBound + b.width) - Double.MIN_VALUE));
-		}
-		float rangeMinimum = Float.POSITIVE_INFINITY;
-		float rangeMaximum = Float.NEGATIVE_INFINITY;
-		for (int i = 0; i < ourDomain.length; i++) {
-			if (lowerBound <= ourDomain[i] && ourDomain[i] <= upperBound) {
-				rangeMinimum = Math.min(rangeMinimum, ourRange[i]);
-				rangeMaximum = Math.max(rangeMaximum, ourRange[i]);
-			}
-		}
-		float[] answer = {rangeMinimum, rangeMaximum};
-		return answer;
-	}
-
-	/**
-	 * Determine how short a glyph can be so we can avoid empty vertical space.
-	 * Originally implemented for annotation tracks.
-	 * Here we hope for a {@link GraphSym} as the glyph's info.
-	 * If we don't find one, we return the answer from the super class.
-	 * Subclasses can specialize this, of course.
-	 * TODO Do we want y max? or |y max - y min| or [y max|?
-	 *      or even max(|y min|, [y max|)?
-	 *      The old basic graph glyph used to flip y values
-	 *      because pixels start at 0 and go negative.
-	 * @param theView limits the data to consider.
-	 * @return How tall the glyph must be to show all the data in view.
-	 *         Cannot be negative?
-	 */
-	@Override
-	public int getSlotsNeeded(ViewI theView) {
-		if (null == theView) {
-			throw new IllegalArgumentException("theView cannot be null.");
-		}
-		Object o = this.getInfo();
-		if (null != o) {
-			if (o instanceof GraphSym) {
-				GraphSym model = (GraphSym) o;
-				// Figure it out.
-				float[] bounds = getRangeInView(model, theView);
-				assert bounds[0] <= bounds[1];
-				float answer = bounds[1] - bounds[0];
-				if (answer <= 0) {
-					return 0;
-				}
-				if (Integer.MAX_VALUE <= answer) {
-					return Integer.MAX_VALUE;
-				}
-				return (int) answer;
-			}
-		}
-		return super.getSlotsNeeded(theView);
-	}
-
-	@Override
-	public boolean initUnloaded() {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();	 
-		if (getInfo() != null && ((GraphSym) getInfo()).getGraphSeq() != seq) {
-			return true;
-		}
-		return super.initUnloaded();
-	}
-	 
-	@Override
-	protected boolean shouldDrawToolBar(){
-		return false;
-	}
-
+	
 	public void lockGraphStyle(){
 		lockGraphStyle = true;
 	}
@@ -1165,6 +1015,156 @@ public class AbstractGraphGlyph extends ViewModeGlyph {
 		}
 	}
 
+	@Override
+	public boolean initUnloaded() {
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();	 
+		if (getInfo() != null && ((GraphSym) getInfo()).getGraphSeq() != seq) {
+			return true;
+		}
+		return super.initUnloaded();
+	}
+		
+	@Override
+	public String getLabel() {
+		String lab = state.getTierStyle().getTrackName();
+		// If it has a combo style and that is collapsed, then only use the label
+		// from the combo style.  Otherwise use the individual tier style.
+		if (state.getComboStyle() != null && state.getComboStyle().getCollapsed()) {
+			lab = state.getComboStyle().getTrackName();
+		}
+		if (lab == null) {
+			// if no label was set, try using ID
+			Object mod = this.getInfo();
+			if (mod instanceof SeqSymmetry) {
+				lab = ((SeqSymmetry) mod).getID();
+			}
+			if (lab == null) {
+				lab = state.getTierStyle().getUniqueName();
+			}
+		}
+
+		lab += " (" + nformat.format(state.getVisibleMinY()) + ", " + nformat.format(state.getVisibleMaxY()) + ")";
+
+		return lab;
+	}
+	
+	@Override
+	public void setLabel(String str) {
+	}
+		
+	@Override
+	public void setPreferredHeight(double height, ViewI view) {
+		GlyphI child = getChild(0);
+		Rectangle2D.Double  c = child.getCoordBox();
+		child.setCoords(c.x, c.y, c.width, height);
+		//Note : Fix to handle height in a view mode.
+		// But this also causes minor change in height while switching back to default view mode.
+		setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
+		this.style.setHeight(height + 2 * getSpacing());
+		child.pack(view);
+	}
+
+	@Override
+	public int getActualSlots() {
+		return 1;
+	}
+
+	/**
+	 * Determine how short a glyph can be so we can avoid empty vertical space.
+	 * Originally implemented for annotation tracks.
+	 * Here we hope for a {@link GraphSym} as the glyph's info.
+	 * If we don't find one, we return the answer from the super class.
+	 * Subclasses can specialize this, of course.
+	 * TODO Do we want y max? or |y max - y min| or [y max|?
+	 *      or even max(|y min|, [y max|)?
+	 *      The old basic graph glyph used to flip y values
+	 *      because pixels start at 0 and go negative.
+	 * @param theView limits the data to consider.
+	 * @return How tall the glyph must be to show all the data in view.
+	 *         Cannot be negative?
+	 */
+	@Override
+	public int getSlotsNeeded(ViewI theView) {
+		if (null == theView) {
+			throw new IllegalArgumentException("theView cannot be null.");
+		}
+		Object o = this.getInfo();
+		if (null != o) {
+			if (o instanceof GraphSym) {
+				GraphSym model = (GraphSym) o;
+				// Figure it out.
+				float[] bounds = getRangeInView(model, theView);
+				assert bounds[0] <= bounds[1];
+				float answer = bounds[1] - bounds[0];
+				if (answer <= 0) {
+					return 0;
+				}
+				if (Integer.MAX_VALUE <= answer) {
+					return Integer.MAX_VALUE;
+				}
+				return (int) answer;
+			}
+		}
+		return super.getSlotsNeeded(theView);
+	}
+
+	@Override
+	protected boolean shouldDrawToolBar(){
+		return false;
+	}
+	
+	@Override
+	public Map<String, Class<?>> getPreferences() {
+		return new HashMap<String, Class<?>>(PREFERENCES);
+	}
+
+	@Override
+	public void setPreferences(Map<String, Object> preferences) {
+	}
+	
+	/**
+	 * Determine the extreme values of <var>y</var> in theView.
+	 * We do not need to translate between scene coordinates
+	 * to those of the graph symmetry.
+	 * They are essentially the same thing(?), just different precisions.
+	 * Graph symmetry coordinates are not pixels.
+	 * TODO Maybe this should be a method of GraphSym?
+	 * TODO Could use a "Range" or "Interval" object instead of float[2].
+	 * TODO Should a null view be an illegal argument?
+	 * @param theData containing points (<var>x</var>,<var>y</var>).
+	 * @return the minimum and maximum values of <var>y</var>
+	 *         restricted to the <var>x</var> values in theView.
+	 */
+	private float[] getRangeInView(GraphSym theData, ViewI theView) {
+		if (null == theData) {
+			throw new IllegalArgumentException("theData cannot be null.");
+		}
+		int[] ourDomain = theData.getGraphXCoords();
+		float[] ourRange = theData.getGraphYCoords();
+		assert ourDomain.length == ourRange.length;
+		float[] empty = {0, 0};
+		if (ourDomain.length < 1) {
+			return empty; // Artificial. Maybe should throw illegal arg.
+		}
+		Rectangle2D.Double b = theView.getCoordBox();
+		long lowerBound = Long.MIN_VALUE;
+		long upperBound = Long.MAX_VALUE;
+		if (null != theView) {
+			lowerBound = Math.round(b.x);
+			upperBound = Math.round(Math.floor((lowerBound + b.width) - Double.MIN_VALUE));
+		}
+		float rangeMinimum = Float.POSITIVE_INFINITY;
+		float rangeMaximum = Float.NEGATIVE_INFINITY;
+		for (int i = 0; i < ourDomain.length; i++) {
+			if (lowerBound <= ourDomain[i] && ourDomain[i] <= upperBound) {
+				rangeMinimum = Math.min(rangeMinimum, ourRange[i]);
+				rangeMaximum = Math.max(rangeMaximum, ourRange[i]);
+			}
+		}
+		float[] answer = {rangeMinimum, rangeMaximum};
+		return answer;
+	}
+	
 	public abstract class GraphStyle {
 
 		protected static final double transition_scale = 500;

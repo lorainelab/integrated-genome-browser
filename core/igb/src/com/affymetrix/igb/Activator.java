@@ -46,13 +46,14 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
     private String commandLineBatchFileStr;
+	String[] args;
 
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 	
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
-        String[] args = CommonUtils.getInstance().getArgs(bundleContext);
+        args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
     		if (CommonUtils.getInstance().isHelp(bundleContext)) { // display all command options
 				System.out.println("-offline - set the URL caching to offline");
@@ -66,7 +67,6 @@ public class Activator implements BundleActivator {
 				return;
     		}
 
-    		printDetails(args);
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
     		if (prefsMode != null) {
     			PreferenceUtils.setPrefsMode(prefsMode);
@@ -153,24 +153,6 @@ public class Activator implements BundleActivator {
 		initOperators();
 	}
 
-	private void printDetails(String[] args) {
-		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
-		System.out.println("UserAgent: " + USER_AGENT);
-		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
-		Runtime runtime = Runtime.getRuntime();
-		System.out.println("Locale: " + Locale.getDefault());
-		System.out.println("System memory: " + runtime.maxMemory() / 1024);
-		if (args != null) {
-			System.out.print("arguments: ");
-			for (String arg : args) {
-				System.out.print(" " + arg);
-			}
-			System.out.println();
-		}
-
-		System.out.println();
-	}
-
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {}
 
@@ -215,7 +197,7 @@ public class Activator implements BundleActivator {
 		// To avoid race condition on startup
 		initMapViewGlyphFactorys();
 		
-        igb.init();
+        igb.init(args);
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
 		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);

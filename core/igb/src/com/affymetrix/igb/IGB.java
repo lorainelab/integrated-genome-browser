@@ -163,7 +163,7 @@ public final class IGB extends Application
 		}
 	}
 
-	public void init() {
+	public void init(String[] args) {
 		addTextFieldToolbar();
 		setLaf();
 
@@ -178,6 +178,7 @@ public final class IGB extends Application
 		// Initialize the ConsoleView right off, so that ALL output will
 		// be captured there.
 		ConsoleView.init(APP_NAME);
+		printDetails(args);
 
 		// Initialize statusbar output logger.
 		StatusBarOutput.initStatusBarOutput();
@@ -270,6 +271,24 @@ public final class IGB extends Application
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
 		notifyCounter();
+	}
+	
+		private void printDetails(String[] args) {
+		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+		System.out.println("UserAgent: " + USER_AGENT);
+		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+		Runtime runtime = Runtime.getRuntime();
+		System.out.println("Locale: " + Locale.getDefault());
+		System.out.println("System memory: " + runtime.maxMemory() / 1024);
+		if (args != null) {
+			System.out.print("arguments: ");
+			for (String arg : args) {
+				System.out.print(" " + arg);
+			}
+			System.out.println();
+		}
+
+		System.out.println();
 	}
 
 	private void notifyCounter(){

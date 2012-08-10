@@ -260,7 +260,7 @@ public class TierGlyph extends SolidGlyph {
 	public ITrackStyleExtended getAnnotStyle() {
 		return viewModeGlyph.getAnnotStyle();
 	}
-	
+						
 	public String getLabel() {
 		return viewModeGlyph.getLabel();
 	}
@@ -302,12 +302,53 @@ public class TierGlyph extends SolidGlyph {
 		setCoords(cbox.x, cbox.y, cbox.width, height);
 		this.moveRelative(0, diffy);
 	}
-	
+		
 	public void addMiddleGlyph(GlyphI gl) {
 		viewModeGlyph.addMiddleGlyph(gl);
 	}
 	
 	/*************************** Used Methods *********************************/
+	
+	/******************* Method overridden in ViewModeGlyph *******************/
+	@Override
+	public void drawTraversal(ViewI view)  {
+		if(!isVisible())
+			return;
+		
+		viewModeGlyph.drawMiddle(view);
+		viewModeGlyph.drawTraversal(view);
+	}
+	
+	@Override
+	public void setInfo(Object info)  {
+		this.modelSym = (SeqSymmetry)info;
+		setViewModeGlyph(this.style);
+		//viewModeGlyph.setInfo(info); // Let factory setInfo for viewModeGlyph : HV 02/17/12
+	}
+	
+	@Override
+	public void removeAllChildren() {
+		viewModeGlyph.removeAllChildren();
+	}
+	
+	@Override
+	public void pack(ViewI view) {
+		if (viewModeGlyph.getParent() == null) {
+			viewModeGlyph.setParent(super.getParent());
+		}
+		Glyph glyph = null;
+		if (viewModeGlyph.getChildCount() == 0) {
+			// Add empty child.
+			glyph = new Glyph() {};
+			glyph.setCoords(0, 0, 0, viewModeGlyph.getChildHeight());
+			viewModeGlyph.addChild(glyph);
+		}
+		viewModeGlyph.pack(view);
+		if (glyph != null) {
+			viewModeGlyph.removeChild(glyph);
+		}
+	}
+	/******************* Method overridden in ViewModeGlyph *******************/
 	
 	// Glyph methods
 	@Override
@@ -458,14 +499,6 @@ public class TierGlyph extends SolidGlyph {
 		viewModeGlyph.drawSelected(view);
 	}
 	@Override
-	public void drawTraversal(ViewI view)  {
-		if(!isVisible())
-			return;
-		
-		viewModeGlyph.drawMiddle(view);
-		viewModeGlyph.drawTraversal(view);
-	}
-	@Override
 	public void getChildTransform(ViewI view, LinearTransform trans) {
 		viewModeGlyph.getChildTransform(view, trans);
 	}
@@ -478,29 +511,8 @@ public class TierGlyph extends SolidGlyph {
 		viewModeGlyph.moveRelative(diffx, diffy);
 	}
 	@Override
-	public void pack(ViewI view) {
-		if (viewModeGlyph.getParent() == null) {
-			viewModeGlyph.setParent(super.getParent());
-		}
-		Glyph glyph = null;
-		if (viewModeGlyph.getChildCount() == 0) {
-			// Add empty child.
-			glyph = new Glyph() {};
-			glyph.setCoords(0, 0, 0, viewModeGlyph.getChildHeight());
-			viewModeGlyph.addChild(glyph);
-		}
-		viewModeGlyph.pack(view);
-		if (glyph != null) {
-			viewModeGlyph.removeChild(glyph);
-		}
-	}
-	@Override
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
 		viewModeGlyph.pickTraversal(pickRect, pickList, view);
-	}
-	@Override
-	public void removeAllChildren() {
-		viewModeGlyph.removeAllChildren();
 	}
 	@Override
 	public void removeChild(GlyphI glyph)  {
@@ -539,12 +551,6 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	public void setForegroundColor(Color color)  {
 		viewModeGlyph.setForegroundColor(color);
-	}
-	@Override
-	public void setInfo(Object info)  {
-		this.modelSym = (SeqSymmetry)info;
-		setViewModeGlyph(this.style);
-		//viewModeGlyph.setInfo(info); // Let factory setInfo for viewModeGlyph : HV 02/17/12
 	}
 	@Override
 	public void setMinimumPixelBounds(Dimension d)   {

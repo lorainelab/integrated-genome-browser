@@ -272,11 +272,6 @@ public class SeqMapView extends JPanel
 
 		@Override
 		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			for (TierGlyph tier : seqmap.getTiers()) {
-				if (tier.getViewModeGlyph() instanceof SeqSelectionListener) {
-					((SeqSelectionListener) tier.getViewModeGlyph()).seqSelectionChanged(evt);
-				}
-			}
 			if (PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence)) {
 				GeneralLoadView.getLoadView().loadResidues(false);
 			}

@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
-import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.graphTypes.BarGraphGlyph;
 import com.affymetrix.igb.graphTypes.DotGraphGlyph;
 import com.affymetrix.igb.graphTypes.HeatMapGraphGlyph;
@@ -77,11 +76,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	
 	@Override
 	protected void viewModeComboBoxActionPerformedA(ActionEvent evt) {
-	    final JComboBox viewModeComboBox = getViewModeComboBox();
-		MapViewGlyphFactoryI viewmode = (MapViewGlyphFactoryI)viewModeComboBox.getSelectedItem();
-		GenericAction viewModeAction = new ChangeViewModeAction(viewmode);
-		viewModeAction.actionPerformed(evt);
-		updateDisplay();
+
 	}
 
 	@Override

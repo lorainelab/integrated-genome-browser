@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
@@ -150,31 +149,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 		return operationsMenu;
-	}
-
-	private JMenu addViewModeMenu(List<GlyphI> glyphs) {
-		JMenu viewModeMenu = new JMenu(BUNDLE.getString("viewModeMenu"));
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<MapViewGlyphFactoryI> factories = TrackUtils.getInstance().getAvailableViewModes((List)glyphs);
-		boolean hasFactories = (factories != null) && factories.size() > 0;
-		viewModeMenu.setEnabled(hasFactories);
-		if (hasFactories) {
-			String selectViewMode = ((ViewModeGlyph)glyphs.get(0)).getAnnotStyle().getViewMode();
-			for (GlyphI gl : glyphs) {
-				if (!selectViewMode.equals(((ViewModeGlyph)gl).getAnnotStyle().getViewMode())) {
-					selectViewMode = null;
-					break;
-				}
-			}
-			for (final MapViewGlyphFactoryI mode : factories) {
-				Action action = new ChangeViewModeAction(mode);
-				if(mode.getName().equals(selectViewMode)){
-					action.putValue(Action.SELECTED_KEY, true);
-				}
-				viewModeMenu.add(new JCheckBoxMenuItem(action));
-			}
-		}
-		return viewModeMenu;
 	}
 
 	private JMenu addTransformMenu(TierGlyph glyph) {
@@ -322,7 +296,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
-		popup.add(addViewModeMenu(gviewer.getAllSelectedTiers()));
 		popup.add(addTransformMenu(labels.size() == 1 ? (TierGlyph) labels.get(0).getInfo() : null));
 		popup.add(new JSeparator());
 		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));

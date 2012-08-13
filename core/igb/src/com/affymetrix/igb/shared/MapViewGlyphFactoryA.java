@@ -37,7 +37,4 @@ public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
 		return getDisplayName();
 	}
 	
-	public ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 }

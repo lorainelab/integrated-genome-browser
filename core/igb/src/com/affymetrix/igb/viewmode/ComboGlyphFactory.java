@@ -27,6 +27,11 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		return instance;
 	}
 
+	@Override
+	public ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+		return new ComboGlyph(gviewer, style);
+	}
+
 	// glyph class
 	public class ComboGlyph extends MultiGraphGlyph {
 		private GraphFasterExpandPacker expand_packer = new GraphFasterExpandPacker();

@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -17,7 +18,8 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	
-	public ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	@Override
+	public AbstractViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		return new SequenceGlyph(style);
 	}
 		

@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -18,7 +17,6 @@ import com.affymetrix.igb.viewmode.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.*;
 import java.awt.geom.Rectangle2D;

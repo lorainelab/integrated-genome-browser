@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
+import com.affymetrix.igb.shared.TierGlyphImpl;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
@@ -40,7 +41,7 @@ public class SplitGraphsAction extends GenericAction {
 						GraphState gstate = gsym.getGraphState();
 						gstate.setComboStyle(null, 0);
 						ViewModeGlyph child = (ViewModeGlyph)gl;
-						child.getTierGlyph().dejoin(vg, child);
+						((TierGlyphImpl)child.getTierGlyph()).dejoin(vg, child);
 //						igbService.selectTrack(child, true);
 		
 						// For simplicity, set the floating state of all new tiers to false.

@@ -1003,7 +1003,7 @@ public class SeqMapView extends JPanel
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
 				ViewModeGlyph vg = (ViewModeGlyph) glyph;
 				if (!vg.getAnnotStyle().getFloatTier()) {
-					vg.getTierGlyph().defloat(pixel_floater_glyph, vg);
+					((TierGlyphImpl)vg.getTierGlyph()).defloat(pixel_floater_glyph, vg);
 					change_happened = true;
 				}
 			}
@@ -1020,7 +1020,7 @@ public class SeqMapView extends JPanel
 		boolean change_happened = false;
 		for (TierGlyph tg : tiers) {
 			if (tg.getViewModeGlyph().getAnnotStyle().getFloatTier()) {
-				tg.enfloat(pixel_floater_glyph, getSeqMap());
+				((TierGlyphImpl)tg).enfloat(pixel_floater_glyph, getSeqMap());
 				change_happened = true;
 			}
 		}
@@ -1037,7 +1037,7 @@ public class SeqMapView extends JPanel
 				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
 					ViewModeGlyph vg = (ViewModeGlyph) glyph;
 					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphState().getComboStyle() != null)) {
-						vg.getTierGlyph().dejoin(tierGlyph.getViewModeGlyph(), vg);
+						((TierGlyphImpl)vg.getTierGlyph()).dejoin(tierGlyph.getViewModeGlyph(), vg);
 						selectTrack(vg.getTierGlyph(), true);
 						change_happened = true;
 					}
@@ -1061,7 +1061,7 @@ public class SeqMapView extends JPanel
 				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph) vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
 				comboTracks.add(comboTierGlyph);
 				comboTierGlyph.setUnloadedOK(true);
-				tg.enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
+				((TierGlyphImpl)tg).enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
 				change_happened = true;
 			}
 		}

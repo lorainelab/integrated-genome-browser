@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoMap;
+import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -89,5 +90,28 @@ public interface TierGlyph extends GlyphI {
 	void makeGarbage();
 
 	void setUnloadedOK(boolean unloadedOK);
+	
+	
+	/***** ViewModeGlyph Methods ********/
+	
+//	public TierGlyph getTierGlyph();
+
+//	public void setTierGlyph(TierGlyph aThis);
+//	
+//	public void drawMiddle(ViewI view);
+//
+//	public List<GlyphI> getMiddleGlyphs();
+//	
+//	public void copyChildren(ViewModeGlyph vmg);
+//
+//	public void processParentCoordBox(Rectangle2D.Double coordBox);
+//
+//	public double getChildHeight();
+//	
+//	public void setMinimumPixelBounds(Graphics graphics);
+//
+//	public boolean toolBarHit(Rectangle2D.Double hitrect, ViewI view);
+	
+	/***** ViewModeGlyph Methods ********/
     
 }

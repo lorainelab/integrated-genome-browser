@@ -15,11 +15,8 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
-import com.affymetrix.genometryImpl.operator.ICopy;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -30,7 +27,6 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -151,33 +147,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		return operationsMenu;
 	}
 
-	private JMenu addTransformMenu(TierGlyph glyph) {
-		JMenu transformMenu = new JMenu(BUNDLE.getString("transformMenu"));
-		if (glyph != null /*&& glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry*/) {
-			final ITrackStyleExtended style = glyph.getAnnotStyle();
-			if (style instanceof TrackStyle) {
-				TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
-				FileTypeCategory category = style.getFileTypeCategory();
-				if (category == null && glyph.getInfo() instanceof RootSeqSymmetry) {
-					category = ((RootSeqSymmetry)glyph.getInfo()).getCategory();
-				}
-				operators.addAll(TransformHolder.getInstance().getAllTransformFor(category));
-				for (final Operator operator : operators) {
-					if(!(operator instanceof ICopy)){
-						Action action = new TransformAction(operator);
-						if (operator.getName().equals(style.getOperator())) {
-							action.putValue(Action.SELECTED_KEY, true);
-						}
-					transformMenu.add(new JCheckBoxMenuItem(action));
-					}
-				}
-				transformMenu.setEnabled(transformMenu.getMenuComponentCount() > 0);
-			}
-		}
-		transformMenu.setEnabled(transformMenu.getMenuComponentCount() > 0);
-		return transformMenu;
-	}
-
 	private JMenu addChangeMenu(int num_selections, boolean any_are_expanded, boolean any_are_separate_tiers, boolean any_are_single_tier, boolean any_are_color_off, boolean coordinates_track_selected) {
 		JMenu changeMenu = new JMenu(BUNDLE.getString("changeMenu"));
 		JMenuItem change_foreground_color = new JRPMenuItemTLP(ChangeForegroundColorAction.getAction());
@@ -296,8 +265,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
-		popup.add(addTransformMenu(labels.size() == 1 ? (TierGlyph) labels.get(0).getInfo() : null));
-		popup.add(new JSeparator());
 		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
 		JMenuItem sumThreshItem = new JRPMenuItemTLP(SetSummaryThresholdAction.getAction());
 		sumThreshItem.setEnabled(num_selections > 0);

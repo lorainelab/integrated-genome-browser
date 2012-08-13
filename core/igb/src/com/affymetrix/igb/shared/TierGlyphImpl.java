@@ -89,16 +89,10 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 		if (isSymLoaded()) {
 			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
 			if (factory != null) {
-				Operator operator = getOperator(style.getOperator());
-				if (operator != null) {
-					factory = new OperatorGlyphFactory(operator, factory);
-					style.setViewMode(((OperatorGlyphFactory)factory).getActualFactoryName());
-				} else {
-					if (modelSym instanceof RootSeqSymmetry) {
-						if (!factory.isCategorySupported(((RootSeqSymmetry) modelSym).getCategory())) {
-							factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry) modelSym).getCategory());
-							style.setViewMode(factory.getName());
-						}
+				if (modelSym instanceof RootSeqSymmetry) {
+					if (!factory.isCategorySupported(((RootSeqSymmetry) modelSym).getCategory())) {
+						factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry) modelSym).getCategory());
+						style.setViewMode(factory.getName());
 					}
 				}
 			}
@@ -112,10 +106,6 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 			return MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)modelSym).getCategory());
 		}
 		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
-	}
-
-	private Operator getOperator(String operator){
-		return TransformHolder.getInstance().getOperator(operator);
 	}
 
 	private boolean isSymLoaded() {

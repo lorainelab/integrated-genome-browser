@@ -1,9 +1,9 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.IGBConstants;
 import java.util.Map;
 import java.util.MissingResourceException;
-
-import com.affymetrix.igb.IGBConstants;
 
 public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
 	
@@ -35,5 +35,9 @@ public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
 	@Override
 	public String toString() {
 		return getDisplayName();
+	}
+	
+	public ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

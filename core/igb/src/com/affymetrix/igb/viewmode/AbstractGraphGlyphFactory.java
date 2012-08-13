@@ -174,11 +174,11 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph result = null;
 		if (sym == null) {
-			result = createEmptyGraphGlyph(style, smv);
+			result = createViewModeGlyph(style, tier_direction, smv);
 		} else if (sym instanceof GraphSym) {
 			result = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (result == null) {
-				result = createEmptyGraphGlyph(style, smv);
+				result = createViewModeGlyph(style, tier_direction, smv);
 			}
 			else {
 				if(smv.getViewSeq() != smv.getAnnotatedSeq()){
@@ -199,7 +199,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		return result;
 	}
 	
-	private ViewModeGlyph createEmptyGraphGlyph(ITrackStyleExtended style, SeqMapViewExtendedI smv){
+	@Override
+	public ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
 		GraphSym sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());
 		ViewModeGlyph result = createViewModeGlyph(sym, getGraphState(style), smv);
 		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());

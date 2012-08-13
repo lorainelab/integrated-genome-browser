@@ -90,7 +90,7 @@ public class TrackView {
 		TierGlyph tierGlyph = null;
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
-			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
+			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.createViewModeGlyph(style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {

@@ -540,7 +540,8 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		return (checkCategory == category);
 	}
 
-	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	@Override
+	public ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		ViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
 
 		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());

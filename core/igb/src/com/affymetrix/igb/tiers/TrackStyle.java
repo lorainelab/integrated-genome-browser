@@ -57,7 +57,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private String view_mode = default_view_mode;
 	private String summary_view_mode = null;
 	private String detail_view_mode = null;
-	private String operator = default_operator;
 	private float min_score_color = default_min_score_color;
 	private float max_score_color = default_max_score_color;
 	private String url = null;
@@ -1259,15 +1258,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return false;
 	}
 
-	@Override
-	public void setOperator(String o) {
-		operator = o;
-	}
-
-	@Override
-	public String getOperator() {
-		return operator;
-	}
 	/**
 	 * for height on the reverse strand. To help with track resizing.
 	 */

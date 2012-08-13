@@ -63,9 +63,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public void setDetailViewMode(String s);
 	public String getDetailViewMode();
 	
-	void setOperator(String o);
-	String getOperator();
-	
 	int getDirectionType();
 	public void setDirectionType(int ordinal);
 

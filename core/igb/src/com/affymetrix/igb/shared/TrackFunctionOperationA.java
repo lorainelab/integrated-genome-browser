@@ -21,7 +21,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -43,8 +42,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		
 		for (GlyphI gl : vgs) {
 			ViewModeGlyph vg = (ViewModeGlyph)gl;
-			if(vg.getAnnotStyle().getFeature() == null
-					|| !TrackConstants.default_operator.equals(vg.getAnnotStyle().getOperator())){
+			if(vg.getAnnotStyle().getFeature() == null){
 				addNonUpdateableTier(vgs);
 				return;
 			}

@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -34,7 +33,6 @@ import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.shared.TierGlyphImpl;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
-import com.affymetrix.igb.viewmode.TransformHolder;
 
 /**
  *
@@ -183,13 +181,6 @@ public class TrackView {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-
-			Operator operator = determineOperator(annotSym);
-			if(operator != null){
-				if(!operator.supportsTwoTrack()){
-					style.setSeparate(false);
-				}
-			}
 			Direction direction = null;
 			if (annotSym instanceof GraphSym) {
 				direction = Direction.NONE;
@@ -208,17 +199,6 @@ public class TrackView {
 			}
 			return;
 		}
-	}
-
-	private Operator determineOperator(SymWithProps sym){
-		String meth = BioSeq.determineMethod(sym);
-
-		if (meth != null) {
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			return TransformHolder.getInstance().getOperator(style.getOperator());
-		}
-		
-		return null;
 	}
 		
 	private void doMiddlegroundShading(SeqMapView gviewer, SymWithProps annotSym, BioSeq seq) {

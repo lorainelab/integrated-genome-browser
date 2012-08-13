@@ -72,9 +72,6 @@ public class MapViewModeHolder {
 		if (Delegate.EXT.equalsIgnoreCase(style.getFileType())) {
 			return false;
 		}
-		if (style.getOperator() != null && !style.getOperator().equals(TrackConstants.default_operator)) {
-			return false;
-		}
 		String viewMode = style.getViewMode();
 		if (viewMode.equals(TrackConstants.default_view_mode)) {
 			viewMode = getDefaultFactoryFor(style.getFileTypeCategory()).getName();

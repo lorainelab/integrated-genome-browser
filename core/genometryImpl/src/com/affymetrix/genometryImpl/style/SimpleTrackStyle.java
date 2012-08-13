@@ -168,15 +168,6 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		this.detail_view_mode = detail_view_mode;
 	}
 	@Override
-	public String getOperator() {
-		return null;
-	}
-	@Override
-	public void setOperator(String o) {
-		//throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
 	public void setFeature(GenericFeature f) {
 		//throw new UnsupportedOperationException("Not supported yet.");
 	}

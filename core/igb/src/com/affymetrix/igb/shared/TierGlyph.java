@@ -48,8 +48,6 @@ public interface TierGlyph extends GlyphI {
 
 	public void setPreferredHeight(double maxHeight, ViewI view);
 		
-	Rectangle2D.Double getTierCoordBox();
-
 	ViewModeGlyph getViewModeGlyph();
 
 	boolean initUnloaded();

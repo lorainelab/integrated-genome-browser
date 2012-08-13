@@ -137,10 +137,6 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 		}
 	}
 
-	public Rectangle2D.Double getTierCoordBox()   {
-		return super.getCoordBox();
-	}
-
 	/**
 	 * Make the glyph a floating glyph.
 	 * Note - the viewModeGlyph will leave its tierGlyph pointing to this glyph.

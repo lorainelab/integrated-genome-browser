@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
-import com.affymetrix.igb.action.ChangeGraphTypeAction;
 import com.affymetrix.igb.action.ChangeViewModeAction;
 import com.affymetrix.igb.graphTypes.BarGraphGlyph;
 import com.affymetrix.igb.graphTypes.DotGraphGlyph;

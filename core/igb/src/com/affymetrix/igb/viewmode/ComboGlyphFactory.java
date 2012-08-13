@@ -123,11 +123,6 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
 	public boolean canAutoLoad(String uri) {
 		return false;
 	}

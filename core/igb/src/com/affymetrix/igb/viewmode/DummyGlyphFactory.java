@@ -79,8 +79,4 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 		return false;
 	}
 	
-	@Override
-	public boolean isURISupported(String uri) {
-		return false;
-	}
 }

@@ -63,12 +63,6 @@ public interface MapViewGlyphFactoryI  {
 	 */
 	public boolean isCategorySupported(FileTypeCategory category);
 	/**
-	 * specifies if this view mode glyph supports the specified uri
-	 * @param uri - the uri to test
-	 * @return if the uri is supported
-	 */
-	public boolean isURISupported(String uri);
-	/**
 	 * specifies if the uri can be autoloaded vs. waiting for the Load Data
 	 *   button to be pressed
 	 * @param uri - the uri to test

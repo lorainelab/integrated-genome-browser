@@ -93,7 +93,7 @@ public class MapViewModeHolder {
 
 		for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
 			MapViewGlyphFactoryI emv = entry.getValue();
-			if (emv.isCategorySupported(category) && emv.isURISupported(uri)) {
+			if (emv.isCategorySupported(category)) {
 				modes.add(emv);
 			}
 

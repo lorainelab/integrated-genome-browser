@@ -18,6 +18,7 @@ import com.affymetrix.igb.viewmode.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.*;
 import java.awt.geom.Rectangle2D;
@@ -94,7 +95,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 					style.setViewMode(((OperatorGlyphFactory)factory).getActualFactoryName());
 				} else {
 					if (modelSym instanceof RootSeqSymmetry) {
-						if (!factory.isCategorySupported(((RootSeqSymmetry) modelSym).getCategory()) || !factory.isURISupported(style.getMethodName())) {
+						if (!factory.isCategorySupported(((RootSeqSymmetry) modelSym).getCategory())) {
 							factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry) modelSym).getCategory());
 							style.setViewMode(factory.getName());
 						}

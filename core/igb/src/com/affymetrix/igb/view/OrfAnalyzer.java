@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.shared.TierGlyphImpl;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
@@ -171,7 +172,7 @@ public final class OrfAnalyzer extends JComponent
 		fortier.setDirection(TierGlyph.Direction.FORWARD);
 
 		AffyTieredMap map = smv.getSeqMap();
-		TierGlyph forTierGlyph = new TierGlyph(null, CoordinateStyle.coordinate_annot_style, Direction.FORWARD, smv, fortier);
+		TierGlyph forTierGlyph = new TierGlyphImpl(null, CoordinateStyle.coordinate_annot_style, Direction.FORWARD, smv, fortier);
 
 		map.addTier(forTierGlyph, true);  // put forward tier above axis
 
@@ -183,7 +184,7 @@ public final class OrfAnalyzer extends JComponent
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);
 		revtier.setDirection(TierGlyph.Direction.REVERSE);
-		TierGlyph reTierGlyph = new TierGlyph(null, CoordinateStyle.coordinate_annot_style, Direction.REVERSE, smv, revtier);
+		TierGlyph reTierGlyph = new TierGlyphImpl(null, CoordinateStyle.coordinate_annot_style, Direction.REVERSE, smv, revtier);
 		map.addTier(reTierGlyph, false);  // put reverse tier below axis
 
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);

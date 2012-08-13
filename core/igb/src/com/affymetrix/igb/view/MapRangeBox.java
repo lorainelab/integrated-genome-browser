@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -450,7 +451,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	private List<TypeContainerAnnot> getTrackSyms() {
 		List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
 		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs();
-		for (Glyph selectedTierGlyph : tierGlyphs) {
+		for (GlyphI selectedTierGlyph : tierGlyphs) {
 			Object info = selectedTierGlyph.getInfo();
 			if (info instanceof TypeContainerAnnot) {
 				trackSyms.add((TypeContainerAnnot)info);

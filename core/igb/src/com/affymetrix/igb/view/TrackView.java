@@ -32,6 +32,7 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.shared.MapViewModeHolder;
+import com.affymetrix.igb.shared.TierGlyphImpl;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TransformHolder;
 
@@ -91,7 +92,7 @@ public class TrackView {
 		TierGlyph tierGlyph = null;
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
-			tierGlyph = new TierGlyph(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
+			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {

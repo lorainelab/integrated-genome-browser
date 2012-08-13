@@ -939,7 +939,7 @@ public class SeqMapView extends JPanel
 
 		resultAxisTier.addChild(axis);
 
-		TierGlyph resultAxisTierGlyph = new TierGlyph(null, CoordinateStyle.coordinate_annot_style, Direction.AXIS, this, resultAxisTier);
+		TierGlyph resultAxisTierGlyph = new TierGlyphImpl(null, CoordinateStyle.coordinate_annot_style, Direction.AXIS, this, resultAxisTier);
 		// it is important to set the colors before adding the tier
 		// to the map, else the label tier colors won't match
 		if (seqmap.getTiers().size() >= tier_index) {

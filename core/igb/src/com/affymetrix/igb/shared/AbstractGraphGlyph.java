@@ -109,107 +109,50 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 	private GraphStyle graphStyle;
 	private boolean lockGraphStyle;
 	
-	@Override
-	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
-		setCoordBox(getCoordBox()); // so all use the same coordbox
-	}
-
-	public float getXCoord(int i) {
-		if (graf == null) {
-			return 0;
-		}
-		return graf.getGraphXCoord(i);
-	}
-
-	public float getYCoord(int i) {
-		if (graf == null) {
-			return 0;
-		}
-		return graf.getGraphYCoord(i);
-	}
-
-	public boolean hasWidth() {
-		if (graf == null) {
-			return false;
-		}
-		return graf.hasWidth();
-	}
-
-	protected int getWCoord(int i) {
-		if (graf == null) {
-			return 0;
-		}
-		return graf.getGraphWidthCoord(i);
-	}
-
-	public int[] getWCoords() {
-		if (graf == null) {
-			return new int[]{};
-		}
-		return graf.getGraphWidthCoords();
-	}
-
-	/**
-	 * Temporary helper method.
-	 */
-	public float[] copyYCoords() {
-		if (graf == null) {
-			return new float[]{};
-		}
-		return graf.normalizeGraphYCoords();
-	}
-	
 	public AbstractGraphGlyph(GraphState state) {
 		super();
 		this.state = state;
 	}
 	
 	public AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
-		super();
+		this(gstate);
+		setGraphSym(graf);
+	}
+
+	public final void setGraphSym(GraphSym graf) throws NumberFormatException {
 		this.graf = graf;
-		state = gstate;
-		if (graf == null && gstate == null) {
+		if (graf == null && state == null) {
 			return; // only created for getName()
 		}
-		if(gstate != null){
-			setStyle(gstate.getTierStyle());
+		if (state != null) {
+			setStyle(state.getTierStyle());
 		}
-
 		if (graf == null || graf.getPointCount() == 0) {
 			return;
 		}
-
 		setCoords(getCoordBox().x, state.getTierStyle().getY(), getCoordBox().width, state.getTierStyle().getHeight());
-
-		Map<String,Object> map = graf.getProperties();
+		Map<String, Object> map = graf.getProperties();
 		boolean toInitialize = isUninitialized();
-		
 		setColor(toInitialize, map);
-
 		checkVisibleBoundsY(toInitialize, map);
-
 		/* Code below comes from old SmartGraphGlyph Constructor */
 		setDrawOrder(Glyph.DRAW_SELF_FIRST);
-
 		thresh_glyph.setVisibility(getShowThreshold());
 		thresh_glyph.setSelectable(false);
 		if (thresh_color != null) {
 			thresh_glyph.setColor(thresh_color);
 		}
 		this.addChild(thresh_glyph);
-
 		if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
 			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
 		}
-
-//		if(graf instanceof MisMatchGraphSym){
-//			helper = ResidueColorHelper.getColorHelper();
-//			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
-//		}
-		
+		//		if(graf instanceof MisMatchGraphSym){
+		//			helper = ResidueColorHelper.getColorHelper();
+		//			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
+		//		}
 		resetThreshLabel();
 	}
-
+		
 	private void setColor(boolean toInitialize, Map<String, Object> map) throws NumberFormatException {
 		if (toInitialize && map != null) {
 			Object value = map.get(ViewPropertyNames.INITIAL_COLOR);
@@ -284,6 +227,56 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 		
 	}
 
+	@Override
+	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
+		setCoordBox(getCoordBox()); // so all use the same coordbox
+	}
+
+	public float getXCoord(int i) {
+		if (graf == null) {
+			return 0;
+		}
+		return graf.getGraphXCoord(i);
+	}
+
+	public float getYCoord(int i) {
+		if (graf == null) {
+			return 0;
+		}
+		return graf.getGraphYCoord(i);
+	}
+
+	public boolean hasWidth() {
+		if (graf == null) {
+			return false;
+		}
+		return graf.hasWidth();
+	}
+
+	protected int getWCoord(int i) {
+		if (graf == null) {
+			return 0;
+		}
+		return graf.getGraphWidthCoord(i);
+	}
+
+	public int[] getWCoords() {
+		if (graf == null) {
+			return new int[]{};
+		}
+		return graf.getGraphWidthCoords();
+	}
+
+	/**
+	 * Temporary helper method.
+	 */
+	public float[] copyYCoords() {
+		if (graf == null) {
+			return new float[]{};
+		}
+		return graf.normalizeGraphYCoords();
+	}
+	
 	public void resetVisibleMinYAndMaxY(){
 		float[] range = graf.getVisibleYRange();
 		point_max_ycoord = range[1];

@@ -50,6 +50,10 @@ public class BED extends SymLoader implements LineProcessor {
 	private String default_type = null;
 	private final TrackLineParser track_line_parser = new TrackLineParser();
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private int BED_DETAIL_LINE_CHECK_COUNT = 0;
+	private static final int BED_DETAIL_LINE_CHECK_LIMIT = 10;
+	private static final int BED_DETAIL_FIELD_COUNT = 14;
+	private boolean bedDetail = false;
 
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -219,6 +223,7 @@ public class BED extends SymLoader implements LineProcessor {
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
 				bedType = track_line_parser.getCurrentTrackHash().get("type");
+				bedDetail = "bedDetail".equals(bedType);
 				continue;
 			} else if (firstChar == 'b' && line.startsWith("browser")) {
 				// currently take no action for browser lines
@@ -226,7 +231,7 @@ public class BED extends SymLoader implements LineProcessor {
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				if (!parseLine(line, gmodel, type, use_item_rgb, min, max, bedType) && isSorted) {
+				if (!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted) {
 					break;
 				}
 			}
@@ -263,12 +268,20 @@ public class BED extends SymLoader implements LineProcessor {
 		return symlist;
 	}
 
-	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum, String bedType) {
-		boolean bedDetail = "bedDetail".equals(bedType);
-		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum) {
+//		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+		String[] fields = tab_regex.split(line);
+		if (fields.length == 1) {
+			fields = line_regex.split(line);
+		}
 		String detailId = null;
 		String detailDescription = null;
 		int field_count = fields.length;
+		
+		// Check BED detail type for few non-comment lines if 'bedDetail' attribute not specified in track line
+		if(!bedDetail && field_count == BED_DETAIL_FIELD_COUNT && (BED_DETAIL_LINE_CHECK_COUNT++ < BED_DETAIL_LINE_CHECK_LIMIT)) {
+			bedDetail = true;
+		}
 		if (bedDetail) {
 			detailId = fields[field_count - 2];
 			detailDescription = fields[field_count - 1];

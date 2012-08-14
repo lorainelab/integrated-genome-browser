@@ -473,7 +473,7 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI gviewer) {
+	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI gviewer) {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
 		if (meth == null) {
@@ -499,7 +499,7 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 					style.setTrackName(human_name);
 				}
 				label_field = style.getLabelField();
-				ViewModeGlyph[] tiers = new ViewModeGlyph[2];
+				AbstractViewModeGlyph[] tiers = new AbstractViewModeGlyph[2];
 				TierGlyph.Direction useDirection = (tier_direction == TierGlyph.Direction.BOTH) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
 				tiers[0] = createViewModeGlyph(sym, style, useDirection, gviewer);
 				tiers[0].setInfo(sym);

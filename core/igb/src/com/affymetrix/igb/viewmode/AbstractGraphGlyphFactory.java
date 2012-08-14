@@ -170,8 +170,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
-		ViewModeGlyph result = null;
+	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
+		AbstractViewModeGlyph result = null;
 		if (sym == null) {
 			result = createViewModeGlyph(sym, style, tier_direction, smv);
 		} else if (sym instanceof GraphSym) {

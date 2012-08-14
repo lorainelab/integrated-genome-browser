@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.AbstractGraphGlyph.GraphStyle;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.viewmode.AbstractGraphGlyphFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

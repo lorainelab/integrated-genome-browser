@@ -256,7 +256,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	}
 		
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
+	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		if (sym == null) {
 			return new ScoredContainerViewModeGlyph(style);
 		}

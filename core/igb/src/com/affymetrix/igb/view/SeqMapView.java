@@ -817,11 +817,12 @@ public class SeqMapView extends JPanel
 	 *       (FORWARD, REVERSE, or BOTH)
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style);
+		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
 		return getTrack(sym, style, tier_direction, factory);
 	}
 
-	final TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+	@Override
+	final public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
 		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, factory);
 	}
 

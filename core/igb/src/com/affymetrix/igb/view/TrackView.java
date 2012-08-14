@@ -90,7 +90,7 @@ public class TrackView {
 		TierGlyph tierGlyph = null;
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
-			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.createViewModeGlyph(style, tier_direction, smv));
+			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.createViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {
@@ -349,8 +349,8 @@ public class TrackView {
 	}
 
 	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
-		if(setViewMode){
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style);
+		if (setViewMode) {
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
 			String viewmode = factory.getName();
 			style.setViewMode(viewmode);
 		}

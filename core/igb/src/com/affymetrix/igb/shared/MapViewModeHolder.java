@@ -115,7 +115,7 @@ public class MapViewModeHolder {
 	 * when it is first selected (before Load Data),
 	 * normally the UnloadedFactory (gray background).
 	 */
-	public MapViewGlyphFactoryI getAutoloadFactory(ITrackStyleExtended style) {
+	public MapViewGlyphFactoryI getDefaultFactoryFor(ITrackStyleExtended style) {
 		FileTypeCategory category = null;
 		FileTypeHandler handler = null;
 		if(style.getFileType() != null && style.getFileType().length() > 0){
@@ -128,14 +128,6 @@ public class MapViewModeHolder {
 		
 		if (handler != null) {
 			category = handler.getFileTypeCategory();
-		}
-		if (category != null) {
-			for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
-				MapViewGlyphFactoryI emv = entry.getValue();
-				if (emv.isCategorySupported(category) && emv.canAutoLoad(style.getMethodName())) {
-					return emv;
-				}
-			}
 		}
 		return MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
 	}

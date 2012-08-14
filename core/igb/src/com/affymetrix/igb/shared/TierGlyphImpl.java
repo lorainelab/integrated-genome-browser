@@ -42,7 +42,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 	private SeqSymmetry modelSym;
 	private boolean unloadedOK = false;
 
-	public TierGlyphImpl(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv, ViewModeGlyph viewModeGlyph) {
+	public TierGlyphImpl(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv, AbstractViewModeGlyph viewModeGlyph) {
  		this.modelSym = sym;
  		this.smv = smv;
 		initViewModeGlyph(viewModeGlyph);
@@ -52,13 +52,13 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
  		setHitable(false);
 	}
 
-	private ViewModeGlyph viewModeGlyph;
+	private AbstractViewModeGlyph viewModeGlyph;
 	
-	public ViewModeGlyph getViewModeGlyph() {
+	public AbstractViewModeGlyph getViewModeGlyph() {
 		return viewModeGlyph;
 	}
 
-	private void setViewModeGlyph(ViewModeGlyph vmg) {
+	private void setViewModeGlyph(AbstractViewModeGlyph vmg) {
 		if (smv.isGenomeSequenceSupported() && smv.getViewSeq().getComposition() != null && 
 				smv.getViewSeq() != smv.getAnnotatedSeq()) {
 			if (viewModeGlyph == null) {
@@ -71,7 +71,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 		}
 	}
 
-	private void initViewModeGlyph(ViewModeGlyph vmg){
+	private void initViewModeGlyph(AbstractViewModeGlyph vmg){
 		ViewModeGlyph oldViewModeGlyph = viewModeGlyph;
 		viewModeGlyph = vmg;
 		viewModeGlyph.setTierGlyph(this);
@@ -162,7 +162,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 	 * @param floater the PixelFloaterGlyph
 	 * @param floatingGlyph the glyph
 	 */
-	public void defloat(Glyph floater, ViewModeGlyph floatingGlyph) {
+	public void defloat(Glyph floater, AbstractViewModeGlyph floatingGlyph) {
 		floater.removeChild(floatingGlyph);
 		viewModeGlyph = floatingGlyph;
 		viewModeGlyph.setCoordBox(super.getCoordBox());
@@ -189,7 +189,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 	 * @param comboGlyph the comboGlyph
 	 * @param joinedGlyph the glyph
 	 */
-	public void dejoin(ViewModeGlyph comboGlyph, ViewModeGlyph joinedGlyph) {
+	public void dejoin(AbstractViewModeGlyph comboGlyph, AbstractViewModeGlyph joinedGlyph) {
 		comboGlyph.removeChild(joinedGlyph);
 		joinedGlyph.setParent(getParent());
 		viewModeGlyph = joinedGlyph;

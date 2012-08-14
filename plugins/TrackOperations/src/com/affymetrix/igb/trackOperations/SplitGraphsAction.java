@@ -9,9 +9,9 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyphImpl;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  *  Puts all selected graphs in separate tiers by setting the
@@ -31,8 +31,8 @@ public class SplitGraphsAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<ViewModeGlyph> selectedGlyphs = (List)igbService.getSeqMapView().getAllSelectedTiers();
-		for (ViewModeGlyph vg : selectedGlyphs) {
+		List<AbstractViewModeGlyph> selectedGlyphs = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		for (AbstractViewModeGlyph vg : selectedGlyphs) {
 			if (vg instanceof MultiGraphGlyph) {
 				igbService.deselect(vg.getTierGlyph());
 				if (vg.getChildren() != null) {
@@ -40,7 +40,7 @@ public class SplitGraphsAction extends GenericAction {
 						GraphSym gsym = (GraphSym)gl.getInfo();
 						GraphState gstate = gsym.getGraphState();
 						gstate.setComboStyle(null, 0);
-						ViewModeGlyph child = (ViewModeGlyph)gl;
+						AbstractViewModeGlyph child = (AbstractViewModeGlyph)gl;
 						((TierGlyphImpl)child.getTierGlyph()).dejoin(vg, child);
 //						igbService.selectTrack(child, true);
 		

@@ -558,7 +558,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		this.moveRelative(0, diffy);
 	}
 
-	public ViewModeGlyph getViewModeGlyph() {
+	public AbstractViewModeGlyph getViewModeGlyph() {
 		return this;
 	}
 

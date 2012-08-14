@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public interface TierGlyph extends GlyphI {
@@ -48,7 +47,7 @@ public interface TierGlyph extends GlyphI {
 
 	public void setPreferredHeight(double maxHeight, ViewI view);
 		
-	ViewModeGlyph getViewModeGlyph();
+	AbstractViewModeGlyph getViewModeGlyph();
 
 	boolean initUnloaded();
 

@@ -1002,7 +1002,7 @@ public class SeqMapView extends JPanel
 		boolean change_happened = false;
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
-				ViewModeGlyph vg = (ViewModeGlyph) glyph;
+				AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
 				if (!vg.getAnnotStyle().getFloatTier()) {
 					((TierGlyphImpl)vg.getTierGlyph()).defloat(pixel_floater_glyph, vg);
 					change_happened = true;
@@ -1036,7 +1036,7 @@ public class SeqMapView extends JPanel
 		for (TierGlyph tierGlyph : seqmap.getTiers()) {
 			if (tierGlyph.getViewModeGlyph() instanceof ComboGlyph && tierGlyph.getViewModeGlyph().getChildren() != null) {
 				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
-					ViewModeGlyph vg = (ViewModeGlyph) glyph;
+					AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
 					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphState().getComboStyle() != null)) {
 						((TierGlyphImpl)vg.getTierGlyph()).dejoin(tierGlyph.getViewModeGlyph(), vg);
 						selectTrack(vg.getTierGlyph(), true);

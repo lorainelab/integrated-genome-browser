@@ -450,29 +450,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 	
 	@Override
-	protected void viewModeComboBoxReset() {
-		JComboBox viewModeComboBox = getViewModeComboBox();
-		viewModeComboBox.removeAllItems();
-		List<MapViewGlyphFactoryI> factories = TrackUtils.getInstance().getAvailableViewModes(allGlyphs);
-		boolean hasFactories = (factories != null) && factories.size() > 0;
-		viewModeComboBox.setEnabled(hasFactories);
-		getViewModePanel().setEnabled(hasFactories);
-		if (hasFactories) {
-			String selectViewMode = allGlyphs.get(0).getAnnotStyle().getViewMode();
-			for (ViewModeGlyph vg : allGlyphs) {
-				if (!selectViewMode.equals(vg.getAnnotStyle().getViewMode())) {
-					selectViewMode = null;
-					break;
-				}
-			}
-			for (final MapViewGlyphFactoryI viewmode : factories) {
-				viewModeComboBox.addItem(viewmode);
-			}
-			viewModeComboBox.setSelectedItem(MapViewModeHolder.getInstance().getViewFactory(selectViewMode));
-		}
-	}
-
-	@Override
 	protected void floatCheckBoxReset() {
 		JCheckBox floatCheckBox = getFloatCheckBox();
 

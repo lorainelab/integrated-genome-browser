@@ -36,24 +36,21 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="1" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace pref="0" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="trackNameTextField" min="-2" pref="256" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="selectAllButton" min="-2" pref="90" max="-2" attributes="0"/>
-                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="hideButton" min="-2" pref="43" max="-2" attributes="0"/>
-                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="clearButton" min="-2" pref="43" max="-2" attributes="0"/>
-                      <EmptySpace pref="0" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="restoreToDefaultButton" min="-2" pref="124" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="stylePanel" min="-2" max="-2" attributes="1"/>
-                          <Component id="viewModePanel" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="stylePanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="annotationsPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -81,11 +78,10 @@
               </Group>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="graphPanel" alignment="0" pref="178" max="32767" attributes="0"/>
+                  <Component id="graphPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="annotationsPanel" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="viewModePanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="stylePanel" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -113,15 +109,15 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
                       </Group>
                       <Component id="graphStyleMinMaxAvgRadioButton" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="labelCheckBox" min="-2" pref="63" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="YAxisCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="floatCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
@@ -151,26 +147,26 @@
                       <Component id="YAxisCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="labelCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="graphStyleLineRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="graphStyleBarRadioButton" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="graphStyleStairStepRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="graphStyleDotRadioButton" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="graphStyleMinMaxAvgRadioButton" min="-2" pref="20" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleHeatMapComboBox" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="36" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -330,6 +326,16 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="labelColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                          <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="backgroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                          <Component id="backgroundColorLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="labelSizeLabel" max="32767" attributes="0"/>
@@ -345,14 +351,6 @@
                           <Component id="foregroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                           <Component id="foregroundColorLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                          <Component id="backgroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          <Component id="backgroundColorLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                          <Component id="labelColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -364,23 +362,29 @@
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="foregroundColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="backgroundColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="foregroundColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="labelColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="labelColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="backgroundColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="backgroundColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="labelColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="labelSizeComboBox" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
                       <Component id="labelSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="colorSchemeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="colorSchemeComboBox" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -482,17 +486,17 @@
         </Component>
         <Component class="javax.swing.JLabel" name="foregroundColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="FG"/>
+            <Property name="text" type="java.lang.String" value="Foreground Color"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="labelColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Label"/>
+            <Property name="text" type="java.lang.String" value="Label Color"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="backgroundColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="BG"/>
+            <Property name="text" type="java.lang.String" value="Background Color"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="labelSizeLabel">
@@ -524,18 +528,18 @@
                       <Component id="strandsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="strandsForwardColorLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="strandsForwardColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Component id="strandsReverseColorLabel" min="-2" pref="9" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="strandsReverseColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="strands2TracksCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="0" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="strandsArrowCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -548,9 +552,9 @@
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="stackDepthLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="stackDepthTextField" min="-2" pref="44" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="stackDepthGoButton" min="-2" pref="43" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="stackDepthAllButton" min="-2" pref="46" max="-2" attributes="0"/>
@@ -567,19 +571,19 @@
                       <Component id="stackDepthGoButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="stackDepthAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="strandsLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="strands2TracksCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="strandsArrowCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="strandsColorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="strandsForwardColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -715,40 +719,6 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton(com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction.getAction())"/>
           </AuxValues>
-        </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JPanel" name="viewModePanel">
-      <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="View Mode"/>
-          </Border>
-        </Property>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="viewModeComboBox" alignment="0" pref="145" max="-2" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="viewModeComboBox" min="-2" pref="22" max="-2" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JComboBox" name="viewModeComboBox">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="viewModeComboBoxActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

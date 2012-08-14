@@ -117,12 +117,6 @@ public class TrackPreferencesDefaults extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void viewModeComboBoxReset() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	protected void floatCheckBoxReset() {
 		// TODO Auto-generated method stub
 		

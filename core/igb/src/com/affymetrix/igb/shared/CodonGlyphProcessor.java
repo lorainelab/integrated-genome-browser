@@ -3,8 +3,8 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.prefs.PreferenceChangeEvent;
@@ -56,10 +56,6 @@ public class CodonGlyphProcessor implements GlyphProcessor, java.util.prefs.Pref
 			}
 		}
 		return false;
-	}
-	@Override
-	public AbstractGraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
-		return null;
 	}
 
 	public void preferenceChange(PreferenceChangeEvent pce) {

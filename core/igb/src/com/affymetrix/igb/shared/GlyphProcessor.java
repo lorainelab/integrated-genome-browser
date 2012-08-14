@@ -6,5 +6,4 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 
 public interface GlyphProcessor {
 	public void processGlyph(GlyphI glyph);
-	public AbstractGraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate);
 }

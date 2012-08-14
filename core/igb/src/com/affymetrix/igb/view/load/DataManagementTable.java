@@ -74,7 +74,6 @@ public final class DataManagementTable {
 		table.setRowEditorModel(DataManagementTableModel.FOREGROUND_COLUMN, color);
 		table.setRowEditorModel(DataManagementTableModel.SEPARATE_COLUMN, bool);
 		table.setRowEditorModel(DataManagementTableModel.LOAD_STRATEGY_COLUMN, choices);
-		table.setRowEditorModel(DataManagementTableModel.FEATURE_NAME_COLUMN, text);
 		table.setRowEditorModel(DataManagementTableModel.TRACK_NAME_COLUMN, text);
 		table.setRowEditorModel(DataManagementTableModel.DELETE_FEATURE_COLUMN, action);
 
@@ -176,9 +175,8 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 		"Set foreground color for tracks",
 		"Set background color for tracks",
 		"Show 2 Tracks (+) and (-) or one track (+/-)",
-		"Set track name",
 		"Load Strategy",
-		"Name of active data set or file",
+		"Set track name",
 		"Remove data set or file."
 	};
 	private final Map<Integer, RowEditorModel> rmMap;
@@ -205,16 +203,6 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		//Special Case
-		if (col == DataManagementTableModel.FEATURE_NAME_COLUMN) {
-			if (isCellEditable(row, col)) {
-				DataManagementTableModel ftm = (DataManagementTableModel) getModel();
-				VirtualFeature vFeature = ftm.getFeature(row);
-				return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName,
-						vFeature.getFeature().getLastRefreshStatus().toString(), DataManagementTable.error_icon);
-			}
-		}
-
 		if (rmMap != null) {
 			TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 			if (tmpEditor != null) {
@@ -240,16 +228,6 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 				return new LabelTableCellRenderer(null, false);
 			}
 			return new DataManagementTable.ColumnRenderer();
-		} else if (column == DataManagementTableModel.FEATURE_NAME_COLUMN) {
-			switch (vFeature.getLastRefreshStatus()) {
-				case NO_DATA_LOADED: {
-					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
-						vFeature.getLastRefreshStatus().toString(), DataManagementTable.error_icon);
-				}
-			}
-			TableCellRenderer renderer = super.getCellRenderer(row, column);
-			((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.RIGHT);
-			return renderer;
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
 			if (vFeature.getStyle() != null) {
 				if(Delegate.EXT.equalsIgnoreCase(vFeature.getStyle().getFileType())){
@@ -308,9 +286,6 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 				} else {
 					tip = "Cannot change load strategy for " + featureName;
 				}
-				break;
-			case DataManagementTableModel.FEATURE_NAME_COLUMN:
-				tip = "File Name  (" + feature.getServer() + ")" + "\n " + feature.getFeature().featureName;
 				break;
 			case DataManagementTableModel.DELETE_FEATURE_COLUMN:
 				tip = "Delete " + featureName;

@@ -30,18 +30,17 @@ import javax.swing.table.AbstractTableModel;
 public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"", "", "FG", "BG", "2 Track",
-		"Track Name", "Load Mode", "Data Set/File Name", ""};
+	private static final String[] columnNames = {"", "", "FG", "BG", "2 Track", "Load Mode",
+		"Track Name", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int REFRESH_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int FOREGROUND_COLUMN = 2;
 	static final int BACKGROUND_COLUMN = 3;
 	static final int SEPARATE_COLUMN = 4;
-	static final int TRACK_NAME_COLUMN = 5;
-	static final int LOAD_STRATEGY_COLUMN = 6;
-	static final int FEATURE_NAME_COLUMN = 7;
-	static final int DELETE_FEATURE_COLUMN = 8;
+	static final int LOAD_STRATEGY_COLUMN = 5;
+	static final int TRACK_NAME_COLUMN = 6;
+	static final int DELETE_FEATURE_COLUMN = 7;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 	private SeqMapView smv;
@@ -163,14 +162,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		return (virtualFeatures == null) ? 0 : virtualFeatures.size();
 	}
 
-	public void updateFeatureColumn() {
-		for (int row = 0; row < virtualFeatures.size(); row++) {
-			if (row >= 0) {
-				fireTableCellUpdated(row, FEATURE_NAME_COLUMN);
-			}
-		}
-	}
-
 	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
@@ -203,14 +194,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					return "";
 				}
 				return vFeature.getLoadStrategy().toString();
-			case FEATURE_NAME_COLUMN:
-				// the friendly feature name removes slashes.  Clip it here.
-				if (vFeature.getServer() == ServerTypeI.QuickLoad) {
-					return vFeature.getFeature().featureName;
-				} else if (!vFeature.isPrimary()) {
-					return "";
-				}
-				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
 				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
 					return "";
@@ -272,13 +255,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 				&& !vFeature.isPrimary()) {
 			return false;
-		} else if (col == FEATURE_NAME_COLUMN) {
-			switch (vFeature.getFeature().getLastRefreshStatus()) {
-				case NO_DATA_LOADED:
-					return true;
-				default:
-					return false;
-			}
 		} else if (smv.getPixelFloater().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
 			for (GlyphI i : smv.getPixelFloater().getChildren()) {

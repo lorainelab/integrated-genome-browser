@@ -457,8 +457,8 @@ public final class GeneralLoadView {
 		table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(120);
 		table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
 		table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
-		table.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
-		table.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
+		table.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
+		table.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(110);
 		//dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
 		table.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(130);
 		table.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(130);

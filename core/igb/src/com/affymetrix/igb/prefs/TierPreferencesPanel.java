@@ -19,8 +19,6 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 	@Override
 	protected void enableSpecificComponents()
 	{
-		viewModePanel.setVisible(true);
-		viewModeComboBox.setVisible(true);
 		autoRefreshCheckBox.setVisible(true);
 		refreshButton.setVisible(true);
 		applyButton.setVisible(true);
@@ -52,9 +50,5 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 	@Override
 	protected void selectAndAddButtonActionPerformed(java.awt.event.ActionEvent evt) {  
 		((TierPrefsView)tdv).selectAll();
-	}
-	@Override
-	protected void viewModeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-		((TierPrefsView)tdv).viewModeCB();
 	}
 }

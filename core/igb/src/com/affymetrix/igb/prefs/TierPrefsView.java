@@ -10,7 +10,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPStyledJComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -552,8 +551,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			negativeColorComboBox.setEnabled(false);
 			show2TracksCheckBox.setEnabled(false);
 		} else {
-			resetViewModeCB(style);
-
 			resetLabelField(style);
 		}
 	}
@@ -563,29 +560,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		for (int i = 0; i < selectedRows.length; i++) {
 			TrackStyle style = rows.get(selectedRows[i]);
 			setEnabledByAxisOrGraph(style);
-		}
-	}
-
-	private void resetViewModeCB(TrackStyle style) {
-		viewModeCB.removeAllItems();
-
-		for (final MapViewGlyphFactoryI mode :
-				MapViewModeHolder.getInstance().getAllViewModesFor(
-				style.getFileTypeCategory(), style.getMethodName())) {
-
-//			if (style.getSeparate()
-//					&& !mode.supportsTwoTrack()) {
-//				continue;
-//			}
-
-			viewModeCB.addItem(mode.getName() + ":" + mode.getDisplayName());
-		}
-
-		MapViewGlyphFactoryI mode = MapViewModeHolder.getInstance().
-				getViewFactory(style.getViewMode());
-
-		if (mode != null) {
-			viewModeCB.setSelectedItem(mode.getName());
 		}
 	}
 
@@ -847,9 +821,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 							break;
 						case COL_NEG_STRAND_COLOR:
 							style.setReverseColor((Color) value);
-							break;
-						case COL_VIEW_MODE:
-							style.setViewMode((String) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

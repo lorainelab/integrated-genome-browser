@@ -240,9 +240,6 @@ public abstract class BookmarkController {
 		tier_style.setBackground(bg_col);
 		tier_style.setY(ypos);
 		tier_style.setHeight(yheight);
-		if (tier_style instanceof ITrackStyleExtended) {
-			((ITrackStyleExtended) tier_style).setViewMode(view_mode);
-		}
 	}
 
 	private static void applyGraphProperties(IGBService igbService, GraphState gstate, GraphType graph_style_num, String heatmap_name,
@@ -398,7 +395,6 @@ public abstract class BookmarkController {
 		mark_sym.setProperty(SYM.COL.toString() + i, sixDigitHex(style.getForeground()));
 		mark_sym.setProperty(SYM.BG.toString() + i, sixDigitHex(style.getBackground()));
 		mark_sym.setProperty(SYM.NAME.toString() + i, name);
-		mark_sym.setProperty(SYM.VIEW_MODE.toString() + i, style.getViewMode());
 	}
 
 	/**

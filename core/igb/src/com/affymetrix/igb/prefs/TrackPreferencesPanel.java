@@ -65,8 +65,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         selectAndAddButton = new javax.swing.JButton();
         deleteAndRestoreButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        viewModePanel = new javax.swing.JPanel();
-        viewModeComboBox = tdv.viewModeCB;
         propertiesPanel = new javax.swing.JPanel();
         trackTypeNameLabel = new javax.swing.JLabel();
         trackNameTypeTextField = tracknametype;
@@ -151,31 +149,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                 .add(tablePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(selectAndAddButton)
                     .add(deleteAndRestoreButton)))
-        );
-
-        viewModePanel.setVisible(false);
-        viewModePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
-
-        viewModeComboBox.setVisible(false);
-        viewModeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                viewModeComboBoxActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout viewModePanelLayout = new org.jdesktop.layout.GroupLayout(viewModePanel);
-        viewModePanel.setLayout(viewModePanelLayout);
-        viewModePanelLayout.setHorizontalGroup(
-            viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, viewModePanelLayout.createSequentialGroup()
-                .add(0, 0, Short.MAX_VALUE)
-                .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-        );
-        viewModePanelLayout.setVerticalGroup(
-            viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, viewModePanelLayout.createSequentialGroup()
-                .add(0, 0, Short.MAX_VALUE)
-                .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
@@ -456,9 +429,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(15, 15, 15)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(viewModePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -468,9 +439,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
                 .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(5, 5, 5)
-                .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 66, Short.MAX_VALUE)
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
@@ -520,10 +489,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
 		tdv.negativeColorComboBox();
 	}//GEN-LAST:event_negativeColorComboBoxActionPerformed
-
-	protected void viewModeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewModeComboBoxActionPerformed
-		((TierPrefsView)tdv).viewModeCB();
-	}//GEN-LAST:event_viewModeComboBoxActionPerformed
 
 	private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
 		tdv.applyMaxDepth();
@@ -609,8 +574,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
     private javax.swing.JPanel tablePanel;
     private javax.swing.JTextField trackNameTypeTextField;
     private javax.swing.JLabel trackTypeNameLabel;
-    protected javax.swing.JComboBox viewModeComboBox;
-    protected javax.swing.JPanel viewModePanel;
     // End of variables declaration//GEN-END:variables
 
 	@Override

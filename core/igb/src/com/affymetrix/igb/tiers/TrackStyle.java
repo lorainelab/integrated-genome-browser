@@ -54,7 +54,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double y = default_y;
 	private Color start_color = default_start;
 	private Color end_color = default_end;
-	private String view_mode = default_view_mode;
 	private String summary_view_mode = null;
 	private String detail_view_mode = null;
 	private float min_score_color = default_min_score_color;
@@ -306,7 +305,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
-		view_mode = node.get(PREF_VIEW_MODE, this.getViewMode());
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
 
@@ -326,7 +324,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		props.put(PROP_COLLAPSED, String.valueOf(getCollapsed()));
 		props.put(PROP_FONT_SIZE, String.valueOf(getTrackNameSize()));
 		props.put(PROP_DIRECTION_TYPE, String.valueOf(getDirectionName()));
-		props.put(PROP_VIEW_MODE, getViewMode());
 
 		return props;
 	}
@@ -433,11 +430,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setDirectionType(prev_direction_type);
 			}
 		}
-		String viewmodestring = (String) props.getProperty(PROP_VIEW_MODE);
-		if (viewmodestring != null) {
-			setViewMode(viewmodestring);
-		}
-
+		
 		if (DEBUG) {
 			System.out.println("    +++++++  done initializing from PropertyMap");
 		}
@@ -527,10 +520,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 
-		String viewModeString = props.get("view_mode");
-		if (viewModeString != null) {
-			setViewMode(viewModeString);
-		}
 	}
 
 	// Copies properties from the template into this object, but does NOT persist
@@ -1093,29 +1082,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	@Override
-	public void setViewMode(String s) {
-		if (s != null && !default_view_mode.equalsIgnoreCase(s)
-				&& MapViewModeHolder.getInstance().getViewFactory(s) == null) {
-			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
-			s = default_view_mode;
-		}
-		view_mode = s;
-		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(view_mode);
-		setExpandable(factory.isCategorySupported(FileTypeCategory.Annotation) || factory.isCategorySupported(FileTypeCategory.Alignment));
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
-			}
-			getNode().put(PREF_VIEW_MODE, s);
-		}
-	}
-
-	@Override
-	public String getViewMode() {
-		return view_mode;
-	}
-
-	@Override
 	public void setSummaryViewMode(String s) {
 		summary_view_mode = s;
 	}
@@ -1183,7 +1149,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (g instanceof TrackStyle) {
 			TrackStyle as = (TrackStyle) g;
 			setCustomizable(as.getCustomizable());
-			setViewMode(as.getViewMode());
 		}
 
 		getTransientPropertyMap().putAll(g.getTransientPropertyMap());
@@ -1216,8 +1181,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				+ " '" + unique_name + "' ('" + track_name + "') "
 				+ " persistent: " + is_persistent
 				+ " color: " + getForeground()
-				+ " bg: " + getBackground()
-				+ " viewmode: " + getViewMode();
+				+ " bg: " + getBackground();
 		return s;
 	}
 

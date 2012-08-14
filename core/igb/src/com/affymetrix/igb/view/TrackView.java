@@ -349,11 +349,6 @@ public class TrackView {
 	}
 
 	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
-		if (setViewMode) {
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
-			String viewmode = factory.getName();
-			style.setViewMode(viewmode);
-		}
 		RootSeqSymmetry rootSym = null;
 		if(!style.isGraphTier()){
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;

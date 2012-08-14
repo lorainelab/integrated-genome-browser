@@ -80,7 +80,6 @@ public class CombineGraphsAction extends GenericAction {
 			//combo_style.setLabelBackground(background);
 			combo_style.setBackground(background);
 			combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
-			combo_style.setViewMode(viewMode);
 		}
 
 		// Now apply that combo style to all the selected graphs

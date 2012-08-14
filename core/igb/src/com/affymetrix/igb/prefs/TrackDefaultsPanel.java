@@ -16,8 +16,6 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel{
 	@Override
 	protected void enableSpecificComponents()
 	{
-		viewModePanel.setVisible(false);
-		viewModeComboBox.setVisible(false);
 		autoRefreshCheckBox.setVisible(false);
 		refreshButton.setVisible(false);
 		applyButton.setVisible(false);

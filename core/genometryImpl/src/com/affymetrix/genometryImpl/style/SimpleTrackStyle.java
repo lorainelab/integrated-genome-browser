@@ -140,17 +140,8 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		return null;
 	}
 
-	private String view_mode = null;
 	private String summary_view_mode = null;
 	private String detail_view_mode = null;
-	@Override
-	public String getViewMode() {
-		return view_mode;
-	}
-	@Override
-	public void setViewMode(String view_mode) {
-		this.view_mode = view_mode;
-	}
 	@Override
 	public String getSummaryViewMode() {
 		return summary_view_mode;

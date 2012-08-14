@@ -48,7 +48,6 @@ public interface TrackConstants {
 	static final Color default_start = new Color(204, 255, 255);
 	static final Color default_end = new Color(51, 255, 255);
 	static final String default_label_field = "";
-	static final String default_view_mode = "annotation";
 	static final int default_glyphDepth = 2;
 	static final double default_height = 50.0;//25.0;
 	static final double default_y = 0.0;

@@ -69,14 +69,7 @@ public class MapViewModeHolder {
 	}
 
 	public boolean styleSupportsTwoTrack(ITrackStyleExtended style) {
-		if (Delegate.EXT.equalsIgnoreCase(style.getFileType())) {
-			return false;
-		}
-		String viewMode = style.getViewMode();
-		if (viewMode.equals(TrackConstants.default_view_mode)) {
-			viewMode = getDefaultFactoryFor(style.getFileTypeCategory()).getName();
-		}
-		MapViewGlyphFactoryI factory = getViewFactory(viewMode);
+		MapViewGlyphFactoryI factory = getDefaultFactoryFor(style);
 		if (factory == null) {
 			return false;
 		}

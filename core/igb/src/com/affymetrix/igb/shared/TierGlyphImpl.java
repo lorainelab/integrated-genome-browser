@@ -85,25 +85,17 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 	
 	private void setViewModeGlyph(ITrackStyleExtended style) {
 		if (isSymLoaded()) {
-			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
 			if (factory != null) {
 				if (modelSym instanceof RootSeqSymmetry) {
 					if (!factory.isCategorySupported(((RootSeqSymmetry) modelSym).getCategory())) {
 						factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry) modelSym).getCategory());
-						style.setViewMode(factory.getName());
 					}
 				}
 			}
 			setViewModeGlyph(factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
 		}
 		this.style = style;
-	}
-
-	private MapViewGlyphFactoryI getViewGlyphFactory(String viewMode) {
-		if ("default".equals(viewMode) && modelSym != null) {
-			return MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)modelSym).getCategory());
-		}
-		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
 	}
 
 	private boolean isSymLoaded() {
@@ -129,7 +121,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 	public void setStyle(ITrackStyleExtended style){
 		ITrackStyleExtended saveStyle = this.style;
 		this.style = style;
-		if (saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {
+		if (saveStyle == null) {
 			setViewModeGlyph(style);
 		}
 		else {

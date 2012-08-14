@@ -292,7 +292,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 	protected void rangeChanged(SeqMapViewExtendedI smv){
 		if(isAutoLoadMode() && isDetail(smv.getSeqMap().getView())){
 			try {
-				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(getAnnotStyle().getViewMode());
+				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(getAnnotStyle());
 				if(factory != null){
 					loadAndDisplayRegion(smv, factory);
 				}

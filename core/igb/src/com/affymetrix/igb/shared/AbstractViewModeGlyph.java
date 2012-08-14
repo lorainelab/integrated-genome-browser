@@ -43,7 +43,7 @@ import javax.swing.SwingWorker;
  *  This is the glyph that displays the contents of a Tier/Track. Each TierGlyph
  *  contains a ViewModeGlyph and delegates all calls to the ViewModeGlyph.
  */
-public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewModeGlyph, NeoRangeListener{
+public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewModeGlyph, TierGlyph, NeoRangeListener{
 	
 	private TierGlyph tierGlyph;
 	SwingWorker previousWorker, worker;
@@ -65,7 +65,8 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 	protected Color other_fill_color = null;
 	
 	protected String label = null;
-	
+	private boolean unloadedOK = false;
+	  
 	public abstract void setPreferredHeight(double height, ViewI view);
 	public abstract int getActualSlots();
 	public abstract Map<String,Class<?>> getPreferences();
@@ -549,5 +550,24 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		return style.getLabelField() != null && 
 		!style.getLabelField().equals(TrackConstants.NO_LABEL) && 
 		(style.getLabelField().trim().length() > 0);
+	}
+
+	public void resizeHeight(double diffy, double height) {
+		Rectangle2D.Double cbox = getCoordBox();
+		setCoords(cbox.x, cbox.y, cbox.width, height);
+		this.moveRelative(0, diffy);
+	}
+
+	public ViewModeGlyph getViewModeGlyph() {
+		return this;
+	}
+
+	public void makeGarbage() {
+		removeAllChildren();
+		setUnloadedOK(false);
+	}
+
+	public void setUnloadedOK(boolean unloadedOK) {
+		this.unloadedOK = unloadedOK;
 	}
 }

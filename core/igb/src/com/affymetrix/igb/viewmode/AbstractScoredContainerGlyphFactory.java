@@ -251,7 +251,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv);
 
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
+	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
 		return new ScoredContainerViewModeGlyph(style);
 	}
 		

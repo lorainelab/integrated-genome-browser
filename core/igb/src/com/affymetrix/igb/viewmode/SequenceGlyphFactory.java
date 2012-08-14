@@ -19,7 +19,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		return new SequenceGlyph(style);
 	}
 		

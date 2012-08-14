@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -174,11 +173,11 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph result = null;
 		if (sym == null) {
-			result = createViewModeGlyph(style, tier_direction, smv);
+			result = createViewModeGlyph(sym, style, tier_direction, smv);
 		} else if (sym instanceof GraphSym) {
 			result = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (result == null) {
-				result = createViewModeGlyph(style, tier_direction, smv);
+				result = createViewModeGlyph(sym, style, tier_direction, smv);
 			}
 			else {
 				if(smv.getViewSeq() != smv.getAnnotatedSeq()){
@@ -200,9 +199,15 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
-		GraphSym sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());
-		AbstractViewModeGlyph result = createViewModeGlyph(sym, getGraphState(style), smv);
+	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
+		GraphState gState;
+		if(sym == null){
+			sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());
+			gState = getGraphState(style);
+		}else{
+			gState = ((GraphSym)sym).getGraphState();
+		}
+		AbstractViewModeGlyph result = createViewModeGlyph((GraphSym)sym, gState, smv);
 		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
 		return result;
 	}

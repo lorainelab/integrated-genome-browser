@@ -465,7 +465,7 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI gviewer){
+	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI gviewer){
 		AbstractViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
 		viewModeGlyph.setMinimumPixelBounds(gviewer.getSeqMap().getGraphics());
 		viewModeGlyph.setDirection(tier_direction);
@@ -477,7 +477,7 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
 		if (meth == null) {
-			return createViewModeGlyph(style, tier_direction, gviewer);
+			return createViewModeGlyph(sym, style, tier_direction, gviewer);
 //			meth = "unknown";
 //			human_name = meth;
 		} else {
@@ -501,9 +501,9 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 				label_field = style.getLabelField();
 				ViewModeGlyph[] tiers = new ViewModeGlyph[2];
 				TierGlyph.Direction useDirection = (tier_direction == TierGlyph.Direction.BOTH) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
-				tiers[0] = createViewModeGlyph(style, useDirection, gviewer);
+				tiers[0] = createViewModeGlyph(sym, style, useDirection, gviewer);
 				tiers[0].setInfo(sym);
-				tiers[1] = (tier_direction == TierGlyph.Direction.BOTH) ? tiers[0] : createViewModeGlyph(style, TierGlyph.Direction.REVERSE, gviewer);
+				tiers[1] = (tier_direction == TierGlyph.Direction.BOTH) ? tiers[0] : createViewModeGlyph(sym, style, TierGlyph.Direction.REVERSE, gviewer);
 				tiers[1].setInfo(sym);
 				if (style.getSeparate()) {
 					addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);

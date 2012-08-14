@@ -14,10 +14,10 @@ public abstract class MultiGraphGlyph extends AbstractGraphGlyph {
 	@Override
 	public void drawMiddle(ViewI view) {
 		if (getChildren() != null) {
-			ViewModeGlyph child;
+			AbstractViewModeGlyph child;
 			int numChildren = getChildren().size();
 			for (int i = 0; i < numChildren; i++) {
-				child = (ViewModeGlyph) getChildren().get(i);
+				child = (AbstractViewModeGlyph) getChildren().get(i);
 				child.drawMiddle(view);
 			}
 		}

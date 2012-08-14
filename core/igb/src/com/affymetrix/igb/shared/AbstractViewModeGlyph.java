@@ -71,7 +71,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 	public abstract int getActualSlots();
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
-	protected void updateParent(ViewModeGlyph vmg){
+	protected void updateParent(AbstractViewModeGlyph vmg){
 		//Do Nothing
 	}
 
@@ -339,7 +339,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		return direction;
 	}
 	
-	public final void copyChildren(ViewModeGlyph temp) {
+	public final void copyChildren(AbstractViewModeGlyph temp) {
 		if(temp == null)
 			return;
 		
@@ -440,7 +440,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		}
 	}
 	
-	protected final ViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
+	protected final AbstractViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
 		return factory.getViewModeGlyph(rootSym, style, direction, smv);
 	};
 	
@@ -456,7 +456,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 			protected Void doInBackground() throws Exception {
 				RootSeqSymmetry rootSym = loadRegion(smv.getVisibleSpan());
 				if (rootSym.getChildCount() > 0) {
-					final ViewModeGlyph vmg = createGlyphs(rootSym, factory, smv);
+					final AbstractViewModeGlyph vmg = createGlyphs(rootSym, factory, smv);
 					ThreadUtils.runOnEventQueue(new Runnable() {
 
 						public void run() {

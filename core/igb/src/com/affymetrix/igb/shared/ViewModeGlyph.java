@@ -1,16 +1,8 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D.Double;
-import java.util.List;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 
 public interface ViewModeGlyph extends GlyphI{
@@ -19,70 +11,70 @@ public interface ViewModeGlyph extends GlyphI{
 	
 	public TierGlyph getTierGlyph();
 
-	public List<SeqSymmetry> getSelected();
-
-	public void drawMiddle(ViewI view);
+	public java.util.List<SeqSymmetry> getSelected();
 
 	public boolean isManuallyResizable();
 
 	public String getLabel();
 
-	public void setLabel(String str);
-
-	public int getSlotsNeeded(ViewI theView);
-
-	public void setPreferredHeight(double height, ViewI view);
-
-	public int getActualSlots();
-
-	public void copyChildren(ViewModeGlyph vmg);
-
-	public void setTierGlyph(TierGlyph aThis);
-
-	public void processParentCoordBox(Double coordBox);
-
-	public void setStyle(ITrackStyleExtended style);
-
-	public boolean initUnloaded();
-
-	public void setDirection(Direction d);
-
-	public boolean isGarbage();
-
-	public void addMiddleGlyph(GlyphI gl);
-
-	public double getChildHeight();
-
-	public Font getFont();
-
-	public Rectangle getPixelBox();
-
-	public boolean drawTransients();
-
-	public boolean hit(Rectangle pixel_hitbox, ViewI view);
-
-	public boolean inside(int x, int y);
-
-	public boolean intersects(Rectangle rect);
-
-	public int getDrawOrder();
-
-	public void calcPixels(ViewI view);
-
-	public void drawSelected(ViewI view);
-
-	public void setDrawOrder(int order);
-
-	public void setFont(Font f);
-
-	public void setHitable(boolean hitable);
-
 	public TierGlyph.Direction getDirection();
-
-	public List<GlyphI> getMiddleGlyphs();
-
-	public void setMinimumPixelBounds(Graphics graphics);
-
-	public boolean toolBarHit(Double hitrect, ViewI view);
+	
+//	public void drawMiddle(ViewI view);
+//	
+//	public void setLabel(String str);
+//
+//	public int getSlotsNeeded(ViewI theView);
+//
+//	public void setPreferredHeight(double height, ViewI view);
+//
+//	public int getActualSlots();
+//
+//	public void copyChildren(ViewModeGlyph vmg);
+//
+//	public void setTierGlyph(TierGlyph aThis);
+//
+//	public void processParentCoordBox(Double coordBox);
+//
+//	public void setStyle(ITrackStyleExtended style);
+//
+//	public boolean initUnloaded();
+//
+//	public void setDirection(Direction d);
+//
+//	public boolean isGarbage();
+//
+//	public void addMiddleGlyph(GlyphI gl);
+//
+//	public double getChildHeight();
+//
+//	public Font getFont();
+//
+//	public Rectangle getPixelBox();
+//
+//	public boolean drawTransients();
+//
+//	public boolean hit(Rectangle pixel_hitbox, ViewI view);
+//
+//	public boolean inside(int x, int y);
+//
+//	public boolean intersects(Rectangle rect);
+//
+//	public int getDrawOrder();
+//
+//	public void calcPixels(ViewI view);
+//
+//	public void drawSelected(ViewI view);
+//
+//	public void setDrawOrder(int order);
+//
+//	public void setFont(Font f);
+//
+//	public void setHitable(boolean hitable);
+//
+//	public List<GlyphI> getMiddleGlyphs();
+//
+//	public void setMinimumPixelBounds(Graphics graphics);
+//
+//	public boolean toolBarHit(Double hitrect, ViewI view);
 
 }

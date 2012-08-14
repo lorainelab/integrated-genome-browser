@@ -92,7 +92,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements ViewModeGl
 	}
 		
 	@Override
-	protected void updateParent(ViewModeGlyph vmg){
+	protected void updateParent(AbstractViewModeGlyph vmg){
 		if(vmg.getChildCount() > 0){
 			copyChildren(vmg);
 		}

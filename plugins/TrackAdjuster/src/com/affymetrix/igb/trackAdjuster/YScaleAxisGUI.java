@@ -11,6 +11,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -26,7 +27,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private final IGBService igbService;
 	private GraphVisibleBoundsSetter vis_bounds_setter;
 	private final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
-	private final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
+	private final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 	private boolean is_listening = true; // used to turn on and off listening to GUI events
 
 	/**
@@ -325,7 +326,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 			ViewModeGlyph useGlyph = (ViewModeGlyph)glyph;
 			allGlyphs.add(useGlyph);
 			if(useGlyph instanceof AbstractGraphGlyph){
-				graphGlyphs.add((AbstractGraphGlyph)useGlyph);
+				graphGlyphs.add(((AbstractGraphGlyph)useGlyph).getGraphGlyph());
 			}
 		}
 	}
@@ -388,7 +389,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	}
 
 	public void setTrackHeight(double height) {
-		for (ViewModeGlyph gl : graphGlyphs) {
+		for (GraphGlyph gl : graphGlyphs) {
 			Rectangle2D.Double cbox = gl.getCoordBox();
 			gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 

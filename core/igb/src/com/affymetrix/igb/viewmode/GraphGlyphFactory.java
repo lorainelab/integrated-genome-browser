@@ -4,7 +4,8 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.AbstractGraphGlyph.GraphStyle;
+import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph.GraphStyle;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,9 +33,10 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 	
 	private AbstractGraphGlyph createInstance(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv){
 		try {
-			AbstractGraphGlyph result = new AbstractGraphGlyph(newgraf, gstate);
-			GraphStyle style = preferredGraphType.getConstructor(new Class[]{AbstractGraphGlyph.class}).newInstance(result);
-			result.setGraphStyle(style);
+			GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
+			AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
+			GraphStyle style = preferredGraphType.getConstructor(new Class[]{GraphGlyph.class}).newInstance(graphGlyph);
+			result.getGraphGlyph().setGraphStyle(style);
 			if(smv != null){
 				result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 			}

@@ -29,15 +29,16 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
-		return new ComboGlyph(gviewer, style);
+		//return new ComboGlyph(gviewer, style);
+		return null;
 	}
 
 	// glyph class
 	public class ComboGlyph extends MultiGraphGlyph {
 		private GraphFasterExpandPacker expand_packer = new GraphFasterExpandPacker();
 		private CollapsePacker collapse_packer = new CollapsePacker();
-		public ComboGlyph(SeqMapViewExtendedI smv, ITrackStyleExtended style) {
-			super(smv, style);
+		public ComboGlyph(GraphGlyph graphGlyph) {
+			super(graphGlyph);
 			setStyle(style);
 		}
 	
@@ -78,15 +79,15 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 			return true;
 		}
 
-		@Override
-		public String getName() {
-			return "combo";
-		}
-
-		@Override
-		public GraphType getGraphStyle() {
-			return null;
-		}
+//		@Override
+//		public String getName() {
+//			return "combo";
+//		}
+//
+//		@Override
+//		public GraphType getGraphStyle() {
+//			return null;
+//		}
 
 		public GlyphI getChildWithStyle(ITrackStyleExtended style) {
 			int numChildren = getChildCount();
@@ -112,9 +113,10 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction tier_direction, SeqMapViewExtendedI smv) {
-		ComboGlyph comboGlyph = new ComboGlyph(smv, style);
-		comboGlyph.setCoords(0, style.getY(), smv.getAnnotatedSeq().getLength(), 0);
-		return comboGlyph;
+		//ComboGlyph comboGlyph = new ComboGlyph(smv, style);
+		//comboGlyph.setCoords(0, style.getY(), smv.getAnnotatedSeq().getLength(), 0);
+		//return comboGlyph;
+		return null;
 	}
 
 	@Override

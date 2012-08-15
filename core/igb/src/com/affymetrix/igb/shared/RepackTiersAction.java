@@ -60,8 +60,8 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 			com.affymetrix.igb.shared.ViewModeGlyph vmg = t.getViewModeGlyph();
 			if (vmg instanceof com.affymetrix.igb.shared.AbstractGraphGlyph) {
 				// So far this has only been tested with annotation depth graphs.
-				com.affymetrix.igb.shared.AbstractGraphGlyph gg
-						= (com.affymetrix.igb.shared.AbstractGraphGlyph) vmg;
+				com.affymetrix.igb.shared.GraphGlyph gg
+						= (com.affymetrix.igb.shared.GraphGlyph) vmg;
 				gg.setVisibleMaxY(a);
 			}
 		}

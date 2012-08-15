@@ -44,12 +44,12 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 				if (useGlyph instanceof MultiGraphGlyph && useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof AbstractGraphGlyph) {
-							graphGlyphs.add((AbstractGraphGlyph) g);
+							graphGlyphs.add(((AbstractGraphGlyph) g).getGraphGlyph());
 							allGlyphs.add((ViewModeGlyph) g);
 						}
 					}
 				}else{
-					graphGlyphs.add((AbstractGraphGlyph) useGlyph);
+					graphGlyphs.add(((AbstractGraphGlyph) useGlyph).getGraphGlyph());
 					allGlyphs.add(useGlyph);
 				}
 			}

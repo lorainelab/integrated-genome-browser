@@ -4,16 +4,16 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Arrays;
 
-public class FillBarGraphGlyph extends AbstractGraphGlyph.GraphStyle {
+public class FillBarGraphGlyph extends GraphGlyph.GraphStyle {
 
-	public FillBarGraphGlyph(AbstractGraphGlyph graphGlyph){
+	public FillBarGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	

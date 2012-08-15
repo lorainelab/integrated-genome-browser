@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -30,7 +31,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 	private final JRPMenuItem thresholdingMenuItem;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	private final List<GraphSym> grafs = new ArrayList<GraphSym>();
-	private final List<AbstractGraphGlyph> glyphs = new ArrayList<AbstractGraphGlyph>();
+	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
 	public SelectionListener(IGBService igbService, ThresholdingAction thresholdingAction, JRPMenuItem thresholdingMenuItem) {
 		super();
@@ -72,7 +73,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 		boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
 
 		// Take the first glyph in the list as a prototype
-		AbstractGraphGlyph first_glyph = null;
+		GraphGlyph first_glyph = null;
 		GraphType graph_style = GraphType.LINE_GRAPH;
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
@@ -87,7 +88,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (AbstractGraphGlyph gl : glyphs) {
+		for (GraphGlyph gl : glyphs) {
 			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
@@ -131,12 +132,12 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 					if (vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
 						for (GlyphI child : vg.getChildren()) {
 							if (grafs.contains(child.getInfo())) {
-								glyphs.add((AbstractGraphGlyph) child);
+								glyphs.add((GraphGlyph) child);
 							}
 						}
 					}
 					else if (grafs.contains(vg.getInfo())) {
-						glyphs.add((AbstractGraphGlyph) vg);
+						glyphs.add(((AbstractGraphGlyph) vg).getGraphGlyph());
 					}
 				}
 			}

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.viewmode;
 
-import com.affymetrix.igb.graphTypes.FillBarGraphGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -10,8 +9,10 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.graphTypes.FillBarGraphGlyph;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -50,8 +51,9 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 			};
 		}
 
-		public MismatchPileupGlyph(AbstractGraphGlyph graphGlyph){
+		public MismatchPileupGlyph(GraphGlyph graphGlyph){
 			super(graphGlyph);
+			graphGlyph.lockGraphStyle();
 		}
 		
 		@Override
@@ -142,11 +144,9 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 
 	@Override
 	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
-		AbstractGraphGlyph result = new AbstractGraphGlyph(newgraf, gstate);
-		result.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupGlyph(result) : new FillBarGraphGlyph(result));
-		if(newgraf instanceof MisMatchPileupGraphSym){
-			result.lockGraphStyle();
-		}
+		GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
+		AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
+		result.getGraphGlyph().setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupGlyph(graphGlyph) : new FillBarGraphGlyph(graphGlyph));
 		result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 		return result;
 	}

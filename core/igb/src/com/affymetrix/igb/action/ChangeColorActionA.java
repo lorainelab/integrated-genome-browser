@@ -36,7 +36,6 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 
 	protected abstract void setChooserColor(JColorChooser chooser, ITrackStyleExtended style);
 	protected abstract void setStyleColor(Color color, ITrackStyleExtended style);
-	protected void setGraphColor(AbstractGraphGlyph gg, Color color) { }
 
 	protected final void iterateMultiGraph(boolean iterate){
 		iterateMultigraph = iterate;
@@ -93,7 +92,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 					ITrackStyleExtended style = vg.getAnnotStyle();
 					if (style != null) {
 						setStyleColor(color, style);
-					}	
+					}
 				}
 				
 			}

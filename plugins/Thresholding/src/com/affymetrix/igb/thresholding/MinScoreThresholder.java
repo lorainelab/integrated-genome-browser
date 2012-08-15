@@ -16,7 +16,7 @@ package com.affymetrix.igb.thresholding;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -37,7 +37,7 @@ public final class MinScoreThresholder extends JPanel
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("thresholding");
 
   private static final NumberFormat nformat = new DecimalFormat();
-  private final List<AbstractGraphGlyph> graphs = new ArrayList<AbstractGraphGlyph>();
+  private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
   private final NeoAbstractWidget widg;
   private final JRPSlider tslider;
   private final JRPTextField minscoreTF;
@@ -46,7 +46,7 @@ public final class MinScoreThresholder extends JPanel
   private float minscore_thresh = 0;
   private float sliders_per_score = 0;
 
-  static MinScoreThresholder showFramedThresholder(AbstractGraphGlyph sgg, NeoAbstractWidget widg) {
+  static MinScoreThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MinScoreThresholder dthresher = new MinScoreThresholder(sgg, widg);
     JFrame frm = new JFrame(BUNDLE.getString("scoreControl"));
     Container cpane = frm.getContentPane();
@@ -65,7 +65,7 @@ public final class MinScoreThresholder extends JPanel
     return dthresher;
   }
 
-  public MinScoreThresholder(AbstractGraphGlyph gl, NeoAbstractWidget w) {
+  public MinScoreThresholder(GraphGlyph gl, NeoAbstractWidget w) {
     this(w);
     setGraph(gl);
   }
@@ -90,7 +90,7 @@ public final class MinScoreThresholder extends JPanel
     minscoreTF.addActionListener(this);
   }
 
-  public void setGraphs(List<AbstractGraphGlyph> newgraphs) {
+  public void setGraphs(List<GraphGlyph> newgraphs) {
     graphs.clear();
 
     tslider.removeChangeListener(this);
@@ -101,7 +101,7 @@ public final class MinScoreThresholder extends JPanel
     //    System.out.println("in MinScoreThresholder.setGraphs(), count = " + gcount);
     //    float minscore_thresh = 0;
     float newthresh = 0;
-		for (AbstractGraphGlyph gl : newgraphs) {
+		for (GraphGlyph gl : newgraphs) {
       graphs.add(gl);
       thresh_min = Math.min(thresh_min, gl.getGraphMinY());
       thresh_max = Math.max(thresh_max, gl.getGraphMaxY());
@@ -129,7 +129,7 @@ public final class MinScoreThresholder extends JPanel
 
 
 
-  public void setGraph(AbstractGraphGlyph gl) {
+  public void setGraph(GraphGlyph gl) {
     graphs.clear();
     graphs.add(gl);
     //    this.sgg = gl;
@@ -170,7 +170,7 @@ public final class MinScoreThresholder extends JPanel
       float current_thresh = calcScore(tslider.getValue());
       if (current_thresh != minscore_thresh) {
 	minscore_thresh = current_thresh;
-	for (AbstractGraphGlyph sgg : graphs) {
+	for (GraphGlyph sgg : graphs) {
 	  sgg.setMinScoreThreshold(minscore_thresh);
 	}
 	minscoreTF.removeActionListener(this);
@@ -191,7 +191,7 @@ public final class MinScoreThresholder extends JPanel
 	}
 	else {
 	  minscore_thresh = new_thresh;
-		for (AbstractGraphGlyph sgg : graphs) {
+		for (GraphGlyph sgg : graphs) {
 	    sgg.setMinScoreThreshold(minscore_thresh);
 	  }
 	  tslider.removeChangeListener(this);

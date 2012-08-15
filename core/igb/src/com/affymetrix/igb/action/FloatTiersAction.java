@@ -94,7 +94,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 					style.setFloatTier(true);
 
 					if(gl instanceof AbstractGraphGlyph){
-						((AbstractGraphGlyph)gl).setShowLabel(true);
+						((AbstractGraphGlyph)gl).getGraphGlyph().setShowLabel(true);
 					}
 
 					something_changed = true;

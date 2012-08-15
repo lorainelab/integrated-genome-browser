@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.thresholding.GraphScoreThreshSetter;
 
 public class ThresholdingAction extends GenericAction {
@@ -36,7 +36,7 @@ public class ThresholdingAction extends GenericAction {
 		score_thresh_adjuster.showFrame();
 	}
 
-	public void setGraphs(List<AbstractGraphGlyph> glyphs) {
+	public void setGraphs(List<GraphGlyph> glyphs) {
 		score_thresh_adjuster.setGraphs(glyphs);
 	}
 }

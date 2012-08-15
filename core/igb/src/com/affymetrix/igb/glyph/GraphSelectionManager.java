@@ -55,6 +55,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -78,13 +79,13 @@ public final class GraphSelectionManager
 
   private static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
-  private AbstractGraphGlyph current_graph = null;
+  private GraphGlyph current_graph = null;
   private ViewModeGlyph graph_to_scale = null;
   //   second_curent_graph is
   //   the graph selected just _before_ the current_graph in a multi-select
   //   (this is usually the previous current_graph if multi-selection is happening,
   //    but null if no multi-select)
-  private AbstractGraphGlyph second_current_graph = null;
+  private GraphGlyph second_current_graph = null;
 
   // The current_source will be the AffyTieredMap of the SeqMapView
   //  final NeoAbstractWidget current_source;
@@ -237,7 +238,7 @@ public final class GraphSelectionManager
    *  tier in the source which is a tier map, then delete the tier as well.
    *  If the graph's symmetry is in a mutalbe bio seq, remove it from there.
    */
-  void deleteGraph(NeoAbstractWidget source, AbstractGraphGlyph gl) {
+  void deleteGraph(NeoAbstractWidget source, GraphGlyph gl) {
     source.removeItem(gl);
     // clean-up references to the graph, allowing garbage-collection, etc.
     gmodel.clearSelectedSymmetries(this);
@@ -278,7 +279,7 @@ public final class GraphSelectionManager
     return graph_file_chooser;
   }
 
-  public void saveGraph(AbstractGraphGlyph graph) {
+  public void saveGraph(GraphGlyph graph) {
     Object info = graph.getInfo();
     if (info instanceof GraphSym) {
       FileOutputStream ostr = null;
@@ -426,7 +427,7 @@ public final class GraphSelectionManager
         NeoWidget widg = (NeoWidget)src;
         ViewI view = widg.getView();
         GlyphI threshgl = gl;
-        AbstractGraphGlyph graphgl = (AbstractGraphGlyph)threshgl.getParent();
+        GraphGlyph graphgl = (GraphGlyph)threshgl.getParent();
         Rectangle2D.Double tbox = threshgl.getCoordBox();
         float new_threshold = graphgl.getGraphValue(view, tbox.y);
         if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
@@ -450,7 +451,7 @@ public final class GraphSelectionManager
 
 
   /** Make a simple lable for a graph glyph, no longer than max_label_length. */
-  private String getGraphLabel(AbstractGraphGlyph gg) {
+  private String getGraphLabel(GraphGlyph gg) {
     if (gg==null) {return "";}
     String result = gg.getLabel();
     if (result == null) {result = "No label";}
@@ -469,7 +470,7 @@ public final class GraphSelectionManager
       return;
     }
     
-    final List<AbstractGraphGlyph> selected_graph_glyphs = new ArrayList<AbstractGraphGlyph>(0);
+    final List<GraphGlyph> selected_graph_glyphs = new ArrayList<GraphGlyph>(0);
     current_graph = null;
     second_current_graph = null;
 
@@ -479,7 +480,7 @@ public final class GraphSelectionManager
       SeqSymmetry sym = iter.next();
       GlyphI g = current_source.<GlyphI>getItem(sym);
       if (g instanceof AbstractGraphGlyph) {
-        selected_graph_glyphs.add((AbstractGraphGlyph)g);
+        selected_graph_glyphs.add((GraphGlyph)g);
       }
     }
 

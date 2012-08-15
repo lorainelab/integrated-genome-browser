@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -135,7 +136,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 				if (Float.MIN_VALUE < maxMax) {
 					ViewModeGlyph vg = tg.getViewModeGlyph();
 					if (vg instanceof AbstractGraphGlyph) {
-						AbstractGraphGlyph gg = (AbstractGraphGlyph) vg;
+						GraphGlyph gg = (GraphGlyph) vg;
 						gg.setVisibleMaxY(maxMax);
 					}
 				}

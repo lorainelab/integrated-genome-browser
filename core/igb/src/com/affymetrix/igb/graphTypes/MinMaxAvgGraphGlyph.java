@@ -4,18 +4,17 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.AbstractGraphGlyph.GraphStyle;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Arrays;
 
-public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph.GraphStyle {
-	private final GraphStyle tempViewModeBarGraphGlyph;
+public class MinMaxAvgGraphGlyph extends GraphGlyph.GraphStyle {
+	private final GraphGlyph.GraphStyle tempViewModeBarGraphGlyph;
 
-	public MinMaxAvgGraphGlyph(AbstractGraphGlyph graphGlyph){
+	public MinMaxAvgGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
 		tempViewModeBarGraphGlyph = new BarGraphGlyph(graphGlyph);
 	}

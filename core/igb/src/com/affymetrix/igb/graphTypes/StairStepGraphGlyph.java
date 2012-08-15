@@ -3,14 +3,14 @@ package com.affymetrix.igb.graphTypes;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class StairStepGraphGlyph extends AbstractGraphGlyph.GraphStyle {
+public class StairStepGraphGlyph extends GraphGlyph.GraphStyle {
 
-	public StairStepGraphGlyph(AbstractGraphGlyph graphGlyph){
+	public StairStepGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	
@@ -28,13 +28,13 @@ public class StairStepGraphGlyph extends AbstractGraphGlyph.GraphStyle {
 			// draw the same regardless of whether wcoords == null
 			// skip drawing if width > 10000... (fix for linux problem?)
 			// draw the same regardless of whether wcoords == null
-			AbstractGraphGlyph.drawRectOrLine(g, prev_point.x, Math.min(zero_point.y, prev_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(prev_point.y - zero_point.y)));
+			GraphGlyph.drawRectOrLine(g, prev_point.x, Math.min(zero_point.y, prev_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(prev_point.y - zero_point.y)));
 		}
 		// If this is the very last point, special rules apply
 		// If this is the very last point, special rules apply
 		if (i == draw_end_index) {
 			stairwidth = (!graphSym.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
-			AbstractGraphGlyph.drawRectOrLine(g, curr_point.x, Math.min(zero_point.y, curr_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(curr_point.y - zero_point.y)));
+			GraphGlyph.drawRectOrLine(g, curr_point.x, Math.min(zero_point.y, curr_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(curr_point.y - zero_point.y)));
 		}
 	}
 

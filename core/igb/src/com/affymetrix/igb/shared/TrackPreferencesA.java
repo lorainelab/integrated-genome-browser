@@ -27,7 +27,7 @@ import com.affymetrix.igb.graphTypes.LineGraphGlyph;
 import com.affymetrix.igb.graphTypes.MinMaxAvgGraphGlyph;
 import com.affymetrix.igb.graphTypes.StairStepGraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AbstractGraphGlyph.GraphStyle;
+import com.affymetrix.igb.shared.GraphGlyph.GraphStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 import com.jidesoft.combobox.ColorComboBox;
@@ -96,7 +96,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox labelCheckBox = getLabelCheckBox();
 		boolean b = labelCheckBox.isSelected();
-		for (AbstractGraphGlyph gl : graphGlyphs) {
+		for (GraphGlyph gl : graphGlyphs) {
 			gl.setShowLabel(b);
 		}
 		updateDisplay();
@@ -106,7 +106,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
 		boolean b = YAxisCheckBox.isSelected();
-		for (AbstractGraphGlyph gl : graphGlyphs) {
+		for (GraphGlyph gl : graphGlyphs) {
 			gl.setShowAxis(b);
 		}
 		updateDisplay();
@@ -123,7 +123,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
-			for (AbstractGraphGlyph gl : graphGlyphs) {
+			for (GraphGlyph gl : graphGlyphs) {
 				if ("heatmapgraph".equals(gl.getName())) {
 					gl.setShowGraph(true);
 					if (!(gl.getHeatMap() instanceof DynamicStyleHeatMap)) {
@@ -135,7 +135,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		else {
 			HeatMap hm = HeatMap.getStandardHeatMap(name);
 			if (hm != null) {
-				for (AbstractGraphGlyph gl : graphGlyphs) {
+				for (GraphGlyph gl : graphGlyphs) {
 					if ("heatmapgraph".equals(gl.getName())) {
 						gl.setShowGraph(true);
 						gl.setHeatMap(hm);
@@ -222,7 +222,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
-		for (AbstractGraphGlyph graphGlyph : graphGlyphs) {
+		for (GraphGlyph graphGlyph : graphGlyphs) {
 			GraphStyle selectedMode = null;
 			if (getGraphStyleLineRadioButton().isSelected()) {
 				selectedMode = new LineGraphGlyph(graphGlyph);
@@ -397,7 +397,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAnyJoined(){
-		for (AbstractGraphGlyph gg : graphGlyphs) {
+		for (GraphGlyph gg : graphGlyphs) {
 			if (gg.getGraphState().getComboStyle() != null) {
 				return true;
 			}
@@ -441,7 +441,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllGraphStyleLocked() {
-		for(AbstractGraphGlyph graphGlyph : graphGlyphs){
+		for(GraphGlyph graphGlyph : graphGlyphs){
 			if(!graphGlyph.isGraphStyleLocked()){
 				return false;
 			}
@@ -454,7 +454,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox floatCheckBox = getFloatCheckBox();
 
 		boolean allFloat = isAllGraph();
-		for (AbstractGraphGlyph glyph : graphGlyphs) {
+		for (GraphGlyph glyph : graphGlyphs) {
 			if (!glyph.getAnnotStyle().getFloatTier()) {
 				allFloat = false;
 				break;
@@ -473,7 +473,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox labelCheckBox = getLabelCheckBox();
 		labelCheckBox.setEnabled(isAllGraph());
 		boolean allLabel = isAllGraph();
-		for (AbstractGraphGlyph glyph : graphGlyphs) {
+		for (GraphGlyph glyph : graphGlyphs) {
 			if (!glyph.getShowLabel()) {
 				allLabel = false;
 				break;
@@ -487,7 +487,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox yAxisCheckBox = getYAxisCheckBox();
 		yAxisCheckBox.setEnabled(isAllGraph());
 		boolean allYAxis = isAllGraph();
-		for (AbstractGraphGlyph gg : graphGlyphs) {
+		for (GraphGlyph gg : graphGlyphs) {
 			if (!gg.getShowAxis()) {
 				allYAxis = false;
 				break;
@@ -503,7 +503,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			boolean allHeatMap = true;
 			HeatMap heatMap = null;
 			boolean heatMapSet = false;
-			for (AbstractGraphGlyph gg : graphGlyphs) {
+			for (GraphGlyph gg : graphGlyphs) {
 				if (gg.getGraphStyle() != GraphType.HEAT_MAP) {
 					allHeatMap = false;
 					break;
@@ -737,7 +737,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (isAllGraph()) {
 			GraphType graphType = null;
 			boolean graphTypeSet = false;
-			for (AbstractGraphGlyph vg : graphGlyphs) {
+			for (GraphGlyph vg : graphGlyphs) {
 				if (graphType == null && !graphTypeSet) {
 					graphType = vg.getGraphStyle();
 					graphTypeSet = true;

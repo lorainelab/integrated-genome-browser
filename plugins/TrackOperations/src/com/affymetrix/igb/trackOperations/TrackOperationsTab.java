@@ -144,10 +144,10 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		glyphs.addAll(selected);
-		List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
+		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 		for (ViewModeGlyph vg : glyphs) {
 			if (vg instanceof AbstractGraphGlyph) {
-				graphGlyphs.add((AbstractGraphGlyph)vg);
+				graphGlyphs.add(((AbstractGraphGlyph)vg).getGraphGlyph());
 			}
 		}
 		rootSyms.clear();

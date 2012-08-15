@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.util.List;
 import java.util.Map;
@@ -21,10 +21,10 @@ import java.util.ResourceBundle;
  */
 public class ThresholdOperator implements Operator{
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("thresholding");
-	final public AbstractGraphGlyph sgg;
+	final public GraphGlyph sgg;
 	final ViewI view;
 	
-	public ThresholdOperator(AbstractGraphGlyph sgg, ViewI view){
+	public ThresholdOperator(GraphGlyph sgg, ViewI view){
 		this.sgg = sgg;
 		this.view = view;
 	}

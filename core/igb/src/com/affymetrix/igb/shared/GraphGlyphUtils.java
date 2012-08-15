@@ -72,7 +72,7 @@ public final class GraphGlyphUtils {
 	 *   the other must also.)
 	 *  @return null if the graphs are comparable, or an explanation string if they are not.
 	 */
-	public static String graphsAreComparable(AbstractGraphGlyph graphA, AbstractGraphGlyph graphB) {
+	public static String graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
 		// checking that both graphs are non-null
 		if (graphA == null || graphB == null) {
 			return "Must select exactly two graphs";
@@ -128,7 +128,7 @@ public final class GraphGlyphUtils {
 	 *  Gets the percents2scores array for the given graph, creating the array
 	 *  if necessary.
 	 */
-	private static float[] getPercents2Scores(AbstractGraphGlyph gl) {
+	private static float[] getPercents2Scores(GraphGlyph gl) {
 		Object info = gl.getInfo();
 //		if (info == null && !(gl instanceof MultiGraphGlyph)) {
 //            Logger.getLogger("com.affymetrix.igb.shared").log(Level.INFO, "Graph has no info! " + gl);
@@ -146,7 +146,7 @@ public final class GraphGlyphUtils {
 		return p2score;
 	}
 
-	public static float getValueForPercent(AbstractGraphGlyph gl, float percent) {
+	public static float getValueForPercent(GraphGlyph gl, float percent) {
 		float[] percent2score = getPercents2Scores(gl);
 		int index = Math.round(percent * sliders_per_percent);
 
@@ -161,7 +161,7 @@ public final class GraphGlyphUtils {
 		return percent2score[index];
 	}
 
-	public static float getPercentForValue(AbstractGraphGlyph gl, float value) {
+	public static float getPercentForValue(GraphGlyph gl, float value) {
 		float percent = Float.NEGATIVE_INFINITY;
 		float[] percent2score = getPercents2Scores(gl);
 		// do a binary search through percent2score array to find percent bin closest to value

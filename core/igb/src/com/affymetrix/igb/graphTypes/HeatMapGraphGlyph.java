@@ -4,7 +4,7 @@ package com.affymetrix.igb.graphTypes;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HeatMapGraphGlyph extends AbstractGraphGlyph.GraphStyle {
+public class HeatMapGraphGlyph extends GraphGlyph.GraphStyle {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -22,7 +22,7 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph.GraphStyle {
 		PREFERENCES = Collections.unmodifiableMap(temp);
 	}
 
-	public HeatMapGraphGlyph(AbstractGraphGlyph graphGlyph){
+	public HeatMapGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	
@@ -43,7 +43,7 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph.GraphStyle {
 			heatmap_index = 255;
 		}
 		g.setColor(getHeatMap().getColor(heatmap_index));
-		AbstractGraphGlyph.drawRectOrLine(g, curr_point.x, getPixelBox().y, 
+		GraphGlyph.drawRectOrLine(g, curr_point.x, getPixelBox().y, 
 				Math.max(1, curr_x_plus_width.x - curr_point.x), getPixelBox().height + 1);
 	}
 
@@ -65,7 +65,7 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph.GraphStyle {
 		}
 		g.setColor(getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
 		//drawRectOrLine(g, prev_point.x, plot_top_ypixel, 1, plot_bottom_ypixel - plot_top_ypixel);
-		AbstractGraphGlyph.drawRectOrLine(g, prev_point.x, 
+		GraphGlyph.drawRectOrLine(g, prev_point.x, 
 				getPixelBox().y, width, getPixelBox().height + 1);
 	}
 

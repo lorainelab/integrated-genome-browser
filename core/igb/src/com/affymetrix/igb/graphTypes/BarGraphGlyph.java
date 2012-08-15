@@ -3,14 +3,14 @@ package com.affymetrix.igb.graphTypes;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class BarGraphGlyph extends AbstractGraphGlyph.GraphStyle {
+public class BarGraphGlyph extends GraphGlyph.GraphStyle {
 	
-	public BarGraphGlyph(AbstractGraphGlyph graphGlyph){
+	public BarGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 		

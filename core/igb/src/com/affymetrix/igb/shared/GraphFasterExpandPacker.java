@@ -30,14 +30,14 @@ public class GraphFasterExpandPacker extends FasterExpandPacker {
 	private static class GraphGlyphPosComparator implements Comparator<GlyphI> {
 
 		public int compare(GlyphI g1, GlyphI g2) {
-			if (!(g1 instanceof AbstractGraphGlyph) || !(g2 instanceof AbstractGraphGlyph)) {
+			if (!(g1 instanceof GraphGlyph) || !(g2 instanceof GraphGlyph)) {
 				return Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
 			}
 
-			AbstractGraphGlyph gg1 = (AbstractGraphGlyph) g1;
+			GraphGlyph gg1 = (GraphGlyph) g1;
 			GraphState gs1 = gg1.graf.getGraphState();
 
-			AbstractGraphGlyph gg2 = (AbstractGraphGlyph) g2;
+			GraphGlyph gg2 = (GraphGlyph) g2;
 			GraphState gs2 = gg2.graf.getGraphState();
 
 			return Double.compare(gs1.getPosition(), gs2.getPosition());

@@ -3,15 +3,15 @@ package com.affymetrix.igb.graphTypes;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class LineGraphGlyph extends AbstractGraphGlyph.GraphStyle {
+public class LineGraphGlyph extends GraphGlyph.GraphStyle {
 
-	public LineGraphGlyph(AbstractGraphGlyph graphGlyph){
+	public LineGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	

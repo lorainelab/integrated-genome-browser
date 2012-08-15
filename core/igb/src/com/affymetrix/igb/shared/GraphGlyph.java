@@ -1002,12 +1002,9 @@ public class GraphGlyph extends Glyph {
 		return lab;
 	}
 
-	/********************** Newly Added ********************/
-	public ITrackStyleExtended getAnnotStyle() {
-		return state.getTierStyle();
-	}
-	/********************** Newly Added ********************/
-
+	/*
+	 * Sub-Class for different graph styles
+	 */
 	public abstract class GraphStyle {
 
 		protected static final double transition_scale = 500;

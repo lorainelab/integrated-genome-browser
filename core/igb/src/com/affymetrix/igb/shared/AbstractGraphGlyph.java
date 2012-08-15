@@ -73,26 +73,7 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 		
 	@Override
 	public String getLabel() {
-		String lab = graphGlyph.getGraphState().getTierStyle().getTrackName();
-		// If it has a combo style and that is collapsed, then only use the label
-		// from the combo style.  Otherwise use the individual tier style.
-		if (graphGlyph.getGraphState().getComboStyle() != null && graphGlyph.getGraphState().getComboStyle().getCollapsed()) {
-			lab = graphGlyph.getGraphState().getComboStyle().getTrackName();
-		}
-		if (lab == null) {
-			// if no label was set, try using ID
-			Object mod = this.getInfo();
-			if (mod instanceof SeqSymmetry) {
-				lab = ((SeqSymmetry) mod).getID();
-			}
-			if (lab == null) {
-				lab = graphGlyph.getGraphState().getTierStyle().getUniqueName();
-			}
-		}
-
-		lab += " (" + nformat.format(graphGlyph.getGraphState().getVisibleMinY()) + ", " + nformat.format(graphGlyph.getGraphState().getVisibleMaxY()) + ")";
-
-		return lab;
+		return graphGlyph.getLabel();
 	}
 	
 	@Override

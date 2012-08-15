@@ -375,7 +375,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	    heightLabel.setEnabled(heightEnabled);
 	    vis_bounds_setter.setGraphs(enabled ? graphGlyphs : null);
 		if (enabled && graphGlyphs.size() == 1) {
-			double the_height = graphGlyphs.get(0).getAnnotStyle().getHeight();
+			double the_height = graphGlyphs.get(0).getGraphState().getTierStyle().getHeight();
 			heightSlider.setValue((int) the_height);
 		}
 		else {
@@ -398,8 +398,8 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 			if (isTierGlyph(parentgl)) {
 				parentgl.pack(igbService.getView());
 			}
-			if (gl.getAnnotStyle().getFloatTier()) {
-				gl.getAnnotStyle().setHeight(height);
+			if (gl.getGraphState().getTierStyle().getFloatTier()) {
+				gl.getGraphState().getTierStyle().setHeight(height);
 			}
 		}
 		igbService.packMap(false, true);

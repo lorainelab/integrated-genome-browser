@@ -112,12 +112,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/Thresholding/src</label>
-                    <type>java</type>
-                    <location>plugins/Thresholding/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/RestrictionsSites/src</label>
                     <type>java</type>
                     <location>plugins/RestrictionsSites/src</location>
@@ -530,10 +524,6 @@
                         <location>plugins/SearchModeLucene/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/Thresholding/src</label>
-                        <location>plugins/Thresholding/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/RestrictionsSites/src</label>
                         <location>plugins/RestrictionsSites/src</location>
                     </source-folder>
@@ -719,7 +709,6 @@
                 <package-root>plugins/BigBedHandler/src</package-root>
                 <package-root>plugins/BigWigHandler/src</package-root>
                 <package-root>plugins/SearchModeSymmetryFilter/src</package-root>
-                <package-root>plugins/Thresholding/src</package-root>
                 <package-root>plugins/TrackOperations/src</package-root>
                 <package-root>plugins/TrackAdjuster/src</package-root>
                 <package-root>plugins/IGBScript/src</package-root>

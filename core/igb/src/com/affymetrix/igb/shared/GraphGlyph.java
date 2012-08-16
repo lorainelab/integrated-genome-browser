@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -36,13 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 public class GraphGlyph extends Glyph {
-	private static final boolean TIME_DRAWING = false;
-	private static final boolean DEBUG = false;
 	private static Font default_font = NeoConstants.default_plain_font;
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
-	private static final int xpix_offset = 0;
-	private static final Timer tim = new Timer();
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
 	 */
@@ -87,6 +82,11 @@ public class GraphGlyph extends Glyph {
 	private boolean draw_handle = true;
 	private GraphStyle graphStyle;
 	private boolean lockGraphStyle;
+	
+	// This variables can be probably removed
+	protected final Point t_curr_point = new Point(0, 0);
+	protected final Point t_prev_point = new Point(0, 0);
+	protected final Point2D.Double t_coord = new Point2D.Double(0, 0);
 	
 	public GraphGlyph(GraphState state) {
 		super();
@@ -724,14 +724,27 @@ public class GraphGlyph extends Glyph {
 
 	@Override
 	public void draw(ViewI view) {
-		graphStyle.draw(view);
-	}
-
-	private float determineYZero() {
-		if (getVisibleMinY() > 0) {
-			return getVisibleMinY();
+		if (getInfo() != null && getInfo() instanceof GraphSym
+				&& !((GraphSym) getInfo()).isValid()) {
+			return;
 		}
-		return Math.min(0, getVisibleMaxY());
+		// GAH 9-13-2002
+		// hack to get thresholding to work -- thresh line child glyph keeps getting removed
+		//   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...
+		if (getChildCount() == 0) {
+			if (thresh_glyph == null) {
+				thresh_glyph = new ThreshGlyph();
+				thresh_glyph.setSelectable(false);
+				thresh_glyph.setColor(thresh_color);
+			}
+			addChild(thresh_glyph);
+		}
+		graphStyle.draw(view);
+		if (getShowThreshold()) {
+			drawThresholdedRegions(view, null, null);
+		} else {
+			thresh_glyph.setVisibility(false);
+		}
 	}
 
 	// this should not be here, only for backwards compatibility
@@ -753,7 +766,7 @@ public class GraphGlyph extends Glyph {
 		}
 	}
 	
-	protected void drawHandleAxisAndLabel(ViewI view) {
+	private void drawHandleAxisAndLabel(ViewI view) {
 		// drawing the "handle", which is the only part of the graph that recognizes hits
 		// not a normal "child", so if it is hit then graph is considered to be hit...
 		drawHandle(view);
@@ -772,12 +785,9 @@ public class GraphGlyph extends Glyph {
 		if (getShowLabel()) {
 			drawLabel(view);
 		}
-		if (TIME_DRAWING) {
-			System.out.println("graph draw time: " + tim.read());
-		}
 	}
 
-	protected void drawAxisLabel(ViewI view) {
+	private void drawAxisLabel(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 
 		Graphics g = view.getGraphics();
@@ -806,7 +816,7 @@ public class GraphGlyph extends Glyph {
 
 	}
 
-	public void drawLabel(ViewI view) {
+	protected void drawLabel(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 		Graphics g = view.getGraphics();
 		g.setColor(getForegroundColor());
@@ -815,7 +825,7 @@ public class GraphGlyph extends Glyph {
 		g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
 	}
 
-	public void drawHandle(ViewI view) {
+	protected void drawHandle(ViewI view) {
 		if (!draw_handle) {
 			return;
 		}
@@ -962,7 +972,7 @@ public class GraphGlyph extends Glyph {
 				}
 			}
 			if (draw_previous) {
-				graphStyle.drawPrevious(pass_thresh_start, span_start_shift, pass_thresh_end, span_end_shift, min_run_threshold, view, make_syms, aseq, region_holder, g);
+				drawPrevious(pass_thresh_start, span_start_shift, pass_thresh_end, span_end_shift, min_run_threshold, view, make_syms, aseq, region_holder, g);
 				draw_previous = false;
 				pass_threshold_mode = pass_score_thresh;
 				if (pass_score_thresh) {
@@ -974,7 +984,47 @@ public class GraphGlyph extends Glyph {
 		}
 		// clean up by doing a draw if exited loop while still in pass_threshold_mode
 		if (pass_threshold_mode && (pass_thresh_end != pass_thresh_start)) {
-			graphStyle.drawPrevious2(pass_thresh_start, span_start_shift, pass_thresh_end, span_end_shift, min_run_threshold, view, make_syms, aseq, region_holder, g);
+			drawPrevious2(pass_thresh_start, span_start_shift, pass_thresh_end, span_end_shift, min_run_threshold, view, make_syms, aseq, region_holder, g);
+		}
+	}
+	
+	private void drawPrevious(int pass_thresh_start, double span_start_shift, int pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
+		double draw_min = pass_thresh_start + span_start_shift;
+		double draw_max = pass_thresh_end + span_end_shift;
+		// make sure that length of region is > min_run_threshold
+		// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
+		if (draw_max - draw_min > min_run_threshold) {
+			// make sure aren't drawing single points
+			t_coord.x = draw_min;
+			view.transformToPixels(t_coord, t_prev_point);
+			t_coord.x = draw_max;
+			view.transformToPixels(t_coord, t_curr_point);
+			if (make_syms) {
+				SeqSymmetry sym = new SingletonSeqSymmetry((int) draw_min, (int) draw_max, aseq);
+				region_holder.addChild(sym);
+			} else {
+				drawRectOrLine(g, t_prev_point.x, getPixelBox().y + getPixelBox().height - thresh_contig_height, t_curr_point.x - t_prev_point.x + 1, thresh_contig_height);
+			}
+		}
+	}
+
+	private void drawPrevious2(int pass_thresh_start, double span_start_shift, int pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
+		double draw_min = pass_thresh_start + span_start_shift;
+		double draw_max = pass_thresh_end + span_end_shift;
+		// make sure that length of region is > min_run_threshold
+		// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
+		if (draw_max - draw_min > min_run_threshold) {
+			// make sure aren't drawing single points
+			t_coord.x = draw_min;
+			view.transformToPixels(t_coord, t_prev_point);
+			t_coord.x = draw_max;
+			view.transformToPixels(t_coord, t_curr_point);
+			if (make_syms) {
+				SeqSymmetry sym = new SingletonSeqSymmetry(pass_thresh_start, pass_thresh_end, aseq);
+				region_holder.addChild(sym);
+			} else {
+				drawRectOrLine(g, t_prev_point.x, getPixelBox().y + getPixelBox().height - thresh_contig_height, t_curr_point.x - t_prev_point.x + 1, thresh_contig_height);
+			}
 		}
 	}
 		
@@ -1006,9 +1056,14 @@ public class GraphGlyph extends Glyph {
 	 * Sub-Class for different graph styles
 	 */
 	public abstract class GraphStyle {
-
+		private static final boolean TIME_DRAWING = false;
+		private static final boolean DEBUG = false;
+		private static final int xpix_offset = 0;
+		
 		protected static final double transition_scale = 500;
 		protected static final double mismatch_transition_scale = 30;
+		
+		private final Timer tim = new Timer();
 		protected final Point zero_point = new Point(0, 0);
 		protected final Point curr_point = new Point(0, 0);
 		protected final Point prev_point = new Point(0, 0);
@@ -1070,6 +1125,35 @@ public class GraphGlyph extends Glyph {
 		
 		protected Color getLighterColor(){
 			return GraphGlyph.this.lighter;
+		}
+		
+		private float determineYZero() {
+			if (getVisibleMinY() > 0) {
+				return getVisibleMinY();
+			}
+			return Math.min(0, getVisibleMaxY());
+		}
+		
+				
+		protected void draw(ViewI view) {
+			doDraw(view);
+		}
+		
+		protected void doDraw(ViewI view) {
+			oldDraw(view);
+		}
+
+		public void oldDraw(ViewI view) {
+			if (TIME_DRAWING) {
+				tim.start();
+			}
+			view.transformToPixels(getCoordBox(), getPixelBox());
+
+			if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
+				DrawTheGraph(view);
+			}
+
+			drawHandleAxisAndLabel(view);
 		}
 		
 		protected void drawSmart(ViewI view) {
@@ -1185,48 +1269,7 @@ public class GraphGlyph extends Glyph {
 			drawRectOrLine(g, prev_point.x, ystart, 1, yend - ystart);
 		}
 
-		protected void doDraw(ViewI view) {
-			oldDraw(view);
-		}
-
-		public void oldDraw(ViewI view) {
-			if (TIME_DRAWING) {
-				tim.start();
-			}
-			view.transformToPixels(getCoordBox(), getPixelBox());
-
-			if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
-				DrawTheGraph(view);
-			}
-
-			drawHandleAxisAndLabel(view);
-		}
-
 		protected void colorChange(Graphics g) {
-		}
-
-		public void draw(ViewI view) {
-			if (getInfo() != null && getInfo() instanceof GraphSym
-					&& !((GraphSym) getInfo()).isValid()) {
-				return;
-			}
-			// GAH 9-13-2002
-			// hack to get thresholding to work -- thresh line child glyph keeps getting removed
-			//   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...
-			if (getChildCount() == 0) {
-				if (thresh_glyph == null) {
-					thresh_glyph = new ThreshGlyph();
-					thresh_glyph.setSelectable(false);
-					thresh_glyph.setColor(thresh_color);
-				}
-				addChild(thresh_glyph);
-			}
-			doDraw(view);
-			if (getShowThreshold()) {
-				drawThresholdedRegions(view, null, null);
-			} else {
-				thresh_glyph.setVisibility(false);
-			}
 		}
 
 		protected void bigDrawLoop(int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
@@ -1329,44 +1372,5 @@ public class GraphGlyph extends Glyph {
 			}
 		}
 
-		private void drawPrevious(int pass_thresh_start, double span_start_shift, int pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
-			double draw_min = pass_thresh_start + span_start_shift;
-			double draw_max = pass_thresh_end + span_end_shift;
-			// make sure that length of region is > min_run_threshold
-			// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
-			if (draw_max - draw_min > min_run_threshold) {
-				// make sure aren't drawing single points
-				coord.x = draw_min;
-				view.transformToPixels(coord, prev_point);
-				coord.x = draw_max;
-				view.transformToPixels(coord, curr_point);
-				if (make_syms) {
-					SeqSymmetry sym = new SingletonSeqSymmetry((int) draw_min, (int) draw_max, aseq);
-					region_holder.addChild(sym);
-				} else {
-					drawRectOrLine(g, prev_point.x, getPixelBox().y + getPixelBox().height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
-				}
-			}
-		}
-
-		private void drawPrevious2(int pass_thresh_start, double span_start_shift, int pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
-			double draw_min = pass_thresh_start + span_start_shift;
-			double draw_max = pass_thresh_end + span_end_shift;
-			// make sure that length of region is > min_run_threshold
-			// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
-			if (draw_max - draw_min > min_run_threshold) {
-				// make sure aren't drawing single points
-				coord.x = draw_min;
-				view.transformToPixels(coord, prev_point);
-				coord.x = draw_max;
-				view.transformToPixels(coord, curr_point);
-				if (make_syms) {
-					SeqSymmetry sym = new SingletonSeqSymmetry(pass_thresh_start, pass_thresh_end, aseq);
-					region_holder.addChild(sym);
-				} else {
-					drawRectOrLine(g, prev_point.x, getPixelBox().y + getPixelBox().height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
-				}
-			}
-		}
 	}
 }

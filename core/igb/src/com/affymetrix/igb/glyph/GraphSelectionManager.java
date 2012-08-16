@@ -198,8 +198,8 @@ public final class GraphSelectionManager
 			}
 		} else if (src == show_bounds) {
 			current_graph.setShowBounds(!current_graph.getShowBounds());
-		} else if (src == show_graph) {
-			current_graph.setShowGraph(!current_graph.getShowGraph());
+		/*} else if (src == show_graph) {
+			current_graph.setShowGraph(!current_graph.getShowGraph()); */
 		} else if (src == show_label) {
 			current_graph.setShowLabel(!current_graph.getShowLabel());
 		} else if (src == show_axis) {

@@ -126,7 +126,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
 			for (GraphGlyph gl : graphGlyphs) {
 				if ("heatmapgraph".equals(gl.getName())) {
-					gl.setShowGraph(true);
+//					gl.setShowGraph(true);
 					if (!(gl.getHeatMap() instanceof DynamicStyleHeatMap)) {
 						gl.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, gl.getGraphState().getTierStyle(), 0.0f, 0.5f));
 					}
@@ -138,7 +138,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			if (hm != null) {
 				for (GraphGlyph gl : graphGlyphs) {
 					if ("heatmapgraph".equals(gl.getName())) {
-						gl.setShowGraph(true);
+//						gl.setShowGraph(true);
 						gl.setHeatMap(hm);
 					}
 				}

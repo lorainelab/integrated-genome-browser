@@ -499,9 +499,11 @@ public class GraphGlyph extends Glyph {
 		state.getTierStyle().setForeground(c);
 	}
 
+	/*
 	public boolean getShowGraph() {
 		return state.getShowGraph();
 	}
+	*/
 
 	public boolean getShowBounds() {
 		return state.getShowBounds();
@@ -519,10 +521,12 @@ public class GraphGlyph extends Glyph {
 		state.setShowAxis(b);
 	}
 
+	/*
 	public void setShowGraph(boolean show) {
 		state.setShowGraph(show);
 	}
-
+	*/
+	
 	public void setShowBounds(boolean show) {
 		state.setShowBounds(show);
 	}
@@ -1149,7 +1153,7 @@ public class GraphGlyph extends Glyph {
 			}
 			view.transformToPixels(getCoordBox(), getPixelBox());
 
-			if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
+			if (/*getShowGraph() && */graf != null && graf.getPointCount() > 0) {
 				DrawTheGraph(view);
 			}
 
@@ -1162,7 +1166,7 @@ public class GraphGlyph extends Glyph {
 			}
 			view.transformToPixels(getCoordBox(), getPixelBox());
 
-			if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
+			if (/*getShowGraph() && */graf != null && graf.getPointCount() > 0) {
 				drawGraph(view);
 			}
 

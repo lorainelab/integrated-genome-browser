@@ -102,5 +102,10 @@ Import-Package: affymetrix.calvin.data,
  org.w3c.dom.traversal,
  org.w3c.dom.xpath,
  org.xml.sax,
+ net.sf.cglib.core,
+ net.sf.cglib.proxy,
+ ch.lambdaj,
+ org.hamcrest,
+ org.hamcrest.core,
  sun.reflect;resolution:=optional
  

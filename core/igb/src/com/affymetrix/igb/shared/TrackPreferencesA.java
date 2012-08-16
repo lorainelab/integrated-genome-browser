@@ -30,11 +30,16 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph.GraphStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.*;
+import org.hamcrest.core.*;
+
 import com.jidesoft.combobox.ColorComboBox;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.*;
-
 import javax.swing.*;
 
 /**
@@ -96,9 +101,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox labelCheckBox = getLabelCheckBox();
 		boolean b = labelCheckBox.isSelected();
-		for (GraphGlyph gl : graphGlyphs) {
-			gl.setShowLabel(b);
-		}
+		forEach(graphGlyphs).setShowLabel(b);
 		updateDisplay();
 	}
 
@@ -106,9 +109,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
 		boolean b = YAxisCheckBox.isSelected();
-		for (GraphGlyph gl : graphGlyphs) {
-			gl.setShowAxis(b);
-		}
+		forEach(graphGlyphs).setShowAxis(b);
 		updateDisplay();
 	}
 

@@ -34,9 +34,9 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 	private AbstractGraphGlyph createInstance(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv){
 		try {
 			GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
-			AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
 			GraphStyle style = preferredGraphType.getConstructor(new Class[]{GraphGlyph.class}).newInstance(graphGlyph);
-			result.getGraphGlyph().setGraphStyle(style);
+			graphGlyph.setGraphStyle(style);
+			AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
 			if(smv != null){
 				result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 			}

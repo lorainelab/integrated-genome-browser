@@ -222,7 +222,7 @@ public class SeqMapView extends JPanel
 	private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
 
 		public void preferenceChange(PreferenceChangeEvent pce) {
-			if (getAxisTier() == null) {
+			if (axis_tier == null) {
 				return;
 			}
 

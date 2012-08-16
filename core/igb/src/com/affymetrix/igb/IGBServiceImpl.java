@@ -308,7 +308,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 				TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), method, style);
 			} else {
 				for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
-					style = gg.getGraphState().getTierStyle();
+					style = gg.getGraphGlyph().getGraphState().getTierStyle();
 					method = style.getMethodName();
 					TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), method, style);
 				}

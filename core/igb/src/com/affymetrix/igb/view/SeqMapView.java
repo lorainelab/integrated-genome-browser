@@ -1037,7 +1037,7 @@ public class SeqMapView extends JPanel
 			if (tierGlyph.getViewModeGlyph() instanceof ComboGlyph && tierGlyph.getViewModeGlyph().getChildren() != null) {
 				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
 					AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
-					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphState().getComboStyle() != null)) {
+					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null)) {
 						((TierGlyphImpl)vg.getTierGlyph()).dejoin(tierGlyph.getViewModeGlyph(), vg);
 						selectTrack(vg.getTierGlyph(), true);
 						change_happened = true;
@@ -1058,8 +1058,8 @@ public class SeqMapView extends JPanel
 		Set<TierGlyph> comboTracks = new HashSet<TierGlyph>();
 		for (TierGlyph tg : tiers) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
-			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphState().getComboStyle() != null) {
-				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph) vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
+			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null) {
+				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
 				comboTracks.add(comboTierGlyph);
 				comboTierGlyph.setUnloadedOK(true);
 				((TierGlyphImpl)tg).enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
@@ -1261,7 +1261,7 @@ public class SeqMapView extends JPanel
 		//Remove hidden Graphs
 		for (GlyphI g : glyphlist) {
 			gg = (AbstractGraphGlyph) g;
-			if (gg.getGraphState().getTierStyle().getShow()) {
+			if (gg.getGraphGlyph().getGraphState().getTierStyle().getShow()) {
 				visibleList.add(g);
 			}
 		}

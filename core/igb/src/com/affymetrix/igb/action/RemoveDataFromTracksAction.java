@@ -51,7 +51,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 					TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
 				} else {
 					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
-						style = gg.getGraphState().getTierStyle();
+						style = gg.getGraphGlyph().getGraphState().getTierStyle();
 						method = style.getMethodName();
 						TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
 					}

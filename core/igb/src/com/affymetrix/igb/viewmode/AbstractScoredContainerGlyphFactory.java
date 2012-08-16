@@ -195,7 +195,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 
 	private AbstractGraphGlyph displayGraphSym(GraphIntervalSym graf, SeqMapViewExtendedI smv) {
 		AbstractGraphGlyph graph_glyph = createViewModeGlyph(graf, graf.getGraphState(), smv);
-		GraphState gstate = graph_glyph.getGraphState();
+		GraphState gstate = graph_glyph.getGraphGlyph().getGraphState();
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(graf.getGraphName());
 

@@ -37,7 +37,7 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 				((TrackStyle)tierGlyph.getAnnotStyle()).restoreToDefault();
 			}
 			if(tierGlyph.getViewModeGlyph() instanceof AbstractGraphGlyph ){
-				((AbstractGraphGlyph)tierGlyph.getViewModeGlyph()).getGraphState().restoreToDefault();
+				((AbstractGraphGlyph)tierGlyph.getViewModeGlyph()).getGraphGlyph().getGraphState().restoreToDefault();
 			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);

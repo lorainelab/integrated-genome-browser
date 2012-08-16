@@ -110,7 +110,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				style.setFloatTier(false);
 				
 				if(gl instanceof AbstractGraphGlyph){
-					((AbstractGraphGlyph)gl).getGraphState().setShowLabel(false);
+					((AbstractGraphGlyph)gl).getGraphGlyph().getGraphState().setShowLabel(false);
 				}
 
 				something_changed = true;

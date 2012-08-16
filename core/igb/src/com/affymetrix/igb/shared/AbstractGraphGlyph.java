@@ -14,10 +14,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Rectangle2D;
@@ -198,9 +196,6 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 	public GraphGlyph getGraphGlyph(){
 		return graphGlyph;
 	}
-	
-	public GraphState getGraphState() {
-		return graphGlyph.getGraphState();
-	}
+
 /*************************** Should be removed ********************************/
 }

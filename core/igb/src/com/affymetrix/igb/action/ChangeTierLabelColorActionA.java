@@ -61,9 +61,9 @@ public class ChangeTierLabelColorActionA extends SeqMapViewActionA {
 					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
 						if (fg) {
 							gg.setColor(chooser.getColor());
-							gg.getGraphState().getTierStyle().setLabelForeground(chooser.getColor());
+							gg.getGraphGlyph().getGraphState().getTierStyle().setLabelForeground(chooser.getColor());
 						} else {
-							gg.getGraphState().getTierStyle().setLabelBackground(chooser.getColor());
+							gg.getGraphGlyph().getGraphState().getTierStyle().setLabelBackground(chooser.getColor());
 						}
 					}
 				}

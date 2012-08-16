@@ -275,7 +275,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		ITrackStyleExtended combo_style = null;
 		if (topgl != null && topgl instanceof AbstractGraphGlyph) {
 			AbstractGraphGlyph gg = (AbstractGraphGlyph) topgl;
-			combo_style = gg.getGraphState().getComboStyle();
+			combo_style = gg.getGraphGlyph().getGraphState().getComboStyle();
 		}
 
 		if (preserve_selections) {
@@ -289,7 +289,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			for (int i = 0; i < hcount; i++) {
 				Object obj = hits.get(i);
 				if (obj instanceof AbstractGraphGlyph
-						&& ((AbstractGraphGlyph) obj).getGraphState().getComboStyle() == combo_style) {
+						&& ((AbstractGraphGlyph) obj).getGraphGlyph().getGraphState().getComboStyle() == combo_style) {
 					graphs.add((AbstractGraphGlyph) obj);
 				}
 			}

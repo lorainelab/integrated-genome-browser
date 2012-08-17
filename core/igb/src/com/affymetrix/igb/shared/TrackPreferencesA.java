@@ -218,29 +218,30 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
-		for (GraphGlyph graphGlyph : graphGlyphs) {
-			GraphType selectedMode = null;
-			if (getGraphStyleLineRadioButton().isSelected()) {
-				selectedMode = GraphType.LINE_GRAPH;
-			}
-			if (getGraphStyleBarRadioButton().isSelected()) {
-				selectedMode = GraphType.BAR_GRAPH;
-			}
-			if (getGraphStyleStairStepRadioButton().isSelected()) {
-				selectedMode = GraphType.STAIRSTEP_GRAPH;
-			}
-			if (getGraphStyleDotRadioButton().isSelected()) {
-				selectedMode = GraphType.DOT_GRAPH;
-			}
-			if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
-				selectedMode = GraphType.MINMAXAVG;
-			}
-			if (getGraphStyleHeatMapRadioButton().isSelected()) {
-				selectedMode = GraphType.HEAT_MAP;
-			}
-			graphGlyph.getGraphState().setGraphStyle(selectedMode);
+		GraphType selectedMode = null;
+		if (getGraphStyleLineRadioButton().isSelected()) {
+			selectedMode = GraphType.LINE_GRAPH;
+		}
+		if (getGraphStyleBarRadioButton().isSelected()) {
+			selectedMode = GraphType.BAR_GRAPH;
+		}
+		if (getGraphStyleStairStepRadioButton().isSelected()) {
+			selectedMode = GraphType.STAIRSTEP_GRAPH;
+		}
+		if (getGraphStyleDotRadioButton().isSelected()) {
+			selectedMode = GraphType.DOT_GRAPH;
+		}
+		if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
+			selectedMode = GraphType.MINMAXAVG;
+		}
+		if (getGraphStyleHeatMapRadioButton().isSelected()) {
+			selectedMode = GraphType.HEAT_MAP;
 		}
 		
+		for (GraphGlyph graphGlyph : graphGlyphs) {
+			graphGlyph.getGraphState().setGraphStyle(selectedMode);
+		}
+
 		buttonGroup1Reset();
 		graphStyleHeatMapComboBoxReset();
 		// TODO : Need to create method in igbService to change graph type.

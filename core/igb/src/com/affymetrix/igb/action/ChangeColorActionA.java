@@ -48,7 +48,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 
 		final JColorChooser chooser = new JColorChooser();
 
-		ITrackStyleExtended style_0 = ((ViewModeGlyph)getSeqMapView().getAllSelectedTiers().get(0)).getAnnotStyle();
+		ITrackStyleExtended style_0 = ((TierGlyph)getSeqMapView().getAllSelectedTiers().get(0)).getAnnotStyle();
 		if (style_0 != null) {
 			setChooserColor(chooser, style_0);
 		}
@@ -75,13 +75,13 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	private void changeColor(Color color){
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		List<ViewModeGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
+		List<TierGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
 		if (!vgList.isEmpty()) {
-			for (ViewModeGlyph vg : vgList) {
+			for (TierGlyph vg : vgList) {
 				if (iterateMultigraph && vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
 					for (GlyphI child : vg.getChildren()) {
-						if (child instanceof ViewModeGlyph) {
-							ITrackStyleExtended style = ((ViewModeGlyph)child).getAnnotStyle();
+						if (child instanceof TierGlyph) {
+							ITrackStyleExtended style = ((TierGlyph)child).getAnnotStyle();
 							if (style != null) {
 								setStyleColor(color, style);
 							}

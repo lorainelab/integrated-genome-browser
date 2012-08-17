@@ -9,8 +9,6 @@
  */
 package com.affymetrix.igb.view;
 
-import cern.colt.list.IntArrayList;
-import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.*;
@@ -18,23 +16,25 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import cern.colt.list.IntArrayList;
+
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TransformTierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.CoordinateStyle;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.shared.TierGlyphImpl;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
+
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
@@ -163,29 +163,31 @@ public final class OrfAnalyzer extends JComponent
 		
 		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);
 		SimpleTrackStyle forSts = new SimpleTrackStyle("Stop Codon", false);
+		forSts.setBackground(bgcol);
 		forSts.setLabelBackground(bgcol);
-		forSts.setLabelForeground(bgcol);
+		//forSts.setLabelForeground(bgcol);
+		forSts.setTrackName("Stop Codons");
 		fortier = new TransformTierGlyph(forSts);
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(bgcol);
+		fortier.setBackgroundColor(bgcol);
 		fortier.setDirection(TierGlyph.Direction.FORWARD);
 
 		AffyTieredMap map = smv.getSeqMap();
-		TierGlyph forTierGlyph = new TierGlyphImpl(null, CoordinateStyle.coordinate_annot_style, Direction.FORWARD, smv, fortier);
-
-		map.addTier(forTierGlyph, true);  // put forward tier above axis
+		map.addTier(fortier, true);  // put forward tier above axis
 
 		SimpleTrackStyle revSts = new SimpleTrackStyle("Stop Codon", false);
+		revSts.setBackground(bgcol);
 		revSts.setLabelBackground(bgcol);
-		revSts.setLabelForeground(bgcol);
+		//revSts.setLabelForeground(bgcol);
+		revSts.setTrackName("Stop Codons");
 		revtier = new TransformTierGlyph(revSts);
-		revtier.setLabel("Stop Codons");
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);
+		revtier.setBackgroundColor(bgcol);
 		revtier.setDirection(TierGlyph.Direction.REVERSE);
-		TierGlyph reTierGlyph = new TierGlyphImpl(null, CoordinateStyle.coordinate_annot_style, Direction.REVERSE, smv, revtier);
-		map.addTier(reTierGlyph, false);  // put reverse tier below axis
+		map.addTier(revtier, false);  // put reverse tier below axis
 
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
 		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
@@ -214,7 +216,7 @@ public final class OrfAnalyzer extends JComponent
 			point_template.setColor(pointcol);
 			point_template.setCoords(residue_offset, 0, vseq.getLength(), 10);
 
-			TierGlyph tier = forward ? fortier.getTierGlyph() : revtier.getTierGlyph();
+			TierGlyph tier = forward ? fortier : revtier;
 			GlyphI orf_glyph = null;
 			if (xpos.length > 0) {
 				GlyphI link_template = new FillRectGlyph();
@@ -290,11 +292,11 @@ public final class OrfAnalyzer extends JComponent
 	private void removeTiersAndCleanup() {
 		AffyTieredMap map = smv.getSeqMap();
 		if (fortier != null) {
-			map.removeTier(fortier.getTierGlyph());
+			map.removeTier(fortier);
 			fortier = null;
 		}
 		if (revtier != null) {
-			map.removeTier(revtier.getTierGlyph());
+			map.removeTier(revtier);
 			revtier = null;
 		}
 		orf_holders.clear();

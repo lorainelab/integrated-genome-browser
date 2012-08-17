@@ -100,6 +100,8 @@ public final class GraphState {
 	private final ITrackStyleExtended tier_style;
 	private ITrackStyleExtended combo_tier_style = null;
 
+	private boolean lockGraphStyle = false;
+	
 	public static final float default_graph_height = 100.0f;
 
 
@@ -181,7 +183,8 @@ public final class GraphState {
 	public int getMinRunThreshold() { return min_run_threshold; }
 	public double getThreshStartShift() { return span_start_shift; }
 	public double getThreshEndShift() { return span_end_shift; }
-
+	public boolean getGraphStyleLocked(){ return lockGraphStyle; }
+	
 	/**
 	 *  Returns either {@link #THRESHOLD_DIRECTION_GREATER} or
 	 *  {@link #THRESHOLD_DIRECTION_LESS_EQUAL} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
@@ -204,7 +207,8 @@ public final class GraphState {
 	public void setMinRunThreshold(int thresh) { min_run_threshold = thresh;}
 	public void setThreshStartShift(double d) { span_start_shift = d;}
 	public void setThreshEndShift(double d) { span_end_shift = d;}
-
+	public void lockGraphStyle(){ lockGraphStyle = true; }
+	
 	/**
 	 *  Set to either {@link #THRESHOLD_DIRECTION_GREATER} or
 	 *  {@link #THRESHOLD_DIRECTION_LESS_EQUAL} or {@link #THRESHOLD_DIRECTION_BETWEEN}.

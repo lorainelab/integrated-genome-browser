@@ -81,7 +81,6 @@ public class GraphGlyph extends Glyph {
 
 	private boolean draw_handle = true;
 	private GraphStyle graphStyle;
-	private boolean lockGraphStyle;
 	
 	// This variables can be probably removed
 	protected final Point t_curr_point = new Point(0, 0);
@@ -755,17 +754,9 @@ public class GraphGlyph extends Glyph {
 	public GraphType getGraphStyle(){
 		return graphStyle.getGraphStyle();
 	}
-	
-	public void lockGraphStyle(){
-		lockGraphStyle = true;
-	}
-	
-	public boolean isGraphStyleLocked(){
-		return lockGraphStyle;
-	}
-	
+		
 	public void setGraphStyle(GraphStyle style) {
-		if(!lockGraphStyle){
+		if(!state.getGraphStyleLocked()){
 			this.graphStyle = style;
 		}
 	}

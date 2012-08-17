@@ -445,7 +445,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	private boolean isAllGraphStyleLocked() {
 		for(GraphGlyph graphGlyph : graphGlyphs){
-			if(!graphGlyph.isGraphStyleLocked()){
+			if(!graphGlyph.getGraphState().getGraphStyleLocked()){
 				return false;
 			}
 		}

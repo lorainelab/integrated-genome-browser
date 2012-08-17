@@ -53,7 +53,7 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 
 		public MismatchPileupGlyph(GraphGlyph graphGlyph){
 			super(graphGlyph);
-			graphGlyph.lockGraphStyle();
+			graphGlyph.getGraphState().lockGraphStyle();
 		}
 		
 		@Override

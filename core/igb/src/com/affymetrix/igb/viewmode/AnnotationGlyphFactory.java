@@ -108,7 +108,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	protected void addLeafsToTier(SeqMapViewExtendedI gviewer, SeqSymmetry sym,
-			ViewModeGlyph ftier, ViewModeGlyph rtier,
+			TierGlyph ftier, TierGlyph rtier,
 			int desired_leaf_depth) {
 		int depth = getDepth(sym);
 		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
@@ -128,8 +128,8 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	 *    the symmetry must have a depth of at least 2.
 	 */
 	private void addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry insym,
-			ViewModeGlyph forward_tier,
-			ViewModeGlyph reverse_tier,
+			TierGlyph forward_tier,
+			TierGlyph reverse_tier,
 			boolean parent_and_child) {
 		try {
 			BioSeq annotseq = gviewer.getAnnotatedSeq();
@@ -149,7 +149,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 				return;
 			}  // if no span corresponding to seq, then return;
 
-			ViewModeGlyph the_tier = !pspan.isForward() ? reverse_tier : forward_tier;
+			TierGlyph the_tier = !pspan.isForward() ? reverse_tier : forward_tier;
 			boolean labelInSouth = !pspan.isForward() && (reverse_tier != forward_tier);
 			
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();

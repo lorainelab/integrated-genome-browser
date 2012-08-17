@@ -31,7 +31,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 //	protected final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
 	protected final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
 	protected final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
-	protected final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+	protected final List<GraphState> graphState = new ArrayList<GraphState>();
 	private JRadioButton hiddenRadioButton;
 	
 	/** Creates new form TrackPreferencesGUI */
@@ -1107,7 +1107,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		is_listening = false;
 		getStylePanel().setEnabled(allStyles.size() > 0);
 		getAnnotationsPanel().setEnabled(annotStyles.size() > 0);
-		getGraphPanel().setEnabled(graphGlyphs.size() > 0);
+		getGraphPanel().setEnabled(graphState.size() > 0);
 		floatCheckBoxReset();
 		labelCheckBoxReset();
 		YAxisCheckBoxReset();

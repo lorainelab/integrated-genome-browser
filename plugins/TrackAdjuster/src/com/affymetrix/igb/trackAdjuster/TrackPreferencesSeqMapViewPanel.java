@@ -30,7 +30,7 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allStyles.clear();
 		//allGlyphs.addAll(selected);
-		graphGlyphs.clear();
+		graphState.clear();
 		annotStyles.clear();
 		for (ViewModeGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
@@ -44,12 +44,12 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 				if (useGlyph instanceof MultiGraphGlyph && useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof AbstractGraphGlyph) {
-							graphGlyphs.add(((AbstractGraphGlyph) g).getGraphGlyph());
+							graphState.add(((AbstractGraphGlyph) g).getGraphGlyph().getGraphState());
 							allStyles.add(((ViewModeGlyph) g).getAnnotStyle());
 						}
 					}
 				}else{
-					graphGlyphs.add(((AbstractGraphGlyph) useGlyph).getGraphGlyph());
+					graphState.add(((AbstractGraphGlyph) useGlyph).getGraphGlyph().getGraphState());
 					allStyles.add(useGlyph.getAnnotStyle());
 				}
 			}

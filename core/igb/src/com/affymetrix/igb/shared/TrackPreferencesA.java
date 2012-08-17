@@ -26,6 +26,7 @@ import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
 import static ch.lambdaj.Lambda.*;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import static org.hamcrest.Matchers.*;
 import org.hamcrest.core.*;
@@ -96,7 +97,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox labelCheckBox = getLabelCheckBox();
 		boolean b = labelCheckBox.isSelected();
-		forEach(graphGlyphs).setShowLabel(b);
+		for(GraphState state : graphState){
+			state.setShowLabel(b);
+		}
 		updateDisplay();
 	}
 
@@ -104,13 +107,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
 		boolean b = YAxisCheckBox.isSelected();
-		forEach(graphGlyphs).setShowAxis(b);
+		for(GraphState state : graphState){
+			state.setShowAxis(b);
+		}
 		updateDisplay();
 	}
 
 	@Override
 	protected void graphStyleHeatMapComboBoxActionPerformedA(ActionEvent evt) {
-		if (graphGlyphs.isEmpty() || !is_listening) {
+		if (graphState.isEmpty() || !is_listening) {
 			return;
 		}
 		JComboBox heatMapComboBox = getGraphStyleHeatMapComboBox();
@@ -119,11 +124,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
-			for (GraphGlyph gl : graphGlyphs) {
-				if (gl.getGraphState().getGraphStyle() == GraphType.HEAT_MAP) {
+			for (GraphState state : graphState) {
+				if (state.getGraphStyle() == GraphType.HEAT_MAP) {
 //					gl.setShowGraph(true);
-					if (!(gl.getGraphState().getHeatMap() instanceof DynamicStyleHeatMap)) {
-						gl.getGraphState().setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, gl.getGraphState().getTierStyle(), 0.0f, 0.5f));
+					if (!(state.getHeatMap() instanceof DynamicStyleHeatMap)) {
+						state.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, state.getTierStyle(), 0.0f, 0.5f));
 					}
 				}
 			}
@@ -131,10 +136,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		else {
 			HeatMap hm = HeatMap.getStandardHeatMap(name);
 			if (hm != null) {
-				for (GraphGlyph gl : graphGlyphs) {
-					if (gl.getGraphState().getGraphStyle() == GraphType.HEAT_MAP) {
+				for (GraphState state : graphState) {
+					if (state.getGraphStyle() == GraphType.HEAT_MAP) {
 //						gl.setShowGraph(true);
-						gl.getGraphState().setHeatMap(hm);
+						state.setHeatMap(hm);
 					}
 				}
 			}
@@ -238,8 +243,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			selectedMode = GraphType.HEAT_MAP;
 		}
 		
-		for (GraphGlyph graphGlyph : graphGlyphs) {
-			graphGlyph.getGraphState().setGraphStyle(selectedMode);
+		for (GraphState state : graphState) {
+			state.setGraphStyle(selectedMode);
 		}
 
 		buttonGroup1Reset();
@@ -355,7 +360,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			action.performAction(allStyles.get(0).getTrackName(), name);
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
-				action.performAction((graphGlyphs.get(0)).getGraphState().getComboStyle(), name);
+				action.performAction((graphState.get(0)).getComboStyle(), name);
 			}
 		}
 	}
@@ -387,7 +392,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllGraph() {
-		return allStyles.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
+		return allStyles.size() == graphState.size() && graphState.size() > 0;
 	}
 
 	private boolean isAllAnnot() {
@@ -395,8 +400,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAnyJoined(){
-		for (GraphGlyph gg : graphGlyphs) {
-			if (gg.getGraphState().getComboStyle() != null) {
+		for (GraphState state : graphState) {
+			if (state.getComboStyle() != null) {
 				return true;
 			}
 		}
@@ -404,15 +409,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 	
 	private boolean isOneJoined(){
-		if(graphGlyphs.size() < 2)
+		if(graphState.size() < 2)
 			return false;
 		
-		Object comboStyle = graphGlyphs.get(0).getGraphState().getComboStyle();
+		Object comboStyle = graphState.get(0).getComboStyle();
 		if(comboStyle == null)
 			return false;
 		
-		for(int i=1; i<graphGlyphs.size(); i++){
-			if(graphGlyphs.get(i).getGraphState().getComboStyle() != comboStyle){
+		for(int i=1; i<graphState.size(); i++){
+			if(graphState.get(i).getComboStyle() != comboStyle){
 				return false;
 			}
 		}
@@ -439,8 +444,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllGraphStyleLocked() {
-		for(GraphGlyph graphGlyph : graphGlyphs){
-			if(!graphGlyph.getGraphState().getGraphStyleLocked()){
+		for(GraphState state : graphState){
+			if(!state.getGraphStyleLocked()){
 				return false;
 			}
 		}
@@ -452,8 +457,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox floatCheckBox = getFloatCheckBox();
 
 		boolean allFloat = isAllGraph();
-		for (GraphGlyph glyph : graphGlyphs) {
-			if (!glyph.getGraphState().getTierStyle().getFloatTier()) {
+		for (GraphState state : graphState) {
+			if (!state.getTierStyle().getFloatTier()) {
 				allFloat = false;
 				break;
 			}
@@ -471,8 +476,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox labelCheckBox = getLabelCheckBox();
 		labelCheckBox.setEnabled(isAllGraph());
 		boolean allLabel = isAllGraph();
-		for (GraphGlyph glyph : graphGlyphs) {
-			if (!glyph.getShowLabel()) {
+		for (GraphState state : graphState) {
+			if (!state.getShowLabel()) {
 				allLabel = false;
 				break;
 			}
@@ -485,8 +490,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox yAxisCheckBox = getYAxisCheckBox();
 		yAxisCheckBox.setEnabled(isAllGraph());
 		boolean allYAxis = isAllGraph();
-		for (GraphGlyph gg : graphGlyphs) {
-			if (!gg.getShowAxis()) {
+		for (GraphState state : graphState) {
+			if (!state.getShowAxis()) {
 				allYAxis = false;
 				break;
 			}
@@ -501,16 +506,16 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			boolean allHeatMap = true;
 			HeatMap heatMap = null;
 			boolean heatMapSet = false;
-			for (GraphGlyph gg : graphGlyphs) {
-				if (gg.getGraphState().getGraphStyle() != GraphType.HEAT_MAP) {
+			for (GraphState state : graphState) {
+				if (state.getGraphStyle() != GraphType.HEAT_MAP) {
 					allHeatMap = false;
 					break;
 				}
 				if (heatMap == null && !heatMapSet) {
-					heatMap = gg.getGraphState().getHeatMap();
+					heatMap = state.getHeatMap();
 					heatMapSet = true;
 				}
-				else if (heatMap != gg.getGraphState().getHeatMap()) {
+				else if (heatMap != state.getHeatMap()) {
 					heatMap = null;
 					break;
 				}
@@ -736,12 +741,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (isAllGraph()) {
 			GraphType graphType = null;
 			boolean graphTypeSet = false;
-			for (GraphGlyph vg : graphGlyphs) {
+			for (GraphState state : graphState) {
 				if (graphType == null && !graphTypeSet) {
-					graphType = vg.getGraphState().getGraphStyle();
+					graphType = state.getGraphStyle();
 					graphTypeSet = true;
 				}
-				else if (graphType != vg.getGraphState().getGraphStyle()) {
+				else if (graphType != state.getGraphStyle()) {
 					graphType = null;
 					break;
 				}
@@ -890,7 +895,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
 				trackNameTextField.setEnabled(true);
-				trackNameTextField.setText(graphGlyphs.get(0).getGraphState().getComboStyle().getTrackName());
+				trackNameTextField.setText(graphState.get(0).getComboStyle().getTrackName());
 			}else{
 				trackNameTextField.setEnabled(false);
 				trackNameTextField.setText("");

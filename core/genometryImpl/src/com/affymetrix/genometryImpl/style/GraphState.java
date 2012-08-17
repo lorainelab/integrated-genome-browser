@@ -21,7 +21,7 @@ import java.util.Map;
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
  */
-public final class GraphState {
+public class GraphState {
 
 		//TODO: Make this an enum
 	public static final int THRESHOLD_DIRECTION_GREATER = 1;

@@ -435,7 +435,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		if (axisTier == null){
 			return false;
 		}
-		TierGlyph axis_tier = axisTier.getTierGlyph();
+		TierGlyph axis_tier = axisTier;
 		boolean started_in_axis_tier = (rubber_band_start != null)
 				&& (axis_tier != null)
 				&& axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
@@ -508,7 +508,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			return false;
 		}
 
-		TierGlyph axis_tier = smv.getAxisTier().getTierGlyph();
+		TierGlyph axis_tier = smv.getAxisTier();
 		GlyphI p = g;
 		while (p != null) {
 			if (p == axis_tier) {

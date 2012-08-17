@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.regex.Pattern;
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -667,7 +666,7 @@ public class SeqMapView extends JPanel
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
-		TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier.getTierGlyph();
+		TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier;
 		int axis_index = Math.max(0, cur_tiers.indexOf(axisTierGlyph));	// if not found, set to 0
 		List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
 
@@ -741,7 +740,7 @@ public class SeqMapView extends JPanel
 			shrinkWrap();
 		}
 
-		seqmap.toFront(axis_tier.getTierGlyph());
+		seqmap.toFront(axis_tier);
 
 		// restore floating layers to front of map
 		for (GlyphI layer_glyph : getFloatingLayers(seqmap.getScene().getGlyph())) {
@@ -940,13 +939,12 @@ public class SeqMapView extends JPanel
 
 		resultAxisTier.addChild(axis);
 
-		TierGlyph resultAxisTierGlyph = new TierGlyphImpl(null, CoordinateStyle.coordinate_annot_style, Direction.AXIS, this, resultAxisTier);
 		// it is important to set the colors before adding the tier
 		// to the map, else the label tier colors won't match
 		if (seqmap.getTiers().size() >= tier_index) {
-			seqmap.addTier(resultAxisTierGlyph, tier_index);
+			seqmap.addTier(resultAxisTier, tier_index);
 		} else {
-			seqmap.addTier(resultAxisTierGlyph, false);
+			seqmap.addTier(resultAxisTier, false);
 		}
 
 		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);

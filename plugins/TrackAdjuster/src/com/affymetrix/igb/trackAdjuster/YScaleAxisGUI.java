@@ -14,7 +14,6 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private static final long serialVersionUID = 1L;
 	private final IGBService igbService;
 	private GraphVisibleBoundsSetter vis_bounds_setter;
-	private final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
+	private final List<TierGlyph> allGlyphs = new ArrayList<TierGlyph>();
 	private final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 	private boolean is_listening = true; // used to turn on and off listening to GUI events
 
@@ -323,7 +322,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		allGlyphs.clear();
 		graphGlyphs.clear();
 		for (GlyphI glyph : igbService.getSeqMapView().getAllSelectedTiers()) {
-			ViewModeGlyph useGlyph = (ViewModeGlyph)glyph;
+			TierGlyph useGlyph = (TierGlyph)glyph;
 			allGlyphs.add(useGlyph);
 			if(useGlyph instanceof AbstractGraphGlyph){
 				graphGlyphs.add(((AbstractGraphGlyph)useGlyph).getGraphGlyph());
@@ -351,7 +350,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	}
 
 	private boolean isAllFloat() {
-		for (ViewModeGlyph vg : allGlyphs) {
+		for (TierGlyph vg : allGlyphs) {
 			if (!vg.getAnnotStyle().getFloatTier()) {
 				return false;
 			}

@@ -184,7 +184,7 @@ public final class GlyphEdgeMatcher  {
   // Result undefined if the glyph is not in a tier.
   GlyphI getTier(GlyphI target) {
     GlyphI p = target;
-    while (p.getParent() != null && ! (p instanceof com.affymetrix.igb.shared.ViewModeGlyph)) {
+    while (p.getParent() != null && ! (p instanceof com.affymetrix.igb.shared.TierGlyph)) {
       p = p.getParent();
     }
     return p;

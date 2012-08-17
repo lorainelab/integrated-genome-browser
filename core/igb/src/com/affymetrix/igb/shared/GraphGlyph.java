@@ -262,11 +262,7 @@ public class GraphGlyph extends Glyph {
 	public GraphState getGraphState() {
 		return state;
 	}
-		
-	public String getName(){
-		return graphStyle.getName();
-	}
-	
+			
 	public void drawHandle(boolean b){
 		draw_handle = b;
 	}
@@ -551,15 +547,6 @@ public class GraphGlyph extends Glyph {
 
 	public int getPointCount() {
 		return graf.getPointCount();
-	}
-
-	public void setHeatMap(HeatMap hmap) {
-		state.setHeatMap(hmap);
-		setGraphStyle(new HeatMapGraphGlyph(this));
-	}
-
-	public HeatMap getHeatMap() {
-		return state.getHeatMap();
 	}
 
 	@Override

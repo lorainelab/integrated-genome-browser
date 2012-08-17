@@ -120,10 +120,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		}
 		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
 			for (GraphGlyph gl : graphGlyphs) {
-				if ("heatmapgraph".equals(gl.getName())) {
+				if (gl.getGraphState().getGraphStyle() == GraphType.HEAT_MAP) {
 //					gl.setShowGraph(true);
-					if (!(gl.getHeatMap() instanceof DynamicStyleHeatMap)) {
-						gl.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, gl.getGraphState().getTierStyle(), 0.0f, 0.5f));
+					if (!(gl.getGraphState().getHeatMap() instanceof DynamicStyleHeatMap)) {
+						gl.getGraphState().setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, gl.getGraphState().getTierStyle(), 0.0f, 0.5f));
 					}
 				}
 			}
@@ -132,9 +132,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			HeatMap hm = HeatMap.getStandardHeatMap(name);
 			if (hm != null) {
 				for (GraphGlyph gl : graphGlyphs) {
-					if ("heatmapgraph".equals(gl.getName())) {
+					if (gl.getGraphState().getGraphStyle() == GraphType.HEAT_MAP) {
 //						gl.setShowGraph(true);
-						gl.setHeatMap(hm);
+						gl.getGraphState().setHeatMap(hm);
 					}
 				}
 			}
@@ -507,10 +507,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 					break;
 				}
 				if (heatMap == null && !heatMapSet) {
-					heatMap = gg.getHeatMap();
+					heatMap = gg.getGraphState().getHeatMap();
 					heatMapSet = true;
 				}
-				else if (heatMap != gg.getHeatMap()) {
+				else if (heatMap != gg.getGraphState().getHeatMap()) {
 					heatMap = null;
 					break;
 				}

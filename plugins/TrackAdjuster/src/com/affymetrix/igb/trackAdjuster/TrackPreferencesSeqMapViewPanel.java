@@ -28,10 +28,10 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
 		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
-		allGlyphs.clear();
+		allStyles.clear();
 		//allGlyphs.addAll(selected);
 		graphGlyphs.clear();
-		annotGlyphs.clear();
+		annotStyles.clear();
 		for (ViewModeGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
 			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
@@ -45,30 +45,30 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof AbstractGraphGlyph) {
 							graphGlyphs.add(((AbstractGraphGlyph) g).getGraphGlyph());
-							allGlyphs.add((ViewModeGlyph) g);
+							allStyles.add(((ViewModeGlyph) g).getAnnotStyle());
 						}
 					}
 				}else{
 					graphGlyphs.add(((AbstractGraphGlyph) useGlyph).getGraphGlyph());
-					allGlyphs.add(useGlyph);
+					allStyles.add(useGlyph.getAnnotStyle());
 				}
 			}
 			else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {
-				annotGlyphs.add(useGlyph);
-				allGlyphs.add(useGlyph);
+				annotStyles.add(useGlyph.getAnnotStyle());
+				allStyles.add(useGlyph.getAnnotStyle());
 			}
 		}
-		rootSyms.clear();
-		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(allGlyphs));
-		// First loop through and collect graphs and glyphs
-		for (RootSeqSymmetry rootSym : rootSyms) {
-			if (rootSym.getCategory() == FileTypeCategory.Annotation || rootSym.getCategory() == FileTypeCategory.Alignment) {
-				annotSyms.add(rootSym);
-			}
-			if (rootSym.getCategory() == FileTypeCategory.Graph || rootSym.getCategory() == FileTypeCategory.ScoredContainer) {
-				graphSyms.add(rootSym);
-			}
-		}
+//		rootSyms.clear();
+//		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(allGlyphs));
+//		// First loop through and collect graphs and glyphs
+//		for (RootSeqSymmetry rootSym : rootSyms) {
+//			if (rootSym.getCategory() == FileTypeCategory.Annotation || rootSym.getCategory() == FileTypeCategory.Alignment) {
+//				annotSyms.add(rootSym);
+//			}
+//			if (rootSym.getCategory() == FileTypeCategory.Graph || rootSym.getCategory() == FileTypeCategory.ScoredContainer) {
+//				graphSyms.add(rootSym);
+//			}
+//		}
 		is_listening = true; // turn back on GUI events
 	}
 

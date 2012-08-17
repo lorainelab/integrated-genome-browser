@@ -5,7 +5,7 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import java.awt.event.ActionEvent;
@@ -25,12 +25,12 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	private static final long serialVersionUID = 1L;
 	protected boolean is_listening = true; // used to turn on and off listening to GUI events	
 	private static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-	protected final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-	protected final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
-	protected final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
-	protected final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
+//	protected final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
+//	protected final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
+//	protected final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
+	protected final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
+	protected final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
 	protected final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
-	protected final List<ViewModeGlyph> annotGlyphs = new ArrayList<ViewModeGlyph>();
 	private JRadioButton hiddenRadioButton;
 	
 	/** Creates new form TrackPreferencesGUI */
@@ -1104,8 +1104,8 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 	protected abstract void restoreToDefaultButtonReset();
 	protected final void resetAll() {
 		is_listening = false;
-		getStylePanel().setEnabled(allGlyphs.size() > 0);
-		getAnnotationsPanel().setEnabled(annotGlyphs.size() > 0);
+		getStylePanel().setEnabled(allStyles.size() > 0);
+		getAnnotationsPanel().setEnabled(annotStyles.size() > 0);
 		getGraphPanel().setEnabled(graphGlyphs.size() > 0);
 		floatCheckBoxReset();
 		labelCheckBoxReset();

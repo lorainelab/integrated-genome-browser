@@ -32,6 +32,8 @@ import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
 import static ch.lambdaj.Lambda.*;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import static org.hamcrest.Matchers.*;
 import org.hamcrest.core.*;
 
@@ -349,13 +351,13 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void trackNameTextFieldActionPerformedA(ActionEvent evt) {
 		final JTextField trackNameTextField = getTrackNameTextField();
 		String name = trackNameTextField.getText();
-		if (igbService.getSeqMapView() == null || allGlyphs == null || allGlyphs.isEmpty()) {
+		if (igbService.getSeqMapView() == null || allStyles == null || allStyles.isEmpty()) {
 			return;
 		}
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.RenameTierAction");
-		if (allGlyphs.size() == 1) {
-			action.performAction(allGlyphs.get(0).getAnnotStyle(), name);
+		if (allStyles.size() == 1) {
+			action.performAction(allStyles.get(0).getTrackName(), name);
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
 				action.performAction((graphGlyphs.get(0)).getGraphState().getComboStyle(), name);
@@ -390,11 +392,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllGraph() {
-		return allGlyphs.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
+		return allStyles.size() == graphGlyphs.size() && graphGlyphs.size() > 0;
 	}
 
 	private boolean isAllAnnot() {
-		return allGlyphs.size() == annotGlyphs.size() && annotGlyphs.size() > 0;
+		return allStyles.size() == annotStyles.size() && annotStyles.size() > 0;
 	}
 
 	private boolean isAnyJoined(){
@@ -424,8 +426,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 	
 	private boolean isAnyFloat() {
-		for (ViewModeGlyph ag : allGlyphs) {
-			if (ag.getAnnotStyle().getFloatTier()) {
+		for (ITrackStyleExtended style : allStyles) {
+			if (style.getFloatTier()) {
 				return true;
 			}
 		}
@@ -433,8 +435,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllSupportTwoTrack() {
-		for (ViewModeGlyph ag : annotGlyphs) {
-			if (!MapViewModeHolder.getInstance().styleSupportsTwoTrack(ag.getAnnotStyle())) {
+		for (ITrackStyleExtended style : annotStyles) {
+			if (!MapViewModeHolder.getInstance().styleSupportsTwoTrack(style)) {
 				return false;
 			}
 		}
@@ -541,16 +543,16 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		Integer labelSize = -1;
 		boolean labelSizeSet = false;
-		for (ViewModeGlyph vg : allGlyphs) {
+		for (ITrackStyleExtended style: allStyles) {
 			if (labelSize == -1 && !labelSizeSet) {
-				labelSize = (int)vg.getAnnotStyle().getTrackNameSize();
+				labelSize = (int)style.getTrackNameSize();
 				labelSizeSet = true;
 			}
-			else if (labelSize != (int)vg.getAnnotStyle().getTrackNameSize()) {
+			else if (labelSize != (int)style.getTrackNameSize()) {
 				labelSize = -1;
 			}
 		}
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
+		boolean enable = allStyles.size() > 0 && !isAnyFloat();
 		labelSizeComboBox.setEnabled(enable);
 		getLabelSizeLabel().setEnabled(enable);
 		if (!enable || labelSize == -1) {
@@ -564,8 +566,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void colorSchemeComboBoxReset() {
 		ColorSchemeComboBox colorSchemeComboBox = getColorSchemeComboBox();
-		colorSchemeComboBox.setEnabled(allGlyphs.size() > 0);
-		getColorSchemeLabel().setEnabled(allGlyphs.size() > 0);
+		colorSchemeComboBox.setEnabled(allStyles.size() > 0);
+		getColorSchemeLabel().setEnabled(allStyles.size() > 0);
 	}
 
 	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
@@ -575,10 +577,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		return sym;
 	}
 
-	private Set<String> getFields(ViewModeGlyph glyph) {
+	private Set<String> getFields(ITrackStyleExtended style) {
 		Set<String> fields = new TreeSet<String>();
-		if (glyph.getInfo() != null && glyph.getInfo() instanceof SeqSymmetry) {
-			SeqSymmetry sym = (SeqSymmetry)glyph.getInfo();
+		SeqSymmetry sym = GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
+		if (sym != null) {
 			if (sym.getChildCount() > 0) {
 				SeqSymmetry child = sym.getChild(0);
 				SeqSymmetry original = getMostOriginalSymmetry(child);
@@ -602,9 +604,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		String labelField = null;
 		boolean labelFieldSet = false;
 		Set<String> allFields = null;
-		for (ViewModeGlyph glyph : annotGlyphs) {
-			if (glyph.getAnnotStyle() != null && glyph.getAnnotStyle().getLabelField() != null) {
-				String field = glyph.getAnnotStyle().getLabelField();
+		for (ITrackStyleExtended style : annotStyles) {
+			if (style.getLabelField() != null) {
+				String field = style.getLabelField();
 				if (!labelFieldSet) {
 					labelField = field;
 					labelFieldSet = true;
@@ -613,8 +615,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 					labelField = null;
 				}
 			}
-			Set<String> fields = getFields(glyph);
-			if (glyph.getInfo() instanceof SeqSymmetry) {
+			Set<String> fields = getFields(style);
+			SeqSymmetry sym = GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
+			if (sym instanceof SeqSymmetry) {
 				if (allFields == null) {
 					allFields = new TreeSet<String>(fields);
 				}
@@ -637,8 +640,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
 		strands2TracksCheckBox.setEnabled(isAllAnnot() && isAllSupportTwoTrack());
 		boolean all2Tracks = isAllAnnot();
-		for (ViewModeGlyph glyph : annotGlyphs) {
-			if (!glyph.getAnnotStyle().getSeparate()) {
+		for (ITrackStyleExtended style : annotStyles) {
+			if (!style.getSeparate()) {
 				all2Tracks = false;
 				break;
 			}
@@ -651,8 +654,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
 		strandsArrowCheckBox.setEnabled(isAllAnnot() && isAllSupportTwoTrack());
 		boolean allArrow = isAllAnnot();
-		for (ViewModeGlyph glyph : annotGlyphs) {
-			if (!(glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() || glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+		for (ITrackStyleExtended style : annotStyles) {
+			if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
 				allArrow = false;
 				break;
 			}
@@ -662,8 +665,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	private boolean isAllStrandsColor() {
 		boolean allColor = true;
-		for (ViewModeGlyph glyph : annotGlyphs) {
-			if (!(glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal() || glyph.getAnnotStyle().getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+		for (ITrackStyleExtended style : annotStyles) {
+			if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal() || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
 				allColor = false;
 				break;
 			}
@@ -686,12 +689,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color strandsForwardColor = null;
 		if (isAllAnnot() && isAllStrandsColor()) {
 			boolean strandsForwardColorSet = false;
-			for (ViewModeGlyph ag : annotGlyphs) {
+			for (ITrackStyleExtended style : annotStyles) {
 				if (strandsForwardColor == null && !strandsForwardColorSet) {
-					strandsForwardColor = ag.getAnnotStyle().getForwardColor();
+					strandsForwardColor = style.getForwardColor();
 					strandsForwardColorSet = true;
 				}
-				else if (strandsForwardColor != ag.getAnnotStyle().getForwardColor()) {
+				else if (strandsForwardColor != style.getForwardColor()) {
 					strandsForwardColor = null;
 					break;
 				}
@@ -708,12 +711,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		Color strandsReverseColor = null;
 		if (isAllAnnot() && isAllStrandsColor()) {
 			boolean strandsReverseColorSet = false;
-			for (ViewModeGlyph ag : annotGlyphs) {
+			for (ITrackStyleExtended style : annotStyles) {
 				if (strandsReverseColor == null && !strandsReverseColorSet) {
-					strandsReverseColor = ag.getAnnotStyle().getReverseColor();
+					strandsReverseColor = style.getReverseColor();
 					strandsReverseColorSet = true;
 				}
-				else if (strandsReverseColor != ag.getAnnotStyle().getReverseColor()) {
+				else if (strandsReverseColor != style.getReverseColor()) {
 					strandsReverseColor = null;
 					break;
 				}
@@ -799,29 +802,21 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void labelColorComboBoxReset() {
+		// Need to consider joined glyphs
 		ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color labelColor = null;
 		boolean labelColorSet = false;
-		for (ViewModeGlyph ag : allGlyphs) {
+		for (ITrackStyleExtended style : allStyles) {
 			if (labelColor == null && !labelColorSet) {
-				labelColor = ag.getAnnotStyle().getLabelForeground();
-				if(ag instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)ag).getGraphGlyph().getGraphState().getComboStyle() != null){
-					labelColor = ((AbstractGraphGlyph)ag).getGraphGlyph().getGraphState().getComboStyle().getLabelForeground();
-				}
+				labelColor = style.getLabelForeground();
 				labelColorSet = true;
 			}
-			else if (labelColor != ag.getAnnotStyle().getLabelForeground()) {
-				if(ag instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)ag).getGraphGlyph().getGraphState().getComboStyle() != null){
-					if(labelColor != ((AbstractGraphGlyph)ag).getGraphGlyph().getGraphState().getComboStyle().getLabelForeground()){
-						labelColor = null;
-					}
-				}else{
-					labelColor = null;
-				}
+			else if (labelColor != style.getLabelForeground()) {
+				labelColor = null;
 				break;
 			}
 		}
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
+		boolean enable = allStyles.size() > 0 && !isAnyFloat();
 		labelColorComboBox.setEnabled(enable);
 		getLabelColorLabel().setEnabled(enable);
 		labelColorComboBox.setSelectedColor(enable ? labelColor : null);
@@ -830,12 +825,12 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void backgroundColorComboBoxReset() {
 		ColorComboBox backgroundColorComboBox = getBackgroundColorComboBox();
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
+		boolean enable = allStyles.size() > 0 && !isAnyFloat();
 		Color backgroundColor = null;
 		if (enable) {
-			backgroundColor = allGlyphs.get(0).getAnnotStyle().getBackground();
-			for (ViewModeGlyph ag : allGlyphs) {
-				if (backgroundColor != ag.getAnnotStyle().getBackground()) {
+			backgroundColor = allStyles.get(0).getBackground();
+			for (ITrackStyleExtended style : allStyles) {
+				if (backgroundColor != style.getBackground()) {
 					backgroundColor = null;
 					break;
 				}
@@ -849,14 +844,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void foregroundColorComboBoxReset() {
 		ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
-		boolean enable = allGlyphs.size() > 0;
+		boolean enable = allStyles.size() > 0;
 		foregroundColorComboBox.setEnabled(enable);
 		getForegroundColorLabel().setEnabled(enable);
 		Color foregroundColor = null;
 		if (enable) {
-			foregroundColor = allGlyphs.get(0).getAnnotStyle().getForeground();
-			for (ViewModeGlyph ag : allGlyphs) {
-				if (!(foregroundColor.equals(ag.getAnnotStyle().getForeground()))) {
+			foregroundColor = allStyles.get(0).getForeground();
+			for (ITrackStyleExtended style : allStyles) {
+				if (!(foregroundColor.equals(style.getForeground()))) {
 					foregroundColor = null;
 					break;
 				}
@@ -868,19 +863,19 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void stackDepthTextFieldReset() {
 		JTextField stackDepthTextField = getStackDepthTextField();
-		boolean enabled = annotGlyphs.size() > 0 && isAllAnnot();
+		boolean enabled = annotStyles.size() > 0 && isAllAnnot();
 		stackDepthTextField.setEnabled(enabled);
 		getStackDepthLabel().setEnabled(enabled);
 		stackDepthTextField.setText("");
 		if (enabled) {
 			Integer stackDepth = -1;
 			boolean stackDepthSet = false;
-			for (ViewModeGlyph ag : annotGlyphs) {
+			for (ITrackStyleExtended style : annotStyles) {
 				if (stackDepth == -1 && !stackDepthSet) {
-					stackDepth = ag.getAnnotStyle().getMaxDepth();
+					stackDepth = style.getMaxDepth();
 					stackDepthSet = true;
 				}
-				else if (stackDepth != ag.getAnnotStyle().getMaxDepth()) {
+				else if (stackDepth != style.getMaxDepth()) {
 					stackDepth = -1;
 					break;
 				}
@@ -894,9 +889,9 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void trackNameTextFieldReset() {
 		JTextField trackNameTextField = getTrackNameTextField();
-		if (allGlyphs.size() == 1) {
+		if (allStyles.size() == 1) {
 			trackNameTextField.setEnabled(true);
-			trackNameTextField.setText(allGlyphs.get(0).getLabel());
+			trackNameTextField.setText(allStyles.get(0).getTrackName());
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
 				trackNameTextField.setEnabled(true);
@@ -914,13 +909,13 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void stackDepthGoButtonReset() {
 		JButton stackDepthGoButton = getStackDepthGoButton();
-		stackDepthGoButton.setEnabled(annotGlyphs.size() > 0 && isAllAnnot());
+		stackDepthGoButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
 	}
 
 	@Override
 	protected void stackDepthAllButtonReset() {
 		JButton stackDepthAllButton = getStackDepthAllButton();
-		stackDepthAllButton.setEnabled(annotGlyphs.size() > 0 && isAllAnnot());
+		stackDepthAllButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
 	}
 
 	@Override
@@ -932,21 +927,21 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void hideButtonReset() {
 		JButton hideButton = getHideButton();
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
+		boolean enable = allStyles.size() > 0 && !isAnyFloat();
 		hideButton.setEnabled(enable);
 	}
 
 	@Override
 	protected void clearButtonReset() {
 		JButton clearButton = getClearButton();
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
+		boolean enable = allStyles.size() > 0 && !isAnyFloat();
 		clearButton.setEnabled(enable);
 	}
 
 	@Override
 	protected void restoreToDefaultButtonReset() {
 		JButton restoreToDefaultButton = getRestoreToDefaultButton();
-		boolean enable = allGlyphs.size() > 0 && !isAnyFloat();
+		boolean enable = allStyles.size() > 0 && !isAnyFloat();
 		restoreToDefaultButton.setEnabled(enable);
 	}
 }

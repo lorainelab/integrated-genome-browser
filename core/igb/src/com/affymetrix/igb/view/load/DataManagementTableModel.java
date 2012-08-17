@@ -2,14 +2,12 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -258,7 +256,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		} else if (smv.getPixelFloater().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
 			for (GlyphI i : smv.getPixelFloater().getChildren()) {
-				if (((ViewModeGlyph) i).getAnnotStyle() == style) {
+				if (((TierGlyph) i).getAnnotStyle() == style) {
 					return false;
 				}
 			}
@@ -410,7 +408,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (smv.getPixelFloater().getChildren() != null) {
 						for (GlyphI g : smv.getPixelFloater().getChildren()) {
-							ViewModeGlyph j = (ViewModeGlyph) g;
+							TierGlyph j = (TierGlyph) g;
 							if (j.getAnnotStyle() == style) {
 								stylemap.put((TrackStyle) style, (TrackStyle) style);
 							}

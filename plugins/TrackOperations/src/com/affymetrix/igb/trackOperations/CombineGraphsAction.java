@@ -15,8 +15,8 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  *  Puts all selected graphs in the same tier.
@@ -37,7 +37,7 @@ public class CombineGraphsAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		List<RootSeqSymmetry> rootSyms = TrackUtils.getInstance().getSymsFromViewModeGlyphs(selected);
 		int gcount = rootSyms.size();
 		float height = 0;

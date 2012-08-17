@@ -76,9 +76,9 @@ public class TrackUtils {
 		return syms;
 	}
 
-	public List<RootSeqSymmetry> getSymsFromViewModeGlyphs(List<ViewModeGlyph> viewModeGlyphGlyphs) {
+	public List<RootSeqSymmetry> getSymsFromViewModeGlyphs(List<TierGlyph> viewModeGlyphGlyphs) {
 		List<RootSeqSymmetry> syms = new ArrayList<RootSeqSymmetry>();
-		for (ViewModeGlyph glyph : viewModeGlyphGlyphs) {
+		for (TierGlyph glyph : viewModeGlyphGlyphs) {
 			RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 			if (rootSym == null && glyph.getChildCount() > 0 && glyph.getChild(0) instanceof RootSeqSymmetry) {
 				rootSym = (RootSeqSymmetry) glyph.getChild(0).getInfo();

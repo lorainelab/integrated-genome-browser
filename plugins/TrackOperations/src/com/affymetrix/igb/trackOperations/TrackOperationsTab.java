@@ -34,7 +34,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<ViewModeGlyph> glyphs = new ArrayList<ViewModeGlyph>();
+	public final List<TierGlyph> glyphs = new ArrayList<TierGlyph>();
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB;
 	public final JRPButton splitB;
@@ -142,10 +142,10 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	private void collectGraphsAndGlyphs() {
 		glyphs.clear();
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		glyphs.addAll(selected);
 		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
-		for (ViewModeGlyph vg : glyphs) {
+		for (TierGlyph vg : glyphs) {
 			if (vg instanceof AbstractGraphGlyph) {
 				graphGlyphs.add(((AbstractGraphGlyph)vg).getGraphGlyph());
 			}
@@ -222,7 +222,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (ViewModeGlyph gl : glyphs) {
+		for (TierGlyph gl : glyphs) {
 			any_are_combined |= gl instanceof MultiGraphGlyph;
 			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
 				graph_count++;
@@ -357,7 +357,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		return rootSyms;
 	}
 
-	public List<ViewModeGlyph> getSelectedGlyphss() {
+	public List<TierGlyph> getSelectedGlyphss() {
 		return glyphs;
 	}
 

@@ -13,7 +13,6 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -151,11 +150,11 @@ public class LawrencianZoomer implements ChangeListener {
 		if (selection.isEmpty()) {
 			System.err.println(this.getClass().getSimpleName() + ".setZoomLevel: No tracks selected.");
 		}
-		for (TierLabelGlyph tg : selection) {
-		    TierGlyph g = tg.getReferenceTier();
+		for (TierLabelGlyph tlg : selection) {
+		    TierGlyph g = tlg.getReferenceTier();
 			int slotsAtZoom = theLevel;
-			ViewModeGlyph vmg = g.getViewModeGlyph();
-			ITrackStyleExtended style = vmg.getAnnotStyle();
+			TierGlyph tg = g.getViewModeGlyph();
+			ITrackStyleExtended style = tg.getAnnotStyle();
 			switch (g.getDirection()) {
 				case FORWARD:
 					style.setForwardMaxDepth(slotsAtZoom);

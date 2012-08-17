@@ -20,14 +20,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
-import com.affymetrix.igb.graphTypes.BarGraphGlyph;
-import com.affymetrix.igb.graphTypes.DotGraphGlyph;
-import com.affymetrix.igb.graphTypes.HeatMapGraphGlyph;
-import com.affymetrix.igb.graphTypes.LineGraphGlyph;
-import com.affymetrix.igb.graphTypes.MinMaxAvgGraphGlyph;
-import com.affymetrix.igb.graphTypes.StairStepGraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.GraphGlyph.GraphStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.viewmode.DynamicStyleHeatMap;
 
@@ -226,31 +219,32 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
 		for (GraphGlyph graphGlyph : graphGlyphs) {
-			GraphStyle selectedMode = null;
+			GraphType selectedMode = null;
 			if (getGraphStyleLineRadioButton().isSelected()) {
-				selectedMode = new LineGraphGlyph(graphGlyph);
+				selectedMode = GraphType.LINE_GRAPH;
 			}
 			if (getGraphStyleBarRadioButton().isSelected()) {
-				selectedMode = new BarGraphGlyph(graphGlyph);
+				selectedMode = GraphType.BAR_GRAPH;
 			}
 			if (getGraphStyleStairStepRadioButton().isSelected()) {
-				selectedMode = new StairStepGraphGlyph(graphGlyph);
+				selectedMode = GraphType.STAIRSTEP_GRAPH;
 			}
 			if (getGraphStyleDotRadioButton().isSelected()) {
-				selectedMode = new DotGraphGlyph(graphGlyph);
+				selectedMode = GraphType.DOT_GRAPH;
 			}
 			if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
-				selectedMode = new MinMaxAvgGraphGlyph(graphGlyph);
+				selectedMode = GraphType.MINMAXAVG;
 			}
 			if (getGraphStyleHeatMapRadioButton().isSelected()) {
-				selectedMode = new HeatMapGraphGlyph(graphGlyph);
+				selectedMode = GraphType.HEAT_MAP;
 			}
-			graphGlyph.setGraphStyle(selectedMode);
+			graphGlyph.getGraphState().setGraphStyle(selectedMode);
 		}
 		
 		buttonGroup1Reset();
 		graphStyleHeatMapComboBoxReset();
-		refreshView();
+		// TODO : Need to create method in igbService to change graph type.
+		updateDisplay();
 	}
 	
 	@Override
@@ -507,7 +501,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			HeatMap heatMap = null;
 			boolean heatMapSet = false;
 			for (GraphGlyph gg : graphGlyphs) {
-				if (gg.getGraphStyle() != GraphType.HEAT_MAP) {
+				if (gg.getGraphState().getGraphStyle() != GraphType.HEAT_MAP) {
 					allHeatMap = false;
 					break;
 				}
@@ -743,10 +737,10 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			boolean graphTypeSet = false;
 			for (GraphGlyph vg : graphGlyphs) {
 				if (graphType == null && !graphTypeSet) {
-					graphType = vg.getGraphStyle();
+					graphType = vg.getGraphState().getGraphStyle();
 					graphTypeSet = true;
 				}
-				else if (graphType != vg.getGraphStyle()) {
+				else if (graphType != vg.getGraphState().getGraphStyle()) {
 					graphType = null;
 					break;
 				}

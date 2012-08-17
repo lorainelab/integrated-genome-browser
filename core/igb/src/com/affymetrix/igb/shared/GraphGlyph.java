@@ -14,7 +14,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.igb.graphTypes.HeatMapGraphGlyph;
+import com.affymetrix.igb.graphTypes.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -749,12 +749,7 @@ public class GraphGlyph extends Glyph {
 			thresh_glyph.setVisibility(false);
 		}
 	}
-
-	// this should not be here, only for backwards compatibility
-	public GraphType getGraphStyle(){
-		return graphStyle.getGraphStyle();
-	}
-		
+	
 	public void setGraphStyle(GraphStyle style) {
 		if(!state.getGraphStyleLocked()){
 			this.graphStyle = style;

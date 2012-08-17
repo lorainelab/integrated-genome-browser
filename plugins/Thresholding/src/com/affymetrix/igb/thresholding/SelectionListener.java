@@ -77,7 +77,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 		GraphType graph_style = GraphType.LINE_GRAPH;
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
-			graph_style = first_glyph.getGraphStyle();
+			graph_style = first_glyph.getGraphState().getGraphStyle();
 			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = first_glyph.getGraphState().getShowAxis();
 			all_show_label = first_glyph.getGraphState().getShowLabel();
@@ -99,7 +99,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 			if (graph_style == null) {
 				graph_style = GraphType.LINE_GRAPH;
 			}
-			else if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
+			else if (first_glyph.getGraphState().getGraphStyle() != gl.getGraphState().getGraphStyle()) {
 				graph_style = GraphType.LINE_GRAPH;
 			}
 		}

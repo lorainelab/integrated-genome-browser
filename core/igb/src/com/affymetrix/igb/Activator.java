@@ -6,14 +6,12 @@ import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
-import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import static com.affymetrix.igb.IGBConstants.*;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -26,10 +24,8 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.*;
-import com.affymetrix.igb.graphTypes.*;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -37,7 +33,6 @@ import javax.swing.*;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -385,15 +380,15 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(MapViewGlyphFactoryI.class, sequenceGlyphFactory, null);
 
 		// Add Graph factories
-		GraphGlyphFactory minMaxAvgGraphGlyphFactory = new GraphGlyphFactory(MinMaxAvgGraphGlyph.class);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, minMaxAvgGraphGlyphFactory, null);
+		GraphGlyphFactory graphGlyphFactory = new GraphGlyphFactory();
+		bundleContext.registerService(MapViewGlyphFactoryI.class, graphGlyphFactory, null);
 		
 		// Add ProbeSet factory
 		ProbeSetGlyphFactory probeSetGlyphFactory = new ProbeSetGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSetGlyphFactory, null);
 		
 		// Add ScoredContainer factory
-		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(minMaxAvgGraphGlyphFactory);
+		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(graphGlyphFactory);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredMinMaxAvg, null);
 		
 		// Add Mismatch factory
@@ -404,7 +399,7 @@ public class Activator implements BundleActivator {
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, minMaxAvgGraphGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, graphGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);

@@ -50,14 +50,10 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
-import com.affymetrix.igb.shared.MapViewModeHolder;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
@@ -816,13 +812,7 @@ public class SeqMapView extends JPanel
 	 *       (FORWARD, REVERSE, or BOTH)
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
-		return getTrack(sym, style, tier_direction, factory);
-	}
-
-	@Override
-	final public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
-		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, factory);
+		return TrackView.getInstance().getTrack(this, sym, style, tier_direction);
 	}
 
 	public void preserveSelectionAndPerformAction(AbstractAction action) {
@@ -884,9 +874,9 @@ public class SeqMapView extends JPanel
 		addAnnotationTracks();
 		boolean change_happened = false;
 		change_happened |= moveNonFloatingTierGlyphs();
-		change_happened |= moveNonJoinedTierGlyphs();
+//		change_happened |= moveNonJoinedTierGlyphs();
 		hideEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
-		change_happened |= moveJoinedTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
+//		change_happened |= moveJoinedTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
 		change_happened |= moveFloatingTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
 		if (change_happened) {
 			postSelections();
@@ -1026,49 +1016,49 @@ public class SeqMapView extends JPanel
 		return change_happened;
 	}
 
-	/**
-	 * Move non joined glyphs from their comboGlyph to tierGlyph.
-	 */
-	private boolean moveNonJoinedTierGlyphs() {
-		boolean change_happened = false;
-		for (TierGlyph tierGlyph : seqmap.getTiers()) {
-			if (tierGlyph.getViewModeGlyph() instanceof ComboGlyph && tierGlyph.getViewModeGlyph().getChildren() != null) {
-				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
-					AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
-					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null)) {
-						((TierGlyphImpl)vg.getTierGlyph()).dejoin(tierGlyph.getViewModeGlyph(), vg);
-						selectTrack(vg.getTierGlyph(), true);
-						change_happened = true;
-					}
-				}
-			}
-		}
-		return change_happened;
-	}
-
-	/**
-	 * move joined glyphs from TierGlyph to their comboGlyph
-	 *
-	 * @param tiers the list of TierGlyphs
-	 */
-	private boolean moveJoinedTierGlyphs(List<TierGlyph> tiers) {
-		boolean change_happened = false;
-		Set<TierGlyph> comboTracks = new HashSet<TierGlyph>();
-		for (TierGlyph tg : tiers) {
-			ViewModeGlyph vg = tg.getViewModeGlyph();
-			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null) {
-				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
-				comboTracks.add(comboTierGlyph);
-				comboTierGlyph.setUnloadedOK(true);
-				((TierGlyphImpl)tg).enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
-				change_happened = true;
-			}
-		}
-		for (TierGlyph comboTierGlyph : comboTracks) {
-			selectTrack(comboTierGlyph, true);
-		}
-		return change_happened;
-	}
+//	/**
+//	 * Move non joined glyphs from their comboGlyph to tierGlyph.
+//	 */
+//	private boolean moveNonJoinedTierGlyphs() {
+//		boolean change_happened = false;
+//		for (TierGlyph tierGlyph : seqmap.getTiers()) {
+//			if (tierGlyph.getViewModeGlyph() instanceof ComboGlyph && tierGlyph.getViewModeGlyph().getChildren() != null) {
+//				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
+//					AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
+//					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null)) {
+//						((TierGlyphImpl)vg.getTierGlyph()).dejoin(tierGlyph.getViewModeGlyph(), vg);
+//						selectTrack(vg.getTierGlyph(), true);
+//						change_happened = true;
+//					}
+//				}
+//			}
+//		}
+//		return change_happened;
+//	}
+//
+//	/**
+//	 * move joined glyphs from TierGlyph to their comboGlyph
+//	 *
+//	 * @param tiers the list of TierGlyphs
+//	 */
+//	private boolean moveJoinedTierGlyphs(List<TierGlyph> tiers) {
+//		boolean change_happened = false;
+//		Set<TierGlyph> comboTracks = new HashSet<TierGlyph>();
+//		for (TierGlyph tg : tiers) {
+//			ViewModeGlyph vg = tg.getViewModeGlyph();
+//			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null) {
+//				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
+//				comboTracks.add(comboTierGlyph);
+//				comboTierGlyph.setUnloadedOK(true);
+//				((TierGlyphImpl)tg).enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
+//				change_happened = true;
+//			}
+//		}
+//		for (TierGlyph comboTierGlyph : comboTracks) {
+//			selectTrack(comboTierGlyph, true);
+//		}
+//		return change_happened;
+//	}
 
 	/**
 	 * hide TierGlyphs with no children (that is how IGB indicates that a glyph

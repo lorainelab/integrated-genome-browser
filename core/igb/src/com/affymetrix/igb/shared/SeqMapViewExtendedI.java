@@ -13,5 +13,5 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 
 	int getAverageSlots();
 	
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory);
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 }

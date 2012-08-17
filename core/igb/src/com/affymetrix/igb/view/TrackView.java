@@ -85,11 +85,12 @@ public class TrackView {
 	 * @param tier_direction the direction
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
-	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		AffyTieredMap seqmap = smv.getSeqMap();
 		TierGlyph tierGlyph = null;
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
 			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.createViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
@@ -132,15 +133,15 @@ public class TrackView {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 				if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
 					//Create dummy tier
-					String meth = BioSeq.determineMethod(annotSym);
-					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-					if (style.getSeparate()) {
-						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, DummyGlyphFactory.getInstance());
-						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, DummyGlyphFactory.getInstance());
-					}
-					else {
-						smv.getTrack(null, style, TierGlyph.Direction.BOTH, DummyGlyphFactory.getInstance());
-					}
+//					String meth = BioSeq.determineMethod(annotSym);
+//					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+//					if (style.getSeparate()) {
+//						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, DummyGlyphFactory.getInstance());
+//						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, DummyGlyphFactory.getInstance());
+//					}
+//					else {
+//						smv.getTrack(null, style, TierGlyph.Direction.BOTH, DummyGlyphFactory.getInstance());
+//					}
 					continue;
 				}
 			}

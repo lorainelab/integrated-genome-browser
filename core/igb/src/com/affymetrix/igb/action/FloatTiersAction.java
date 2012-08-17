@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -42,7 +41,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
 			for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-				ViewModeGlyph vg = tg.getViewModeGlyph();
+				TierGlyph vg = tg.getViewModeGlyph();
 				if (vg instanceof AbstractGraphGlyph) {
 					SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
 					if (selected_syms.contains(ss)) { // Need this? Action doesn't.
@@ -79,7 +78,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 		boolean something_changed = false;
 		List<? extends GlyphI> selectedTiers = getTierManager().getSelectedTiers();
 		for (GlyphI tg : selectedTiers) {
-			ViewModeGlyph gl = ((TierGlyph)tg).getViewModeGlyph();
+			TierGlyph gl = ((TierGlyph)tg).getViewModeGlyph();
 			if (gl instanceof AbstractGraphGlyph) { // for now, eventually all tracks should float
 				ITrackStyleExtended style = gl.getAnnotStyle();
 				boolean is_floating = style.getFloatTier();

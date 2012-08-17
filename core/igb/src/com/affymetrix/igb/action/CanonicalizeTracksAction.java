@@ -16,7 +16,6 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
@@ -134,7 +133,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 						this.getSeqMapView().getSeqMap().getView()
 				);
 				if (Float.MIN_VALUE < maxMax) {
-					ViewModeGlyph vg = tg.getViewModeGlyph();
+					TierGlyph vg = tg.getViewModeGlyph();
 					if (vg instanceof AbstractGraphGlyph) {
 						GraphGlyph gg = (GraphGlyph) vg;
 						gg.setVisibleMaxY(maxMax);

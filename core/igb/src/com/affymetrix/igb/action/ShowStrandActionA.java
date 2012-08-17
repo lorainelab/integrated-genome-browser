@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -72,7 +71,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		boolean hasSeparate = false;
 		boolean hasMixed = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-			ViewModeGlyph vg = tg.getViewModeGlyph();
+			TierGlyph vg = tg.getViewModeGlyph();
 			SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
 			if (selected_syms.contains(ss)) {
 				if (!(vg instanceof MultiGraphGlyph)) {

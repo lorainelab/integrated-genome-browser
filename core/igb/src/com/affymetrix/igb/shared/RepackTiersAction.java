@@ -8,7 +8,6 @@ import javax.swing.AbstractAction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 
 /**
@@ -57,11 +56,11 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 					style.setForwardMaxDepth(a);
 					break;
 			}
-			com.affymetrix.igb.shared.ViewModeGlyph vmg = t.getViewModeGlyph();
-			if (vmg instanceof com.affymetrix.igb.shared.AbstractGraphGlyph) {
+			com.affymetrix.igb.shared.TierGlyph tg = t.getViewModeGlyph();
+			if (tg instanceof com.affymetrix.igb.shared.AbstractGraphGlyph) {
 				// So far this has only been tested with annotation depth graphs.
 				com.affymetrix.igb.shared.GraphGlyph gg
-						= (com.affymetrix.igb.shared.GraphGlyph) vmg;
+						= (com.affymetrix.igb.shared.GraphGlyph) tg;
 				gg.setVisibleMaxY(a);
 			}
 		}

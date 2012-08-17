@@ -11,11 +11,9 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -53,8 +51,8 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
-			List<ViewModeGlyph> selectedTiers = getSelectedFloatingTiers();
-			for (ViewModeGlyph vg : selectedTiers) {
+			List<TierGlyph> selectedTiers = getSelectedFloatingTiers();
+			for (TierGlyph vg : selectedTiers) {
 				if (vg instanceof AbstractGraphGlyph) {
 					//SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
 					//if (selected_syms.contains(ss)) { // Need this? Action doesn't.
@@ -92,8 +90,8 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean something_changed = false;
-		List<ViewModeGlyph> selectedTiers = getSelectedFloatingTiers();
-		for (ViewModeGlyph gl : selectedTiers) {
+		List<TierGlyph> selectedTiers = getSelectedFloatingTiers();
+		for (TierGlyph gl : selectedTiers) {
 			ITrackStyleExtended style = gl.getAnnotStyle();
 			boolean is_floating = style.getFloatTier();
 			if (is_floating) {
@@ -121,8 +119,8 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 		}
 	}
 
-	private List<ViewModeGlyph> getSelectedFloatingTiers() {
-		List<ViewModeGlyph> selectedTiers = new ArrayList<ViewModeGlyph>();
+	private List<TierGlyph> getSelectedFloatingTiers() {
+		List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
 		SeqMapView v = this.getSeqMapView();
 		if (null == v) {
 			return selectedTiers;
@@ -137,7 +135,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 		}
 		for (GlyphI glyph : l) {
 			if (glyph.isSelected()) {
-				selectedTiers.add((ViewModeGlyph)glyph);
+				selectedTiers.add((TierGlyph)glyph);
 			}
 		}
 		return selectedTiers;
@@ -156,7 +154,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				List<TierLabelGlyph> labels = mgr.getAllTierLabels();
 				for (TierLabelGlyph g : labels) {
 					TierGlyph tg = g.getReferenceTier();
-					ViewModeGlyph vmg = tg.getViewModeGlyph();
+					TierGlyph vmg = tg.getViewModeGlyph();
 					int iteration = 0;
 					if (vmg.isSelected()) {
 						mgr.select(tg);

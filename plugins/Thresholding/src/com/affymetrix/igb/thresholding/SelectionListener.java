@@ -20,7 +20,6 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 public class SelectionListener implements SeqSelectionListener, SymSelectionListener {
@@ -128,7 +127,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				for (Glyph g : igbService.getVisibleTierGlyphs()) {
-					ViewModeGlyph vg = ((TierGlyph)g).getViewModeGlyph();
+					TierGlyph vg = ((TierGlyph)g).getViewModeGlyph();
 					if (vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
 						for (GlyphI child : vg.getChildren()) {
 							if (grafs.contains(child.getInfo())) {

@@ -40,7 +40,7 @@ public final class GraphGlyphUtils {
 	 *  Assumes that glyph is a child of a PixelFloaterGlyph, so that
 	 *   the glyph's coord box is also its pixel box.
 	 */
-	public static void checkPixelBounds(ViewModeGlyph gl, NeoMap map) {
+	public static void checkPixelBounds(TierGlyph gl, NeoMap map) {
 		if (gl.getAnnotStyle().getFloatTier()) {
 			Rectangle mapbox = map.getView().getPixelBox();
 			Rectangle2D.Double gbox = gl.getCoordBox();

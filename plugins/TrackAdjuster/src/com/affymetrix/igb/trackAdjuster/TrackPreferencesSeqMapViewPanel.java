@@ -27,12 +27,12 @@ public class TrackPreferencesSeqMapViewPanel extends TrackPreferencesA implement
 	private void refreshSelection() {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
-		List<ViewModeGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allStyles.clear();
 		//allGlyphs.addAll(selected);
 		graphState.clear();
 		annotStyles.clear();
-		for (ViewModeGlyph useGlyph : selected) {
+		for (TierGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
 			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
 				category = ((RootSeqSymmetry)useGlyph.getInfo()).getCategory();

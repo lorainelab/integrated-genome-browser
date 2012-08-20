@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.util.*;
 import javax.swing.*;
 
+import static com.affymetrix.igb.shared.Selections.*;
 /**
  * For Panels that update the Track styles (as opposed to the track style defaults)
  */
@@ -97,7 +98,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox labelCheckBox = getLabelCheckBox();
 		boolean b = labelCheckBox.isSelected();
-		for(GraphState state : graphState){
+		for(GraphState state : graphStates){
 			state.setShowLabel(b);
 		}
 		updateDisplay();
@@ -107,7 +108,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
 		boolean b = YAxisCheckBox.isSelected();
-		for(GraphState state : graphState){
+		for(GraphState state : graphStates){
 			state.setShowAxis(b);
 		}
 		updateDisplay();
@@ -115,7 +116,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void graphStyleHeatMapComboBoxActionPerformedA(ActionEvent evt) {
-		if (graphState.isEmpty() || !is_listening) {
+		if (graphStates.isEmpty() || !is_listening) {
 			return;
 		}
 		JComboBox heatMapComboBox = getGraphStyleHeatMapComboBox();
@@ -124,7 +125,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
-			for (GraphState state : graphState) {
+			for (GraphState state : graphStates) {
 				if (state.getGraphStyle() == GraphType.HEAT_MAP) {
 //					gl.setShowGraph(true);
 					if (!(state.getHeatMap() instanceof DynamicStyleHeatMap)) {
@@ -136,7 +137,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		else {
 			HeatMap hm = HeatMap.getStandardHeatMap(name);
 			if (hm != null) {
-				for (GraphState state : graphState) {
+				for (GraphState state : graphStates) {
 					if (state.getGraphStyle() == GraphType.HEAT_MAP) {
 //						gl.setShowGraph(true);
 						state.setHeatMap(hm);
@@ -243,7 +244,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			selectedMode = GraphType.HEAT_MAP;
 		}
 		
-		for (GraphState state : graphState) {
+		for (GraphState state : graphStates) {
 			state.setGraphStyle(selectedMode);
 		}
 
@@ -360,7 +361,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			action.performAction(allStyles.get(0).getTrackName(), name);
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
-				action.performAction((graphState.get(0)).getComboStyle(), name);
+				action.performAction((graphStates.get(0)).getComboStyle(), name);
 			}
 		}
 	}
@@ -392,7 +393,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllGraph() {
-		return allStyles.size() == graphState.size() && graphState.size() > 0;
+		return allStyles.size() == graphStates.size() && graphStates.size() > 0;
 	}
 
 	private boolean isAllAnnot() {
@@ -400,7 +401,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAnyJoined(){
-		for (GraphState state : graphState) {
+		for (GraphState state : graphStates) {
 			if (state.getComboStyle() != null) {
 				return true;
 			}
@@ -409,15 +410,15 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 	
 	private boolean isOneJoined(){
-		if(graphState.size() < 2)
+		if(graphStates.size() < 2)
 			return false;
 		
-		Object comboStyle = graphState.get(0).getComboStyle();
+		Object comboStyle = graphStates.get(0).getComboStyle();
 		if(comboStyle == null)
 			return false;
 		
-		for(int i=1; i<graphState.size(); i++){
-			if(graphState.get(i).getComboStyle() != comboStyle){
+		for(int i=1; i<graphStates.size(); i++){
+			if(graphStates.get(i).getComboStyle() != comboStyle){
 				return false;
 			}
 		}
@@ -444,7 +445,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllGraphStyleLocked() {
-		for(GraphState state : graphState){
+		for(GraphState state : graphStates){
 			if(!state.getGraphStyleLocked()){
 				return false;
 			}
@@ -457,7 +458,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox floatCheckBox = getFloatCheckBox();
 
 		boolean allFloat = isAllGraph();
-		for (GraphState state : graphState) {
+		for (GraphState state : graphStates) {
 			if (!state.getTierStyle().getFloatTier()) {
 				allFloat = false;
 				break;
@@ -476,7 +477,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox labelCheckBox = getLabelCheckBox();
 		labelCheckBox.setEnabled(isAllGraph());
 		boolean allLabel = isAllGraph();
-		for (GraphState state : graphState) {
+		for (GraphState state : graphStates) {
 			if (!state.getShowLabel()) {
 				allLabel = false;
 				break;
@@ -490,7 +491,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		JCheckBox yAxisCheckBox = getYAxisCheckBox();
 		yAxisCheckBox.setEnabled(isAllGraph());
 		boolean allYAxis = isAllGraph();
-		for (GraphState state : graphState) {
+		for (GraphState state : graphStates) {
 			if (!state.getShowAxis()) {
 				allYAxis = false;
 				break;
@@ -506,7 +507,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			boolean allHeatMap = true;
 			HeatMap heatMap = null;
 			boolean heatMapSet = false;
-			for (GraphState state : graphState) {
+			for (GraphState state : graphStates) {
 				if (state.getGraphStyle() != GraphType.HEAT_MAP) {
 					allHeatMap = false;
 					break;
@@ -741,7 +742,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (isAllGraph()) {
 			GraphType graphType = null;
 			boolean graphTypeSet = false;
-			for (GraphState state : graphState) {
+			for (GraphState state : graphStates) {
 				if (graphType == null && !graphTypeSet) {
 					graphType = state.getGraphStyle();
 					graphTypeSet = true;
@@ -895,7 +896,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
 				trackNameTextField.setEnabled(true);
-				trackNameTextField.setText(graphState.get(0).getComboStyle().getTrackName());
+				trackNameTextField.setText(graphStates.get(0).getComboStyle().getTrackName());
 			}else{
 				trackNameTextField.setEnabled(false);
 				trackNameTextField.setText("");

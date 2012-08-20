@@ -5,18 +5,14 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JRadioButton;
-
+import static com.affymetrix.igb.shared.Selections.*;
 
 /**
  *
@@ -29,9 +25,6 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 //	protected final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 //	protected final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
 //	protected final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
-	protected final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
-	protected final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
-	protected final List<GraphState> graphState = new ArrayList<GraphState>();
 	private JRadioButton hiddenRadioButton;
 	
 	/** Creates new form TrackPreferencesGUI */
@@ -1107,7 +1100,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 		is_listening = false;
 		getStylePanel().setEnabled(allStyles.size() > 0);
 		getAnnotationsPanel().setEnabled(annotStyles.size() > 0);
-		getGraphPanel().setEnabled(graphState.size() > 0);
+		getGraphPanel().setEnabled(graphStates.size() > 0);
 		floatCheckBoxReset();
 		labelCheckBoxReset();
 		YAxisCheckBoxReset();

@@ -12,10 +12,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.TrackView;
+import static com.affymetrix.igb.shared.Selections.*;
 
 public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -43,19 +42,11 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 
 		if (IGB.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getID()), PreferenceUtils.getTopNode(),
 				PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
-			List<TierLabelGlyph> tiers = getTierManager().getSelectedTierLabels();
-			for (TierLabelGlyph tlg : tiers) {
-				ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
+			for (ITrackStyleExtended style : allStyles) {
 				String method = style.getMethodName();
 				if (method != null) {
 					TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
 				}
-			}
-			
-			for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
-				ITrackStyleExtended style = gg.getGraphGlyph().getGraphState().getTierStyle();
-				String method = style.getMethodName();
-				TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
 			}
 		}
 		getSeqMapView().dataRemoved();	// refresh

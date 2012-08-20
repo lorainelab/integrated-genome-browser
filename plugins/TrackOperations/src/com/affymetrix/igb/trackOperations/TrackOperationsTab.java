@@ -34,7 +34,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<TierGlyph> glyphs = new ArrayList<TierGlyph>();
+	public final List<TierGlyph> allGlyphs = new ArrayList<TierGlyph>();
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB;
 	public final JRPButton splitB;
@@ -132,6 +132,14 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		resetSelectedGlyphs(true);
 	}
 
+	public void seqSelectionChanged(SeqSelectionEvent evt) {
+		if (DEBUG_EVENTS) {
+			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
+		}
+		collectGraphsAndGlyphs();
+		resetSelectedGlyphs(true);
+	}
+		
 	private void resetSelectedGlyphs(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		loadOperators(enable);
@@ -140,27 +148,14 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	}
 
 	private void collectGraphsAndGlyphs() {
-		glyphs.clear();
+		allGlyphs.clear();
+		rootSyms.clear();
+		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
-		glyphs.addAll(selected);
-		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
-		for (TierGlyph vg : glyphs) {
-			if (vg instanceof AbstractGraphGlyph) {
-				graphGlyphs.add(((AbstractGraphGlyph)vg).getGraphGlyph());
-			}
-		}
-		rootSyms.clear();
+		allGlyphs.addAll(selected);
 		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(selected));
-		thresholdingAction.setGraphs(graphGlyphs);
-	}
-
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		if (DEBUG_EVENTS) {
-			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
-		}
-		collectGraphsAndGlyphs();
-		resetSelectedGlyphs(true);
+		thresholdingAction.setGraphs(Selections.graphGlyphs);
 	}
 
 	public void updateViewer() {
@@ -222,7 +217,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (TierGlyph gl : glyphs) {
+		for (TierGlyph gl : allGlyphs) {
 			any_are_combined |= gl instanceof MultiGraphGlyph;
 			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
 				graph_count++;
@@ -258,7 +253,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		}
 		transformationGoB.setEnabled(enableTransformation);
 		setTransformationDisplay(enableTransformation);
-		boolean enableOperation = enable && glyphs.size() > 1 && operatorCount > 0;
+		boolean enableOperation = enable && allGlyphs.size() > 1 && operatorCount > 0;
 		operationLabel.setEnabled(enableOperation);
 		operationCB.setEnabled(enableOperation);
 		if (!enableOperation) {
@@ -297,7 +292,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			Operator operator = name2ation.get(selection);
 			ationGoB.setToolTipText(getTooltipMessage(operator));
 			Map<String, Class<?>> params = operator.getParameters();
-			if (params == null || params.size() == 0 || (!singleOK && glyphs.size() < 2)) {
+			if (params == null || params.size() == 0 || (!singleOK && allGlyphs.size() < 2)) {
 				ationParamLabel.setText(" ");
 				ationParamLabel.setEnabled(false);
 				ationParam.setEditable(false);
@@ -358,7 +353,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	}
 
 	public List<TierGlyph> getSelectedGlyphss() {
-		return glyphs;
+		return allGlyphs;
 	}
 
 	public IGBService getIgbService() {

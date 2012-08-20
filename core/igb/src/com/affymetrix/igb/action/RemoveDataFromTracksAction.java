@@ -49,13 +49,13 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 				String method = style.getMethodName();
 				if (method != null) {
 					TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
-				} else {
-					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
-						style = gg.getGraphGlyph().getGraphState().getTierStyle();
-						method = style.getMethodName();
-						TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
-					}
 				}
+			}
+			
+			for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
+				ITrackStyleExtended style = gg.getGraphGlyph().getGraphState().getTierStyle();
+				String method = style.getMethodName();
+				TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
 			}
 		}
 		getSeqMapView().dataRemoved();	// refresh

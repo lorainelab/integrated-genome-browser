@@ -1,33 +1,24 @@
 package com.affymetrix.igb.trackAdjuster;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import java.awt.geom.Rectangle2D;
+
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import static com.affymetrix.igb.shared.Selections.*;
 
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.List;
 
-public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {
+public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.RefreshSelectionListener {
 
 	private static final long serialVersionUID = 1L;
 	private final IGBService igbService;
 	private GraphVisibleBoundsSetter vis_bounds_setter;
-	private final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
-	private final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 	private boolean is_listening = true; // used to turn on and off listening to GUI events
 
 	/**
@@ -39,10 +30,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 		initComponents();
 		resetAll();
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		gmodel.addSeqSelectionListener(this);
-		gmodel.addSymSelectionListener(this);
-		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
+		Selections.addRefreshSelectionListener(this);
 	}
 
 	/**
@@ -302,35 +290,10 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	}
 
 	@Override
-	public void symSelectionChanged(SymSelectionEvent evt) {
-		loadGlyphs();
+	public void selectionRefreshed() {
 		resetAll();
 	}
-
-	@Override
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		loadGlyphs();
-		resetAll();
-	}
-
-	@Override
-	public void trackstylePropertyChanged(EventObject eo) { // this is redundant when the source of the style change is this panel
-		loadGlyphs();
-		resetAll();
-	}
-
-	private void loadGlyphs() {
-		allStyles.clear();
-		graphGlyphs.clear();
-		for (GlyphI glyph : igbService.getSeqMapView().getAllSelectedTiers()) {
-			TierGlyph useGlyph = (TierGlyph)glyph;
-			allStyles.add(useGlyph.getAnnotStyle());
-			if(useGlyph instanceof AbstractGraphGlyph){
-				graphGlyphs.add(((AbstractGraphGlyph)useGlyph).getGraphGlyph());
-			}
-		}
-	}
-
+	
 	private int getStretchableCount() {
 		int stretchableCount = 0;
 		for (Glyph glyph : igbService.getVisibleTierGlyphs()) {

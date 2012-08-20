@@ -42,7 +42,7 @@ public class ChangeTierLabelBackgroundColorAction extends ChangeTierLabelColorAc
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		changeColor(getTierManager().getSelectedTierLabels(), false);
+		changeColor(false);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 }

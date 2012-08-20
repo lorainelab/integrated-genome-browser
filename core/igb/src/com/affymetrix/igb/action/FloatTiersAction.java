@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -16,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import javax.swing.SwingUtilities;
+import static com.affymetrix.igb.shared.Selections.*;
 
 public class FloatTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -76,29 +78,23 @@ public class FloatTiersAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean something_changed = false;
-		List<? extends GlyphI> selectedTiers = getTierManager().getSelectedTiers();
-		for (GlyphI tg : selectedTiers) {
-			TierGlyph gl = ((TierGlyph)tg).getViewModeGlyph();
-			if (gl instanceof AbstractGraphGlyph) { // for now, eventually all tracks should float
-				ITrackStyleExtended style = gl.getAnnotStyle();
+		for (GraphState state : graphStates) {
+				ITrackStyleExtended style = state.getTierStyle();
 				boolean is_floating = style.getFloatTier();
 				if (!is_floating) {
 					// figure out correct height
-					Rectangle2D.Double coordbox = gl.getCoordBox();
+					Rectangle2D.Double coordbox = new Rectangle2D.Double(0, style.getY(), 0, style.getHeight());
 					Rectangle pixbox = new Rectangle();
 					getSeqMapView().getSeqMap().getView().transformToPixels(coordbox, pixbox);
 					style.setY(pixbox.y);
 					style.setHeight(pixbox.height);
-	
+					
 					style.setFloatTier(true);
-
-					if(gl instanceof AbstractGraphGlyph){
-						((AbstractGraphGlyph)gl).getGraphGlyph().getGraphState().setShowLabel(true);
-					}
-
+					state.setShowLabel(true);
+					
 					something_changed = true;
 				}
-			}
+			
 		}
 		if (something_changed) {
 			updateViewer();

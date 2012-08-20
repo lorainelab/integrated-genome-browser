@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -15,10 +16,10 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
+import static com.affymetrix.igb.shared.Selections.*;
 
 public class UnFloatTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -90,9 +91,8 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean something_changed = false;
-		List<TierGlyph> selectedTiers = getSelectedFloatingTiers();
-		for (TierGlyph gl : selectedTiers) {
-			ITrackStyleExtended style = gl.getAnnotStyle();
+		for (GraphState state : graphStates) {
+			ITrackStyleExtended style = state.getTierStyle();
 			boolean is_floating = style.getFloatTier();
 			if (is_floating) {
 				//GraphGlyphUtils.attachGraph(gl, gviewer);
@@ -102,15 +102,12 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 //				Rectangle2D.Double coordbox = new Rectangle2D.Double();
 //				getSeqMapView().getSeqMap().getView().transformToCoords(pixbox, coordbox);
 				
-				Rectangle2D.Double coordbox = gl.getCoordBox();
-				style.setY(coordbox.y);
-				style.setHeight(coordbox.height);
-				style.setFloatTier(false);
+				style.setY(style.getY());
+				style.setHeight(style.getHeight());
 				
-				if(gl instanceof AbstractGraphGlyph){
-					((AbstractGraphGlyph)gl).getGraphGlyph().getGraphState().setShowLabel(false);
-				}
-
+				style.setFloatTier(false);
+				state.setShowLabel(false);
+				
 				something_changed = true;
 			}
 		}
@@ -140,6 +137,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 		}
 		return selectedTiers;
 	}
+	
 	private void updateViewer() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

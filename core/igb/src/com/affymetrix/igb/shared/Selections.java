@@ -14,22 +14,27 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.EventObject;
 import java.util.List;
+import javax.swing.event.EventListenerList;
 
 /**
  *
  * @author hiralv
  */
 public class Selections {
-	private static final IGBService igbService;
 	public static final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<GraphState> graphStates = new ArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
-	
+		
+	private static final IGBService igbService;
+	private static final EventListenerList listenerList;
+
 	static{
 		igbService = IGBServiceImpl.getInstance();
+		listenerList = new EventListenerList();
 		addListeners(new Listeners());
 	}
 	
@@ -79,6 +84,7 @@ public class Selections {
 				allStyles.add(useGlyph.getAnnotStyle());
 			}
 		}
+		notifyRefreshListener();
 //		rootSyms.clear();
 //		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(allGlyphs));
 //		// First loop through and collect graphs and glyphs
@@ -90,6 +96,24 @@ public class Selections {
 //				graphSyms.add(rootSym);
 //			}
 //		}
+	}
+	
+	private static void notifyRefreshListener() {
+		// Guaranteed to return a non-null array
+		RefreshSelectionListener[] listeners = listenerList.getListeners(RefreshSelectionListener.class);
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 1; i >= 0; i -= 1) {
+			listeners[i].selectionRefreshed();
+		}
+	}
+	
+	public static void addRefreshSelectionListener(RefreshSelectionListener listener){
+		listenerList.add(RefreshSelectionListener.class, listener);
+	}
+	
+	public static interface RefreshSelectionListener extends EventListener{
+		public void selectionRefreshed();
 	}
 	
 	private static class Listeners implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {

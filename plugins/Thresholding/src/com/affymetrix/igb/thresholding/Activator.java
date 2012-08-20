@@ -7,11 +7,11 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 public class Activator implements BundleActivator {
@@ -25,9 +25,8 @@ public class Activator implements BundleActivator {
 		JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding", thresholdingAction);
 		MenuUtil.addToMenu(igbService.getMenu("tools"), thresholdingMenuItem);
 		thresholdingMenuItem.setEnabled(false);
-		selectionListener = new SelectionListener(igbService, thresholdingAction, thresholdingMenuItem);
-		GenometryModel.getGenometryModel().addSeqSelectionListener(selectionListener);
-		GenometryModel.getGenometryModel().addSymSelectionListener(selectionListener);
+		selectionListener = new SelectionListener(thresholdingAction, thresholdingMenuItem);
+		Selections.addRefreshSelectionListener(selectionListener);
 	}
 
 	@Override

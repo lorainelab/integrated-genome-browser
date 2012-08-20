@@ -112,7 +112,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	private AbstractGraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
 		AbstractGraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate, smv);
-		graph_glyph.addChild(graph_glyph.getGraphGlyph());
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
 //		tier_style.setCollapsed(isGenome);
@@ -121,7 +120,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		graph_glyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
-		graph_glyph.getGraphGlyph().setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
 //		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
 ////		if (pspan == null || pspan.getLength() == 0) {
 //		if (pspan == null) {
@@ -129,7 +127,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 //		}
 //		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
 		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
-		smv.setDataModelFromOriginalSym(graph_glyph.getGraphGlyph(), graf);
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		//if (/*gstate.getComboStyle() == null && */ gstate.getTierStyle().getFloatGraph()) {
@@ -158,7 +155,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 */
 			if (graph_glyph.getScene() != null) {
 				graph_glyph.pack(smv.getSeqMap().getView());
-				graph_glyph.getGraphGlyph().pack(smv.getSeqMap().getView());
 			}
 		//}
 		return graph_glyph;

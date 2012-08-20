@@ -3,6 +3,7 @@ package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.igb.graphTypes.BarGraphGlyph;
 import com.affymetrix.igb.graphTypes.DotGraphGlyph;
@@ -55,6 +56,17 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 			AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
 			if(smv != null){
 				result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
+			}
+			ITrackStyleExtended tier_style = gstate.getTierStyle();
+			tier_style.setTrackName(newgraf.getGraphName());
+			if (gstate.getComboStyle() != null) {
+				tier_style = gstate.getComboStyle();
+			}
+			result.addChild(graphGlyph);
+			graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
+			smv.setDataModelFromOriginalSym(graphGlyph, newgraf);
+			if (graphGlyph.getScene() != null) {
+				graphGlyph.pack(smv.getSeqMap().getView());
 			}
 			return result;
 		} catch (Exception ex) {

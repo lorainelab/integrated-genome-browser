@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -148,6 +149,17 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 		graphGlyph.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupGlyph(graphGlyph) : new FillBarGraphGlyph(graphGlyph));
 		AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
 		result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
+		ITrackStyleExtended tier_style = gstate.getTierStyle();
+		tier_style.setTrackName(newgraf.getGraphName());
+		if (gstate.getComboStyle() != null) {
+			tier_style = gstate.getComboStyle();
+		}
+		result.addChild(graphGlyph);
+		graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
+		smv.setDataModelFromOriginalSym(graphGlyph, newgraf);
+		if (graphGlyph.getScene() != null) {
+			graphGlyph.pack(smv.getSeqMap().getView());
+		}
 		return result;
 	}
 	

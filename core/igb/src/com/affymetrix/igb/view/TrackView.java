@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -91,7 +92,7 @@ public class TrackView {
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
-			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, factory.createViewModeGlyph(sym, style, tier_direction, smv));
+			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, (AbstractViewModeGlyph)factory.createViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {

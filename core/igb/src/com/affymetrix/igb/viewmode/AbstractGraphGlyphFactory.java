@@ -173,8 +173,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
-		AbstractViewModeGlyph result = null;
+	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
+		TierGlyph result = null;
 		if (sym == null) {
 			result = createViewModeGlyph(sym, style, tier_direction, smv);
 		} else if (sym instanceof GraphSym) {
@@ -202,7 +202,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
+	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
 		GraphState gState;
 		if(sym == null){
 			sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());

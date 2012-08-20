@@ -71,7 +71,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 	public abstract int getActualSlots();
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
-	protected void updateParent(AbstractViewModeGlyph vmg){
+	protected void updateParent(TierGlyph vmg){
 		//Do Nothing
 	}
 
@@ -339,7 +339,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		return direction;
 	}
 	
-	public final void copyChildren(AbstractViewModeGlyph temp) {
+	public final void copyChildren(TierGlyph temp) {
 		if(temp == null)
 			return;
 		
@@ -351,7 +351,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		}
 		
 		childrens.clear();
-		childrens.addAll(temp.getMiddleGlyphs());
+//		childrens.addAll(temp.getMiddleGlyphs());
 		
 		for (int i = 0; i < childrens.size(); i++) {
 			addMiddleGlyph(childrens.get(i));
@@ -440,7 +440,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 		}
 	}
 	
-	protected final AbstractViewModeGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
+	protected final TierGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
 		return factory.getViewModeGlyph(rootSym, style, direction, smv);
 	};
 	
@@ -456,12 +456,12 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 			protected Void doInBackground() throws Exception {
 				RootSeqSymmetry rootSym = loadRegion(smv.getVisibleSpan());
 				if (rootSym.getChildCount() > 0) {
-					final AbstractViewModeGlyph vmg = createGlyphs(rootSym, factory, smv);
+					final TierGlyph tg = createGlyphs(rootSym, factory, smv);
 					ThreadUtils.runOnEventQueue(new Runnable() {
 
 						public void run() {
-							updateParent(vmg);
-							GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), vmg.getChildCount() > 0);
+							updateParent(tg);
+							GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), tg.getChildCount() > 0);
 							GeneralLoadView.getLoadView().refreshDataManagementView();
 							//TODO: Find a way to avoid this
 							//if (lastUsedGlyph == saveDetailGlyph) {

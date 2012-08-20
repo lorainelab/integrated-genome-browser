@@ -13,17 +13,18 @@ import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		return new SequenceGlyph(style);
 	}
 		
 	@Override
-	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
+	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction direction, SeqMapViewExtendedI smv) {
 		AbstractViewModeGlyph viewModeGlyph = new SequenceGlyph(style);
 		

@@ -93,7 +93,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 					}
 				}
 			}
-			setViewModeGlyph(factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
+			setViewModeGlyph((AbstractViewModeGlyph)factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
 		}
 		this.style = style;
 	}
@@ -142,7 +142,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
 		floater.addChild(viewModeGlyph);
 		// replace viewModeGlyph with dummy, so that it won't show as a regular glyph in the track
-		viewModeGlyph = DummyGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv);
+		viewModeGlyph = (AbstractViewModeGlyph) DummyGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv);
 		viewModeGlyph.setTierGlyph(this);
 		viewModeGlyph.setCoordBox(super.getCoordBox());
 		setVisibility(false);
@@ -169,7 +169,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 		viewModeGlyph.setVisibility(true);
 		comboGlyph.addChild(viewModeGlyph);
 		// replace viewModeGlyph with dummy, so that it won't show as a regular glyph in the track
-		viewModeGlyph = DummyGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv);
+		viewModeGlyph = (AbstractViewModeGlyph)DummyGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv);
 		viewModeGlyph.setTierGlyph(this);
 		viewModeGlyph.setCoordBox(super.getCoordBox());
 		setVisibility(false);

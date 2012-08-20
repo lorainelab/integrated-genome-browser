@@ -28,7 +28,7 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		//return new ComboGlyph(gviewer, style);
 		return null;
 	}
@@ -111,7 +111,7 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
+	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction tier_direction, SeqMapViewExtendedI smv) {
 		//ComboGlyph comboGlyph = new ComboGlyph(smv, style);
 		//comboGlyph.setCoords(0, style.getY(), smv.getAnnotatedSeq().getLength(), 0);

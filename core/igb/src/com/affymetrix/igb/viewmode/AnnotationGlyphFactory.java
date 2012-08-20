@@ -540,7 +540,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		AbstractViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
 
 		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());
@@ -551,7 +551,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI gviewer) {
 		if (sym == null) {
 			return createViewModeGlyph(sym, style, tier_direction, gviewer);
 		}
@@ -559,9 +559,9 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 			int glyph_depth = style.getGlyphDepth();
 
 			Direction useDirection = (tier_direction == Direction.BOTH) ? Direction.BOTH : Direction.FORWARD;
-			AbstractViewModeGlyph ftier = createViewModeGlyph(sym, style, useDirection, gviewer);
+			TierGlyph ftier = createViewModeGlyph(sym, style, useDirection, gviewer);
 			ftier.setInfo(sym);
-			AbstractViewModeGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : createViewModeGlyph(sym, style, Direction.REVERSE, gviewer);
+			TierGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : createViewModeGlyph(sym, style, Direction.REVERSE, gviewer);
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);

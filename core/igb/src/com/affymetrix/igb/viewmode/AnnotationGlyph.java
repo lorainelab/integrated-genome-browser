@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
@@ -92,7 +91,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements ViewModeGl
 	}
 		
 	@Override
-	protected void updateParent(AbstractViewModeGlyph vmg){
+	protected void updateParent(TierGlyph vmg){
 		if(vmg.getChildCount() > 0){
 			copyChildren(vmg);
 		}

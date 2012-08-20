@@ -39,7 +39,7 @@ public interface MapViewGlyphFactoryI  {
 	 * @param gviewer
 	 * @return 
 	 */
-	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer);
+	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer);
 	/**
 	 * create a ViewModeGlyph for the SeqSymmetry
 	 * @param sym - The SeqSymmetry (object model) for the TierGlyph
@@ -48,7 +48,7 @@ public interface MapViewGlyphFactoryI  {
 	 * @param smv - reference to the SeqMapView parent of the Tier
 	 * @return the ViewModeGlyph
 	 */
-	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv);
+	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv);
 	/**
 	 * unique identifier
 	 * @return name of the factory

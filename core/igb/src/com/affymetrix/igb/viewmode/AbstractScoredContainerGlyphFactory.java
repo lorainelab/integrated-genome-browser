@@ -251,17 +251,17 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv);
 
 	@Override
-	public AbstractViewModeGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
 		return new ScoredContainerViewModeGlyph(style);
 	}
 		
 	@Override
-	public AbstractViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
+	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		if (sym == null) {
 			return new ScoredContainerViewModeGlyph(style);
 		}
 		else if (sym instanceof ScoredContainerSym) {
-			ViewModeGlyph annot = annotFactory.getViewModeGlyph(sym, style, tier_direction, smv);
+			TierGlyph annot = annotFactory.getViewModeGlyph(sym, style, tier_direction, smv);
 			ScoredContainerViewModeGlyph scored = new ScoredContainerViewModeGlyph(style);
 			scored.setInfo(sym);
 			

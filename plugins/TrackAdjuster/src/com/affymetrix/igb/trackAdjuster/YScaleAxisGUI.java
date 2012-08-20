@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -25,7 +26,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	private static final long serialVersionUID = 1L;
 	private final IGBService igbService;
 	private GraphVisibleBoundsSetter vis_bounds_setter;
-	private final List<TierGlyph> allGlyphs = new ArrayList<TierGlyph>();
+	private final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
 	private final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 	private boolean is_listening = true; // used to turn on and off listening to GUI events
 
@@ -319,11 +320,11 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	}
 
 	private void loadGlyphs() {
-		allGlyphs.clear();
+		allStyles.clear();
 		graphGlyphs.clear();
 		for (GlyphI glyph : igbService.getSeqMapView().getAllSelectedTiers()) {
 			TierGlyph useGlyph = (TierGlyph)glyph;
-			allGlyphs.add(useGlyph);
+			allStyles.add(useGlyph.getAnnotStyle());
 			if(useGlyph instanceof AbstractGraphGlyph){
 				graphGlyphs.add(((AbstractGraphGlyph)useGlyph).getGraphGlyph());
 			}
@@ -350,8 +351,8 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 	}
 
 	private boolean isAllFloat() {
-		for (TierGlyph vg : allGlyphs) {
-			if (!vg.getAnnotStyle().getFloatTier()) {
+		for (ITrackStyleExtended style : allStyles) {
+			if (!style.getFloatTier()) {
 				return false;
 			}
 		}
@@ -360,7 +361,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements SeqSelectionLis
 
 	private void resetAll() {
 		is_listening = false;
-		boolean enabled = graphGlyphs.size() > 0 && graphGlyphs.size() == allGlyphs.size();
+		boolean enabled = graphGlyphs.size() > 0 && graphGlyphs.size() == allStyles.size();
 		boolean heightEnabled = enabled && (getStretchableCount() > 1 || isAllFloat());
 		setByLabel.setEnabled(enabled);
 	    by_percentileRB_val.setEnabled(enabled);

@@ -293,30 +293,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		((IGB) IGB.getSingleton()).getWindowService().selectTab(panel);
 	}
 
-	@Override
-	public void deleteGlyph(GlyphI glyph) {
-		List<TierLabelGlyph> tiers = new ArrayList<TierLabelGlyph>();
-		for (TierLabelGlyph tierLabelGlyph : ((AffyLabelledTierMap) getSeqMap()).getTierLabels()) {
-			if (tierLabelGlyph.getInfo() == glyph) {
-				tiers.add(tierLabelGlyph);
-			}
-		}
-		for (TierLabelGlyph tlg : tiers) {
-			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-			String method = style.getMethodName();
-			if (method != null) {
-				TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), method, style);
-			} else {
-				for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
-					style = gg.getGraphGlyph().getGraphState().getTierStyle();
-					method = style.getMethodName();
-					TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), method, style);
-				}
-			}
-		}
-		((SeqMapView) getSeqMapView()).dataRemoved();	// refresh
-	}
-
 	public void deleteGraph(GraphSym gsym) {
 		TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
 		((SeqMapView) getSeqMapView()).dataRemoved();	// refresh

@@ -3,11 +3,10 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
+import static com.affymetrix.igb.shared.Selections.*;
 
 public class RestoreToDefaultAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -32,12 +31,9 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 		if (getTierManager().getSelectedTiers() == null) {
 			return;
 		}
-		for (TierGlyph tierGlyph : getTierManager().getSelectedTiers()) {
-			if (tierGlyph.getAnnotStyle() instanceof TrackStyle) {
-				((TrackStyle)tierGlyph.getAnnotStyle()).restoreToDefault();
-			}
-			if(tierGlyph.getViewModeGlyph() instanceof AbstractGraphGlyph ){
-				((AbstractGraphGlyph)tierGlyph.getViewModeGlyph()).getGraphGlyph().getGraphState().restoreToDefault();
+		for (ITrackStyleExtended style : allStyles) {
+			if (style instanceof TrackStyle) {
+				((TrackStyle)style).restoreToDefault();
 			}
 		}
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);

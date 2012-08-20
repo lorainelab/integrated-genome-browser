@@ -53,9 +53,10 @@ public class Selections {
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
 		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allStyles.clear();
-		//allGlyphs.addAll(selected);
-		graphStates.clear();
 		annotStyles.clear();
+		graphStates.clear();
+		graphGlyphs.clear();
+		//allGlyphs.addAll(selected);
 		for (TierGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
 			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {

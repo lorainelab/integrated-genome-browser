@@ -13,6 +13,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.AutoScrollAction;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -185,18 +186,17 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	// show properites in tool tip or display in selection info tab table
 	private void showGraphProperties(boolean isToolTip, MouseEvent evt) {
 		// Do we intersect any graph glyphs?
-		List<GlyphI> glyphlist = smv.collectGraphs();
+		List<GraphGlyph> glyphlist = smv.collectGraphs();
 		Point2D pbox = evt.getPoint();
-		for (GlyphI glyph : glyphlist) {
-			AbstractGraphGlyph graf = (AbstractGraphGlyph) glyph;
-			if (graf.getPixelBox().contains(pbox)) {
+		for (GraphGlyph glyph : glyphlist) {
+			if (glyph.getPixelBox().contains(pbox)) {
 				Point2D cbox = new Point2D.Double();
 				map.getView().transformToCoords(pbox, cbox);
 
 				if (isToolTip) {
-					smv.setToolTip((int) cbox.getX(), graf);
+					smv.setToolTip((int) cbox.getX(), glyph);
 				} else {
-					smv.showProperties((int) cbox.getX(), graf);
+					smv.showProperties((int) cbox.getX(), glyph);
 				}
 				break;
 			}

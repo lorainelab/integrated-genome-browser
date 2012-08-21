@@ -441,7 +441,7 @@ public final class GraphSelectionManager
 
       GlyphI gl = evt.getGlyph();
       if (gl instanceof AbstractGraphGlyph && src instanceof AffyTieredMap) {
-        GraphGlyphUtils.checkPixelBounds((AbstractGraphGlyph) gl, (AffyTieredMap) src);
+        GraphGlyphUtils.checkPixelBounds(((AbstractGraphGlyph) gl).getGraphGlyph(), (AffyTieredMap) src);
       }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored

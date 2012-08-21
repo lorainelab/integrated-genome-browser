@@ -138,7 +138,7 @@ public class TierGlyphImpl extends SolidGlyph implements TierGlyph {
 		Rectangle2D.Double cbox = map.getCoordBounds();
 		viewModeGlyph.setCoordBox(new Rectangle2D.Double(cbox.x, style.getY(), cbox.width, style.getHeight())); // viewModeGlyph does not have same CoordBox as TierGlyph
 		viewModeGlyph.setVisibility(true);
-		GraphGlyphUtils.checkPixelBounds(viewModeGlyph, map);
+		GraphGlyphUtils.checkPixelBounds(((AbstractGraphGlyph)viewModeGlyph).getGraphGlyph(), map);
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
 		floater.addChild(viewModeGlyph);
 		// replace viewModeGlyph with dummy, so that it won't show as a regular glyph in the track

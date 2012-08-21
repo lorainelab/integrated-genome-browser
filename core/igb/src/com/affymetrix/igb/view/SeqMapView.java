@@ -463,9 +463,9 @@ public class SeqMapView extends JPanel
 			SwingUtilities.invokeLater(new Runnable() {
 
 				public void run() {
-					List<GlyphI> graphs = collectGraphs();
+					List<GraphGlyph> graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
-						GraphGlyphUtils.checkPixelBounds((AbstractGraphGlyph) graphs.get(i), getSeqMap());
+						GraphGlyphUtils.checkPixelBounds(graphs.get(i), getSeqMap());
 					}
 					getSeqMap().stretchToFit(false, false);
 					getSeqMap().updateWidget();
@@ -1242,14 +1242,12 @@ public class SeqMapView extends JPanel
 
 	@Override
 	public final void selectAllGraphs() {
-		List<GlyphI> glyphlist = collectGraphs();
-		List<GlyphI> visibleList = new ArrayList<GlyphI>(glyphlist.size());
-		AbstractGraphGlyph gg;
+		List<GraphGlyph> glyphlist = collectGraphs();
+		List<GraphGlyph> visibleList = new ArrayList<GraphGlyph>(glyphlist.size());
 
 		//Remove hidden Graphs
-		for (GlyphI g : glyphlist) {
-			gg = (AbstractGraphGlyph) g;
-			if (gg.getGraphGlyph().getGraphState().getTierStyle().getShow()) {
+		for (GraphGlyph g : glyphlist) {
+			if (g.getGraphState().getTierStyle().getShow()) {
 				visibleList.add(g);
 			}
 		}
@@ -1258,8 +1256,8 @@ public class SeqMapView extends JPanel
 		// convert graph glyphs to GraphSyms via glyphsToSyms
 
 		// Bring them all into the visual area
-		for (GlyphI gl : visibleList) {
-			GraphGlyphUtils.checkPixelBounds((AbstractGraphGlyph) gl, getSeqMap());
+		for (GraphGlyph gl : visibleList) {
+			GraphGlyphUtils.checkPixelBounds(gl, getSeqMap());
 		}
 
 		select(glyphsToSyms(visibleList), false, true, true);
@@ -2045,8 +2043,8 @@ public class SeqMapView extends JPanel
 	 * Recurse through glyphs and collect those that are instances of
 	 * GraphGlyph.
 	 */
-	final List<GlyphI> collectGraphs() {
-		List<GlyphI> graphs = new ArrayList<GlyphI>();
+	final List<GraphGlyph> collectGraphs() {
+		List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 		GlyphI root = seqmap.getScene().getGlyph();
 		collectGraphs(root, graphs);
 		return graphs;
@@ -2055,12 +2053,12 @@ public class SeqMapView extends JPanel
 	/**
 	 * Recurse through glyph hierarchy and collect graphs.
 	 */
-	private static void collectGraphs(GlyphI gl, List<GlyphI> graphs) {
+	private static void collectGraphs(GlyphI gl, List<GraphGlyph> graphs) {
 		int max = gl.getChildCount();
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
 			if (child instanceof TierGlyph && ((TierGlyph) child).getViewModeGlyph() instanceof AbstractGraphGlyph) {
-				graphs.add(((TierGlyph) child).getViewModeGlyph());
+				graphs.add(((AbstractGraphGlyph)((TierGlyph) child).getViewModeGlyph()).getGraphGlyph());
 			}
 			if (child.getChildCount() > 0) {
 				collectGraphs(child, graphs);
@@ -2162,14 +2160,14 @@ public class SeqMapView extends JPanel
 	 *
 	 * @param glyph
 	 */
-	public final void setToolTip(int x, AbstractGraphGlyph glyph) {
+	public final void setToolTip(int x, GraphGlyph glyph) {
 		if (!show_prop_tooltip) {
 			return;
 		}
 
 		((AffyLabelledTierMap) seqmap).setToolTip(null);
 
-		List<GlyphI> glyphs = new ArrayList<GlyphI>();
+		List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 		glyphs.add(glyph);
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
@@ -2182,8 +2180,8 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void showProperties(int x, AbstractGraphGlyph glyph) {
-		List<GlyphI> glyphs = new ArrayList<GlyphI>();
+	public void showProperties(int x, GraphGlyph glyph) {
+		List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 		glyphs.add(glyph);
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 

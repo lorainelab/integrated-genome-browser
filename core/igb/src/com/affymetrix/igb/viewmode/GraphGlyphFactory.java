@@ -53,7 +53,7 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 			GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
 			GraphStyle style = type2Style.get(gstate.getGraphStyle()).getConstructor(new Class[]{GraphGlyph.class}).newInstance(graphGlyph);
 			graphGlyph.setGraphStyle(style);
-			AbstractGraphGlyph result = new AbstractGraphGlyph(graphGlyph);
+			AbstractGraphGlyph result = new AbstractGraphGlyph(gstate.getTierStyle());
 			if(smv != null){
 				result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 			}

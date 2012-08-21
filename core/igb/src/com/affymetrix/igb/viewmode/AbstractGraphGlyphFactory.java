@@ -224,9 +224,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	
 	public static class GenomeGraphGlyph extends MultiGraphGlyph{
 
-		public GenomeGraphGlyph(GraphGlyph graphGlyph) {
-			super(graphGlyph);
-			setStyle(style);
+		public GenomeGraphGlyph(ITrackStyleExtended style) {
+			super(style);
 		}
 				
 		@Override

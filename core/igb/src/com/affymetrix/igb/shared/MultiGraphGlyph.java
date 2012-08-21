@@ -1,12 +1,13 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 public abstract class MultiGraphGlyph extends AbstractGraphGlyph {
 		
-	public MultiGraphGlyph(GraphGlyph graphGlyph) {
-		super(graphGlyph);
+	public MultiGraphGlyph(ITrackStyleExtended style) {
+		super(style);
 	}
 
 	@Override

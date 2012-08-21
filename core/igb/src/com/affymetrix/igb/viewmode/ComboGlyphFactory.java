@@ -37,9 +37,8 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	public class ComboGlyph extends MultiGraphGlyph {
 		private GraphFasterExpandPacker expand_packer = new GraphFasterExpandPacker();
 		private CollapsePacker collapse_packer = new CollapsePacker();
-		public ComboGlyph(GraphGlyph graphGlyph) {
-			super(graphGlyph);
-			setStyle(style);
+		public ComboGlyph(ITrackStyleExtended style) {
+			super(style);
 		}
 	
 		@Override

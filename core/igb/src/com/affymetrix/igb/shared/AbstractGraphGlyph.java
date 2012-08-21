@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewModeGlyph{
 	private static final NumberFormat nformat = new DecimalFormat();
-	protected final GraphGlyph graphGlyph;
+	protected GraphGlyph graphGlyph;
 
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
@@ -43,16 +43,17 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 		PREFERENCES = Collections.unmodifiableMap(temp);
 	}
 
-	public AbstractGraphGlyph(GraphGlyph graphGlyph) {
+	public AbstractGraphGlyph(ITrackStyleExtended style) {
 		super();
-		this.graphGlyph = graphGlyph;
-		setStyle(graphGlyph.getGraphState().getTierStyle());
+		setStyle(style);
 	}
 	
 	@Override
 	public void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
-		graphGlyph.setColor(style.getForeground());
+		if(graphGlyph != null){
+			graphGlyph.setColor(style.getForeground());
+		}
 	}
 	
 	@Override
@@ -71,11 +72,12 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 		
 	@Override
 	public String getLabel() {
-		return graphGlyph.getLabel();
+		return style.getTrackName();
 	}
 	
 	@Override
 	public void setLabel(String str) {
+		style.setTrackName(str);
 	}
 		
 	@Override
@@ -191,6 +193,19 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 		return answer;
 	}
 
+	@Override
+	public void addChild(GlyphI glyph, int position) {
+		addChild(glyph);
+	}
+	
+	@Override
+	public void addChild(GlyphI child){
+		super.addChild(child);
+		if(child instanceof GraphGlyph){
+			graphGlyph = (GraphGlyph)child;
+		}
+	}
+	
 /*************************** Should be removed ********************************/
 	
 	public GraphGlyph getGraphGlyph(){

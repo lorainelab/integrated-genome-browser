@@ -54,7 +54,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 			boolean hasAnchored = false;
 			List<TierGlyph> selectedTiers = getSelectedFloatingTiers();
 			for (TierGlyph vg : selectedTiers) {
-				if (vg instanceof AbstractGraphGlyph) {
+				if (vg.getAnnotStyle().isGraphTier()) {
 					//SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
 					//if (selected_syms.contains(ss)) { // Need this? Action doesn't.
 						boolean floating = vg.getAnnotStyle().getFloatTier();

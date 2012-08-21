@@ -250,7 +250,7 @@ public final class TierLabelManager implements PropertyHolder {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 
 		for (TierGlyph glyph : getSelectedTiers()) {
-			if(!(glyph.getViewModeGlyph() instanceof AbstractGraphGlyph)){
+			if(!(glyph.getAnnotStyle().isGraphTier())){
 				Map<String, Object> props = getTierProperties(glyph);
 
 			if(props != null)
@@ -264,7 +264,7 @@ public final class TierLabelManager implements PropertyHolder {
 	public static Map<String, Object> getTierProperties(TierGlyph glyph) {
 	
 		if(glyph.getAnnotStyle().isGraphTier() && glyph.getChildCount() > 0 &&
-				glyph.getChild(0) instanceof AbstractGraphGlyph){
+				glyph.getChild(0) instanceof GraphGlyph){
 			return null;
 		}
 		
@@ -373,7 +373,7 @@ public final class TierLabelManager implements PropertyHolder {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();
 			if (child_count > 0) {
-				if (tg.getChild(0) instanceof AbstractGraphGlyph) {
+				if (tg.getChild(0) instanceof GraphGlyph) {
 					// It would be nice if we could assume that a tier contains only
 					// GraphGlyph's or only non-GraphGlyph's, but that is not true.
 					//
@@ -386,7 +386,7 @@ public final class TierLabelManager implements PropertyHolder {
 					// Assume that if first child is a GraphGlyph, then so are all others
 					for (int i = 0; i < child_count; i++) {
 						GlyphI ob = tg.getChild(i);
-						if (!(ob instanceof AbstractGraphGlyph)) {
+						if (!(ob instanceof GraphGlyph)) {
 							// ignore the glyphs that are not GraphGlyph's
 							continue;
 						}

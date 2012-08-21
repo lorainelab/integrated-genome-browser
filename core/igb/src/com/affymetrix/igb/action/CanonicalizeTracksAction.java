@@ -133,10 +133,14 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 						this.getSeqMapView().getSeqMap().getView()
 				);
 				if (Float.MIN_VALUE < maxMax) {
-					TierGlyph vg = tg.getViewModeGlyph();
-					if (vg instanceof AbstractGraphGlyph) {
-						GraphGlyph gg = (GraphGlyph) vg;
-						gg.setVisibleMaxY(maxMax);
+					if (tg.getAnnotStyle().isGraphTier()) {
+						for(GlyphI g : tg.getViewModeGlyph().getChildren()){
+							if(!(g instanceof GraphGlyph))
+								break;
+						
+							GraphGlyph gg = (GraphGlyph) g;
+							gg.setVisibleMaxY(maxMax);
+						}
 					}
 				}
 			}

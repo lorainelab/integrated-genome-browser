@@ -5,6 +5,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.action.HideAction;
 import com.affymetrix.igb.action.ShowAllAction;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -95,7 +96,7 @@ final public class MouseShortCut implements MouseListener{
 				
 			}
 
-			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof AbstractGraphGlyph)
+			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof GraphGlyph)
 				return;
 			
 			//Zoom to glyphs.

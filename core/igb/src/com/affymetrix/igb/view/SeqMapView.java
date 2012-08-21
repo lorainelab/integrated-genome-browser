@@ -1812,8 +1812,8 @@ public class SeqMapView extends JPanel
 					id = SeqUtils.spanToString(seq_region);
 					sym_used_for_title = seq_selected_sym;
 				}
-				if (id == null && topgl instanceof AbstractGraphGlyph) {
-					AbstractGraphGlyph gg = (AbstractGraphGlyph) topgl;
+				if (id == null && topgl instanceof GraphGlyph) {
+					GraphGlyph gg = (GraphGlyph) topgl;
 					if (gg.getLabel() != null) {
 						id = "Graph: " + gg.getLabel();
 					} else {
@@ -1952,8 +1952,8 @@ public class SeqMapView extends JPanel
 	// sets the text on the JLabel based on the current selection
 	private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
 		String title = "";
-		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof AbstractGraphGlyph) {
-			AbstractGraphGlyph gg = (AbstractGraphGlyph) selected_glyphs.get(0);
+		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
+			GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
 			title = gg.getLabel();
 		} else {
 			title = getSelectionTitle(selected_glyphs);

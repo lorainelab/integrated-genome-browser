@@ -2057,7 +2057,9 @@ public class SeqMapView extends JPanel
 		int max = gl.getChildCount();
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
-			if (child instanceof TierGlyph && ((TierGlyph) child).getViewModeGlyph() instanceof AbstractGraphGlyph) {
+			if (child instanceof TierGlyph 
+					&& ((TierGlyph) child).getViewModeGlyph() instanceof AbstractGraphGlyph
+					&& ((AbstractGraphGlyph)((TierGlyph) child).getViewModeGlyph()).getGraphGlyph() != null) {
 				graphs.add(((AbstractGraphGlyph)((TierGlyph) child).getViewModeGlyph()).getGraphGlyph());
 			}
 			if (child.getChildCount() > 0) {

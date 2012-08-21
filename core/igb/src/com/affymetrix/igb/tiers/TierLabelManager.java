@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
@@ -422,8 +423,8 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	/** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
-	public static List<AbstractGraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-		List<AbstractGraphGlyph> result = new ArrayList<AbstractGraphGlyph>();
+	public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
+		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			result.addAll(getContainedGraphs(tlg.getReferenceTier()));
 		}
@@ -431,13 +432,13 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	/** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
-	private static List<AbstractGraphGlyph> getContainedGraphs(TierGlyph tier) {
-		List<AbstractGraphGlyph> result = new ArrayList<AbstractGraphGlyph>();
+	private static List<GraphGlyph> getContainedGraphs(TierGlyph tier) {
+		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
 		int child_count = tier.getChildCount();
 		if (child_count > 0 && tier.getAnnotStyle().isGraphTier() && 
-				tier.getChild(0) instanceof AbstractGraphGlyph) {
+				tier.getChild(0) instanceof GraphGlyph) {
 			for (int j = 0; j < child_count; j++) {
-				result.add((AbstractGraphGlyph) tier.getChild(j));
+				result.add((GraphGlyph) tier.getChild(j));
 			}
 		}
 		return result;
@@ -501,9 +502,9 @@ public final class TierLabelManager implements PropertyHolder {
 			// When collapsing, make them all be the same height as the tier.
 			// (this is for simplicity in figuring out how to draw things.)
 			if (collapsed) {
-				List<AbstractGraphGlyph> graphs = getContainedGraphs(tg);
+				List<GraphGlyph> graphs = getContainedGraphs(tg);
 				double tier_height = style.getHeight();
-				for (AbstractGraphGlyph graph : graphs) {
+				for (GraphGlyph graph : graphs) {
 					Rectangle2D.Double cbox = graph.getCoordBox();
 					graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
 				}

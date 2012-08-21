@@ -44,7 +44,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -335,7 +334,7 @@ public final class GraphSelectionManager
             break;
           }
         }
-        else if (gl.getParent() instanceof AbstractGraphGlyph) {
+        else if (gl.getParent() instanceof GraphGlyph) {
           if (DEBUG) System.out.println("hit child of graph...");
         }
       }
@@ -422,7 +421,7 @@ public final class GraphSelectionManager
     Object src = evt.getSource();
     if (id == NeoGlyphDragEvent.DRAG_IN_PROGRESS) {
       GlyphI gl = evt.getGlyph();
-      if (gl.getParent() instanceof AbstractGraphGlyph && src instanceof NeoWidget) {
+      if (gl.getParent() instanceof GraphGlyph && src instanceof NeoWidget) {
         NeoWidget widg = (NeoWidget)src;
         ViewI view = widg.getView();
         GlyphI threshgl = gl;
@@ -440,8 +439,8 @@ public final class GraphSelectionManager
       dragger.removeGlyphDragListener(this);
 
       GlyphI gl = evt.getGlyph();
-      if (gl instanceof AbstractGraphGlyph && src instanceof AffyTieredMap) {
-        GraphGlyphUtils.checkPixelBounds(((AbstractGraphGlyph) gl).getGraphGlyph(), (AffyTieredMap) src);
+      if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
+        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
       }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored
@@ -478,7 +477,7 @@ public final class GraphSelectionManager
     while (iter.hasNext()) {
       SeqSymmetry sym = iter.next();
       GlyphI g = current_source.<GlyphI>getItem(sym);
-      if (g instanceof AbstractGraphGlyph) {
+      if (g instanceof GraphGlyph) {
         selected_graph_glyphs.add((GraphGlyph)g);
       }
     }
@@ -527,10 +526,10 @@ public final class GraphSelectionManager
       if (labels.size() == 0 || !areAllGraphs(labels)) {
         return;
       }
-      List<AbstractGraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
+      List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
 		List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>(graph_glyphs.size());
-		for (AbstractGraphGlyph glyph : graph_glyphs) {
+		for (GraphGlyph glyph : graph_glyphs) {
 			graph_syms.add((GraphSym) glyph.getInfo()); // It will be a GraphSym object
 		}
 		GraphSym primary_sym = null;

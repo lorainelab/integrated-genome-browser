@@ -206,6 +206,12 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewMod
 		}
 	}
 	
+	@Override
+	public void removeAllChildren() {
+		super.removeAllChildren();
+		graphGlyph = null;
+	}
+	
 /*************************** Should be removed ********************************/
 	
 	public GraphGlyph getGraphGlyph(){

@@ -191,7 +191,7 @@ public class TrackView {
 			}
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
 			factory.getViewModeGlyph(annotSym, style, direction, smv);
-			if (style.getSeparate()) {
+			if (style.getSeparate() && !(annotSym instanceof GraphSym)) {
 				factory.getViewModeGlyph(annotSym, style, TierGlyph.Direction.REVERSE, smv);
 			}
 		}

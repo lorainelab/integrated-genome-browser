@@ -4,10 +4,13 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public interface TierGlyph extends GlyphI {
+
+	public void setMinimumPixelBounds(Graphics graphics);
 
 	public static enum Direction {
 		FORWARD(" (+)"), NONE(""), REVERSE(" (-)"), BOTH(" (+/-)"), AXIS("");

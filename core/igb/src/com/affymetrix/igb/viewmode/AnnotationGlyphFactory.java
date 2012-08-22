@@ -541,7 +541,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
-		AbstractViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
+		TierGlyph viewModeGlyph = new AnnotationGlyph(style);
 
 		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());
 		// Don't use style height. That seems to be in scene coordinates.

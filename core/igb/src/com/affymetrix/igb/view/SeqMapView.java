@@ -990,7 +990,7 @@ public class SeqMapView extends JPanel
 		boolean change_happened = false;
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
-				AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
+				TierGlyph vg = (TierGlyph) glyph;
 				if (!vg.getAnnotStyle().getFloatTier()) {
 			
 //					change_happened = true;
@@ -1946,7 +1946,7 @@ public class SeqMapView extends JPanel
 		// this selects all floating tracks
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
-				AbstractViewModeGlyph gl = (AbstractViewModeGlyph)floatGlyph;
+				TierGlyph gl = (TierGlyph)floatGlyph;
 				boolean matches = matchesCategory((RootSeqSymmetry) gl.getInfo(), category);
 				if (matches) {
 					floatGlyph.setSelected(true);

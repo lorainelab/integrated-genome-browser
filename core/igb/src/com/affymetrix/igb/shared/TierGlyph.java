@@ -20,39 +20,38 @@ public interface TierGlyph extends GlyphI {
 			return display;
 		}
 	};
-		
-	public String getLabel();
-
-	public void resizeHeight(double d, double height);
-
-	public List<SeqSymmetry> getSelected();
-		
+	
+	public ITrackStyleExtended getAnnotStyle();
+	
 	public void setStyle(ITrackStyleExtended annotStyle);
-
-	public void setLabel(String trackName);
-
+	
+	public Direction getDirection();
+	
 	public void setDirection(Direction direction);
 
-	public void addMiddleGlyph(GlyphI mglyph);
+	public String getLabel();
 
-	public boolean inside(int x, int y);
+	public void setLabel(String trackName);
+	
+	public void addMiddleGlyph(GlyphI mglyph);
+	
+	public List<SeqSymmetry> getSelected();
 
 	public int getActualSlots();
 		
 	public int getSlotsNeeded(ViewI ourView);
 
-	public ITrackStyleExtended getAnnotStyle();
-
-	public Direction getDirection();
-
 	public boolean isManuallyResizable();
 
+	public void resizeHeight(double d, double height);
+		
+	public double getChildHeight();
+	
 	public void setPreferredHeight(double maxHeight, ViewI view);
+	
+	public void setMinimumPixelBounds(Graphics graphics);
 	
 	public boolean toolBarHit(Rectangle2D.Double hitrect, ViewI view);
 	
-	public double getChildHeight();
-	
-	public void setMinimumPixelBounds(Graphics graphics);
-
+	public boolean inside(int x, int y);
 }

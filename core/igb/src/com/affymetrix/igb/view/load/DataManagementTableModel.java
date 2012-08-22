@@ -402,7 +402,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			for (TierGlyph tier : new CopyOnWriteArrayList<TierGlyph>(smv.getSeqMap().getTiers())) {
 				ITrackStyle style = tier.getAnnotStyle();
 				if (style instanceof TrackStyle) {
-					if (!tier.isGarbage() || tier.getDirection() == Direction.AXIS) {
+					if (tier.getDirection() == Direction.AXIS) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (style.getMethodName().equals(CytobandParser.CYTOBAND_TIER_NAME)) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);

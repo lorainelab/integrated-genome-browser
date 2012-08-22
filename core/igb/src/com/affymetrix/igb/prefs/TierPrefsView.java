@@ -208,8 +208,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				}
 
 				if (style instanceof TrackStyle
-						&& style.getShow()
-						&& !tier.isGarbage()) {
+						&& style.getShow()) {
 					styles.add((TrackStyle) style);
 				}
 			}

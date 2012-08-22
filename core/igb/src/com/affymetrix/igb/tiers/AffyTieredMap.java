@@ -190,9 +190,7 @@ public class AffyTieredMap extends NeoMap {
 
 		// Now hide or show tiers based on which checkboxes are selected
 		for (TierGlyph mtg : tiersCopy) {
-			if (mtg.isGarbage()) {
-				mtg.setVisibility(false);
-			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
+			if (mtg.getChildCount() == 0) {
 				mtg.setVisibility(false);
 			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
 				mtg.setVisibility(false);

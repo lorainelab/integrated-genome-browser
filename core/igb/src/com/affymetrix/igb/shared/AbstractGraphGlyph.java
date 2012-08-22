@@ -60,16 +60,7 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
 		setCoordBox(getCoordBox()); // so all use the same coordbox
 	}
-		
-	@Override
-	public boolean initUnloaded() {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();	 
-		if (getInfo() != null && ((GraphSym) getInfo()).getGraphSeq() != seq) {
-			return true;
-		}
-		return super.initUnloaded();
-	}
-		
+			
 	@Override
 	public String getLabel() {
 		return style.getTrackName();

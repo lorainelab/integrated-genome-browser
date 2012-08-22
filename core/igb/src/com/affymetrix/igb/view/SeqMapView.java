@@ -851,7 +851,6 @@ public class SeqMapView extends JPanel
 				continue;
 			}
 			TierGlyph tg = cur_tiers.get(i);
-			tg.makeGarbage();
 			temp_tiers.add(tg);
 			if (DEBUG_TIERS) {
 				System.out.println("removing tier from map: " + tg.getLabel());
@@ -1024,7 +1023,7 @@ public class SeqMapView extends JPanel
 	 */
 	private void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
-			if (tg.isGarbage()) {
+			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
 			}
 		}

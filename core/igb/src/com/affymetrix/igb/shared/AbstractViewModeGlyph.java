@@ -62,7 +62,6 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	protected Color other_fill_color = null;
 	
 	protected String label = null;
-	private boolean unloadedOK = false;
 	  
 	public abstract void setPreferredHeight(double height, ViewI view);
 	public abstract int getActualSlots();
@@ -480,9 +479,6 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 		worker = null;
 	};
 	
-	public boolean isGarbage() {
-		return getChildCount() == 0;
-	}
 	public boolean isCombo() {
 		return false;
 	}
@@ -555,12 +551,4 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 		this.moveRelative(0, diffy);
 	}
 
-	public void makeGarbage() {
-		removeAllChildren();
-		setUnloadedOK(false);
-	}
-
-	public void setUnloadedOK(boolean unloadedOK) {
-		this.unloadedOK = unloadedOK;
-	}
 }

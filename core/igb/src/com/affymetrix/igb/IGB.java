@@ -353,10 +353,10 @@ public final class IGB extends Application
 		if(tool_bar == null)
 			tool_bar = new JToolBar();
 		tool_bar.addSeparator();
-		tool_bar.add(new JLabel("Selection Info: "));
+		tool_bar.add(new JLabel("  Selection Info:  "));
 		selField.setEditable(false);
 		tool_bar.add(selField);
-		tool_bar.add(new JLabel("Click the map below to select Annotations"));
+		tool_bar.add(new JLabel("  Click the map below to select annotations  "));
 	}
 	
 	public void removeTextFieldToolbar(){

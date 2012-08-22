@@ -992,8 +992,8 @@ public class SeqMapView extends JPanel
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
 				AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
 				if (!vg.getAnnotStyle().getFloatTier()) {
-					((TierGlyphImpl)vg.getTierGlyph()).defloat(pixel_floater_glyph, vg);
-					change_happened = true;
+			
+//					change_happened = true;
 				}
 			}
 		}
@@ -1009,56 +1009,12 @@ public class SeqMapView extends JPanel
 		boolean change_happened = false;
 		for (TierGlyph tg : tiers) {
 			if (tg.getViewModeGlyph().getAnnotStyle().getFloatTier()) {
-				((TierGlyphImpl)tg).enfloat(pixel_floater_glyph, getSeqMap());
-				change_happened = true;
+
+//				change_happened = true;
 			}
 		}
 		return change_happened;
 	}
-
-//	/**
-//	 * Move non joined glyphs from their comboGlyph to tierGlyph.
-//	 */
-//	private boolean moveNonJoinedTierGlyphs() {
-//		boolean change_happened = false;
-//		for (TierGlyph tierGlyph : seqmap.getTiers()) {
-//			if (tierGlyph.getViewModeGlyph() instanceof ComboGlyph && tierGlyph.getViewModeGlyph().getChildren() != null) {
-//				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
-//					AbstractViewModeGlyph vg = (AbstractViewModeGlyph) glyph;
-//					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null)) {
-//						((TierGlyphImpl)vg.getTierGlyph()).dejoin(tierGlyph.getViewModeGlyph(), vg);
-//						selectTrack(vg.getTierGlyph(), true);
-//						change_happened = true;
-//					}
-//				}
-//			}
-//		}
-//		return change_happened;
-//	}
-//
-//	/**
-//	 * move joined glyphs from TierGlyph to their comboGlyph
-//	 *
-//	 * @param tiers the list of TierGlyphs
-//	 */
-//	private boolean moveJoinedTierGlyphs(List<TierGlyph> tiers) {
-//		boolean change_happened = false;
-//		Set<TierGlyph> comboTracks = new HashSet<TierGlyph>();
-//		for (TierGlyph tg : tiers) {
-//			ViewModeGlyph vg = tg.getViewModeGlyph();
-//			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle() != null) {
-//				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph) vg).getGraphGlyph().getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
-//				comboTracks.add(comboTierGlyph);
-//				comboTierGlyph.setUnloadedOK(true);
-//				((TierGlyphImpl)tg).enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
-//				change_happened = true;
-//			}
-//		}
-//		for (TierGlyph comboTierGlyph : comboTracks) {
-//			selectTrack(comboTierGlyph, true);
-//		}
-//		return change_happened;
-//	}
 
 	/**
 	 * hide TierGlyphs with no children (that is how IGB indicates that a glyph

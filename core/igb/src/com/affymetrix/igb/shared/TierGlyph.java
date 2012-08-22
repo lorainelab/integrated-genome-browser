@@ -53,5 +53,4 @@ public interface TierGlyph extends GlyphI {
 	
 	public boolean toolBarHit(Rectangle2D.Double hitrect, ViewI view);
 	
-	public boolean inside(int x, int y);
 }

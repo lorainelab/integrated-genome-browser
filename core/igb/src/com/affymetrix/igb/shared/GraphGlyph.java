@@ -489,7 +489,7 @@ public class GraphGlyph extends Glyph {
 
 	@Override
 	public void setColor(Color c) {
-//		setBackgroundColor(c);
+		setBackgroundColor(c);
 		setForegroundColor(c);
 		state.getTierStyle().setForeground(c);
 	}

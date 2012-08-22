@@ -14,7 +14,6 @@ import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  * creates a glyph with no children, so that it is never displayed
@@ -36,7 +35,7 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	// glyph class
-	public class DummyGlyph extends AbstractViewModeGlyph implements ViewModeGlyph{
+	public class DummyGlyph extends AbstractViewModeGlyph{
 
 		public DummyGlyph(ITrackStyleExtended style, Direction tier_direction) {
 			super();

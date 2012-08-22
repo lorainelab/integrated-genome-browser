@@ -129,8 +129,8 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
 		// P.S. Why isn't getMinPixelsHeight in GlyphI?
 		int currentPixelHeight = parent.getPixelBox(view).height;
 		if (currentPixelHeight < minPixelHeight) {
-			if (parent instanceof ViewModeGlyph) {
-				ViewModeGlyph g = (ViewModeGlyph) parent;
+			if (parent instanceof AbstractViewModeGlyph) {
+				AbstractViewModeGlyph g = (AbstractViewModeGlyph) parent;
 				// Only do this for resizable tiers for now.
 				// It would screw up the axis tier, for one.
 				if (g.isManuallyResizable()) {

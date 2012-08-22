@@ -32,7 +32,7 @@ import java.util.*;
  * <p><em><strong>This is only meant for graphs on horizontal maps.</strong></em>
  * </p>
  */
-public class AbstractGraphGlyph extends AbstractViewModeGlyph implements ViewModeGlyph{
+public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 	private static final NumberFormat nformat = new DecimalFormat();
 	protected GraphGlyph graphGlyph;
 

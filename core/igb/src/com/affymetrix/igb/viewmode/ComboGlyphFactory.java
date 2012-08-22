@@ -91,7 +91,7 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		public GlyphI getChildWithStyle(ITrackStyleExtended style) {
 			int numChildren = getChildCount();
 			for (int i = 0; i < numChildren; i++) {
-				ViewModeGlyph glyph = (ViewModeGlyph)getChild(i);
+				AbstractViewModeGlyph glyph = (AbstractViewModeGlyph)getChild(i);
 				if (glyph.getAnnotStyle() == style) { // can use == instead of equals()
 					return glyph;
 				}

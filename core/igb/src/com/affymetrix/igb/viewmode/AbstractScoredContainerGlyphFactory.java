@@ -40,7 +40,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	public void init(Map<String, Object> options) {
 	}
 
-	private List<ViewModeGlyph> displayGraphs(ScoredContainerSym original_container, SeqMapViewExtendedI smv) {
+	private List<TierGlyph> displayGraphs(ScoredContainerSym original_container, SeqMapViewExtendedI smv) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 
 
@@ -48,7 +48,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 			return null;
 		}
 		GraphIntervalSym[] the_graph_syms = determineGraphSyms(smv, aseq, original_container);
-		List<ViewModeGlyph> vmgs = new ArrayList<ViewModeGlyph>();
+		List<TierGlyph> vmgs = new ArrayList<TierGlyph>();
 
 		for (GraphIntervalSym gis : the_graph_syms) {
 			GraphGlyph gg = displayGraphSym(gis, smv);
@@ -274,12 +274,12 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 
 			scored.addChild(annot);
 			
-			List<ViewModeGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
+			List<TierGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
 			if(vmgs == null){
 				return scored;
 			}
 			
-			for(ViewModeGlyph vmg : vmgs){
+			for(TierGlyph vmg : vmgs){
 				scored.addChild(vmg);
 			}
 

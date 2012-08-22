@@ -1946,7 +1946,7 @@ public class SeqMapView extends JPanel
 		// this selects all floating tracks
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
-				ViewModeGlyph gl = (ViewModeGlyph)floatGlyph;
+				AbstractViewModeGlyph gl = (AbstractViewModeGlyph)floatGlyph;
 				boolean matches = matchesCategory((RootSeqSymmetry) gl.getInfo(), category);
 				if (matches) {
 					floatGlyph.setSelected(true);

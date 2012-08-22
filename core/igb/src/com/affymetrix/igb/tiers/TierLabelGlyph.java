@@ -7,7 +7,6 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -305,10 +304,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 	public boolean isManuallyResizable() {
 		Object o = getInfo();
-		if (o instanceof ViewModeGlyph) {
-			ViewModeGlyph t = (ViewModeGlyph) o;
-			return t.isManuallyResizable();
-		}
 		if (o instanceof TierGlyph) {
 			TierGlyph t = (TierGlyph) o;
 			return t.isManuallyResizable();

@@ -70,7 +70,7 @@ public class Selections {
 					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof AbstractGraphGlyph) {
 							graphStates.add(((AbstractGraphGlyph) g).getGraphGlyph().getGraphState());
-							allStyles.add(((ViewModeGlyph) g).getAnnotStyle());
+							allStyles.add(((AbstractViewModeGlyph) g).getAnnotStyle());
 							graphGlyphs.add(((AbstractGraphGlyph)g).getGraphGlyph());
 						}
 					}

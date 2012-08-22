@@ -38,12 +38,9 @@ import javax.swing.SwingWorker;
 
 
 /**
- *  !!! the TierGlyph and ViewModeGlyph and all its subordinate ViewModeGlyphs should
- *  all contain the same instance of CoordBox. !!!
- *  This is the glyph that displays the contents of a Tier/Track. Each TierGlyph
- *  contains a ViewModeGlyph and delegates all calls to the ViewModeGlyph.
+ *  This is the glyph that displays the contents of a Tier/Track.
  */
-public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewModeGlyph, TierGlyph, NeoRangeListener{
+public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGlyph, NeoRangeListener{
 	
 	private TierGlyph tierGlyph;
 	SwingWorker previousWorker, worker;
@@ -97,7 +94,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 			
 			return GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 		} catch (Exception ex) {
-			Logger.getLogger(ViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		return Collections.<SeqSymmetry>emptyList();
@@ -297,7 +294,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements ViewMo
 					loadAndDisplayRegion(smv, factory);
 				}
 			} catch (Exception ex) {
-				Logger.getLogger(ViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 	};

@@ -52,13 +52,13 @@ public class GlyphDragger
 
 	double prevx, prevy;
 	double currentx, currenty;
-	Point2D.Double prev_point = new Point2D.Double(0, 0);
-	Point2D.Double cur_point = new Point2D.Double(0, 0);
+	protected Point2D.Double prev_point = new Point2D.Double(0, 0);
+	protected Point2D.Double cur_point = new Point2D.Double(0, 0);
 
-	GlyphI dragged_glyph;
+	protected GlyphI dragged_glyph;
 	NeoAbstractWidget widget;
 	private final Set<NeoGlyphDragListener> drag_listeners = new CopyOnWriteArraySet<NeoGlyphDragListener>();
-	boolean force_within_parent = false;
+	protected boolean force_within_parent = false;
 
 	// a transform to use when mapping mouse drags to glyph coords
 	//    if no trans is passed in via startDrag, will use standard

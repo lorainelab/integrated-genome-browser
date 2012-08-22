@@ -488,9 +488,6 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	public void setTierGlyph(TierGlyph tierGlyph) {
 		this.tierGlyph = tierGlyph;
 	}
-	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
-		setCoordBox(parentCoordBox); // so all use the same coordbox
-	}
 	public int getSlotsNeeded(ViewI theView) {
 		return 1;
 	}

@@ -40,12 +40,7 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 		super();
 		setStyle(style);
 	}
-		
-	@Override
-	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
-		setCoordBox(getCoordBox()); // so all use the same coordbox
-	}
-			
+					
 	@Override
 	public String getLabel() {
 		return style.getTrackName();

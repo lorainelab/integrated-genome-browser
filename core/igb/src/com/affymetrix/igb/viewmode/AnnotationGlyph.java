@@ -214,8 +214,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph{
 	 */
 	@Override
 	public void draw(ViewI view) {
-		//drawMiddle(view);
-
 		if (shouldDrawLabel()) {
 			drawLabelLeft(view);
 		}

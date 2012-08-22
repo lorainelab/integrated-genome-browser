@@ -285,6 +285,7 @@ public class AffyTieredMap extends NeoMap {
 				removeItem(child);
 			}
 		}
+		gl.removeAllChildren();
 	}
 
 	/**

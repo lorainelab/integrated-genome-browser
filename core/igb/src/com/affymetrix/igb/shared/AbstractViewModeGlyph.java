@@ -207,13 +207,9 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 		}
 	}
 	
-	public List<GlyphI> getMiddleGlyphs(){
-		return middle_glyphs;
-	}
-	
 	@Override
-	public void drawTraversal(ViewI view)  {
-		super.drawTraversal(view);
+	public void draw(ViewI view){
+		drawMiddle(view);
 		if (shouldDrawToolBar()) {
 			drawExpandCollapse(view);
 		}

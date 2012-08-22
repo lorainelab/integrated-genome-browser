@@ -148,14 +148,13 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	@Override
 	public void draw(ViewI view) {
 		TierGlyph reftier = this.getReferenceTier();
-		Color fgcolor = reftier.getForegroundColor();
-		Color bgcolor = reftier.getBackgroundColor();
+		ITrackStyleExtended trackStyle = reftier.getAnnotStyle();
+		Color fgcolor = trackStyle.getLabelForeground();
+		Color bgcolor = trackStyle.getBackground();
 
 		final Graphics g = view.getGraphics();
 		g.setPaintMode();
 
-		ITrackStyleExtended trackStyle = reftier.getAnnotStyle();
-		fgcolor = trackStyle.getLabelForeground();
 		//bgcolor = trackStyle.getLabelBackground();
 		Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
 		g.setFont(newfnt);

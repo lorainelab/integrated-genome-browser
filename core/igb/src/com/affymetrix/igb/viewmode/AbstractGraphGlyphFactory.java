@@ -104,14 +104,15 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		return displayGraphSym(newgraf, graf, smv, isGenome);
 	}
 
-	protected abstract GraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv);
+	protected abstract void setGraphType(GraphSym newgraf, GraphState gstate, GraphGlyph graphGlyph);
 
 	/**
 	 * Almost exactly the same as ScoredContainerGlyphFactory.displayGraphSym.
 	 */
 	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
-		GraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate, smv);
+		GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
+		setGraphType(newgraf, gstate, graphGlyph);
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
 //		tier_style.setCollapsed(isGenome);
@@ -119,14 +120,14 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tier_style = gstate.getComboStyle();
 		}
 
-		graph_glyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
+		graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
 //		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
 ////		if (pspan == null || pspan.getLength() == 0) {
 //		if (pspan == null) {
 //			return null;
 //		}
 //		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
-		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
+		smv.setDataModelFromOriginalSym(graphGlyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		//if (/*gstate.getComboStyle() == null && */ gstate.getTierStyle().getFloatGraph()) {
@@ -153,11 +154,11 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView(), false);
 */
-			if (graph_glyph.getScene() != null) {
-				graph_glyph.pack(smv.getSeqMap().getView());
+			if (graphGlyph.getScene() != null) {
+				graphGlyph.pack(smv.getSeqMap().getView());
 			}
 		//}
-		return graph_glyph;
+		return graphGlyph;
 	}
 
 	@Override

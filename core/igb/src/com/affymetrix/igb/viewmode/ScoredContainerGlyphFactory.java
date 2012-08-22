@@ -20,7 +20,8 @@ public class ScoredContainerGlyphFactory extends AbstractScoredContainerGlyphFac
 	
 	@Override
 	protected GraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv) {
-		return graphGlyphFactory.createViewModeGlyph(graf, graphState, smv);
+//		return graphGlyphFactory.setGraphType(graf, graphState, smv);
+		return null;
 	}
 	
 	@Override

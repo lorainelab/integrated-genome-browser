@@ -540,7 +540,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
 		TierGlyph viewModeGlyph = new AnnotationGlyph(style);
 
 		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());

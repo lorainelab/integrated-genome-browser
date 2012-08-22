@@ -18,7 +18,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	
 	@Override
-	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer){
 		return new SequenceGlyph(style);
 	}
 		

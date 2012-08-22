@@ -185,9 +185,9 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
+	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer){
 		AbstractGraphGlyph result = new AbstractGraphGlyph(style);
-		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
+		result.setCoords(0, style.getY(), gviewer.getViewSeq().getLength(), style.getHeight());
 		return result;
 	}
 	

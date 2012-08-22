@@ -30,7 +30,7 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
+	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
 		return new DummyGlyph(style, direction);
 	}
 

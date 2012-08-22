@@ -142,14 +142,6 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	public void setDirection(TierGlyph.Direction d) {
 		direction = d;
 	}
-
-	public void setLabel(String str) {
-		label = str;
-	}
-
-	public String getLabel() {
-		return label;
-	}
 	
 	public void setStyle(ITrackStyleExtended style) {
 		this.style = style;
@@ -161,7 +153,6 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 
 		//If any visibilty bug occurs, fix here. -HV 22/03/2012
 		setVisibility(style.getShow());
-		setLabel(style.getTrackName());
 	}
 		
 	protected boolean shouldDrawToolBar(){

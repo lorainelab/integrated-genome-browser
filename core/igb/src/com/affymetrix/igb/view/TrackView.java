@@ -90,7 +90,6 @@ public class TrackView {
 		if (tierGlyph == null) {
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
 			tierGlyph = factory.createViewModeGlyph(sym, style, tier_direction, smv);
-			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {
 				gstyle2track.put(style, tierGlyph);

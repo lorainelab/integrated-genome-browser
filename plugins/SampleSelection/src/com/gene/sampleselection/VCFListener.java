@@ -125,8 +125,8 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
 		}
 		lastClickedGlyph = selectedGlyphs.get(0);
 		String name = null;
-		if (lastClickedGlyph != null && lastClickedGlyph.getLabel() != null) {
-			 name = lastClickedGlyph.getLabel();
+		if (lastClickedGlyph != null && lastClickedGlyph.getAnnotStyle().getTrackName() != null) {
+			 name = lastClickedGlyph.getAnnotStyle().getTrackName();
 		}
 		
 		SampleSelectionView samplesPanel = (SampleSelectionView)igbService.getTabPanel(SampleSelectionView.class.getName());

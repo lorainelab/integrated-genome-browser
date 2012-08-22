@@ -28,10 +28,6 @@ public interface TierGlyph extends GlyphI {
 	public Direction getDirection();
 	
 	public void setDirection(Direction direction);
-
-	public String getLabel();
-
-	public void setLabel(String trackName);
 	
 	public void addMiddleGlyph(GlyphI mglyph);
 	

@@ -853,7 +853,7 @@ public class SeqMapView extends JPanel
 			TierGlyph tg = cur_tiers.get(i);
 			temp_tiers.add(tg);
 			if (DEBUG_TIERS) {
-				System.out.println("removing tier from map: " + tg.getLabel());
+				System.out.println("removing tier from map: " + tg.getAnnotStyle().getTrackName());
 			}
 			seqmap.removeTier(tg);
 		}
@@ -888,7 +888,7 @@ public class SeqMapView extends JPanel
 			for (int i = 0; i < temp_tiers.size(); i++) {
 				TierGlyph tg = temp_tiers.get(i);
 				if (DEBUG_TIERS) {
-					System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
+					System.out.println("adding back tier: " + tg.getAnnotStyle().getTrackName() + ", scene = " + tg.getScene());
 				}
 				if (tg.getAnnotStyle() != null) {
 					tg.setStyle(tg.getAnnotStyle());

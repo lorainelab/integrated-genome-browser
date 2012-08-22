@@ -365,10 +365,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 	private void update(int col) {
 		if (col == BACKGROUND_COLUMN || col == TRACK_NAME_COLUMN) {
-			if (col == TRACK_NAME_COLUMN) {
-				smv.getSeqMap().setTierLabels();
-			}
-
 			smv.getSeqMap().updateWidget();
 		} else if (col == HIDE_FEATURE_COLUMN){
 			smv.getSeqMap().repackTheTiers(false, true);

@@ -74,7 +74,6 @@ public class RenameTierAction extends SeqMapViewActionA implements ParameteredAc
 	}
 	
 	private void update(){
-		getTierMap().setTierLabels();
-		getTierMap().updateWidget();
+		getTierMap().getLabelMap().updateWidget();
 	}
 }

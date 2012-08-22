@@ -40,17 +40,7 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 		super();
 		setStyle(style);
 	}
-					
-	@Override
-	public String getLabel() {
-		return style.getTrackName();
-	}
-	
-	@Override
-	public void setLabel(String str) {
-		style.setTrackName(str);
-	}
-		
+							
 	@Override
 	public void setPreferredHeight(double height, ViewI view) {
 		GlyphI child = getChild(0);

@@ -847,10 +847,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 					smv.getSeqMap().repackTheTiers(true, true);
 				}
 
-				if (col == COL_TRACK_NAME) {
-					smv.getSeqMap().setTierLabels();
-				}
-
 				smv.getSeqMap().updateWidget();
 			} else {
 				refreshSeqMapViewAndSlicedView();

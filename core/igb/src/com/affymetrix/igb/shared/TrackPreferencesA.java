@@ -358,7 +358,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.RenameTierAction");
 		if (allStyles.size() == 1) {
-			action.performAction(allStyles.get(0).getTrackName(), name);
+			action.performAction(allStyles.get(0), name);
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
 				action.performAction((graphStates.get(0)).getComboStyle(), name);

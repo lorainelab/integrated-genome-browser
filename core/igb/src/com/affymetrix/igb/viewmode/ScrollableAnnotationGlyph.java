@@ -335,7 +335,7 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 	}
 
 	private void drawLabelLeft(ViewI view) {
-		if (getLabel() == null) {
+		if (style.getTrackName() == null) {
 			return;
 		}
 		Rectangle hpix = calcHandlePix(view);
@@ -344,7 +344,7 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 			g.setFont(default_font);
 			FontMetrics fm = g.getFontMetrics();
 			g.setColor(this.getColor());
-			g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+			g.drawString(style.getTrackName(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
 		}
 	}
 

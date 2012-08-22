@@ -76,8 +76,7 @@ public class Selections {
 						}
 					}
 				}
-			}
-			else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {
+			}else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 			}

@@ -124,11 +124,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 */
 	private String getLabelString() {
 		TierGlyph reference_tier = getReferenceTier();
-		if (reference_tier.getLabel() == null) {
+		if (reference_tier.getAnnotStyle().getTrackName() == null) {
 			return ".......";
 		}
 		String direction_str = getDirectionString(reference_tier);
-		return reference_tier.getLabel() + direction_str;
+		return reference_tier.getAnnotStyle().getTrackName() + direction_str;
 	}
 
 	public boolean isLoading() {

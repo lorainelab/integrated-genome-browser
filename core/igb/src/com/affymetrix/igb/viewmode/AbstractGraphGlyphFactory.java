@@ -175,7 +175,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		if (sym instanceof GraphSym) {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if(graphGlyph != null){
-				TierGlyph result = smv.getTrack(sym, style, Direction.NONE);
+				TierGlyph result = smv.getTrack(style, Direction.NONE);
 				result.addChild(graphGlyph);
 			}
 		} else {

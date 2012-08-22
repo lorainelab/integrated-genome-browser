@@ -83,7 +83,7 @@ public class TrackView {
 	 * @param tier_direction the direction
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
-	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+	TierGlyph getTrack(SeqMapView smv, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		AffyTieredMap seqmap = smv.getSeqMap();
 		TierGlyph tierGlyph = null;
 		tierGlyph = getTier(style, tier_direction);
@@ -162,11 +162,11 @@ public class TrackView {
 		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);
 		
 		//Remove previous view mode glyph
-		TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+		TierGlyph mainTier = smv.getTrack(style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 		smv.getSeqMap().removeItem(mainTier);
 		
 		if (style.getSeparate()) {
-			TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+			TierGlyph secondTier = smv.getTrack(style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 			smv.getSeqMap().removeItem(secondTier);
 		}
 		
@@ -336,13 +336,13 @@ public class TrackView {
 		if(!style.isGraphTier()){
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
 			//rootSym = (category == FileTypeCategory.ScoredContainer) ? new ScoredContainerSym() : new TypeContainerAnnot(style.getMethodName());
-			TierGlyph tgfor = gviewer.getTrack(rootSym, style, direction);
+			TierGlyph tgfor = gviewer.getTrack(style, direction);
 			if (style.getSeparate()) {
-				TierGlyph tgrev = gviewer.getTrack(rootSym, style, Direction.REVERSE);
+				TierGlyph tgrev = gviewer.getTrack(style, Direction.REVERSE);
 			}
 		}else {
 			//rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
-			TierGlyph tg = gviewer.getTrack(rootSym, style, Direction.NONE);
+			TierGlyph tg = gviewer.getTrack(style, Direction.NONE);
 		}
 		return;
 	}

@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
 /**
@@ -13,5 +12,5 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 
 	int getAverageSlots();
 	
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction);
+	public TierGlyph getTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 }

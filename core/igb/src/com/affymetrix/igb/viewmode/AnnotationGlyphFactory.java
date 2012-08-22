@@ -555,9 +555,9 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();
 			Direction useDirection = (!style.getSeparable()) ? Direction.BOTH : Direction.FORWARD;
-			TierGlyph ftier = gviewer.getTrack(sym, style, useDirection);
+			TierGlyph ftier = gviewer.getTrack(style, useDirection);
 			ftier.setInfo(sym);
-			TierGlyph rtier = (useDirection == Direction.BOTH) ? ftier : gviewer.getTrack(sym, style, Direction.REVERSE);
+			TierGlyph rtier = (useDirection == Direction.BOTH) ? ftier : gviewer.getTrack(style, Direction.REVERSE);
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);

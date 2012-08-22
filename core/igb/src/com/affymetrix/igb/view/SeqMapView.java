@@ -811,8 +811,8 @@ public class SeqMapView extends JPanel
 	 * @param tier_direction the direction of the track
 	 *       (FORWARD, REVERSE, or BOTH)
 	 */
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return TrackView.getInstance().getTrack(this, sym, style, tier_direction);
+	public TierGlyph getTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		return TrackView.getInstance().getTrack(this, style, tier_direction);
 	}
 
 	public void preserveSelectionAndPerformAction(AbstractAction action) {

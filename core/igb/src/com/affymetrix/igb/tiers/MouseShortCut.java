@@ -4,7 +4,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.action.HideAction;
 import com.affymetrix.igb.action.ShowAllAction;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;

@@ -1292,6 +1292,7 @@ public class SeqMapView extends JPanel
 		return allSelectedTiers;
 	}
 
+	@Override
 	public List<GraphGlyph> getFloatingGraphGlyphs() {
 		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 		if (pixel_floater_glyph.getChildren() != null) {

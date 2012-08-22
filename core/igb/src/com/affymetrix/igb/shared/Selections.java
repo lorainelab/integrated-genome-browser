@@ -81,6 +81,16 @@ public class Selections {
 				allStyles.add(useGlyph.getAnnotStyle());
 			}
 		}
+		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
+		List<GlyphI> selectedGraphs = (List)igbService.getSeqMapView().getFloatingGraphGlyphs();
+		for (GlyphI glyph : selectedGraphs) {
+			if (glyph instanceof GraphGlyph) {
+				GraphGlyph gg = (GraphGlyph) glyph;
+				graphStates.add(gg.getGraphState());
+				allStyles.add(gg.getGraphState().getTierStyle());
+				graphGlyphs.add(gg);
+			}
+		}
 		notifyRefreshListener();
 //		rootSyms.clear();
 //		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(allGlyphs));

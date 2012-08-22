@@ -114,4 +114,6 @@ public interface SeqMapViewI {
 	public void updatePanel(boolean preserveViewX, boolean preserveViewY);
 
 	public List<GlyphI> getAllSelectedTiers();
+	
+	public List<? extends GlyphI> getFloatingGraphGlyphs();
 }

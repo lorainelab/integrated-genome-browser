@@ -66,18 +66,15 @@ public class Selections {
 				category = useGlyph.getAnnotStyle().getFileTypeCategory();
 			}
 			if (useGlyph instanceof AbstractGraphGlyph) {
-				if (useGlyph instanceof MultiGraphGlyph && useGlyph.getChildCount() > 0) {
+				if (useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
-						if (g instanceof AbstractGraphGlyph) {
-							graphStates.add(((AbstractGraphGlyph) g).getGraphGlyph().getGraphState());
-							allStyles.add(((TierGlyph) g).getAnnotStyle());
-							graphGlyphs.add(((AbstractGraphGlyph)g).getGraphGlyph());
+						if (g instanceof GraphGlyph) {
+							GraphGlyph gg = (GraphGlyph)g;
+							graphStates.add(gg.getGraphState());
+							allStyles.add(gg.getGraphState().getTierStyle());
+							graphGlyphs.add(gg);
 						}
 					}
-				}else{
-					graphStates.add(((AbstractGraphGlyph) useGlyph).getGraphGlyph().getGraphState());
-					allStyles.add(useGlyph.getAnnotStyle());
-					graphGlyphs.add(((AbstractGraphGlyph)useGlyph).getGraphGlyph());
 				}
 			}
 			else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {

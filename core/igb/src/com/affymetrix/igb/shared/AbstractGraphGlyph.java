@@ -12,15 +12,11 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Rectangle2D;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 
 
@@ -33,9 +29,6 @@ import java.util.*;
  * </p>
  */
 public class AbstractGraphGlyph extends AbstractViewModeGlyph{
-	private static final NumberFormat nformat = new DecimalFormat();
-	protected GraphGlyph graphGlyph;
-
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -47,15 +40,7 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 		super();
 		setStyle(style);
 	}
-	
-	@Override
-	public void setStyle(ITrackStyleExtended style) {
-		super.setStyle(style);
-		if(graphGlyph != null){
-			graphGlyph.setColor(style.getForeground());
-		}
-	}
-	
+		
 	@Override
 	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
 		setCoordBox(getCoordBox()); // so all use the same coordbox
@@ -183,31 +168,4 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 		float[] answer = {rangeMinimum, rangeMaximum};
 		return answer;
 	}
-
-	@Override
-	public void addChild(GlyphI glyph, int position) {
-		addChild(glyph);
-	}
-	
-	@Override
-	public void addChild(GlyphI child){
-		super.addChild(child);
-		if(child instanceof GraphGlyph){
-			graphGlyph = (GraphGlyph)child;
-		}
-	}
-	
-	@Override
-	public void removeAllChildren() {
-		super.removeAllChildren();
-		graphGlyph = null;
-	}
-	
-/*************************** Should be removed ********************************/
-	
-	public GraphGlyph getGraphGlyph(){
-		return graphGlyph;
-	}
-
-/*************************** Should be removed ********************************/
 }

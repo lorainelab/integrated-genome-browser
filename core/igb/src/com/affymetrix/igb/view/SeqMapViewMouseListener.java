@@ -12,7 +12,6 @@ import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.AutoScrollAction;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
@@ -271,31 +270,30 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 		// seems no longer needed
 		//map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
-		List<AbstractGraphGlyph> graphs = new ArrayList<AbstractGraphGlyph>();
+		List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 		ITrackStyleExtended combo_style = null;
-		if (topgl != null && topgl instanceof AbstractGraphGlyph) {
-			AbstractGraphGlyph gg = (AbstractGraphGlyph) topgl;
-			combo_style = gg.getGraphGlyph().getGraphState().getComboStyle();
+		if (topgl != null && topgl instanceof GraphGlyph) {
+			combo_style = ((GraphGlyph) topgl).getGraphState().getComboStyle();
 		}
 
 		if (preserve_selections) {
 			for (int i = 0; i < hcount; i++) {
 				Object obj = hits.get(i);
-				if (obj instanceof AbstractGraphGlyph) {
-					graphs.add((AbstractGraphGlyph) obj);
+				if (obj instanceof GraphGlyph) {
+					graphs.add((GraphGlyph) obj);
 				}
 			}
 		} else if (combo_style != null) {
 			for (int i = 0; i < hcount; i++) {
 				Object obj = hits.get(i);
-				if (obj instanceof AbstractGraphGlyph
-						&& ((AbstractGraphGlyph) obj).getGraphGlyph().getGraphState().getComboStyle() == combo_style) {
-					graphs.add((AbstractGraphGlyph) obj);
+				if (obj instanceof GraphGlyph
+						&& ((GraphGlyph) obj).getGraphState().getComboStyle() == combo_style) {
+					graphs.add((GraphGlyph) obj);
 				}
 			}
 		} else {
-			if (topgl != null && topgl instanceof AbstractGraphGlyph) {
-				graphs.add((AbstractGraphGlyph) topgl);
+			if (topgl != null && topgl instanceof GraphGlyph) {
+				graphs.add((GraphGlyph) topgl);
 			}
 		}
 
@@ -310,7 +308,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 			int gcount = graphs.size();
 			for (int i = 0; i < gcount; i++) {
-				AbstractGraphGlyph gl = graphs.get(i);
+				GraphGlyph gl = graphs.get(i);
 				if (gl != topgl) {  // if gl == topgl, already handled above...
 					if (toggle_event && gl.isSelected()) {
 						map.deselect(gl);

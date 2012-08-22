@@ -424,7 +424,8 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	}
 	
 	protected final TierGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
-		return factory.getViewModeGlyph(rootSym, style, direction, smv);
+		return null;
+		//return factory.getViewModeGlyph(rootSym, style, direction, smv);
 	};
 	
 	protected final void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapViewGlyphFactoryI factory) throws Exception{

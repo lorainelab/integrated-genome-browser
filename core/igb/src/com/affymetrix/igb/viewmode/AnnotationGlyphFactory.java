@@ -551,17 +551,13 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI gviewer) {
-		if (sym == null) {
-			return gviewer.getTrack(sym, style, tier_direction);
-		}
-		else {
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer) {
+		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();
-
-			Direction useDirection = (tier_direction == Direction.BOTH) ? Direction.BOTH : Direction.FORWARD;
+			Direction useDirection = (!style.getSeparable()) ? Direction.BOTH : Direction.FORWARD;
 			TierGlyph ftier = gviewer.getTrack(sym, style, useDirection);
 			ftier.setInfo(sym);
-			TierGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : gviewer.getTrack(sym, style, Direction.REVERSE);
+			TierGlyph rtier = (useDirection == Direction.BOTH) ? ftier : gviewer.getTrack(sym, style, Direction.REVERSE);
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
@@ -569,7 +565,6 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 				// use only one tier
 				addLeafsToTier(gviewer, sym, ftier, ftier, glyph_depth);
 			}
-			return (tier_direction == Direction.REVERSE) ? rtier : ftier;
 		}
 //		else {  // keep recursing down into child syms if parent sym has no "method" property
 //			int childCount = sym.getChildCount();

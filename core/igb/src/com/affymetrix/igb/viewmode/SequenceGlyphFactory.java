@@ -23,29 +23,24 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	}
 		
 	@Override
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-		Direction direction, SeqMapViewExtendedI smv) {
-		TierGlyph viewModeGlyph = smv.getTrack(sym, style, direction);
-		
-		if(sym == null){
-			return viewModeGlyph;
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
+		if (sym != null) {
+			TierGlyph viewModeGlyph = smv.getTrack(sym, style, Direction.NONE);
+			SimpleSymWithResidues childSym = (SimpleSymWithResidues) sym.getChild(0);
+			SeqSpan pspan = smv.getViewSeqSpan(childSym);
+			if (pspan == null || pspan.getLength() == 0) {
+				return;
+			}  // if no span corresponding to seq, then return;
+			viewModeGlyph.setDirection(Direction.NONE);
+			viewModeGlyph.setInfo(sym);
+			FillRectGlyph childGlyph = new FillRectGlyph();
+			childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
+			childGlyph.setColor(style.getForeground());
+			smv.setDataModelFromOriginalSym(childGlyph, childSym);
+			BioSeq annotseq = smv.getAnnotatedSeq();
+			addAlignedResidues(childSym, annotseq, childGlyph);
+			viewModeGlyph.addChild(childGlyph);
 		}
-		
-		SimpleSymWithResidues childSym = (SimpleSymWithResidues)sym.getChild(0);
-		SeqSpan pspan = smv.getViewSeqSpan(childSym);
-		if (pspan == null || pspan.getLength() == 0) {
-			return viewModeGlyph;
-		}  // if no span corresponding to seq, then return;
-		viewModeGlyph.setDirection(direction);
-		viewModeGlyph.setInfo(sym);
-		FillRectGlyph childGlyph = new FillRectGlyph();
-		childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
-		childGlyph.setColor(style.getForeground());
-		smv.setDataModelFromOriginalSym(childGlyph, childSym);
-		BioSeq annotseq = smv.getAnnotatedSeq();
-		addAlignedResidues(childSym, annotseq, childGlyph);
-		viewModeGlyph.addChild(childGlyph);
-		return viewModeGlyph;
 	}
 
 	/**

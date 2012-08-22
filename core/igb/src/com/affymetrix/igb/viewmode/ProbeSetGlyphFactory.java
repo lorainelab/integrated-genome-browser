@@ -475,14 +475,10 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI gviewer) {
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer) {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
-		if (meth == null) {
-			return gviewer.getTrack(sym, style, tier_direction);
-//			meth = "unknown";
-//			human_name = meth;
-		} else {
+		if (meth != null) {
 			// Why to strip off the ending ??
 			// Not stripping off the ending to resolve bug ID: 3213610
 			// http://sourceforge.net/tracker/?func=detail&aid=3213610&group_id=129420&atid=714744
@@ -501,26 +497,22 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 					style.setTrackName(human_name);
 				}
 				label_field = style.getLabelField();
-				TierGlyph[] tiers = new TierGlyph[2];
-				TierGlyph.Direction useDirection = (tier_direction == TierGlyph.Direction.BOTH) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
-				tiers[0] = gviewer.getTrack(sym, style, useDirection);
-				tiers[0].setInfo(sym);
-				tiers[1] = (tier_direction == TierGlyph.Direction.BOTH) ? tiers[0] : gviewer.getTrack(sym, style, TierGlyph.Direction.REVERSE);
-				tiers[1].setInfo(sym);
+				TierGlyph.Direction useDirection = (!style.getSeparate()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+				TierGlyph ftier = gviewer.getTrack(sym, style, useDirection);
+				ftier.setInfo(sym);
+				TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(sym, style, TierGlyph.Direction.REVERSE);
+				rtier.setInfo(sym);
 				if (style.getSeparate()) {
-					addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);
+					addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
 				} else {
 					// use only one tier
-					addLeafsToTier(gviewer, sym, tiers[0], tiers[0], glyph_depth);
+					addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
 				}
 				
-				return (tier_direction == TierGlyph.Direction.REVERSE) ? tiers[1] : tiers[0];
-
 			} catch (Exception ex) {
 				Logger.getLogger(ProbeSetGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		return null;
 	}
 
 	@Override

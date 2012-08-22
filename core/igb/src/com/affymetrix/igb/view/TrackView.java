@@ -179,21 +179,8 @@ public class TrackView {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			Direction direction = null;
-			if (annotSym instanceof GraphSym) {
-				direction = Direction.NONE;
-			}
-			else if (style.getSeparate()) {
-				direction = Direction.FORWARD;
-			}
-			else {
-				direction = Direction.BOTH;
-			}
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
-			factory.getViewModeGlyph(annotSym, style, direction, smv);
-			if (style.getSeparate() && !(annotSym instanceof GraphSym)) {
-				factory.getViewModeGlyph(annotSym, style, TierGlyph.Direction.REVERSE, smv);
-			}
+			factory.createGlyphs(annotSym, style, smv);
 		}
 	}
 		

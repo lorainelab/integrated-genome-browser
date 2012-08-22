@@ -48,7 +48,7 @@ public interface MapViewGlyphFactoryI  {
 	 * @param smv - reference to the SeqMapView parent of the Tier
 	 * @return the ViewModeGlyph
 	 */
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv);
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv);
 	/**
 	 * unique identifier
 	 * @return name of the factory

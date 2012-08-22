@@ -259,35 +259,21 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	}
 		
 	@Override
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
-		if (sym == null) {
-			return new ScoredContainerViewModeGlyph(style);
-		}
-		else if (sym instanceof ScoredContainerSym) {
-			TierGlyph annot = annotFactory.getViewModeGlyph(sym, style, tier_direction, smv);
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
+		if (sym instanceof ScoredContainerSym) {
+			annotFactory.createGlyphs(sym, style, smv);
 			ScoredContainerViewModeGlyph scored = new ScoredContainerViewModeGlyph(style);
 			scored.setInfo(sym);
 			
-			if(annot == null){
-				return scored;
-			}
-
-			scored.addChild(annot);
-			
-			List<TierGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
-			if(vmgs == null){
-				return scored;
-			}
-			
+			List<TierGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);	
 			for(TierGlyph vmg : vmgs){
 				scored.addChild(vmg);
 			}
 
-			return scored;
+
 		} else {
 			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry "
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
-		return null;
 	}
 }

@@ -69,9 +69,8 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-		Direction tier_direction, SeqMapViewExtendedI smv) {
-		return new DummyGlyph(style, tier_direction);
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
+		new DummyGlyph(style, Direction.FORWARD);
 	}
 
 	@Override

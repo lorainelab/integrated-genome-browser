@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
@@ -170,20 +171,17 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
-		TierGlyph result = smv.getTrack(sym, style, tier_direction);
-		if (sym == null) {
-			return result;
-		} else if (sym instanceof GraphSym) {
+	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
+		if (sym instanceof GraphSym) {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if(graphGlyph != null){
+				TierGlyph result = smv.getTrack(sym, style, Direction.NONE);
 				result.addChild(graphGlyph);
 			}
 		} else {
 			ourLogger.log(Level.SEVERE, 
 					"GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry passed in is NOT a GraphSym: {0}", sym);
 		}
-		return result;
 	}
 	
 	@Override

@@ -8,15 +8,12 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import static com.affymetrix.igb.shared.Selections.*;
@@ -52,16 +49,13 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
-			List<TierGlyph> selectedTiers = getSelectedFloatingTiers();
-			for (TierGlyph vg : selectedTiers) {
-				if (vg.getAnnotStyle().isGraphTier()) {
-					//SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
-					//if (selected_syms.contains(ss)) { // Need this? Action doesn't.
-						boolean floating = vg.getAnnotStyle().getFloatTier();
-						hasFloater |= floating;
-						hasAnchored |= !floating;
-					//}
-				}
+			List<GraphGlyph> selectedTiers = getSeqMapView().getFloatingGraphGlyphs();
+			for (GraphGlyph vg : selectedTiers) {
+				//SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+				//if (selected_syms.contains(ss)) { // Need this? Action doesn't.
+				boolean floating = vg.getGraphState().getTierStyle().getFloatTier();
+				hasFloater |= floating;
+				hasAnchored |= !floating;
 			}
 			ACTION.setEnabled(hasFloater);
 
@@ -114,28 +108,6 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 		if (something_changed) {
 			updateViewer();
 		}
-	}
-
-	private List<TierGlyph> getSelectedFloatingTiers() {
-		List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
-		SeqMapView v = this.getSeqMapView();
-		if (null == v) {
-			return selectedTiers;
-		}
-		PixelFloaterGlyph g = v.getPixelFloater();
-		if (null == g) {
-			return selectedTiers;
-		}
-		List<GlyphI> l = g.getChildren();
-		if (null == l) {
-			return selectedTiers;
-		}
-		for (GlyphI glyph : l) {
-			if (glyph.isSelected()) {
-				selectedTiers.add((TierGlyph)glyph);
-			}
-		}
-		return selectedTiers;
 	}
 	
 	private void updateViewer() {

@@ -871,15 +871,7 @@ public class SeqMapView extends JPanel
 		addPreviousTierGlyphs(seqmap, temp_tiers);
 		axis_tier = addAxisTier(axis_index);
 		addAnnotationTracks();
-		boolean change_happened = false;
-		change_happened |= moveNonFloatingTierGlyphs();
-//		change_happened |= moveNonJoinedTierGlyphs();
 		hideEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
-//		change_happened |= moveJoinedTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
-		change_happened |= moveFloatingTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
-		if (change_happened) {
-			postSelections();
-		}
 	}
 
 	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
@@ -980,39 +972,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 		return layers;
-	}
-
-	/**
-	 * Move non floating glyphs from pixel floater to tier glyph.
-	 */
-	private boolean moveNonFloatingTierGlyphs() {
-		boolean change_happened = false;
-		if (pixel_floater_glyph.getChildren() != null) {
-			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
-				TierGlyph vg = (TierGlyph) glyph;
-				if (!vg.getAnnotStyle().getFloatTier()) {
-			
-//					change_happened = true;
-				}
-			}
-		}
-		return change_happened;
-	}
-
-	/**
-	 * move floating glyphs from TierGlyph to pixel floater
-	 *
-	 * @param tiers the list of TierGlyphs
-	 */
-	private boolean moveFloatingTierGlyphs(List<TierGlyph> tiers) {
-		boolean change_happened = false;
-		for (TierGlyph tg : tiers) {
-			if (tg.getAnnotStyle().getFloatTier()) {
-
-//				change_happened = true;
-			}
-		}
-		return change_happened;
 	}
 
 	/**
@@ -1314,15 +1273,7 @@ public class SeqMapView extends JPanel
 		// this adds all tracks selected on the label, including join tracks (not join children)
 		for (TierGlyph tierGlyph : tier_manager.getSelectedTiers()) {
 			allSelectedTiers.add(tierGlyph);
-		}
-		// this adds all floating tracks
-		if (pixel_floater_glyph.getChildren() != null) {
-			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
-				if (floatGlyph.isSelected()) {
-					allSelectedTiers.add(floatGlyph);
-				}
-			}
-		}
+		}	
 		// this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			if (!allSelectedTiers.contains(tierGlyph)) {
@@ -1339,6 +1290,18 @@ public class SeqMapView extends JPanel
 			}
 		}
 		return allSelectedTiers;
+	}
+
+	public List<GraphGlyph> getFloatingGraphGlyphs() {
+		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+		if (pixel_floater_glyph.getChildren() != null) {
+			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
+				if (floatGlyph.isSelected()) {
+					graphGlyphs.add((GraphGlyph)floatGlyph);
+				}
+			}
+		}
+		return graphGlyphs;
 	}
 
 	/**

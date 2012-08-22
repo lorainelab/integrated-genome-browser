@@ -174,12 +174,17 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
 		if (sym instanceof GraphSym) {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
-			if(graphGlyph != null){
-				TierGlyph result = smv.getTrack(style, Direction.NONE);
-				result.addChild(graphGlyph);
+			if (graphGlyph != null) {
+				if (style.getFloatTier()) {
+					GraphGlyphUtils.checkPixelBounds(graphGlyph, smv.getSeqMap());
+					smv.addToPixelFloaterGlyph(graphGlyph);
+				} else {
+					TierGlyph result = smv.getTrack(style, Direction.NONE);
+					result.addChild(graphGlyph);
+				}
 			}
 		} else {
-			ourLogger.log(Level.SEVERE, 
+			ourLogger.log(Level.SEVERE,
 					"GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry passed in is NOT a GraphSym: {0}", sym);
 		}
 	}

@@ -51,7 +51,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	 *     will go into an attached tier, never a floating glyph.
 	 *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
 	 */
-	private AbstractGraphGlyph displayGraph(GraphSym graf, SeqMapViewExtendedI smv, boolean check_same_seq) {
+	private GraphGlyph displayGraph(GraphSym graf, SeqMapViewExtendedI smv, boolean check_same_seq) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
@@ -104,14 +104,14 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		return displayGraphSym(newgraf, graf, smv, isGenome);
 	}
 
-	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv);
+	protected abstract GraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv);
 
 	/**
 	 * Almost exactly the same as ScoredContainerGlyphFactory.displayGraphSym.
 	 */
-	private AbstractGraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
+	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
-		AbstractGraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate, smv);
+		GraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate, smv);
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
 //		tier_style.setCollapsed(isGenome);
@@ -170,25 +170,13 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
-		TierGlyph result = null;
+		TierGlyph result = smv.getTrack(sym, style, tier_direction);
 		if (sym == null) {
-			result = createViewModeGlyph(sym, style, tier_direction, smv);
+			return result;
 		} else if (sym instanceof GraphSym) {
-			result = displayGraph((GraphSym) sym, smv, check_same_seq);
-			if (result == null) {
-				result = createViewModeGlyph(sym, style, tier_direction, smv);
-			}
-			else {
-				if(smv.getViewSeq() != smv.getAnnotatedSeq()){
-//					GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
-//					genomeGraphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
-//					if (genomeGraphGlyph.getScene() != null) {
-//						genomeGraphGlyph.pack(smv.getSeqMap().getView());
-//					}
-//					//((AbstractGraphGlyph)result).drawHandle(false);
-//					genomeGraphGlyph.addChild(result);
-//					result = genomeGraphGlyph;
-				}
+			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
+			if(graphGlyph != null){
+				result.addChild(graphGlyph);
 			}
 		} else {
 			ourLogger.log(Level.SEVERE, 
@@ -199,14 +187,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	
 	@Override
 	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv){
-		GraphState gState;
-		if(sym == null){
-			sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), smv.getAnnotatedSeq());
-			gState = getGraphState(style);
-		}else{
-			gState = ((GraphSym)sym).getGraphState();
-		}
-		AbstractViewModeGlyph result = createViewModeGlyph((GraphSym)sym, gState, smv);
+		AbstractGraphGlyph result = new AbstractGraphGlyph(style);
 		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
 		return result;
 	}

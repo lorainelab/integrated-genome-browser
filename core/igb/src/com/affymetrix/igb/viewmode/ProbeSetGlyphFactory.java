@@ -479,7 +479,7 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
 		if (meth == null) {
-			return createViewModeGlyph(sym, style, tier_direction, gviewer);
+			return gviewer.getTrack(sym, style, tier_direction);
 //			meth = "unknown";
 //			human_name = meth;
 		} else {
@@ -503,9 +503,9 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 				label_field = style.getLabelField();
 				TierGlyph[] tiers = new TierGlyph[2];
 				TierGlyph.Direction useDirection = (tier_direction == TierGlyph.Direction.BOTH) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
-				tiers[0] = createViewModeGlyph(sym, style, useDirection, gviewer);
+				tiers[0] = gviewer.getTrack(sym, style, useDirection);
 				tiers[0].setInfo(sym);
-				tiers[1] = (tier_direction == TierGlyph.Direction.BOTH) ? tiers[0] : createViewModeGlyph(sym, style, TierGlyph.Direction.REVERSE, gviewer);
+				tiers[1] = (tier_direction == TierGlyph.Direction.BOTH) ? tiers[0] : gviewer.getTrack(sym, style, TierGlyph.Direction.REVERSE);
 				tiers[1].setInfo(sym);
 				if (style.getSeparate()) {
 					addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);

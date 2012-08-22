@@ -4,6 +4,7 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 
 /**
@@ -18,7 +19,7 @@ public class ScoredContainerGlyphFactory extends AbstractScoredContainerGlyphFac
 	}
 	
 	@Override
-	protected AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv) {
+	protected GraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv) {
 		return graphGlyphFactory.createViewModeGlyph(graf, graphState, smv);
 	}
 	

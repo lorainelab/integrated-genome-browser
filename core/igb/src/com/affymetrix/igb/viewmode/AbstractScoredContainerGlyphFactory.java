@@ -51,7 +51,10 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 		List<ViewModeGlyph> vmgs = new ArrayList<ViewModeGlyph>();
 
 		for (GraphIntervalSym gis : the_graph_syms) {
-			vmgs.add(displayGraphSym(gis, smv));
+			GraphGlyph gg = displayGraphSym(gis, smv);
+			AbstractGraphGlyph agg = (AbstractGraphGlyph) smv.getTrack(gis, gis.getGraphState().getTierStyle(), TierGlyph.Direction.NONE);
+			agg.addChild(gg);
+			vmgs.add(agg);
 		}
 
 		return vmgs;
@@ -193,8 +196,8 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 		return gsym;
 	}
 
-	private AbstractGraphGlyph displayGraphSym(GraphIntervalSym graf, SeqMapViewExtendedI smv) {
-		AbstractGraphGlyph graph_glyph = createViewModeGlyph(graf, graf.getGraphState(), smv);
+	private GraphGlyph displayGraphSym(GraphIntervalSym graf, SeqMapViewExtendedI smv) {
+		GraphGlyph graph_glyph = createViewModeGlyph(graf, graf.getGraphState(), smv);
 		GraphState gstate = graf.getGraphState();
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(graf.getGraphName());
@@ -248,7 +251,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 		return false;
 	}
 
-	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv);
+	protected abstract GraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv);
 
 	@Override
 	public TierGlyph createViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {

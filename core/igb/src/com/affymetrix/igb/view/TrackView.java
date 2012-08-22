@@ -23,16 +23,13 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.shared.MapViewModeHolder;
-import com.affymetrix.igb.shared.TierGlyphImpl;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 
 /**
@@ -92,7 +89,7 @@ public class TrackView {
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
-			tierGlyph = new TierGlyphImpl(sym, style, tier_direction, smv, (AbstractViewModeGlyph)factory.createViewModeGlyph(sym, style, tier_direction, smv));
+			tierGlyph = factory.createViewModeGlyph(sym, style, tier_direction, smv);
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {
@@ -193,13 +190,11 @@ public class TrackView {
 			else {
 				direction = Direction.BOTH;
 			}
-			TierGlyph mainTier = smv.getTrack(annotSym, style, direction);
-			mainTier.setInfo(annotSym);
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
+			factory.getViewModeGlyph(annotSym, style, direction, smv);
 			if (style.getSeparate()) {
-				TierGlyph secondTier = smv.getTrack(annotSym, style, TierGlyph.Direction.REVERSE);
-				secondTier.setInfo(annotSym);
+				factory.getViewModeGlyph(annotSym, style, TierGlyph.Direction.REVERSE, smv);
 			}
-			return;
 		}
 	}
 		

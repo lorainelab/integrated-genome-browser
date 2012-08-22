@@ -12,7 +12,6 @@ import com.affymetrix.igb.graphTypes.HeatMapGraphGlyph;
 import com.affymetrix.igb.graphTypes.LineGraphGlyph;
 import com.affymetrix.igb.graphTypes.MinMaxAvgGraphGlyph;
 import com.affymetrix.igb.graphTypes.StairStepGraphGlyph;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph.GraphStyle;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -39,39 +38,33 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 	}
 	
 	@Override
-	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
-		return createInstance(newgraf, gstate, smv);
+	protected GraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
+		try {
+			GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
+			GraphStyle style = type2Style.get(gstate.getGraphStyle()).getConstructor(new Class[]{GraphGlyph.class}).newInstance(graphGlyph);
+			graphGlyph.setGraphStyle(style);
+			ITrackStyleExtended tier_style = gstate.getTierStyle();
+			tier_style.setTrackName(newgraf.getGraphName());
+			if (gstate.getComboStyle() != null) {
+				tier_style = gstate.getComboStyle();
+			}
+			graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
+			smv.setDataModelFromOriginalSym(graphGlyph, newgraf);
+			if (graphGlyph.getScene() != null) {
+				graphGlyph.pack(smv.getSeqMap().getView());
+			}
+			return graphGlyph;
+		} catch (Exception ex) {
+			Logger.getLogger(GraphGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
 	}
+	
 
 	@Override
 	public String getName() {
 		return "Graph";
 	}
 	
-	private AbstractGraphGlyph createInstance(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv){
-		try {
-			GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
-			GraphStyle style = type2Style.get(gstate.getGraphStyle()).getConstructor(new Class[]{GraphGlyph.class}).newInstance(graphGlyph);
-			graphGlyph.setGraphStyle(style);
-			AbstractGraphGlyph result = new AbstractGraphGlyph(gstate.getTierStyle());
-			if(smv != null){
-				result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
-			}
-			ITrackStyleExtended tier_style = gstate.getTierStyle();
-			tier_style.setTrackName(newgraf.getGraphName());
-			if (gstate.getComboStyle() != null) {
-				tier_style = gstate.getComboStyle();
-			}
-			result.addChild(graphGlyph);
-			graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
-			smv.setDataModelFromOriginalSym(graphGlyph, newgraf);
-			if (graphGlyph.getScene() != null) {
-				graphGlyph.pack(smv.getSeqMap().getView());
-			}
-			return result;
-		} catch (Exception ex) {
-			Logger.getLogger(GraphGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return null;
-	}
+		
 }

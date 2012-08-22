@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -26,7 +25,7 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction direction, SeqMapViewExtendedI smv) {
-		AbstractViewModeGlyph viewModeGlyph = new SequenceGlyph(style);
+		TierGlyph viewModeGlyph = smv.getTrack(sym, style, direction);
 		
 		if(sym == null){
 			return viewModeGlyph;

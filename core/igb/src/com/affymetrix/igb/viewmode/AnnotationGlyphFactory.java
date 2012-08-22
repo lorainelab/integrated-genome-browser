@@ -553,15 +553,15 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public TierGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI gviewer) {
 		if (sym == null) {
-			return createViewModeGlyph(sym, style, tier_direction, gviewer);
+			return gviewer.getTrack(sym, style, tier_direction);
 		}
 		else {
 			int glyph_depth = style.getGlyphDepth();
 
 			Direction useDirection = (tier_direction == Direction.BOTH) ? Direction.BOTH : Direction.FORWARD;
-			TierGlyph ftier = createViewModeGlyph(sym, style, useDirection, gviewer);
+			TierGlyph ftier = gviewer.getTrack(sym, style, useDirection);
 			ftier.setInfo(sym);
-			TierGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : createViewModeGlyph(sym, style, Direction.REVERSE, gviewer);
+			TierGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : gviewer.getTrack(sym, style, Direction.REVERSE);
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);

@@ -134,7 +134,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 				);
 				if (Float.MIN_VALUE < maxMax) {
 					if (tg.getAnnotStyle().isGraphTier()) {
-						for(GlyphI g : tg.getViewModeGlyph().getChildren()){
+						for(GlyphI g : tg.getChildren()){
 							if(!(g instanceof GraphGlyph))
 								break;
 						

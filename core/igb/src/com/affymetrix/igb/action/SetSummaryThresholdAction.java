@@ -67,9 +67,9 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 					summaryThreshold = ThresholdReader.getInstance().toDetail();
 				}
 				((TrackStyle) style).setSummaryThreshold(summaryThreshold);
-				if (tierGlyph.getViewModeGlyph() instanceof NeoRangeListener) {
+				if (tierGlyph instanceof NeoRangeListener) {
 					NeoRangeEvent newevt = new NeoRangeEvent(getSeqMapView(), tierGlyph.getCoordBox().x, tierGlyph.getCoordBox().x + tierGlyph.getCoordBox().width);
-					((NeoRangeListener) tierGlyph.getViewModeGlyph()).rangeChanged(newevt);
+					((NeoRangeListener) tierGlyph).rangeChanged(newevt);
 				}
 			}
 		}

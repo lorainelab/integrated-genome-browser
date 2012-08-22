@@ -71,13 +71,12 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		boolean hasSeparate = false;
 		boolean hasMixed = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-			TierGlyph vg = tg.getViewModeGlyph();
-			SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+			SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 			if (selected_syms.contains(ss)) {
-				if (!(vg instanceof MultiGraphGlyph)) {
+				if (!(tg instanceof MultiGraphGlyph)) {
 					if (MapViewModeHolder.getInstance().styleSupportsTwoTrack(
-							vg.getAnnotStyle())) {
-						boolean separate = vg.getAnnotStyle().getSeparate();
+							tg.getAnnotStyle())) {
+						boolean separate = tg.getAnnotStyle().getSeparate();
 						hasSeparate |= separate;
 						hasMixed |= !separate;
 					}

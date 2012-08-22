@@ -211,10 +211,10 @@ public class OldTierResizer extends MouseInputAdapter {
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(0, height);
-				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
+				if(this.upperGl.getReferenceTier() instanceof TransformableViewModeGlyph){
 					if(this.upperGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
+						((TransformableViewModeGlyph)this.upperGl.getReferenceTier()).setOffset(
+							((TransformableViewModeGlyph)this.upperGl.getReferenceTier()).getOffset() + (int)delta);
 					}
 				}
 				
@@ -231,10 +231,10 @@ public class OldTierResizer extends MouseInputAdapter {
 				height = this.lowerGl.getCoordBox().getHeight() - delta;
 				this.lowerGl.resizeHeight(y, height);
 				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
-				if(this.lowerGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
+				if(this.lowerGl.getReferenceTier() instanceof TransformableViewModeGlyph){
 					if(this.lowerGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((TransformableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((TransformableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).getOffset() - (int)delta);
+						((TransformableViewModeGlyph)this.lowerGl.getReferenceTier()).setOffset(
+							((TransformableViewModeGlyph)this.lowerGl.getReferenceTier()).getOffset() - (int)delta);
 					}
 				}
 				

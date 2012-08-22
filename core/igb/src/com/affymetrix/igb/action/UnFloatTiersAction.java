@@ -152,9 +152,8 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				List<TierLabelGlyph> labels = mgr.getAllTierLabels();
 				for (TierLabelGlyph g : labels) {
 					TierGlyph tg = g.getReferenceTier();
-					TierGlyph vmg = tg.getViewModeGlyph();
 					int iteration = 0;
-					if (vmg.isSelected()) {
+					if (tg.isSelected()) {
 						mgr.select(tg);
 						mgr.doGraphSelections(0 == iteration);
 						iteration += 1;

@@ -144,10 +144,10 @@ public class NewTierResizer extends MouseInputAdapter{
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(-delta, height);
-				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
+				if(this.upperGl.getReferenceTier() instanceof TransformableViewModeGlyph){
 					if(this.upperGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE){
-						((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
+						((TransformableViewModeGlyph)this.upperGl.getReferenceTier()).setOffset(
+							((TransformableViewModeGlyph)this.upperGl.getReferenceTier()).getOffset() + (int)delta);
 					}
 				}
 				

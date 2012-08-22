@@ -109,7 +109,7 @@ final public class MouseShortCut implements MouseListener{
 
 			List<TierLabelGlyph> tier_Labels = smv.getTierManager().getSelectedTierLabels();
 			if(tier_Labels.size() == 1){
-				if(tier_Labels.get(0).getInfo() instanceof TierGlyph && ((TierGlyph)tier_Labels.get(0).getInfo()).getViewModeGlyph() instanceof TransformTierGlyph){
+				if(tier_Labels.get(0).getInfo() instanceof TierGlyph && ((TierGlyph)tier_Labels.get(0).getInfo()) instanceof TransformTierGlyph){
 					ShowAllAction.getAction().actionPerformed(null);
 					return;
 				}

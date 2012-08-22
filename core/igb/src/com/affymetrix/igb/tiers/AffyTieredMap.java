@@ -214,8 +214,8 @@ public class AffyTieredMap extends NeoMap {
 			if (!mtg.isVisible()) {
 				continue;
 			}
-			if (mtg.getViewModeGlyph() instanceof TransformTierGlyph) {
-				TransformTierGlyph transtier = (TransformTierGlyph) mtg.getViewModeGlyph();
+			if (mtg instanceof TransformTierGlyph) {
+				TransformTierGlyph transtier = (TransformTierGlyph) mtg;
 				transtier.fitToPixelHeight(this.getView());
 				fixed_pixel_height += transtier.getFixedPixHeight();
 			} else {
@@ -620,7 +620,7 @@ public class AffyTieredMap extends NeoMap {
 			hitrect = view.transformToCoords(pixrect, hitrect);
 		}
 		for (TierGlyph tier : tiers) {
-			if (tier.getViewModeGlyph().toolBarHit(hitrect, view)) {
+			if (tier.toolBarHit(hitrect, view)) {
 				return tier;
 			}
 		}

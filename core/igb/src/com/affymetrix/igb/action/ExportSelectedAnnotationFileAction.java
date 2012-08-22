@@ -28,6 +28,6 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 
 	@Override
 	protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
-		annotationWriter.writeAnnotations(atier.getViewModeGlyph().getSelected(), aseq, "", dos);
+		annotationWriter.writeAnnotations(atier.getSelected(), aseq, "", dos);
 	}
 }

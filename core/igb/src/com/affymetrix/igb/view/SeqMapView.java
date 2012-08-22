@@ -1008,7 +1008,7 @@ public class SeqMapView extends JPanel
 	private boolean moveFloatingTierGlyphs(List<TierGlyph> tiers) {
 		boolean change_happened = false;
 		for (TierGlyph tg : tiers) {
-			if (tg.getViewModeGlyph().getAnnotStyle().getFloatTier()) {
+			if (tg.getAnnotStyle().getFloatTier()) {
 
 //				change_happened = true;
 			}
@@ -1314,7 +1314,7 @@ public class SeqMapView extends JPanel
 		List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
 		// this adds all tracks selected on the label, including join tracks (not join children)
 		for (TierGlyph tierGlyph : tier_manager.getSelectedTiers()) {
-			allSelectedTiers.add(tierGlyph.getViewModeGlyph());
+			allSelectedTiers.add(tierGlyph);
 		}
 		// this adds all floating tracks
 		if (pixel_floater_glyph.getChildren() != null) {
@@ -1326,13 +1326,12 @@ public class SeqMapView extends JPanel
 		}
 		// this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (!allSelectedTiers.contains(vg)) {
-				if (vg.isSelected()) {
-					allSelectedTiers.add(vg);
+			if (!allSelectedTiers.contains(tierGlyph)) {
+				if (tierGlyph.isSelected()) {
+					allSelectedTiers.add(tierGlyph);
 				}
-				if (vg instanceof MultiGraphGlyph && vg.getChildren() != null) {
-					for (GlyphI child : vg.getChildren()) {
+				if (tierGlyph instanceof MultiGraphGlyph && tierGlyph.getChildren() != null) {
+					for (GlyphI child : tierGlyph.getChildren()) {
 						if (child.isSelected()) {
 							allSelectedTiers.add(child);
 						}
@@ -1883,7 +1882,7 @@ public class SeqMapView extends JPanel
 			GenericFeature feature = tglyph.getAnnotStyle().getFeature();
 			if (feature == null) {
 				//Check if clicked on axis.
-				if (tglyph.getViewModeGlyph() instanceof TransformTierGlyph) {
+				if (tglyph instanceof TransformTierGlyph) {
 					SeqSpan visible = getVisibleSpan();
 					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
 						popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));
@@ -1937,9 +1936,8 @@ public class SeqMapView extends JPanel
 		for (TierLabelGlyph labelGlyph : tier_manager.getAllTierLabels()) {
 			TierGlyph tierGlyph = (TierGlyph) labelGlyph.getInfo();
 			if (labelGlyph.isVisible()
-					&& tierGlyph.getViewModeGlyph().getInfo() != null) {
-				ViewModeGlyph gl = tierGlyph.getViewModeGlyph();
-				boolean matches = matchesCategory((RootSeqSymmetry) gl.getInfo(), category);
+					&& tierGlyph.getInfo() != null) {
+				boolean matches = matchesCategory((RootSeqSymmetry) tierGlyph.getInfo(), category);
 				if (matches) {
 					labelmap.select(labelGlyph);
 				}
@@ -1957,9 +1955,8 @@ public class SeqMapView extends JPanel
 		}
 		// this selects all join subtracks on the track itself (arrow on left edge)
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (vg instanceof MultiGraphGlyph && vg.getChildCount() > 0) {
-				for (GlyphI child : vg.getChildren()) {
+			if (tierGlyph instanceof MultiGraphGlyph && tierGlyph.getChildCount() > 0) {
+				for (GlyphI child : tierGlyph.getChildren()) {
 					boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
 					if (matches) {
 						child.setSelected(true);
@@ -1980,9 +1977,8 @@ public class SeqMapView extends JPanel
 			}
 		}
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			ViewModeGlyph vg = tierGlyph.getViewModeGlyph();
-			if (vg instanceof MultiGraphGlyph && vg.getChildCount() > 0) {
-				for (GlyphI child : vg.getChildren()) {
+			if (tierGlyph instanceof MultiGraphGlyph && tierGlyph.getChildCount() > 0) {
+				for (GlyphI child : tierGlyph.getChildren()) {
 					child.setSelected(false);
 				}
 			}
@@ -2014,9 +2010,9 @@ public class SeqMapView extends JPanel
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
 			if (child instanceof TierGlyph 
-					&& ((TierGlyph) child).getViewModeGlyph() instanceof AbstractGraphGlyph
-					&& ((AbstractGraphGlyph)((TierGlyph) child).getViewModeGlyph()).getGraphGlyph() != null) {
-				graphs.add(((AbstractGraphGlyph)((TierGlyph) child).getViewModeGlyph()).getGraphGlyph());
+					&& ((TierGlyph) child) instanceof AbstractGraphGlyph
+					&& ((AbstractGraphGlyph)((TierGlyph) child)).getGraphGlyph() != null) {
+				graphs.add(((AbstractGraphGlyph)((TierGlyph) child)).getGraphGlyph());
 			}
 			if (child.getChildCount() > 0) {
 				collectGraphs(child, graphs);
@@ -2420,8 +2416,8 @@ public class SeqMapView extends JPanel
 	public void fireRangeChanged(double start, double end) {
 		NeoRangeEvent evt = new NeoRangeEvent(SeqMapView.this, start, end);
 		for (TierGlyph tier : seqmap.getTiers()) {
-			if (tier.getViewModeGlyph() instanceof NeoRangeListener) {
-				((NeoRangeListener) tier.getViewModeGlyph()).rangeChanged(evt);
+			if (tier instanceof NeoRangeListener) {
+				((NeoRangeListener) tier).rangeChanged(evt);
 			}
 		}
 	}

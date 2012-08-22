@@ -8,8 +8,6 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
@@ -43,11 +41,10 @@ public class FloatTiersAction extends SeqMapViewActionA {
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
 			for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-				TierGlyph vg = tg.getViewModeGlyph();
-				if (vg.getAnnotStyle().isGraphTier()) {
-					SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
+				if (tg.getAnnotStyle().isGraphTier()) {
+					SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 					if (selected_syms.contains(ss)) { // Need this? Action doesn't.
-						boolean floating = vg.getAnnotStyle().getFloatTier();
+						boolean floating = tg.getAnnotStyle().getFloatTier();
 						hasFloater |= floating;
 						hasAnchored |= !floating;
 					}

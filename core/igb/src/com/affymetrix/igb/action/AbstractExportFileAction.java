@@ -87,7 +87,7 @@ extends GenericAction implements SymSelectionListener {
 	}
 
 	private void saveAsFile(TierGlyph atier) {
-		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getViewModeGlyph().getInfo();
+		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getInfo();
 		AnnotationWriter annotationWriter;
 		try {
 			annotationWriter = annotationWriters.get(rootSym.getCategory()).newInstance();

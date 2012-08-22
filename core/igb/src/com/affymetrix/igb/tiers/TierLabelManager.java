@@ -226,7 +226,7 @@ public final class TierLabelManager implements PropertyHolder {
 		for (TierLabelGlyph tlg : getSelectedTierLabels()) {
 			// TierGlyph should be data model for tier label, access via label.getInfo()
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			if (!(tier.getViewModeGlyph() instanceof DummyGlyphFactory.DummyGlyph)) {
+			if (!(tier instanceof DummyGlyphFactory.DummyGlyph)) {
 				selected_tiers.add(tier);
 			}
 		}
@@ -400,8 +400,8 @@ public final class TierLabelManager implements PropertyHolder {
 						}
 					}
 				}
-				else if (tg.getViewModeGlyph() instanceof AbstractGraphGlyph) {
-					SeqSymmetry sym = (SeqSymmetry) tg.getViewModeGlyph().getInfo();
+				else if (tg instanceof AbstractGraphGlyph) {
+					SeqSymmetry sym = (SeqSymmetry) tg.getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {
 						graph_symmetries.add(sym);
@@ -411,7 +411,7 @@ public final class TierLabelManager implements PropertyHolder {
 					}
 				}
 				else {
-					RootSeqSymmetry rootSym = (RootSeqSymmetry) tg.getViewModeGlyph().getInfo();
+					RootSeqSymmetry rootSym = (RootSeqSymmetry) tg.getInfo();
 					if (tierlabel.isSelected()) {
 						all_symmetries.add(rootSym);
 					}

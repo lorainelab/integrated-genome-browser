@@ -40,8 +40,8 @@ public class GlyphTransformer {
 	}
 
 	public void startscroll(TierLabelGlyph tlg){
-		if(!(tlg.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph)
-				|| !((TransformableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph()).isScrollingAllowed()){
+		if(!(tlg.getReferenceTier() instanceof TransformableViewModeGlyph)
+				|| !((TransformableViewModeGlyph)tlg.getReferenceTier()).isScrollingAllowed()){
 			return;
 		}
 			
@@ -49,7 +49,7 @@ public class GlyphTransformer {
 		zoomtrans = new ExponentialTransform(map.getMinZoom(AffyLabelledTierMap.Y), map.getMaxZoom(AffyLabelledTierMap.Y), 
 				map.getZoomer(AffyLabelledTierMap.Y).getMinimum(), map.getZoomer(AffyLabelledTierMap.Y).getMaximum());
 		tierlabel = tlg;
-		svmg = (TransformableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph();
+		svmg = (TransformableViewModeGlyph)tlg.getReferenceTier();
 
 //		scrollbar = getScrollBar(tlg.getReferenceTier(), svmg.getOffset(), svmg.getScale());
 //		scroll_window = getWindow(scrollbar);
@@ -162,7 +162,7 @@ public class GlyphTransformer {
 	}
 	
 	private static JScrollBar getScrollBar(TierGlyph tier, int sb_curr, float scale){
-		int style_height = (int) tier.getViewModeGlyph().getChildHeight() * tier.getActualSlots()  + 75;
+		int style_height = (int) tier.getChildHeight() * tier.getActualSlots()  + 75;
 		if(tier.getDirection() != Direction.REVERSE){
 			style_height *= -1;
 		}

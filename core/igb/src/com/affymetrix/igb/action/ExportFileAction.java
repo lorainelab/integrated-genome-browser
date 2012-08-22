@@ -38,7 +38,7 @@ extends AbstractExportFileAction {
 
 	@Override
 	protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
-		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getViewModeGlyph().getInfo();
+		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getInfo();
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		if (rootSym.getCategory().isContainer()) {
 			int childcount = rootSym.getChildCount();

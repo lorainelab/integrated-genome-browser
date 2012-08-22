@@ -153,7 +153,7 @@ public class LawrencianZoomer implements ChangeListener {
 		for (TierLabelGlyph tlg : selection) {
 		    TierGlyph g = tlg.getReferenceTier();
 			int slotsAtZoom = theLevel;
-			TierGlyph tg = g.getViewModeGlyph();
+			TierGlyph tg = g;
 			ITrackStyleExtended style = tg.getAnnotStyle();
 			switch (g.getDirection()) {
 				case FORWARD:

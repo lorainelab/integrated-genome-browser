@@ -164,11 +164,11 @@ public class TrackView {
 		
 		//Remove previous view mode glyph
 		TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
-		smv.getSeqMap().removeItem(mainTier.getViewModeGlyph());
+		smv.getSeqMap().removeItem(mainTier);
 		
 		if (style.getSeparate()) {
 			TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
-			smv.getSeqMap().removeItem(secondTier.getViewModeGlyph());
+			smv.getSeqMap().removeItem(secondTier);
 		}
 		
 		addAnnotationGlyphs(smv, annotSym);

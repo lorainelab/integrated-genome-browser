@@ -466,19 +466,6 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 		worker = null;
 	};
 	
-	public boolean isCombo() {
-		return false;
-	}
-	public boolean isPreLoaded() {
-		return false;
-	}
-	public void addSym(SeqSymmetry sym) {}
-	public TierGlyph getTierGlyph() {
-		return tierGlyph;
-	}
-	public void setTierGlyph(TierGlyph tierGlyph) {
-		this.tierGlyph = tierGlyph;
-	}
 	public int getSlotsNeeded(ViewI theView) {
 		return 1;
 	}
@@ -523,16 +510,15 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 		}
 	}
 	
-	public static boolean useLabel(ITrackStyleExtended style){
-		return style.getLabelField() != null && 
-		!style.getLabelField().equals(TrackConstants.NO_LABEL) && 
-		(style.getLabelField().trim().length() > 0);
-	}
-
 	public void resizeHeight(double diffy, double height) {
 		Rectangle2D.Double cbox = getCoordBox();
 		setCoords(cbox.x, cbox.y, cbox.width, height);
 		this.moveRelative(0, diffy);
 	}
 
+	public static boolean useLabel(ITrackStyleExtended style){
+		return style.getLabelField() != null && 
+		!style.getLabelField().equals(TrackConstants.NO_LABEL) && 
+		(style.getLabelField().trim().length() > 0);
+	}
 }

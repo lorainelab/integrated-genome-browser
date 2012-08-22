@@ -35,7 +35,4 @@ public abstract class MultiGraphGlyph extends AbstractGraphGlyph {
 	public void setPreferences(java.util.Map<String, Object> preferences) {
 	}
 
-	@Override
-	public void addSym(SeqSymmetry sym) {
-	}
 }

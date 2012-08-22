@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -71,11 +70,6 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		@Override
 		public Map<String, Class<?>> getPreferences() {
 			return PREFERENCES;
-		}
-
-		@Override
-		public boolean isCombo() {
-			return true;
 		}
 
 //		@Override

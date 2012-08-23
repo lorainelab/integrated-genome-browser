@@ -467,11 +467,8 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer){
-		AbstractViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
-		viewModeGlyph.setMinimumPixelBounds(gviewer.getSeqMap().getGraphics());
-		viewModeGlyph.setDirection(direction);
-		return viewModeGlyph;
+	public TierGlyph getTierGlyph(ITrackStyleExtended style){
+		return new AnnotationGlyph(style);
 	}
 	
 	@Override

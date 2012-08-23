@@ -190,10 +190,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	}
 	
 	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer){
-		AbstractGraphGlyph result = new AbstractGraphGlyph(style);
-		result.setCoords(0, style.getY(), gviewer.getViewSeq().getLength(), style.getHeight());
-		return result;
+	public TierGlyph getTierGlyph(ITrackStyleExtended style){
+		return new AbstractGraphGlyph(style);
 	}
 	
 	private static GraphState getGraphState(ITrackStyleExtended style){

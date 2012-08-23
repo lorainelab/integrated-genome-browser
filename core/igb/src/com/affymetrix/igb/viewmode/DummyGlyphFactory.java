@@ -13,7 +13,6 @@ import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 /**
  * creates a glyph with no children, so that it is never displayed
@@ -30,18 +29,17 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
-		return new DummyGlyph(style, direction);
+	public TierGlyph getTierGlyph(ITrackStyleExtended style) {
+		return new DummyGlyph(style);
 	}
 
 	// glyph class
 	public class DummyGlyph extends AbstractViewModeGlyph{
 
-		public DummyGlyph(ITrackStyleExtended style, Direction tier_direction) {
+		public DummyGlyph(ITrackStyleExtended style) {
 			super();
 			setStyle(style);
 			this.setPacker(new FasterExpandPacker());
-			this.setDirection(tier_direction);
 		}
 
 		@Override
@@ -70,7 +68,7 @@ public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
-		new DummyGlyph(style, Direction.FORWARD);
+		new DummyGlyph(style);
 	}
 
 	@Override

@@ -540,14 +540,8 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI gviewer) {
-		TierGlyph viewModeGlyph = new AnnotationGlyph(style);
-
-		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());
-		// Don't use style height. That seems to be in scene coordinates.
-		viewModeGlyph.setMinimumPixelBounds(gviewer.getSeqMap().getGraphics());
-		viewModeGlyph.setDirection(direction);
-		return viewModeGlyph;
+	public TierGlyph getTierGlyph(ITrackStyleExtended style) {
+		return new AnnotationGlyph(style);
 	}
 
 	@Override

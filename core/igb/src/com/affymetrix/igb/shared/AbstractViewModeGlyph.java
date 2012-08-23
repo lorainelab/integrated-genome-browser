@@ -207,7 +207,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	
 	@Override
 	public void drawTraversal(ViewI view)  {
-		if (isVisible() && withinView(view)) {
+		if (isVisible() && (withinView(view) || RectangleIntersectHack(view))) {
 			drawMiddle(view);
 			if (getChildCount() > 0) {
 				drawChildren(view);

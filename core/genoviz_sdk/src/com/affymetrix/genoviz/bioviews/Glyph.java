@@ -146,7 +146,7 @@ public abstract class Glyph implements GlyphI  {
 	 * Specifically, this handles the case where a 0-width/0-height rectangle intersects another rectangle.
 	 * Is this an intersection or not?  Genoviz says yes, Java SDK says no.
 	 */
-	private boolean RectangleIntersectHack(ViewI view) {
+	protected boolean RectangleIntersectHack(ViewI view) {
 		Rectangle2D.Double r= this.getPositiveCoordBox();
 		Rectangle2D.Double v = view.getCoordBox();
 		if (r.width == 0 || r.height == 0) {

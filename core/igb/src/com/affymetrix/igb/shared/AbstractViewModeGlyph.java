@@ -502,20 +502,12 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	@Override
 	public void pack(ViewI view) {
 		super.pack(view);
-		// Make sure the parent is not too short.
-		// This was needed for tiers in tiered maps.
-		int minPixelHeight = getMinPixelsHeight();
-		// P.S. Why isn't getMinPixelsHeight in GlyphI?
-		int currentPixelHeight = getPixelBox(view).height;
-		if (currentPixelHeight < minPixelHeight) {
+		if (this.getCoordBox().height < MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT) {
 			// Only do this for resizable tiers for now.
 			// It would screw up the axis tier, for one.
 			if (isManuallyResizable()) {
 				Rectangle2D.Double oldBox = getCoordBox();
-				Rectangle r = getPixelBox(view);
-				r.height = minPixelHeight; // Make it tall enough.
-				view.transformToCoords(r, oldBox);
-				setCoords(oldBox.x, oldBox.y, oldBox.width, oldBox.height);
+				setCoords(oldBox.x, oldBox.y, oldBox.width, MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT);
 			}
 
 		}

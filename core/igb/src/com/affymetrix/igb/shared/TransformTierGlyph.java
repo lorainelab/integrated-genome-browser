@@ -41,28 +41,6 @@ public final class TransformTierGlyph extends TransformViewModeGlyph {
     return tier_transform;
   }
 
-	/**
-	 * Overridden to allow background shading by a collection of non-child
-	 * "middle ground" glyphs.
-	 * These are rendered after the solid background
-	 * but before all of the children
-	 * (which could be considered the "foreground").
-	 */
-	@Override
-	public void draw(ViewI view) {
-		drawMiddle(view);
-/*
-		if (!style.isGraphTier()) {
-			// graph tiers take care of drawing their own handles and labels.
-			if (shouldDrawLabel()) {
-				drawLabelLeft(view);
-			}
-		}
-*/
-
-		super.draw(view);
-	}
-
   @Override
   protected void setModifiedViewCoords(ViewI view){
 	// This works fine too. But for now not modifying it. HV 05/19/12

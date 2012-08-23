@@ -200,12 +200,22 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	
 	@Override
 	public void draw(ViewI view){
-		drawMiddle(view);
 		if (shouldDrawToolBar()) {
 			drawExpandCollapse(view);
 		}
 	}
-			
+	
+	@Override
+	public void drawTraversal(ViewI view)  {
+		if (isVisible() && withinView(view)) {
+			drawMiddle(view);
+			if (getChildCount() > 0) {
+				drawChildren(view);
+			}
+			draw(view);
+		}
+	}
+	
 	private void drawExpandCollapse(ViewI view) {
 		Rectangle hpix = getToolbarPixel(view);
 		if (hpix != null) {

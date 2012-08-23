@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -121,13 +122,12 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tier_style = gstate.getComboStyle();
 		}
 
-		graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
-//		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
-////		if (pspan == null || pspan.getLength() == 0) {
-//		if (pspan == null) {
-//			return null;
-//		}
-//		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
+//		graphGlyph.setCoords(0, tier_style.getY(), newgraf.getGraphSeq().getLength(), gstate.getTierStyle().getHeight());
+		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
+		if (pspan == null || pspan.getLength() == 0) {
+			return null;
+		}
+		graphGlyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
 		smv.setDataModelFromOriginalSym(graphGlyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
@@ -180,6 +180,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 					smv.addToPixelFloaterGlyph(graphGlyph);
 				} else {
 					TierGlyph result = smv.getTrack(style, Direction.NONE);
+					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					result.addChild(graphGlyph);
 				}
 			}

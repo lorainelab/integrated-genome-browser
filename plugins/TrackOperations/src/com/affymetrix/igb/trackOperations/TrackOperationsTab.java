@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
@@ -218,26 +219,42 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (TierGlyph gl : allGlyphs) {
-			any_are_combined |= gl instanceof MultiGraphGlyph;
-			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
-				graph_count++;
-				if (!(gl.getParent() instanceof MultiGraphGlyph)) {
-					uncombined_graph_glyph_count++;
+			if (gl instanceof AbstractGraphGlyph && gl.getChildCount() > 0) {
+				for (GlyphI g : gl.getChildren()) {
+					if (g instanceof GraphGlyph) {
+						graph_count++;
+						if (((GraphGlyph) g).getGraphState().getComboStyle() == null) {
+							uncombined_graph_glyph_count++;
+						} else {
+							any_are_combined = true;
+						}
+						RootSeqSymmetry rootSym = (RootSeqSymmetry) gl.getInfo();
+						if (rootSym == null) {
+							all_same = false;
+						} else {
+							FileTypeCategory category = rootSym.getCategory();
+							if (saveCategory == null) {
+								saveCategory = category;
+							} else {
+								all_same &= (saveCategory == category);
+							}
+						}
+					}
+				}
+			} else {
+				RootSeqSymmetry rootSym = (RootSeqSymmetry) gl.getInfo();
+				if (rootSym == null) {
+					all_same = false;
+				} else {
+					FileTypeCategory category = rootSym.getCategory();
+					if (saveCategory == null) {
+						saveCategory = category;
+					} else {
+						all_same &= (saveCategory == category);
+					}
 				}
 			}
-			RootSeqSymmetry rootSym = (RootSeqSymmetry)gl.getInfo();
-			if (rootSym == null) {
-				all_same = false;
-			}
-			else {
-				FileTypeCategory category = rootSym.getCategory();
-				if (saveCategory == null) {
-					saveCategory = category;
-				}
-				else {
-					all_same &= (saveCategory == category);
-				}
-			}
+
 		}
 
 		combineB.setEnabled(enable && uncombined_graph_glyph_count > 1);

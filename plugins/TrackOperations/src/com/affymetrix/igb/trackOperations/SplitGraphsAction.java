@@ -9,8 +9,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AbstractViewModeGlyph;
-import com.affymetrix.igb.shared.MultiGraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 
 /**
@@ -33,7 +32,7 @@ public class SplitGraphsAction extends GenericAction {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<TierGlyph> selectedGlyphs = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		for (TierGlyph vg : selectedGlyphs) {
-			if (vg instanceof MultiGraphGlyph) {
+			if (vg instanceof AbstractGraphGlyph) {
 				if (vg.getChildren() != null) {
 					for (GlyphI gl : new CopyOnWriteArrayList<GlyphI>(vg.getChildren())) {
 						GraphSym gsym = (GraphSym)gl.getInfo();

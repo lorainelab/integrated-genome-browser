@@ -5,8 +5,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symloader.Delegate;
-import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -113,6 +111,13 @@ public class MapViewModeHolder {
 		FileTypeHandler handler = null;
 		if(style.getFileType() != null && style.getFileType().length() > 0){
 			handler = FileTypeHolder.getInstance().getFileTypeHandler(style.getFileType());
+		}
+		
+		if(style.getMethodName() == null){
+			if(style.isGraphTier()){
+				return MapViewModeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.Graph);
+			}
+			return MapViewModeHolder.getInstance().getDefaultFactory();
 		}
 		
 		if(handler == null){

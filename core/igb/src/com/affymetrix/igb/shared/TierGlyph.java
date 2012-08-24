@@ -20,6 +20,7 @@ public interface TierGlyph extends GlyphI {
 			return display;
 		}
 	};
+	public boolean initUnloaded();
 	
 	public ITrackStyleExtended getAnnotStyle();
 	

@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.*;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
@@ -217,27 +216,4 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		return DefaultStateProvider.getGlobalStateProvider().getGraphState(style.getMethodName(), featureName, extension, featureProps);
 	}
 	
-	public static class GenomeGraphGlyph extends MultiGraphGlyph{
-
-		public GenomeGraphGlyph(ITrackStyleExtended style) {
-			super(style);
-		}
-				
-		@Override
-		public void draw(ViewI view) {
-			//drawHandle(view);
-			//drawLabel(view);
-		}
-		
-//		@Override
-//		public String getName() {
-//			return "genome";
-//		}
-//
-//		@Override
-//		public GraphType getGraphStyle() {
-//			return null;
-//		}
-		
-	}
 }

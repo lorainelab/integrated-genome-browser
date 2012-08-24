@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
@@ -174,12 +173,24 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
 		if (sym instanceof GraphSym) {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
-			if (graphGlyph != null) {
+			if (graphGlyph != null) {				
 				if (style.getFloatTier()) {
 					GraphGlyphUtils.checkPixelBounds(graphGlyph, smv.getSeqMap());
 					smv.addToPixelFloaterGlyph(graphGlyph);
 				} else {
-					TierGlyph result = smv.getTrack(style, Direction.NONE);
+					GraphSym graf = (GraphSym)sym;
+					if (graf.getGraphState().getComboStyle() != null/* && !(result.getPacker() instanceof GraphFasterExpandPacker)*/) {
+						//result.setExpandedPacker(new GraphFasterExpandPacker());
+						style = graf.getGraphState().getComboStyle();
+					}
+					TierGlyph.Direction direction = TierGlyph.Direction.NONE;
+					
+					if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+						direction = TierGlyph.Direction.REVERSE;
+					} else if (GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+						direction = TierGlyph.Direction.FORWARD;
+					}	
+					TierGlyph result = smv.getTrack(style, direction);
 					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					result.addChild(graphGlyph);
 				}

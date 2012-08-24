@@ -133,6 +133,11 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 			glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
 			addMiddleGlyph(glyph);
 		}
+		
+		glyph = new FillRectGlyph();
+		glyph.setCoords(0, 0, 0, getChildHeight());
+		addChild(glyph);
+		
 		return false;
 	}
 	

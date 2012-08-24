@@ -340,13 +340,21 @@ public class TrackView {
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
 			//rootSym = (category == FileTypeCategory.ScoredContainer) ? new ScoredContainerSym() : new TypeContainerAnnot(style.getMethodName());
 			TierGlyph tgfor = gviewer.getTrack(style, direction);
+			if(tgfor.getChildCount() == 0){
+				tgfor.initUnloaded();
+			}
 			if (style.getSeparate()) {
 				TierGlyph tgrev = gviewer.getTrack(style, Direction.REVERSE);
+				if(tgrev.getChildCount() == 0){
+					tgrev.initUnloaded();
+				}
 			}
 		}else {
 			//rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
 			TierGlyph tg = gviewer.getTrack(style, Direction.NONE);
+			if(tg.getChildCount() == 0){
+				tg.initUnloaded();
+			}
 		}
-		return;
 	}
 }

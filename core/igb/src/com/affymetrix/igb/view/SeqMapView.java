@@ -1277,15 +1277,14 @@ public class SeqMapView extends JPanel
 		// this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			if (!allSelectedTiers.contains(tierGlyph)) {
-				if (tierGlyph.isSelected()) {
-					allSelectedTiers.add(tierGlyph);
-				}
-				if (tierGlyph instanceof MultiGraphGlyph && tierGlyph.getChildren() != null) {
+				if(tierGlyph instanceof AbstractGraphGlyph && tierGlyph.getChildCount() > 0){
 					for (GlyphI child : tierGlyph.getChildren()) {
 						if (child.isSelected()) {
 							allSelectedTiers.add(child);
 						}
 					}
+				}else if (tierGlyph.isSelected()) {
+					allSelectedTiers.add(tierGlyph);
 				}
 			}
 		}
@@ -1918,7 +1917,7 @@ public class SeqMapView extends JPanel
 		}
 		// this selects all join subtracks on the track itself (arrow on left edge)
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			if (tierGlyph instanceof MultiGraphGlyph && tierGlyph.getChildCount() > 0) {
+			if (tierGlyph instanceof AbstractGraphGlyph && tierGlyph.getChildCount() > 0) {
 				for (GlyphI child : tierGlyph.getChildren()) {
 					boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
 					if (matches) {
@@ -1940,7 +1939,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			if (tierGlyph instanceof MultiGraphGlyph && tierGlyph.getChildCount() > 0) {
+			if (tierGlyph instanceof AbstractGraphGlyph && tierGlyph.getChildCount() > 0) {
 				for (GlyphI child : tierGlyph.getChildren()) {
 					child.setSelected(false);
 				}

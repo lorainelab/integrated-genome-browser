@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -62,11 +63,25 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	protected Color other_fill_color = null;
 	
 	protected String label = null;
-	  
+	private double spacer = 2;
+	protected FasterExpandPacker expand_packer = new FasterExpandPacker();
+	protected CollapsePacker collapse_packer = new CollapsePacker();
+	
 	public abstract void setPreferredHeight(double height, ViewI view);
 	public abstract int getActualSlots();
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
+	
+	public AbstractViewModeGlyph(){
+		setSpacer(spacer);
+	}
+	
+	private void setSpacer(double spacer) {
+		this.spacer = spacer;
+		((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
+		((PaddedPackerI) expand_packer).setParentSpacer(spacer);
+	}
+		
 	protected void updateParent(TierGlyph vmg){
 		//Do Nothing
 	}
@@ -158,6 +173,11 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 
 		//If any visibilty bug occurs, fix here. -HV 22/03/2012
 		setVisibility(style.getShow());
+		if (style.getCollapsed()) {
+			setPacker(collapse_packer);
+		} else {
+			setPacker(expand_packer);
+		}
 	}
 		
 	protected boolean shouldDrawToolBar(){

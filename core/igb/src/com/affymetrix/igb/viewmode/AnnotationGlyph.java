@@ -10,7 +10,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.*;
@@ -52,30 +51,23 @@ public class AnnotationGlyph extends AbstractViewModeGlyph{
 	 * If set to Boolean.TRUE, the tier will draw a handle on the left side.
 	 */
 	private static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
-	private double spacer = 2;
+	
 
 	private static final int BUFFER = 50;
 	private static final Font default_font = NeoConstants.default_plain_font;
-	private FasterExpandPacker expand_packer = new FasterExpandPacker();
-	private CollapsePacker collapse_packer = new CollapsePacker();
+
 	//private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 		 
 	public AnnotationGlyph(ITrackStyleExtended style) {
 		super();
 		setHitable(false);
-		setSpacer(spacer);
 		setStyle(style);
 	}
 	
 	@Override
 	public final void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
-		if (style.getCollapsed()) {
-			setPacker(collapse_packer);
-		} else {
-			setPacker(expand_packer);
-		}
 		setMaxExpandDepth(style.getMaxDepth());
 	}
 
@@ -305,12 +297,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph{
 			g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
 			g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
 		}
-	}
-
-	private void setSpacer(double spacer) {
-		this.spacer = spacer;
-		((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
-		((PaddedPackerI) expand_packer).setParentSpacer(spacer);
 	}
 
 	// very, very deprecated

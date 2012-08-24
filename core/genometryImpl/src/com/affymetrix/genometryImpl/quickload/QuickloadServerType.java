@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
-import com.affymetrix.genometryImpl.symloader.TwoBit;
+import com.affymetrix.genometryImpl.symloader.TwoBitNew;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
@@ -441,10 +441,10 @@ public class QuickloadServerType implements ServerTypeI {
 				return new BNIB(uri, "", seq_group);
 
 			case VTWOBIT:
-				return new TwoBit(uri, seq_group, seq_name);
+				return new TwoBitNew(uri, "", seq_group);
 
 			case TWOBIT:
-				return new TwoBit(uri, "", seq_group);
+				return new TwoBitNew(uri, "", seq_group);
 
 //			case FA:
 //				return new Fasta(uri, seq_group);

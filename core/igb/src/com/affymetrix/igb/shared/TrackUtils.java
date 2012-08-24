@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -76,20 +77,32 @@ public class TrackUtils {
 		return syms;
 	}
 
-	public List<RootSeqSymmetry> getSymsFromViewModeGlyphs(List<TierGlyph> viewModeGlyphGlyphs) {
+	public List<RootSeqSymmetry> getSymsTierGlyphs(List<TierGlyph> tierGlyphs) {
 		List<RootSeqSymmetry> syms = new ArrayList<RootSeqSymmetry>();
-		for (TierGlyph glyph : viewModeGlyphGlyphs) {
-			RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
-			if (rootSym == null && glyph.getChildCount() > 0 && glyph.getChild(0) instanceof RootSeqSymmetry) {
-				rootSym = (RootSeqSymmetry) glyph.getChild(0).getInfo();
-			}
-			if (rootSym != null) {
-				syms.add(rootSym);
+		for (TierGlyph glyph : tierGlyphs) {
+			if(glyph instanceof AbstractGraphGlyph){
+				for(GlyphI g : glyph.getChildren()){
+					if(g instanceof GraphGlyph){
+						collectRootSym(g, syms);
+					}
+				}
+			}else{
+				collectRootSym(glyph, syms);
 			}
 		}
 		return syms;
 	}
 
+	private void collectRootSym(GlyphI glyph, List<RootSeqSymmetry> syms) {
+		RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+		if (rootSym == null && glyph.getChildCount() > 0 && glyph.getChild(0) instanceof RootSeqSymmetry) {
+			rootSym = (RootSeqSymmetry) glyph.getChild(0).getInfo();
+		}
+		if (rootSym != null) {
+			syms.add(rootSym);
+		}
+	}
+		
 	private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
 		Map<FileTypeCategory, Integer> trackCounts = new HashMap<FileTypeCategory, Integer>();
 		for (SeqSymmetry sym : syms) {

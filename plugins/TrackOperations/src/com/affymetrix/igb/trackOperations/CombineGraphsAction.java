@@ -38,7 +38,7 @@ public class CombineGraphsAction extends GenericAction {
 		super.actionPerformed(e);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
-		List<RootSeqSymmetry> rootSyms = TrackUtils.getInstance().getSymsFromViewModeGlyphs(selected);
+		List<RootSeqSymmetry> rootSyms = TrackUtils.getInstance().getSymsTierGlyphs(selected);
 		int gcount = rootSyms.size();
 		float height = 0;
 

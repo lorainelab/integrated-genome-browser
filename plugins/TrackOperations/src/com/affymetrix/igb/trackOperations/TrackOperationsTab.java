@@ -154,7 +154,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allGlyphs.addAll(selected);
-		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(selected));
+		rootSyms.addAll(TrackUtils.getInstance().getSymsTierGlyphs(selected));
 		thresholdingAction.setGraphs(Selections.graphGlyphs);
 	}
 

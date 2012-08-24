@@ -274,7 +274,7 @@ public class BED extends SymLoader implements LineProcessor {
 		if (fields.length == 1) {
 			fields = line_regex.split(line);
 		}
-		String detailId = null;
+		String detailSymbol = null;
 		String detailDescription = null;
 		int field_count = fields.length;
 		
@@ -283,7 +283,7 @@ public class BED extends SymLoader implements LineProcessor {
 			bedDetail = true;
 		}
 		if (bedDetail) {
-			detailId = fields[field_count - 2];
+			detailSymbol = fields[field_count - 2];
 			detailDescription = fields[field_count - 1];
 			field_count -= 2;
 		}
@@ -421,7 +421,7 @@ public class BED extends SymLoader implements LineProcessor {
 		}
 		SymWithProps bedline_sym = null;
 		bedline_sym = bedDetail ?
-				new UcscBedDetailSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailId, detailDescription)
+				new UcscBedDetailSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailSymbol, detailDescription)
 				:
 				new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
 		if (use_item_rgb && itemRgb != null) {

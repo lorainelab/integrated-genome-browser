@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
+import com.affymetrix.genometryImpl.symloader.TwoBitNew;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.Application;
 
@@ -38,7 +39,7 @@ import java.util.logging.Logger;
  * @version $Id$
  */
 public final class ResidueLoading {
-
+	
 	enum FORMAT {
 		BNIB,
 		RAW,
@@ -242,10 +243,10 @@ public final class ResidueLoading {
 				return new BNIB(uri, "", seq_group);
 
 			case VTWOBIT:
-				return new TwoBit(uri, seq_group, seq_name);
+				return new TwoBitNew(uri, "", seq_group);
 
 			case TWOBIT:
-				return new TwoBit(uri, "", seq_group);
+				return new TwoBitNew(uri, "", seq_group);
 
 //			case FA:
 //				return new Fasta(uri, seq_group);

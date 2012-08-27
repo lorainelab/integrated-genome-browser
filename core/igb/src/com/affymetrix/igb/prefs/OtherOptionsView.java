@@ -116,6 +116,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         autoloadSequenceCheckBox = PreferenceUtils.createCheckBox("Autoload Sequence", PreferenceUtils.getTopNode(),       PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence);
         coverageSummaryHeatMapCheckBox = PreferenceUtils.createCheckBox("Coverage Summary as HeatMap", PreferenceUtils.getTopNode(),       PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap);
 
+        setPreferredSize(new java.awt.Dimension(545, 540));
+
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
         coordinatePanel.setPreferredSize(new java.awt.Dimension(510, 60));
 
@@ -201,7 +203,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(bgLabel)
                 .add(10, 10, 10)
                 .add(bgComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -345,7 +347,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchLabel)
                 .add(10, 10, 10)
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(420, Short.MAX_VALUE))
+                .addContainerGap(425, Short.MAX_VALUE))
         );
         edgeMatchPanelLayout.setVerticalGroup(
             edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

@@ -480,6 +480,9 @@ public class FileTypeHolder {
 				}
 			}
 		}
+		if(fileTypeHandler == null){
+			Logger.getAnonymousLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "No file handler found for type {0} of uri {1}",new Object[]{extension,uri});
+		}
 		return fileTypeHandler;
 	}
 

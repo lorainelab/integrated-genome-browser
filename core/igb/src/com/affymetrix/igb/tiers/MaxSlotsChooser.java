@@ -64,7 +64,10 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
         message = new javax.swing.JLabel();
         maxSlots = new javax.swing.JFormattedTextField(new java.text.DecimalFormat("###0"));
 
+        jPanel1.setPreferredSize(new java.awt.Dimension(350, 90));
+
         Unlimitter.setText("Unlimited");
+        Unlimitter.setPreferredSize(new java.awt.Dimension(128, 29));
         Unlimitter.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 UnlimitterMouseClicked(evt);
@@ -90,6 +93,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
         });
 
         okButton.setText("OK");
+        okButton.setPreferredSize(new java.awt.Dimension(128, 29));
         okButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 okButtonMouseClicked(evt);
@@ -97,6 +101,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
         });
 
         cancelButton.setText("Cancel");
+        cancelButton.setPreferredSize(new java.awt.Dimension(128, 29));
         cancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cancelButtonMouseClicked(evt);
@@ -122,20 +127,20 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(message, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
-                        .add(okButton)
-                        .add(18, 18, 18)
-                        .add(cancelButton)
-                        .add(38, 38, 38))
-                    .add(message, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(49, 49, 49))
+                    .add(jPanel1Layout.createSequentialGroup()
                         .add(maxSlots, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 86, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(37, 37, 37)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(Optimizer)
-                        .add(18, 18, 18)
-                        .add(Unlimitter)
-                        .addContainerGap(33, Short.MAX_VALUE))))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(Unlimitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -143,27 +148,27 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
                 .add(message)
                 .add(11, 11, 11)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(Unlimitter)
+                    .add(Unlimitter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(Optimizer)
                     .add(maxSlots, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(okButton)
-                    .add(cancelButton))
-                .addContainerGap())
+                    .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(jPanel1, 366, 366, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -174,10 +179,12 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 
 	private void UnlimitterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UnlimitterMouseClicked
 		maxSlots.setText(this.unlimitted.toString());
+		okButtonMouseClicked(evt);
 	}//GEN-LAST:event_UnlimitterMouseClicked
 
 	private void OptimizerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OptimizerMouseClicked
 		maxSlots.setText(this.optimum.toString());
+		okButtonMouseClicked(evt);
 	}//GEN-LAST:event_OptimizerMouseClicked
 
 	private void okButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_okButtonMouseClicked

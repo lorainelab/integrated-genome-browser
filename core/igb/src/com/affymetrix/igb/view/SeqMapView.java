@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
@@ -995,67 +994,6 @@ public class SeqMapView extends JPanel
 		if (aseq.getComposition() != null) {
 			handleCompositionSequence();
 		}
-	}
-
-	public void addAnnotationTrackFor(final ITrackStyleExtended style) {
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				AbstractAction action = new AbstractAction() {
-
-					private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e) {
-						addAnnotationTrack();
-						//SeqMapView.this.getSeqMap().repackTheTiers(true, false);
-						SeqMapView.this.getSeqMap().packTiers(true, false, false);
-						SeqMapView.this.getSeqMap().updateWidget();
-					}
-				};
-
-				SeqMapView.this.preserveSelectionAndPerformAction(action);
-			}
-
-			private void addAnnotationTrack() {
-				TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
-				if (aseq.getComposition() != null) {
-					handleCompositionSequence();
-				}
-			}
-
-			//TODO: Remove this redundancy.
-			private void handleCompositionSequence() {
-				BioSeq cached_aseq = aseq;
-				MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
-				SeqSymmetry[] cached_path = transform_path;
-				SeqSymmetry comp = aseq.getComposition();
-				// assuming a two-level deep composition hierarchy for now...
-				//   need to make more recursive at some point...
-				//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
-				int scount = comp.getChildCount();
-				for (int i = 0; i < scount; i++) {
-					SeqSymmetry csym = comp.getChild(i);
-					// return seq in a symmetry span that _doesn't_ match aseq
-					BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
-					if (cseq != null) {
-						aseq = cseq;
-						if (cached_seq2viewSym == null) {
-							transform_path = new SeqSymmetry[1];
-							transform_path[0] = csym;
-						} else {
-							transform_path = new SeqSymmetry[2];
-							transform_path[0] = csym;
-							transform_path[1] = cached_seq2viewSym;
-						}
-						addAnnotationTracks();
-					}
-				}
-				// restore aseq and seq2viewsym afterwards...
-				aseq = cached_aseq;
-				seq2viewSym = cached_seq2viewSym;
-				transform_path = cached_path;
-			}
-		});
 	}
 
 	protected void addDependentAndEmptyTrack(){

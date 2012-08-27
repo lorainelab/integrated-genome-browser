@@ -159,22 +159,6 @@ public class TrackView {
 			addEmptyTierFor(feature, smv, false);
 		}
 	}
-
-	public void addAnnotationGlyphs(SeqMapView smv, ITrackStyleExtended style){ 
-		String meth = style.getMethodName();
-		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);
-		
-		//Remove previous view mode glyph
-		TierGlyph mainTier = smv.getTrack(style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
-		smv.getSeqMap().removeItem(mainTier);
-		
-		if (style.getSeparate()) {
-			TierGlyph secondTier = smv.getTrack(style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
-			smv.getSeqMap().removeItem(secondTier);
-		}
-		
-		addAnnotationGlyphs(smv, annotSym);
-	}
 	
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs

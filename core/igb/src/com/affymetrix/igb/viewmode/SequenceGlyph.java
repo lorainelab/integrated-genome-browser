@@ -1,15 +1,14 @@
 package com.affymetrix.igb.viewmode;
 
+import java.awt.geom.Rectangle2D;
+import java.util.*;
+
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.CollapsePacker;
-
-import java.awt.Color;
-import java.util.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for sequences
@@ -50,54 +49,9 @@ public class SequenceGlyph extends AbstractViewModeGlyph{
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 	}
 
-	/**
-	 *  Overridden to allow background shading by a collection of non-child
-	 *    "middleground" glyphs.  These are rendered after the solid background but before
-	 *    all of the children (which could be considered the "foreground").
-	 */
-	@Override
-	public void draw(ViewI view) {
-		//drawMiddle(view);
-		super.draw(view);
-	}
-
 	private void setSpacer(double spacer) {
 		this.spacer = spacer;
 		((PaddedPackerI) packer).setParentSpacer(spacer);
-	}
-
-	// very, very deprecated
-	@Override
-	public Color getColor() {
-		return getForegroundColor();
-	}
-
-	// very, very deprecated
-	@Override
-	public void setColor(Color c) {
-		setForegroundColor(c);
-	}
-
-	@Override
-	public void setForegroundColor(Color color) {
-		if (style.getForeground() != color) {
-			style.setForeground(color);
-		}
-	}
-
-	@Override
-	public Color getForegroundColor() {
-		return style.getForeground();
-	}
-
-	@Override
-	public void setBackgroundColor(Color color) {
-		setFillColor(color);
-	}
-
-	@Override
-	public Color getBackgroundColor() {
-		return getFillColor();
 	}
 
 	@Override
@@ -108,7 +62,7 @@ public class SequenceGlyph extends AbstractViewModeGlyph{
 	public void setPreferredHeight(double height, ViewI view){
 		height = height - 2 * getSpacing();
 
-		if(useLabel()) {
+		if(useLabel(style)) {
 			height = height / 2;
 		}
 
@@ -135,15 +89,6 @@ public class SequenceGlyph extends AbstractViewModeGlyph{
 
 	}
 
-	private boolean useLabel() {
-		String label_field = style.getLabelField();
-		boolean use_label = label_field != null && (label_field.trim().length() > 0);
-		if (use_label) {
-			return true;
-		}
-
-		return false;
-	}
 
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override

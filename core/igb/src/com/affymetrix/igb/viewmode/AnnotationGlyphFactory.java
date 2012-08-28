@@ -149,6 +149,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 				return;
 			}  // if no span corresponding to seq, then return;
 
+			int child_height = DEFAULT_CHILD_HEIGHT;
 			TierGlyph the_tier = !pspan.isForward() ? reverse_tier : forward_tier;
 			boolean labelInSouth = !pspan.isForward() && (reverse_tier != forward_tier);
 			
@@ -156,7 +157,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 			the_tier.addChild(determinePGlyph(gviewer,
 					parent_and_child, insym, the_style,
-					labelInSouth, pspan, sym, annotseq, coordseq));
+					labelInSouth, pspan, sym, annotseq, coordseq, child_height));
 		} catch (InstantiationException ie) {
 			System.err.println("AnnotationGlyphFactory.addToTier: " + ie);
 		}
@@ -168,18 +169,18 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	private GlyphI determinePGlyph(SeqMapViewExtendedI gviewer,
 			boolean parent_and_child, SeqSymmetry insym,
 			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan,
-			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq)
+			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph;
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
-			addChildren(gviewer, insym, sym, pspan, the_style, annotseq, pglyph, coordseq);
-			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, DEFAULT_CHILD_HEIGHT /*the_style.getHeight() */);
+			addChildren(gviewer, insym, sym, pspan, the_style, annotseq, pglyph, coordseq, child_height);
+			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, child_height /*the_style.getHeight() */);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height);
 			GlyphI alignResidueGlyph = handleAlignedResidues(insym, annotseq);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -192,14 +193,14 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	private static GlyphI determineGlyph(
 			Class<?> glyphClass, Class<?> labelledGlyphClass,
 			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
-			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer)
+			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer, int child_height)
 			throws IllegalAccessException, InstantiationException {
 		GlyphI pglyph;
 		// Note: Setting parent height (pheight) larger than the child height (cheight)
 		// allows the user to select both the parent and the child as separate entities
 		// in order to look at the properties associated with them.  Otherwise, the method
 		// EfficientGlyph.pickTraversal() will only allow one to be chosen.
-		double pheight = /*the_style.getHeight()*/ DEFAULT_CHILD_HEIGHT + 0.0001;
+		double pheight = /*the_style.getHeight()*/ child_height + 0.0001;
 		if (AbstractViewModeGlyph.useLabel(the_style)) {
 			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, the_style.getLabelField());
@@ -252,7 +253,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	private void addChildren(SeqMapViewExtendedI gviewer, 
 			SeqSymmetry insym, SeqSymmetry sym, SeqSpan pspan, ITrackStyleExtended the_style, BioSeq annotseq,
-			GlyphI pglyph, BioSeq coordseq)
+			GlyphI pglyph, BioSeq coordseq, int child_height)
 			throws InstantiationException, IllegalAccessException {
 		SeqSpan cdsSpan = null;
 		SeqSymmetry cds_sym = null;
@@ -273,7 +274,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
-		double thin_height = /* the_style.getHeight() */ DEFAULT_CHILD_HEIGHT * 0.6;
+		double thin_height = /* the_style.getHeight() */ child_height * 0.6;
 //		Color start_color = the_style.getStartColor();
 //		Color end_color = the_style.getEndColor();
 		for (int i = 0; i < childCount; i++) {
@@ -285,7 +286,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
-				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ DEFAULT_CHILD_HEIGHT, thin_height);
+				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);

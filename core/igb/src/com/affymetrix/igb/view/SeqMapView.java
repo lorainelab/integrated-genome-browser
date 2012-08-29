@@ -1501,7 +1501,7 @@ public class SeqMapView extends JPanel
 		// ignore self-generated xym selection -- already handled internally
 		if (src == this) {
 			String title = getSelectionTitle(seqmap.getSelected());
-			setStatus(title);
+			setSelectionStatus(title);
 		} // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this
 		else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView)) {
 			// catching SeqMapView as source of event because currently sym selection events actually originating
@@ -1519,7 +1519,7 @@ public class SeqMapView extends JPanel
 				zoomToSelections();
 			}
 			String title = getSelectionTitle(seqmap.getSelected());
-			setStatus(title);
+			setSelectionStatus(title);
 		}
 	}
 

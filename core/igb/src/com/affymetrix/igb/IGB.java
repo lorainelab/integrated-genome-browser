@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import static com.affymetrix.igb.IGBConstants.*;
-import com.affymetrix.igb.action.SelectionRulesAction;
 
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;

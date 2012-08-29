@@ -57,7 +57,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		final String updateMessage = "You might not be on latest revision.";
 		final String update = "Update";
 		selLabel = new JLabel(" Selection Info: ");
-		selField = new JTextField(20);
+		selField = new JTextField(25);
 		selField.setEditable(false);
 		selectionPanel = new JPanel();
 		selectionPanel.add(selLabel);
@@ -88,6 +88,10 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		selField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		selLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		selectionPanel.setMinimumSize(new Dimension(420, 1));
+		
 		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 	
 		status_ta.setToolTipText(tt_status);
@@ -114,7 +118,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 				.addComponent(progressPanel)
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
-				.addGap(1, 200, Short.MAX_VALUE)
+				.addGap(1, 250, Short.MAX_VALUE)
 				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item, 1, 200, 200)
@@ -125,7 +129,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 				.addComponent(progressPanel)
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
-				.addGap(30)
 				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item)

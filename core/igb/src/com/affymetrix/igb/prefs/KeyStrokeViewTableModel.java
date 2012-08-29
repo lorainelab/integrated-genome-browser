@@ -101,10 +101,12 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 			}
 			else {
 				if (bValue) {
-					((IGB)IGB.getSingleton()).addToolbarAction(genericAction);
+					int index = ((IGB)IGB.getSingleton()).addToolbarAction(genericAction);
+					PreferenceUtils.getToolbarNode().putInt(pref_name+".index", index);
 				}
 				else {
 					((IGB)IGB.getSingleton()).removeToolbarAction(genericAction);
+					PreferenceUtils.getToolbarNode().remove(pref_name+".index");
 				}
 			}
 		}

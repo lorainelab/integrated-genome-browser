@@ -180,7 +180,12 @@ public class Activator implements BundleActivator {
 									genericAction.putValue(Action.ACCELERATOR_KEY, ks);
 								}
 							}
-							((IGB)Application.getSingleton()).addToolbarAction(genericAction);
+							int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId()+".index", -1);
+							if(index == -1){
+								((IGB)Application.getSingleton()).addToolbarAction(genericAction);
+							}else{
+								((IGB)Application.getSingleton()).addToolbarAction(genericAction, index);
+							}
 						}
 					}
 				}
@@ -230,6 +235,7 @@ public class Activator implements BundleActivator {
 				@Override
 				public void stop() {
 					WebLink.autoSave();
+					((IGB)Application.getSingleton()).saveToolBar();
 				}
 			},
 			null

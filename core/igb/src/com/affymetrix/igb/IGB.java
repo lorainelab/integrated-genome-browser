@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.swing.DragDropToolBar;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -73,10 +74,15 @@ public final class IGB extends Application
 
     private class JRPButtonTLP extends JRPButton implements TrackListProvider {
 		private static final long serialVersionUID = 1L;
-		private JRPButtonTLP(GenericAction genericAction) {
+		private final int index;
+		private JRPButtonTLP(GenericAction genericAction, int index) {
     		super("Toolbar_" + genericAction.getId(), genericAction);
 			setHideActionText(true);
+			this.index = index;
     	}
+		public int getIndex(){
+			return index;
+		}
 		@Override
 		public List<TierGlyph> getTrackList() {
 			return ((IGB)Application.getSingleton()).getMapView().getTierManager().getSelectedTiers();
@@ -343,8 +349,8 @@ public final class IGB extends Application
 
 	private int getOrdinal(Component c) {
 		int ordinal = 0;
-		if (c instanceof JButton && ((JButton)c).getAction() instanceof GenericAction) {
-			ordinal = ((GenericAction)((JButton)c).getAction()).getOrdinal();
+		if (c instanceof JRPButtonTLP) {
+			ordinal = ((JRPButtonTLP)c).getIndex();
 		}
 		return ordinal;
 	}
@@ -370,23 +376,31 @@ public final class IGB extends Application
 		tool_bar.remove(count-4);
 		tool_bar.remove(count-5);
 	}*/
-	public void addToolbarAction(GenericAction genericAction) {
+	public int addToolbarAction(GenericAction genericAction) {
 		if (tool_bar == null) {
-			tool_bar = new JToolBar();
+			tool_bar = new DragDropToolBar();
 		}
-		//removeTextFieldToolbar();
-		JRPButton button = new JRPButtonTLP(genericAction); // >>>>>>> .r12096
-		button.setHideActionText(true);
-		addAction(genericAction);
-		int index = 0;
-		while (index < tool_bar.getComponentCount() && getOrdinal(button) >= getOrdinal(tool_bar.getComponent(index))) {
-			index++;
-		}
-		tool_bar.add(button, index);
-		//addTextFieldToolbar();
-		tool_bar.validate();
+		addToolbarAction(genericAction, tool_bar.getComponentCount());
+		
+		return tool_bar.getComponentCount();
 	}
 
+	public void addToolbarAction(GenericAction genericAction, int index){
+		if (tool_bar == null) {
+			tool_bar = new DragDropToolBar();
+		}
+		JRPButton button = new JRPButtonTLP(genericAction, index); // >>>>>>> .r12096
+		button.setHideActionText(true);
+		addAction(genericAction);
+		int local_index = 0;
+		while (local_index < index && local_index < tool_bar.getComponentCount() 
+				&& index >= getOrdinal(tool_bar.getComponent(local_index))) {
+			local_index++;
+		}
+		tool_bar.add(button, local_index);
+		tool_bar.validate();
+	}
+	
 	public void removeToolbarAction(GenericAction action) {
 		if (tool_bar == null) {
 			return;
@@ -407,6 +421,16 @@ public final class IGB extends Application
 		}
 	}
 
+	void saveToolBar() {
+		int index = 0;
+		for(Component c : tool_bar.getComponents()){
+			if(c instanceof JButton && ((JButton)c).getAction() instanceof GenericAction){
+				GenericAction action = (GenericAction) ((JButton)c).getAction();
+				PreferenceUtils.getToolbarNode().putInt(action.getId()+".index", index++);
+			}
+		}
+	}
+	
 	/**
 	 * Returns the icon stored in the jar file. It is expected to be at
 	 * com.affymetrix.igb.igb.gif.

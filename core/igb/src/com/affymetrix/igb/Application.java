@@ -96,6 +96,9 @@ public abstract class Application {
 		}
 	}
 
+	public final void setSelField(String s){
+		status_bar.setSelField(s);
+	}
 	/**
 	 * Shows a panel asking for the user to confirm something.
 	 *

@@ -714,7 +714,7 @@ public class SeqMapView extends JPanel
 			List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
 			select(symlist, false, false, false);
 
-			setStatus(getSelectionTitle(seqmap.getSelected()));
+			setSelectionStatus(getSelectionTitle(seqmap.getSelected()));
 		}
 
 		// Restore selected tiers
@@ -1121,7 +1121,7 @@ public class SeqMapView extends JPanel
 		if (normal_selection) {
 			zoomToSelections();
 			List<GlyphI> glyphs = seqmap.getSelected();
-			setStatus(getSelectionTitle(glyphs));
+			setSelectionStatus(getSelectionTitle(glyphs));
 			if (show_edge_matches) {
 				doEdgeMatching(glyphs, false);
 			}
@@ -1620,12 +1620,14 @@ public class SeqMapView extends JPanel
 		return g;
 	}
 
+	private void setSelectionStatus(String title){
+		Application.getSingleton().setSelField(title);
+	}
 	private void setStatus(String title) {
 		if (!report_status_in_status_bar) {
 			return;
 		}
 		Application.getSingleton().setStatus(title, false);
-		((IGB)Application.getSingleton()).setSelField(title);
 	}
 
 	// Compare the code here with SymTableView.selectionChanged()

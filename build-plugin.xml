@@ -12,31 +12,31 @@
 	<property name="extra-classpath" value="" />
 
 	<target name="compile" description="compile the source">
-		<fail unless="workspace">Please set the IGB_WORKSPACE env variable to the IGB home directory</fail>
+		<fail unless="env.IGB_WORKSPACE">Please set the IGB_WORKSPACE env variable to the IGB home directory</fail>
 		<fail unless="plugin">Please set the plugin variable to the plugin name</fail>
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${build}" />
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" debug="${debug}" deprecation="${deprecation}" includeantruntime="false" classpath="${extra-classpath}">
-			<classpath location="${workspace}/Integrated_Genome_Browser/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/common/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/igb/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/genometryImpl/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/genoviz_sdk/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/igb_service/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/window_service/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/SearchModeGeneric/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/ext/colt.jar" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/ext/felix.jar" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/ext/tribble-0.1.jar" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/ext/BigWig.jar" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/ext/sam.jar" />
+			<classpath location="${env.IGB_WORKSPACE}/build" />
+			<classpath location="${env.IGB_WORKSPACE}/common/build" />
+			<classpath location="${env.IGB_WORKSPACE}/igb/build" />
+			<classpath location="${env.IGB_WORKSPACE}/genometryImpl/build" />
+			<classpath location="${env.IGB_WORKSPACE}/genoviz_sdk/build" />
+			<classpath location="${env.IGB_WORKSPACE}/plugins/igb_service/build" />
+			<classpath location="${env.IGB_WORKSPACE}/plugins/window_service/build" />
+			<classpath location="${env.IGB_WORKSPACE}/plugins/SearchModeGeneric/build" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/colt.jar" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/felix.jar" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/tribble-0.1.jar" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/BigWig.jar" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/sam.jar" />
 		</javac>
 	</target>
 
 	<target name="declare_igb_ant">
 		<taskdef name="getvrsn" classname="com.affymetrix.igb.ant.GetVersion"
-            classpath="${workspace}/Integrated_Genome_Browser/plugins/ant/build;${workspace}/Integrated_Genome_Browser/ext/felix.jar" />
+            classpath="${env.IGB_WORKSPACE}/plugins/ant/build;${env.IGB_WORKSPACE}/ext/felix.jar" />
 	</target>
 
 	<target name="dist" depends="clean,compile,declare_igb_ant" description="generate the distribution">

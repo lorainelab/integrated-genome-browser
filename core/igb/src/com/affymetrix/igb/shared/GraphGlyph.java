@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -14,7 +15,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.igb.graphTypes.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GraphGlyph extends Glyph {
+public class GraphGlyph extends Glyph implements StyledGlyph{
 	private static Font default_font = NeoConstants.default_plain_font;
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
@@ -1027,6 +1027,11 @@ public class GraphGlyph extends Glyph {
 		lab += " (" + nformat.format(state.getVisibleMinY()) + ", " + nformat.format(state.getVisibleMaxY()) + ")";
 
 		return lab;
+	}
+
+	@Override
+	public ITrackStyleExtended getAnnotStyle() {
+		return state.getTierStyle();
 	}
 
 	/*

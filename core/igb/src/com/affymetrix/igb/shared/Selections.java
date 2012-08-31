@@ -51,13 +51,13 @@ public class Selections {
 	
 	private static void refreshSelection() {
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
-		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<StyledGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allStyles.clear();
 		annotStyles.clear();
 		graphStates.clear();
 		graphGlyphs.clear();
 		//allGlyphs.addAll(selected);
-		for (TierGlyph useGlyph : selected) {
+		for (StyledGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
 			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
 				category = ((RootSeqSymmetry)useGlyph.getInfo()).getCategory();
@@ -65,7 +65,12 @@ public class Selections {
 			if (category == null && useGlyph.getAnnotStyle() != null) {
 				category = useGlyph.getAnnotStyle().getFileTypeCategory();
 			}
-			if (useGlyph instanceof AbstractGraphGlyph) {
+			if (useGlyph instanceof GraphGlyph){
+				GraphGlyph gg = (GraphGlyph)useGlyph;
+				graphStates.add(gg.getGraphState());
+				allStyles.add(gg.getGraphState().getTierStyle());
+				graphGlyphs.add(gg);
+			}else if (useGlyph instanceof AbstractGraphGlyph) {
 				if (useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof GraphGlyph) {

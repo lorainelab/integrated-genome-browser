@@ -35,7 +35,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<TierGlyph> allGlyphs = new ArrayList<TierGlyph>();
+	public final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB;
 	public final JRPButton splitB;
@@ -153,7 +153,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		rootSyms.clear();
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<StyledGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		allGlyphs.addAll(selected);
 		rootSyms.addAll(TrackUtils.getInstance().getSymsTierGlyphs(selected));
 		thresholdingAction.setGraphs(Selections.graphGlyphs);
@@ -218,7 +218,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (TierGlyph gl : allGlyphs) {
+		for (StyledGlyph gl : allGlyphs) {
 			if (gl instanceof AbstractGraphGlyph && gl.getChildCount() > 0) {
 				for (GlyphI g : gl.getChildren()) {
 					if (g instanceof GraphGlyph) {
@@ -369,7 +369,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		return rootSyms;
 	}
 
-	public List<TierGlyph> getSelectedGlyphss() {
+	public List<StyledGlyph> getSelectedGlyphss() {
 		return allGlyphs;
 	}
 

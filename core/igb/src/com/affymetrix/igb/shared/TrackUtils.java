@@ -77,9 +77,9 @@ public class TrackUtils {
 		return syms;
 	}
 
-	public List<RootSeqSymmetry> getSymsTierGlyphs(List<TierGlyph> tierGlyphs) {
+	public List<RootSeqSymmetry> getSymsTierGlyphs(List<StyledGlyph> tierGlyphs) {
 		List<RootSeqSymmetry> syms = new ArrayList<RootSeqSymmetry>();
-		for (TierGlyph glyph : tierGlyphs) {
+		for (StyledGlyph glyph : tierGlyphs) {
 			if(glyph instanceof AbstractGraphGlyph){
 				for(GlyphI g : glyph.getChildren()){
 					if(g instanceof GraphGlyph){

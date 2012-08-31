@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TrackUtils;
 
 /**
@@ -37,7 +37,7 @@ public class CombineGraphsAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<TierGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<StyledGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
 		List<RootSeqSymmetry> rootSyms = TrackUtils.getInstance().getSymsTierGlyphs(selected);
 		int gcount = rootSyms.size();
 		float height = 0;

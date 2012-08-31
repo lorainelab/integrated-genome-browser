@@ -94,7 +94,7 @@ public final class IGB extends Application
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JToolBar tool_bar;
-	//private JTextField selField = new JTextField(30);
+	private JTextField selField = new JTextField(30);
 	private SeqMapView map_view;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
@@ -170,8 +170,8 @@ public final class IGB extends Application
 	}
 
 	public void init(String[] args) {
-		//addTextFieldToolbar();
 		setLaf();
+		addTextFieldToolbar();
 
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates
@@ -355,7 +355,7 @@ public final class IGB extends Application
 		return ordinal;
 	}
 
-/*	public void addTextFieldToolbar(){
+	public void addTextFieldToolbar(){
 		if(tool_bar == null)
 			tool_bar = new JToolBar();
 		tool_bar.addSeparator();
@@ -363,7 +363,6 @@ public final class IGB extends Application
 		selField.setEditable(false);
 		tool_bar.add(selField);
 		tool_bar.add(new JLabel("  Click the map below to select annotations  "));
-		tool_bar.add(SelectionRulesAction.getAction());
 	}
 	
 	public void removeTextFieldToolbar(){
@@ -374,11 +373,11 @@ public final class IGB extends Application
 		tool_bar.remove(count-2);
 		tool_bar.remove(count-3);
 		tool_bar.remove(count-4);
-		tool_bar.remove(count-5);
-	}*/
+	}
+	
 	public int addToolbarAction(GenericAction genericAction) {
 		if (tool_bar == null) {
-			tool_bar = new DragDropToolBar();
+			tool_bar = new JToolBar();
 		}
 		addToolbarAction(genericAction, tool_bar.getComponentCount());
 		
@@ -387,8 +386,10 @@ public final class IGB extends Application
 
 	public void addToolbarAction(GenericAction genericAction, int index){
 		if (tool_bar == null) {
-			tool_bar = new DragDropToolBar();
+			tool_bar = new JToolBar();
 		}
+		removeTextFieldToolbar();
+		
 		JRPButton button = new JRPButtonTLP(genericAction, index); // >>>>>>> .r12096
 		button.setHideActionText(true);
 		addAction(genericAction);
@@ -398,6 +399,8 @@ public final class IGB extends Application
 			local_index++;
 		}
 		tool_bar.add(button, local_index);
+		
+		addTextFieldToolbar();
 		tool_bar.validate();
 	}
 	
@@ -522,10 +525,11 @@ public final class IGB extends Application
 		return windowService.getPlugins();
 	}
 
-	//public void setSelField(String message){
-	//	selField.setText(message);
-	//	tool_bar.repaint();
-	//}
+	@Override
+	public void setSelField(String message){
+		selField.setText(message);
+		tool_bar.repaint();
+	}
 	
 	/**
 	 * Get a named view.

@@ -47,21 +47,21 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private final JRPButton mainCancel;
 	private final JButton updateAvailable;
 	private final JPanel progressPanel;
-	private final JPanel selectionPanel;
-	private final JLabel selLabel;
-	private final JTextField selField;
+//	private final JPanel selectionPanel;
+//	private final JLabel selLabel;
+//	private final JTextField selField;
 	
 		
 	public StatusBar() {
 		String tt_status = "Shows Selected Item, or other Message";
 		final String updateMessage = "You might not be on latest revision.";
 		final String update = "Update";
-		selLabel = new JLabel(" Selection Info: ");
-		selField = new JTextField(25);
-		selField.setEditable(false);
-		selectionPanel = new JPanel();
-		selectionPanel.add(selLabel);
-		selectionPanel.add(selField);
+//		selLabel = new JLabel(" Selection Info: ");
+//		selField = new JTextField(20);
+//		selField.setEditable(false);
+//		selectionPanel = new JPanel();
+//		selectionPanel.add(selLabel);
+//		selectionPanel.add(selField);
 		status_ta = new JLabel("");
 		progressPanel = new JPanel();
 		memory_item = new MemoryStatusBarItem();
@@ -88,12 +88,12 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-		selField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		selLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		selectionPanel.setMinimumSize(new Dimension(420, 1));
-		
-		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-	
+//		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+//		selField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+//		selLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+//		selectionPanel.setMinimumSize(new Dimension(420, 1));
+//		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+
 		status_ta.setToolTipText(tt_status);
 		progressPanel.setMaximumSize(new Dimension(150, 5));
 		displayProgress(false);
@@ -119,7 +119,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
 				.addGap(1, 250, Short.MAX_VALUE)
-				.addComponent(selectionPanel)
+//				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item, 1, 200, 200)
 				.addComponent(updateAvailable));
@@ -129,7 +129,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 				.addComponent(progressPanel)
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
-				.addComponent(selectionPanel)
+//				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item)
 				.addComponent(updateAvailable));
@@ -153,8 +153,9 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		if(s == null){
 			s = "";
 		}
-		selField.setText(s);
+//		selField.setText(s);
 	}
+	
 	public void displayProgress(boolean b) {
 		mainCancel.setVisible(b);
 		progressPanel.setVisible(b);

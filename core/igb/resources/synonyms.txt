@@ -11,6 +11,7 @@ B_floridae_Mar_2006	braFlo1
 B_taurus_Aug_2006	bosTau3	Cow_Aug_2006
 B_taurus_Mar_2005	bosTau2	Cow_Mar_2005
 B_taurus_Oct_2007	bosTau4	Cow_Oct_2007	Bos_taurus.Btau_4.0.reference
+B_taurus_Oct_2011	bosTau7	Btau_4.6.1
 C_brenneri_Feb_2008	caePb2
 C_brenneri_Jan_2007	caePb1
 C_briggsae_Aug_2005	cb2

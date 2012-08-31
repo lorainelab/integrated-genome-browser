@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.BAMSym;
+import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -184,7 +186,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		}
 		ResidueRange residueRange = getResidueRange();
 		String residue = residueRange.getResidue();
-		if (residue.indexOf("-") > -1) { // load residues
+		if (residue.indexOf("-") > -1 || parentSym instanceof BAMSym) { // load residues
 //			if (view != null) {
 //				loadInBackground(view, exonSpan);
 //			}

@@ -70,7 +70,7 @@ public class DragDropToolBar extends JToolBar implements DragSourceListener, Dro
 	
 	private void moveTo(Point point){
 		Component target = this.getComponentAt(point);
-		if(target == null)
+		if(target == this)
 			return;
 		
 		int source_index = 0;

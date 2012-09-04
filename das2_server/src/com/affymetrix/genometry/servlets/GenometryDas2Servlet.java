@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 
 
 import hci.gnomex.model.GenomeBuild;
+import hci.gnomex.model.DataTrackFile;
 import hci.gnomex.model.UnloadDataTrack;
 import hci.gnomex.security.SecurityAdvisor;
 import hci.gnomex.utility.DataTrackQuery;
@@ -370,8 +371,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			try {
 				String gnomex_server_name = context.getInitParameter(Constants.GNOMEX_SERVER_NAME);
 				sess = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();
-				genometry_server_dir = PropertyDictionaryHelper.getInstance(sess).getDataTrackReadDirectory(gnomex_server_name);
-				gnomex_analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisReadDirectory(gnomex_server_name);
+				genometry_server_dir = PropertyDictionaryHelper.getInstance(sess).getDataTrackDirectory(gnomex_server_name);
+				gnomex_analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisDirectory(gnomex_server_name);
 			} catch (Exception e) {
 				System.out.println("\nERROR: Cannot open hibernate session to obtain gnomex property " + e.toString());
 			} finally {
@@ -664,7 +665,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return true;
 
 	}
-
 
 	 private boolean loadGenomesFromGNomEx(GNomExSecurity gnomexSecurity, boolean isServerRefreshMode)  {
 	    Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading Genomes from GNomEx DB");

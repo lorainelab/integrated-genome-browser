@@ -44,6 +44,8 @@
 		<property name="codeVisibility" column="codeVisibility" type="string"/>		
 		<property name="idInstitution" column="idInstitution" type="integer"/>
 		<property name="idCoreFacility" column="idCoreFacility" type="integer"/>
+		<property name="idSubmitter" column="idSubmitter" type="integer"/>
+		<many-to-one name="submitter" column="idSubmitter" class="hci.gnomex.model.AppUser" cascade="none" insert="false" update="false" />
     <property name="privacyExpirationDate" column="privacyExpirationDate" type="date"/>		
 		<set name="analysisGroups" table="AnalysisGroupItem" lazy="true" cascade="none">
 			<key column="idAnalysis"/>
@@ -53,7 +55,7 @@
 			<key column="idAnalysis"/>
 			<one-to-many class="hci.gnomex.model.AnalysisExperimentItem" />
 		</set>
-		<set name="files" table="AnalysisFile" lazy="false" cascade="all" order-by="fileName">
+		<set name="files" table="AnalysisFile" lazy="false" cascade="all-delete-orphan" order-by="fileName">
 			<key column="idAnalysis"/>
 			<one-to-many class="hci.gnomex.model.AnalysisFile" />
 		</set>
@@ -71,6 +73,11 @@
       <key column="idAnalysis"/>
       <one-to-many class="hci.gnomex.model.PropertyEntry" />
     </set>
+	    
+		<set name="topics" table="AnalysisToTopic" lazy="true" cascade="none">
+			<key column="idAnalysis"/>
+			<many-to-many column="idTopic" class="hci.gnomex.model.Topic"/>
+		</set>    
 		
 	</class>
 	
@@ -143,6 +150,10 @@
 			<key column="idAppUser"/>
 			<many-to-many column="idLab" class="hci.gnomex.model.Lab"/>
 		</set>
+    <set name="managingCoreFacilities" table="CoreFacilityManager" lazy="true">
+      <key column="idAppUser"/>
+      <many-to-many column="idCoreFacility" class="hci.gnomex.model.CoreFacility"/>
+    </set>
 	</class>
 	
     <!-- hci.gnomex.model.AppUserPublic -->
@@ -183,7 +194,23 @@
 		<property name="submitterEmail" column="submitterEmail" type="string"/>		
 		<property name="submitterUID" column="submitterUID" type="string"/>		
 		<property name="totalDollarAmount" column="totalDollarAmount" type="big_decimal"/>
+		<property name="orderFormFileType" column="orderFormFileType" type="string"/>
+		<property name="purchaseOrderForm" column="purchaseOrderForm" type="binary"/>
+		<property name="shortAcct" column="shortAcct" type="string"/>
+    <property name="startDate" column="startDate" type="date"/>
 	</class>
+  
+  <!-- hci.gnomex.model.Invoice -->
+  <class name="hci.gnomex.model.Invoice" table="Invoice">
+    <id name="idInvoice" column="idInvoice" type="integer">
+      <generator class="native"/>
+    </id>
+    <property name="idCoreFacility" column="idCoreFacility" type="integer"/>
+    <property name="idBillingPeriod" column="idBillingPeriod" type="integer"/>
+    <property name="idBillingAccount" column="idBillingAccount" type="integer"/>
+    <property name="invoiceNumber" column="invoiceNumber" type="string"/>
+    <property name="lastEmailDate" column="lastEmailDate" type="date"/>
+  </class>  
 	
 	<!-- hci.gnomex.model.BillingItem -->
 	<class name="hci.gnomex.model.BillingItem" table="BillingItem">
@@ -213,6 +240,8 @@
     <many-to-one name="lab" column="idLab" class="hci.gnomex.model.Lab" cascade="none" insert="false" update="false" />
 		<property name="notes" column="notes" type="string"/>
 	  <property name="splitType" column="splitType" type="string"/>
+    <property name="idInvoice" column="idInvoice" type="integer"/>
+    <many-to-one name="invoice" column="idInvoice" class="hci.gnomex.model.Invoice" cascade="none" insert="false" update="false" />
   </class>	
   
   <!-- hci.gnomex.model.Chromatogram -->
@@ -222,8 +251,9 @@
 		</id>
 		<property name="idPlateWell" column="idPlateWell" type="integer"/>
 		<many-to-one name="plateWell" column="idPlateWell" class="hci.gnomex.model.PlateWell" cascade="none" insert="false" update="false" />
-		<property name="idRequest" column="idRequest" type="integer"/>
-		<property name="fileName" column="fileName" type="string"/>
+		<many-to-one name="request" column="idRequest" class="hci.gnomex.model.Request" cascade="none" update="false" insert="false"/>
+    	<property name="idRequest" column="idRequest" type="integer"/>
+        <property name="qualifiedFilePath" column="qualifiedFilePath" type="string"/>
 		<property name="displayName" column="displayName" type="string"/>
 		<property name="readLength" column="readLength" type="integer"/>
 		<property name="trimmedLength" column="trimmedLength" type="integer"/>
@@ -233,6 +263,9 @@
 		<property name="cSignalStrength" column="cSignalStrength" type="integer"/>
 		<property name="gSignalStrength" column="gSignalStrength" type="integer"/>
 		<property name="tSignalStrength" column="tSignalStrength" type="integer"/>
+        <property name="releaseDate" column="releaseDate" type="java.util.Date"/>
+        <property name="idReleaser" column="idReleaser" type="integer"/>
+        <property name="lane" column="lane" type="integer"/>
 	</class>
   
   <!-- hci.gnomex.model.CoreFacility -->
@@ -241,6 +274,12 @@
       <generator class="native"/>
     </id>
     <property name="facilityName" column="facilityName" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+    <property name="showProjectAnnotations" column="showProjectAnnotations" type="string"/>
+    <set name="managers" table="CoreFacilityManager" lazy="true" cascade="none">
+      <key column="idCoreFacility"/>
+      <many-to-many column="idAppUser" class="hci.gnomex.model.AppUser"/>
+    </set>
   </class>
 	
   
@@ -269,6 +308,11 @@
 			<key column="idDataTrack"/>
 			<many-to-many column="idDataTrackFolder" class="hci.gnomex.model.DataTrackFolder"/>
 		</set>    
+
+		<set name="topics" table="DataTrackToTopic" lazy="true" cascade="none">
+			<key column="idDataTrack"/>
+			<many-to-many column="idTopic" class="hci.gnomex.model.Topic"/>
+		</set>    
 		
 		<set name="collaborators" table="DataTrackCollaborator" lazy="true" cascade="none">
 		   <key column="idDataTrack"/>
@@ -293,7 +337,7 @@
             <generator class="native"/>
         </id>
         <property name="idAnalysisFile"              column="idAnalysisFile"    type="integer"/>
-    	<many-to-one name="analysisFile"             column="idAnalysisFile"     class="hci.gnomex.model.AnalysisFile" cascade="none" insert="false" update="false" />
+    	  <many-to-one name="analysisFile"             column="idAnalysisFile"     class="hci.gnomex.model.AnalysisFile" cascade="none" insert="false" update="false" />
         <property name="idDataTrack"                 column="idDataTrack"   type="integer"/>
     </class>
     
@@ -306,7 +350,7 @@
         <property name="name"                        column="name"                       type="string"/>
         <property name="description"                 column="description"                type="string"/>
         <property name="idParentDataTrackFolder"     column="idParentDataTrackFolder"    type="integer"/>
-    	<many-to-one name="parentFolder"             column="idParentDataTrackFolder" class="hci.gnomex.model.DataTrackFolder" cascade="none" insert="false" update="false" />
+    	  <many-to-one name="parentFolder"             column="idParentDataTrackFolder" class="hci.gnomex.model.DataTrackFolder" cascade="none" insert="false" update="false" />
         <property name="idGenomeBuild"               column="idGenomeBuild"              type="integer"/>
         <many-to-one name="genomeBuild" column="idGenomeBuild" class="hci.gnomex.model.GenomeBuild" cascade="none" insert="false" update="false" />
         <property name="idLab"                       column="idLab"                      type="integer"/>
@@ -450,6 +494,7 @@
 		<property name="institution" column="institution" type="string"/>
 		<property name="description" column="description" type="string"/>
 		<property name="isActive" column="isActive" type="string"/>
+		<property name="isDefault" column="isDefault" type="string"/>
 		<set name="labs" table="InstitutionLab" lazy="true" cascade="none">
 			<key column="idInstitution"/>
 			<many-to-many column="idLab" class="hci.gnomex.model.Lab"/>
@@ -462,6 +507,15 @@
 			<generator class="native"/>
 		</id>
 		<property name="runDate" column="runDate" type="java.util.Date"/>
+    	<property name="createDate" column="createDate" type="java.util.Date"/>
+    	<property name="codeInstrumentRunStatus" column="codeInstrumentRunStatus" type="string"/>
+    	<many-to-one name="instrumentRunStatus" column="codeInstrumentRunStatus" class="hci.gnomex.model.InstrumentRunStatus" cascade="none" insert="false" update="false" />
+     	<property name="comments" column="comments" type="string"/>
+    	<property name="label" column="label" type="string"/>
+    	<property name="codeReactionType" column="codeReactionType" type="string"/>
+    	<property name="creator" column="creator" type="string"/>
+    	<property name="codeSealType" column="codeSealType" type="string"/>
+       
     </class>
 
     <!-- hci.gnomex.model.Lab -->
@@ -472,6 +526,7 @@
 		<property name="firstName" column="firstName" type="string"/>
 		<property name="lastName" column="lastName" type="string"/>
 		<property name="isExternalPricing" column="isExternalPricing" type="string"/>
+    <property name="isExternalPricingCommercial" column="isExternalPricingCommercial" type="string"/>
 		<property name="department" column="department" type="string"/>
 		<property name="contactName" column="contactName" type="string"/>
 		<property name="contactAddress" column="contactAddress" type="string"/>
@@ -495,7 +550,7 @@
 			<key column="idLab"/>
 			<many-to-many column="idAppUser" class="hci.gnomex.model.AppUser"/>
 		</set>
-		<set name="projects" table="Project" lazy="true" cascade="none" >
+		<set name="projects" table="Project" lazy="true" cascade="none" order-by="name" >
 			<key column="idLab"/>
 			<one-to-many class="hci.gnomex.model.Project" />
 		</set>
@@ -507,6 +562,10 @@
 			<key column="idLab"/>
 			<many-to-many column="idInstitution" class="hci.gnomex.model.Institution"/>
 		</set>
+    <set name="coreFacilities" table="CoreFacilityLab" lazy="true">
+      <key column="idLab"/>
+      <many-to-many column="idCoreFacility" class="hci.gnomex.model.CoreFacility"/>
+    </set>
 	</class>	
     
     <!-- hci.gnomex.model.LabeledSample -->
@@ -523,6 +582,7 @@
 		<property name="idLabel" column="idLabel" type="integer"/>
 		<property name="idLabelingProtocol" column="idLabelingProtocol" type="integer"/>
 		<property name="idRequest" column="idRequest" type="integer"/>
+		<many-to-one name="request" column="idRequest" class="hci.gnomex.model.Request" cascade="none" update="false" insert="false"/>
 		<property name="codeLabelingReactionSize" column="codeLabelingReactionSize" type="string"/>
 		<property name="numberOfReactions" column="numberOfReactions" type="integer"/>
 	</class>
@@ -533,10 +593,19 @@
 			<generator class="native"/>
 		</id>
 		<property name="idInstrumentRun" column="idInstrumentRun" type="integer"/>
-		<set name="plateWells" table="plateWells" lazy="true" cascade="none">
+		<many-to-one name="instrumentRun" column="idInstrumentRun" class="hci.gnomex.model.InstrumentRun" cascade="none" update="false" insert="false"/>
+		<set name="plateWells" table="PlateWell" lazy="true" cascade="none">
 			<key column="idPlate"/>
 			<one-to-many class="hci.gnomex.model.PlateWell" />
 		</set>
+    	<property name="quadrant" column="quadrant" type="integer"/>
+    	<property name="createDate" column="createDate" type="java.util.Date"/>
+    	<property name="comments" column="comments" type="string"/>
+    	<property name="label" column="label" type="string"/>
+    	<property name="codeReactionType" column="codeReactionType" type="string"/>
+    	<property name="creator" column="creator" type="string"/>
+    	<property name="codeSealType" column="codeSealType" type="string"/>
+      <property name="codePlateType" column="codePlateType" type="string"/>
 	</class>
 	
 	<!-- hci.gnomex.model.PlateWell -->
@@ -546,13 +615,30 @@
 		</id>
 		<property name="row" column="row" type="string"/>
 		<property name="col" column="col" type="integer"/>
-		<property name="index" column="ind" type="integer"/>
+		<property name="position" column="ind" type="integer"/>
 		<property name="idPlate" column="idPlate" type="integer"/>
 		<property name="idSample" column="idSample" type="integer"/>
 		<property name="idRequest" column="idRequest" type="integer"/>
 		<many-to-one name="plate" column="idPlate" class="hci.gnomex.model.Plate" cascade="none" insert="false" update="false" />
 		<many-to-one name="sample" column="idSample" class="hci.gnomex.model.Sample" cascade="none" insert="false" update="false" />
+    	<property name="codeReactionType" column="codeReactionType" type="string"/>
+   		<property name="createDate" column="createDate" type="date"/>
+		<property name="idAssay" column="idAssay" type="integer"/>
+		<property name="idPrimer" column="idPrimer" type="integer"/>
+		<property name="redoFlag" column="redoFlag" type="string"/>
+    <property name="isControl" column="isControl" type="string"/>
+    <many-to-one name="primer" column="idPrimer" class="hci.gnomex.model.Primer" cascade="none" insert="false" update="false" />
+    <many-to-one name="assay" column="idAssay" class="hci.gnomex.model.Assay" cascade="none" insert="false" update="false" />
 	</class>
+	  
+   <!-- hci.gnomex.model.PlateType -->
+  <class name="hci.gnomex.model.PlateType" table="PlateType">
+    <id name="codePlateType" column="codePlateType" type="string">
+      <generator class="assigned"/>
+    </id>
+    <property name="plateTypeDescription" column="plateTypeDescription" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+  </class>
 	
 	<!-- hci.gnomex.model.Project -->
 	<class name="hci.gnomex.model.Project" table="Project">
@@ -602,7 +688,7 @@
 		<property name="number" column="number" type="string"/>
 		<property name="codeProtocolType" column="codeProtocolType" type="string"/>
 		<property name="protocolNumber" column="protocolNumber" type="string"/>
-		<property name="createDate" column="createDate" type="date"/>
+		<property name="createDate" column="createDate" type="java.util.Date"/>
 		<property name="idLab" column="idLab" type="integer"/>
 		<property name="idCoreFacility" column="idCoreFacility" type="integer"/>
     	<many-to-one name="lab" column="idLab" class="hci.gnomex.model.Lab" cascade="none" insert="false" update="false" />
@@ -635,6 +721,11 @@
 		<property name="captureLibDesignId" column="captureLibDesignId" type="string"/>
 		<property name="avgInsertSizeFrom" column="avgInsertSizeFrom" type="integer"/>
 		<property name="avgInsertSizeTo" column="avgInsertSizeTo" type="integer"/>						
+		<property name="idSampleDropOffLocation" column="idSampleDropOffLocation" type="integer" />
+    	<property name="codeRequestStatus" column="codeRequestStatus" type="string"/>
+    	<many-to-one name="requestStatus" column="codeRequestStatus" class="hci.gnomex.model.RequestStatus" cascade="none" insert="false" update="false" />
+		<property name="idSubmitter" column="idSubmitter" type="integer"/>
+		<many-to-one name="submitter" column="idSubmitter" class="hci.gnomex.model.AppUser" cascade="none" insert="false" update="false" />    	
 		<set name="samples" table="Sample" lazy="true" cascade="delete" sort="hci.gnomex.utility.SampleNumberComparator">
 			<key column="idRequest"/>
 			<one-to-many class="hci.gnomex.model.Sample" />
@@ -676,6 +767,15 @@
 			<one-to-many class="hci.gnomex.model.ExperimentFile" />
 		</set>
 		
+		<set name="topics" table="RequestToTopic" lazy="true" cascade="none">
+			<key column="idRequest"/>
+			<many-to-many column="idTopic" class="hci.gnomex.model.Topic"/>
+		</set>    
+		<set name="chromatograms" table="Chromatogram" lazy="true" cascade="none">
+			<key column="idRequest"/>
+			<one-to-many class="hci.gnomex.model.Chromatogram" />
+		</set>
+		
 	</class>
 	
 	<!-- hci.gnomex.model.ExperimentCollaborator -->
@@ -694,6 +794,7 @@
 			<generator class="native"/>
 		</id>
 		<property name="idRequest" column="idRequest" type="integer"/>
+		<many-to-one name="request" column="idRequest" class="hci.gnomex.model.Request" cascade="none" insert="false" update="false" />
 		<property name="number" column="number" type="string"/>
 		<property name="name" column="name" type="string"/>
 		<property name="description" column="description" type="string"/>
@@ -747,6 +848,10 @@
 			<key column="idSample"/>
 			<one-to-many class="hci.gnomex.model.LabeledSample" />
 		</set>
+		<set name="wells" table="PlateWell" lazy="true" cascade="none">
+			<key column="idSample"/>
+			<one-to-many class="hci.gnomex.model.PlateWell"/>
+		</set>    
   </class>
 	
 	<!-- hci.gnomex.model.PropertyEntry -->
@@ -838,6 +943,7 @@
 		<property name="idAnalysis" column="idAnalysis" type="integer"/>
 		<property name="idRequest" column="idRequest" type="integer"/>
 		<property name="idLab" column="idLab" type="integer"/>
+		<many-to-one name="lab" column="idLab" class="hci.gnomex.model.Lab" cascade="none" insert="false" update="false" />
 	</class>
 		
 	<!-- hci.gnomex.model.WorkItem -->
@@ -908,6 +1014,10 @@
 		<property name="isActive" column="isActive" type="string"/>
 		<property name="idApplicationTheme" column="idApplicationTheme" type="integer"/>
 		<property name="sortOrder" column="sortOrder" type="integer"/>
+		<property name="avgInsertSizeFrom" column="avgInsertSizeFrom" type="integer"/>
+		<property name="avgInsertSizeTo" column="avgInsertSizeTo" type="integer"/>
+		<property name="hasCaptureLibDesign" column="hasCaptureLibDesign" type="string"/>
+		
 	</class>
 
   <!-- hci.gnomex.model.ApplicationTheme -->
@@ -949,6 +1059,17 @@
 		<property name="accessionNumberUArrayExpress" column="accessionNumberUArrayExpress" type="string"/>
 		<property name="idArrayCoordinate" column="idArrayCoordinate" type="integer"/>
 	</class>
+	
+	<!-- hci.gnomex.model.Assay -->
+	<class name="hci.gnomex.model.Assay" table="Assay">
+		<id name="idAssay" column="idAssay" type="integer">
+			<generator class="native"/>
+		</id>
+		<property name="name" column="name" type="string"/>
+		<property name="description" column="description" type="string"/>
+		<property name="isActive" column="isActive" type="string"/>
+	</class>
+
 	
 	<!-- hci.gnomex.model.BioanalyzerChipType -->
 	<class name="hci.gnomex.model.BioanalyzerChipType" table="BioanalyzerChipType">
@@ -1060,6 +1181,29 @@
 		<property name="isActive" column="isActive" type="string"/>
 	</class>
 
+  <!-- hci.gnomex.model.InstrumentRunStatus -->
+  <class name="hci.gnomex.model.InstrumentRunStatus" table="InstrumentRunStatus">
+    <id name="codeInstrumentRunStatus" column="codeInstrumentRunStatus" type="string">
+      <generator class="assigned"/>
+    </id>
+    <property name="instrumentRunStatus" column="instrumentRunStatus" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+  </class>
+  
+  	
+	<!-- hci.gnomex.model.Primer -->
+	<class name="hci.gnomex.model.Primer" table="Primer">
+		<id name="idPrimer" column="idPrimer" type="integer">
+			<generator class="native"/>
+		</id>
+		<property name="name" column="name" type="string"/>
+		<property name="description" column="description" type="string"/>
+		<property name="sequence" column="sequence" type="string"/>
+		<property name="isActive" column="isActive" type="string"/>
+	</class>
+
+  
+
 	<!-- hci.gnomex.model.PropertyType -->
 	<class name="hci.gnomex.model.PropertyType" table="PropertyType">
 		<id name="codePropertyType" column="codePropertyType" type="string">
@@ -1069,6 +1213,15 @@
 		<property name="isActive" column="isActive" type="string"/>
 	</class>
 	
+  <!-- hci.gnomex.model.RequestStatus -->
+  <class name="hci.gnomex.model.RequestStatus" table="RequestStatus">
+    <id name="codeRequestStatus" column="codeRequestStatus" type="string">
+      <generator class="assigned"/>
+    </id>
+    <property name="requestStatus" column="requestStatus" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+  </class>
+  
 	<!-- hci.gnomex.model.SeqRunType -->
 	<class name="hci.gnomex.model.SeqRunType" table="SeqRunType">
 		<id name="idSeqRunType" column="idSeqRunType" type="integer">
@@ -1359,7 +1512,8 @@
 		<property name="description" column="description" type="string"/>
 		<property name="isActive"  column="isActive" type="string"/>
 		<property name="unitPrice" column="unitPrice" type="big_decimal"/>
-		<property name="unitPriceExternal" column="unitPriceExternal" type="big_decimal"/>
+		<property name="unitPriceExternalAcademic" column="unitPriceExternalAcademic" type="big_decimal"/>
+    <property name="unitPriceExternalCommercial" column="unitPriceExternalCommercial" type="big_decimal"/>
 		<property name="idPriceCategory" column="idPriceCategory" type="integer"/>
 		<set name="priceCriterias" table="PriceCriteria" lazy="true" cascade="delete" >
 			<key column="idPrice"/>
@@ -1389,6 +1543,7 @@
 		<property name="propertyValue"       column="propertyValue" type="string"/>
 		<property name="propertyDescription" column="propertyDescription" type="string"/>
 		<property name="forServerOnly"       column="forServerOnly" type="string"/>
+    <property name="idCoreFacility"      column="idCoreFacility" type="integer"/>
 	</class>
 	
 	<!-- hci.gnomex.model.ProtocolType -->
@@ -1491,6 +1646,25 @@
 		<property name="isActive" column="isActive" type="string"/>
 	</class>
 	
+  
+   <!-- hci.gnomex.model.ReactionType -->
+  <class name="hci.gnomex.model.ReactionType" table="ReactionType">
+    <id name="codeReactionType" column="codeReactionType" type="string">
+      <generator class="assigned"/>
+    </id>
+    <property name="reactionType" column="reactionType" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+  </class>
+  
+   <!-- hci.gnomex.model.SampleDropOffLocation -->
+  <class name="hci.gnomex.model.SampleDropOffLocation" table="SampleDropOffLocation">
+    <id name="idSampleDropOffLocation" column="idSampleDropOffLocation" type="integer">
+      <generator class="native"/>
+    </id>
+    <property name="sampleDropOffLocation" column="sampleDropOffLocation" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+  </class>
+  
 	 <!-- hci.gnomex.model.SampleSource -->
 	<class name="hci.gnomex.model.SampleSource" table="SampleSource">
 		<id name="idSampleSource" column="idSampleSource" type="integer">
@@ -1538,6 +1712,15 @@
 		<many-to-one name="requestCategory"  column="codeRequestCategory" class="hci.gnomex.model.RequestCategory" cascade="none" insert="false" update="false" />
 		
 	</class>
+
+  <!-- hci.gnomex.model.SealType -->
+  <class name="hci.gnomex.model.SealType" table="SealType">
+    <id name="codeSealType" column="codeSealType" type="string">
+      <generator class="assigned"/>
+    </id>
+    <property name="sealType" column="sealType" type="string"/>
+    <property name="isActive" column="isActive" type="string"/>
+  </class>
 
   <!-- hci.gnomex.model.SeqLibTreatment -->
 	<class name="hci.gnomex.model.SeqLibTreatment" table="SeqLibTreatment">
@@ -1768,5 +1951,45 @@
     <property name="instrument" column="instrument" type="string"/>
     <property name="isActive" column="isActive" type="string"/>
   </class>
+  
+    <!--  Topic -->
+    <class name="hci.gnomex.model.Topic" table="Topic">
+        <id name="idTopic"  column="idTopic"    type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="name"                        column="name"                       type="string"/>
+        <property name="description"                 column="description"                type="string"/>
+        <property name="idParentTopic"               column="idParentTopic"              type="integer"/>
+    	<many-to-one name="parentTopic"              column="idParentTopic" class="hci.gnomex.model.Topic" cascade="none" insert="false" update="false" />
+        <property name="idLab"                       column="idLab"                      type="integer"/>
+        <many-to-one name="lab" column="idLab" class="hci.gnomex.model.Lab" cascade="none" insert="false" update="false" />
+        <property name="createdBy"                   column="createdBy"                  type="string"/>
+        <property name="createDate"                  column="createDate"                 type="java.sql.Date"/>
+		<property name="idAppUser" column="idAppUser" type="integer"/>
+		<many-to-one name="appUser" column="idAppUser" class="hci.gnomex.model.AppUser" cascade="none" insert="false" update="false" />
+        <property name="codeVisibility"              column="codeVisibility"             type="string"/>
+        <property name="idInstitution"               column="idInstitution"              type="integer"/>
+		        
+        <set name="topics" table="Topic" lazy="true" cascade="all" order-by="name">
+			    <key column="idParentTopic"/>
+			    <one-to-many class="hci.gnomex.model.Topic" />
+		</set> 
+		  
+		<set name="requests" table="RequestToTopic" lazy="true" cascade="none">
+			    <key column="idTopic"/>
+			    <many-to-many column="idRequest" class="hci.gnomex.model.Request"/>
+		</set>
+		
+		<set name="analyses" table="AnalysisToTopic" lazy="true" cascade="none">
+			    <key column="idTopic"/>
+			    <many-to-many column="idAnalysis" class="hci.gnomex.model.Analysis"/>
+		</set>
+		
+		<set name="dataTracks" table="DataTrackToTopic" lazy="true" cascade="none">
+			    <key column="idTopic"/>
+			    <many-to-many column="idDataTrack" class="hci.gnomex.model.DataTrack"/>
+		</set>
+    </class>
+  
 	
 </hibernate-mapping>

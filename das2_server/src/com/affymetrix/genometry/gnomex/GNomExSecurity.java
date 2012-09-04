@@ -72,7 +72,7 @@ public class GNomExSecurity implements AnnotSecurity, Serializable {
 			this.loadAuthorizedResources(sess);	
 		}
 		
-		analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisReadDirectory(serverName);
+		analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisDirectory(serverName);
 	}
 	
 	public Document getXML() {
@@ -81,9 +81,9 @@ public class GNomExSecurity implements AnnotSecurity, Serializable {
 		root.addAttribute("userName",        secAdvisor.getUID() != null ?  secAdvisor.getUID() : "");
 		root.addAttribute("userDisplayName", secAdvisor.getAppUser() != null ? secAdvisor.getAppUser().getDisplayName() : "");
 		root.addAttribute("name",            secAdvisor.getAppUser() != null ? secAdvisor.getAppUser().getDisplayName() : "");
-		root.addAttribute("isAdmin",         secAdvisor.isAdmin() ? "Y" : "N");
+		root.addAttribute("isAdmin",         secAdvisor.hasPermission(SecurityAdvisor.CAN_ADMINISTER_ALL_CORE_FACILITIES) ? "Y" : "N");
 		root.addAttribute("isGuest",         secAdvisor.getIsGuest());
-		root.addAttribute("canManageUsers",  secAdvisor.isAdmin() || (secAdvisor.getAppUser() != null && secAdvisor.getGroupsIManage().size() > 0) ? "Y" : "N");
+		root.addAttribute("canManageUsers",  secAdvisor.hasPermission(SecurityAdvisor.CAN_ADMINISTER_ALL_CORE_FACILITIES) || (secAdvisor.getAppUser() != null && secAdvisor.getGroupsIManage().size() > 0) ? "Y" : "N");
 		
 		
 		return doc;		

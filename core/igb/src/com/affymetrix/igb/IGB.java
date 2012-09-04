@@ -19,9 +19,7 @@ import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.swing.DragDropToolBar;
 import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import static com.affymetrix.igb.IGBConstants.*;
 
@@ -29,8 +27,6 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -39,6 +35,7 @@ import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.util.MainMenuUtil;
 import com.affymetrix.igb.util.StatusBarOutput;
 import com.affymetrix.igb.view.AltSpliceView;
+import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqGroupViewGUI;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
@@ -47,7 +44,6 @@ import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
@@ -72,29 +68,12 @@ import javax.swing.*;
 public final class IGB extends Application
 		implements GroupSelectionListener, SeqSelectionListener {
 
-    private class JRPButtonTLP extends JRPButton implements TrackListProvider {
-		private static final long serialVersionUID = 1L;
-		private final int index;
-		private JRPButtonTLP(GenericAction genericAction, int index) {
-    		super("Toolbar_" + genericAction.getId(), genericAction);
-			setHideActionText(true);
-			this.index = index;
-    	}
-		public int getIndex(){
-			return index;
-		}
-		@Override
-		public List<TierGlyph> getTrackList() {
-			return ((IGB)Application.getSingleton()).getMapView().getTierManager().getSelectedTiers();
-		}
-    }
 	private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
 	private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
 	public static final String NODE_PLUGINS = "plugins";
 	private JFrame frm;
 	private JMenuBar mbar;
-	private JToolBar tool_bar;
-	private JTextField selField = new JTextField(30);
+	private IGBToolBar tool_bar;
 	private SeqMapView map_view;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
@@ -171,8 +150,7 @@ public final class IGB extends Application
 
 	public void init(String[] args) {
 		setLaf();
-		addTextFieldToolbar();
-
+	
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates
 		// when connecting to server over HTTPS
@@ -326,7 +304,7 @@ public final class IGB extends Application
 
 		windowService.setStatusBar(status_bar);
 		if (tool_bar == null) {
-			tool_bar = new JToolBar();
+			tool_bar = new IGBToolBar();
 		}
 		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(getMenu("view"));
@@ -346,92 +324,36 @@ public final class IGB extends Application
 	public JRPMenu addTopMenu(String id, String text) {
 		return MenuUtil.getRPMenu(mbar, id, text);
 	}
-
-	private int getOrdinal(Component c) {
-		int ordinal = 0;
-		if (c instanceof JRPButtonTLP) {
-			ordinal = ((JRPButtonTLP)c).getIndex();
-		}
-		return ordinal;
-	}
-
-	public void addTextFieldToolbar(){
-		if(tool_bar == null)
-			tool_bar = new JToolBar();
-		tool_bar.addSeparator();
-		tool_bar.add(new JLabel("  Selection Info:  "));
-		selField.setEditable(false);
-		tool_bar.add(selField);
-		tool_bar.add(new JLabel("  Click the map below to select annotations  "));
-	}
-	
-	public void removeTextFieldToolbar(){
-		if(tool_bar == null)
-			return;
-		int count = tool_bar.getComponentCount();
-		tool_bar.remove(count-1);
-		tool_bar.remove(count-2);
-		tool_bar.remove(count-3);
-		tool_bar.remove(count-4);
-	}
 	
 	public int addToolbarAction(GenericAction genericAction) {
 		if (tool_bar == null) {
-			tool_bar = new JToolBar();
+			tool_bar = new IGBToolBar();
 		}
-		addToolbarAction(genericAction, tool_bar.getComponentCount());
+		addToolbarAction(genericAction, tool_bar.getItemCount());
 		
-		return tool_bar.getComponentCount();
+		return tool_bar.getItemCount();
 	}
 
 	public void addToolbarAction(GenericAction genericAction, int index){
 		if (tool_bar == null) {
-			tool_bar = new JToolBar();
-		}
-		removeTextFieldToolbar();
-		
-		JRPButton button = new JRPButtonTLP(genericAction, index); // >>>>>>> .r12096
-		button.setHideActionText(true);
+			tool_bar = new IGBToolBar();
+		}		
 		addAction(genericAction);
-		int local_index = 0;
-		while (local_index < index && local_index < tool_bar.getComponentCount() 
-				&& index >= getOrdinal(tool_bar.getComponent(local_index))) {
-			local_index++;
-		}
-		tool_bar.add(button, local_index);
-		
-		addTextFieldToolbar();
-		tool_bar.validate();
+
+		tool_bar.addToolbarAction(genericAction, index);
 	}
 	
 	public void removeToolbarAction(GenericAction action) {
-		if (tool_bar == null) {
+		if(tool_bar == null)
 			return;
-		}
-		boolean removed = false;
-		for (int i = 0; i < tool_bar.getComponentCount(); i++) {
-			if (((JButton)tool_bar.getComponent(i)).getAction() == action) {
-				tool_bar.remove(i);
-				tool_bar.validate();
-				tool_bar.repaint(); // to really make it gone.
-				removed = true;
-				break;
-			}
-		}
-		if (!removed) {
-			System.err.println(this.getClass().getName()
-					+ ".removeToolbarAction: Could not find " + action);
-		}
+		tool_bar.removeToolbarAction(action);
 	}
-
+	
 	void saveToolBar() {
-		int index = 0;
-		for(Component c : tool_bar.getComponents()){
-			if(c instanceof JButton && ((JButton)c).getAction() instanceof GenericAction){
-				GenericAction action = (GenericAction) ((JButton)c).getAction();
-				PreferenceUtils.getToolbarNode().putInt(action.getId()+".index", index++);
-			}
-		}
+		if(tool_bar == null)
+			return;
+		
+		tool_bar.saveToolBar();
 	}
 	
 	/**
@@ -527,8 +449,7 @@ public final class IGB extends Application
 
 	@Override
 	public void setSelField(String message){
-		selField.setText(message);
-		tool_bar.repaint();
+		tool_bar.setSelectionText(message);
 	}
 	
 	/**

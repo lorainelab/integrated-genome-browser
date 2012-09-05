@@ -391,6 +391,32 @@ public class AnnotatedSeqGroup {
 		return UNKNOWN_ID + unknown_id_no++;
 	}
 	
+	final public Set<String> find(Pattern regex, int limit){
+		
+		if(id2sym_hash.isEmpty()){
+			return Collections.<String>emptySet();
+		}
+	
+		int size = Math.min(limit,id2sym_hash.size());
+		Set<String> syms = new HashSet<String>(size);
+		final Matcher matcher = regex.matcher("");
+	
+		int count = 0;
+		for (String key : id2sym_hash.keySet()) {
+			matcher.reset(key);
+			if (matcher.matches()) {
+				syms.add(key);
+				
+				count++;
+				if(count > size){
+					break;
+				}
+			}
+		}
+		
+		return syms;
+	}
+	
 	/**
 	 *  Associates a symmetry with a case-insensitive ID.  You can later retrieve the
 	 *  list of all matching symmetries for a given ID by calling findSyms(String).

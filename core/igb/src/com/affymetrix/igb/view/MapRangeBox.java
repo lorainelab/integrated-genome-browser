@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
@@ -37,6 +36,7 @@ import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.DummyStatus;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.jidesoft.hints.ListDataIntelliHints;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -316,6 +316,9 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		range_box.addActionListener(this);
 		range_box.addFocusListener(focus_listener);
 		map.addViewBoxListener(this);
+		
+		SearchHints hints = new SearchHints(range_box);
+	
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
 		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
 	}
@@ -554,6 +557,43 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	private void fireSearchResult(String searchText, List<SeqSymmetry> spanList) {
 		for (SearchListener listener : search_listeners) {
 			listener.searchResults(searchText, spanList);
+		}
+	}
+	
+	private class SearchHints extends ListDataIntelliHints<String> {
+
+        public SearchHints(JRPTextField searchBox) {
+            super(searchBox, new String[]{});
+        }
+
+        @Override
+        public void acceptHint(Object context) {
+            String text = (String) context;
+            super.acceptHint(context);
+            setText(text);
+			setRange(text);
+        }
+
+        @Override
+		public boolean updateHints(Object context) {
+			String search_text = (String) context;
+			if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null || search_text.length() <= 1) {
+				return false;
+			} else {
+				String regexText = search_text;
+				if (!(regexText.contains("*") || regexText.contains("^") || regexText.contains("$"))) {
+					// Not much of a regular expression.  Assume the user wants to match at the start and end
+					regexText = ".*" + regexText + ".*";
+				}
+				Pattern regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
+				
+                Set<String> syms = GenometryModel.getGenometryModel().getSelectedSeqGroup().find(regex, 20);
+                if (syms.size() >= 1) {
+                    this.setListData(syms.toArray());
+                    return true;
+                }
+			}
+			return false;
 		}
 	}
 }

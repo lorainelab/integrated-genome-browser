@@ -119,7 +119,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         setPreferredSize(new java.awt.Dimension(545, 540));
 
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
-        coordinatePanel.setPreferredSize(new java.awt.Dimension(510, 60));
+        coordinatePanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
         backgroundLabel.setText("Background:");
 
@@ -172,7 +172,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         );
 
         orfAnalyzerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("ORF Analyzer (Sliced View tab)"));
-        orfAnalyzerPanel.setPreferredSize(new java.awt.Dimension(510, 60));
+        orfAnalyzerPanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
         stopCodonLabel.setText("Stop Codon:");
 
@@ -203,7 +203,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(bgLabel)
                 .add(10, 10, 10)
                 .add(bgComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -220,7 +220,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         );
 
         residueColorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Residue Colors"));
-        residueColorPanel.setPreferredSize(new java.awt.Dimension(510, 60));
+        residueColorPanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
         aLabel.setText("A:");
 
@@ -334,7 +334,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         });
 
         edgeMatchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edge Match"));
-        edgeMatchPanel.setPreferredSize(new java.awt.Dimension(510, 60));
+        edgeMatchPanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
         edgeMatchLabel.setText("Color:");
 
@@ -347,7 +347,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchLabel)
                 .add(10, 10, 10)
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(425, Short.MAX_VALUE))
+                .addContainerGap(420, Short.MAX_VALUE))
         );
         edgeMatchPanelLayout.setVerticalGroup(
             edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -420,28 +420,28 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
                 .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(12, 12, 12)
+                .add(10, 10, 10)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(askBeforeExitCheckBox)
                             .add(keepZoomStripeCheckBox))
-                        .add(12, 12, 12)
+                        .add(10, 10, 10)
                         .add(confirmBeforeDeleteCheckBox))
                     .add(showZoomStripLabelCheckBox))
-                .add(12, 12, 12)
+                .add(10, 10, 10)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(displayOption)
                     .add(confirmBeforeLoadCheckBox))
-                .add(12, 12, 12)
+                .add(10, 10, 10)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(showCollapseOptionCheckBox)
                     .add(autoloadSequenceCheckBox))
-                .add(12, 12, 12)
+                .add(10, 10, 10)
                 .add(coverageSummaryHeatMapCheckBox)
-                .add(18, 18, 18)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

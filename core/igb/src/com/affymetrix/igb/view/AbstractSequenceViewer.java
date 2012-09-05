@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -264,7 +263,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	}
 */
 	public static class CreateValueSet implements Comparable<SequenceViewer.CreateValueSet>{
-		static final SeqSpanComparator spanCompare = new SeqSpanComparator();
 		public SeqSpan span;
 		public SequenceViewerItems si;
 
@@ -282,8 +280,15 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		}
 		
 		public int compareTo(SequenceViewer.CreateValueSet t) {
-			return spanCompare.compare(span, t.getSpan());
-		}
+			final int start1 = span.getStart();
+			final int start2 = t.getSpan().getStart();
+			if (start1 != start2) {
+				return ((Integer) start1).compareTo(start2);
+			}
+			
+			// secondary sort by end
+			return ((Integer) span.getEnd()).compareTo(t.getSpan().getEnd());
+		}	
 	}
 
 	private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {

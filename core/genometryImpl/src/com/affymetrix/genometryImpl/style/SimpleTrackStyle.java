@@ -164,11 +164,6 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	}
 
 	@Override
-	public String getFileType() {
-		return "";
-	}
-
-	@Override
 	public FileTypeCategory getFileTypeCategory(){
 		return null;
 	}

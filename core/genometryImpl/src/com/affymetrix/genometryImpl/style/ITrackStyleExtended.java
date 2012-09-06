@@ -63,7 +63,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	int getDirectionType();
 	public void setDirectionType(int ordinal);
 
-	String getFileType();
 	public FileTypeCategory getFileTypeCategory();
 
 	void setForwardHeight(double theNewHeight);

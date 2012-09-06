@@ -883,11 +883,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	@Override
-	public String getFileType() {
-		return file_type;
-	}
-
-	@Override
 	public FileTypeCategory getFileTypeCategory() {
 		if (file_type == null) {
 			return null;

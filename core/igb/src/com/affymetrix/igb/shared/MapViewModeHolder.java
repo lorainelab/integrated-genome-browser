@@ -107,12 +107,6 @@ public class MapViewModeHolder {
 	 * normally the UnloadedFactory (gray background).
 	 */
 	public MapViewGlyphFactoryI getDefaultFactoryFor(ITrackStyleExtended style) {
-		FileTypeCategory category = null;
-		FileTypeHandler handler = null;
-		if(style.getFileType() != null && style.getFileType().length() > 0){
-			handler = FileTypeHolder.getInstance().getFileTypeHandler(style.getFileType());
-		}
-		
 		if(style.getMethodName() == null){
 			if(style.isGraphTier()){
 				return MapViewModeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.Graph);
@@ -120,13 +114,15 @@ public class MapViewModeHolder {
 			return MapViewModeHolder.getInstance().getDefaultFactory();
 		}
 		
-		if(handler == null){
-			handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName());
+		FileTypeCategory category = style.getFileTypeCategory();
+		
+		if(category == null){
+			FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName());
+			if (handler != null) {
+				category = handler.getFileTypeCategory();
+			}
 		}
 		
-		if (handler != null) {
-			category = handler.getFileTypeCategory();
-		}
 		return MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
 	}
 }

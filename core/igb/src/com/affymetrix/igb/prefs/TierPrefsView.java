@@ -634,21 +634,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 	}
 
-	public void viewModeCB() {
-		if (applyChanged) {
-			String mode = viewModeCB.getSelectedValue();
-			Boolean supportsTwoTrack = MapViewModeHolder.getInstance().
-					getViewFactory(mode).supportsTwoTrack();
-			if (!supportsTwoTrack) {
-				show2TracksCheckBox.setEnabled(false);
-			} else if (!show2TracksCheckBox.isEnabled()) {
-				show2TracksCheckBox.setEnabled(true);
-			}
-			
-			model.setValueAt(mode, 0, COL_VIEW_MODE);
-		}
-	}
-
 	public void restoreToDefault() {
 		if (selectedRows != null) { //Prevents NPE when no tracks have been generated.
 			int row;

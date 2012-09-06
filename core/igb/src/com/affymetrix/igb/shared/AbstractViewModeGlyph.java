@@ -68,12 +68,16 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	protected CollapsePacker collapse_packer = new CollapsePacker();
 	
 	public abstract void setPreferredHeight(double height, ViewI view);
-	public abstract int getActualSlots();
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
 	
 	public AbstractViewModeGlyph(){
 		setSpacer(spacer);
+	}
+	
+	@Override
+	public int getActualSlots() {
+		return 1;
 	}
 	
 	private void setSpacer(double spacer) {

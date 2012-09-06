@@ -54,11 +54,6 @@ public class SequenceGlyph extends AbstractViewModeGlyph{
 		((PaddedPackerI) packer).setParentSpacer(spacer);
 	}
 
-	@Override
-	public int getActualSlots() {
-		return 1;
-	}
-
 	public void setPreferredHeight(double height, ViewI view){
 		height = height - 2 * getSpacing();
 

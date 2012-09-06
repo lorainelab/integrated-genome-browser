@@ -63,7 +63,6 @@ public abstract class STierGlyph extends SolidGlyph implements TierGlyph {
 	 */
 	public abstract int getSlotsNeeded(ViewI theView);
 	public abstract void setPreferredHeight(double height, ViewI view);
-	public abstract int getActualSlots();
 
 	protected abstract boolean shouldDrawToolBar();
 	
@@ -77,6 +76,11 @@ public abstract class STierGlyph extends SolidGlyph implements TierGlyph {
 	public STierGlyph(ITrackStyleExtended style) {
 		setHitable(false);
 		setStyle(style);
+	}
+	
+	@Override
+	public int getActualSlots() {
+		return 1;
 	}
 	
 	protected RootSeqSymmetry loadRegion(SeqSpan span){

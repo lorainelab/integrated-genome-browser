@@ -53,11 +53,6 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 		child.pack(view);
 	}
 
-	@Override
-	public int getActualSlots() {
-		return 1;
-	}
-
 	/**
 	 * Determine how short a glyph can be so we can avoid empty vertical space.
 	 * Originally implemented for annotation tracks.

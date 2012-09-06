@@ -78,7 +78,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 		List<TierGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
 		if (!vgList.isEmpty()) {
 			for (TierGlyph vg : vgList) {
-				if (iterateMultigraph && vg instanceof AbstractGraphGlyph && vg.getChildren() != null) {
+				if (iterateMultigraph && vg instanceof GraphTierGlyph && vg.getChildren() != null) {
 					for (GlyphI child : vg.getChildren()) {
 						if (child instanceof GraphGlyph) {
 							ITrackStyleExtended style = ((GraphGlyph)child).getGraphState().getTierStyle();

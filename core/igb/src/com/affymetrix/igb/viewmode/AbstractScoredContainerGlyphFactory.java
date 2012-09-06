@@ -52,7 +52,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 
 		for (GraphIntervalSym gis : the_graph_syms) {
 			GraphGlyph gg = displayGraphSym(gis, smv);
-			AbstractGraphGlyph agg = (AbstractGraphGlyph) smv.getTrack(gis.getGraphState().getTierStyle(), TierGlyph.Direction.NONE);
+			GraphTierGlyph agg = (GraphTierGlyph) smv.getTrack(gis.getGraphState().getTierStyle(), TierGlyph.Direction.NONE);
 			agg.addChild(gg);
 			vmgs.add(agg);
 		}

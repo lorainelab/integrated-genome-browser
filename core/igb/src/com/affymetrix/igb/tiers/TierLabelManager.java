@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphTierGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
@@ -397,7 +397,7 @@ public final class TierLabelManager implements PropertyHolder {
 						}
 					}
 				}
-				else if (tg instanceof AbstractGraphGlyph) {
+				else if (tg instanceof GraphTierGlyph) {
 					SeqSymmetry sym = (SeqSymmetry) tg.getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {

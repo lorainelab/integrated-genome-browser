@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphTierGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -85,7 +85,7 @@ public class TrackView {
 				return new SequenceGlyph(style);
 			case Graph:
 			case Mismatch:
-				return new AbstractGraphGlyph(style);
+				return new GraphTierGlyph(style);
 			default:
 				return new AnnotationGlyph(style);
 		}

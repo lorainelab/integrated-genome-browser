@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphTierGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -70,7 +70,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		boolean hasCollapsed = false;
 		boolean hasExpanded = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-			if (tg instanceof AnnotationGlyph && !(tg instanceof AbstractGraphGlyph)) {
+			if (tg instanceof AnnotationGlyph && !(tg instanceof GraphTierGlyph)) {
 				SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 				if (selected_syms.contains(ss)) {
 					boolean collapsed = tg.getAnnotStyle().getCollapsed();

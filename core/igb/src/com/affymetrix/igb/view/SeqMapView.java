@@ -1215,7 +1215,7 @@ public class SeqMapView extends JPanel
 		// this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			if (!allSelectedTiers.contains(tierGlyph)) {
-				if(tierGlyph instanceof AbstractGraphGlyph && tierGlyph.getChildCount() > 0){
+				if(tierGlyph instanceof GraphTierGlyph && tierGlyph.getChildCount() > 0){
 					for (GlyphI child : tierGlyph.getChildren()) {
 						if (child.isSelected()) {
 							allSelectedTiers.add(child);
@@ -1857,7 +1857,7 @@ public class SeqMapView extends JPanel
 		}
 		// this selects all join subtracks on the track itself (arrow on left edge)
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			if (tierGlyph instanceof AbstractGraphGlyph && tierGlyph.getChildCount() > 0) {
+			if (tierGlyph instanceof GraphTierGlyph && tierGlyph.getChildCount() > 0) {
 				for (GlyphI child : tierGlyph.getChildren()) {
 					boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
 					if (matches) {
@@ -1879,7 +1879,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
-			if (tierGlyph instanceof AbstractGraphGlyph && tierGlyph.getChildCount() > 0) {
+			if (tierGlyph instanceof GraphTierGlyph && tierGlyph.getChildCount() > 0) {
 				for (GlyphI child : tierGlyph.getChildren()) {
 					child.setSelected(false);
 				}
@@ -1912,8 +1912,8 @@ public class SeqMapView extends JPanel
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
 			if (child instanceof TierGlyph 
-					&& ((TierGlyph) child) instanceof AbstractGraphGlyph) {
-				AbstractGraphGlyph agg = (AbstractGraphGlyph)child;
+					&& ((TierGlyph) child) instanceof GraphTierGlyph) {
+				GraphTierGlyph agg = (GraphTierGlyph)child;
 				if (agg.getChildCount() > 0) {
 					for (GlyphI g : agg.getChildren()) {
 						if (g instanceof GraphGlyph) {

@@ -73,7 +73,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 					style.setForwardMaxDepth(a);
 					break;
 			}
-			if (t instanceof com.affymetrix.igb.shared.AbstractGraphGlyph) {
+			if (t instanceof com.affymetrix.igb.shared.GraphTierGlyph) {
 				// So far this has only been tested with annotation depth graphs.
 				com.affymetrix.igb.shared.GraphGlyph gg
 						= (com.affymetrix.igb.shared.GraphGlyph) t;

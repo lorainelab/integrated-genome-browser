@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -326,8 +327,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			ITrackStyleExtended style = tierGlyph.getAnnotStyle();
 			GenericFeature feature = style.getFeature();
 			if (feature != null) {
-				String file_type = style.getFileType();
-				if (FileTypeHolder.getInstance().isSequence(file_type)) {
+				if (style.getFileTypeCategory() == FileTypeCategory.Sequence) {
 					popup.add(new JSeparator());
 					JMenuItem use_as_reference_seq = new JRPMenuItemTLP(UseAsReferenceSeqAction.getAction());
 					popup.add(use_as_reference_seq);

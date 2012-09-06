@@ -41,9 +41,8 @@ import javax.swing.SwingWorker;
 /**
  *  This is the glyph that displays the contents of a Tier/Track.
  */
-public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGlyph, NeoRangeListener{
+public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph, NeoRangeListener{
 	
-	private TierGlyph tierGlyph;
 	SwingWorker previousWorker, worker;
 	protected ITrackStyleExtended style;
 	protected TierGlyph.Direction direction = TierGlyph.Direction.NONE;
@@ -71,7 +70,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
 	
-	public AbstractViewModeGlyph(){
+	public AbstractTierGlyph(){
 		setSpacer(spacer);
 	}
 	
@@ -112,7 +111,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 			
 			return GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 		} catch (Exception ex) {
-			Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AbstractTierGlyph.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		return Collections.<SeqSymmetry>emptyList();
@@ -325,7 +324,7 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 					loadAndDisplayRegion(smv, factory);
 				}
 			} catch (Exception ex) {
-				Logger.getLogger(AbstractViewModeGlyph.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(AbstractTierGlyph.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 	};

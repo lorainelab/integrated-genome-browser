@@ -201,7 +201,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		// in order to look at the properties associated with them.  Otherwise, the method
 		// EfficientGlyph.pickTraversal() will only allow one to be chosen.
 		double pheight = /*the_style.getHeight()*/ child_height + 0.0001;
-		if (AbstractViewModeGlyph.useLabel(the_style)) {
+		if (AbstractTierGlyph.useLabel(the_style)) {
 			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, the_style.getLabelField());
 			String label = (property == null) ? "" : property.toString();

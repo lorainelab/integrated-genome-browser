@@ -28,7 +28,7 @@ import java.util.*;
  * <p><em><strong>This is only meant for graphs on horizontal maps.</strong></em>
  * </p>
  */
-public class AbstractGraphGlyph extends AbstractViewModeGlyph{
+public class AbstractGraphGlyph extends AbstractTierGlyph{
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();

@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author hiralv
  */
-public abstract class TransformViewModeGlyph extends AbstractViewModeGlyph{
+public abstract class TransformViewModeGlyph extends AbstractTierGlyph{
 
 	// Variable for transformable tier
 	protected LinearTransform tier_transform = new LinearTransform();

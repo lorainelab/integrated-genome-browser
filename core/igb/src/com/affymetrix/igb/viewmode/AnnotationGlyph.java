@@ -20,7 +20,7 @@ import java.util.List;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationGlyph extends AbstractViewModeGlyph{
+public class AnnotationGlyph extends AbstractTierGlyph{
 	private static final int MAX_EXPAND = 0;
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;

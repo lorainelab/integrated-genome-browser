@@ -134,7 +134,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 		
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method,featureName,operator.getOutputCategory(),null);
 		if(preferredStyle != null){
 			style.copyPropertiesFrom(preferredStyle);
 			style.setSeparate(false);

@@ -158,7 +158,6 @@ public interface IGBService {
 	public void deleteGraph(GraphSym gsym);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
-	public ITrackStyleExtended getTrackStyle(String meth);
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
 	public List<Glyph> getSelectedTierGlyphs();

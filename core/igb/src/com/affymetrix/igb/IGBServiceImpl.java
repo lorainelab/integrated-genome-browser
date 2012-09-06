@@ -309,11 +309,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return ((AffyTieredMap) getSeqMap()).getView();
 	}
 
-	@Override
-	public ITrackStyleExtended getTrackStyle(String meth) {
-		return TrackStyle.getInstance(meth, false);
-	}
-
 	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
 	@Override
 	public List<Glyph> getAllTierGlyphs() {

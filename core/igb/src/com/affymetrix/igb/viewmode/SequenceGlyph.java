@@ -64,26 +64,8 @@ public class SequenceGlyph extends AbstractViewModeGlyph{
 		double percent = ((height * 100)/style.getHeight() - 100)/100;
 		style.setHeight(height);
 
-		setChildHeight(percent, getChildren(), view);
+		scaleChildHeights(percent, getChildren(), view);
 	}
-
-	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){
-		int sibs_size = sibs.size();
-
-		GlyphI child;
-		Rectangle2D.Double coordbox;
-		for (int i = 0; i < sibs_size; i++) {
-			child =  sibs.get(i);
-			coordbox = child.getCoordBox();
-			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height + (coordbox.height * percent));
-			if(child.getChildCount() > 0){
-				setChildHeight(percent, child.getChildren(), view);
-			}
-			child.pack(view);
-		}
-
-	}
-
 
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override

@@ -431,27 +431,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph{
 		
 	}
 
-	private static void scaleChildHeights(double theScale, List<GlyphI> theSiblings, ViewI theView) {
-		if(theSiblings == null || theSiblings.isEmpty()){
-			return;
-		}
-		
-		int numberOfSiblings = theSiblings.size();
-		GlyphI child;
-		Rectangle2D.Double coordbox;
-		for (int i = 0; i < numberOfSiblings; i++) {
-			child =  theSiblings.get(i);
-			coordbox = child.getCoordBox();
-			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height * theScale);
-			if (0 < child.getChildCount()) {
-				// The above test is needed as of 2011-03-01
-				// because child.getChildren() returns null instead of an empty list.
-				scaleChildHeights(theScale, child.getChildren(), theView);
-			}
-			child.pack(theView);
-		}
-	}
-
 	private boolean useLabel() {
 		String label_field = style.getLabelField();
 		boolean use_label = label_field != null && (label_field.trim().length() > 0);

@@ -103,7 +103,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 					meth.append(((TierGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
 				}
 			}
-			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
+			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle, operator.getOutputCategory());
 		}
 	}
 			

@@ -8,9 +8,11 @@ import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -181,7 +183,7 @@ public interface IGBService {
 	public void addStyleSheet(String name, InputStream istr);
 	public void removeStyleSheet(String name);
 
-	public void addTrack(SeqSymmetry sym, String method);
+	public void addTrack(SeqSymmetry sym, String method, FileTypeCategory fileTypeCategory);
 
 	public void addSpeciesItemListener(ItemListener il);
 

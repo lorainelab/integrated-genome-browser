@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -33,14 +32,14 @@ public class TrackUtils {
 		super();
 	}
 
-	public void addTrack(SeqSymmetry sym, String method, ITrackStyleExtended preferredStyle) {
-		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
+	public void addTrack(SeqSymmetry sym, String method, ITrackStyleExtended preferredStyle, FileTypeCategory file_type_category) {
+		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle, file_type_category);
 		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 		aseq.addAnnotation(sym);
 		Application.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle) {
+	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle, FileTypeCategory file_type_category) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = TrackStyle.getUniqueName(human_name);
@@ -48,7 +47,7 @@ public class TrackUtils {
 		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
-		TrackStyle style = TrackStyle.getInstance(unique_name, human_name, Delegate.EXT, null);
+		TrackStyle style = TrackStyle.getInstance(unique_name, human_name, file_type_category, null);
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands

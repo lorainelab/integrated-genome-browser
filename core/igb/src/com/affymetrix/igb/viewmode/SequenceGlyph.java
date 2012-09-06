@@ -33,12 +33,6 @@ public class SequenceGlyph extends AbstractViewModeGlyph{
 		setStyle(style);
 	}
 
-	@Override
-	public void addChild(GlyphI glyph, int position) {
-		throw new RuntimeException("SequenceGlyph.addChild(glyph, position) not allowed, "
-				+ "use SequenceGlyph.addChild(glyph) instead");
-	}
-
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view) {

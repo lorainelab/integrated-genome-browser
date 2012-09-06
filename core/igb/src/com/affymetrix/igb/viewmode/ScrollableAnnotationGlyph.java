@@ -114,12 +114,6 @@ public class ScrollableAnnotationGlyph extends TransformViewModeGlyph implements
 
 	}
 
-	@Override
-	public void addChild(GlyphI glyph, int position) {
-		throw new RuntimeException("AnnotationGlyph.addChild(glyph, position) not allowed, "
-				+ "use AnnotationGlyph.addChild(glyph) instead");
-	}
-
 	/**
 	 * Overriding addChild() to keep track of whether children are sorted by ascending min
 	 */

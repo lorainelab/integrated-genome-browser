@@ -269,6 +269,12 @@ public abstract class AbstractViewModeGlyph extends SolidGlyph implements TierGl
 		}
 	}
 	
+	@Override
+	public void addChild(GlyphI glyph, int position) {
+		throw new RuntimeException("AbstractViewModeGlyph.addChild(glyph, position) not allowed, "
+				+ "use AbstractViewModeGlyph.addChild(glyph) instead");
+	}
+	
 	/**
 	 * Remove all children of the glyph,
 	 * including those added with addMiddleGlyph(GlyphI).

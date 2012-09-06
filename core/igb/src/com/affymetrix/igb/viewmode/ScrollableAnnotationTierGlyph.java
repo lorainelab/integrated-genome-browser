@@ -1,7 +1,6 @@
 package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
@@ -10,7 +9,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.*;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class ScrollableAnnotationGlyph extends AbstractTransformTierGlyph implements TransformableViewModeGlyph {
+public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph implements TransformableViewModeGlyph {
 	private static final int MAX_EXPAND = 0;
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
@@ -66,7 +64,7 @@ public class ScrollableAnnotationGlyph extends AbstractTransformTierGlyph implem
 	private Rectangle upper_pixelbox = new Rectangle();
 	private Rectangle child_temp = new Rectangle();
 	 
-	public ScrollableAnnotationGlyph(ITrackStyleExtended style) {
+	public ScrollableAnnotationTierGlyph(ITrackStyleExtended style) {
 		super();
 		setHitable(false);
 		setSpacer(spacer);

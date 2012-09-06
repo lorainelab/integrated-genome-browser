@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import java.util.*;
 
 public class DefaultStateProvider implements StateProvider {
@@ -53,6 +54,10 @@ public class DefaultStateProvider implements StateProvider {
 	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String, String> props) {
 		return getAnnotStyle(name);
 	}
+
+	public ITrackStyleExtended getAnnotStyle(String name, String human_name, FileTypeCategory file_type_category, Map<String, String> props) {
+		return getAnnotStyle(name);
+	}
 	
 	public GraphState getGraphState(String id) {
 		return getGraphState(id, null, null, null);
@@ -66,5 +71,5 @@ public class DefaultStateProvider implements StateProvider {
 		}
 		return state;
 	}
-		
+	
 }

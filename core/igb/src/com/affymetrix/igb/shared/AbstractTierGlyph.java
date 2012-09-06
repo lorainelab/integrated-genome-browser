@@ -319,7 +319,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph,
 	protected void rangeChanged(SeqMapViewExtendedI smv){
 		if(isAutoLoadMode() && isDetail(smv.getSeqMap().getView())){
 			try {
-				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(getAnnotStyle());
+				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(getAnnotStyle().getFileTypeCategory());
 				if(factory != null){
 					loadAndDisplayRegion(smv, factory);
 				}

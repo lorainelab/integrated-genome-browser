@@ -2,13 +2,8 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,7 +62,7 @@ public class MapViewModeHolder {
 	}
 
 	public boolean styleSupportsTwoTrack(ITrackStyleExtended style) {
-		MapViewGlyphFactoryI factory = getDefaultFactoryFor(style);
+		MapViewGlyphFactoryI factory = getDefaultFactoryFor(style.getFileTypeCategory());
 		if (factory == null) {
 			return false;
 		}
@@ -76,53 +71,10 @@ public class MapViewModeHolder {
 		}
 	}
 
-	public List<MapViewGlyphFactoryI> getAllViewModesFor(FileTypeCategory category, String uri) {
-		List<MapViewGlyphFactoryI> modes = new ArrayList<MapViewGlyphFactoryI>(view2Factory.size());
-
-		for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
-			MapViewGlyphFactoryI emv = entry.getValue();
-			if (emv.isCategorySupported(category)) {
-				modes.add(emv);
-			}
-
-		}
-
-		return modes;
-	}
-
-	public MapViewGlyphFactoryI getDefaultFactory() {
-		return getDefaultFactoryFor(FileTypeCategory.Annotation);
-	}
-
 	public MapViewGlyphFactoryI getDefaultFactoryFor(FileTypeCategory category) {
 		if(defaultView.get(category) != null) {
 			return defaultView.get(category);
 		}
 		return defaultView.get(FileTypeCategory.Annotation);
-	}
-
-	/**
-	 * Get the MapViewGlyphFactoryI to be used for a track
-	 * when it is first selected (before Load Data),
-	 * normally the UnloadedFactory (gray background).
-	 */
-	public MapViewGlyphFactoryI getDefaultFactoryFor(ITrackStyleExtended style) {
-		if(style.getMethodName() == null){
-			if(style.isGraphTier()){
-				return MapViewModeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.Graph);
-			}
-			return MapViewModeHolder.getInstance().getDefaultFactory();
-		}
-		
-		FileTypeCategory category = style.getFileTypeCategory();
-		
-		if(category == null){
-			FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName());
-			if (handler != null) {
-				category = handler.getFileTypeCategory();
-			}
-		}
-		
-		return MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
 	}
 }

@@ -180,7 +180,7 @@ public class TrackView {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style);
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style.getFileTypeCategory());
 			factory.createGlyphs(annotSym, style, smv);
 		}
 	}

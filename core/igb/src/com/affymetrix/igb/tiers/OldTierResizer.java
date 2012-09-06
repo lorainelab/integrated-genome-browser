@@ -5,7 +5,7 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.TransformableViewModeGlyph;
+import com.affymetrix.igb.shared.ITransformableTierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
@@ -211,10 +211,10 @@ public class OldTierResizer extends MouseInputAdapter {
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(0, height);
-				if(this.upperGl.getReferenceTier() instanceof TransformableViewModeGlyph){
+				if(this.upperGl.getReferenceTier() instanceof ITransformableTierGlyph){
 					if(this.upperGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((TransformableViewModeGlyph)this.upperGl.getReferenceTier()).setOffset(
-							((TransformableViewModeGlyph)this.upperGl.getReferenceTier()).getOffset() + (int)delta);
+						((ITransformableTierGlyph)this.upperGl.getReferenceTier()).setOffset(
+							((ITransformableTierGlyph)this.upperGl.getReferenceTier()).getOffset() + (int)delta);
 					}
 				}
 				
@@ -231,10 +231,10 @@ public class OldTierResizer extends MouseInputAdapter {
 				height = this.lowerGl.getCoordBox().getHeight() - delta;
 				this.lowerGl.resizeHeight(y, height);
 				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
-				if(this.lowerGl.getReferenceTier() instanceof TransformableViewModeGlyph){
+				if(this.lowerGl.getReferenceTier() instanceof ITransformableTierGlyph){
 					if(this.lowerGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((TransformableViewModeGlyph)this.lowerGl.getReferenceTier()).setOffset(
-							((TransformableViewModeGlyph)this.lowerGl.getReferenceTier()).getOffset() - (int)delta);
+						((ITransformableTierGlyph)this.lowerGl.getReferenceTier()).setOffset(
+							((ITransformableTierGlyph)this.lowerGl.getReferenceTier()).getOffset() - (int)delta);
 					}
 				}
 				

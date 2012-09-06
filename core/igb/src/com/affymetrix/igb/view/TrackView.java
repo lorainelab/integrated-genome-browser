@@ -33,7 +33,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.AnnotationTierGlyph;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
-import com.affymetrix.igb.viewmode.SequenceGlyph;
+import com.affymetrix.igb.viewmode.SequenceTierGlyph;
 
 /**
  *
@@ -82,7 +82,7 @@ public class TrackView {
 	private static TierGlyph getTierGlyphForStyle(ITrackStyleExtended style){
 		switch(style.getFileTypeCategory()){
 			case Sequence:
-				return new SequenceGlyph(style);
+				return new SequenceTierGlyph(style);
 			case Graph:
 			case Mismatch:
 				return new GraphTierGlyph(style);

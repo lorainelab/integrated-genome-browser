@@ -13,7 +13,7 @@ import com.affymetrix.igb.shared.CollapsePacker;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for sequences
  */
-public class SequenceGlyph extends AbstractTierGlyph{
+public class SequenceTierGlyph extends AbstractTierGlyph{
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
@@ -25,7 +25,7 @@ public class SequenceGlyph extends AbstractTierGlyph{
 
 	private CollapsePacker packer = new CollapsePacker();
 	
-	public SequenceGlyph(ITrackStyleExtended style) {
+	public SequenceTierGlyph(ITrackStyleExtended style) {
 		super();
 		setHitable(false);
 		setSpacer(spacer);

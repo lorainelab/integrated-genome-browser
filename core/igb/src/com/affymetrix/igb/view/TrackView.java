@@ -31,7 +31,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapViewModeHolder;
-import com.affymetrix.igb.viewmode.AnnotationGlyph;
+import com.affymetrix.igb.viewmode.AnnotationTierGlyph;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.SequenceGlyph;
 
@@ -87,7 +87,7 @@ public class TrackView {
 			case Mismatch:
 				return new GraphTierGlyph(style);
 			default:
-				return new AnnotationGlyph(style);
+				return new AnnotationTierGlyph(style);
 		}
 	}
 	

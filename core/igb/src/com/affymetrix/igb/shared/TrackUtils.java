@@ -48,7 +48,7 @@ public class TrackUtils {
 		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
-		TrackStyle style = TrackStyle.getInstance(unique_name, Delegate.EXT, false);
+		TrackStyle style = TrackStyle.getInstance(unique_name, human_name, Delegate.EXT, null);
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands

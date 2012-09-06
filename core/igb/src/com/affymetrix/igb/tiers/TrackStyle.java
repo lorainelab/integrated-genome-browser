@@ -10,8 +10,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.stylesheet.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -84,14 +82,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
 		return getInstance(unique_name, track_name, file_type, true, true, props);
-	}
-
-	public static TrackStyle getInstance(String unique_name, String track_name, String file_type) {
-		return getInstance(unique_name, track_name, file_type, true, true, null);
-	}
-
-	public static TrackStyle getInstance(String unique_name, String file_type, boolean persistent) {
-		return getInstance(unique_name, null, file_type, persistent, false, null);
 	}
 	
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {

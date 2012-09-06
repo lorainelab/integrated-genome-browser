@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.IGBConstants;
 import java.util.Map;
 import java.util.MissingResourceException;

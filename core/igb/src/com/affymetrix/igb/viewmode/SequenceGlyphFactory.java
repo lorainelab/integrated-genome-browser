@@ -16,12 +16,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
-	
-	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style){
-		return new SequenceGlyph(style);
-	}
-		
+			
 	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
 		if (sym != null) {

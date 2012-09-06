@@ -541,11 +541,6 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style) {
-		return new AnnotationGlyph(style);
-	}
-
-	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer) {
 		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();

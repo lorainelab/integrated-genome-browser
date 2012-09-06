@@ -252,11 +252,6 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	}
 
 	protected abstract GraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv);
-
-	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style){
-		return new AnnotationGlyph(style);
-	}
 		
 	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {

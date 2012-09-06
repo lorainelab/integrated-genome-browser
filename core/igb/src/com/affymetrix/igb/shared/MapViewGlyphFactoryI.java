@@ -33,14 +33,6 @@ public interface MapViewGlyphFactoryI  {
 	 */
 	public void init(Map<String, Object> options);
 	/**
-	 * Create empty view mode glyph
-	 * @param style
-	 * @param direction
-	 * @param gviewer
-	 * @return 
-	 */
-	public TierGlyph getTierGlyph(ITrackStyleExtended style);
-	/**
 	 * create a ViewModeGlyph for the SeqSymmetry
 	 * @param sym - The SeqSymmetry (object model) for the TierGlyph
 	 * @param style - track style

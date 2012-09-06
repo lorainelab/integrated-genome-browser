@@ -465,11 +465,6 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.ProbeSet;
 	}
-
-	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style){
-		return new AnnotationGlyph(style);
-	}
 	
 	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer) {

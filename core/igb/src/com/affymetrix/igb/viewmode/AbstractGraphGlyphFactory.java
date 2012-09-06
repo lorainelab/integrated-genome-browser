@@ -200,11 +200,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		}
 	}
 	
-	@Override
-	public TierGlyph getTierGlyph(ITrackStyleExtended style){
-		return new AbstractGraphGlyph(style);
-	}
-	
 	private static GraphState getGraphState(ITrackStyleExtended style){
 		String featureName = null, extension = null;
 		Map<String, String> featureProps = null;

@@ -84,8 +84,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return getInstance(unique_name, track_name, file_type, true, true, props);
 	}
 	
-	public static TrackStyle getInstance(String unique_name, boolean persistent) {
-		return getInstance(unique_name, null, null, persistent, false, null);
+	public static TrackStyle getInstance(String unique_name) {
+		return getInstance(unique_name, null, null, true, false, null);
 	}
 
 	private static TrackStyle getInstance(String unique_name, String track_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {

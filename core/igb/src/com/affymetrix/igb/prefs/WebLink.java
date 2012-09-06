@@ -156,7 +156,7 @@ public final class WebLink {
 		List<WebLink> results = new ArrayList<WebLink>();
 
 		// If the method name has already been used, then the annotStyle must have already been created
-		TrackStyle style = TrackStyle.getInstance(method, false);
+		TrackStyle style = TrackStyle.getInstance(method);
 		String style_url = style.getUrl();
 		if (style_url != null && style_url.length() > 0) {
 			WebLink link = new WebLink("Track Line URL", null, style_url, RegexType.TYPE);

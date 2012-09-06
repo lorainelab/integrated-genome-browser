@@ -86,7 +86,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			if (rootSym != null) {
 				seqSymList.add(rootSym);
 				if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && ((SimpleSymWithProps)rootSym).getProperty("method") != null) {
-					preferredStyle = TrackStyle.getInstance(((SimpleSymWithProps)rootSym).getProperty("method").toString(), false);
+					preferredStyle = TrackStyle.getInstance(((SimpleSymWithProps)rootSym).getProperty("method").toString());
 				}
 			}
 		}

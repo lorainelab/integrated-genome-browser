@@ -1,9 +1,9 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class IGBStateProvider extends DefaultStateProvider {
@@ -19,7 +19,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
   	
   @Override
   public ITrackStyleExtended getAnnotStyle(String name) {
-    return TrackStyle.getInstance(name,true);
+    return TrackStyle.getInstance(name);
   }
 
   @Override

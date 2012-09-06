@@ -94,7 +94,7 @@ public class AbstractGraphGlyph extends AbstractViewModeGlyph{
 
 	@Override
 	protected boolean shouldDrawToolBar(){
-		return false;
+		return this.getChildCount() > 1;
 	}
 	
 	@Override

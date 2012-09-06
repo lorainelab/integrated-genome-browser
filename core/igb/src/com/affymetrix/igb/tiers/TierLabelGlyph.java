@@ -60,13 +60,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		reference_tier = tier;
 		setInfo(reference_tier);
 		setPosition(position);
-		isIGBTrack = Delegate.EXT.equalsIgnoreCase(
-				reference_tier.getAnnotStyle().getFileType());
+		isIGBTrack = reference_tier.getAnnotStyle().getFileTypeCategory() == null;
 	}
 
 	public void setShowIGBTrack(boolean b) {
-		isIGBTrack = b && Delegate.EXT.equalsIgnoreCase(
-				reference_tier.getAnnotStyle().getFileType());
+		isIGBTrack = b && reference_tier.getAnnotStyle().getFileTypeCategory() == null;
 	}
 
 	public void setPosition(int position) {

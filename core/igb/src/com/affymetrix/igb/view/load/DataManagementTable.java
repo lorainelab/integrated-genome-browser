@@ -230,7 +230,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			return new DataManagementTable.ColumnRenderer();
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
 			if (vFeature.getStyle() != null) {
-				if(Delegate.EXT.equalsIgnoreCase(vFeature.getStyle().getFileType())){
+				if(vFeature.getStyle().getFileTypeCategory() == null){
 					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
 						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 				}

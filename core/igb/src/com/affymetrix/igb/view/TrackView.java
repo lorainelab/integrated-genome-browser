@@ -34,6 +34,8 @@ import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.AnnotationTierGlyph;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.SequenceTierGlyph;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -73,7 +75,7 @@ public class TrackView {
 		else if (tier_direction == TierGlyph.Direction.REVERSE) {
 			style2track = style2reverseTierGlyph;
 		}
-		else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
+		else if (tier_direction == TierGlyph.Direction.FORWARD || tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.NONE) {
 			style2track = style2forwardTierGlyph;
 		}
 		return style2track.get(style);
@@ -178,9 +180,14 @@ public class TrackView {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		String meth = BioSeq.determineMethod(annotSym);
 
-		if (meth != null) {
+		if (meth != null && annotSym instanceof RootSeqSymmetry) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(style.getFileTypeCategory());
+			if(((RootSeqSymmetry)annotSym).getCategory() != style.getFileTypeCategory()){
+				Logger.getLogger(TrackView.class.getName()).log(Level.SEVERE, 
+						"File type category for {0} is {1} while style has category {2}", 
+						new Object[]{annotSym, ((RootSeqSymmetry)annotSym).getCategory(), style.getFileTypeCategory()});
+			}
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)annotSym).getCategory());
 			factory.createGlyphs(annotSym, style, smv);
 		}
 	}

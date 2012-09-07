@@ -515,13 +515,13 @@ public final class ServerList {
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
-			if (!server.serverType.isSaveServersInPrefs()) {
+			if (server.serverType != null && !server.serverType.isSaveServersInPrefs()) {
 				removeServer(server.URL);
 			}
 
 			if (!removedManually) {
 				String errorText;
-				if (server.serverType == ServerTypeI.QuickLoad) {
+				if (server.serverType != null && server.serverType == ServerTypeI.QuickLoad) {
 					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
 					errorText = siteOK
 							? MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
@@ -538,12 +538,11 @@ public final class ServerList {
 					}
 				}
 			}
-			if (server.serverType != ServerTypeI.LocalFiles) {
-				if (server.serverType == null) {
-					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
-				} else {
-					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
-				}
+
+			if (server.serverType == null) {
+				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
+			} else if (server.serverType != ServerTypeI.LocalFiles) {
+				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
 			}
 		}
 

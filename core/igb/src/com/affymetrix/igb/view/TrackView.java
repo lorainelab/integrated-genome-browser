@@ -116,7 +116,7 @@ public class TrackView {
 			else if (tier_direction == TierGlyph.Direction.REVERSE) {
 				style2reverseTierGlyph.put(style, tierGlyph);
 			}
-			else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
+			else if (tier_direction == TierGlyph.Direction.FORWARD || tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.NONE) {
 				style2forwardTierGlyph.put(style, tierGlyph);
 			}
 			if (seqmap.getTierIndex(tierGlyph) == -1) {
@@ -125,11 +125,16 @@ public class TrackView {
 			}
 		}
 		
-		if (!style.isGraphTier() && (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD)) {
-			if(style.getSeparate()){
-				tierGlyph.setDirection(TierGlyph.Direction.FORWARD);
-			}else{
-				tierGlyph.setDirection(TierGlyph.Direction.BOTH);
+		if (!style.isGraphTier() && (tier_direction == TierGlyph.Direction.FORWARD || 
+				tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.NONE)) {
+			if (style.getSeparable()) {
+				if (style.getSeparate()) {
+					tierGlyph.setDirection(TierGlyph.Direction.FORWARD);
+				} else {
+					tierGlyph.setDirection(TierGlyph.Direction.BOTH);
+				}
+			} else {
+				tierGlyph.setDirection(TierGlyph.Direction.NONE);
 			}
 		}
 

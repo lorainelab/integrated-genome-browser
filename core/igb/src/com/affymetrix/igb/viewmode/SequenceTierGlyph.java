@@ -4,7 +4,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.AbstractTierGlyph;
@@ -61,6 +60,11 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 		scaleChildHeights(percent, getChildren(), view);
 	}
 
+	@Override
+	protected boolean shouldDrawToolBar(){
+		return false;
+	}
+	
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override
 	protected void drawSelectedFill(ViewI view) {

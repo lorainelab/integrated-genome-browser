@@ -440,7 +440,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}else if (gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD){
 			// This would trigger auto load
-			smv.fireRangeChanged(smv.getVisibleSpan().getStart(), smv.getVisibleSpan().getEnd());
+			
 		}
 
 		//  Whatever feature strategy changed, it may have affected

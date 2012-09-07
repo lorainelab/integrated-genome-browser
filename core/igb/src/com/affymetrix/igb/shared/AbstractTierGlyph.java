@@ -41,7 +41,7 @@ import javax.swing.SwingWorker;
 /**
  *  This is the glyph that displays the contents of a Tier/Track.
  */
-public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph, NeoRangeListener{
+public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	
 	SwingWorker previousWorker, worker;
 	protected ITrackStyleExtended style;
@@ -309,7 +309,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph,
 		return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
 	}
 	
-	@Override
+//	@Override
 	public void rangeChanged(NeoRangeEvent evt){
 		if(evt.getSource() instanceof SeqMapViewExtendedI){
 			rangeChanged(((SeqMapViewExtendedI)evt.getSource()));

@@ -26,10 +26,6 @@
 
 <repository name="Bioviz development" url="http://eos.transvar.org/igb_plugins" enabled="false" default="true"/>
 
-<repository name="Genentech" url="http://research-pub.gene.com/igb_plugins" enabled="true" default="true"/>
-
-<repository name="Genentech development" url="http://research-pub.gene.com/igb_plugins/development" enabled="false" default="true"/>
-
 <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:
          annot_type_regex: feature name and a regular expression (case insensitive by default)

@@ -20,37 +20,40 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
 		if (sym != null) {
-			TierGlyph viewModeGlyph = smv.getTrack(style, Direction.NONE);
+			TierGlyph tierGlyph = smv.getTrack(style, Direction.NONE);
 			SimpleSymWithResidues childSym = (SimpleSymWithResidues) sym.getChild(0);
 			SeqSpan pspan = smv.getViewSeqSpan(childSym);
 			if (pspan == null || pspan.getLength() == 0) {
 				return;
 			}  // if no span corresponding to seq, then return;
-			viewModeGlyph.setDirection(Direction.NONE);
-			viewModeGlyph.setInfo(sym);
-			FillRectGlyph childGlyph = new FillRectGlyph();
-			childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
-			childGlyph.setColor(style.getForeground());
-			smv.setDataModelFromOriginalSym(childGlyph, childSym);
-			BioSeq annotseq = smv.getAnnotatedSeq();
-			addAlignedResidues(childSym, annotseq, childGlyph);
-			viewModeGlyph.addChild(childGlyph);
+			tierGlyph.setDirection(Direction.NONE);
+			tierGlyph.setInfo(sym);	
+			GlyphI residueGlyph = addAlignedResidues(childSym, smv.getAnnotatedSeq());
+			if(residueGlyph != null){
+				FillRectGlyph childGlyph = new FillRectGlyph();
+				childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
+				childGlyph.setColor(style.getForeground());
+				residueGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
+				smv.setDataModelFromOriginalSym(childGlyph, childSym);
+				childGlyph.addChild(residueGlyph);
+				tierGlyph.addChild(childGlyph);
+			}
 		}
 	}
 
 	/**
 	 * Determine and set the appropriate residues for this element.
 	 */
-	private static void addAlignedResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI childGlyph) {
+	private static GlyphI addAlignedResidues(SeqSymmetry sym, BioSeq annotseq) {
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
-			return;
+			return null;
 		}
 
 		String residueStr = ((SymWithResidues) sym).getResidues();
 
 		if (residueStr == null || residueStr.length() == 0) {
-			return;
+			return null;
 		}
 		
 		AlignedResidueGlyph csg = new AlignedResidueGlyph();
@@ -62,8 +65,7 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 			csg.setResidueMask(bioSeqResidue);
 		}*/
 		csg.setDefaultShowMask(false);
-		csg.setCoordBox(childGlyph.getCoordBox());
-		childGlyph.addChild(csg);
+		return csg;
 			
 		// SEQ array has unexpected behavior;  commenting out for now.
 		/*if (((SymWithProps) sym).getProperty("SEQ") != null) {

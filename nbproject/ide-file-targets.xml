@@ -5,9 +5,9 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="genoviz_sdk/demo"/>
+                <pathelement path="core/genoviz_sdk/demo"/>
                 <fileset dir="${lib.dir}" includes="*.jar"/>
-                <dirset dir="${basedir}">
+                <dirset dir="${basedir}/core">
                     <include name="*/build"/>
                 </dirset>
             </classpath>

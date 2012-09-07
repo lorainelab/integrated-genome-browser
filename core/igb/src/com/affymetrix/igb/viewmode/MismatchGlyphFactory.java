@@ -12,7 +12,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
  *
  * @author hiralv
  */
-public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
+public class MismatchGlyphFactory extends GraphGlyphFactory {
 
 	public String getName() {
 		return "mismatch";

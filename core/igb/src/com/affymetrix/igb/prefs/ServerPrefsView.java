@@ -215,7 +215,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	 * @param name
 	 */
 	public void addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault) {
-		if (url == null || url.isEmpty() || name == null || name.isEmpty()) {
+		if (url == null || url.isEmpty() || url.equals("http://") || name == null || name.isEmpty()) {
 			return;
 		}
 
@@ -229,7 +229,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			return;
 		}
 
-		ServerList.getServerInstance().addServerToPrefs(server, order);
+		ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
 		sourceTableModel.init();
 	}
 

@@ -169,7 +169,7 @@ public final class ServerList {
 
 				if (server != null) {
 					url2server.put(url, server);
-					addServerToPrefs(server, order);
+					addServerToPrefs(server, order, isDefault);
 				}
 			}
 		}
@@ -425,11 +425,12 @@ public final class ServerList {
 	 * @return an anemic GenericServer object whose sole purpose is to aid in
 	 * setting of additional preferences
 	 */
-	private GenericServer addRepositoryToPrefs(String url, String name) {
+	private GenericServer addRepositoryToPrefs(String url, String name, boolean isDefault) {
 		Preferences node = PreferenceUtils.getRepositoriesNode().node(GenericServer.getHash(url));
 
 		node.put(GenericServerPref.NAME, name);
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
+		node.putBoolean(GenericServerPref.DEFAULT, isDefault);
 
 		return new GenericServer(node, null, null, false);
 	}
@@ -441,9 +442,9 @@ public final class ServerList {
 	 *
 	 * @param server GenericServer object of the server to add or update.
 	 */
-	public void addServerToPrefs(GenericServer server, int order) {
+	public void addServerToPrefs(GenericServer server, int order, boolean isDefault) {
 		if (server.serverType == null) {
-			addRepositoryToPrefs(server.URL, server.serverName);
+			addRepositoryToPrefs(server.URL, server.serverName, isDefault);
 		} else if (server.serverType.isSaveServersInPrefs()) {
 			addServerToPrefs(server.URL, server.serverName,
 					server.serverType, order, server.isDefault());

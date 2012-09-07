@@ -53,6 +53,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -692,8 +693,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				}
 				catch (Exception x) {
 					igbService.getRepositoryChangerHolder().failRepository(url);
-					displayError(MessageFormat.format(BUNDLE.getString("repositoryLoadError"), url));
-					x.printStackTrace();
+					ErrorHandler.errorPanelWithReportBug(BUNDLE.getString("repository"),
+							MessageFormat.format(BUNDLE.getString("invalidRepositoryError"), url), 
+							Level.SEVERE);
 				}
 				return null;
 			}

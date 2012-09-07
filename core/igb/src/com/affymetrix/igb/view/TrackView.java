@@ -106,7 +106,6 @@ public class TrackView {
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
 			tierGlyph = getTierGlyphForStyle(style);
-			tierGlyph.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
 			tierGlyph.setDirection(tier_direction);
 			
 			// do not set packer here, will be set in ViewModeGlyph

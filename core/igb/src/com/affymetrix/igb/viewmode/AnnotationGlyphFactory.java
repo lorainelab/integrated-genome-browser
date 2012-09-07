@@ -181,7 +181,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height);
-			GlyphI alignResidueGlyph = handleAlignedResidues(insym, annotseq);
+			GlyphI alignResidueGlyph = getAlignedResiduesGlyph(insym, annotseq, true);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
 				pglyph.addChild(alignResidueGlyph);
@@ -244,13 +244,6 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		return null;
 	}
 
-	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
-		if (sym instanceof DerivedSeqSymmetry) {
-			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
-		}
-		return sym;
-	}
-
 	private void addChildren(SeqMapViewExtendedI gviewer, 
 			SeqSymmetry insym, SeqSymmetry sym, SeqSpan pspan, ITrackStyleExtended the_style, BioSeq annotseq,
 			GlyphI pglyph, BioSeq coordseq, int child_height)
@@ -296,7 +289,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 //					addCdsColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
 //				}
 				
-				GlyphI alignResidueGlyph = handleAlignedResidues(child, annotseq);
+				GlyphI alignResidueGlyph = getAlignedResiduesGlyph(child, annotseq, true);
 				if(alignResidueGlyph != null){
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 					gviewer.setDataModelFromOriginalSym(alignResidueGlyph, child);
@@ -397,52 +390,6 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		return thin_height;
 	}
 
-	/**
-	 * Determine and set the appropriate residues for this element.
-	 */
-	private GlyphI handleAlignedResidues(SeqSymmetry insym, BioSeq annotseq) {
-		SeqSymmetry sym = insym;
-		if (insym instanceof DerivedSeqSymmetry) {
-			sym = getMostOriginalSymmetry(insym);
-		}
-
-		if (!(sym instanceof SymWithResidues)) {
-			return null;
-		}
-		
-		SeqSpan span = sym.getSpan(annotseq);
-		if (span == null) {
-			return null;
-		}
-
-		String residueStr = ((SymWithResidues) sym).getResidues();
-
-		if (residueStr == null || residueStr.length() == 0) {
-			return null;
-		}
-		
-		AlignedResidueGlyph csg = new AlignedResidueGlyph();
-		csg.setResidues(residueStr);
-		String bioSeqResidue = annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length());
-		if (bioSeqResidue != null) {
-			csg.setResidueMask(bioSeqResidue);
-		}
-		csg.setHitable(false);
-		
-		return csg;
-		
-		// SEQ array has unexpected behavior;  commenting out for now.
-			/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
-		byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
-		for (int i = 0; i < seqArr.length; i++) {
-		System.out.print((char) seqArr[i]);
-		}
-		System.out.println();
-		isg.setResidueMask(seqArr);
-		}*/
-		
-	}
-	
 	private void handleInsertionGlyphs(SeqMapViewExtendedI gviewer, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, double height)
 			throws IllegalAccessException, InstantiationException {
 		

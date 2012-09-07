@@ -373,14 +373,10 @@ public class Activator implements BundleActivator {
 			}
 		);
 		
-		// Add Annotation factory
-		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Annotation);
+		// Add Annotation/Alignment factory
+		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationGlyphFactory, null);
 		
-		// Add Alignment factory
-		AnnotationGlyphFactory alignmentGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Alignment);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentGlyphFactory, null);
-
 		// Add Sequence factory
 		SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, sequenceGlyphFactory, null);
@@ -403,7 +399,7 @@ public class Activator implements BundleActivator {
 
 		// Set Default factory
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, annotationGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, graphGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);

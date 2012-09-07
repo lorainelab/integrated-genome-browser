@@ -30,7 +30,7 @@ public class ScoredContainerGlyphFactory extends MapViewGlyphFactoryA {
 //	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
 	
-	private static final MapViewGlyphFactoryI annotFactory = new AnnotationGlyphFactory(FileTypeCategory.ScoredContainer);
+	private static final MapViewGlyphFactoryI annotFactory = new AnnotationGlyphFactory();
 	private static final MapViewGlyphFactoryI glyphFactory = new GraphGlyphFactory();
 	
 	/** Does nothing. */

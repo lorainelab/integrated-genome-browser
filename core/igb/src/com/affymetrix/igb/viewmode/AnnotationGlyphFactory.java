@@ -38,7 +38,6 @@ import java.util.Map;
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
 public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
-	private final FileTypeCategory category;
 	private static final boolean DEBUG = false;
 	/** Set to true if the we can assume the container SeqSymmetry being passed
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
@@ -52,8 +51,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	private Class<?> child_glyph_class;
 	private final Class<?> parent_labelled_glyph_class;
 
-	public AnnotationGlyphFactory(FileTypeCategory category) {
-		this.category = category;
+	public AnnotationGlyphFactory() {
 		parent_glyph_class = default_eparent_class;
 		child_glyph_class = default_echild_class;
 		parent_labelled_glyph_class = default_elabelled_parent_class;
@@ -484,7 +482,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public boolean isCategorySupported(FileTypeCategory checkCategory) {
-		return (checkCategory == category);
+		return (checkCategory == FileTypeCategory.Annotation || checkCategory == FileTypeCategory.Alignment);
 	}
 
 	@Override
@@ -514,6 +512,6 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public String getName() {
-		return category.name().toLowerCase();
+		return "annotation/alignment";
 	}
 }

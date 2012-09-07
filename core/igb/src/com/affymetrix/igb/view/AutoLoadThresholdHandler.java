@@ -34,10 +34,10 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);
 		
-//		this.zoomer.addMouseListener(this);
-//		this.scroller.addMouseListener(this);
-//		this.map.addMouseListener(this);
-//		this.map.addMouseMotionListener(this);
+		this.zoomer.addMouseListener(this);
+		this.scroller.addMouseListener(this);
+		this.map.addMouseListener(this);
+		this.map.addMouseMotionListener(this);
 		this.zoomer_value = this.zoomer.getValue();
 		threshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, ThresholdReader.default_threshold);
 		autoLoadEnabled = PreferenceUtils.getBooleanParam(PreferenceUtils.PREFS_AUTOLOAD, default_autoload);
@@ -49,7 +49,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 		if(!shouldAutoLoad()){
 			return;
 		}
-		//GeneralLoadView.loadAutoLoadFeatures();
+		GeneralLoadView.loadAutoLoadFeatures();
 	}
 		
 	public void mouseClicked(MouseEvent e) {}

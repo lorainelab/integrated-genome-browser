@@ -438,6 +438,8 @@ public class SeqMapView extends JPanel
 //		refresh_button.setText("");
 		refresh_button.setIcon(MenuUtil.getIcon("16x16/actions/refresh.png"));
 		xzoombox.add(refresh_button);
+				
+		AutoLoadThresholdHandler autoload = new AutoLoadThresholdHandler(this);
 	}
 
 	protected Adjustable getXZoomer(String id) {

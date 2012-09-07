@@ -394,7 +394,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSetGlyphFactory, null);
 		
 		// Add ScoredContainer factory
-		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(graphGlyphFactory);
+		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredMinMaxAvg, null);
 		
 		// Add Mismatch factory

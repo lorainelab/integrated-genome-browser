@@ -5,9 +5,7 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.AbstractTierGlyph;
-import com.affymetrix.igb.shared.CollapsePacker;
 
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for sequences
@@ -20,15 +18,11 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 		PREFERENCES = Collections.unmodifiableMap(temp);
 	}
 
-	private double spacer = 2;
-
-	private CollapsePacker packer = new CollapsePacker();
-	
 	public SequenceTierGlyph(ITrackStyleExtended style) {
 		super();
+		style.setSeparable(false);
+		style.setSeparate(false);
 		setHitable(false);
-		setSpacer(spacer);
-		setPacker(packer);
 		setStyle(style);
 	}
 
@@ -40,11 +34,6 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 		Rectangle2D.Double cbox = this.getCoordBox();
 
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
-	}
-
-	private void setSpacer(double spacer) {
-		this.spacer = spacer;
-		((PaddedPackerI) packer).setParentSpacer(spacer);
 	}
 
 	public void setPreferredHeight(double height, ViewI view){

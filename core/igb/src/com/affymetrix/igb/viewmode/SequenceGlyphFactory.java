@@ -20,7 +20,6 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
 		if (sym != null) {
-			style.setSeparable(false);
 			TierGlyph viewModeGlyph = smv.getTrack(style, Direction.NONE);
 			SimpleSymWithResidues childSym = (SimpleSymWithResidues) sym.getChild(0);
 			SeqSpan pspan = smv.getViewSeqSpan(childSym);

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
@@ -60,7 +59,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		reference_tier = tier;
 		setInfo(reference_tier);
 		setPosition(position);
-		isIGBTrack = reference_tier.getAnnotStyle().getFileTypeCategory() == null;
+		isIGBTrack = false; /*reference_tier.getAnnotStyle().getFileTypeCategory() == null;*/
 	}
 
 	public void setShowIGBTrack(boolean b) {

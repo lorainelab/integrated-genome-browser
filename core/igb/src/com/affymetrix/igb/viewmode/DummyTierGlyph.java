@@ -8,14 +8,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DummyGlyph extends AbstractTierGlyph {
+public class DummyTierGlyph extends AbstractTierGlyph {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
 		PREFERENCES = Collections.unmodifiableMap(temp);
 	}
 	
-	public DummyGlyph(ITrackStyleExtended style) {
+	public DummyTierGlyph(ITrackStyleExtended style) {
 		super();
 		setStyle(style);
 		this.setPacker(new FasterExpandPacker());

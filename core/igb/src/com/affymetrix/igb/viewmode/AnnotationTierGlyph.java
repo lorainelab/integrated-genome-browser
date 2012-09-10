@@ -21,19 +21,6 @@ import java.util.List;
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
 public class AnnotationTierGlyph extends AbstractTierGlyph{
-	private static final int MAX_EXPAND = 0;
-	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
-	private static final Map<String,Class<?>> PREFERENCES;
-	static {
-		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
-		temp.put("collapsed", Boolean.class);
-		temp.put("connected", Boolean.class);
-		temp.put("arrow", Boolean.class);
-		temp.put("max_depth", Integer.class);
-		temp.put("forward_color", Integer.class);
-		temp.put("reverse_color", Integer.class);
-		PREFERENCES = Collections.unmodifiableMap(temp);
-	}
 	private static final float default_trans = 0.5f;
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
 
@@ -327,14 +314,6 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 		return getFillColor();
 	}
 
-	/**
-	 * Changes the maximum depth of the expanded packer.
-	 * This does not call pack() afterwards.
-	 */
-	private void setMaxExpandDepth(int max) {
-		expand_packer.setMaxSlots(max);
-	}
-
 	@Override
 	public void setDirection(Direction d) {
 		super.setDirection(d);
@@ -355,20 +334,4 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 		this.drawSelectedOutline(view);
 	}
 
-	@Override
-	public Map<String, Class<?>> getPreferences() {
-		return new HashMap<String, Class<?>>(PREFERENCES);
-	}
-
-	@Override
-	public void setPreferences(Map<String, Object> preferences) {
-		Integer maxDepth = (Integer) preferences.get("max_depth");
-		setMaxExpandDepth(maxDepth);
-		Boolean collapsed = (Boolean) preferences.get("collapsed");
-		if (collapsed) {
-			setPacker(collapse_packer);
-		} else {
-			setPacker(expand_packer);
-		}
-	}
 }

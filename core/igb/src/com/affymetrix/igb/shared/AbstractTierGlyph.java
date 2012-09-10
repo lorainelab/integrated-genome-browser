@@ -31,6 +31,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -42,7 +43,24 @@ import javax.swing.SwingWorker;
  *  This is the glyph that displays the contents of a Tier/Track.
  */
 public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
-	
+	private static final Map<String,Class<?>> NONE_PREFERENCES = new HashMap<String,Class<?>>();
+	private static final Map<String,Class<?>> ANNOT_DEFAULT_PREFERENCES;
+	static {
+		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
+		temp.put("collapsed", Boolean.class);
+		temp.put("connected", Boolean.class);
+		temp.put("arrow", Boolean.class);
+		temp.put("max_depth", Integer.class);
+		temp.put("forward_color", Integer.class);
+		temp.put("reverse_color", Integer.class);
+		ANNOT_DEFAULT_PREFERENCES = Collections.unmodifiableMap(temp);
+	}
+	private static final Map<String,Class<?>> GRAPH_DEFAULT_PREFERENCES;
+	static {
+		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
+		temp.put("y_axis", Boolean.class);
+		GRAPH_DEFAULT_PREFERENCES = Collections.unmodifiableMap(temp);
+	}
 	SwingWorker previousWorker, worker;
 	protected ITrackStyleExtended style;
 	protected TierGlyph.Direction direction = TierGlyph.Direction.NONE;
@@ -66,11 +84,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	protected FasterExpandPacker expand_packer = new FasterExpandPacker();
 	protected CollapsePacker collapse_packer = new CollapsePacker();
 	private TierType tierType;
-	
-	
-	public abstract Map<String,Class<?>> getPreferences();
-	public abstract void setPreferences(Map<String,Object> preferences);
-	
+		
 	public AbstractTierGlyph(){
 		setSpacer(spacer);
 		tierType = TierType.NONE;
@@ -192,8 +206,13 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			setPacker(expand_packer);
 		}
 	}
-		
-	protected boolean shouldDrawToolBar(){
+	
+	protected final boolean shouldDrawToolBar(){
+		if(tierType == TierType.GRAPH){
+			return this.getChildCount() > 1;
+		}else if (tierType == TierType.SEQUENCE){
+			return false;
+		}
 		return style.drawCollapseControl();
 	}
 	
@@ -759,5 +778,34 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		}
 		float[] answer = {rangeMinimum, rangeMaximum};
 		return answer;
+	}
+	
+	public Map<String,Class<?>> getPreferences(){
+		if(tierType == TierType.ANNOTATION){
+			return ANNOT_DEFAULT_PREFERENCES;
+		}else if(tierType == TierType.GRAPH){
+			return GRAPH_DEFAULT_PREFERENCES;
+		}
+	
+		return NONE_PREFERENCES;
+	};
+	
+	public void setPreferences(Map<String,Object> preferences){
+		Integer maxDepth = (Integer) preferences.get("max_depth");
+		setMaxExpandDepth(maxDepth);
+		Boolean collapsed = (Boolean) preferences.get("collapsed");
+		if (collapsed) {
+			setPacker(collapse_packer);
+		} else {
+			setPacker(expand_packer);
+		}
+	};
+
+	/**
+	 * Changes the maximum depth of the expanded packer.
+	 * This does not call pack() afterwards.
+	 */
+	protected void setMaxExpandDepth(int max) {
+		expand_packer.setMaxSlots(max);
 	}
 }

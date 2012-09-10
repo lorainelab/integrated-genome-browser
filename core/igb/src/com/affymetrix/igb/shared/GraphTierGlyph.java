@@ -13,11 +13,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.geom.Rectangle2D;
-import java.util.*;
 
 
 /**
@@ -29,30 +24,8 @@ import java.util.*;
  * </p>
  */
 public class GraphTierGlyph extends AbstractTierGlyph{
-	private static final Map<String,Class<?>> PREFERENCES;
-	static {
-		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
-		temp.put("y_axis", Boolean.class);
-		PREFERENCES = Collections.unmodifiableMap(temp);
-	}
-
 	public GraphTierGlyph(ITrackStyleExtended style) {
 		super();
 		setStyle(style);
 	}
-							
-	@Override
-	protected boolean shouldDrawToolBar(){
-		return this.getChildCount() > 1;
-	}
-	
-	@Override
-	public Map<String, Class<?>> getPreferences() {
-		return new HashMap<String, Class<?>>(PREFERENCES);
-	}
-
-	@Override
-	public void setPreferences(Map<String, Object> preferences) {
-	}
-	
 }

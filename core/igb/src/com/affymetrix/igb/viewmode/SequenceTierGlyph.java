@@ -1,7 +1,6 @@
 package com.affymetrix.igb.viewmode;
 
 import java.awt.geom.Rectangle2D;
-import java.util.*;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -11,12 +10,6 @@ import com.affymetrix.igb.shared.AbstractTierGlyph;
  *  copy / modification of TierGlyph for ViewModeGlyph for sequences
  */
 public class SequenceTierGlyph extends AbstractTierGlyph{
-	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
-	private static final Map<String,Class<?>> PREFERENCES;
-	static {
-		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
-		PREFERENCES = Collections.unmodifiableMap(temp);
-	}
 
 	public SequenceTierGlyph(ITrackStyleExtended style) {
 		super();
@@ -35,11 +28,6 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 	}
-
-	@Override
-	protected boolean shouldDrawToolBar(){
-		return false;
-	}
 	
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override
@@ -53,12 +41,4 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 		this.drawSelectedOutline(view);
 	}
 
-	@Override
-	public Map<String, Class<?>> getPreferences() {
-		return new HashMap<String, Class<?>>(PREFERENCES);
-	}
-
-	@Override
-	public void setPreferences(Map<String, Object> preferences) {
-	}
 }

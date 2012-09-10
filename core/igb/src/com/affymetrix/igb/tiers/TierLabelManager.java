@@ -397,7 +397,7 @@ public final class TierLabelManager implements PropertyHolder {
 						}
 					}
 				}
-				else if (tg instanceof GraphTierGlyph) {
+				else if (tg.getTierType() == TierGlyph.TierType.GRAPH) {
 					SeqSymmetry sym = (SeqSymmetry) tg.getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {

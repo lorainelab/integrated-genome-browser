@@ -73,7 +73,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
 			SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 			if (selected_syms.contains(ss)) {
-				if (!(tg instanceof GraphTierGlyph)) {
+				if (tg.getTierType() != TierGlyph.TierType.GRAPH) {
 					if (MapViewModeHolder.getInstance().styleSupportsTwoTrack(
 							tg.getAnnotStyle())) {
 						boolean separate = tg.getAnnotStyle().getSeparate();

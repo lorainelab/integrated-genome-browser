@@ -70,7 +70,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		boolean hasCollapsed = false;
 		boolean hasExpanded = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-			if (tg instanceof AnnotationTierGlyph && !(tg instanceof GraphTierGlyph)) {
+			if (tg instanceof AnnotationTierGlyph && !(tg.getTierType() == TierGlyph.TierType.GRAPH)) {
 				SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 				if (selected_syms.contains(ss)) {
 					boolean collapsed = tg.getAnnotStyle().getCollapsed();

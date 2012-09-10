@@ -322,16 +322,4 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 		}
 	}
 
-	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
-	@Override
-	protected void drawSelectedFill(ViewI view) {
-		this.drawSelectedOutline(view);
-	}
-
-	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
-	@Override
-	protected void drawSelectedReverse(ViewI view) {
-		this.drawSelectedOutline(view);
-	}
-
 }

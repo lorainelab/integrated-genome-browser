@@ -28,17 +28,5 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 	}
-	
-	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
-	@Override
-	protected void drawSelectedFill(ViewI view) {
-		this.drawSelectedOutline(view);
-	}
-
-	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
-	@Override
-	protected void drawSelectedReverse(ViewI view) {
-		this.drawSelectedOutline(view);
-	}
 
 }

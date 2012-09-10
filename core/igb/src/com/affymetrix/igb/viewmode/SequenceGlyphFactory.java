@@ -23,7 +23,7 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 			if (pspan == null || pspan.getLength() == 0) {
 				return;
 			}  // if no span corresponding to seq, then return;
-			tierGlyph.setResizingMethod(TierGlyph.TierType.ANNOTATION);
+			tierGlyph.setTierType(TierGlyph.TierType.ANNOTATION);
 			tierGlyph.setDirection(Direction.NONE);
 			tierGlyph.setInfo(sym);	
 			GlyphI residueGlyph = getAlignedResiduesGlyph(childSym, smv.getAnnotatedSeq(), false);

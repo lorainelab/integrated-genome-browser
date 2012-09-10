@@ -179,8 +179,16 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	@Override
-	public final void setResizingMethod(TierType method){
+	public final void setTierType(TierType method){
 		this.tierType = method;
+		if(tierType == TierType.SEQUENCE){
+			style.setSeparable(false);
+			style.setSeparate(false);
+		}
+	}
+	
+	public final TierType getTierType(){
+		return tierType;
 	}
 	
 	/**

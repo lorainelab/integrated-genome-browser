@@ -25,7 +25,9 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 		ANNOTATION, GRAPH, SEQUENCE, NONE
 	};
 	
-	public void setResizingMethod(TierType method);
+	public void setTierType(TierType method);
+	
+	public TierType getTierType();
 	
 	public boolean initUnloaded();
 		

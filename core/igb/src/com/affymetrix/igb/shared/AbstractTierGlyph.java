@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -520,7 +521,46 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		worker = null;
 	};
 	
-	public int getSlotsNeeded(ViewI theView) {
+	@Override
+	public final int getSlotsNeeded(ViewI theView) {
+		if (tierType == TierType.GRAPH) {
+			/**
+			* Determine how short a glyph can be so we can avoid empty vertical space.
+			* Originally implemented for annotation tracks.
+			* Here we hope for a {@link GraphSym} as the glyph's info.
+			* If we don't find one, we return the answer from the super class.
+			* Subclasses can specialize this, of course.
+			* TODO Do we want y max? or |y max - y min| or [y max|?
+			*      or even max(|y min|, [y max|)?
+			*      The old basic graph glyph used to flip y values
+			*      because pixels start at 0 and go negative.
+			* @param theView limits the data to consider.
+			* @return How tall the glyph must be to show all the data in view.
+			*         Cannot be negative?
+			*/
+			Object o = this.getInfo();
+			if (null != o) {
+				if (o instanceof GraphSym) {
+					GraphSym model = (GraphSym) o;
+					// Figure it out.
+					float[] bounds = getRangeInView(model, theView);
+					assert bounds[0] <= bounds[1];
+					float answer = bounds[1] - bounds[0];
+					if (answer <= 0) {
+						return 0;
+					}
+					if (Integer.MAX_VALUE <= answer) {
+						return Integer.MAX_VALUE;
+					}
+					return (int) answer;
+				}
+			}
+		} else if (tierType == TierType.ANNOTATION) {
+			if(getPacker() == expand_packer) {
+				return expand_packer.getSlotsNeeded(this, theView);
+			}
+		}
+
 		return 1;
 	}
 	public boolean isManuallyResizable() {
@@ -677,5 +717,47 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			max = Math.max(max, this.getChild(i).getCoordBox().height);
 		}
 		return max;
+	}
+	/**
+	 * Determine the extreme values of <var>y</var> in theView.
+	 * We do not need to translate between scene coordinates
+	 * to those of the graph symmetry.
+	 * They are essentially the same thing(?), just different precisions.
+	 * Graph symmetry coordinates are not pixels.
+	 * TODO Maybe this should be a method of GraphSym?
+	 * TODO Could use a "Range" or "Interval" object instead of float[2].
+	 * TODO Should a null view be an illegal argument?
+	 * @param theData containing points (<var>x</var>,<var>y</var>).
+	 * @return the minimum and maximum values of <var>y</var>
+	 *         restricted to the <var>x</var> values in theView.
+	 */
+	private float[] getRangeInView(GraphSym theData, ViewI theView) {
+		if (null == theData) {
+			throw new IllegalArgumentException("theData cannot be null.");
+		}
+		int[] ourDomain = theData.getGraphXCoords();
+		float[] ourRange = theData.getGraphYCoords();
+		assert ourDomain.length == ourRange.length;
+		float[] empty = {0, 0};
+		if (ourDomain.length < 1) {
+			return empty; // Artificial. Maybe should throw illegal arg.
+		}
+		Rectangle2D.Double b = theView.getCoordBox();
+		long lowerBound = Long.MIN_VALUE;
+		long upperBound = Long.MAX_VALUE;
+		if (null != theView) {
+			lowerBound = Math.round(b.x);
+			upperBound = Math.round(Math.floor((lowerBound + b.width) - Double.MIN_VALUE));
+		}
+		float rangeMinimum = Float.POSITIVE_INFINITY;
+		float rangeMaximum = Float.NEGATIVE_INFINITY;
+		for (int i = 0; i < ourDomain.length; i++) {
+			if (lowerBound <= ourDomain[i] && ourDomain[i] <= upperBound) {
+				rangeMinimum = Math.min(rangeMinimum, ourRange[i]);
+				rangeMaximum = Math.max(rangeMaximum, ourRange[i]);
+			}
+		}
+		float[] answer = {rangeMinimum, rangeMaximum};
+		return answer;
 	}
 }

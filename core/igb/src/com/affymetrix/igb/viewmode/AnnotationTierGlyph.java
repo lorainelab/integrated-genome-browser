@@ -336,14 +336,6 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 	}
 
 	@Override
-	public int getSlotsNeeded(ViewI theView) {
-		if(getPacker() == expand_packer) {
-			return expand_packer.getSlotsNeeded(this, theView);
-		}
-		return 1;
-	}
-
-	@Override
 	public void setDirection(Direction d) {
 		super.setDirection(d);
 		if (direction != Direction.REVERSE) {

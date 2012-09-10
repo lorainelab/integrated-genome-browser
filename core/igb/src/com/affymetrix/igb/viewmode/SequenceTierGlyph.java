@@ -36,19 +36,6 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 	}
 
-	public void setPreferredHeight(double height, ViewI view){
-		height = height - 2 * getSpacing();
-
-		if(useLabel(style)) {
-			height = height / 2;
-		}
-
-		double percent = ((height * 100)/style.getHeight() - 100)/100;
-		style.setHeight(height);
-
-		scaleChildHeights(percent, getChildren(), view);
-	}
-
 	@Override
 	protected boolean shouldDrawToolBar(){
 		return false;

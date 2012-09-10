@@ -1,7 +1,6 @@
 package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractTierGlyph;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import java.util.Collections;
@@ -19,10 +18,6 @@ public class DummyTierGlyph extends AbstractTierGlyph {
 		super();
 		setStyle(style);
 		this.setPacker(new FasterExpandPacker());
-	}
-
-	@Override
-	public void setPreferredHeight(double height, ViewI view) {
 	}
 
 	@Override

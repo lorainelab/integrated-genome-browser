@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
-import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
@@ -65,13 +64,15 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	private double spacer = 2;
 	protected FasterExpandPacker expand_packer = new FasterExpandPacker();
 	protected CollapsePacker collapse_packer = new CollapsePacker();
+	private TierType tierType;
 	
-	public abstract void setPreferredHeight(double height, ViewI view);
+	
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
 	
 	public AbstractTierGlyph(){
 		setSpacer(spacer);
+		tierType = TierType.NONE;
 	}
 	
 	@Override
@@ -157,6 +158,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		addChild(glyph);
 		
 		return false;
+	}
+	
+	@Override
+	public final void setResizingMethod(TierType method){
+		this.tierType = method;
 	}
 	
 	/**
@@ -547,6 +553,87 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		}
 	}
 	
+	@Override
+	public final void setPreferredHeight(double height, ViewI view) {
+		if (this.tierType == TierType.SEQUENCE) {
+			height = height - 2 * getSpacing();
+
+			if (useLabel(style)) {
+				height = height / 2;
+			}
+
+			double percent = ((height * 100) / style.getHeight() - 100) / 100;
+			style.setHeight(height);
+
+			scaleChildHeights(percent, getChildren(), view);
+		} else if (this.tierType == TierType.GRAPH) {
+			GlyphI child = getChild(0);
+			Rectangle2D.Double c = child.getCoordBox();
+			child.setCoords(c.x, c.y, c.width, height);
+			//Note : Fix to handle height in a view mode.
+			// But this also causes minor change in height while switching back to default view mode.
+			setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
+			this.style.setHeight(height + 2 * getSpacing());
+			child.pack(view);
+		} else if (this.tierType == TierType.ANNOTATION) {
+
+			// Remove the padding at top and bottom.
+			// Shouldn't we get this info from the packer?
+			height = height - 2 * getSpacing();
+			double scale = 1.0;
+
+			if (getPacker() == expand_packer) {
+				// Now figure out how deep to set max depth.
+				// Get current slot height. Should actually get this from the packer.
+				double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();
+				long depth = (long) Math.floor(height / h);
+				assert -1 < depth && depth < Integer.MAX_VALUE;
+				expand_packer.setMaxSlots((int) depth);
+				switch (this.direction) {
+					case FORWARD:
+						this.style.setForwardMaxDepth((int) depth);
+						break;
+					case REVERSE:
+						this.style.setReverseMaxDepth((int) depth);
+						break;
+					default:
+					case BOTH:
+					case NONE:
+					case AXIS:
+						this.style.setMaxDepth((int) depth);
+				}
+			} else { // Not expanded (using an expand packer).
+				int numberOfSlotsInUse = getActualSlots();
+				double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
+				double newSlotHeight = (height - totalInteriorSpacing) / numberOfSlotsInUse;
+
+				if (useLabel(style)) {
+					// Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
+					newSlotHeight = newSlotHeight / 2;
+				}
+
+				switch (this.direction) {
+					case FORWARD:
+						scale = newSlotHeight / style.getForwardHeight();
+						style.setForwardHeight(newSlotHeight);
+						break;
+					case REVERSE:
+						scale = newSlotHeight / style.getReverseHeight();
+						style.setReverseHeight(newSlotHeight);
+						break;
+					default:
+					case BOTH:
+					case NONE:
+					case AXIS:
+						scale = newSlotHeight / style.getHeight();
+						style.setHeight(newSlotHeight);
+				}
+			}
+
+			scaleChildHeights(scale, getChildren(), view);
+		}
+	}
+	
 	public void resizeHeight(double diffy, double height) {
 		Rectangle2D.Double cbox = getCoordBox();
 		setCoords(cbox.x, cbox.y, cbox.width, height);
@@ -578,5 +665,14 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			}
 			child.pack(theView);
 		}
+	}
+
+	protected double getMaxChildHeight() {
+		double max = 0;
+		int children = this.getChildCount();
+		for (int i = 0; i < children; i++) {
+			max = Math.max(max, this.getChild(i).getCoordBox().height);
+		}
+		return max;
 	}
 }

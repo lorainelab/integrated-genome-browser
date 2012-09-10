@@ -233,7 +233,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
 	}
 
 	private GraphState initializeGraphState(String id, String score_name, char strand) {
-		GraphState gs = DefaultStateProvider.getGlobalStateProvider().getGraphState(id);
+		GraphState gs = DefaultStateProvider.getGlobalStateProvider().getGraphState(id, score_name, "egr", null);
 		gs.setGraphStyle(GraphType.HEAT_MAP);
 		gs.getTierStyle().setTrackName(score_name);
 		gs.setComboStyle(getContainerStyle(strand), 0);

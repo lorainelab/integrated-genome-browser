@@ -90,14 +90,6 @@ public final class TransformTierGlyph extends AbstractTransformTierGlyph {
     return fixedPixHeight;
   }
 
-  /**
-   * Should not be called.
-   */
-  @Override
-  public void setPreferredHeight(double height, ViewI view) {
-    throw new UnsupportedOperationException("Transform tiers cannot change height.");
-  }
-
   @Override
   public int getActualSlots() {
 	return 1;

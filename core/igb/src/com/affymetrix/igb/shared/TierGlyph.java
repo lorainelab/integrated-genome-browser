@@ -20,6 +20,13 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 			return display;
 		}
 	};
+	
+	public static enum TierType{
+		ANNOTATION, GRAPH, SEQUENCE, NONE
+	};
+	
+	public void setResizingMethod(TierType method);
+	
 	public boolean initUnloaded();
 		
 	public void setStyle(ITrackStyleExtended annotStyle);

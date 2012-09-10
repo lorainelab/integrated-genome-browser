@@ -41,18 +41,6 @@ public class GraphTierGlyph extends AbstractTierGlyph{
 		setStyle(style);
 	}
 							
-	@Override
-	public void setPreferredHeight(double height, ViewI view) {
-		GlyphI child = getChild(0);
-		Rectangle2D.Double  c = child.getCoordBox();
-		child.setCoords(c.x, c.y, c.width, height);
-		//Note : Fix to handle height in a view mode.
-		// But this also causes minor change in height while switching back to default view mode.
-		setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
-		this.style.setHeight(height + 2 * getSpacing());
-		child.pack(view);
-	}
-
 	/**
 	 * Determine how short a glyph can be so we can avoid empty vertical space.
 	 * Originally implemented for annotation tracks.

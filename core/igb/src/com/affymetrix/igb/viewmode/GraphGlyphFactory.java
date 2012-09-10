@@ -214,6 +214,7 @@ public class GraphGlyphFactory extends MapViewGlyphFactoryA {
 					TierGlyph result = smv.getTrack(style, direction);
 					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					result.addChild(graphGlyph);
+					result.setResizingMethod(TierGlyph.TierType.GRAPH);
 				}
 			}
 		} else {

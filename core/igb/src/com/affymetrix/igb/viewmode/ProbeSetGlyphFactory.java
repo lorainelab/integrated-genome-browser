@@ -491,8 +491,10 @@ public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 				label_field = style.getLabelField();
 				TierGlyph.Direction useDirection = (!style.getSeparate()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
 				TierGlyph ftier = gviewer.getTrack(style, useDirection);
+				ftier.setResizingMethod(TierGlyph.TierType.ANNOTATION);
 				ftier.setInfo(sym);
 				TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+				rtier.setResizingMethod(TierGlyph.TierType.ANNOTATION);
 				rtier.setInfo(sym);
 				if (style.getSeparate()) {
 					addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);

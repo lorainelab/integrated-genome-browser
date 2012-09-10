@@ -70,7 +70,7 @@ public class Selections {
 				graphStates.add(gg.getGraphState());
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
-			}else if (useGlyph instanceof GraphTierGlyph) {
+			}else if (useGlyph instanceof TierGlyph && ((TierGlyph)useGlyph).getTierType() == TierGlyph.TierType.GRAPH) {
 				if (useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
 						if (g instanceof GraphGlyph) {

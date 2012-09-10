@@ -219,7 +219,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (StyledGlyph gl : allGlyphs) {
-			if (gl instanceof GraphTierGlyph && gl.getChildCount() > 0) {
+			if (gl instanceof TierGlyph && ((TierGlyph)gl).getTierType() == TierGlyph.TierType.GRAPH && gl.getChildCount() > 0) {
 				for (GlyphI g : gl.getChildren()) {
 					if (g instanceof GraphGlyph) {
 						graph_count++;

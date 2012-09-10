@@ -76,7 +76,10 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	@Override
-	public int getActualSlots() {
+	public final int getActualSlots() {
+		if(tierType == tierType.ANNOTATION && getPacker() == expand_packer){
+			return expand_packer.getActualSlots();
+		}
 		return 1;
 	}
 	

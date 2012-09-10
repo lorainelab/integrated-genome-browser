@@ -91,11 +91,6 @@ public final class TransformTierGlyph extends AbstractTransformTierGlyph {
   }
 
   @Override
-  public int getActualSlots() {
-	return 1;
-  }
-
-  @Override
   public Map<String, Class<?>> getPreferences() {
 	return new HashMap<String, Class<?>>(PREFERENCES);
   }

@@ -21,11 +21,6 @@ public class DummyTierGlyph extends AbstractTierGlyph {
 	}
 
 	@Override
-	public int getActualSlots() {
-		return 0;
-	}
-
-	@Override
 	public Map<String, Class<?>> getPreferences() {
 		return PREFERENCES;
 	}

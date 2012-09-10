@@ -1280,10 +1280,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public Color getLabelForeground() {
 		if (labelForeground == null) {
-			//edge case hack fix for coordinate track 
-			if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {				
-				return CoordinateStyle.default_coordinate_color;
-			}
 			return foreground;
 		}
 		return labelForeground;
@@ -1292,10 +1288,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public Color getLabelBackground() {
 		if (labelBackground == null) {
-			//edge case hack fix for coordinate track 
-			if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {				
-				return CoordinateStyle.default_coordinate_background;
-			}
 			return background;
 		}
 		return labelBackground;

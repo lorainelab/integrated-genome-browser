@@ -12,9 +12,12 @@ public final class CoordinateStyle {
 
 	/** An un-collapsible, but hideable, instance. */
 	public static final TrackStyle coordinate_annot_style = new TrackStyle() {
-
+		private Color foreground, background;
+		
 		{ // a non-static initializer block
 			setTrackName("Coordinates");
+			foreground = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_COLOR, default_coordinate_color);
+			background = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_BACKGROUND, default_coordinate_background);
 		}
 
 		@Override
@@ -35,21 +38,33 @@ public final class CoordinateStyle {
 		@Override
 		public void setForeground(Color c) {
 			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_COLOR, c);
+			foreground = c;
 		}
 
 		@Override
 		public Color getForeground() {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_COLOR, default_coordinate_color);
+			return foreground;
 		}
 
 		@Override
 		public void setBackground(Color c) {
 			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_BACKGROUND, c);
+			background = c;
 		}
 
 		@Override
 		public Color getBackground() {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_BACKGROUND, default_coordinate_background);
+			return background;
+		}
+		
+		@Override
+		public Color getLabelForeground() {
+			return getForeground();
+		}
+
+		@Override
+		public Color getLabelBackground() {
+			return getBackground();
 		}
 	};
 }

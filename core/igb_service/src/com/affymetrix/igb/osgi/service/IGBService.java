@@ -183,7 +183,7 @@ public interface IGBService {
 	public void addStyleSheet(String name, InputStream istr);
 	public void removeStyleSheet(String name);
 
-	public void addTrack(SeqSymmetry sym, String method, FileTypeCategory fileTypeCategory);
+	public void addTrack(SeqSymmetry sym, String method);
 
 	public void addSpeciesItemListener(ItemListener il);
 

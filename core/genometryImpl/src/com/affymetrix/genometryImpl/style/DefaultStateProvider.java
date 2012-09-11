@@ -55,10 +55,6 @@ public class DefaultStateProvider implements StateProvider {
 		return getAnnotStyle(name);
 	}
 
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name, FileTypeCategory file_type_category, Map<String, String> props) {
-		return getAnnotStyle(name);
-	}
-	
 	public GraphState getGraphState(String id) {
 		return getGraphState(id, null, null, null);
 	}

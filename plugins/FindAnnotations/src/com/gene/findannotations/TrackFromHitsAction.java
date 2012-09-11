@@ -8,7 +8,6 @@ import javax.swing.JTextField;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -44,7 +43,7 @@ public class TrackFromHitsAction extends GenericAction {
 			igbService.setStatus(MessageFormat.format(FindAnnotationsView.BUNDLE.getString("findannotationsNoData"), seq.toString()));
 		}
 		else {
-			igbService.addTrack(containerSym, type, FileTypeCategory.Annotation);
+			igbService.addTrack(containerSym, type);
 		}
 	}
 }

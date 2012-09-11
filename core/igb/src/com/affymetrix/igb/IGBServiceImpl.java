@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
@@ -389,8 +388,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void addTrack(SeqSymmetry sym, String method, FileTypeCategory fileTypeCategory) {
-		TrackUtils.getInstance().addTrack(sym, method, null, fileTypeCategory);
+	public void addTrack(SeqSymmetry sym, String method) {
+		TrackUtils.getInstance().addTrack(sym, method, null);
 	}
 
 	@Override

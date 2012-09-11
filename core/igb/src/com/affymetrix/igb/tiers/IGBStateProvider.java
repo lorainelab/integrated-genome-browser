@@ -1,7 +1,6 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -28,8 +27,4 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	 return TrackStyle.getInstance(name, human_name, file_type, props);
   }
   
-  @Override
-  public ITrackStyleExtended getAnnotStyle(String name, String human_name, FileTypeCategory file_type_category, java.util.Map<String, String> props) {
-	return TrackStyle.getInstance(name, human_name, file_type_category, props);
-  }
 }

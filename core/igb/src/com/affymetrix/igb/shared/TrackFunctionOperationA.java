@@ -103,7 +103,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 					meth.append(((TierGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
 				}
 			}
-			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle, operator.getOutputCategory());
+			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
 		}
 	}
 			
@@ -134,7 +134,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 		
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method,featureName,operator.getOutputCategory(),null);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 		if(preferredStyle != null){
 			style.copyPropertiesFrom(preferredStyle);
 			style.setSeparate(false);

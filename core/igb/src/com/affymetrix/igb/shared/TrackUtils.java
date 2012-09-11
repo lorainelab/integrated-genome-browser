@@ -32,14 +32,14 @@ public class TrackUtils {
 		super();
 	}
 
-	public void addTrack(SeqSymmetry sym, String method, ITrackStyleExtended preferredStyle, FileTypeCategory file_type_category) {
-		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle, file_type_category);
+	public void addTrack(SeqSymmetry sym, String method, ITrackStyleExtended preferredStyle) {
+		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
 		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 		aseq.addAnnotation(sym);
 		Application.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle, FileTypeCategory file_type_category) {
+	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = TrackStyle.getUniqueName(human_name);
@@ -47,7 +47,7 @@ public class TrackUtils {
 		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
-		TrackStyle style = TrackStyle.getInstance(unique_name, human_name, file_type_category, null);
+		TrackStyle style = TrackStyle.getInstance(unique_name);
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands

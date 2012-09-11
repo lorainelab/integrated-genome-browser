@@ -32,8 +32,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -171,13 +169,8 @@ public class TrackView {
 		String meth = BioSeq.determineMethod(annotSym);
 
 		if (meth != null && annotSym instanceof RootSeqSymmetry) {
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			if(((RootSeqSymmetry)annotSym).getCategory() != style.getFileTypeCategory()){
-				Logger.getLogger(TrackView.class.getName()).log(Level.SEVERE, 
-						"File type category for {0} is {1} while style has category {2}", 
-						new Object[]{annotSym, ((RootSeqSymmetry)annotSym).getCategory(), style.getFileTypeCategory()});
-			}
 			MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)annotSym).getCategory());
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 			factory.createGlyphs(annotSym, style, smv);
 		}
 	}

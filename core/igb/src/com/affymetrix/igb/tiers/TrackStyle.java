@@ -56,7 +56,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private float max_score_color = default_max_score_color;
 	private String url = null;
 	private String file_type = null;
-	private FileTypeCategory file_type_category = null;
 	private boolean color_by_score = false;
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
@@ -200,7 +199,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.track_name = track_name; // this is the default human name, and is not lower case
 		this.original_track_name = track_name;
 		this.file_type = file_type;
-		this.file_type_category = file_type_category;
 		this.unique_name = unique_ame.toLowerCase();
 		this.is_persistent = is_persistent;
 		this.float_graph = false;
@@ -889,11 +887,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public GenericFeature getFeature() {
 		return this.feature;
-	}
-
-	@Override
-	public FileTypeCategory getFileTypeCategory() {
-		return file_type_category;
 	}
 
 	public void setDirectionType(DIRECTION_TYPE type) {

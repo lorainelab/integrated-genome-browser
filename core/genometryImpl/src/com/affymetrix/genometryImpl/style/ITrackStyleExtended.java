@@ -53,13 +53,7 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	
 	void setReverseColor(Color c);
 	Color getReverseColor();
-		
-	public void setSummaryViewMode(String s);
-	public String getSummaryViewMode();
-	
-	public void setDetailViewMode(String s);
-	public String getDetailViewMode();
-	
+			
 	int getDirectionType();
 	public void setDirectionType(int ordinal);
 

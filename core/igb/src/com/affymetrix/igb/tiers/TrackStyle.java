@@ -52,8 +52,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double y = default_y;
 	private Color start_color = default_start;
 	private Color end_color = default_end;
-	private String summary_view_mode = null;
-	private String detail_view_mode = null;
 	private float min_score_color = default_min_score_color;
 	private float max_score_color = default_max_score_color;
 	private String url = null;
@@ -1066,26 +1064,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getForeground());
 		}
 		return custom_heatmap;
-	}
-
-	@Override
-	public void setSummaryViewMode(String s) {
-		summary_view_mode = s;
-	}
-
-	@Override
-	public String getSummaryViewMode() {
-		return summary_view_mode;
-	}
-
-	@Override
-	public void setDetailViewMode(String s) {
-		detail_view_mode = s;
-	}
-
-	@Override
-	public String getDetailViewMode() {
-		return detail_view_mode;
 	}
 
 	public static void setDrawCollapseControl(boolean b) {

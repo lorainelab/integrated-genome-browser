@@ -26,6 +26,7 @@ import javax.swing.event.EventListenerList;
 public class Selections {
 	public static final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
+	public static final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
 	public static final List<GraphState> graphStates = new ArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 		
@@ -56,7 +57,7 @@ public class Selections {
 		annotStyles.clear();
 		graphStates.clear();
 		graphGlyphs.clear();
-		//allGlyphs.addAll(selected);
+		allGlyphs.clear();
 		for (StyledGlyph useGlyph : selected) {
 			FileTypeCategory category = null;
 			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
@@ -70,6 +71,7 @@ public class Selections {
 				graphStates.add(gg.getGraphState());
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
+				allGlyphs.add(gg);
 			}else if (useGlyph instanceof TierGlyph && ((TierGlyph)useGlyph).getTierType() == TierGlyph.TierType.GRAPH) {
 				if (useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
@@ -78,12 +80,14 @@ public class Selections {
 							graphStates.add(gg.getGraphState());
 							allStyles.add(gg.getGraphState().getTierStyle());
 							graphGlyphs.add(gg);
+							allGlyphs.add(gg);
 						}
 					}
 				}
 			}else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
+				allGlyphs.add(useGlyph);
 			}
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })

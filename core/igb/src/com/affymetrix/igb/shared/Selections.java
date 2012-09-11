@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -23,7 +22,7 @@ import javax.swing.event.EventListenerList;
  *
  * @author hiralv
  */
-public class Selections {
+public abstract class Selections {
 	public static final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
@@ -108,6 +107,67 @@ public class Selections {
 //		}
 	}
 	
+		public static boolean isAllGraph() {
+		return allStyles.size() == graphStates.size() && graphStates.size() > 0;
+	}
+
+	public static boolean isAllAnnot() {
+		return allStyles.size() == annotStyles.size() && annotStyles.size() > 0;
+	}
+
+	public static boolean isAnyJoined(){
+		for (GraphState state : graphStates) {
+			if (state.getComboStyle() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isOneJoined(){
+		if(graphStates.size() < 2)
+			return false;
+		
+		Object comboStyle = graphStates.get(0).getComboStyle();
+		if(comboStyle == null)
+			return false;
+		
+		for(int i=1; i<graphStates.size(); i++){
+			if(graphStates.get(i).getComboStyle() != comboStyle){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static boolean isAnyFloat() {
+		for (ITrackStyleExtended style : allStyles) {
+			if (style.getFloatTier()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isAllSupportTwoTrack() {
+		for (StyledGlyph glyph : allGlyphs) {
+			if (!MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isAllGraphStyleLocked() {
+		for(GraphState state : graphStates){
+			if(!state.getGraphStyleLocked()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private static void notifyRefreshListener() {
 		// Guaranteed to return a non-null array
 		RefreshSelectionListener[] listeners = listenerList.getListeners(RefreshSelectionListener.class);
@@ -121,11 +181,17 @@ public class Selections {
 	public static void addRefreshSelectionListener(RefreshSelectionListener listener){
 		listenerList.add(RefreshSelectionListener.class, listener);
 	}
-	
+		
+	/*
+	 * Interface to notify selection has been updated.
+	 */
 	public static interface RefreshSelectionListener extends EventListener{
 		public void selectionRefreshed();
 	}
 	
+	/**
+	 * Inner class to fire selection refreshed events.
+	 */
 	private static class Listeners implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {
 
 		@Override

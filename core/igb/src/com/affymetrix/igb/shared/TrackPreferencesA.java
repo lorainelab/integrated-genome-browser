@@ -391,67 +391,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void restoreToDefaultButtonActionPerformedA(ActionEvent evt) {
 	}
-
-	private boolean isAllGraph() {
-		return allStyles.size() == graphStates.size() && graphStates.size() > 0;
-	}
-
-	private boolean isAllAnnot() {
-		return allStyles.size() == annotStyles.size() && annotStyles.size() > 0;
-	}
-
-	private boolean isAnyJoined(){
-		for (GraphState state : graphStates) {
-			if (state.getComboStyle() != null) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private boolean isOneJoined(){
-		if(graphStates.size() < 2)
-			return false;
-		
-		Object comboStyle = graphStates.get(0).getComboStyle();
-		if(comboStyle == null)
-			return false;
-		
-		for(int i=1; i<graphStates.size(); i++){
-			if(graphStates.get(i).getComboStyle() != comboStyle){
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	private boolean isAnyFloat() {
-		for (ITrackStyleExtended style : allStyles) {
-			if (style.getFloatTier()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isAllSupportTwoTrack() {
-		for (StyledGlyph glyph : allGlyphs) {
-			if (!MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private boolean isAllGraphStyleLocked() {
-		for(GraphState state : graphStates){
-			if(!state.getGraphStyleLocked()){
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	@Override
 	protected void floatCheckBoxReset() {

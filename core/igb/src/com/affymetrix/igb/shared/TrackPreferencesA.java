@@ -437,7 +437,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	private boolean isAllSupportTwoTrack() {
 		for (ITrackStyleExtended style : annotStyles) {
-			if (!MapViewModeHolder.getInstance().styleSupportsTwoTrack(style)) {
+			if (!MapTierTypeHolder.getInstance().styleSupportsTwoTrack(style)) {
 				return false;
 			}
 		}

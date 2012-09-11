@@ -24,14 +24,14 @@ import com.affymetrix.igb.shared.*;
  *
  * @author hiralv
  */
-public class ScoredContainerGlyphFactory extends MapViewGlyphFactoryA {
+public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 	private static final String[] supportedFormat = {"sin", "egr", "egr.txt", "map", "chp"};
 
 //	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
 	
-	private static final MapViewGlyphFactoryI annotFactory = new AnnotationGlyphFactory();
-	private static final MapViewGlyphFactoryI glyphFactory = new GraphGlyphFactory();
+	private static final MapTierGlyphFactoryI annotFactory = new AnnotationGlyphFactory();
+	private static final MapTierGlyphFactoryI glyphFactory = new GraphGlyphFactory();
 	
 	/** Does nothing. */
 	public void init(Map<String, Object> options) {

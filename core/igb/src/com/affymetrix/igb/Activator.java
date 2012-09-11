@@ -359,51 +359,51 @@ public class Activator implements BundleActivator {
 	}
 	
 	private void initMapViewGlyphFactorys() {
-		ExtensionPointHandler<MapViewGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapViewGlyphFactoryI.class);
+		ExtensionPointHandler<MapTierGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapTierGlyphFactoryI.class);
 		mapViewGlyphFactoryExtensionPoint.addListener(
-			new ExtensionPointListener<MapViewGlyphFactoryI>() {
+			new ExtensionPointListener<MapTierGlyphFactoryI>() {
 				@Override
-				public void removeService(MapViewGlyphFactoryI factory) {
-					MapViewModeHolder.getInstance().removeViewFactory(factory);
+				public void removeService(MapTierGlyphFactoryI factory) {
+					MapTierTypeHolder.getInstance().removeViewFactory(factory);
 				}
 				@Override
-				public void addService(MapViewGlyphFactoryI factory) {
-					MapViewModeHolder.getInstance().addViewFactory(factory);
+				public void addService(MapTierGlyphFactoryI factory) {
+					MapTierTypeHolder.getInstance().addViewFactory(factory);
 				}
 			}
 		);
 		
 		// Add Annotation/Alignment factory
 		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationGlyphFactory, null);
+		bundleContext.registerService(MapTierGlyphFactoryI.class, annotationGlyphFactory, null);
 		
 		// Add Sequence factory
 		SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, sequenceGlyphFactory, null);
+		bundleContext.registerService(MapTierGlyphFactoryI.class, sequenceGlyphFactory, null);
 
 		// Add Graph factories
 		GraphGlyphFactory graphGlyphFactory = new GraphGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, graphGlyphFactory, null);
+		bundleContext.registerService(MapTierGlyphFactoryI.class, graphGlyphFactory, null);
 		
 		// Add ProbeSet factory
 		ProbeSetGlyphFactory probeSetGlyphFactory = new ProbeSetGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSetGlyphFactory, null);
+		bundleContext.registerService(MapTierGlyphFactoryI.class, probeSetGlyphFactory, null);
 		
 		// Add ScoredContainer factory
 		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredMinMaxAvg, null);
+		bundleContext.registerService(MapTierGlyphFactoryI.class, scoredMinMaxAvg, null);
 		
 		// Add Mismatch factory
 		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
-		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchGlyphFactory, null);
+		bundleContext.registerService(MapTierGlyphFactoryI.class, mismatchGlyphFactory, null);
 
 		// Set Default factory
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, annotationGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, graphGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, annotationGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, graphGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);
 	}
 }

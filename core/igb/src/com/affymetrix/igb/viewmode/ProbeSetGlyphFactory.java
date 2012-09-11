@@ -25,7 +25,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
  *
  * @author hiralv
  */
-public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
+public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
 	/*
 	Algorithm for drawing probe-set-display data.

@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
  * instances can be registered in the igb bundle Activator
  * initMapViewGlyphFactorys() method.
  */
-public interface MapViewGlyphFactoryI  {
+public interface MapTierGlyphFactoryI  {
 	public static final int DEFAULT_CHILD_HEIGHT = 25;
 	
 	/**

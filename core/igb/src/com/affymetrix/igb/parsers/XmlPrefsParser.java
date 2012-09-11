@@ -24,7 +24,7 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 import com.affymetrix.igb.general.ServerList;
 import javax.xml.parsers.ParserConfigurationException;
@@ -247,7 +247,7 @@ public final class XmlPrefsParser {
 			}
 		}
 		try {
-			MapViewGlyphFactoryI factory = (MapViewGlyphFactoryI) factory_class.newInstance();
+			MapTierGlyphFactoryI factory = (MapTierGlyphFactoryI) factory_class.newInstance();
 			factory.init(attmap);
 		} catch (InstantiationException ex) {
 			System.out.println("ERROR: Could not instantiate a glyph factory while processing preferences file: " + factory_class);

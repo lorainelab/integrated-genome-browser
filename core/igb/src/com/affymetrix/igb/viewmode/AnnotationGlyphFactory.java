@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
-public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
+public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private static final boolean DEBUG = false;
 	/** Set to true if the we can assume the container SeqSymmetry being passed
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.

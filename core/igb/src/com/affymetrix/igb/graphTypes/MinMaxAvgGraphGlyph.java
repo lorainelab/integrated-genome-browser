@@ -12,11 +12,11 @@ import java.awt.Point;
 import java.util.Arrays;
 
 public class MinMaxAvgGraphGlyph extends GraphGlyph.GraphStyle {
-	private final GraphGlyph.GraphStyle tempViewModeBarGraphGlyph;
+	private final GraphGlyph.GraphStyle tempBarGraphStyle;
 
 	public MinMaxAvgGraphGlyph(GraphGlyph graphGlyph){
 		graphGlyph.super();
-		tempViewModeBarGraphGlyph = new BarGraphGlyph(graphGlyph);
+		tempBarGraphStyle = new BarGraphGlyph(graphGlyph);
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class MinMaxAvgGraphGlyph extends GraphGlyph.GraphStyle {
 		double xpixels_per_coord = (view.getTransform()).getScaleX();
 		double xcoords_per_pixel = 1 / xpixels_per_coord;
 		if (xcoords_per_pixel < transition_scale) {
-			tempViewModeBarGraphGlyph.oldDraw(view);
+			tempBarGraphStyle.oldDraw(view);
 		} else {
 			drawSmart(view);
 		}

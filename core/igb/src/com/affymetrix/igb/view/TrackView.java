@@ -23,13 +23,13 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.shared.MapViewModeHolder;
+import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.viewmode.DefaultTierGlyph;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import java.util.logging.Level;
@@ -177,7 +177,7 @@ public class TrackView {
 						"File type category for {0} is {1} while style has category {2}", 
 						new Object[]{annotSym, ((RootSeqSymmetry)annotSym).getCategory(), style.getFileTypeCategory()});
 			}
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)annotSym).getCategory());
+			MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)annotSym).getCategory());
 			factory.createGlyphs(annotSym, style, smv);
 		}
 	}

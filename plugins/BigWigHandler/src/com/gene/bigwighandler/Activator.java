@@ -13,22 +13,22 @@ import org.osgi.util.tracker.ServiceTracker;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
 	private ServiceRegistration<FileTypeHandler> bigwigHandlerRegistration;
-	private ServiceRegistration<MapViewGlyphFactoryI> annotationBigwigSemanticZoomGlyphFactoryRegistration;
-	private ServiceRegistration<MapViewGlyphFactoryI> alignmentBigwigSemanticZoomGlyphFactoryRegistration;
-	private ServiceRegistration<MapViewGlyphFactoryI> graphBigwigSemanticZoomGlyphFactoryRegistration;
-	private MapViewGlyphFactoryI annotationGlyphFactory = null;
-	private MapViewGlyphFactoryI alignmentGlyphFactory = null;
-	private MapViewGlyphFactoryI graphGlyphFactory = null;
-    private ServiceTracker<MapViewGlyphFactoryI,Object> serviceTrackerMapViewGlyphFactoryI = null;
+	private ServiceRegistration<MapTierGlyphFactoryI> annotationBigwigSemanticZoomGlyphFactoryRegistration;
+	private ServiceRegistration<MapTierGlyphFactoryI> alignmentBigwigSemanticZoomGlyphFactoryRegistration;
+	private ServiceRegistration<MapTierGlyphFactoryI> graphBigwigSemanticZoomGlyphFactoryRegistration;
+	private MapTierGlyphFactoryI annotationGlyphFactory = null;
+	private MapTierGlyphFactoryI alignmentGlyphFactory = null;
+	private MapTierGlyphFactoryI graphGlyphFactory = null;
+    private ServiceTracker<MapTierGlyphFactoryI,Object> serviceTrackerMapViewGlyphFactoryI = null;
 	private boolean factoryCreated = false;
 
-	private void checkReference(ServiceReference<MapViewGlyphFactoryI> reference) {
-    	MapViewGlyphFactoryI factory = bundleContext.getService(reference);
+	private void checkReference(ServiceReference<MapTierGlyphFactoryI> reference) {
+    	MapTierGlyphFactoryI factory = bundleContext.getService(reference);
 		if ("annotation".equals(factory.getName())) {
 			annotationGlyphFactory = factory;
 		}
@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
 	private void registerServices(final IGBService igbService) {
 		bigwigHandlerRegistration = bundleContext.registerService(FileTypeHandler.class, new BigWigHandler(), null);
 		try {
-			for (ServiceReference<MapViewGlyphFactoryI> reference : bundleContext.getServiceReferences(MapViewGlyphFactoryI.class, null)) {
+			for (ServiceReference<MapTierGlyphFactoryI> reference : bundleContext.getServiceReferences(MapTierGlyphFactoryI.class, null)) {
 				checkReference(reference);
 			}
 		}

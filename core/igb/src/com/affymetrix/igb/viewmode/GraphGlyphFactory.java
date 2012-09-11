@@ -18,7 +18,7 @@ import com.affymetrix.igb.graphTypes.*;
 import com.affymetrix.igb.shared.*;
 import java.util.HashMap;
 
-public class GraphGlyphFactory extends MapViewGlyphFactoryA {
+public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
 	private static final Logger ourLogger =
 			Logger.getLogger(GraphGlyphFactory.class.getPackage().getName());

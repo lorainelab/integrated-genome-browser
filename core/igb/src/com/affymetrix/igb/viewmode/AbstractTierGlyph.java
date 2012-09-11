@@ -23,8 +23,8 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.MapViewModeHolder;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -346,7 +346,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	protected void rangeChanged(SeqMapViewExtendedI smv){
 		if(isAutoLoadMode() && isDetail(smv.getSeqMap().getView())){
 			try {
-				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(getAnnotStyle().getFileTypeCategory());
+				MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(getAnnotStyle().getFileTypeCategory());
 				if(factory != null){
 					loadAndDisplayRegion(smv, factory);
 				}
@@ -468,7 +468,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 		
 	public final double getChildHeight(){
-		double child_height = MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
+		double child_height = MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
 		child_height = useLabel(getAnnotStyle()) ? child_height * 2 : child_height;
 		child_height = child_height + getSpacing() * 2;
 		return child_height;
@@ -494,12 +494,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		}
 	}
 	
-	protected final TierGlyph createGlyphs(RootSeqSymmetry rootSym, MapViewGlyphFactoryI factory, SeqMapViewExtendedI smv){
+	protected final TierGlyph createGlyphs(RootSeqSymmetry rootSym, MapTierGlyphFactoryI factory, SeqMapViewExtendedI smv){
 		return null;
 		//return factory.getViewModeGlyph(rootSym, style, direction, smv);
 	};
 	
-	protected final void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapViewGlyphFactoryI factory) throws Exception{
+	protected final void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapTierGlyphFactoryI factory) throws Exception{
 		if (previousWorker != null && !previousWorker.isCancelled() && !previousWorker.isDone()) {
 			previousWorker.cancel(true);
 			previousWorker = null;
@@ -561,12 +561,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	@Override
 	public void pack(ViewI view) {
 		super.pack(view);
-		if (this.getCoordBox().height < MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT) {
+		if (this.getCoordBox().height < MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT) {
 			// Only do this for resizable tiers for now.
 			// It would screw up the axis tier, for one.
 			if (isManuallyResizable()) {
 				Rectangle2D.Double oldBox = getCoordBox();
-				setCoords(oldBox.x, oldBox.y, oldBox.width, MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT);
+				setCoords(oldBox.x, oldBox.y, oldBox.width, MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT);
 			}
 
 		}

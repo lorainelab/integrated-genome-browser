@@ -9,7 +9,7 @@ import com.affymetrix.igb.IGBConstants;
 import java.util.Map;
 import java.util.MissingResourceException;
 
-public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
+public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 	
 	@Override
 	public void init(Map<String, Object> options) {	}

@@ -15,7 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 
 public final class AssociationElement implements DrawableElement {
@@ -39,7 +39,7 @@ public final class AssociationElement implements DrawableElement {
   private String paramValue;
 
   // If the styleName starts with "com.", then try to instantiate an old-fashioned factory
-  private MapViewGlyphFactoryI factory = null;
+  private MapTierGlyphFactoryI factory = null;
 
   private AssociationElement(String elementName,
     String paramName, String paramValue, String styleName) {
@@ -125,6 +125,6 @@ public final class AssociationElement implements DrawableElement {
     return sb;
   }
 
-  MapViewGlyphFactoryI getGlyphFactory() { return factory; }
+  MapTierGlyphFactoryI getGlyphFactory() { return factory; }
   public PropertyMap getPropertyMap() { return propertyMap; }
 }

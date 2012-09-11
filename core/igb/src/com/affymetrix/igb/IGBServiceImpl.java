@@ -430,11 +430,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		CThreadHolder.getInstance().execute(server, worker);
 	}
 
-//	@Override
-//	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
-//		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, style, viewMode, rootSym, comboStyle);
-//	}
-
 	@Override
 	public void goToRegion(String region) {
 		((SeqMapView)getSeqMapView()).getMapRangeBox().setRange(region);

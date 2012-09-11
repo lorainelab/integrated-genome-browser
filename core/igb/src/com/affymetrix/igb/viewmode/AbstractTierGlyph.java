@@ -1,11 +1,10 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -22,6 +21,12 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.SetSummaryThresholdAction;
+import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.shared.FasterExpandPacker;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewModeHolder;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;

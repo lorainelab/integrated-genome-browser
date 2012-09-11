@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractTierGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 

@@ -5,7 +5,6 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractTierGlyph;
 
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for sequences

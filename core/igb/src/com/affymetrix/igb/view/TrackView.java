@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.shared.GraphTierGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -33,7 +32,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.DefaultTierGlyph;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
-import com.affymetrix.igb.viewmode.SequenceTierGlyph;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,18 +78,6 @@ public class TrackView {
 		}
 		return style2track.get(style);
 	}
-
-	private static TierGlyph getTierGlyphForStyle(ITrackStyleExtended style){
-		switch(style.getFileTypeCategory()){
-			case Sequence:
-				return new SequenceTierGlyph(style);
-			case Graph:
-			case Mismatch:
-				return new GraphTierGlyph(style);
-			default:
-				return new DefaultTierGlyph(style);
-		}
-	}
 	
 	/**
 	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
@@ -105,7 +91,7 @@ public class TrackView {
 		TierGlyph tierGlyph = null;
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
-			tierGlyph = getTierGlyphForStyle(style);
+			tierGlyph = new DefaultTierGlyph(style);
 			tierGlyph.setDirection(tier_direction);
 			
 			// do not set packer here, will be set in ViewModeGlyph

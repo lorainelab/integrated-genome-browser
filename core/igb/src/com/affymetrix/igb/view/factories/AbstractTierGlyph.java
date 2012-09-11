@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -169,6 +170,14 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	
 	public final TierType getTierType(){
 		return tierType;
+	}
+	
+	@Override
+	public FileTypeCategory getFileTypeCategory(){
+		if(getInfo() != null && getInfo() instanceof RootSeqSymmetry){
+			return ((RootSeqSymmetry)getInfo()).getCategory();
+		}
+		return null;
 	}
 	
 	/**

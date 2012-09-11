@@ -1,5 +1,6 @@
  package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -28,6 +29,8 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	public void setTierType(TierType method);
 	
 	public TierType getTierType();
+	
+	public FileTypeCategory getFileTypeCategory();
 	
 	public boolean initUnloaded();
 		

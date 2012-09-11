@@ -61,8 +61,8 @@ public class MapTierTypeHolder {
 		defaultView.put(category, factory);
 	}
 
-	public boolean styleSupportsTwoTrack(ITrackStyleExtended style) {
-		MapTierGlyphFactoryI factory = getDefaultFactoryFor(style.getFileTypeCategory());
+	public boolean supportsTwoTrack(FileTypeCategory category) {
+		MapTierGlyphFactoryI factory = getDefaultFactoryFor(category);
 		if (factory == null) {
 			return false;
 		}

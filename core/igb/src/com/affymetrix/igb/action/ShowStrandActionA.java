@@ -31,7 +31,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (!b || MapTierTypeHolder.getInstance().styleSupportsTwoTrack(style)) {
+			if (!b || MapTierTypeHolder.getInstance().supportsTwoTrack(tier.getFileTypeCategory())) {
 				style.setSeparate(b);
 			}
 		}
@@ -74,8 +74,7 @@ implements SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyLis
 			SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 			if (selected_syms.contains(ss)) {
 				if (tg.getTierType() != TierGlyph.TierType.GRAPH) {
-					if (MapTierTypeHolder.getInstance().styleSupportsTwoTrack(
-							tg.getAnnotStyle())) {
+					if (MapTierTypeHolder.getInstance().supportsTwoTrack(tg.getFileTypeCategory())) {
 						boolean separate = tg.getAnnotStyle().getSeparate();
 						hasSeparate |= separate;
 						hasMixed |= !separate;

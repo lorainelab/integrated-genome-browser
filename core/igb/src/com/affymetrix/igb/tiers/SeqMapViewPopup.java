@@ -243,7 +243,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			any_are_color_off = any_are_color_off || (!astyle.getColorByScore());
 			if (!astyle.isGraphTier()) {
 				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
-				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate() && MapTierTypeHolder.getInstance().styleSupportsTwoTrack(astyle));
+				any_are_single_tier = 
+						any_are_single_tier || (!astyle.getSeparate() && 
+						MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory()));
 			}
 			any_view_mode = any_view_mode || (!astyle.isGraphTier());
 

@@ -436,8 +436,8 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	private boolean isAllSupportTwoTrack() {
-		for (ITrackStyleExtended style : annotStyles) {
-			if (!MapTierTypeHolder.getInstance().styleSupportsTwoTrack(style)) {
+		for (StyledGlyph glyph : allGlyphs) {
+			if (!MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory())) {
 				return false;
 			}
 		}

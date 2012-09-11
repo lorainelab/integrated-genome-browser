@@ -7,10 +7,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPStyledJComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
@@ -92,7 +90,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
-		viewModeCB = new JRPStyledJComboBox("TierPrefsView_viewModeCB");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
 
 		setEnabled(false);
@@ -243,7 +240,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	private void setEnabled(boolean b) {
 		displayNameTextField.setEnabled(b);
 		displayNameTextField.setEditable(b);
-		viewModeCB.setEnabled(b);
 		labelFieldComboBox.setEnabled(b);
 		maxDepthTextField.setEnabled(b);
 		collapsedCheckBox.setEnabled(b);
@@ -310,7 +306,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		possitiveColorComboBox.setSelectedColor((Color) getValueAt(COL_POS_STRAND_COLOR));
 		negativeColorComboBox.setSelectedColor((Color) getValueAt(COL_NEG_STRAND_COLOR));
 
-		viewModeCB.setEnabled(false);
 	}
 
 	/**
@@ -542,7 +537,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				}
 			}
 			
-			viewModeCB.setEnabled(false);
 			labelFieldComboBox.setEnabled(false);
 			colorCheckBox.setEnabled(false);
 			arrowCheckBox.setEnabled(false);

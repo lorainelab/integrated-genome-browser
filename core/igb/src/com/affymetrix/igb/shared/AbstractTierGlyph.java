@@ -83,13 +83,13 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	private double spacer = 2;
 	protected FasterExpandPacker expand_packer = new FasterExpandPacker();
 	protected CollapsePacker collapse_packer = new CollapsePacker();
-	private TierType tierType;
+	protected TierType tierType;
 		
 	public AbstractTierGlyph(){
 		setSpacer(spacer);
 		tierType = TierType.NONE;
 	}
-		
+	
 	private void setSpacer(double spacer) {
 		this.spacer = spacer;
 		((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
@@ -244,6 +244,25 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 				}
 			}
 		}
+	}
+	
+	@Override
+	public int getActualSlots() {
+		return 1;
+	}
+
+	@Override
+	public int getSlotsNeeded(ViewI ourView) {
+		return 1;
+	}
+
+	@Override
+	public void setPreferredHeight(double maxHeight, ViewI view) {
+		//Do Nothing
+	}
+	
+	protected boolean shouldDrawToolBar(){
+		return style.drawCollapseControl();
 	}
 	
 	@Override
@@ -565,147 +584,6 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		}
 	}
 	
-	@Override
-	public int getActualSlots() {
-		if(tierType == tierType.ANNOTATION && getPacker() == expand_packer){
-			return expand_packer.getActualSlots();
-		}
-		return 1;
-	}
-		
-	protected boolean shouldDrawToolBar(){
-		if(tierType == TierType.GRAPH){
-			return this.getChildCount() > 1;
-		}else if (tierType == TierType.SEQUENCE){
-			return false;
-		}
-		return style.drawCollapseControl();
-	}
-	
-	@Override
-	public int getSlotsNeeded(ViewI theView) {
-		if (tierType == TierType.GRAPH) {
-			/**
-			* Determine how short a glyph can be so we can avoid empty vertical space.
-			* Originally implemented for annotation tracks.
-			* Here we hope for a {@link GraphSym} as the glyph's info.
-			* If we don't find one, we return the answer from the super class.
-			* Subclasses can specialize this, of course.
-			* TODO Do we want y max? or |y max - y min| or [y max|?
-			*      or even max(|y min|, [y max|)?
-			*      The old basic graph glyph used to flip y values
-			*      because pixels start at 0 and go negative.
-			* @param theView limits the data to consider.
-			* @return How tall the glyph must be to show all the data in view.
-			*         Cannot be negative?
-			*/
-			Object o = this.getInfo();
-			if (null != o) {
-				if (o instanceof GraphSym) {
-					GraphSym model = (GraphSym) o;
-					// Figure it out.
-					float[] bounds = getRangeInView(model, theView);
-					assert bounds[0] <= bounds[1];
-					float answer = bounds[1] - bounds[0];
-					if (answer <= 0) {
-						return 0;
-					}
-					if (Integer.MAX_VALUE <= answer) {
-						return Integer.MAX_VALUE;
-					}
-					return (int) answer;
-				}
-			}
-		} else if (tierType == TierType.ANNOTATION) {
-			if(getPacker() == expand_packer) {
-				return expand_packer.getSlotsNeeded(this, theView);
-			}
-		}
-
-		return 1;
-	}
-	
-	@Override
-	public void setPreferredHeight(double height, ViewI view) {
-		if (this.tierType == TierType.SEQUENCE) {
-			height = height - 2 * getSpacing();
-
-			if (useLabel(style)) {
-				height = height / 2;
-			}
-
-			double percent = ((height * 100) / style.getHeight() - 100) / 100;
-			style.setHeight(height);
-
-			scaleChildHeights(percent, getChildren(), view);
-		} else if (this.tierType == TierType.GRAPH) {
-			GlyphI child = getChild(0);
-			Rectangle2D.Double c = child.getCoordBox();
-			child.setCoords(c.x, c.y, c.width, height);
-			//Note : Fix to handle height in a view mode.
-			// But this also causes minor change in height while switching back to default view mode.
-			setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
-			this.style.setHeight(height + 2 * getSpacing());
-			child.pack(view);
-		} else if (this.tierType == TierType.ANNOTATION) {
-
-			// Remove the padding at top and bottom.
-			// Shouldn't we get this info from the packer?
-			height = height - 2 * getSpacing();
-			double scale = 1.0;
-
-			if (getPacker() == expand_packer) {
-				// Now figure out how deep to set max depth.
-				// Get current slot height. Should actually get this from the packer.
-				double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();
-				long depth = (long) Math.floor(height / h);
-				assert -1 < depth && depth < Integer.MAX_VALUE;
-				expand_packer.setMaxSlots((int) depth);
-				switch (this.direction) {
-					case FORWARD:
-						this.style.setForwardMaxDepth((int) depth);
-						break;
-					case REVERSE:
-						this.style.setReverseMaxDepth((int) depth);
-						break;
-					default:
-					case BOTH:
-					case NONE:
-					case AXIS:
-						this.style.setMaxDepth((int) depth);
-				}
-			} else { // Not expanded (using an expand packer).
-				int numberOfSlotsInUse = getActualSlots();
-				double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
-				double newSlotHeight = (height - totalInteriorSpacing) / numberOfSlotsInUse;
-
-				if (useLabel(style)) {
-					// Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
-					newSlotHeight = newSlotHeight / 2;
-				}
-
-				switch (this.direction) {
-					case FORWARD:
-						scale = newSlotHeight / style.getForwardHeight();
-						style.setForwardHeight(newSlotHeight);
-						break;
-					case REVERSE:
-						scale = newSlotHeight / style.getReverseHeight();
-						style.setReverseHeight(newSlotHeight);
-						break;
-					default:
-					case BOTH:
-					case NONE:
-					case AXIS:
-						scale = newSlotHeight / style.getHeight();
-						style.setHeight(newSlotHeight);
-				}
-			}
-
-			scaleChildHeights(scale, getChildren(), view);
-		}
-	}
-	
 	public void resizeHeight(double diffy, double height) {
 		Rectangle2D.Double cbox = getCoordBox();
 		setCoords(cbox.x, cbox.y, cbox.width, height);
@@ -760,7 +638,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	 * @return the minimum and maximum values of <var>y</var>
 	 *         restricted to the <var>x</var> values in theView.
 	 */
-	private float[] getRangeInView(GraphSym theData, ViewI theView) {
+	protected float[] getRangeInView(GraphSym theData, ViewI theView) {
 		if (null == theData) {
 			throw new IllegalArgumentException("theData cannot be null.");
 		}

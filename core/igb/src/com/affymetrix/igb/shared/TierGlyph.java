@@ -1,11 +1,9 @@
  package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -53,8 +51,6 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	public double getChildHeight();
 	
 	public void setPreferredHeight(double maxHeight, ViewI view);
-	
-	public void setMinimumPixelBounds(Graphics graphics);
 	
 	public boolean toolBarHit(Rectangle2D.Double hitrect, ViewI view);
 	

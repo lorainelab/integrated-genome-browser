@@ -1,7 +1,6 @@
 
 package com.affymetrix.igb.view.factories;
 
-import com.affymetrix.igb.view.factories.AbstractTierGlyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -25,7 +24,7 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph{
 
 	protected abstract void setModifiedViewCoords(ViewI view);
 	
-	protected void modifiedDrawChildren(ViewI view){
+	protected void superDrawChildren(ViewI view){
 		super.drawChildren(view);
 	}
 	
@@ -58,12 +57,17 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph{
 		view.setCoordBox(modified_view_coordbox);
 		
 		// CALL NORMAL DRAWCHILDREN(), BUT WITH MODIFIED VIEW
-		modifiedDrawChildren(view);
+		superDrawChildren(view);
 	
 
 		// RESTORE ORIGINAL VIEW
 		view.setTransform(incoming_view_transform);
 		view.setCoordBox(incoming_view_coordbox);
+	}
+	
+	protected void superPickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
+			ViewI view) {
+		super.pickTraversal(pickRect, pickList, view);
 	}
 	
 	// Need to redo pickTraversal, etc. to take account of transform also...

@@ -279,7 +279,7 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
 	}
 	
 	@Override
-	protected void modifiedDrawChildren(ViewI view) {
+	protected void superDrawChildren(ViewI view) {
 		try {
 			if (getChildren() != null) {
 				GlyphI child;

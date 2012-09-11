@@ -570,7 +570,7 @@ public final class GeneralLoadView {
 
 			@Override
 			protected Object runInBackground() {
-				TrackView.getInstance().addEmptyTierFor(feature, gviewer, true);
+				TrackView.getInstance().addEmptyTierFor(feature, gviewer);
 				return null;
 			}
 

@@ -160,7 +160,7 @@ public class TrackView {
 
 	void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
 		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
-			addEmptyTierFor(feature, smv, false);
+			addEmptyTierFor(feature, smv);
 		}
 	}
 	
@@ -272,7 +272,7 @@ public class TrackView {
 		}
 	}
 	
-	public void addEmptyTierFor(GenericFeature feature, SeqMapView gviewer, boolean setViewMode) {
+	public void addEmptyTierFor(GenericFeature feature, SeqMapView gviewer) {
 
 		// No sequence selected or if it is cytoband or it is residue file. Then return
 		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND) ||
@@ -297,12 +297,12 @@ public class TrackView {
 				if(style == null)
 					continue;
 				
-				addTierFor(style, gviewer, feature.getRequestSym(), setViewMode);
+				addTierFor(style, gviewer);
 			}
 		} else {
 			style = getStyle(feature.getURI().toString(), feature);
 			style.setFeature(feature);
-			addTierFor(style, gviewer, feature.getRequestSym(), setViewMode);
+			addTierFor(style, gviewer);
 		}
 
 	}
@@ -322,8 +322,7 @@ public class TrackView {
 		}
 	}
 
-	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
-		RootSeqSymmetry rootSym = null;
+	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
 		if(!style.isGraphTier()){
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
 			//rootSym = (category == FileTypeCategory.ScoredContainer) ? new ScoredContainerSym() : new TypeContainerAnnot(style.getMethodName());

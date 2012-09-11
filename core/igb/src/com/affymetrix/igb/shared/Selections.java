@@ -59,13 +59,7 @@ public class Selections {
 		graphGlyphs.clear();
 		allGlyphs.clear();
 		for (StyledGlyph useGlyph : selected) {
-			FileTypeCategory category = null;
-			if (useGlyph.getInfo() instanceof RootSeqSymmetry) {
-				category = ((RootSeqSymmetry)useGlyph.getInfo()).getCategory();
-			}
-			if (category == null && useGlyph.getAnnotStyle() != null) {
-				category = useGlyph.getAnnotStyle().getFileTypeCategory();
-			}
+			FileTypeCategory category = useGlyph.getFileTypeCategory();
 			if (useGlyph instanceof GraphGlyph){
 				GraphGlyph gg = (GraphGlyph)useGlyph;
 				graphStates.add(gg.getGraphState());

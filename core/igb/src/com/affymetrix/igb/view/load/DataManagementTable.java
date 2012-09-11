@@ -230,10 +230,10 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			return new DataManagementTable.ColumnRenderer();
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
 			if (vFeature.getStyle() != null) {
-				if(vFeature.getStyle().getFileTypeCategory() == null){
-					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
-						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
-				}
+//				if(vFeature.getStyle().getFileTypeCategory() == null){
+//					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
+//						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
+//				}
 				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());
 			} else {
 				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName);

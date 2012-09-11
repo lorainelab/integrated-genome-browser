@@ -329,7 +329,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			ITrackStyleExtended style = tierGlyph.getAnnotStyle();
 			GenericFeature feature = style.getFeature();
 			if (feature != null) {
-				if (style.getFileTypeCategory() == FileTypeCategory.Sequence) {
+				if (tierGlyph.getFileTypeCategory() == FileTypeCategory.Sequence) {
 					popup.add(new JSeparator());
 					JMenuItem use_as_reference_seq = new JRPMenuItemTLP(UseAsReferenceSeqAction.getAction());
 					popup.add(use_as_reference_seq);

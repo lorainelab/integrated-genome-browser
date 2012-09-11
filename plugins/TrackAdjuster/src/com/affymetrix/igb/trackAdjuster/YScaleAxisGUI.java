@@ -298,7 +298,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
 		int stretchableCount = 0;
 		for (Glyph glyph : igbService.getVisibleTierGlyphs()) {
 			if (!((TierGlyph)glyph).getAnnotStyle().getFloatTier()) {
-				FileTypeCategory category = ((TierGlyph)glyph).getAnnotStyle().getFileTypeCategory();
+				FileTypeCategory category = ((TierGlyph)glyph).getFileTypeCategory();
 				if (category == null) {
 					RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry)glyph.getInfo();
 					if (rootSeqSymmetry != null) {

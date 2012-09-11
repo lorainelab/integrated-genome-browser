@@ -1,5 +1,11 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
+import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
+import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.factories.GraphGlyphFactory;
+import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
+import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
@@ -23,7 +29,6 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.*;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.Arrays;
 import java.util.logging.Logger;

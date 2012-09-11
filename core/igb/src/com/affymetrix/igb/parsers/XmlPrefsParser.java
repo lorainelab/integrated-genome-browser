@@ -25,7 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
-import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.general.ServerList;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;

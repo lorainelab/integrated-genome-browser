@@ -30,8 +30,8 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.affymetrix.igb.viewmode.DefaultTierGlyph;
-import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

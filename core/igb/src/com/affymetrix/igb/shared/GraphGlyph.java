@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -1354,5 +1355,13 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			}
 		}
 
+	}
+	
+	@Override
+	public FileTypeCategory getFileTypeCategory(){
+		if(graf != null){
+			return graf.getCategory();
+		}
+		return FileTypeCategory.Graph;
 	}
 }

@@ -30,8 +30,6 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	
 	public TierType getTierType();
 	
-	public FileTypeCategory getFileTypeCategory();
-	
 	public boolean initUnloaded();
 		
 	public void setStyle(ITrackStyleExtended annotStyle);

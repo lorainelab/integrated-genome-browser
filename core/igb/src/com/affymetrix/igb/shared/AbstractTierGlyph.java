@@ -89,15 +89,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		setSpacer(spacer);
 		tierType = TierType.NONE;
 	}
-	
-	@Override
-	public final int getActualSlots() {
-		if(tierType == tierType.ANNOTATION && getPacker() == expand_packer){
-			return expand_packer.getActualSlots();
-		}
-		return 1;
-	}
-	
+		
 	private void setSpacer(double spacer) {
 		this.spacer = spacer;
 		((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
@@ -214,16 +206,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			setPacker(expand_packer);
 		}
 	}
-	
-	protected final boolean shouldDrawToolBar(){
-		if(tierType == TierType.GRAPH){
-			return this.getChildCount() > 1;
-		}else if (tierType == TierType.SEQUENCE){
-			return false;
-		}
-		return style.drawCollapseControl();
-	}
-	
+		
 	public void drawMiddle(ViewI view) {
 		view.transformToPixels(getCoordBox(), getPixelBox());
 
@@ -548,8 +531,59 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		worker = null;
 	};
 	
+	public boolean isManuallyResizable() {
+		if (this.getPacker() instanceof CollapsePacker) {
+			return false;
+		}
+		return true;
+	}
+	
+	public final void setMinimumPixelBounds(Graphics g){
+		java.awt.FontMetrics fm = g.getFontMetrics();
+		int h = fm.getHeight();
+		h += 2 * 2; // border height
+		h += 4; // padding top
+		int w = fm.stringWidth("A Moderate Label");
+		w += 2; // border left
+		w += 4; // padding left
+		java.awt.Dimension minTierSizeInPixels = new java.awt.Dimension(w, h);
+		setMinimumPixelBounds(minTierSizeInPixels);
+	}
+	
+	
 	@Override
-	public final int getSlotsNeeded(ViewI theView) {
+	public void pack(ViewI view) {
+		super.pack(view);
+		if (this.getCoordBox().height < MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT) {
+			// Only do this for resizable tiers for now.
+			// It would screw up the axis tier, for one.
+			if (isManuallyResizable()) {
+				Rectangle2D.Double oldBox = getCoordBox();
+				setCoords(oldBox.x, oldBox.y, oldBox.width, MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT);
+			}
+
+		}
+	}
+	
+	@Override
+	public int getActualSlots() {
+		if(tierType == tierType.ANNOTATION && getPacker() == expand_packer){
+			return expand_packer.getActualSlots();
+		}
+		return 1;
+	}
+		
+	protected boolean shouldDrawToolBar(){
+		if(tierType == TierType.GRAPH){
+			return this.getChildCount() > 1;
+		}else if (tierType == TierType.SEQUENCE){
+			return false;
+		}
+		return style.drawCollapseControl();
+	}
+	
+	@Override
+	public int getSlotsNeeded(ViewI theView) {
 		if (tierType == TierType.GRAPH) {
 			/**
 			* Determine how short a glyph can be so we can avoid empty vertical space.
@@ -590,41 +624,9 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 
 		return 1;
 	}
-	public boolean isManuallyResizable() {
-		if (this.getPacker() instanceof CollapsePacker) {
-			return false;
-		}
-		return true;
-	}
-	public final void setMinimumPixelBounds(Graphics g){
-		java.awt.FontMetrics fm = g.getFontMetrics();
-		int h = fm.getHeight();
-		h += 2 * 2; // border height
-		h += 4; // padding top
-		int w = fm.stringWidth("A Moderate Label");
-		w += 2; // border left
-		w += 4; // padding left
-		java.awt.Dimension minTierSizeInPixels = new java.awt.Dimension(w, h);
-		setMinimumPixelBounds(minTierSizeInPixels);
-	}
-	
 	
 	@Override
-	public void pack(ViewI view) {
-		super.pack(view);
-		if (this.getCoordBox().height < MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT) {
-			// Only do this for resizable tiers for now.
-			// It would screw up the axis tier, for one.
-			if (isManuallyResizable()) {
-				Rectangle2D.Double oldBox = getCoordBox();
-				setCoords(oldBox.x, oldBox.y, oldBox.width, MapViewGlyphFactoryI.DEFAULT_CHILD_HEIGHT);
-			}
-
-		}
-	}
-	
-	@Override
-	public final void setPreferredHeight(double height, ViewI view) {
+	public void setPreferredHeight(double height, ViewI view) {
 		if (this.tierType == TierType.SEQUENCE) {
 			height = height - 2 * getSpacing();
 

@@ -111,5 +111,47 @@ public class GraphTierGlyph extends AbstractTierGlyph{
 	public void setPreferences(Map<String, Object> preferences) {
 	}
 	
+	/**
+	 * Determine the extreme values of <var>y</var> in theView.
+	 * We do not need to translate between scene coordinates
+	 * to those of the graph symmetry.
+	 * They are essentially the same thing(?), just different precisions.
+	 * Graph symmetry coordinates are not pixels.
+	 * TODO Maybe this should be a method of GraphSym?
+	 * TODO Could use a "Range" or "Interval" object instead of float[2].
+	 * TODO Should a null view be an illegal argument?
+	 * @param theData containing points (<var>x</var>,<var>y</var>).
+	 * @return the minimum and maximum values of <var>y</var>
+	 *         restricted to the <var>x</var> values in theView.
+	 */
+	private float[] getRangeInView(GraphSym theData, ViewI theView) {
+		if (null == theData) {
+			throw new IllegalArgumentException("theData cannot be null.");
+		}
+		int[] ourDomain = theData.getGraphXCoords();
+		float[] ourRange = theData.getGraphYCoords();
+		assert ourDomain.length == ourRange.length;
+		float[] empty = {0, 0};
+		if (ourDomain.length < 1) {
+			return empty; // Artificial. Maybe should throw illegal arg.
+		}
+		Rectangle2D.Double b = theView.getCoordBox();
+		long lowerBound = Long.MIN_VALUE;
+		long upperBound = Long.MAX_VALUE;
+		if (null != theView) {
+			lowerBound = Math.round(b.x);
+			upperBound = Math.round(Math.floor((lowerBound + b.width) - Double.MIN_VALUE));
+		}
+		float rangeMinimum = Float.POSITIVE_INFINITY;
+		float rangeMaximum = Float.NEGATIVE_INFINITY;
+		for (int i = 0; i < ourDomain.length; i++) {
+			if (lowerBound <= ourDomain[i] && ourDomain[i] <= upperBound) {
+				rangeMinimum = Math.min(rangeMinimum, ourRange[i]);
+				rangeMaximum = Math.max(rangeMaximum, ourRange[i]);
+			}
+		}
+		float[] answer = {rangeMinimum, rangeMaximum};
+		return answer;
+	}
 }
 

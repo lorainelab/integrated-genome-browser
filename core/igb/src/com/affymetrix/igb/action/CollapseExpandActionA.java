@@ -7,7 +7,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.viewmode.AnnotationTierGlyph;
+import com.affymetrix.igb.viewmode.DefaultTierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -69,7 +69,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		boolean hasCollapsed = false;
 		boolean hasExpanded = false;
 		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-			if (tg instanceof AnnotationTierGlyph && !(tg.getTierType() == TierGlyph.TierType.GRAPH)) {
+			if (tg.getTierType() == TierGlyph.TierType.ANNOTATION) {
 				SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
 				if (selected_syms.contains(ss)) {
 					boolean collapsed = tg.getAnnotStyle().getCollapsed();

@@ -21,7 +21,7 @@ import java.util.List;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationTierGlyph extends AbstractTierGlyph{
+public class DefaultTierGlyph extends AbstractTierGlyph{
 	private static final float default_trans = 0.5f;
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
 
@@ -47,7 +47,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 	//private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	
-	public AnnotationTierGlyph(ITrackStyleExtended style) {
+	public DefaultTierGlyph(ITrackStyleExtended style) {
 		super();
 		setHitable(false);
 		setStyle(style);

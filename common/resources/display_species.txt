@@ -1,7 +1,7 @@
 A_melanoleuca_Dec_2009.png
 A_gambiae_Jul_2003.png
 A_mellifera_Jan_2005.png
-B_taurus_Oct_2007.png
+B_taurus_Oct_2011.png
 C_porcellus_Mar_2008.png
 D_rerio_Dec_2008.png
 E_caballus_Sep_2007.png
@@ -21,7 +21,7 @@ M_musculus_Jul_2007.png
 H_sapiens_Feb_2009.png
 A_thaliana_Jun_2009.png
 E_coli_Oct_2007.png
-O_sativa_japonica_Jun_2009.png
+O_sativa_japonica_Oct_2011.png
 S_pombe_Sep_2007.png
 A_lyrata_Apr_2011.png
 B_distachyon_Aug_2010.png

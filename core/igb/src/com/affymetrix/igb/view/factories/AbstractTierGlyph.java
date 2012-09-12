@@ -116,6 +116,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 
 		return Collections.<SeqSymmetry>emptyList();
 	}
+	
 	public boolean initUnloaded() {
 		Glyph glyph;
 

@@ -27,8 +27,6 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	public void setTierType(TierType method);
 	
 	public TierType getTierType();
-	
-	public boolean initUnloaded();
 		
 	public void setStyle(ITrackStyleExtended annotStyle);
 	

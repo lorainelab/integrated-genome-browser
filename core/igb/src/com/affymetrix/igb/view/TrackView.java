@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -18,9 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
@@ -152,8 +149,6 @@ public class TrackView {
 			}
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(smv, (SymWithProps)annotSym, seq);
-				// TODO: reimplement middleground shading in a generic fashion
-				doMiddlegroundShading(smv, (SymWithProps)annotSym, seq);
 			}
 		}
 		
@@ -176,67 +171,6 @@ public class TrackView {
 		}
 	}
 		
-	private void doMiddlegroundShading(SeqMapView gviewer, SymWithProps annotSym, BioSeq seq) {
-		String meth = BioSeq.determineMethod(annotSym);
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-		GenericFeature feature = style.getFeature();
-		if ((meth != null)
-				&& (annotSym instanceof TypeContainerAnnot)
-				&& (annotSym.getChildCount() > 0)
-				&& (feature != null)) {
-			TierGlyph forwardTrack = style2forwardTierGlyph.get(style);
-			TierGlyph reverseTrack = style2reverseTierGlyph.get(style);
-			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
-			if (seq != gviewer.getViewSeq()) {
-				inverse = gviewer.transformForViewSeq(inverse, seq);
-			}
-			int child_count = inverse.getChildCount();
-			for (int i = 0; i < child_count; i++) {
-				SeqSymmetry child = inverse.getChild(i);
-				for (int j = 0; j < child.getSpanCount(); j++) {
-					SeqSpan ospan = child.getSpan(j);
-					if(ospan.getBioSeq() != gviewer.getViewSeq())
-						continue;
-					
-					if (ospan.getLength() > 1) {
-						if (forwardTrack != null) {
-							GlyphI mglyph = new FillRectGlyph();
-							mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
-							forwardTrack.addMiddleGlyph(mglyph);
-						}
-						if (reverseTrack != null) {
-							GlyphI mglyph = new FillRectGlyph();
-							mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
-							reverseTrack.addMiddleGlyph(mglyph);
-						}
-					}
-				}
-			}
-		}
-
-		// Middle ground shading for graphsym
-		if ((meth != null)
-				&& (annotSym instanceof GraphSym)
-				&& (feature != null)) {
-			TierGlyph track = gstyle2track.get(style);
-			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
-			int child_count = inverse.getChildCount();
-			for (int i = 0; i < child_count; i++) {
-				SeqSymmetry child = inverse.getChild(i);
-				for (int j = 0; j < child.getSpanCount(); j++) {
-					SeqSpan ospan = child.getSpan(j);
-					if (ospan.getLength() > 1) {
-						if (track != null) {
-							GlyphI mglyph = new FillRectGlyph();
-							mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
-							track.addMiddleGlyph(mglyph);
-						}
-					}
-				}
-			}
-		}
-	}
-
 	public void delete(AffyTieredMap map, String method, ITrackStyleExtended style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature feature = style.getFeature();

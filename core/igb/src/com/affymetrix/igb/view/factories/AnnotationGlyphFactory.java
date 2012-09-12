@@ -498,10 +498,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
+				doMiddlegroundShading(gviewer, sym, rtier, seq);
 			} else {
 				// use only one tier
 				addLeafsToTier(gviewer, sym, ftier, ftier, glyph_depth);
 			}
+			doMiddlegroundShading(gviewer, sym, ftier, seq);
 		}
 //		else {  // keep recursing down into child syms if parent sym has no "method" property
 //			int childCount = sym.getChildCount();

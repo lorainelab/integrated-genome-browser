@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -38,6 +37,7 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 				childGlyph.addChild(residueGlyph);
 				tierGlyph.addChild(childGlyph);
 			}
+			doMiddlegroundShading(smv, sym, tierGlyph, seq);
 		}
 	}
 	

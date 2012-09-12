@@ -37,7 +37,7 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 				childGlyph.addChild(residueGlyph);
 				tierGlyph.addChild(childGlyph);
 			}
-			doMiddlegroundShading(smv, sym, tierGlyph, seq);
+			doMiddlegroundShading(tierGlyph, smv, seq);
 		}
 	}
 	

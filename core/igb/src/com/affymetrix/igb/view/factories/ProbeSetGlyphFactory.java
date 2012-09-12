@@ -498,12 +498,12 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 				rtier.setInfo(sym);
 				if (style.getSeparate()) {
 					addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
-					doMiddlegroundShading(gviewer, sym, rtier, seq);
+					doMiddlegroundShading(rtier, gviewer, seq);
 				} else {
 					// use only one tier
 					addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
 				}
-				doMiddlegroundShading(gviewer, sym, ftier, seq);
+				doMiddlegroundShading(ftier, gviewer, seq);
 			} catch (Exception ex) {
 				Logger.getLogger(ProbeSetGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 			}

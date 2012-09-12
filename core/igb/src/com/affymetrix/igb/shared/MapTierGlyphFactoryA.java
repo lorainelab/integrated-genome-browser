@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -46,11 +45,10 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 		return getDisplayName();
 	}
 	
-	protected static void doMiddlegroundShading(SeqMapViewExtendedI gviewer, 
-					SymWithProps annotSym, TierGlyph tierGlyph, BioSeq seq) {
+	protected static void doMiddlegroundShading(TierGlyph tierGlyph, SeqMapViewExtendedI gviewer, BioSeq seq) {
 		
 		GenericFeature feature = tierGlyph.getAnnotStyle().getFeature();
-		if (annotSym.getChildCount() > 0 && feature != null) {
+		if (feature != null) {
 			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
 			if (seq != gviewer.getViewSeq()) {
 				inverse = gviewer.transformForViewSeq(inverse, seq);
@@ -58,16 +56,11 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 			int child_count = inverse.getChildCount();
 			for (int i = 0; i < child_count; i++) {
 				SeqSymmetry child = inverse.getChild(i);
-				for (int j = 0; j < child.getSpanCount(); j++) {
-					SeqSpan ospan = child.getSpan(j);
-					if(ospan.getBioSeq() != gviewer.getViewSeq())
-						continue;
-					
-					if (ospan.getLength() > 1) {
-						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
-						tierGlyph.addMiddleGlyph(mglyph);
-					}
+				SeqSpan ospan = child.getSpan(gviewer.getViewSeq());
+				if(ospan != null && ospan.getLength() > 1){
+					GlyphI mglyph = new FillRectGlyph();
+					mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+					tierGlyph.addMiddleGlyph(mglyph);
 				}
 			}
 		}

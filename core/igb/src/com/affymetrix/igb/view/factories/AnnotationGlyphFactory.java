@@ -486,7 +486,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	@Override
-	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer) {
+	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
 		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();
 			Direction useDirection = (!style.getSeparable()) ? Direction.BOTH : Direction.FORWARD;

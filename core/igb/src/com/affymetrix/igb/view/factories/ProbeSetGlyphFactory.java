@@ -467,7 +467,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 	}
 	
 	@Override
-	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer) {
+	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
 		if (meth != null) {

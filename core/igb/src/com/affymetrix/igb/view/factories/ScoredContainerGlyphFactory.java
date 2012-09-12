@@ -45,7 +45,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 		
 		GraphIntervalSym[] the_graph_syms = determineGraphSyms(smv, aseq, original_container);
 		for (GraphIntervalSym gis : the_graph_syms) {
-			glyphFactory.createGlyphs(gis, gis.getGraphState().getTierStyle(), smv);
+			glyphFactory.createGlyphs(gis, gis.getGraphState().getTierStyle(), smv, null);
 			
 		}
 	}
@@ -209,9 +209,9 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 	}
 	
 	@Override
-	public void createGlyphs(SeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv) {
+	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
 		if (sym instanceof ScoredContainerSym) {
-			annotFactory.createGlyphs(sym, style, smv);
+			annotFactory.createGlyphs(sym, style, smv, seq);
 			displayGraphs((ScoredContainerSym) sym, smv);	
 			
 		} else {

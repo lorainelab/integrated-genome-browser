@@ -151,7 +151,7 @@ public class TrackView {
 				}
 			}
 			if (annotSym instanceof SymWithProps) {
-				addAnnotationGlyphs(smv, (SymWithProps)annotSym);
+				addAnnotationGlyphs(smv, (SymWithProps)annotSym, seq);
 				// TODO: reimplement middleground shading in a generic fashion
 				doMiddlegroundShading(smv, (SymWithProps)annotSym, seq);
 			}
@@ -165,14 +165,14 @@ public class TrackView {
 		}
 	}
 	
-	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
+	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym, BioSeq seq) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		String meth = BioSeq.determineMethod(annotSym);
 
 		if (meth != null && annotSym instanceof RootSeqSymmetry) {
 			MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)annotSym).getCategory());
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			factory.createGlyphs(annotSym, style, smv);
+			factory.createGlyphs(annotSym, style, smv, seq);
 		}
 	}
 		

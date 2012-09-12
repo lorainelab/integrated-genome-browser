@@ -981,11 +981,10 @@ public class SeqMapView extends JPanel
 
 	private void addAnnotationTracks() {
 		TrackView.getInstance().addTracks(this, aseq);
-		addDependentAndEmptyTrack();
-
 		if (aseq.getComposition() != null) {
 			handleCompositionSequence();
 		}
+		addDependentAndEmptyTrack();
 	}
 
 	protected void addDependentAndEmptyTrack(){

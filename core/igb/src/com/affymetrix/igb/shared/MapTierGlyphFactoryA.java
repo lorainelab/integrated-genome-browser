@@ -60,7 +60,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 				SeqSymmetry child = inverse.getChild(i);
 				for (int j = 0; j < child.getSpanCount(); j++) {
 					SeqSpan ospan = child.getSpan(j);
-					if(ospan.getBioSeq() != seq)
+					if(ospan.getBioSeq() != gviewer.getViewSeq())
 						continue;
 					
 					if (ospan.getLength() > 1) {

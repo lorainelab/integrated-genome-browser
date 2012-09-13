@@ -53,23 +53,9 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
 	private Rectangle child_temp = new Rectangle();
 	 
 	public ScrollableAnnotationTierGlyph(ITrackStyleExtended style) {
-		super();
-		setHitable(false);
-		setSpacer(spacer);
-		setStyle(style);
+		super(style);
 	}
 	
-	@Override
-	public final void setStyle(ITrackStyleExtended style) {
-		super.setStyle(style);
-		if (style.getCollapsed()) {
-			setPacker(collapse_packer);
-		} else {
-			setPacker(expand_packer);
-		}
-		setMaxExpandDepth(style.getMaxDepth());
-	}
-
 	private void initForSearching() {
 		int child_count = getChildCount();
 		if (child_count > 0) {

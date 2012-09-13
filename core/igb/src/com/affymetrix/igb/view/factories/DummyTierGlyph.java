@@ -14,9 +14,7 @@ public class DummyTierGlyph extends AbstractTierGlyph {
 	}
 	
 	public DummyTierGlyph(ITrackStyleExtended style) {
-		super();
-		setStyle(style);
-		this.setPacker(new FasterExpandPacker());
+		super(style);
 	}
 
 	@Override

@@ -31,9 +31,7 @@ public final class TransformTierGlyph extends AbstractTransformTierGlyph {
 	}
   
   public TransformTierGlyph(ITrackStyleExtended style)  {
-		setHitable(false);
-//		setSpacer(spacer);
-		setStyle(style);
+	  super(style);
   }
 
   public LinearTransform getTransform() {

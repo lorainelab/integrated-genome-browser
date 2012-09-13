@@ -74,9 +74,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	protected CollapsePacker collapse_packer = new CollapsePacker();
 	protected TierType tierType;
 		
-	public AbstractTierGlyph(){
+	public AbstractTierGlyph(ITrackStyleExtended style){
+		setHitable(false);
 		setSpacer(spacer);
-		tierType = TierType.NONE;
+		setStyle(style);
+		setTierType(TierType.NONE);
 	}
 	
 	private void setSpacer(double spacer) {
@@ -182,7 +184,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		direction = d;
 	}
 	
-	public void setStyle(ITrackStyleExtended style) {
+	public final void setStyle(ITrackStyleExtended style) {
 		this.style = style;
 
 		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
@@ -197,6 +199,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		} else {
 			setPacker(expand_packer);
 		}
+		setMaxExpandDepth(style.getMaxDepth());
 	}
 		
 	public void drawMiddle(ViewI view) {

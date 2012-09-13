@@ -41,8 +41,7 @@ public class GraphTierGlyph extends AbstractTierGlyph{
 	}
 
 	public GraphTierGlyph(ITrackStyleExtended style) {
-		super();
-		setStyle(style);
+		super(style);
 	}
 							
 	@Override

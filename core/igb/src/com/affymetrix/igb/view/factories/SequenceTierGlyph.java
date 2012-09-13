@@ -18,11 +18,9 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 	}
 
 	public SequenceTierGlyph(ITrackStyleExtended style) {
-		super();
+		super(style);
 		style.setSeparable(false);
 		style.setSeparate(false);
-		setHitable(false);
-		setStyle(style);
 	}
 
 	// overriding pack to ensure that tier is always the full width of the scene

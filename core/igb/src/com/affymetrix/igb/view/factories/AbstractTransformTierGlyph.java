@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.view.factories;
 
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -23,6 +24,10 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph{
 	protected Rectangle2D.Double incoming_view_coordbox;
 
 	protected abstract void setModifiedViewCoords(ViewI view);
+	
+	public AbstractTransformTierGlyph(ITrackStyleExtended style){
+		super(style);
+	}
 	
 	protected void superDrawChildren(ViewI view){
 		super.drawChildren(view);

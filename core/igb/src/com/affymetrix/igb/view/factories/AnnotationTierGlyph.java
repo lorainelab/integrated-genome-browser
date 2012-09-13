@@ -60,17 +60,9 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 	private static final int handle_width = 10;  // width of handle in pixels
 		 
 	public AnnotationTierGlyph(ITrackStyleExtended style) {
-		super();
-		setHitable(false);
-		setStyle(style);
+		super(style);
 	}
 	
-	@Override
-	public final void setStyle(ITrackStyleExtended style) {
-		super.setStyle(style);
-		setMaxExpandDepth(style.getMaxDepth());
-	}
-
 	@Override
 	protected RootSeqSymmetry loadRegion(SeqSpan span) {
 		RootSeqSymmetry detailSym = new TypeContainerAnnot(style.getMethodName());

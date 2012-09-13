@@ -468,4 +468,6 @@ public interface GlyphI extends NeoConstants  {
 	public boolean getSkipDraw();
 	
 	public void setSkipDraw(boolean skip);
+
+	public boolean inside(int x, int y);
 }

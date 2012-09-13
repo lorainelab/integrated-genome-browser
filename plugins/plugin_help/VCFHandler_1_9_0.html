@@ -1,0 +1,37 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>VCFHandler IGB plugin</title>
+</head>
+<body>
+<h1>Plugin Name: VCFHandler</h1>
+<h2>Version: 1.9.0</h2>
+<h2>(Designed to work with IGB6.7 and up)</h2>
+<h3>Date: 2011-05-23</h3>
+Author: Genentech<br>
+<br>
+<table>
+<tbody><tr><td>Overview:&nbsp;&nbsp;&nbsp;&nbsp;</td><td>plugin to allow the user to load VCF files.</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td valign="top">Usage:</td><td>This plugin is used to allow the user to load VCF files in IGB. It is an implementation of the FileTypeHandler extension point.<br>
+VCF files are text annotation files described in
+<a href="http://www.1000genomes.org/node/101">VCF 4.0 format</a> and
+<a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41">VCF 4.1 format.</a><br>
+They must have the file extension .vcf, and can be index with a tabix file .vcf.tbi. VCF files without tabix can be used,<br>
+but they will be much slower to load. They can also be compressed with gzip for a .vcf.gz extension.<br>
+The plugin requires the <a href="http://research-pub.gene.com/igb_plugins/docs/VCFHandler-1.9.0/SampleSelection.html">SampleSelection plugin</a> to display and select variants as separate tracks,<br>
+which should be loaded automatically when the VCFHandler plugin is loaded.<br>
+</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>Examples:</td><td>To provide you with better understanding on some usages of the VCFHandler, you can take a look into the following examples</td></tr>
+</tbody></table>
+<br>
+1. Loading a VCF file <img src="VCFHandler_1.9.0_files/vcfhandler1.gif" align="middle"><br>
+<br>
+2. VCF track zoomed out <img src="VCFHandler_1.9.0_files/vcfhandler2.gif" align="middle"><br>
+<br>
+3. VCF track zoomed in <img src="VCFHandler_1.9.0_files/vcfhandler3.gif" align="middle"><br>
+<br>
+If you feel like the plugin has a defect, you can fill out a bug report in <a href="http://sourceforge.net/tracker/?group_id=129420&amp;atid=714744">SourceForge Genoviz</a>.
+
+
+</body></html>

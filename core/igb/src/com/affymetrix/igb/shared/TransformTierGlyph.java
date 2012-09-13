@@ -38,7 +38,10 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
   @Override
   public void pack(ViewI view) {
 	super.pack(view);
-	
+	fixPixHeight();
+  }
+  
+  protected void fixPixHeight(){
 	// trying to transform according to tier's internal transform
 	//   (since packing is done based on tier's children)
 	if(this.getPacker() != null){
@@ -46,7 +49,7 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
 		newbox.setRect(getCoordBox());
 		LinearTransform.transform(tier_transform, newbox, newbox);
 		setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
-	}
+	}  
   }
   
   @Override

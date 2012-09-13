@@ -230,12 +230,12 @@ public class FasterExpandPacker extends ExpandPacker {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 
-		packParent(parent);
-
 		slot_maxes.trimToSize();
 		
 		setActualSlots(slot_maxes.size());
 		
+		packParent(parent);
+
 		return null;
 	}
 	

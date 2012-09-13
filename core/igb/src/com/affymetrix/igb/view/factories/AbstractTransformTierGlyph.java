@@ -38,10 +38,6 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph{
 		super.pickTraversal(pickRect, pickList, view);
 	}
 	
-	protected void superMoveRelative(double diffx, double diffy) {
-		super.moveRelative(diffx, diffy);
-	}
-	
 	@Override
 	public void drawChildren(ViewI view) {
 		// MODIFY VIEW

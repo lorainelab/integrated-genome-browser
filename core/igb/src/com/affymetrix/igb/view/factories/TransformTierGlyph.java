@@ -8,7 +8,6 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.view.factories.AbstractTransformTierGlyph;
 
 /**
  *  TransformTierGlyph.
@@ -35,6 +34,10 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
 	  super(style);
   }
 
+  protected void superMoveRelative(double diffx, double diffy) {
+	super.moveRelative(diffx, diffy);
+  }
+  
   @Override
   public void pack(ViewI view) {
 	super.pack(view);

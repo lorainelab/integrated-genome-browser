@@ -1,14 +1,13 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.view.factories.AbstractTransformTierGlyph;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.view.factories.AbstractTransformTierGlyph;
 
 /**
  *  TransformTierGlyph.
@@ -25,7 +24,6 @@ import java.util.Map;
  */
 public final class TransformTierGlyph extends AbstractTransformTierGlyph {
   private int fixedPixHeight = 1;
-  private double spacer = 2;
   private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -62,15 +60,6 @@ public final class TransformTierGlyph extends AbstractTransformTierGlyph {
 	}
     tier_transform.setTransform(tier_transform.getScaleX(),0,0,tier_transform.getScaleY() * yscale,tier_transform.getTranslateX(),tier_transform.getTranslateY());
     getCoordBox().height = getCoordBox().height * yscale;
-  }
-
-
-  @Override
-  public void setStyle(ITrackStyleExtended style) {
-	super.setStyle(style);
-	FasterExpandPacker expand_packer = new FasterExpandPacker();
-	((PaddedPackerI) expand_packer).setParentSpacer(spacer);
-	setPacker(expand_packer);
   }
 
   // Don't move children! Just change tier's transform offset.

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.view.factories;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;

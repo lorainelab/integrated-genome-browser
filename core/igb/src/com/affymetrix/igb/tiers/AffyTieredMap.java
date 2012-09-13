@@ -26,7 +26,7 @@ import com.affymetrix.igb.action.ShowMixedStrandAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import java.awt.Color;
 import java.awt.Rectangle;

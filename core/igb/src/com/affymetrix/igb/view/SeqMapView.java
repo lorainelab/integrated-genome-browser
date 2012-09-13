@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;

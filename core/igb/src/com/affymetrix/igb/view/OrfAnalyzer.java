@@ -33,7 +33,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
 
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 

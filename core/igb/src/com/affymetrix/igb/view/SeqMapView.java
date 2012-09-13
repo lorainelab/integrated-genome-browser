@@ -205,7 +205,7 @@ public class SeqMapView extends JPanel
 	private final static int[] default_range = new int[]{0, 100};
 	private final static int[] default_offset = new int[]{0, 100};
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
-	private TransformTierGlyph axis_tier;
+	private TierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -510,7 +510,7 @@ public class SeqMapView extends JPanel
 //		seqViewerOptions.add(viewParentinSequenceViewer);// get more info
 	}
 
-	public final TransformTierGlyph getAxisTier() {
+	public final TierGlyph getAxisTier() {
 		return axis_tier;
 	}
 
@@ -885,7 +885,7 @@ public class SeqMapView extends JPanel
 	/**
 	 * Set up a tier with fixed pixel height and place axis in it.
 	 */
-	private TransformTierGlyph addAxisTier(int tier_index) {
+	private TierGlyph addAxisTier(int tier_index) {
 		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
 		resultAxisTier.setFixedPixHeight(45);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
@@ -1775,7 +1775,7 @@ public class SeqMapView extends JPanel
 			GenericFeature feature = tglyph.getAnnotStyle().getFeature();
 			if (feature == null) {
 				//Check if clicked on axis.
-				if (tglyph instanceof TransformTierGlyph) {
+				if (tglyph == axis_tier) {
 					SeqSpan visible = getVisibleSpan();
 					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
 						popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));

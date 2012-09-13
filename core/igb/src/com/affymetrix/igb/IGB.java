@@ -27,7 +27,7 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -392,7 +392,7 @@ public final class IGB extends Application
 	}
 
 	public int searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, TransformTierGlyph axis_tier, List<GlyphI> glyphs, Color hitColor) {
+			boolean forward, Pattern regex, String residues, int residue_offset, GlyphI axis_tier, List<GlyphI> glyphs, Color hitColor) {
 		int hit_count = 0;
 		Matcher matcher = regex.matcher(residues);
 		while (matcher.find() && !Thread.currentThread().isInterrupted()) {

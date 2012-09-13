@@ -38,7 +38,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
@@ -212,7 +211,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void mapRefresh(List<GlyphI> glyphs) {
-		TransformTierGlyph axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
+		GlyphI axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
 		for (GlyphI glyph : new CopyOnWriteArrayList<GlyphI>(glyphs)) {
 			axis_tier.addChild(glyph);
 		}

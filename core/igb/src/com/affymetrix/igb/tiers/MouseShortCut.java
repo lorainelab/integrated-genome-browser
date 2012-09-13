@@ -6,7 +6,6 @@ import com.affymetrix.igb.action.HideAction;
 import com.affymetrix.igb.action.ShowAllAction;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
 import java.awt.event.MouseEvent;
@@ -108,7 +107,7 @@ final public class MouseShortCut implements MouseListener{
 
 			List<TierLabelGlyph> tier_Labels = smv.getTierManager().getSelectedTierLabels();
 			if(tier_Labels.size() == 1){
-				if(tier_Labels.get(0).getInfo() instanceof TierGlyph && ((TierGlyph)tier_Labels.get(0).getInfo()) instanceof TransformTierGlyph){
+				if(tier_Labels.get(0).getReferenceTier() == smv.getAxisTier()){
 					ShowAllAction.getAction().actionPerformed(null);
 					return;
 				}

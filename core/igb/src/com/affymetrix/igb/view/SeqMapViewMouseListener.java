@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.AutoScrollAction;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
@@ -429,7 +428,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 	// did the most recent drag start in the axis tier?
 	private boolean startedInAxisTier() {
-		TransformTierGlyph axis_tier = smv.getAxisTier();
+		GlyphI axis_tier = smv.getAxisTier();
 		if (axis_tier == null){
 			return false;
 		}

@@ -85,7 +85,7 @@ public class ExpandPacker extends ExpandedTierPacker {
 		return null;
 	}
 
-	void packParent(GlyphI parent) {
+	protected void packParent(GlyphI parent) {
 		long min = Long.MIN_VALUE;
 		long max = Long.MAX_VALUE;
 		List<GlyphI> sibs = parent.getChildren();

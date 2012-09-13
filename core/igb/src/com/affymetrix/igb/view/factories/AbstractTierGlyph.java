@@ -117,16 +117,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		return Collections.<SeqSymmetry>emptyList();
 	}
 	
-	public boolean initUnloaded() {
+	public void initUnloaded() {
 		Glyph glyph;
 
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();
 		SeqSymmetry sym = new SimpleMutableSeqSymmetry();
-		double height = style.getHeight();
-		if(!style.isGraphTier()){
-			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
-		}
-		
+	
 		if(style.getFeature() != null){
 			sym = style.getFeature().getRequestSym();
 		}
@@ -156,8 +152,6 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		glyph = new FillRectGlyph();
 		glyph.setCoords(0, 0, 0, getChildHeight());
 		addChild(glyph);
-		
-		return false;
 	}
 	
 	@Override

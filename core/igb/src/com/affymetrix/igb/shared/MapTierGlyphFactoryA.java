@@ -54,14 +54,20 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 				inverse = gviewer.transformForViewSeq(inverse, seq);
 			}
 			int child_count = inverse.getChildCount();
-			for (int i = 0; i < child_count; i++) {
-				SeqSymmetry child = inverse.getChild(i);
-				SeqSpan ospan = child.getSpan(gviewer.getViewSeq());
-				if(ospan != null && ospan.getLength() > 1){
-					GlyphI mglyph = new FillRectGlyph();
-					mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
-					tierGlyph.addMiddleGlyph(mglyph);
+			if (child_count > 0) {
+				for (int i = 0; i < child_count; i++) {
+					SeqSymmetry child = inverse.getChild(i);
+					SeqSpan ospan = child.getSpan(gviewer.getViewSeq());
+					if (ospan != null && ospan.getLength() > 1) {
+						GlyphI mglyph = new FillRectGlyph();
+						mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+						tierGlyph.addMiddleGlyph(mglyph);
+					}
 				}
+			} else {
+				GlyphI mglyph = new FillRectGlyph();
+				mglyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
+				tierGlyph.addMiddleGlyph(mglyph);
 			}
 		}
 	}

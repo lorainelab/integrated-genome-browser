@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ import com.affymetrix.igb.view.factories.AbstractTransformTierGlyph;
  *     these are _not_ considered children, so transform does not apply to them
  *
  */
-public final class TransformTierGlyph extends AbstractTransformTierGlyph {
+public class TransformTierGlyph extends AbstractTransformTierGlyph {
   private int fixedPixHeight = 1;
   private static final Map<String,Class<?>> PREFERENCES;
 	static {
@@ -34,10 +35,20 @@ public final class TransformTierGlyph extends AbstractTransformTierGlyph {
 	  super(style);
   }
 
-  public LinearTransform getTransform() {
-    return tier_transform;
+  @Override
+  public void pack(ViewI view) {
+	super.pack(view);
+	
+	// trying to transform according to tier's internal transform
+	//   (since packing is done based on tier's children)
+	if(this.getPacker() != null){
+		Rectangle2D.Double newbox = new Rectangle2D.Double();
+		newbox.setRect(getCoordBox());
+		LinearTransform.transform(tier_transform, newbox, newbox);
+		setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
+	}
   }
-
+  
   @Override
   protected void setModifiedViewCoords(ViewI view){
 	// This works fine too. But for now not modifying it. HV 05/19/12

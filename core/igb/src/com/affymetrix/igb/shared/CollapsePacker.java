@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import cern.colt.list.DoubleArrayList;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.CollapsedTierPacker;
 
@@ -24,17 +23,6 @@ public final class CollapsePacker extends CollapsedTierPacker {
 
 		adjustHeight(parent);
 		moveAllChildren(parent);
-
-		// trying to transform according to tier's internal transform
-		//   (since packing is done based on tier's children)
-		if (parent instanceof TransformTierGlyph) {
-			Rectangle2D.Double newbox = new Rectangle2D.Double();
-			newbox.setRect(parent.getCoordBox());
-			TransformTierGlyph transtier = (TransformTierGlyph) parent;
-			LinearTransform tier_transform = transtier.getTransform();
-			LinearTransform.transform(tier_transform, newbox, newbox);
-			parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
-		}
 
 		return null;
 	}

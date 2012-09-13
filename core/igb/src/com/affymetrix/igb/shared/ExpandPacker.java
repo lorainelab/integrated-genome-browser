@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Rectangle2D.Double;
 import com.affymetrix.genoviz.glyph.LabelGlyph;
@@ -115,10 +114,6 @@ public class ExpandPacker extends ExpandedTierPacker {
 		newbox.y = newbox.y - parent_spacer;
 		newbox.height = newbox.height + (2 * parent_spacer);
 
-		if (parent instanceof TransformTierGlyph) {
-			TransformTierGlyph transtier = (TransformTierGlyph) parent;
-			LinearTransform.transform(transtier.getTransform(), newbox, newbox);
-		}
 		parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
 	}
 

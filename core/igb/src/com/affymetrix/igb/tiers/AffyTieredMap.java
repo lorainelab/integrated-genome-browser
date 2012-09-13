@@ -26,6 +26,7 @@ import com.affymetrix.igb.action.ShowMixedStrandAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import java.awt.Color;
@@ -207,9 +208,13 @@ public class AffyTieredMap extends NeoMap {
 				continue;
 			}
 			if (mtg instanceof TransformTierGlyph) {
-				TransformTierGlyph transtier = (TransformTierGlyph) mtg;
-				transtier.fitToPixelHeight(this.getView());
-				fixed_pixel_height += transtier.getFixedPixHeight();
+				if(mtg instanceof DefaultTierGlyph && !((DefaultTierGlyph)mtg).isHeightFixed()){
+					fixed_coord_height += mtg.getCoordBox().height;
+				}else{
+					TransformTierGlyph transtier = (TransformTierGlyph) mtg;
+					transtier.fitToPixelHeight(this.getView());
+					fixed_pixel_height += transtier.getFixedPixHeight();
+				}
 			} else {
 				fixed_coord_height += mtg.getCoordBox().height;
 			}

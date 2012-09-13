@@ -21,7 +21,7 @@ import java.util.List;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class DefaultTierGlyph extends AbstractTierGlyph{
+public class DefaultTierGlyph extends TransformTierGlyph{
 	private static final Map<String,Class<?>> ANNOT_DEFAULT_PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -64,6 +64,7 @@ public class DefaultTierGlyph extends AbstractTierGlyph{
 
 	//private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
+	private boolean isFixedHeight;
 	
 	public DefaultTierGlyph(ITrackStyleExtended style) {
 		super(style);
@@ -188,7 +189,7 @@ public class DefaultTierGlyph extends AbstractTierGlyph{
 			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 		}
 	}
-
+	
 	/**
 	 * Overridden to allow background shading
 	 * by a collection of non-child "middle ground" glyphs.
@@ -207,9 +208,54 @@ public class DefaultTierGlyph extends AbstractTierGlyph{
 
 		super.draw(view);
 	}
-						
+	
 	@Override
-	public void drawChildren(ViewI view) {
+	protected void fixPixHeight(){
+		if(isFixedHeight){
+			super.fixPixHeight();
+		}
+	}
+	
+	public boolean isHeightFixed(){
+		return isFixedHeight;
+	}
+	
+	public void setHeightFixed(boolean isFixedHeight){
+		this.isFixedHeight = isFixedHeight;
+		this.setFixedPixHeight(this.getPixelBox().height);
+	}
+	
+	@Override
+	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
+			ViewI view) {
+		if(isFixedHeight){
+			super.pickTraversal(pickRect, pickList, view);
+		}else{
+			superPickTraversal(pickRect, pickList, view);
+		}
+	}
+		
+	@Override
+	public void moveRelative(double diffx, double diffy) {
+		if(isFixedHeight){
+			super.moveRelative(diffx, diffy);
+		}else{
+			superMoveRelative(diffx, diffy);
+		}
+		
+	}
+	
+	@Override
+	public void drawChildren(ViewI view){
+		if(isFixedHeight){
+			super.drawChildren(view);
+		}else{
+			superDrawChildren(view);
+		}
+	}
+	
+	@Override
+	public void superDrawChildren(ViewI view) {
 		try {
 			if (getChildren() != null) {
 				GlyphI child;

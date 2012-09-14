@@ -55,12 +55,12 @@ public class AffyTieredMap extends NeoMap {
 
 	// the total pixel height of visible fixed pixel tiers
 	//    (recalculated with every packTiers() call)
-	private int fixed_pixel_height;
+	protected int fixed_pixel_height;
 
 	// the total coord height of visible fixed coord tiers
 	//    (any visible tier that is NOT a fixed pixel tier)
 	//    (recalculated with every packTiers() call)
-	private double fixed_coord_height;
+	protected double fixed_coord_height;
 	private static boolean show_plus = true;
 	private static boolean show_minus = true;
 	private static boolean show_mixed = true;

@@ -172,6 +172,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setVisibility(tier_glyph.isVisible());
     }
+	labelmap.fixed_coord_height = fixed_coord_height;
+	labelmap.fixed_pixel_height = fixed_pixel_height;
     ordered_glyphs = null;
   }
 

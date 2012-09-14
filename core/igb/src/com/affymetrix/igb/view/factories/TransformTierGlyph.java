@@ -87,11 +87,11 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
 		   tier_transform.getTranslateY() + diffy);
   }
 
-  public void setFixedPixHeight(int pix_height) {
+  public final void setFixedPixHeight(int pix_height) {
     fixedPixHeight = pix_height;
   }
 
-  public int getFixedPixHeight() {
+  public final int getFixedPixHeight() {
     return fixedPixHeight;
   }
 

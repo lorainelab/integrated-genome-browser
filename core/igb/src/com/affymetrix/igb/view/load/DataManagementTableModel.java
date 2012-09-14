@@ -327,7 +327,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				break;
 			case HIDE_FEATURE_COLUMN:
 				if (vFeature.getStyle() != null) {
-					setVisibleTracks(vFeature.getStyle());
+					setVisibleTracks(vFeature);
 				}
 				break;
 			case BACKGROUND_COLUMN:
@@ -373,14 +373,23 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 	}
 
-	private void setVisibleTracks(ITrackStyleExtended style) {
+	private void setVisibleTracks(VirtualFeature vFeature) {
+		LoadStrategy currentLoadStrategy = vFeature.getFeature().getLoadStrategy();
+		ITrackStyleExtended style = vFeature.getStyle();
 		if (style.getShow()) {
 			if (style.getShow()) {
 				style.setShow(false);
+				if ((currentLoadStrategy == LoadStrategy.AUTOLOAD) || (currentLoadStrategy == LoadStrategy.VISIBLE)) {
+					vFeature.getFeature().setLoadStrategy(LoadStrategy.NO_LOAD);
+				}
 			}
 		} else {
 			if (!style.getShow()) {
 				style.setShow(true);
+				if (!(currentLoadStrategy == LoadStrategy.GENOME)) {
+					vFeature.getFeature().setLoadStrategy(LoadStrategy.VISIBLE);
+				}
+				
 			}
 		}
 	}

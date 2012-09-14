@@ -356,6 +356,8 @@ public class AffyTieredMap extends NeoMap {
 		int mod_pixel_height = canvas.getSize().height - fixed_pixel_height;
 		double mod_coord_height = fixed_coord_height;
 		double minzoom = mod_pixel_height / mod_coord_height;
+		//Do not allow to set y-scale to less than 1
+		minzoom = Math.max(minzoom, 1);
 		new_trans.setTransform(new_trans.getScaleX(),0,0,minzoom,new_trans.getTranslateX(),new_trans.getTranslateY());
 		return new_trans;
 	}

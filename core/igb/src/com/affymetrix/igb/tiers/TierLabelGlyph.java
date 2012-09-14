@@ -7,6 +7,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
@@ -187,6 +188,16 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			drawLoading(g, pixelbox);
 		}
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
+		
+		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed()){
+			g.setColor(fgcolor);
+			g.fillRect(pixelbox.x + 5, pixelbox.y + 10, 10, 10);
+			g.fillArc(pixelbox.x + 6, pixelbox.y + 2, 8, 15, 0, 180);
+		
+			g.setColor(bgcolor);
+			g.fillArc(pixelbox.x + 8, pixelbox.y + 4, 4, 12, 0, 180);
+			g.fillRect(pixelbox.x + 9, pixelbox.y + 15, 2, 4);
+		}
 		super.draw(view);
 	}
 	private int textPixelHeight;

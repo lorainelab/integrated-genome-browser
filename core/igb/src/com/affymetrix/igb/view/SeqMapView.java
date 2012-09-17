@@ -54,6 +54,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -976,6 +977,9 @@ public class SeqMapView extends JPanel
 		for (TierGlyph tg : tiers) {
 			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
+				if(tg instanceof DefaultTierGlyph){
+					((DefaultTierGlyph)tg).setHeightFixed(false);
+				}
 			}
 		}
 	}

@@ -205,7 +205,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				}
 
 				if (style instanceof TrackStyle
-						&& style.getShow()) {
+						&& style.getShow()
+						&& tier.getChildCount() > 0) { // Added on Sep 17, 2012 to fix bug - track prefs out of sync
 					styles.add((TrackStyle) style);
 				}
 			}

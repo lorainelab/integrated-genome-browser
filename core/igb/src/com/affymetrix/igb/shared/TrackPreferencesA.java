@@ -24,12 +24,9 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.factories.DynamicStyleHeatMap;
 
-import static ch.lambdaj.Lambda.*;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import static org.hamcrest.Matchers.*;
-import org.hamcrest.core.*;
 
 import com.jidesoft.combobox.ColorComboBox;
 
@@ -803,19 +800,29 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void stackDepthTextFieldReset() {
 		JTextField stackDepthTextField = getStackDepthTextField();
-		boolean enabled = annotStyles.size() > 0 && isAllAnnot();
+		boolean enabled = allGlyphs.size() > 0 && isAllAnnot();
 		stackDepthTextField.setEnabled(enabled);
 		getStackDepthLabel().setEnabled(enabled);
 		stackDepthTextField.setText("");
 		if (enabled) {
 			Integer stackDepth = -1;
 			boolean stackDepthSet = false;
-			for (ITrackStyleExtended style : annotStyles) {
+			for (StyledGlyph glyph : allGlyphs) {
 				if (stackDepth == -1 && !stackDepthSet) {
-					stackDepth = style.getMaxDepth();
+					if (glyph instanceof TierGlyph) {
+						switch (((TierGlyph) glyph).getDirection()) {
+							case FORWARD:
+								stackDepth = glyph.getAnnotStyle().getForwardMaxDepth();
+								break;
+							case REVERSE:
+								stackDepth = glyph.getAnnotStyle().getReverseMaxDepth();
+								break;
+							default:
+								stackDepth = glyph.getAnnotStyle().getMaxDepth();
+						}
+					}
 					stackDepthSet = true;
-				}
-				else if (stackDepth != style.getMaxDepth()) {
+				} else if (stackDepth != glyph.getAnnotStyle().getMaxDepth()) {
 					stackDepth = -1;
 					break;
 				}

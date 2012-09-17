@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public interface TierGlyph extends GlyphI, StyledGlyph {
-
+	public static int MINIMUM_TIER_HEIGHT = 45;
 	public static enum Direction {
 		FORWARD(" (+)"), NONE(""), REVERSE(" (-)"), BOTH(" (+/-)"), AXIS("");
 		private final String display;

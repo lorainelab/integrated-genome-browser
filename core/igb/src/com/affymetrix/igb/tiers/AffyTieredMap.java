@@ -366,7 +366,9 @@ public class AffyTieredMap extends NeoMap {
 		double mod_coord_height = fixed_coord_height;
 		double minzoom = mod_pixel_height / mod_coord_height;
 		//If minzoom is equal or less than zero than it will result in negative scale for y-axis
-		minzoom = Math.max(minzoom, 1);
+		if(minzoom <= 0){
+			minzoom = Math.max(minzoom, 1);
+		}
 		new_trans.setTransform(new_trans.getScaleX(),0,0,minzoom,new_trans.getTranslateX(),new_trans.getTranslateY());
 		return new_trans;
 	}

@@ -521,6 +521,17 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 	}
 	
 	@Override
+	public boolean isManuallyResizable() {
+		if(isHeightFixed())
+			return false;
+		
+		if (this.getPacker() instanceof CollapsePacker) {
+			return false;
+		}
+		return true;
+	}
+		
+	@Override
 	public Map<String,Class<?>> getPreferences(){
 		if(tierType == TierType.ANNOTATION){
 			return ANNOT_DEFAULT_PREFERENCES;

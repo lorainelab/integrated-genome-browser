@@ -211,10 +211,10 @@ public class AffyTieredMap extends NeoMap {
 				if(mtg instanceof DefaultTierGlyph && !((DefaultTierGlyph)mtg).isHeightFixed()){
 					fixed_coord_height += mtg.getCoordBox().height;
 					//TODO: Glyph.getMinPixelHeight() can be used
-					int pixel_height = mtg.getPixelBox(this.getView()).height;
-					if(TierGlyph.MINIMUM_TIER_HEIGHT > pixel_height){
-						fixed_pixel_height += TierGlyph.MINIMUM_TIER_HEIGHT - pixel_height;
-					}
+//					int pixel_height = mtg.getPixelBox(this.getView()).height;
+//					if(TierGlyph.MINIMUM_TIER_HEIGHT > pixel_height){
+//						fixed_pixel_height += TierGlyph.MINIMUM_TIER_HEIGHT - pixel_height;
+//					}
 				}else{
 					TransformTierGlyph transtier = (TransformTierGlyph) mtg;
 					transtier.fitToPixelHeight(this.getView());
@@ -222,10 +222,10 @@ public class AffyTieredMap extends NeoMap {
 				}
 			} else {
 				fixed_coord_height += mtg.getCoordBox().height;
-				int pixel_height = mtg.getPixelBox(this.getView()).height;
-				if(TierGlyph.MINIMUM_TIER_HEIGHT > pixel_height){
-					fixed_pixel_height += TierGlyph.MINIMUM_TIER_HEIGHT - pixel_height;
-				}
+//				int pixel_height = mtg.getPixelBox(this.getView()).height;
+//				if(TierGlyph.MINIMUM_TIER_HEIGHT > pixel_height){
+//					fixed_pixel_height += TierGlyph.MINIMUM_TIER_HEIGHT - pixel_height;
+//				}
 			}
 			height = mtg.getCoordBox().height;
 			// need to call moveAbsolute to trigger recursive move of

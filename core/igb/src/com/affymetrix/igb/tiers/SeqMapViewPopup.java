@@ -110,7 +110,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		igb.addAction(RepackSelectedTiersAction.getAction());
 		igb.addAction(RepackAllTiersAction.getAction());
 		igb.addAction(AutoLoadThresholdAction.getAction());
-		igb.addAction(SetSummaryThresholdAction.getAction());
 	}
 
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
@@ -274,9 +273,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
 		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
-		JMenuItem sumThreshItem = new JRPMenuItemTLP(SetSummaryThresholdAction.getAction());
-		sumThreshItem.setEnabled(num_selections > 0);
-		popup.add(sumThreshItem);
 		popup.add(new JSeparator());
 		JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
 		popup.add(customize);

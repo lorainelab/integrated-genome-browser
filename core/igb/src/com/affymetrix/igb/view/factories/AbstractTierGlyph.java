@@ -339,9 +339,9 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		return true;
 	}
 		
-	public boolean isDetail(ViewI view) {
-		return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
-	}
+//	private boolean isDetail(ViewI view) {
+//		return SetSummaryThresholdAction.getAction().isDetail(getAnnotStyle());
+//	}
 	
 //	@Override
 	public void rangeChanged(NeoRangeEvent evt){
@@ -351,7 +351,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	protected void rangeChanged(SeqMapViewExtendedI smv){
-		if(isAutoLoadMode() && isDetail(smv.getSeqMap().getView())){
+		if(isAutoLoadMode() /* && isDetail(smv.getSeqMap().getView())*/){
 			try {
 				MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(getFileTypeCategory());
 				if(factory != null){

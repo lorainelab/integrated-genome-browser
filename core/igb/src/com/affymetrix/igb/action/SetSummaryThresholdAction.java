@@ -29,13 +29,13 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final SetSummaryThresholdAction ACTION = new SetSummaryThresholdAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static SetSummaryThresholdAction getAction() {
-		return ACTION;
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
+//	
+//	public static SetSummaryThresholdAction getAction() {
+//		return ACTION;
+//	}
 
 	protected SetSummaryThresholdAction() {
 		super(IGBConstants.BUNDLE.getString("setSummaryThresholdAction"),

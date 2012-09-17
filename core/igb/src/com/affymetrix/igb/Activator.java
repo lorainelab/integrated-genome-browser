@@ -319,7 +319,6 @@ public class Activator implements BundleActivator {
 		ChangeExpandMaxAction.getAction();
 		LabelGlyphAction.getAction();
 		TierFontSizeAction.getAction();
-		SetSummaryThresholdAction.getAction();
 		GenericActionHolder.getInstance().addGenericAction(
 				new SeqMapToggleAction(
 				ShowOneTierAction.getAction(),

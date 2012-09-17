@@ -16,18 +16,18 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -235,7 +235,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		boolean any_view_mode = false;
 		boolean coordinates_track_selected = false;
 		boolean containHiddenTiers = false;
-
+		boolean any_lockable = false;
+		boolean any_locked = false;
+		
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
 			ITrackStyleExtended astyle = glyph.getAnnotStyle();
@@ -257,6 +259,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				coordinates_track_selected = true;
 			}
+			
+			any_lockable = any_lockable || glyph.getTierType() == TierGlyph.TierType.ANNOTATION;
+			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
 		}
 
 		for (TierLabelGlyph label : handler.getAllTierLabels()) {
@@ -295,6 +300,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
 		expand.setEnabled(any_are_collapsed);
 		popup.add(expand);
+		JCheckBoxMenuItem lock = new JCheckBoxMenuItem(new LockTierHeightAction(any_locked));
+		lock.setSelected(any_locked);
+		lock.setEnabled(any_lockable);
+		popup.add(lock);
 		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
 		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
 		popup.add(repack_selected_tiers);

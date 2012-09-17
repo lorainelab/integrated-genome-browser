@@ -236,6 +236,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		boolean containHiddenTiers = false;
 		boolean any_lockable = false;
 		boolean any_locked = false;
+		boolean all_but_one_locked = false;
 		
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
@@ -263,13 +264,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
 		}
 
+		int no_of_locked = 0;
 		for (TierLabelGlyph label : handler.getAllTierLabels()) {
 			TierGlyph tier = (TierGlyph) label.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();
 			if (!style.getShow()) {
 				containHiddenTiers = true;
 			}
+			if(style.getShow() && tier instanceof DefaultTierGlyph && ((DefaultTierGlyph)tier).isHeightFixed()){
+				no_of_locked++;
+			}
 		}
+		all_but_one_locked = no_of_locked == handler.getVisibleTierGlyphs().size() - 2;
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
 		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
@@ -299,6 +305,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JCheckBoxMenuItem lock = new JCheckBoxMenuItem(new LockTierHeightAction(any_locked));
 		lock.setSelected(any_locked);
 		lock.setEnabled(any_lockable);
+		if(!any_locked){
+			lock.setEnabled(!all_but_one_locked && any_lockable);
+		}
 		popup.add(lock);
 		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
 		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);

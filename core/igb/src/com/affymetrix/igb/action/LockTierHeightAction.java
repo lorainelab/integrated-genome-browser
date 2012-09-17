@@ -23,7 +23,11 @@ public class LockTierHeightAction extends SeqMapViewActionA{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		for(StyledGlyph glyph : allGlyphs){
+		StyledGlyph[] glyphs = allGlyphs.toArray(new StyledGlyph[0]);
+		int len = getTierManager().getVisibleTierGlyphs().size() - 1 == glyphs.length? glyphs.length - 1 : glyphs.length;
+		StyledGlyph glyph;
+		for(int i = 0; i < len ; i++){
+			glyph = glyphs[i];
 			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).getTierType() == TierType.ANNOTATION){
 				DefaultTierGlyph dtg = (DefaultTierGlyph)glyph;
 				dtg.setHeightFixed((Boolean)getValue(SELECTED_KEY));

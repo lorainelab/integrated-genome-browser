@@ -7,6 +7,7 @@ import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.action.SelectionRulesAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.BorderLayout;
@@ -67,6 +68,9 @@ public class IGBToolBar extends JToolBar {
 		
 		selection_panel.add(lf);
 		selection_panel.add(tf);
+		SelectionRulesAction action = SelectionRulesAction.getAction();
+		JButton button = new JButton(action);
+		selection_panel.add(button);
 		selection_panel.validate();
 		
 		add(toolbar_items_panel, BorderLayout.LINE_START);

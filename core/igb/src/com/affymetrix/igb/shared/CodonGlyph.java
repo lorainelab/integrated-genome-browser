@@ -11,10 +11,8 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
-import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -37,20 +35,23 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 
 	@Override
 	public void drawTraversal(ViewI view)  {
-		if (drawCodonGlyph != null) {
-			drawCodonGlyph.drawTraversal(view);
-		}
-		else {
-			setCoordBox(getParent().getCoordBox());
-			if (chariter == null) {
-				String residues = getResidue(view);
-				if (residues != null) {
-					setResidues(residues);
+		try {
+			if (drawCodonGlyph != null) {
+				drawCodonGlyph.drawTraversal(view);
+			} else {
+				setCoordBox(getParent().getCoordBox());
+				if (chariter == null) {
+					String residues = getResidue(view);
+					if (residues != null) {
+						setResidues(residues);
+					}
+				}
+				if (chariter != null) {
+					super.drawTraversal(view);
 				}
 			}
-			if (chariter != null) {
-				super.drawTraversal(view);
-			}
+		} catch (Exception ex) {
+			System.out.println("Exception in CodonGlyph :" + ex);
 		}
 	}
 
@@ -127,10 +128,13 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	}
 
 	private ResidueRange getResidueRange() {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		SymSpanWithCds parentSym = (SymSpanWithCds)getParent().getParent().getInfo();
+//		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq seq = parentSym.getBioSeq();
 		SeqSymmetry exonSym = (SeqSymmetry)getParent().getInfo();
-		SeqSpan exonSpan = exonSym.getSpan(seq);
+//		SeqSpan exonSpan = exonSym.getSpan(seq);
+		SeqSpan exonSpan = exonSym.getSpan(0);
+		
 		if (parentSym.isForward() && exonSpan.getStart() > exonSpan.getEnd()) {
 			exonSpan = new SimpleSeqSpan(exonSpan.getEnd(), exonSpan.getStart(), seq);
 		}

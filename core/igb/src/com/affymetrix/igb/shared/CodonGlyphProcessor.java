@@ -7,14 +7,27 @@ import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
-public class CodonGlyphProcessor implements GlyphProcessor, java.util.prefs.PreferenceChangeListener{
+public class CodonGlyphProcessor implements GlyphProcessor {
 	private CodonGlyph saveCodonGlyph;
 	private int codeSize;
 	
+	PreferenceChangeListener prefs = new PreferenceChangeListener(){
+
+		public void preferenceChange(PreferenceChangeEvent pce) {
+			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+				return;
+			}
+			if (pce.getKey().equals(CodonGlyph.CODON_GLYPH_CODE_SIZE)) {
+				codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
+			}
+		}
+	};
+	
 	public CodonGlyphProcessor(){
 		codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
-		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(prefs);
 	}
 	
 	/*
@@ -57,12 +70,4 @@ public class CodonGlyphProcessor implements GlyphProcessor, java.util.prefs.Pref
 		return false;
 	}
 
-	public void preferenceChange(PreferenceChangeEvent pce) {
-		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
-          return;
-        }
-		if (pce.getKey().equals(CodonGlyph.CODON_GLYPH_CODE_SIZE)) {
-			codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
-        }
-	}
 }

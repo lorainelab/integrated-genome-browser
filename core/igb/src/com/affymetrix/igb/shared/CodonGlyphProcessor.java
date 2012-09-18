@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
@@ -25,10 +24,10 @@ public class CodonGlyphProcessor implements GlyphProcessor, java.util.prefs.Pref
 	 * will draw the one without on its turn.
 	 */
 	@Override
-	public void processGlyph(GlyphI glyph) {
+	public void processGlyph(GlyphI glyph, BioSeq seq) {
 		if (glyph.getParent() != null && glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
 			CodonGlyph codonGlyph = new CodonGlyph(codeSize);
-			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo())) {
+			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
 				if (saveCodonGlyph != null) {
 					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);
 				}
@@ -40,8 +39,8 @@ public class CodonGlyphProcessor implements GlyphProcessor, java.util.prefs.Pref
 			glyph.addChild(codonGlyph);
 		}
 	}
-	private boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym) {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+	
+	private static boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym, BioSeq seq) {
 		SeqSpan cdsSpan = parentSym.getCdsSpan();
 		if (cdsSpan != null) {
 		if (parentSym.isForward() && exonSym.getSpan(seq) != null &&

@@ -3,6 +3,7 @@ package com.affymetrix.igb.glyph;
 import java.util.List;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.GlyphProcessor;
 
@@ -17,10 +18,10 @@ public class GlyphProcessorUtil {
 		return instance;
 	}
 
-	public void fireProcessGlyph(GlyphI glyph) {
+	public void fireProcessGlyph(GlyphI glyph, BioSeq seq) {
 		List<GlyphProcessor> glyphProcessors = ExtensionPointHandler.getExtensionPoint(GlyphProcessor.class).getExtensionPointImpls();
 		for (GlyphProcessor glyphProcessor : glyphProcessors) {
-			glyphProcessor.processGlyph(glyph);
+			glyphProcessor.processGlyph(glyph, seq);
 		}
 	}
 

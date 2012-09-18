@@ -9,7 +9,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-public class CodonGlyphProcessor implements GlyphProcessor {
+public class CodonGlyphProcessor {
 	private CodonGlyph saveCodonGlyph;
 	private int codeSize;
 	
@@ -36,7 +36,6 @@ public class CodonGlyphProcessor implements GlyphProcessor {
 	 * with. So this kludge causes the one without to not be drawn on its turn, but the one with
 	 * will draw the one without on its turn.
 	 */
-	@Override
 	public void processGlyph(GlyphI glyph, BioSeq seq) {
 		if (glyph.getParent() != null && glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
 			CodonGlyph codonGlyph = new CodonGlyph(codeSize);

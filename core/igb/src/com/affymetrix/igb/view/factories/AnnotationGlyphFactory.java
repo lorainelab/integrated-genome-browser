@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.igb.glyph.GlyphProcessorUtil;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -50,11 +49,13 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private Class<?> parent_glyph_class;
 	private Class<?> child_glyph_class;
 	private final Class<?> parent_labelled_glyph_class;
-
+	private CodonGlyphProcessor codon_glyph_processor;
+	
 	public AnnotationGlyphFactory() {
 		parent_glyph_class = default_eparent_class;
 		child_glyph_class = default_echild_class;
 		parent_labelled_glyph_class = default_elabelled_parent_class;
+		codon_glyph_processor = new CodonGlyphProcessor();
 	}
 	
 	@Override
@@ -297,7 +298,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
-				GlyphProcessorUtil.getInstance().fireProcessGlyph(cglyph, annotseq);
+				codon_glyph_processor.processGlyph(cglyph, annotseq);
 			}
 		}
 				
@@ -382,7 +383,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				pglyph.addChild(cds_glyph);
 				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
-				GlyphProcessorUtil.getInstance().fireProcessGlyph(cds_glyph, annotseq);
+				codon_glyph_processor.processGlyph(cds_glyph, annotseq);
 			}
 		}
 		return thin_height;

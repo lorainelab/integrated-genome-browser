@@ -133,7 +133,6 @@ public class Activator implements BundleActivator {
         	};
         	serviceTracker.open();
         }
-		bundleContext.registerService(GlyphProcessor.class, new CodonGlyphProcessor(), null);
 		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
 		ExtensionPointHandler<FileTypeHandler> extensionPoint
 				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
@@ -163,8 +162,6 @@ public class Activator implements BundleActivator {
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
 	private void run(ServiceReference<IWindowService> windowServiceReference) {
-		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
- 
         IWindowService windowService = bundleContext.getService(windowServiceReference);
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;

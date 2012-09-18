@@ -164,6 +164,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenuItem change_font_size = new JRPMenuItemTLP(ChangeFontSizeAction.getAction());
 		change_font_size.setEnabled(num_selections > 0);
 		changeMenu.add(change_font_size);
+		JMenuItem change_Tier_Height = new JRPMenuItemTLP(ChangeTierHeightAction.getAction());
+		change_Tier_Height.setEnabled(num_selections > 0);
+		changeMenu.add(change_Tier_Height);
 		JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
 		change_expand_max.setEnabled(any_are_expanded);
 		changeMenu.add(change_expand_max);

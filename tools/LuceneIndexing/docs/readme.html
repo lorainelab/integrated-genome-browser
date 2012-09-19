@@ -1,0 +1,41 @@
+<h1>Lucene Indexing</h1>
+<br/>
+This is a batch utility that is used to create <a href="http://lucene.apache.org">Apache Lucene</a> indexes
+on a directory (or single file) of data files for IGB. The indexes
+are to be used with the <a href="http://research-pub.gene.com/igb_plugins/docs/LuceneIndexing.html">SearchModeLucene IGB plugin</a>.<br/>
+This only needs to be run once, or when the files are modified. To get the LuceneIndexing,
+unzip the <a href="http://research-pub.gene.com/igb_plugins/util/LuceneIndexing.zip">LuceneIndexing.zip</a> file to a new directory.<br/>
+<br/>
+Requirements:<br/>
+<ul>
+<li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">java</a> must be installed</li>
+<li><a href="http://ant.apache.org/">Apache ant</a> must be installed</li>
+</ul>
+<br/>
+If you want to customize the indexing, open the index.properties file. The lines indicate the properties to
+index for each file type, by extension. The _default= applies properties to all file types. The _ignore=
+ignore those properties for all file types. below these, add any file type extensions and the properties to index,
+* means all properties. For example:<br/>
+bed=score,description<br/>
+psl=*<br/>
+<br/>
+Next you need to set the parameters<br/>
+<ul>
+<li>lucene_index_dir - points to the directory containing the data files (or it can be a file)</li>
+<li>dump - an optional parameter to print out the index values instead of creating the index (dump=yes)</li>
+</ul>
+you can set the parameters either by setting the environment variable<br/>
+set lucene_index_dir=c:\mydir<br/>
+or by passing the value in the command line when you run ant<br/>
+ant -Denv.lucene_index_dir=/data/bed -Denv.dump=true<br/>
+The program must have write access to the directory<br/>
+<br/>
+run ant to start the indexing. The program will take a while, depending on the amount of
+data. It will skip file types unrecognized or non-annotation. For each file
+that it index, it will create both an index directory .&lt;filename&gt;.index, and a file with the
+directory listing .&lt;filename&gt;.index.dir.<br/>
+You should see the message "Indexing completed successfully" when the program finishes.
+<br/>
+<br/>
+Note - it may go much faster if you copy all the files to a local disk, and run the indexing
+there. Then copy the .index and .dir files back to the server.

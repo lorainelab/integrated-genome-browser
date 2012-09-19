@@ -45,7 +45,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	private List<TrackStyle> currentStyles;
 	public List<VirtualFeature> virtualFeatures;
 	public List<GenericFeature> features;
-
+	private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<GenericFeature, LoadStrategy>(); // Remember the load strategy for un-hidden restoration
+	
 	DataManagementTableModel(GeneralLoadView glv) {
 		this.glv = glv;
 		this.features = null;
@@ -376,20 +377,18 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	private void setVisibleTracks(VirtualFeature vFeature) {
 		LoadStrategy currentLoadStrategy = vFeature.getFeature().getLoadStrategy();
 		ITrackStyleExtended style = vFeature.getStyle();
+		
 		if (style.getShow()) {
-			if (style.getShow()) {
-				style.setShow(false);
-				if ((currentLoadStrategy == LoadStrategy.AUTOLOAD) || (currentLoadStrategy == LoadStrategy.VISIBLE)) {
-					vFeature.getFeature().setLoadStrategy(LoadStrategy.NO_LOAD);
-				}
+			style.setShow(false);
+			if (!(currentLoadStrategy == LoadStrategy.GENOME)) {
+				previousLoadStrategyMap.put(vFeature.getFeature(), currentLoadStrategy); // Store the load strategy for using below when un-hidden
+				vFeature.getFeature().setLoadStrategy(LoadStrategy.NO_LOAD);
 			}
 		} else {
-			if (!style.getShow()) {
-				style.setShow(true);
-				if (!(currentLoadStrategy == LoadStrategy.GENOME)) {
-					vFeature.getFeature().setLoadStrategy(LoadStrategy.VISIBLE);
-				}
-				
+			style.setShow(true);
+			if (!(currentLoadStrategy == LoadStrategy.GENOME)) {
+				LoadStrategy previousLoadStrategy = previousLoadStrategyMap.get(vFeature.getFeature());
+				vFeature.getFeature().setLoadStrategy((previousLoadStrategy == null) ? LoadStrategy.VISIBLE : previousLoadStrategy);
 			}
 		}
 	}

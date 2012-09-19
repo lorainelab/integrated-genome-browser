@@ -97,7 +97,7 @@ public class SearchModeLucene implements ISearchModeSym {
 	}
 
 	@Override
-	public List<SeqSymmetry> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option) {
+	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
 		return luceneSearch.searchIndex(contSym.getType(), search_text, MAX_HITS);
 	}
 

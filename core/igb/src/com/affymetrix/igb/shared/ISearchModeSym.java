@@ -28,7 +28,7 @@ public interface ISearchModeSym extends ISearchMode {
 	 * @param option the value of an option for this mode
 	 * @return a list of the syms found by the search
 	 */
-	public List<SeqSymmetry> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option);
+	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym);
 	/**
 	 * return any alternate symmetries - this is only here to
 	 * be backwardly compatible, return the remote search on DAS2 symmetries

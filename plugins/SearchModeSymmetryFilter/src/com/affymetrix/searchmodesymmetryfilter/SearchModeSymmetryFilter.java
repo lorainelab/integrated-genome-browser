@@ -62,8 +62,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 		for (Glyph selectedTierGlyph : glyphs) {
 			Object info = selectedTierGlyph.getInfo();
 			if (info instanceof TypeContainerAnnot) {
-				List<SeqSymmetry> searchResults = searchTrack(search_text, chrFilter,
-					(TypeContainerAnnot)info, statusHolder, option);
+				List<SeqSymmetry> searchResults = searchTrack(search_text, (TypeContainerAnnot)info);
 				if (searchResults != null) {
 					results.addAll(searchResults);
 				}
@@ -89,8 +88,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 	
 	@Override
-	public List<SeqSymmetry> searchTrack(String search_text, BioSeq chrFilter,
-			TypeContainerAnnot trackSym, IStatus statusHolder, boolean option) {
+	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot trackSym) {
 		if (!search_text.equals(filter.getParam())) {
 			throw new IllegalStateException("filter value changed from " + filter.getParam() + " to " + search_text);
 		}

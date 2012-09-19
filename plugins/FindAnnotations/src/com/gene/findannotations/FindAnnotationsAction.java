@@ -85,7 +85,7 @@ public class FindAnnotationsAction extends GenericAction {
 					status.setStatus(errorMessage);
 				}
 				else {
-					results = searchMode.searchTrack(searchText, null, trackSym, status, false);
+					results = searchMode.searchTrack(searchText, trackSym);
 					Date end = new Date();
 					if (results == null) {
 						status.setStatus(MessageFormat.format(FindAnnotationsView.BUNDLE.getString("findannotationsResults"), searchMode.getName(), trackSym.getType(), "0", "" + ((end.getTime() - start.getTime()) / 1000)));

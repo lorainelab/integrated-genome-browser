@@ -185,7 +185,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 	}
 
 	@Override
-	public List<SeqSymmetry> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option) {
+	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
 		return null;
 	}
 }

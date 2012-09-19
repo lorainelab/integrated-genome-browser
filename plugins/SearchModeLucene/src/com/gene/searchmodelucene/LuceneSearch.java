@@ -27,7 +27,7 @@ import org.apache.lucene.util.Version;
 public abstract class LuceneSearch<T> {
 
 	static Pattern escaper = Pattern.compile("([\\\\\\+\\-\\&\\|\\!\\(\\)\\{\\}\\[\\]\\^\"\\~\\*\\?\\:\\ ])");
-	private static String massageSearchTerm(String searchTerm) {
+	protected String massageSearchTerm(String searchTerm) {
 		return escaper.matcher(searchTerm).replaceAll("\\\\$1").toLowerCase() + "*";
 	}
 
@@ -58,7 +58,10 @@ public abstract class LuceneSearch<T> {
 			TopDocs results = searcher.search(query, max_hits);
 			for (ScoreDoc match : results.scoreDocs) {
 				Document doc = searcher.doc(match.doc);
-				searchResults.add(processSearch(doc));
+				T t = processSearch(doc);
+				if(t != null){
+					searchResults.add(t);
+				}
 			}
 		} catch (NoSuchDirectoryException x) {
 			searchResults = null;

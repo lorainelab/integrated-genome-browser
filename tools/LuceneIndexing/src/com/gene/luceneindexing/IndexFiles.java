@@ -141,10 +141,10 @@ public class IndexFiles {
 		}
 	}
 
-	private void processSym(IndexWriter writer, SeqSymmetry sym, List<String> props, BioSeq seq) throws IOException {
-		if (sym.getChildCount() > 0) {
+	private void processSym(IndexWriter writer, SeqSymmetry sym, List<String> props, BioSeq seq, boolean index_childrens) throws IOException {
+		if (sym.getChildCount() > 0 && index_childrens) {
 			for (int i = 0; i < sym.getChildCount(); i++) {
-				processSym(writer, sym.getChild(i), props, seq);
+				processSym(writer, sym.getChild(i), props, seq, index_childrens);
 			}
 		}
 		Document doc = (writer == null) ? null : new Document();
@@ -273,7 +273,7 @@ public class IndexFiles {
                                             DUMP_STREAM.println("processing " + syms.size() + " records for " + file + " on sequence " + seq.getID());
                                             Date start = new Date();
                                             for (SeqSymmetry sym : syms) {
-                                                processSym(writer, sym, props, seq);
+                                                processSym(writer, sym, props, seq, false);
                                                 count++;
                                                 if (count % SYMS_PER_DOT == 0) {
                                                     DUMP_STREAM.print(".");

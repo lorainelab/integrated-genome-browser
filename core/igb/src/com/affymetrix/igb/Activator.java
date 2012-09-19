@@ -210,6 +210,7 @@ public class Activator implements BundleActivator {
 		}
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
 		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
 		stopRoutineExtensionPoint.addListener(
 			new ExtensionPointListener<IStopRoutine>() {

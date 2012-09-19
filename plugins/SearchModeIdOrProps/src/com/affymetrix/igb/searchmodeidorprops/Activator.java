@@ -8,19 +8,21 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
 	private ServiceRegistration<ISearchModeSym> searchModeIDRegistration;
 	private ServiceRegistration<ISearchModeSym> searchModePropsRegistration;
-
+	private ServiceRegistration<ISearchHints> searchHints;
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
     		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeID(igbService), null);
     		searchModePropsRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeProps(igbService), null);
+			searchHints = bundleContext.registerService(ISearchHints.class, new SearchHints(), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
@@ -56,5 +58,6 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		searchModeIDRegistration.unregister();
 		searchModePropsRegistration.unregister();
+		searchHints.unregister();
 	}
 }

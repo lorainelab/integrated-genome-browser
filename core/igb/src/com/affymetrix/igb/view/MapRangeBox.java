@@ -33,7 +33,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.NextSearchSpanAction;
-import com.affymetrix.igb.shared.DummyStatus;
+import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.jidesoft.hints.ListDataIntelliHints;
@@ -47,6 +47,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -561,7 +562,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	}
 	
 	private class SearchHints extends ListDataIntelliHints<String> {
-
+		
         public SearchHints(JRPTextField searchBox) {
             super(searchBox, new String[]{});
         }
@@ -576,20 +577,23 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
         @Override
 		public boolean updateHints(Object context) {
-			String search_text = (String) context;
-			if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null || search_text.length() <= 1) {
+			String search_term = (String) context;
+			if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null || search_term.length() <= 1) {
 				return false;
 			} else {
-				String regexText = search_text;
-				if (!(regexText.contains("*") || regexText.contains("^") || regexText.contains("$"))) {
-					// Not much of a regular expression.  Assume the user wants to match at the start and end
-					regexText = ".*" + regexText + ".*";
-				}
-				Pattern regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
+				List<ISearchHints> modes = new ArrayList<ISearchHints>();
+				modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchHints.class).getExtensionPointImpls());
+				Set<String> results = new HashSet<String>(ISearchHints.MAX_HITS * modes.size());
 				
-                Set<String> syms = GenometryModel.getGenometryModel().getSelectedSeqGroup().find(regex, 20);
-                if (syms.size() >= 1) {
-                    this.setListData(syms.toArray());
+				for(ISearchHints mode : modes){
+					Set<String> syms = mode.search(search_term);
+					if(syms != null && !syms.isEmpty()){
+						results.addAll(syms);
+					}
+				}
+                
+                if (results.size() >= 1) {
+                    this.setListData(results.toArray());
                     return true;
                 }
 			}

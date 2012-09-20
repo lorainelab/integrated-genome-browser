@@ -278,27 +278,25 @@ public final class Genbank extends SymLoader {
 	private void readFeature(BufferedReader input, String seqName, String lengthStr, Map<String, Integer> chrLength) {
 		boolean done = false;
 		int length;
-		
-		try{
+
+		try {
 			length = Integer.valueOf(lengthStr);
-		}catch(NumberFormatException ex){
+		} catch (NumberFormatException ex) {
 			length = -1;
 		}
-		
-		try {
-			lastSleepTime = System.nanoTime();
-			while (current_line != null && !done) {
-				checkSleep();
-				notifyReadLine(current_line.length());
-				getCurrentInput(input);
-				switch (current_line_type) {
-					case FEATURE_HEADER:
-					case FEATURE:
-						readSingleFeature(input, seqName, length, chrLength);
-				}
+
+		lastSleepTime = System.nanoTime();
+		while (current_line != null && !done) {
+
+			notifyReadLine(current_line.length());
+			getCurrentInput(input);
+			switch (current_line_type) {
+				case FEATURE_HEADER:
+				case FEATURE:
+					readSingleFeature(input, seqName, length, chrLength);
 			}
 		}
-		catch(InterruptedException x) { }
+
 	}
 	
 	private void readSingleFeature(BufferedReader input, String seqName, int length, Map<String, Integer> chrLength) {

@@ -179,7 +179,6 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			br = new BufferedReader(new InputStreamReader(istr));
 			lastSleepTime = System.nanoTime();
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				checkSleep();
 				notifyReadLine(line.length());
 				
 				ch = line.charAt(0);

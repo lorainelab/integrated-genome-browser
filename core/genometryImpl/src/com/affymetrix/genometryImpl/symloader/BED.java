@@ -211,41 +211,38 @@ public class BED extends SymLoader implements LineProcessor {
 		boolean use_item_rgb = false;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
-		try {
-			lastSleepTime = System.nanoTime();
-			while ((line = it.next()) != null && (!thread.isInterrupted())) {
-				checkSleep();
-				if (lineTracker != null) {
-					lineTracker.notifyReadLine(line.length());
+
+		lastSleepTime = System.nanoTime();
+		while ((line = it.next()) != null && (!thread.isInterrupted())) {
+			if (lineTracker != null) {
+				lineTracker.notifyReadLine(line.length());
+			}
+			if (line.length() == 0) {
+				continue;
+			}
+			char firstChar = line.charAt(0);
+			if (firstChar == '#') {  // skip comment lines
+				continue;
+			} else if (firstChar == 't' && line.startsWith("track")) {
+				track_line_parser.parseTrackLine(line);
+				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
+				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
+				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				bedType = track_line_parser.getCurrentTrackHash().get("type");
+				bedDetail = "bedDetail".equals(bedType);
+				continue;
+			} else if (firstChar == 'b' && line.startsWith("browser")) {
+				// currently take no action for browser lines
+			} else {
+				if (DEBUG) {
+					System.out.println(line);
 				}
-				if (line.length() == 0) {
-					continue;
-				}
-				char firstChar = line.charAt(0);
-				if (firstChar == '#') {  // skip comment lines
-					continue;
-				} else if (firstChar == 't' && line.startsWith("track")) {
-					track_line_parser.parseTrackLine(line);
-					TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
-					type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-					String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
-					use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
-					bedType = track_line_parser.getCurrentTrackHash().get("type");
-					bedDetail = "bedDetail".equals(bedType);
-					continue;
-				} else if (firstChar == 'b' && line.startsWith("browser")) {
-					// currently take no action for browser lines
-				} else {
-					if (DEBUG) {
-						System.out.println(line);
-					}
-					if (!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted) {
-						break;
-					}
+				if (!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted) {
+					break;
 				}
 			}
 		}
-		catch (InterruptedException x) {}
 	}
 
 	@Override
@@ -737,7 +734,6 @@ public class BED extends SymLoader implements LineProcessor {
 			lastSleepTime = System.nanoTime();
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				lineCounter++;
-				checkSleep();
 				notifyReadLine(line.length());
 				if (line.length() == 0) {
 					continue;
@@ -807,8 +803,6 @@ public class BED extends SymLoader implements LineProcessor {
 
 			return !thread.isInterrupted();
 
-		} catch (InterruptedException ex) {
-			throw ex;
 		} catch (Exception ex) {
 			throw ex;
 		} finally {

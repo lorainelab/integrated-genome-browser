@@ -29,9 +29,6 @@ import com.affymetrix.genometryImpl.util.*;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader implements LineTrackerI {
-	public static final int SLEEP_INTERVAL_TIME = 30; // in seconds - any shorter may slow down application
-	public static final long SLEEP_INTERVAL_TIME_NANO = (long)SLEEP_INTERVAL_TIME * (long)1000000000; // in nanoseconds
-	public static final int SLEEP_TIME = 1; // in milliseconds
 	protected long lastSleepTime;
 	public static final String FILE_PREFIX = "file:";
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
@@ -482,14 +479,6 @@ public abstract class SymLoader implements LineTrackerI {
 			return null;
 		}
 		return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
-	}
-
-	protected void checkSleep() throws InterruptedException {
-		long currentTime = System.nanoTime();
-		if (currentTime - lastSleepTime >= SLEEP_INTERVAL_TIME_NANO) {
-			Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-			lastSleepTime = currentTime;
-		}
 	}
 	
 	public void clear(){}

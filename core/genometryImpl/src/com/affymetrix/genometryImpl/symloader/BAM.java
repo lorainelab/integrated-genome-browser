@@ -200,14 +200,11 @@ public final class BAM extends XAM {
 					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try {
 							sr = iter.next();
-							checkSleep();
 							if (skipUnmapped && sr.getReadUnmappedFlag()) {
 								continue;
 							}
 							symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
-						}
-						catch (InterruptedException e) {}
-						catch (SAMException e) {
+						} catch (SAMException e) {
 							errList.add(e);
 						}
 					}

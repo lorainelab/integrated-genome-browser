@@ -10,8 +10,9 @@ import com.affymetrix.igb.Application;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
@@ -52,7 +53,12 @@ public class ChangeTierHeightAction extends SeqMapViewActionA {
 			return;
 		}
 		if(labels.size() == 1){
-			height = height+labels.get(0).getReferenceTier().getAnnotStyle().getHeight();
+			int h;
+			TierGlyph currentTier = labels.get(0).getReferenceTier();
+			if(currentTier instanceof TransformTierGlyph){	
+				h = ((TransformTierGlyph)currentTier).getFixedPixHeight();
+				height = height+h;
+			}
 		}
 		JPanel panel = new JPanel();
 		JLabel tierHeightLabel = new JLabel("Track Height: ");
@@ -62,15 +68,19 @@ public class ChangeTierHeightAction extends SeqMapViewActionA {
 		int isOK = JOptionPane.showConfirmDialog(null, panel, "Change Track Height", JOptionPane.OK_CANCEL_OPTION);
 		if(isOK == JOptionPane.OK_OPTION){
 			try{
-				double updatedHeight = (double)(Float.parseFloat(tierHeightField.getText()));
+				int updatedHeight = (Integer.parseInt(tierHeightField.getText()));
 				for(TierLabelGlyph tlg : labels){
 					TierGlyph currentTier = tlg.getReferenceTier();
-					currentTier.getAnnotStyle().setHeight(updatedHeight);
+					if(currentTier instanceof TransformTierGlyph){
+						((TransformTierGlyph)currentTier).setFixedPixHeight(updatedHeight);
+						tlg.getPixelBox().height=updatedHeight;
+					}
 				}
+				AffyLabelledTierMap lm = (AffyLabelledTierMap)(this.getSeqMapView().getSeqMap());
+				lm.repackTheTiers(true, true);
 			}catch(Exception ex){
 				ErrorHandler.errorPanel("Invalid Track Height");
 			}
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		}
 	}
 }

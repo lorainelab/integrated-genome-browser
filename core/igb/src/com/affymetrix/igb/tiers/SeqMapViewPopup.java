@@ -165,7 +165,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		change_font_size.setEnabled(num_selections > 0);
 		changeMenu.add(change_font_size);
 		JMenuItem change_Tier_Height = new JRPMenuItemTLP(ChangeTierHeightAction.getAction());
-		change_Tier_Height.setEnabled(num_selections > 0 && (((DefaultTierGlyph)(handler.getSelectedTierLabels().get(0).getReferenceTier())).isHeightFixed()));
+		if(num_selections > 0 && !(handler.getSelectedTierLabels().get(0).getReferenceTier().getAnnotStyle().getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) 
+				&& (((DefaultTierGlyph)(handler.getSelectedTierLabels().get(0).getReferenceTier())).isHeightFixed())){
+			change_Tier_Height.setEnabled(true);
+		}
+		else{
+			change_Tier_Height.setEnabled(false);
+		}
 		changeMenu.add(change_Tier_Height);
 		JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
 		change_expand_max.setEnabled(any_are_expanded);

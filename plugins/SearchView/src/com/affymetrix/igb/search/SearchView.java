@@ -46,10 +46,12 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.jidesoft.hints.ListDataIntelliHints;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -211,6 +213,36 @@ public final class SearchView extends IGBTabPanel implements
 	private Map<String, ISearchMode> searchModeMap;
 	private ISearchMode selectedSearchMode;
 
+	ListDataIntelliHints<String> searchHints = new ListDataIntelliHints<String>(searchTF, new String[]{}){
+
+        @Override
+        public void acceptHint(Object context) {
+            String text = (String) context;
+            super.acceptHint(context);
+            searchTF.setText(text);
+			searchAction.actionPerformed(null);
+        }
+
+        @Override
+		public boolean updateHints(Object context) {
+			String search_term = (String) context;
+			if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null || search_term.length() <= 1) {
+				return false;
+			} else {
+				if(!(selectedSearchMode instanceof ISearchHints)){
+					return false;
+				}
+				Set<String> results = ((ISearchHints)selectedSearchMode).search(search_term);
+				        
+                if (results != null && results.size() >= 1) {
+                    this.setListData(results.toArray());
+                    return true;
+                }
+			}
+			return false;
+		}
+	};
+	
 	public SearchView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
 		

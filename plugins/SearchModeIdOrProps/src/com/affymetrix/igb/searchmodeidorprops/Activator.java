@@ -20,9 +20,10 @@ public class Activator implements BundleActivator {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-    		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeID(igbService), null);
+			SearchModeID smID = new SearchModeID(igbService);
+    		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, smID, null);
     		searchModePropsRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeProps(igbService), null);
-			searchHints = bundleContext.registerService(ISearchHints.class, new SearchHints(), null);
+			searchHints = bundleContext.registerService(ISearchHints.class, smID, null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());

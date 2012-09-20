@@ -10,11 +10,14 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import java.util.Set;
+import java.util.regex.Pattern;
 
-public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended{
+public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended, ISearchHints {
 	private static final int SEARCH_ALL_ORDINAL = -9000;
 	private static final String REMOTESERVERSEARCH = BUNDLE.getString("optionCheckBox");
 	private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("optionCheckBoxTT");
@@ -81,6 +84,18 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
 		return search(search_text, chrFilter, statusHolder, option, false);
 	}
 
+	@Override
+	public Set<String> search(String search_term) {
+		String regexText = search_term;
+		if (!(regexText.contains("*") || regexText.contains("^") || regexText.contains("$"))) {
+			// Not much of a regular expression.  Assume the user wants to match at the start and end
+			regexText = ".*" + regexText + ".*";
+		}
+		Pattern regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
+
+		return GenometryModel.getGenometryModel().getSelectedSeqGroup().find(regex, 20);
+	}
+	
 	private int getRemoteServerCount() {
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		if (group == null) {

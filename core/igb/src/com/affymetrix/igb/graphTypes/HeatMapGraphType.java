@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HeatMapGraphGlyph extends GraphGlyph.GraphStyle {
+public class HeatMapGraphType extends GraphGlyph.GraphStyle {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -22,7 +22,7 @@ public class HeatMapGraphGlyph extends GraphGlyph.GraphStyle {
 		PREFERENCES = Collections.unmodifiableMap(temp);
 	}
 
-	public HeatMapGraphGlyph(GraphGlyph graphGlyph){
+	public HeatMapGraphType(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	

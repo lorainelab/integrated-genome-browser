@@ -9,9 +9,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class LineGraphGlyph extends GraphGlyph.GraphStyle {
+public class LineGraphType extends GraphGlyph.GraphStyle {
 
-	public LineGraphGlyph(GraphGlyph graphGlyph){
+	public LineGraphType(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	

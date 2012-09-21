@@ -8,9 +8,9 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class StairStepGraphGlyph extends GraphGlyph.GraphStyle {
+public class StairStepGraphType extends GraphGlyph.GraphStyle {
 
-	public StairStepGraphGlyph(GraphGlyph graphGlyph){
+	public StairStepGraphType(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 	

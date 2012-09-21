@@ -15,7 +15,7 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class MismatchPileupGlyph extends FillBarGraphGlyph {
+public final class MismatchPileupType extends FillBarGraphType {
 
 	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<Character, int[]>();
 
@@ -39,7 +39,7 @@ public final class MismatchPileupGlyph extends FillBarGraphGlyph {
 		};
 	}
 
-	public MismatchPileupGlyph(GraphGlyph graphGlyph) {
+	public MismatchPileupType(GraphGlyph graphGlyph) {
 		super(graphGlyph);
 		graphGlyph.getGraphState().lockGraphStyle();
 	}

@@ -27,13 +27,13 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 	public final static Map<GraphType, Class<? extends GraphGlyph.GraphStyle>> type2Style;
 	static{
 		type2Style = new HashMap<GraphType, Class<? extends GraphGlyph.GraphStyle>>();
-		type2Style.put(GraphType.BAR_GRAPH, BarGraphGlyph.class);
-		type2Style.put(GraphType.DOT_GRAPH, DotGraphGlyph.class);
-		type2Style.put(GraphType.FILL_BAR_GRAPH, FillBarGraphGlyph.class);
-		type2Style.put(GraphType.HEAT_MAP, HeatMapGraphGlyph.class);
-		type2Style.put(GraphType.LINE_GRAPH, LineGraphGlyph.class);
-		type2Style.put(GraphType.MINMAXAVG, MinMaxAvgGraphGlyph.class);
-		type2Style.put(GraphType.STAIRSTEP_GRAPH, StairStepGraphGlyph.class);
+		type2Style.put(GraphType.BAR_GRAPH, BarGraphType.class);
+		type2Style.put(GraphType.DOT_GRAPH, DotGraphType.class);
+		type2Style.put(GraphType.FILL_BAR_GRAPH, FillBarGraphType.class);
+		type2Style.put(GraphType.HEAT_MAP, HeatMapGraphType.class);
+		type2Style.put(GraphType.LINE_GRAPH, LineGraphType.class);
+		type2Style.put(GraphType.MINMAXAVG, MinMaxAvgGraphType.class);
+		type2Style.put(GraphType.STAIRSTEP_GRAPH, StairStepGraphType.class);
 	}
 	private boolean check_same_seq = true;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
@@ -125,7 +125,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			graphGlyph.setGraphStyle(style);		
 		} catch (Exception ex) {
 			Logger.getLogger(GraphGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-			graphGlyph.setGraphStyle(new MinMaxAvgGraphGlyph(graphGlyph));
+			graphGlyph.setGraphStyle(new MinMaxAvgGraphType(graphGlyph));
 		}
 	}
 	

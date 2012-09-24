@@ -30,6 +30,22 @@ public class LinearTransform extends AffineTransform  {
 	}
 
 	/**
+	 * Inverse transforms the coordinate on the axis indicated
+	 * @param orientation
+	 * @param px the pixels
+	 * @return transforms coord
+	 */
+	public double inverseTransform(int orientation, int px){
+		double out = 0;
+		if (orientation == NeoConstants.HORIZONTAL) {
+			out = (px - this.getTranslateX()) / this.getScaleX();
+		} else if (orientation == NeoConstants.VERTICAL) {
+			out = (px - this.getTranslateY()) / this.getScaleY();
+		}
+		return out;
+	}
+	
+	/**
 	 * Transforms the source rectangle.
 	 * @param src the Rectangle2D.Double to be transformed.
 	 * @param dst ignored

@@ -31,7 +31,7 @@ public class CancelScriptAction extends GenericAction {
 	}
 
 	private CancelScriptAction() {
-		super(BUNDLE.getString("cancelScript"), null, "16x16/actions/media-playback-stop.png", "22x22/actions/media-playback-stop.png", KeyEvent.VK_X);
+		super(BUNDLE.getString("cancelScript"), null, "16x16/actions/cancel script.png", "22x22/actions/cancel script.png", KeyEvent.VK_X);
 	}
 
 	@Override

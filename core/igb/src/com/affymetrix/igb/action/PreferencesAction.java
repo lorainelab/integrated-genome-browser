@@ -34,8 +34,8 @@ public class PreferencesAction extends GenericAction {
 
 	private PreferencesAction() {
 		super(BUNDLE.getString("Preferences"), null,
-				"16x16/categories/preferences-system.png",
-				"22x22/categories/preferences-system.png",
+				"16x16/actions/preferences.png",
+				"22x22/actions/preferences.png",
 				KeyEvent.VK_E, null, true);
 		this.ordinal = -9006100;
 	}

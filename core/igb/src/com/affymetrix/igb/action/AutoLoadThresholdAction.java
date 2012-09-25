@@ -25,8 +25,8 @@ public class AutoLoadThresholdAction extends SeqMapViewActionA {
 	}
 
 	private AutoLoadThresholdAction() {
-		super(BUNDLE.getString("setThreshold"), "16x16/actions/autoload.png",
-				"22x22/actions/autoload.png");
+		super(BUNDLE.getString("setThreshold"), "16x16/actions/Set Autoload threshold.png",
+				"22x22/actions/Set Autoload threshold.png");
 		this.ordinal = -4006100;
 	}
 

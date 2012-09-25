@@ -53,8 +53,8 @@ public final class RunScriptAction extends GenericAction {
 
 	private RunScriptAction() {
 		super(BUNDLE.getString("runScript"), null,
-				"16x16/actions/media-playback-start.png",
-				"22x22/actions/media-playback-start.png",
+				"16x16/actions/run script.png",
+				"22x22/actions/run script.png",
 				KeyEvent.VK_R, null, true);
 
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();

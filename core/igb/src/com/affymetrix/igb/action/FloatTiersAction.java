@@ -67,7 +67,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 	}
 
 	public FloatTiersAction() {
-		super("Float Track", "16x16/actions/float.png", "22x22/actions/float.png");
+		super("Float Track", "16x16/actions/Float.png", "22x22/actions/Float.png");
 		this.ordinal = -6006511;
 	}
 

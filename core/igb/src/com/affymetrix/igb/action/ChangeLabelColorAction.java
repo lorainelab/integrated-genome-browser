@@ -20,7 +20,7 @@ public class ChangeLabelColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeLabelColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeLabelColorAction"), "16x16/actions/format-text-bold.png", "22x22/actions/format-text-bold.png");
+		super(IGBConstants.BUNDLE.getString("changeLabelColorAction"), "16x16/actions/label color.png", "22x22/actions/label color.png");
 		iterateMultiGraph(false);
 	}
 

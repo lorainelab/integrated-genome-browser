@@ -43,7 +43,7 @@ public class CopyResiduesAction extends GenericAction {
 	}
 
 	private CopyResiduesAction(String text) {
-		super(text, null, "16x16/actions/edit-copy.png", "22x22/actions/edit-copy.png", KeyEvent.VK_C);
+		super(text, null, "16x16/actions/copy sequence.png", "22x22/actions/copy sequence.png", KeyEvent.VK_C);
 	}
 
 	@Override

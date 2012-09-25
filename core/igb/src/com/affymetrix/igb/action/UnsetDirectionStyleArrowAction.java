@@ -18,8 +18,8 @@ public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 
 	private UnsetDirectionStyleArrowAction() {
 		super("Unset Direction Style Arrow",
-				"16x16/actions/blunt.png",
-				"22x22/actions/blunt.png");
+				"16x16/actions/no arrows.png",
+				"22x22/actions/no arrows.png");
 		this.ordinal = -8006512;
 	}
 

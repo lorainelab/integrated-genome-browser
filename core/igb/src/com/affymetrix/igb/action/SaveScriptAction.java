@@ -33,7 +33,8 @@ public class SaveScriptAction extends GenericAction {
 	}
 
 	private SaveScriptAction() {
-		super(BUNDLE.getString("saveScript"), null, null, null, KeyEvent.VK_S, null, true);
+		super(BUNDLE.getString("saveScript"), null, "16x16/actions/save script.png",
+				"22x22/actions/save script.png", KeyEvent.VK_S, null, true);
 	}
 
 	@Override

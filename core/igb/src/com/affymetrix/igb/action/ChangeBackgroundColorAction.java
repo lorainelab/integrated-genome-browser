@@ -21,8 +21,8 @@ public class ChangeBackgroundColorAction extends ChangeColorActionA {
 
 	public ChangeBackgroundColorAction() {
 		super(IGBConstants.BUNDLE.getString("changeBGColorAction"),
-				"16x16/actions/applications-graphics-5.png",
-				"22x22/actions/applications-graphics-5.png");
+				"16x16/actions/BG color.png",
+				"22x22/actions/BG color.png");
 		this.ordinal = -6008100;
 	}
 

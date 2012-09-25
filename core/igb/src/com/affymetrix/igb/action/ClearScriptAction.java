@@ -22,7 +22,7 @@ public class ClearScriptAction extends GenericAction {
 	}
 
 	private ClearScriptAction() {
-		super(BUNDLE.getString("clearScript"), null, "16x16/status/user-trash-full.png", "22x22/status/user-trash-full.png", KeyEvent.VK_C, null, true);
+		super(BUNDLE.getString("clearScript"), null, "16x16/status/clear script.png", "22x22/status/clear script.png", KeyEvent.VK_C, null, true);
 	}
 
 	@Override

@@ -27,8 +27,8 @@ public class ForumHelpAction extends GenericAction {
 
 	private ForumHelpAction() {
 		super(MessageFormat.format(BUNDLE.getString("forumHelp"),APP_NAME),
-				null, "16x16/actions/address-book-new.png",
-				"22x22/actions/address-book-new.png",
+				null, "16x16/actions/help.png",
+				"22x22/actions/help.png",
 				KeyEvent.VK_UNDEFINED, null, true);
 		this.ordinal = 120;
 	}

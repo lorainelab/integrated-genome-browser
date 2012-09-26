@@ -31,15 +31,14 @@
                                   <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="coverageSummaryHeatMapCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="autoloadSequenceCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="displayOption" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-                                  <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
                                   <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="orfAnalyzerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
@@ -82,19 +81,16 @@
               </Group>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="displayOption" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
                   <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
-                  <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Component id="coverageSummaryHeatMapCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+              <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+              <Component id="displayOption" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="74" max="32767" attributes="0"/>
+              <EmptySpace pref="70" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -523,14 +519,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Autoload Sequence&quot;, PreferenceUtils.getTopNode(),       PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence)"/>
         <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="coverageSummaryHeatMapCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="coverageSummaryHeatMapCheckBoxActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Coverage Summary as HeatMap&quot;, PreferenceUtils.getTopNode(),       PreferenceUtils.COVERAGE_SUMMARY_HEATMAP, PreferenceUtils.default_coverage_summary_heatmap)"/>
       </AuxValues>
     </Component>
   </SubComponents>

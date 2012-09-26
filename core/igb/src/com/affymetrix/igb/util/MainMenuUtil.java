@@ -115,6 +115,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_toggleToolTip", ToggleToolTipAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_drawCollapseControl", DrawCollapseControlAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_showIGBTrackMark", ShowIGBTrackMarkAction.getAction()));
+		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_showLockTrackIcon", ShowLockedTrackIconAction.getAction()));
 		view_menu.addSeparator();
 		JRPMenu track_resize_behavior = MenuUtil.getRPMenu(menuBar, id + "_main_viewMenu_trackResizeBehavior", BUNDLE.getString("trackResizeBehavior"));
 		MenuUtil.addToMenu(view_menu, track_resize_behavior);

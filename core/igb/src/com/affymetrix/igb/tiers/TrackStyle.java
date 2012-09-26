@@ -29,6 +29,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
+	public static boolean showLockIcon = true;
 	private static boolean draw_collapse_icon = getDrawCollapseState();
 	// whether to create and use a java Preferences node object for this instance
 	private boolean is_persistent = true;
@@ -877,6 +878,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.feature;
 	}
 
+	public static void setShowLockIcon(boolean b){
+		showLockIcon = b;
+	}
+	
+	public static boolean getShowLockIcon(){
+		return showLockIcon;
+	}
 	public void setDirectionType(DIRECTION_TYPE type) {
 		this.direction_type = type;
 		if (getNode() != null) {

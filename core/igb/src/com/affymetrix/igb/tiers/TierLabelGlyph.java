@@ -189,7 +189,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 		
-		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed()){
+		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed() && TrackStyle.getShowLockIcon()){
 			g.setColor(fgcolor);
 			g.fillRect(pixelbox.x + 5, pixelbox.y + 10, 10, 10);
 			g.fillArc(pixelbox.x + 6, pixelbox.y + 2, 8, 15, 0, 180);

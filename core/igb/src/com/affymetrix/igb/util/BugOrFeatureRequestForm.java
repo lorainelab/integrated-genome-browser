@@ -35,13 +35,15 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         typeLabel = new javax.swing.JLabel();
         bugButton = new javax.swing.JRadioButton();
+        this.setTitle(feature?"Request A Feature" : "Report A Bug");
         featureButton = new javax.swing.JRadioButton();
         summLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        summField = new javax.swing.JTextField();
         descLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         descArea = new javax.swing.JTextArea();
         submit = new javax.swing.JButton();
+        errLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -80,6 +82,10 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
             }
         });
 
+        errLabel.setForeground(new java.awt.Color(255, 0, 51));
+        errLabel.setText("*Summary Required");
+        errLabel.setVisible(false);
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -87,25 +93,28 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(summLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jTextField1))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .add(errLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(submit))
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(typeLabel)
+                                .add(summLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(bugButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(featureButton))
-                            .add(descLabel))
-                        .add(8, 8, 8))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .add(0, 0, Short.MAX_VALUE)
-                        .add(submit)))
-                .addContainerGap())
+                                .add(summField))
+                            .add(jPanel1Layout.createSequentialGroup()
+                                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(jPanel1Layout.createSequentialGroup()
+                                        .add(typeLabel)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(bugButton)
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(featureButton))
+                                    .add(descLabel))
+                                .add(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -116,15 +125,17 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
                     .add(typeLabel)
                     .add(featureButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(summLabel)
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(summField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(descLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(1, 1, 1)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                .add(13, 13, 13)
-                .add(submit))
+                .add(18, 18, 18)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(submit)
+                    .add(errLabel)))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
@@ -145,14 +156,21 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
 
     private void bugButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugButtonActionPerformed
 		feature = false;
+		this.setTitle("Report A Bug");
     }//GEN-LAST:event_bugButtonActionPerformed
 
     private void featureButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_featureButtonActionPerformed
         feature = true;
+		this.setTitle("Request A Feature");
     }//GEN-LAST:event_featureButtonActionPerformed
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
-        if(feature) {
+        errLabel.setVisible(false);
+		if(summField.getText().isEmpty()){
+			errLabel.setVisible(true);
+			return;
+		}
+		if(feature) {
 			GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
 		}
 		else {
@@ -169,11 +187,12 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JTextArea descArea;
     private javax.swing.JLabel descLabel;
+    private javax.swing.JLabel errLabel;
     private javax.swing.JRadioButton featureButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton submit;
+    private javax.swing.JTextField summField;
     private javax.swing.JLabel summLabel;
     private javax.swing.JLabel typeLabel;
     // End of variables declaration//GEN-END:variables

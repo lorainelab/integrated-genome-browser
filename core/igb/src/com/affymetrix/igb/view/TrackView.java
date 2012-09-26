@@ -134,16 +134,6 @@ public class TrackView {
 			if (annotSym instanceof TypeContainerAnnot) {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 				if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
-					//Create dummy tier
-//					String meth = BioSeq.determineMethod(annotSym);
-//					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-//					if (style.getSeparate()) {
-//						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, DummyGlyphFactory.getInstance());
-//						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, DummyGlyphFactory.getInstance());
-//					}
-//					else {
-//						smv.getTrack(null, style, TierGlyph.Direction.BOTH, DummyGlyphFactory.getInstance());
-//					}
 					continue;
 				}
 			}

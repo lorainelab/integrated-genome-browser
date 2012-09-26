@@ -816,7 +816,10 @@ public class SeqMapView extends JPanel
 
 		List<SeqSymmetry> old_sym_selections = getSelectedSyms();
 		seqmap.clearSelected();
-
+		if (show_edge_matches) {
+			doEdgeMatching(seqmap.getSelected(), false);
+		}
+		
 		action.actionPerformed(null);
 
 		// reselect glyph(s) based on selected sym(s);
@@ -831,7 +834,11 @@ public class SeqMapView extends JPanel
 				seqmap.select(gl);
 			}
 		}
-
+		
+//		setSelectionStatus(getSelectionTitle(seqmap.getSelected()));
+		if (show_edge_matches) {
+			doEdgeMatching(seqmap.getSelected(), true);
+		}
 	}
 
 	// copying map tiers to separate list to avoid problems when removing tiers
@@ -1123,7 +1130,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 	}
-
+	
 	public final void selectTrack(TierGlyph tier, boolean selected) {
 		if (tier.getAnnotStyle().getFloatTier()) {
 			tier.setSelected(selected);

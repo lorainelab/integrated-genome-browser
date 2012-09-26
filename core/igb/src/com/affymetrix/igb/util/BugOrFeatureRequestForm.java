@@ -93,7 +93,7 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
                         .add(jTextField1))
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 374, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(typeLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -101,7 +101,7 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(featureButton))
                             .add(descLabel))
-                        .add(0, 8, Short.MAX_VALUE))
+                        .add(8, 8, 8))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
                         .add(submit)))
@@ -122,8 +122,8 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(descLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 155, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 13, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                .add(13, 13, 13)
                 .add(submit))
         );
 

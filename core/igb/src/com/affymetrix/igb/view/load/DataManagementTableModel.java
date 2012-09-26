@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -257,7 +258,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		} else if (smv.getPixelFloater().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
 			for (GlyphI i : smv.getPixelFloater().getChildren()) {
-				if (((TierGlyph) i).getAnnotStyle() == style) {
+				if (((StyledGlyph) i).getAnnotStyle() == style) {
 					return false;
 				}
 			}
@@ -412,7 +413,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (smv.getPixelFloater().getChildren() != null) {
 						for (GlyphI g : smv.getPixelFloater().getChildren()) {
-							TierGlyph j = (TierGlyph) g;
+							StyledGlyph j = (StyledGlyph) g;
 							if (j.getAnnotStyle() == style) {
 								stylemap.put((TrackStyle) style, (TrackStyle) style);
 							}

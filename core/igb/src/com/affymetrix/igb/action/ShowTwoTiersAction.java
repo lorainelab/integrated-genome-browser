@@ -17,8 +17,8 @@ public class ShowTwoTiersAction extends ShowStrandActionA {
 
 	protected ShowTwoTiersAction() {
 		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"),
-				"16x16/actions/strandseparate.png",
-				"22x22/actions/strandseparate.png");
+				"16x16/actions/2 track.png",
+				"22x22/actions/2 track.png");
 		this.ordinal = -6006012;
 		separateStrands = true;
 		setEnabled(false);

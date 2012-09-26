@@ -17,8 +17,8 @@ public class ShowOneTierAction extends ShowStrandActionA {
 
 	protected ShowOneTierAction() {
 		super(IGBConstants.BUNDLE.getString("showSingleTierAction"),
-				"16x16/actions/strandstogether.png",
-				"22x22/actions/strandstogether.png");
+				"16x16/actions/1 track.png",
+				"22x22/actions/1 track.png");
 		this.ordinal = -8006011;
 		separateStrands = false;
 		setEnabled(false);

@@ -13,8 +13,8 @@ public class RepackSelectedTiersAction extends RepackTiersAction {
 
 	public RepackSelectedTiersAction() {
 		super(IGBConstants.BUNDLE.getString("repackSelectedTracksAction"),
-				"16x16/places/user-desktop.png",
-				"22x22/places/user-desktop.png");
+				"16x16/actions/Repack.png",
+				"22x22/actions/Repack.png");
 		this.ordinal = -6008500;
 	}
 

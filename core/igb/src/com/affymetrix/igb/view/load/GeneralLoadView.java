@@ -625,7 +625,11 @@ public final class GeneralLoadView {
 				}
 
 				feature.clear();
+				return null;
+			}
 
+			@Override
+			protected void finished() {
 				if (removeLocal) {
 					// If feature is local then remove it from server.
 					GenericVersion version = feature.gVersion;
@@ -641,12 +645,7 @@ public final class GeneralLoadView {
 						}
 					}
 				}
-
-				return null;
-			}
-
-			@Override
-			protected void finished() {
+								
 				if (refresh) {
 					// Refresh
 					refreshTreeViewAndRestore();

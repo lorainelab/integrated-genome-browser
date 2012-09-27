@@ -31,13 +31,15 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelListener;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which 
  *    track changes in tiers (size, placement) of AffyTieredMap.
  */
-public final class AffyLabelledTierMap extends AffyTieredMap  {
+public final class AffyLabelledTierMap extends AffyTieredMap {
   private static final long serialVersionUID = 1L;
 
   private AffyTieredMap labelmap;
@@ -163,8 +165,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   }
 
 	@Override
-  public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) { 
-    super.packTiers(full_repack, stretch_map, extra_for_now);
+  public void packTiers(boolean full_repack, boolean stretch_map, boolean fire_tier_position_changed) { 
+    super.packTiers(full_repack, stretch_map, fire_tier_position_changed);
     Rectangle2D.Double lbox = labelmap.getCoordBounds();
 	for (TierLabelGlyph label_glyph : label_glyphs) {
       TierGlyph tier_glyph = label_glyph.getReferenceTier();
@@ -175,6 +177,9 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	labelmap.fixed_coord_height = fixed_coord_height;
 	labelmap.fixed_pixel_height = fixed_pixel_height;
     ordered_glyphs = null;
+	if(fire_tier_position_changed){
+		fireTierOrderChanged();
+	}
   }
 
 	/**
@@ -365,4 +370,26 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		scroll(axis, range[0]);
 		setZoomBehavior(axis, CONSTRAIN_COORD, (range[0] + range[1]) / 2);
 	}
+	
+	protected EventListenerList listenerList = new EventListenerList();
+
+	public void addTierOrderListener(TableModelListener l) {
+		listenerList.add(TableModelListener.class, l);
+	}
+
+	public void removeTierOrderListener(TableModelListener l) {
+		listenerList.remove(TableModelListener.class, l);
+	}
+	
+	public void fireTierOrderChanged() {
+        // Guaranteed to return a non-null array
+		Object[] listeners = listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == TableModelListener.class) {
+				((TableModelListener) listeners[i + 1]).tableChanged(null);
+			}
+		}
+    }
 }

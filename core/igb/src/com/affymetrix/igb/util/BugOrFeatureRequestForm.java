@@ -1,17 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 /**
  *
  * @author auser
  */
 public class BugOrFeatureRequestForm extends javax.swing.JFrame {
-
+	private static String URL = "";
+	
 	/**
 	 * Creates new form BugOrRequestFeatureForm1
 	 */
@@ -170,15 +172,29 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
 			errLabel.setVisible(true);
 			return;
 		}
-		if(feature) {
-			GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
-		}
-		else {
-			GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
-		}
 		this.setVisible(false);
+		try {
+			if (feature) {
+				newReport("newFeature", summField.getText(), descArea.getText(), "IGB_7_0_0");
+			} else {
+				newReport("bug", summField.getText(), descArea.getText(), "IGB_7_0_0");
+			}
+		} catch (IOException ex) {
+			ErrorHandler.errorPanel("Unable to send "+(feature? "new feature request." : "bug report."), ex);
+		}
     }//GEN-LAST:event_submitActionPerformed
 
+	private static String newReport(String type, String summary, String description, String version) 
+			throws IOException {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("type", type);
+		params.put("summary", summary);
+		params.put("description", description);
+		params.put("version", version);
+		
+		return LocalUrlCacher.httpPost(URL, params);
+	}
+	
 	/**
 	 * @param args the command line arguments
 	 */

@@ -727,7 +727,6 @@ public final class GeneralLoadUtils {
 						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
 					}
 				}
-				setLastRefreshStatus(feature, true);
 				GeneralLoadView.getLoadView().refreshDataManagementView();
 			}
 
@@ -754,7 +753,6 @@ public final class GeneralLoadUtils {
 		if (optimized_sym == null) {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
-			setLastRefreshStatus(feature, false);
 			return;
 		}
 
@@ -797,7 +795,6 @@ public final class GeneralLoadUtils {
 
 				try {
 					List<SeqSymmetry> result = get();
-					setLastRefreshStatus(feature, result.size() > 0);
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 							Level.SEVERE, "Unable to get refresh action result.", ex);
@@ -862,7 +859,7 @@ public final class GeneralLoadUtils {
 		//end max
 	}
 
-	public static void setLastRefreshStatus(GenericFeature feature, boolean result) {
+	private static void setLastRefreshStatus(GenericFeature feature, boolean result) {
 		if (result) {
 			feature.setLastRefreshStatus(RefreshStatus.DATA_LOADED);
 		} else {

@@ -22,7 +22,7 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 	protected RepackTiersAction(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
-	public void repack(final boolean full_repack) {
+	public void repack(final boolean full_repack, boolean tier_changed) {
 		AbstractAction action = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
@@ -64,6 +64,6 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 			}
 		}
 		// Now repack with the newly appointed maxima.
-		repack(true);
+		repack(true, false);
 	}
 }

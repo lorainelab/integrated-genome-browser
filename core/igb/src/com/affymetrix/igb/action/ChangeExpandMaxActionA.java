@@ -48,7 +48,7 @@ implements ParameteredAction {
 					style.setMaxDepth(max);
 			}
 		}
-		repack(true);
+		repack(true, false);
 		this.getSeqMapView().seqMapRefresh();
 		this.getSeqMapView().getSeqMap().updateWidget();
 	}

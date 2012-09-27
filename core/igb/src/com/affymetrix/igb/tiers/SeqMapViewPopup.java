@@ -126,8 +126,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-	public void repack(final boolean full_repack) {
-		repackStub.repack(full_repack);
+	public void repack(final boolean full_repack, boolean tier_changed) {
+		repackStub.repack(full_repack, tier_changed);
 	}
 
 	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
@@ -220,7 +220,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						style.setShow(true);
 						showMenu.remove(show_tier);
 						handler.sortTiers();
-						repack(false);
+						repack(false, true);
 					}
 				});
 				showMenu.add(show_tier);

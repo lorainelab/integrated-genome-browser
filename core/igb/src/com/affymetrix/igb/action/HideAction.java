@@ -50,7 +50,7 @@ public class HideAction extends RepackTiersAction {
 			}
 		}
 
-		repack(false);
+		repack(false, false);
 
 		/**
 		 * Possible bug : When all strands are hidden. tier label and tier do
@@ -59,7 +59,7 @@ public class HideAction extends RepackTiersAction {
 		 */
 		// NOTE: Below call to stretchToFit is not redundancy. It is there
 		//       to solve above mentioned bug.
-		repack(false);
+		repack(false, true);
 	}
 
 	@Override

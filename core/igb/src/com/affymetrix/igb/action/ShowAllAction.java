@@ -42,7 +42,7 @@ public class ShowAllAction extends RepackTiersAction {
 			}
 		}
 		getTierManager().sortTiers();
-		repack(false);
+		repack(false, false);
 		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}
 

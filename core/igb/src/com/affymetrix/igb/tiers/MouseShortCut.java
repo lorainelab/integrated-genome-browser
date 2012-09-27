@@ -52,7 +52,7 @@ final public class MouseShortCut implements MouseListener{
 			if(tier != null){
 				TierLabelManager.setTierCollapsed(tier, !tier.getAnnotStyle().getCollapsed());
 				smv.getSeqMap().setTierStyles();
-				popup.repack(true);
+				popup.repack(true, false);
 				return;
 			}
 		}

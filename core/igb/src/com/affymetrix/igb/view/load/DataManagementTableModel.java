@@ -154,7 +154,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		
 		VirtualFeature vf;
 		for(int i=0; i<size; i++){
-			vf = style2Feature.get(orderedGlyphs.get(i).getReferenceTier().getAnnotStyle());
+			TierGlyph tg = orderedGlyphs.get(i).getReferenceTier();
+			ITrackStyleExtended style = tg.getAnnotStyle();
+			//Only consider positive track.
+			if(style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE){
+				continue;
+			}
+			
+			vf = style2Feature.get(style);
 			if(vf != null){
 				virtualFeatures.add(vf);
 				tempVirtualFeatures.remove(vf);

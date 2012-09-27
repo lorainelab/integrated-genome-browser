@@ -63,7 +63,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			smv = igb.getMapView();
 			map = (AffyLabelledTierMap)smv.getSeqMap();
 		}
-
+		
 		// Here we map the friendly string back to the LoadStrategy.
 		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
@@ -99,7 +99,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			createPrimaryVirtualFeatures(gFeature);
 		}
 		
-		fireTableDataChanged();
+		sort();
 //		System.out.println(this.getClass().getName() + ".createVirtualFeatures: twice");
 	}
 
@@ -142,6 +142,29 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				style2Feature.put(style, subVfeature);
 			}
 		}
+	}
+
+	private void sort() {
+		List<VirtualFeature> tempVirtualFeatures = new ArrayList<VirtualFeature>();
+		tempVirtualFeatures.addAll(virtualFeatures);
+		virtualFeatures.clear();
+		
+		List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
+		int size = orderedGlyphs.size();
+		
+		VirtualFeature vf;
+		for(int i=0; i<size; i++){
+			vf = style2Feature.get(orderedGlyphs.get(i).getReferenceTier().getAnnotStyle());
+			if(vf != null){
+				virtualFeatures.add(vf);
+				tempVirtualFeatures.remove(vf);
+			}
+		}
+		
+		virtualFeatures.addAll(tempVirtualFeatures);
+		tempVirtualFeatures.clear();
+		
+		fireTableDataChanged();
 	}
 
 	private final static class featureTableComparator implements Comparator<GenericFeature> {
@@ -485,25 +508,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		if(virtualFeatures == null)
 			return;
 		
-		List<VirtualFeature> tempVirtualFeatures = new ArrayList<VirtualFeature>();
-		tempVirtualFeatures.addAll(virtualFeatures);
-		virtualFeatures.clear();
-		
-		List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
-		int size = orderedGlyphs.size();
-		
-		VirtualFeature vf;
-		for(int i=0; i<size; i++){
-			vf = style2Feature.get(orderedGlyphs.get(i).getReferenceTier().getAnnotStyle());
-			if(vf != null){
-				virtualFeatures.add(vf);
-				tempVirtualFeatures.remove(vf);
-			}
-		}
-		
-		virtualFeatures.addAll(tempVirtualFeatures);
-		tempVirtualFeatures.clear();
-		
-		fireTableDataChanged();
+		sort();
 	}
 }

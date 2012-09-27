@@ -7,15 +7,13 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.trackAdjuster;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.RangeSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -32,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 		implements ChangeListener, ActionListener, FocusListener {
@@ -46,8 +45,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	public JRPTextField max_perT;
 	public JRPTextField min_valT;
 	public JRPTextField max_valT;
-	public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", TrackAdjusterTab.BUNDLE.getString("byValue"));
-	public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", TrackAdjusterTab.BUNDLE.getString("byPercentile"));
+	public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", BUNDLE.getString("byValue"));
+	public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", BUNDLE.getString("byPercentile"));
 	private final static int max_chars = 8;
 	private final static int max_pix_per_char = 6;
 	private static final int tf_min_xpix = max_chars * max_pix_per_char;
@@ -112,7 +111,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
 		glist.add(sgg);
 		thresher.setGraphs(glist);
-		JFrame frm = new JFrame(TrackAdjusterTab.BUNDLE.getString("graphPercentileAdjuster"));
+		JFrame frm = new JFrame(BUNDLE.getString("graphPercentileAdjuster"));
 		Container cpane = frm.getContentPane();
 		cpane.setLayout(new BorderLayout());
 		cpane.add("Center", thresher);

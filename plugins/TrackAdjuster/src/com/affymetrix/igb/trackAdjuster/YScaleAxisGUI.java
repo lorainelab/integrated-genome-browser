@@ -9,6 +9,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import static com.affymetrix.igb.shared.Selections.*;

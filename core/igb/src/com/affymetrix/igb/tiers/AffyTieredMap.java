@@ -468,11 +468,15 @@ public class AffyTieredMap extends NeoMap {
 		view.calcCoordBox();
 	}
 
-	/**
+		/**
 	 * Repacks tiers.
 	 * Should be called after hiding or showing tiers or changing their heights.
 	 */
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+		repackTheTiers(full_repack, stretch_vertically, false);
+	}
+	
+	public void repackTheTiers(boolean full_repack, boolean stretch_vertically, boolean tierChanged) {
 		packTiers(full_repack, true, false);
 		stretchToFit(false, stretch_vertically, false);
 		// apply a hack to make sure strechToFit worked
@@ -483,7 +487,7 @@ public class AffyTieredMap extends NeoMap {
 
 		// pack them again!  This clears-up problems with the packing of the axis
 		// tier and getting the labelmap lined-up with the main tier map.
-		packTiers(false, true, false);
+		packTiers(false, true, tierChanged);
 	}
 		
 	/** Prints this component with dialogue box. */

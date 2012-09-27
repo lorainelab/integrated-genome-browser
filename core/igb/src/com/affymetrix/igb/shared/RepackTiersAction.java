@@ -22,13 +22,13 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 	protected RepackTiersAction(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
-	public void repack(final boolean full_repack, boolean tier_changed) {
+	public void repack(final boolean full_repack, final boolean tier_changed) {
 		AbstractAction action = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getTierManager().repackTheTiers(full_repack, true);
+				getTierMap().repackTheTiers(full_repack, true, tier_changed);
 			}
 		};
 		

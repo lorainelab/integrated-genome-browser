@@ -13,6 +13,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.shared.StyledGlyph;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -21,12 +23,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 /**
  * Model for table of features.
  */
-public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener {
+public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener, TableModelListener {
 
 	private static final long serialVersionUID = 1L;
 	private static final String[] columnNames = {"", "", "FG", "BG", "2 Track", "Load Mode",
@@ -41,8 +45,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	static final int TRACK_NAME_COLUMN = 6;
 	static final int DELETE_FEATURE_COLUMN = 7;
 	private final GeneralLoadView glv;
-	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
+//	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 	private SeqMapView smv;
+	private AffyLabelledTierMap map;
+	private Map<Object, VirtualFeature> style2Feature = new HashMap<Object, VirtualFeature>();
 	private List<TrackStyle> currentStyles;
 	public List<VirtualFeature> virtualFeatures;
 	public List<GenericFeature> features;
@@ -55,6 +61,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
+			map = (AffyLabelledTierMap)smv.getSeqMap();
 		}
 
 		// Here we map the friendly string back to the LoadStrategy.
@@ -69,6 +76,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			virtualFeatures.clear();
 
 			features.clear();
+			
+			style2Feature.clear();
 
 			fireTableDataChanged();
 
@@ -78,16 +87,18 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 	void createVirtualFeatures(List<GenericFeature> features) {
 		// Sort these features so the features to be loaded are at the top.
-		Collections.sort(features, visibleFeatureComp);
+		//Collections.sort(features, visibleFeatureComp);
 
 		this.features = features;
 		if (virtualFeatures != null) {
 			virtualFeatures.clear();
 		}
+		style2Feature.clear();
+		
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-
+		
 		fireTableDataChanged();
 //		System.out.println(this.getClass().getName() + ".createVirtualFeatures: twice");
 	}
@@ -102,6 +113,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		for (ITrackStyleExtended style : currentStyles) {
 			if (style.getFeature() == gFeature) {
 				vFeature.setStyle(style);
+				style2Feature.put(style, vFeature);
 				if (gFeature.getMethods().size() > 1) {
 					createSecondaryVirtualFeatures(vFeature);
 					break;
@@ -127,6 +139,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					subVfeature.setPrimary(false);
 				}
 				virtualFeatures.add(subVfeature);
+				style2Feature.put(style, subVfeature);
 			}
 		}
 	}
@@ -369,7 +382,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		if (col == BACKGROUND_COLUMN || col == TRACK_NAME_COLUMN) {
 			smv.getSeqMap().updateWidget();
 		} else if (col == HIDE_FEATURE_COLUMN){
-			smv.getSeqMap().repackTheTiers(false, true);
+			smv.getSeqMap().repackTheTiers(false, true, true);
 		} else if (col == FOREGROUND_COLUMN) {
 			refreshSeqMapView();
 		}
@@ -466,5 +479,31 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				fireTableRowsUpdated(row, row);
 			}
 		}
+	}
+	
+	public void tableChanged(TableModelEvent e) {
+		if(virtualFeatures == null)
+			return;
+		
+		List<VirtualFeature> tempVirtualFeatures = new ArrayList<VirtualFeature>();
+		tempVirtualFeatures.addAll(virtualFeatures);
+		virtualFeatures.clear();
+		
+		List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
+		int size = orderedGlyphs.size();
+		
+		VirtualFeature vf;
+		for(int i=0; i<size; i++){
+			vf = style2Feature.get(orderedGlyphs.get(i).getReferenceTier().getAnnotStyle());
+			if(vf != null){
+				virtualFeatures.add(vf);
+				tempVirtualFeatures.remove(vf);
+			}
+		}
+		
+		virtualFeatures.addAll(tempVirtualFeatures);
+		tempVirtualFeatures.clear();
+		
+		fireTableDataChanged();
 	}
 }

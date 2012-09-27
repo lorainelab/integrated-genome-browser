@@ -63,7 +63,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			smv = igb.getMapView();
 			map = (AffyLabelledTierMap)smv.getSeqMap();
 		}
-		
+
 		// Here we map the friendly string back to the LoadStrategy.
 		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
@@ -106,7 +106,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	/*
 	 * Some file formats might have multiple tracks, try load GFF1_example.gff
 	 */
-	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
+	private void createPrimaryVirtualFeatures(GenericFeature gFeature) {
 		VirtualFeature vFeature = new VirtualFeature(gFeature, null);
 		virtualFeatures.add(vFeature);
 		currentStyles = getCurrentStyles();
@@ -125,7 +125,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 	}
 
-	void createSecondaryVirtualFeatures(VirtualFeature vFeature) {
+	private void createSecondaryVirtualFeatures(VirtualFeature vFeature) {
 		boolean isPrimary = vFeature.isPrimary();
 		VirtualFeature subVfeature;
 		for (ITrackStyleExtended style : currentStyles) {
@@ -407,7 +407,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		} else if (col == HIDE_FEATURE_COLUMN){
 			smv.getSeqMap().repackTheTiers(false, true, true);
 		} else if (col == FOREGROUND_COLUMN) {
-			refreshSeqMapView();
+			smv.updatePanel();
 		}
 	}
 
@@ -427,12 +427,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				LoadStrategy previousLoadStrategy = previousLoadStrategyMap.get(vFeature.getFeature());
 				vFeature.getFeature().setLoadStrategy((previousLoadStrategy == null) ? LoadStrategy.VISIBLE : previousLoadStrategy);
 			}
-		}
-	}
-
-	private void refreshSeqMapView() {
-		if (smv != null) {
-			smv.updatePanel();
 		}
 	}
 

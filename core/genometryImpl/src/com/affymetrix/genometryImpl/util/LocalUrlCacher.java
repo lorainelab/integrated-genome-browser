@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -811,4 +812,109 @@ public final class LocalUrlCacher {
 
 		return null;
 	}
+	
+	private static boolean DEBUG = false;
+	public static String httpGet(String urlStr) throws IOException {
+		URL url = new URL(urlStr);
+		HttpURLConnection conn =
+				(HttpURLConnection) url.openConnection();
+		
+		if (conn.getResponseCode() != 200) {
+			throw new IOException(conn.getResponseMessage());
+		}
+		
+		if (DEBUG) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(
+					Level.INFO,
+					"Response: " + conn.getResponseCode() + " "
+							+ conn.getResponseMessage());
+		}
+	
+		// Buffer the result into a string
+		BufferedReader rd = new BufferedReader(
+				new InputStreamReader(conn.getInputStream()));
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ((line = rd.readLine()) != null) {
+			sb.append(line);
+		}
+		rd.close();
+		conn.disconnect();
+		
+		if (DEBUG) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
+					"Result " + sb.toString());
+		}
+		
+		return sb.toString();
+	}
+
+	public static String httpPost(String urlStr,  Map<String, String> params) throws IOException {
+
+		System.out.println("URL :"+urlStr);
+		URL url = new URL(urlStr);
+		HttpURLConnection conn =
+				(HttpURLConnection) url.openConnection();
+		
+		conn.setRequestMethod("POST");
+		conn.setDoOutput(true);
+		conn.setDoInput(true);
+		conn.setUseCaches(false);
+		conn.setAllowUserInteraction(false);
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for(Entry<String, String> entry : params.entrySet()){
+			if (first) {
+                first = false;
+            } else {
+                sb.append('&');
+            }
+			sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+			sb.append("=");
+			sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+		}
+		String content = sb.toString();
+		if (DEBUG) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
+					"Content :" + content.toString());
+		}
+		
+		// Create the form content
+		DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+		out.writeBytes(content);
+		out.flush();
+		out.close();
+		
+		if (DEBUG) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(
+					Level.INFO,
+					"Response: " + conn.getResponseCode() + " "
+							+ conn.getResponseMessage());
+		}
+		
+		if (conn.getResponseCode() != 200) {
+			throw new IOException(conn.getResponseMessage());
+		}
+		
+		// Buffer the result into a string
+		BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		sb = new StringBuilder();
+		String line;
+		while ((line = rd.readLine()) != null) {
+			sb.append(line).append("\n");
+		}
+		rd.close();
+
+		conn.disconnect();
+		
+		if (DEBUG) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
+					"Result " + sb.toString());
+		}
+		
+		return sb.toString();
+	}
+
 }

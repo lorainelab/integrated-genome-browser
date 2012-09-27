@@ -92,60 +92,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	}
 
 	@Override
-	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
-		final JCheckBox labelCheckBox = getLabelCheckBox();
-		boolean b = labelCheckBox.isSelected();
-		for(GraphState state : graphStates){
-			state.setShowLabel(b);
-		}
-		updateDisplay();
-	}
-
-	@Override
-	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
-		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
-		boolean b = YAxisCheckBox.isSelected();
-		for(GraphState state : graphStates){
-			state.setShowAxis(b);
-		}
-		updateDisplay();
-	}
-
-	@Override
-	protected void graphStyleHeatMapComboBoxActionPerformedA(ActionEvent evt) {
-		if (graphStates.isEmpty() || !is_listening) {
-			return;
-		}
-		JComboBox heatMapComboBox = getGraphStyleHeatMapComboBox();
-		String name = (String) heatMapComboBox.getSelectedItem();
-		if (name == null) {
-			return;
-		}
-		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
-			for (GraphState state : graphStates) {
-				if (state.getGraphStyle() == GraphType.HEAT_MAP) {
-//					gl.setShowGraph(true);
-					if (!(state.getHeatMap() instanceof DynamicStyleHeatMap)) {
-						state.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, state.getTierStyle(), 0.0f, 0.5f));
-					}
-				}
-			}
-		}
-		else {
-			HeatMap hm = HeatMap.getStandardHeatMap(name);
-			if (hm != null) {
-				for (GraphState state : graphStates) {
-					if (state.getGraphStyle() == GraphType.HEAT_MAP) {
-//						gl.setShowGraph(true);
-						state.setHeatMap(hm);
-					}
-				}
-			}
-		}
-		refreshView();
-	}
-
-	@Override
 	protected void labelSizeComboBoxActionPerformedA(ActionEvent evt) {
 		final JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		int fontsize = (Integer)labelSizeComboBox.getSelectedItem();
@@ -215,39 +161,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		strandsForwardColorComboBoxReset();
 		strandsReverseColorComboBoxReset();
 		is_listening = true;
-		updateDisplay();
-	}
-
-	
-	@Override
-	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
-		GraphType selectedMode = null;
-		if (getGraphStyleLineRadioButton().isSelected()) {
-			selectedMode = GraphType.LINE_GRAPH;
-		}
-		if (getGraphStyleBarRadioButton().isSelected()) {
-			selectedMode = GraphType.BAR_GRAPH;
-		}
-		if (getGraphStyleStairStepRadioButton().isSelected()) {
-			selectedMode = GraphType.STAIRSTEP_GRAPH;
-		}
-		if (getGraphStyleDotRadioButton().isSelected()) {
-			selectedMode = GraphType.DOT_GRAPH;
-		}
-		if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
-			selectedMode = GraphType.MINMAXAVG;
-		}
-		if (getGraphStyleHeatMapRadioButton().isSelected()) {
-			selectedMode = GraphType.HEAT_MAP;
-		}
-		
-		for (GraphState state : graphStates) {
-			state.setGraphStyle(selectedMode);
-		}
-
-		buttonGroup1Reset();
-		graphStyleHeatMapComboBoxReset();
-		// TODO : Need to create method in igbService to change graph type.
 		updateDisplay();
 	}
 	
@@ -389,6 +302,92 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void restoreToDefaultButtonActionPerformedA(ActionEvent evt) {
 	}
 	
+		@Override
+	protected void buttonGroup1ActionPerformedA(ActionEvent evt) {
+		GraphType selectedMode = null;
+		if (getGraphStyleLineRadioButton().isSelected()) {
+			selectedMode = GraphType.LINE_GRAPH;
+		}
+		if (getGraphStyleBarRadioButton().isSelected()) {
+			selectedMode = GraphType.BAR_GRAPH;
+		}
+		if (getGraphStyleStairStepRadioButton().isSelected()) {
+			selectedMode = GraphType.STAIRSTEP_GRAPH;
+		}
+		if (getGraphStyleDotRadioButton().isSelected()) {
+			selectedMode = GraphType.DOT_GRAPH;
+		}
+		if (getGraphStyleMinMaxAvgRadioButton().isSelected()) {
+			selectedMode = GraphType.MINMAXAVG;
+		}
+		if (getGraphStyleHeatMapRadioButton().isSelected()) {
+			selectedMode = GraphType.HEAT_MAP;
+		}
+		
+		for (GraphState state : graphStates) {
+			state.setGraphStyle(selectedMode);
+		}
+
+		buttonGroup1Reset();
+		graphStyleHeatMapComboBoxReset();
+		// TODO : Need to create method in igbService to change graph type.
+		updateDisplay();
+	}
+		
+	@Override
+	protected void labelCheckBoxActionPerformedA(ActionEvent evt) {
+		final JCheckBox labelCheckBox = getLabelCheckBox();
+		boolean b = labelCheckBox.isSelected();
+		for(GraphState state : graphStates){
+			state.setShowLabel(b);
+		}
+		updateDisplay();
+	}
+
+	@Override
+	protected void YAxisCheckBoxActionPerformedA(ActionEvent evt) {
+		final JCheckBox YAxisCheckBox = getYAxisCheckBox();
+		boolean b = YAxisCheckBox.isSelected();
+		for(GraphState state : graphStates){
+			state.setShowAxis(b);
+		}
+		updateDisplay();
+	}
+
+	@Override
+	protected void graphStyleHeatMapComboBoxActionPerformedA(ActionEvent evt) {
+		if (graphStates.isEmpty() || !is_listening) {
+			return;
+		}
+		JComboBox heatMapComboBox = getGraphStyleHeatMapComboBox();
+		String name = (String) heatMapComboBox.getSelectedItem();
+		if (name == null) {
+			return;
+		}
+		if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
+			for (GraphState state : graphStates) {
+				if (state.getGraphStyle() == GraphType.HEAT_MAP) {
+//					gl.setShowGraph(true);
+					if (!(state.getHeatMap() instanceof DynamicStyleHeatMap)) {
+						state.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, state.getTierStyle(), 0.0f, 0.5f));
+					}
+				}
+			}
+		}
+		else {
+			HeatMap hm = HeatMap.getStandardHeatMap(name);
+			if (hm != null) {
+				for (GraphState state : graphStates) {
+					if (state.getGraphStyle() == GraphType.HEAT_MAP) {
+//						gl.setShowGraph(true);
+						state.setHeatMap(hm);
+					}
+				}
+			}
+		}
+		refreshView();
+	}
+	
 	@Override
 	protected void floatCheckBoxReset() {
 		JCheckBox floatCheckBox = getFloatCheckBox();
@@ -475,6 +474,76 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		}
 	}
 
+	@Override
+	protected void buttonGroup1Reset() {
+		getGraphStyleLineRadioButton().setEnabled(isAllGraph());
+		getGraphStyleBarRadioButton().setEnabled(isAllGraph());
+		getGraphStyleStairStepRadioButton().setEnabled(isAllGraph());
+		getGraphStyleDotRadioButton().setEnabled(isAllGraph());
+		getGraphStyleMinMaxAvgRadioButton().setEnabled(isAllGraph());
+		getGraphStyleHeatMapRadioButton().setEnabled(isAllGraph());
+		if (isAllGraph()) {
+			GraphType graphType = null;
+			boolean graphTypeSet = false;
+			for (GraphState state : graphStates) {
+				if (graphType == null && !graphTypeSet) {
+					graphType = state.getGraphStyle();
+					graphTypeSet = true;
+				}
+				else if (graphType != state.getGraphStyle()) {
+					graphType = null;
+					break;
+				}
+			}
+			if (graphType == null) {
+				unselectGraphStyle();
+				if (isAllGraphStyleLocked()) {
+					getGraphStyleLineRadioButton().setEnabled(false);
+					getGraphStyleBarRadioButton().setEnabled(false);
+					getGraphStyleStairStepRadioButton().setEnabled(false);
+					getGraphStyleDotRadioButton().setEnabled(false);
+					getGraphStyleMinMaxAvgRadioButton().setEnabled(false);
+					getGraphStyleHeatMapRadioButton().setEnabled(false);
+				}
+			}
+			else {
+				if (graphType == GraphType.HEAT_MAP) {
+					getGraphStyleHeatMapRadioButton().setText("");
+					getGraphStyleHeatMapComboBox().setVisible(true);
+				}
+				else {
+					getGraphStyleHeatMapRadioButton().setText("Heat Map");
+					getGraphStyleHeatMapComboBox().setVisible(false);
+				}
+				switch (graphType) {
+				case LINE_GRAPH:
+					getGraphStyleLineRadioButton().setSelected(true);
+					break;
+				case BAR_GRAPH:
+					getGraphStyleBarRadioButton().setSelected(true);
+					break;
+				case STAIRSTEP_GRAPH:
+					getGraphStyleStairStepRadioButton().setSelected(true);
+					break;
+				case DOT_GRAPH:
+					getGraphStyleDotRadioButton().setSelected(true);
+					break;
+				case MINMAXAVG:
+					getGraphStyleMinMaxAvgRadioButton().setSelected(true);
+					break;
+				case HEAT_MAP:
+					getGraphStyleHeatMapRadioButton().setSelected(true);
+					break;
+				}
+			}
+		}
+		else {
+			unselectGraphStyle();
+			getGraphStyleHeatMapRadioButton().setText("Heat Map");
+			getGraphStyleHeatMapComboBox().setVisible(false);
+		}
+	}
+	
 	@Override
 	protected void labelSizeComboBoxReset() {
 		JComboBox labelSizeComboBox = getLabelSizeComboBox();
@@ -665,76 +734,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void strandsLabelReset() {
 		JLabel strandsLabel = getStrandsLabel();
 		strandsLabel.setEnabled(isAllAnnot() && isAllSupportTwoTrack());
-	}
-
-	@Override
-	protected void buttonGroup1Reset() {
-		getGraphStyleLineRadioButton().setEnabled(isAllGraph());
-		getGraphStyleBarRadioButton().setEnabled(isAllGraph());
-		getGraphStyleStairStepRadioButton().setEnabled(isAllGraph());
-		getGraphStyleDotRadioButton().setEnabled(isAllGraph());
-		getGraphStyleMinMaxAvgRadioButton().setEnabled(isAllGraph());
-		getGraphStyleHeatMapRadioButton().setEnabled(isAllGraph());
-		if (isAllGraph()) {
-			GraphType graphType = null;
-			boolean graphTypeSet = false;
-			for (GraphState state : graphStates) {
-				if (graphType == null && !graphTypeSet) {
-					graphType = state.getGraphStyle();
-					graphTypeSet = true;
-				}
-				else if (graphType != state.getGraphStyle()) {
-					graphType = null;
-					break;
-				}
-			}
-			if (graphType == null) {
-				unselectGraphStyle();
-				if (isAllGraphStyleLocked()) {
-					getGraphStyleLineRadioButton().setEnabled(false);
-					getGraphStyleBarRadioButton().setEnabled(false);
-					getGraphStyleStairStepRadioButton().setEnabled(false);
-					getGraphStyleDotRadioButton().setEnabled(false);
-					getGraphStyleMinMaxAvgRadioButton().setEnabled(false);
-					getGraphStyleHeatMapRadioButton().setEnabled(false);
-				}
-			}
-			else {
-				if (graphType == GraphType.HEAT_MAP) {
-					getGraphStyleHeatMapRadioButton().setText("");
-					getGraphStyleHeatMapComboBox().setVisible(true);
-				}
-				else {
-					getGraphStyleHeatMapRadioButton().setText("Heat Map");
-					getGraphStyleHeatMapComboBox().setVisible(false);
-				}
-				switch (graphType) {
-				case LINE_GRAPH:
-					getGraphStyleLineRadioButton().setSelected(true);
-					break;
-				case BAR_GRAPH:
-					getGraphStyleBarRadioButton().setSelected(true);
-					break;
-				case STAIRSTEP_GRAPH:
-					getGraphStyleStairStepRadioButton().setSelected(true);
-					break;
-				case DOT_GRAPH:
-					getGraphStyleDotRadioButton().setSelected(true);
-					break;
-				case MINMAXAVG:
-					getGraphStyleMinMaxAvgRadioButton().setSelected(true);
-					break;
-				case HEAT_MAP:
-					getGraphStyleHeatMapRadioButton().setSelected(true);
-					break;
-				}
-			}
-		}
-		else {
-			unselectGraphStyle();
-			getGraphStyleHeatMapRadioButton().setText("Heat Map");
-			getGraphStyleHeatMapComboBox().setVisible(false);
-		}
 	}
 
 	@Override

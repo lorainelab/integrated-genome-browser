@@ -523,7 +523,6 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 
 						public void run() {
 							updateParent(tg);
-							GeneralLoadUtils.setLastRefreshStatus(style.getFeature(), tg.getChildCount() > 0);
 							GeneralLoadView.getLoadView().refreshDataManagementView();
 							//TODO: Find a way to avoid this
 							//if (lastUsedGlyph == saveDetailGlyph) {

@@ -47,6 +47,7 @@ import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
@@ -582,7 +583,7 @@ public final class GeneralLoadView {
 
 					public void actionPerformed(ActionEvent e) {
 						refreshDataManagementTable(GeneralLoadUtils.getVisibleFeatures());
-						gviewer.getSeqMap().packTiers(true, true, false);
+						gviewer.getSeqMap().packTiers(true, true, true);
 						gviewer.getSeqMap().stretchToFit(false, true);
 						gviewer.getSeqMap().updateWidget();
 						TierPrefsView.getSingleton().refreshList();
@@ -652,6 +653,8 @@ public final class GeneralLoadView {
 					refreshDataManagementView();
 					gviewer.dataRemoved();
 				}
+				
+				((AffyLabelledTierMap)gviewer.getSeqMap()).fireTierOrderChanged();
 			}
 		};
 

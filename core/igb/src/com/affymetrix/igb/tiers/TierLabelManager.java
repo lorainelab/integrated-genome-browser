@@ -535,7 +535,7 @@ public final class TierLabelManager implements PropertyHolder {
 
 		updatePositions();
 		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
-		tiermap.packTiers(false, true, false);
+		tiermap.packTiers(false, true, true);
 		tiermap.updateWidget();
 	}
 

@@ -211,7 +211,8 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 						direction = TierGlyph.Direction.REVERSE;
 					} else if (GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
 						direction = TierGlyph.Direction.FORWARD;
-					}	
+					}
+					graphGlyph.setDirection(direction);
 					TierGlyph result = smv.getTrack(style, direction);
 					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					result.addChild(graphGlyph);

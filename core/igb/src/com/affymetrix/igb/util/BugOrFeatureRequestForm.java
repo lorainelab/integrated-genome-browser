@@ -12,7 +12,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
  * @author auser
  */
 public class BugOrFeatureRequestForm extends javax.swing.JFrame {
-	private static String URL = "";
+	private static String URL = "http://bioviz.org/bugreporter/report";
 	
 	/**
 	 * Creates new form BugOrRequestFeatureForm1

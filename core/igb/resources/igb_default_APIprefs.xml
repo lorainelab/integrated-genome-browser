@@ -33,7 +33,7 @@
                             <entry key="com.affymetrix.igb.external.UCSCViewAction" value="ctrl U"/>
                             <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>
                             <entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction" value="ctrl B"/>
-                            <entry key="com.affymetrix.igb.action.RefreshDataAction" value="ctrl R"/>
+                            <entry key="com.affymetrix.igb.action.RefreshDataAction" value="ctrl L"/>
                             <entry key="com.affymetrix.igb.action.NextSearchSpanAction" value="ctrl X"/>
                         </map>
                     </node>

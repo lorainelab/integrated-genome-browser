@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genoviz.swing.MenuUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -19,6 +20,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class RefreshDataAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
+	private static RefreshDataAction ACTION = new RefreshDataAction();
 
 	public RefreshDataAction(JComponent comp) {
 		super(BUNDLE.getString("refreshDataButton"), BUNDLE.getString("refreshDataTip"), "toolbarButtonGraphics/general/Refresh16.gif", null, KeyEvent.VK_UNDEFINED);
@@ -26,6 +28,18 @@ public class RefreshDataAction extends GenericAction {
 		if (ks != null) {
 			this.putValue(MNEMONIC_KEY, ks.getKeyCode());
 		}
+	}
+	
+	public RefreshDataAction() {
+		super(BUNDLE.getString("refreshDataButton"), BUNDLE.getString("refreshDataTip"), "toolbarButtonGraphics/general/Refresh16.gif", null, KeyEvent.VK_UNDEFINED);
+	}
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
+	public static RefreshDataAction getAction() {
+		return ACTION;
 	}
 
 	@Override

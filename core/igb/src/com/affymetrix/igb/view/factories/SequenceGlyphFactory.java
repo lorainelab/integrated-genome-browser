@@ -10,8 +10,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 			

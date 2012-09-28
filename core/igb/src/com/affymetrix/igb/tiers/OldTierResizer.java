@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;

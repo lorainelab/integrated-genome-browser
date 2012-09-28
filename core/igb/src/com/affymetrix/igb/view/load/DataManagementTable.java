@@ -94,11 +94,11 @@ public final class DataManagementTable {
 			JRPTextFieldTableCellRenderer trackNameFieldEditor;
 			if (vFeature.getStyle() != null) {
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-						vFeature.getStyle().getTrackName());
+						vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
 			} else {
 				Logger.getLogger(DataManagementTable.class.getName()).log(Level.WARNING, "Found a feature with null style", vFeature.getFeature().featureName);
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-						vFeature.getFeature().featureName);
+						vFeature.getFeature().featureName, Color.WHITE, Color.BLACK);
 			}
 			text.addEditorForRow(row, trackNameFieldEditor); 
 		}
@@ -188,6 +188,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 
 		super.list.add(DataManagementTableModel.BACKGROUND_COLUMN);
 		super.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
+		super.list.add(DataManagementTableModel.TRACK_NAME_COLUMN);
 
 		rmMap = new HashMap<Integer, RowEditorModel>();
 		
@@ -234,9 +235,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
-				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
 			} else {
-				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName);
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName, Color.BLACK, Color.WHITE);
 			}
 
 		} else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {

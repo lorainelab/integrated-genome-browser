@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
-import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import java.util.ArrayList;

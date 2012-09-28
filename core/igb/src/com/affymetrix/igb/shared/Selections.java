@@ -114,7 +114,7 @@ public abstract class Selections {
 //		}
 	}
 	
-		public static boolean isAllGraph() {
+	public static boolean isAllGraph() {
 		return allStyles.size() == graphStates.size() && graphStates.size() > 0;
 	}
 
@@ -172,6 +172,22 @@ public abstract class Selections {
 				return false;
 			}
 		}
+		return true;
+	}
+	
+	public static boolean isAllRootSeqSymmetrySame(){
+		if(rootSyms.isEmpty())
+			return false;
+		
+		if(rootSyms.size() == 1)
+			return true;
+		
+		for(int i=1; i<rootSyms.size(); i++){
+			if(rootSyms.get(0).getCategory() != rootSyms.get(i).getCategory()){
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	

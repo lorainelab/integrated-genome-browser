@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
@@ -106,23 +105,23 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 		});
 		thresholdingAction = ThresholdingAction.createThresholdingAction(igbService);
 		threshB.setAction(thresholdingAction);
-		resetSelectedGlyphs(false);
+		resetAll(false);
 	}
 
 	public void addOperator(Operator operator) {
-		resetSelectedGlyphs(true);
+		resetAll(true);
 	}
 
 	public void removeOperator(Operator operator) {
-		resetSelectedGlyphs(true);
+		resetAll(true);
 	}
 
 	@Override
 	public void selectionRefreshed() {
-		resetSelectedGlyphs(true);
+		resetAll(true);
 	}
 			
-	private void resetSelectedGlyphs(boolean enable) {
+	private void resetAll(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		loadOperators(enable);
 		setPanelEnabled(enable);
@@ -131,12 +130,12 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 
 	public void updateViewer() {
 		// set selections to empty so that options get turned off
-		resetSelectedGlyphs(false);
+		resetAll(false);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				igbService.getSeqMapView().updatePanel();
-				resetSelectedGlyphs(true);
+				resetAll(true);
 			}
 		});
 	}
@@ -179,60 +178,12 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 
 	public void setPanelEnabled(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-		FileTypeCategory saveCategory = null;
-
-		boolean any_are_combined = false; // are any selections inside a combined tier
-		int uncombined_graph_glyph_count = 0;  // count of graph glyphs not in combined tier(s)
-		int graph_count = 0;              // are any selections graph tracks
-		boolean all_same = true;          // all tracks are the same type
-
-		// Now loop through other glyphs if there are more than one
-		// and see if the graph_style and heatmap are the same in all selections
-		for (StyledGlyph gl : allGlyphs) {
-			if (gl instanceof TierGlyph && ((TierGlyph)gl).getTierType() == TierGlyph.TierType.GRAPH && gl.getChildCount() > 0) {
-				for (GlyphI g : gl.getChildren()) {
-					if (g instanceof GraphGlyph) {
-						graph_count++;
-						if (((GraphGlyph) g).getGraphState().getComboStyle() == null) {
-							uncombined_graph_glyph_count++;
-						} else {
-							any_are_combined = true;
-						}
-						RootSeqSymmetry rootSym = (RootSeqSymmetry) gl.getInfo();
-						if (rootSym == null) {
-							all_same = false;
-						} else {
-							FileTypeCategory category = rootSym.getCategory();
-							if (saveCategory == null) {
-								saveCategory = category;
-							} else {
-								all_same &= (saveCategory == category);
-							}
-						}
-					}
-				}
-			} else {
-				RootSeqSymmetry rootSym = (RootSeqSymmetry) gl.getInfo();
-				if (rootSym == null) {
-					all_same = false;
-				} else {
-					FileTypeCategory category = rootSym.getCategory();
-					if (saveCategory == null) {
-						saveCategory = category;
-					} else {
-						all_same &= (saveCategory == category);
-					}
-				}
-			}
-
-		}
-
-		combineB.setEnabled(enable && uncombined_graph_glyph_count > 1);
-		splitB.setEnabled(enable && any_are_combined);
+		combineB.setEnabled(enable && graphGlyphs.size() > 1 && !isAnyJoined());
+		splitB.setEnabled(enable && isAnyJoined());
 		threshB.setEnabled(enable && !graphGlyphs.isEmpty());
 		int transformCount = name2transformation.size();
 		int operatorCount = name2operation.size();
-		boolean enableTransformation = enable && all_same && transformCount > 0;
+		boolean enableTransformation = enable && isAllRootSeqSymmetrySame() && transformCount > 0;
 		transformationLabel.setEnabled(enableTransformation);
 		transformationCB.setEnabled(enableTransformation);
 		if (!enableTransformation) {

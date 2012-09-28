@@ -94,11 +94,11 @@ public final class DataManagementTable {
 			JRPTextFieldTableCellRenderer trackNameFieldEditor;
 			if (vFeature.getStyle() != null) {
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-						vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
+						vFeature.getStyle().getTrackName());
 			} else {
 				Logger.getLogger(DataManagementTable.class.getName()).log(Level.WARNING, "Found a feature with null style", vFeature.getFeature().featureName);
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-						vFeature.getFeature().featureName, Color.WHITE, Color.BLACK);
+						vFeature.getFeature().featureName);
 			}
 			text.addEditorForRow(row, trackNameFieldEditor); 
 		}
@@ -235,9 +235,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
-				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());
 			} else {
-				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName, Color.BLACK, Color.WHITE);
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName);
 			}
 
 		} else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {

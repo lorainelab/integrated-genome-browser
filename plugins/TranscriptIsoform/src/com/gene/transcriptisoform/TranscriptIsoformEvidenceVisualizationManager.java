@@ -31,12 +31,11 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefreshed, SeqSelectionListener, MouseListener, MouseMotionListener {
 	private final IGBService igbService;
 	private List<TierGlyph> refSeqTiers;
-	private final Map<Direction, Map<SimpleSeqSpan, Set<GlyphI>>> intronSpan2Glyphs;
+	private final Map<TierGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>> intronSpan2Glyphs;
 	private int maxCount;
 	private boolean showUnfound = true;;
 	private ExonConnectorGlyph.DensityDisplay showDensity = ExonConnectorGlyph.DensityDisplay.THICKNESS;
@@ -45,9 +44,9 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		super();
 		this.igbService = igbService;
 		this.refSeqTiers = new ArrayList<TierGlyph>();
-		intronSpan2Glyphs = new HashMap<Direction, Map<SimpleSeqSpan, Set<GlyphI>>>();
-		intronSpan2Glyphs.put(Direction.FORWARD, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
-		intronSpan2Glyphs.put(Direction.REVERSE, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
+		intronSpan2Glyphs = new HashMap<TierGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>>();
+		intronSpan2Glyphs.put(TierGlyph.Direction.FORWARD, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
+		intronSpan2Glyphs.put(TierGlyph.Direction.REVERSE, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
 	}
 
 	public boolean isShowUnfound() {
@@ -127,18 +126,18 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		}
 	}
 
-	private static Map<Direction, List<Direction>> directionMap = new HashMap<Direction, List<Direction>>();
+	private static Map<TierGlyph.Direction, List<TierGlyph.Direction>> directionMap = new HashMap<TierGlyph.Direction, List<TierGlyph.Direction>>();
 	static {
-		List<Direction> forward = new ArrayList<Direction>();
-		forward.add(Direction.FORWARD);
-		directionMap.put(Direction.FORWARD, forward);
-		List<Direction> reverse = new ArrayList<Direction>();
-		reverse.add(Direction.REVERSE);
-		directionMap.put(Direction.REVERSE, reverse);
-		List<Direction> both = new ArrayList<Direction>();
-		both.add(Direction.FORWARD);
-		both.add(Direction.REVERSE);
-		directionMap.put(Direction.BOTH, both);
+		List<TierGlyph.Direction> forward = new ArrayList<TierGlyph.Direction>();
+		forward.add(TierGlyph.Direction.FORWARD);
+		directionMap.put(TierGlyph.Direction.FORWARD, forward);
+		List<TierGlyph.Direction> reverse = new ArrayList<TierGlyph.Direction>();
+		reverse.add(TierGlyph.Direction.REVERSE);
+		directionMap.put(TierGlyph.Direction.REVERSE, reverse);
+		List<TierGlyph.Direction> both = new ArrayList<TierGlyph.Direction>();
+		both.add(TierGlyph.Direction.FORWARD);
+		both.add(TierGlyph.Direction.REVERSE);
+		directionMap.put(TierGlyph.Direction.BOTH, both);
 	}
 
 	private Set<SimpleSeqSpan> addFoundIntrons(BioSeq seq, TierGlyph refSeqTier) {
@@ -158,7 +157,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 						endSpanMap.put(exonSpan.getMax(), childSym);
 					}
 				}
-				for (Direction direction : directionMap.get(refSeqTier.getDirection())) {
+				for (TierGlyph.Direction direction : directionMap.get(refSeqTier.getDirection())) {
 					for (SimpleSeqSpan intronSpan : intronSpan2Glyphs.get(direction).keySet()) {
 						SeqSymmetry startSym = endSpanMap.get(intronSpan.getStart());
 						SeqSymmetry endSym = startSpanMap.get(intronSpan.getEnd());
@@ -191,12 +190,12 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		// add a new ExonConnectorGlyph for each unfound intron span
 		for (SimpleSeqSpan intronSpan : unfoundSpans) {
 			Set<GlyphI> glyphs = new HashSet<GlyphI>();
-			if (refSeqTier.getDirection() == Direction.BOTH) {
-				if (intronSpan2Glyphs.get(Direction.FORWARD).get(intronSpan) != null) {
-					glyphs.addAll(intronSpan2Glyphs.get(Direction.FORWARD).get(intronSpan));
+			if (refSeqTier.getDirection() == TierGlyph.Direction.BOTH) {
+				if (intronSpan2Glyphs.get(TierGlyph.Direction.FORWARD).get(intronSpan) != null) {
+					glyphs.addAll(intronSpan2Glyphs.get(TierGlyph.Direction.FORWARD).get(intronSpan));
 				}
-				if (intronSpan2Glyphs.get(Direction.REVERSE).get(intronSpan) != null) {
-					glyphs.addAll(intronSpan2Glyphs.get(Direction.REVERSE).get(intronSpan));
+				if (intronSpan2Glyphs.get(TierGlyph.Direction.REVERSE).get(intronSpan) != null) {
+					glyphs.addAll(intronSpan2Glyphs.get(TierGlyph.Direction.REVERSE).get(intronSpan));
 				}
 			}
 			else {
@@ -204,7 +203,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 					glyphs = intronSpan2Glyphs.get(refSeqTier.getDirection()).get(intronSpan);
 				}
 			}
-			ExonConnectorGlyph exonConnectorGlyph = new ExonConnectorGlyph(intronSpan, glyphs, maxCount, null, null, refSeqTier.getDirection() == Direction.FORWARD, showDensity);
+			ExonConnectorGlyph exonConnectorGlyph = new ExonConnectorGlyph(intronSpan, glyphs, maxCount, null, null, refSeqTier.getDirection() == TierGlyph.Direction.FORWARD, showDensity);
 			refSeqTier.addChild(exonConnectorGlyph);
 			exonConnectorGlyph.init();
 		}
@@ -232,11 +231,11 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 				foundSpans.addAll(addFoundIntrons(seq, refSeqTier));
 			}
 			if (showUnfound) {
-				Direction direction = refSeqTier.getDirection();
+				TierGlyph.Direction direction = refSeqTier.getDirection();
 				Set<SimpleSeqSpan> unfoundSpans;
-				if (direction == Direction.BOTH) {
-					unfoundSpans = new HashSet<SimpleSeqSpan>(intronSpan2Glyphs.get(Direction.FORWARD).keySet());
-					unfoundSpans.addAll(intronSpan2Glyphs.get(Direction.REVERSE).keySet());
+				if (direction == TierGlyph.Direction.BOTH) {
+					unfoundSpans = new HashSet<SimpleSeqSpan>(intronSpan2Glyphs.get(TierGlyph.Direction.FORWARD).keySet());
+					unfoundSpans.addAll(intronSpan2Glyphs.get(TierGlyph.Direction.REVERSE).keySet());
 				}
 				else {
 					unfoundSpans = new HashSet<SimpleSeqSpan>(intronSpan2Glyphs.get(direction).keySet());
@@ -249,7 +248,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		igbService.getSeqMap().updateWidget();
 	}
 
-	private void addIntron(SimpleSeqSpan seqSpan, GlyphI glyph, Direction direction) {
+	private void addIntron(SimpleSeqSpan seqSpan, GlyphI glyph, TierGlyph.Direction direction) {
 		Set<GlyphI> glyphs = intronSpan2Glyphs.get(direction).get(seqSpan);
 		if (glyphs == null) {
 			glyphs = new HashSet<GlyphI>();
@@ -273,7 +272,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 			int endOffset = offset + ce.getLength();
 			if (ce.getOperator() == CigarOperator.SKIPPED_REGION) {
 				SimpleSeqSpan span = new SimpleSeqSpan(Math.min(offset, endOffset), Math.max(offset, endOffset), bs.getBioSeq());
-				addIntron(span, glyph, bs.isForward() ? Direction.FORWARD : Direction.REVERSE);
+				addIntron(span, glyph, bs.isForward() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.REVERSE);
 			}
 			offset = endOffset;
 		}

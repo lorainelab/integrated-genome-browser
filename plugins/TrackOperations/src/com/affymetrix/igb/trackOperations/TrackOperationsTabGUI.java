@@ -37,7 +37,6 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
         stPanel = new javax.swing.JPanel();
         transformationGoB = trackOpTab.transformationGoB;
         transformationParam = trackOpTab.transformationParam;
@@ -52,8 +51,6 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
         threshB = trackOpTab.threshB;
         splitB = trackOpTab.splitB;
         combineB = trackOpTab.combineB;
-
-        jLabel2.setText("jLabel2");
 
         stPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Single Track Operation"));
 
@@ -181,7 +178,6 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btPanel;
     private javax.swing.JButton combineB;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel mtPanel;
     private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;

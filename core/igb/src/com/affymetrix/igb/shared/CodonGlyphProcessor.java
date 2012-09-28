@@ -39,6 +39,7 @@ public class CodonGlyphProcessor {
 	public void processGlyph(GlyphI glyph, BioSeq seq) {
 		if (glyph.getParent() != null && glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
 			CodonGlyph codonGlyph = new CodonGlyph(codeSize);
+			codonGlyph.setHitable(false);
 			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
 				if (saveCodonGlyph != null) {
 					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);

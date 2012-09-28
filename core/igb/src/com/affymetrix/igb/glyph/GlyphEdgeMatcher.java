@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.shared.CodonGlyph;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -108,7 +109,8 @@ public final class GlyphEdgeMatcher  {
       }
     }
     
-    else if ( target.isHitable() && query.isHitable() && target.getParent() != null) {
+	// Hitable for CodonGlyph is false to popup right click menu
+    else if (query instanceof CodonGlyph || (target.isHitable() && query.isHitable() && target.getParent() != null)) {
       // terminal case, neither query nor target have children
       // see if they intersect, if so, see if edges match
       // glyph1.start == glyph2.end is _not_considered a match

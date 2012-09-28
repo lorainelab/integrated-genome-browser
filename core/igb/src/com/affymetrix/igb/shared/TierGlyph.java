@@ -30,8 +30,6 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 		
 	public void setStyle(ITrackStyleExtended annotStyle);
 	
-	public Direction getDirection();
-	
 	public void setDirection(Direction direction);
 	
 	public void addMiddleGlyph(GlyphI mglyph);

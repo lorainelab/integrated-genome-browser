@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -87,6 +88,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 	protected final Point t_curr_point = new Point(0, 0);
 	protected final Point t_prev_point = new Point(0, 0);
 	protected final Point2D.Double t_coord = new Point2D.Double(0, 0);
+	private Direction direction = Direction.NONE;
 	
 	public GraphGlyph(GraphState state) {
 		super();
@@ -1363,5 +1365,14 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			return graf.getCategory();
 		}
 		return FileTypeCategory.Graph;
+	}
+	
+	@Override
+	public Direction getDirection(){
+		return direction;
+	}
+	
+	public void setDirection(Direction direction){
+		this.direction = direction;
 	}
 }

@@ -362,7 +362,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             .add(iScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
-        tabPane.addTab("Infomation", informationPanel);
+        tabPane.addTab("Information", informationPanel);
 
         dScrollPane.setViewportView(dataTable);
 
@@ -385,7 +385,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(splitPane)
+            .add(splitPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

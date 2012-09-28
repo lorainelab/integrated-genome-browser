@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGBServiceImpl;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.EventObject;
@@ -30,12 +30,12 @@ public abstract class Selections {
 	public static final List<GraphState> graphStates = new ArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 	public static final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-		
-	private static final IGBService igbService;
+	
+	private static final SeqMapView smv;
 	private static final EventListenerList listenerList;
 
 	static{
-		igbService = IGBServiceImpl.getInstance();
+		smv = (SeqMapView) IGBServiceImpl.getInstance().getSeqMapView();
 		listenerList = new EventListenerList();
 		addListeners(new Listeners());
 	}
@@ -46,14 +46,14 @@ public abstract class Selections {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(listeners);
 		gmodel.addSymSelectionListener(listeners);
-		igbService.getSeqMapView().addToRefreshList(listeners);
+		smv.addToRefreshList(listeners);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(listeners);
 //		igbService.addListSelectionListener(this);
 	}
 	
 	private static void refreshSelection() {
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
-		List<StyledGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
+		List<StyledGlyph> selected = (List)smv.getAllSelectedTiers();
 		allStyles.clear();
 		annotStyles.clear();
 		graphStates.clear();
@@ -90,7 +90,7 @@ public abstract class Selections {
 			}
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
-		List<GlyphI> selectedGraphs = (List)igbService.getSeqMapView().getFloatingGraphGlyphs();
+		List<GlyphI> selectedGraphs = (List)smv.getFloatingGraphGlyphs();
 		for (GlyphI glyph : selectedGraphs) {
 			if (glyph instanceof GraphGlyph) {
 				GraphGlyph gg = (GraphGlyph) glyph;
@@ -223,8 +223,8 @@ public abstract class Selections {
 			// Ignore the splice view as well as events coming from this class itself.
 
 			Object src = evt.getSource();
-			if (!(src == igbService.getSeqMapView() || src == igbService.getSeqMap())
-					|| igbService.getSeqMap() == null || igbService.getSeqMapView() == null) {
+			if (!(src == smv ||  src == smv.getSeqMap())
+					  || smv == null || smv.getSeqMap() == null) {
 				return;
 			}
 

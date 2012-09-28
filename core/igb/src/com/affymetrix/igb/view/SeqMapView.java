@@ -1219,8 +1219,6 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	/* returns ViewModeGlyphs */
-	@Override
 	public List<GlyphI> getAllSelectedTiers() {
 		List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
 		// this adds all tracks selected on the label, including join tracks (not join children)

@@ -24,7 +24,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
@@ -193,7 +192,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		for (TierLabelGlyph label : tiervec) {
 			TierGlyph tier = (TierGlyph) label.getInfo();
 			final ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null && !style.getShow() && tier.getDirection() != Direction.REVERSE) {
+			if (style != null && !style.getShow() && tier.getDirection() != TierGlyph.Direction.REVERSE) {
 				final JMenuItem show_tier = new JMenuItem() {
 
 					private static final long serialVersionUID = 1L;
@@ -328,7 +327,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(repack_all_tiers);
 		popup.add(new JSeparator());
 		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
-		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != Direction.AXIS) {
+		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != TierGlyph.Direction.AXIS) {
 			JMenuItem maximize_track = new JRPMenuItemTLP(MaximizeTrackAction.getAction());
 			JMenuItem maximize_track_test = new JRPMenuItemTLP(MaximizeTrackActionTest.getAction());
 			popup.add(maximize_track);

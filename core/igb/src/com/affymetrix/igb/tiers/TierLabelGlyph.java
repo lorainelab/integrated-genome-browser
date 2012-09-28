@@ -6,7 +6,6 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -250,7 +249,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				boundingPixelBox.y + boundingPixelBox.height);
 
 		int text_width = fm.stringWidth(label);
-		Direction direction = getReferenceTier() != null ? getReferenceTier().getDirection() : Direction.NONE;
+		TierGlyph.Direction direction = getReferenceTier() != null ? getReferenceTier().getDirection() : TierGlyph.Direction.NONE;
 		if (text_width + (pbBuffer_x * 2) > pixelbox.width) {
 			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox, direction);
 		} else {
@@ -261,7 +260,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	@SuppressWarnings("unused")
-	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, Direction direction) {
+	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, TierGlyph.Direction direction) {
 		int maxLines = (upperY - lowerY) / text_height;
 		if (maxLines == 0) {
 			return;

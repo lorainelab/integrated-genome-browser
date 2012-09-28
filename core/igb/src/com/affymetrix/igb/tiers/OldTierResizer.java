@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
@@ -212,7 +212,7 @@ public class OldTierResizer extends MouseInputAdapter {
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(0, height);
 				if(this.upperGl.getReferenceTier() instanceof ITransformableTierGlyph){
-					if(this.upperGl.getReferenceTier().getDirection() != Direction.REVERSE){
+					if(this.upperGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE){
 						((ITransformableTierGlyph)this.upperGl.getReferenceTier()).setOffset(
 							((ITransformableTierGlyph)this.upperGl.getReferenceTier()).getOffset() + (int)delta);
 					}
@@ -232,7 +232,7 @@ public class OldTierResizer extends MouseInputAdapter {
 				this.lowerGl.resizeHeight(y, height);
 				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
 				if(this.lowerGl.getReferenceTier() instanceof ITransformableTierGlyph){
-					if(this.lowerGl.getReferenceTier().getDirection() != Direction.REVERSE){
+					if(this.lowerGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE){
 						((ITransformableTierGlyph)this.lowerGl.getReferenceTier()).setOffset(
 							((ITransformableTierGlyph)this.lowerGl.getReferenceTier()).getOffset() - (int)delta);
 					}

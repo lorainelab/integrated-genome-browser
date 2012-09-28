@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class DependentData {
 	final private String id;
 	final private String parent_method;
 	final private DependentType type;
-	private Direction direction;
+	private TierGlyph.Direction direction;
 	private SymWithProps sym;
 
 	public DependentData(String id, DependentType type, String parentUrl) {
@@ -42,7 +42,7 @@ public class DependentData {
 		this.type = type;
 	}
 
-	public DependentData(String id, DependentType type, String parentUrl, Direction direction) {
+	public DependentData(String id, DependentType type, String parentUrl, TierGlyph.Direction direction) {
 		this(id, type, parentUrl);
 		this.direction = direction;
 	}
@@ -108,8 +108,8 @@ public class DependentData {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		syms.add(sym);
 		GraphSym gsym = null;
-		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
-			Boolean isForward = direction == Direction.FORWARD ? true : false;
+		if (direction == TierGlyph.Direction.FORWARD || direction == TierGlyph.Direction.REVERSE) {
+			Boolean isForward = direction == TierGlyph.Direction.FORWARD ? true : false;
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, id, isForward);
 		} else {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, id);
@@ -152,7 +152,7 @@ public class DependentData {
 		return type;
 	}
 
-	public Direction getDirection(){
+	public TierGlyph.Direction getDirection(){
 		return direction;
 	}
 

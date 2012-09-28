@@ -10,7 +10,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.shared.TierGlyph;
 
 public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
@@ -18,14 +17,14 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 	@Override
 	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
 		if (sym != null) {
-			TierGlyph tierGlyph = smv.getTrack(style, Direction.NONE);
+			TierGlyph tierGlyph = smv.getTrack(style, TierGlyph.Direction.NONE);
 			SimpleSymWithResidues childSym = (SimpleSymWithResidues) sym.getChild(0);
 			SeqSpan pspan = smv.getViewSeqSpan(childSym);
 			if (pspan == null || pspan.getLength() == 0) {
 				return;
 			}  // if no span corresponding to seq, then return;
 			tierGlyph.setTierType(TierGlyph.TierType.ANNOTATION);
-			tierGlyph.setDirection(Direction.NONE);
+			tierGlyph.setDirection(TierGlyph.Direction.NONE);
 			tierGlyph.setInfo(sym);	
 			GlyphI residueGlyph = getAlignedResiduesGlyph(childSym, smv.getAnnotatedSeq(), false);
 			if(residueGlyph != null){

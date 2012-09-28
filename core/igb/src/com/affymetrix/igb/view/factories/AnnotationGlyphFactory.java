@@ -26,7 +26,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -491,11 +490,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
 		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();
-			Direction useDirection = (!style.getSeparable()) ? Direction.BOTH : Direction.FORWARD;
+			TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
 			TierGlyph ftier = gviewer.getTrack(style, useDirection);
 			ftier.setTierType(TierGlyph.TierType.ANNOTATION);
 			ftier.setInfo(sym);
-			TierGlyph rtier = (useDirection == Direction.BOTH) ? ftier : gviewer.getTrack(style, Direction.REVERSE);
+			TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
 			rtier.setTierType(TierGlyph.TierType.ANNOTATION);
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {

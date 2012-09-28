@@ -26,7 +26,6 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.view.factories.AbstractTierGlyph;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
@@ -249,21 +248,21 @@ public class TrackView {
 
 	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
 		if(!style.isGraphTier()){
-			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
+			TierGlyph.Direction direction = style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH;
 			//rootSym = (category == FileTypeCategory.ScoredContainer) ? new ScoredContainerSym() : new TypeContainerAnnot(style.getMethodName());
 			TierGlyph tgfor = gviewer.getTrack(style, direction);
 			if(tgfor.getChildCount() == 0){
 				((AbstractTierGlyph)tgfor).initUnloaded();
 			}
 			if (style.getSeparate()) {
-				TierGlyph tgrev = gviewer.getTrack(style, Direction.REVERSE);
+				TierGlyph tgrev = gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
 				if(tgrev.getChildCount() == 0){
 					((AbstractTierGlyph)tgrev).initUnloaded();
 				}
 			}
 		}else {
 			//rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
-			TierGlyph tg = gviewer.getTrack(style, Direction.NONE);
+			TierGlyph tg = gviewer.getTrack(style, TierGlyph.Direction.NONE);
 			if(tg.getChildCount() == 0 && !style.getFloatTier()){
 				((AbstractTierGlyph)tg).initUnloaded();
 			}

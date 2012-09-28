@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.StyledGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -63,7 +62,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			smv = igb.getMapView();
 			map = (AffyLabelledTierMap)smv.getSeqMap();
 		}
-
+		
 		// Here we map the friendly string back to the LoadStrategy.
 		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
@@ -444,7 +443,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			for (TierGlyph tier : new CopyOnWriteArrayList<TierGlyph>(smv.getSeqMap().getTiers())) {
 				ITrackStyle style = tier.getAnnotStyle();
 				if (style instanceof TrackStyle) {
-					if (tier.getDirection() != Direction.AXIS) {
+					if (tier.getDirection() != TierGlyph.Direction.AXIS) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (CytobandParser.CYTOBAND_TIER_NAME.equals(style.getMethodName())) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);

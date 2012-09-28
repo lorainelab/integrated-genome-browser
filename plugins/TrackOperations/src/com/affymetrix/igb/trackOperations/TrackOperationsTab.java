@@ -27,6 +27,8 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
+import static com.affymetrix.igb.shared.Selections.*;
+
 public final class TrackOperationsTab implements SeqSelectionListener, SymSelectionListener {
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
@@ -34,8 +36,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	private static GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
-	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
-	public final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB;
 	public final JRPButton splitB;
@@ -149,13 +149,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	}
 
 	private void collectGraphsAndGlyphs() {
-		allGlyphs.clear();
-		rootSyms.clear();
-		
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<StyledGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
-		allGlyphs.addAll(selected);
-		rootSyms.addAll(TrackUtils.getInstance().getSymsTierGlyphs(selected));
 		thresholdingAction.setGraphs(Selections.graphGlyphs);
 	}
 
@@ -363,18 +356,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			}
 		}
 		return sb.toString();
-	}
-
-	public List<RootSeqSymmetry> getRootSyms() {
-		return rootSyms;
-	}
-
-	public List<StyledGlyph> getSelectedGlyphss() {
-		return allGlyphs;
-	}
-
-	public IGBService getIgbService() {
-		return igbService;
 	}
 
 	private class HoverEffect implements MouseListener {

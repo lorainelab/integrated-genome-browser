@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -56,6 +57,8 @@ public final class GeneralLoadView {
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static SeqMapView gviewer;
+	private static GenericAction refreshDataAction;
+	private static JRPButton partial_residuesB;
 	private static DataManagementTableModel tableModel;
 	private FeatureTreeView feature_tree_view;
 	private static GeneralLoadView singleton;
@@ -93,6 +96,10 @@ public final class GeneralLoadView {
 		table = new JTableX("GeneralLoadView_DataManagementTable", tableModel);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
 		initDataManagementTable();
+		refreshDataAction = gviewer.getRefreshDataAction();
+		partial_residuesB = gviewer.getPartial_residuesButton();
+		partial_residuesB.setEnabled(false);
+		refreshDataAction.setEnabled(false);
 	}
 
 	public JTree getTree() {
@@ -381,6 +388,7 @@ public final class GeneralLoadView {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
 		refreshDataManagementTable(visibleFeatures);
 
+		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(visibleFeatures);
 	}
 
@@ -441,7 +449,29 @@ public final class GeneralLoadView {
 		}
 		return enabled;
 	}
-
+	
+	/**
+	 * Don't allow buttons to be used if they're not valid.
+	 */
+	
+	private void disableButtonsIfNecessary() {
+		// Don't allow buttons for a full genome sequence
+		setAllButtons(getIsDisableNecessary());
+	}
+	
+	public void disableAllButtons() {
+		setAllButtons(false);
+	}
+	
+	private void setAllButtons(final boolean enabled) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+			public void run() {
+				partial_residuesB.setEnabled(enabled);
+				refreshDataAction.setEnabled(enabled);
+			}
+		});
+	}
+	
 	/**
 	 * Accessor method. See if we need to enable/disable the refresh_dataB
 	 * button by looking at the features' load strategies.
@@ -457,6 +487,9 @@ public final class GeneralLoadView {
 				enabled = true;
 				break;
 			}
+		}
+		if (refreshDataAction.isEnabled() != enabled) {
+			refreshDataAction.setEnabled(enabled);
 		}
 	}
 

@@ -10,8 +10,6 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.common.ExtensionPointHandler;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -29,11 +27,10 @@ import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 import static com.affymetrix.igb.shared.Selections.*;
 
-public final class TrackOperationsTab implements SeqSelectionListener, SymSelectionListener {
+public final class TrackOperationsTab implements RefreshSelectionListener{ 
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	private static TrackOperationsTab singleton;
-	private static GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
@@ -71,9 +68,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 	public static void init(IGBService igbService) {
 		singleton = new TrackOperationsTab(igbService);
-		gmodel = GenometryModel.getGenometryModel();
-		gmodel.addSeqSelectionListener(singleton);
-		gmodel.addSymSelectionListener(singleton);
+		Selections.addRefreshSelectionListener(singleton);
 	}
 
 	public static synchronized TrackOperationsTab getSingleton() {
@@ -122,34 +117,16 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		resetSelectedGlyphs(true);
 	}
 
-	public void symSelectionChanged(SymSelectionEvent evt) {
-		// Only pay attention to selections from the main SeqMapView or its map.
-		// Ignore the splice view as well as events coming from this class itself.
-		Object src = evt.getSource();
-		if (!(src == igbService.getSeqMapView() || src == igbService.getSeqMap())) {
-			return;
-		}
-		collectGraphsAndGlyphs();
+	@Override
+	public void selectionRefreshed() {
 		resetSelectedGlyphs(true);
 	}
-
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		if (DEBUG_EVENTS) {
-			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
-		}
-		collectGraphsAndGlyphs();
-		resetSelectedGlyphs(true);
-	}
-		
+			
 	private void resetSelectedGlyphs(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		loadOperators(enable);
 		setPanelEnabled(enable);
 		is_listening = true; // turn back on GUI events
-	}
-
-	private void collectGraphsAndGlyphs() {
-		thresholdingAction.setGraphs(Selections.graphGlyphs);
 	}
 
 	public void updateViewer() {
@@ -158,7 +135,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
-				igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+				igbService.getSeqMapView().updatePanel();
 				resetSelectedGlyphs(true);
 			}
 		});
@@ -252,7 +229,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		combineB.setEnabled(enable && uncombined_graph_glyph_count > 1);
 		splitB.setEnabled(enable && any_are_combined);
-		threshB.setEnabled(enable && graph_count > 0);
+		threshB.setEnabled(enable && !graphGlyphs.isEmpty());
 		int transformCount = name2transformation.size();
 		int operatorCount = name2operation.size();
 		boolean enableTransformation = enable && all_same && transformCount > 0;

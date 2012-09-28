@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.thresholding.GraphScoreThreshSetter;
 
 public class ThresholdingAction extends GenericAction {
@@ -29,6 +30,7 @@ public class ThresholdingAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		setGraphs(Selections.graphGlyphs);
 		showGraphScoreThreshSetter();
 	}
 

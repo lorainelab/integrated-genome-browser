@@ -67,9 +67,6 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         dataManagementTableModel =GeneralLoadView.getLoadView().getTableModel();
         dataManagementTable = GeneralLoadView.getLoadView().getTable();
-        partial_residuesB = GeneralLoadView.getLoadView().getPartial_residuesButton();
-        refresh_dataB = GeneralLoadView.getLoadView().getRefreshDataButton();
-        all_residuesB = GeneralLoadView.getLoadView().getAll_ResiduesButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tree = GeneralLoadView.getLoadView().getTree();
@@ -85,23 +82,11 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
-                .add(all_residuesB, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(partial_residuesB, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(refresh_dataB, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                .add(0, 0, 0)
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(all_residuesB)
-                    .add(partial_residuesB)
-                    .add(refresh_dataB)))
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(jPanel2);
@@ -131,7 +116,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -168,15 +153,12 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_jPanel1MouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton all_residuesB;
     private javax.swing.JTable dataManagementTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JButton partial_residuesB;
-    private javax.swing.JButton refresh_dataB;
     private javax.swing.JTree tree;
     // End of variables declaration//GEN-END:variables
 

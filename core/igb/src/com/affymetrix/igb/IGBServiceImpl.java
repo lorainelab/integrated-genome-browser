@@ -398,7 +398,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void addPartialResiduesActionListener(ActionListener al) {
-		GeneralLoadView.getLoadView().getPartial_residuesButton().addActionListener(al);
+		((SeqMapView) getSeqMapView()).getPartial_residuesButton().addActionListener(al);
 	}
 
 	@Override

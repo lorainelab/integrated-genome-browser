@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -33,8 +32,6 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -43,12 +40,9 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.LoadPartialSequenceAction;
-import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
@@ -61,20 +55,14 @@ public final class GeneralLoadView {
 
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
-	private static GenericAction refreshDataAction;
 	private static SeqMapView gviewer;
 	private static DataManagementTableModel tableModel;
 	private FeatureTreeView feature_tree_view;
 	private static GeneralLoadView singleton;
 	private static IGBService igbService;
 	//gui components
-	private static JRPButton all_residuesB;
 	private static JTableX table;
-	private static JRPButton partial_residuesB;
-	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
-	private static Font font = new Font("SansSerif", Font.BOLD, 16);
 	private boolean showLoadingConfirm = false;
 
 	public static void init(IGBService _igbService) {
@@ -105,32 +93,6 @@ public final class GeneralLoadView {
 		table = new JTableX("GeneralLoadView_DataManagementTable", tableModel);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
 		initDataManagementTable();
-
-		refreshDataAction = gviewer.getRefreshDataAction();
-		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
-		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
-		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadPartialSequenceAction.getAction());
-
-		all_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("nucleotideSequence")));
-		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
-		all_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
-		all_residuesB.setEnabled(false);
-		all_residuesB.setFont(font);
-		all_residuesB.setText("Load All Sequence");
-
-		partial_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
-		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
-		partial_residuesB.setEnabled(false);
-		partial_residuesB.setFont(font);
-		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
-		partial_residuesB.setText("Load Sequence In View");
-
-		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
-		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
-		refreshDataAction.setEnabled(false);
-		refresh_dataB.setFont(font);
-		refresh_dataB.setIcon(MenuUtil.getIcon("22x22/actions/refresh.png"));
-		refresh_dataB.setText("Load Data");
 	}
 
 	public JTree getTree() {
@@ -143,22 +105,6 @@ public final class GeneralLoadView {
 
 	public JTable getTable() {
 		return table;
-	}
-
-	public JRPButton getPartial_residuesButton() {
-		return partial_residuesB;
-	}
-
-	public JRPButton getAll_ResiduesButton() {
-		return all_residuesB;
-	}
-
-	public JRPButton getRefreshDataButton() {
-		return refresh_dataB;
-	}
-
-	public GenericAction getRefreshAction() {
-		return refreshDataAction;
 	}
 
 	public void initVersion(String versionName) {
@@ -435,7 +381,6 @@ public final class GeneralLoadView {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
 		refreshDataManagementTable(visibleFeatures);
 
-		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(visibleFeatures);
 	}
 
@@ -498,29 +443,6 @@ public final class GeneralLoadView {
 	}
 
 	/**
-	 * Don't allow buttons to be used if they're not valid.
-	 */
-	private void disableButtonsIfNecessary() {
-		// Don't allow buttons for a full genome sequence
-		setAllButtons(getIsDisableNecessary());
-	}
-
-	public void disableAllButtons() {
-		setAllButtons(false);
-	}
-
-	private void setAllButtons(final boolean enabled) {
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				all_residuesB.setEnabled(enabled);
-				partial_residuesB.setEnabled(enabled);
-				refreshDataAction.setEnabled(enabled);
-			}
-		});
-	}
-
-	/**
 	 * Accessor method. See if we need to enable/disable the refresh_dataB
 	 * button by looking at the features' load strategies.
 	 */
@@ -535,10 +457,6 @@ public final class GeneralLoadView {
 				enabled = true;
 				break;
 			}
-		}
-
-		if (refreshDataAction.isEnabled() != enabled) {
-			refreshDataAction.setEnabled(enabled);
 		}
 	}
 
@@ -660,10 +578,6 @@ public final class GeneralLoadView {
 
 		CThreadHolder.getInstance().execute(feature, delete);
 
-	}
-
-	protected GenericAction getRefreshDataAction() {
-		return refreshDataAction;
 	}
 
 	public FeatureTreeView getFeatureTree() {

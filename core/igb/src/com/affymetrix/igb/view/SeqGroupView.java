@@ -480,7 +480,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		// refreshTreeView should only be called if feature table
 		// needs to be cleared.
 
-		GeneralLoadView.getLoadView().disableAllButtons();
 		GeneralLoadView.AutoloadQuickloadFeature();
 	}
 
@@ -532,7 +531,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			// refreshTreeView should only be called if feature table
 			// needs to be cleared.
 
-			GeneralLoadView.getLoadView().disableAllButtons();
 			return;
 		}
 
@@ -672,9 +670,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		versionCB.setSelectedItem(gVersion.versionName);
 		versionCB.setEnabled(true);
-		GeneralLoadView.getLoadView().getAll_ResiduesButton().setEnabled(false);
-		GeneralLoadView.getLoadView().getPartial_residuesButton().setEnabled(false);
-		GeneralLoadView.getLoadView().getRefreshAction().setEnabled(false);
+		gviewer.getPartial_residuesButton().setEnabled(false);
+		gviewer.getRefreshDataAction().setEnabled(false);
 		addListeners();
 	}
 

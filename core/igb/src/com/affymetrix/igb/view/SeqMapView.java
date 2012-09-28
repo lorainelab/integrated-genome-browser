@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.*;
 import java.awt.event.*;
@@ -55,6 +56,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import java.text.MessageFormat;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -195,6 +197,7 @@ public class SeqMapView extends JPanel
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
+	protected JRPButton partial_residuesB;
 	public static final Font axisFont = NeoConstants.default_bold_font;
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
@@ -399,6 +402,7 @@ public class SeqMapView extends JPanel
 
 		refreshDataAction = new RefreshDataAction(this);
 		addRefreshButton(this.id);
+		addLoadResidueButton(this.id);
 
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 		JPanel pan = new JPanel(new BorderLayout());
@@ -442,6 +446,14 @@ public class SeqMapView extends JPanel
 		xzoombox.add(refresh_button);
 				
 		AutoLoadThresholdHandler autoload = new AutoLoadThresholdHandler(this);
+	}
+	
+	protected void addLoadResidueButton(String id) {
+		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadPartialSequenceAction.getAction());
+		partial_residuesB.setToolTipText(MessageFormat.format(IGBConstants.BUNDLE.getString("load"), IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
+		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
+		partial_residuesB.setText("Load Sequence");
+		xzoombox.add(partial_residuesB);
 	}
 
 	protected Adjustable getXZoomer(String id) {
@@ -2161,7 +2173,7 @@ public class SeqMapView extends JPanel
 	public GenericAction getRefreshDataAction() {
 		return refreshDataAction;
 	}
-
+	
 	@Override
 	public void setPropertyHandler(PropertyHandler propertyHandler) {
 		this.propertyHandler = propertyHandler;
@@ -2280,6 +2292,10 @@ public class SeqMapView extends JPanel
 
 	public MapRangeBox getMapRangeBox() {
 		return map_range_box;
+	}
+	
+	public JRPButton getPartial_residuesButton() {
+		return partial_residuesB;
 	}
 
 	public SeqMapViewPopup getPopup() {

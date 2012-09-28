@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 
 public class TrackTransformAction extends TrackFunctionOperationA {
 	private static final long serialVersionUID = 1L;
@@ -17,9 +16,9 @@ public class TrackTransformAction extends TrackFunctionOperationA {
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		List<GlyphI> tiers;
-		for (GlyphI glyph : getSeqMapView().getAllSelectedTiers()) {
-			tiers = new ArrayList<GlyphI>();
+		List<StyledGlyph> tiers;
+		for (StyledGlyph glyph : Selections.allGlyphs) {
+			tiers = new ArrayList<StyledGlyph>();
 			tiers.add(glyph);
 			addTier(tiers);
 		}

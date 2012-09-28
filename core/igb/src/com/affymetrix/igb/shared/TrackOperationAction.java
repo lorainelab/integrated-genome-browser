@@ -12,6 +12,6 @@ public class TrackOperationAction extends TrackFunctionOperationA {
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		addTier(getSeqMapView().getAllSelectedTiers());
+		addTier(Selections.allGlyphs);
 	}
 }

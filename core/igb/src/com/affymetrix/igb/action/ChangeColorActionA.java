@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
@@ -12,6 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
 
+import static com.affymetrix.igb.shared.Selections.*;
 /**
  * note - this class contains an instance of SeqMapView. For now, there
  * is just one instance using the regular SeqMapView, no instance for
@@ -42,13 +42,13 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	}
 	
 	private void changeColor() {
-		if (getSeqMapView().getAllSelectedTiers().isEmpty()) {
+		if (allGlyphs.isEmpty()) {
 			return;
 		}
 
 		final JColorChooser chooser = new JColorChooser();
 
-		ITrackStyleExtended style_0 = ((TierGlyph)getSeqMapView().getAllSelectedTiers().get(0)).getAnnotStyle();
+		ITrackStyleExtended style_0 = (allGlyphs.get(0)).getAnnotStyle();
 		if (style_0 != null) {
 			setChooserColor(chooser, style_0);
 		}
@@ -73,29 +73,25 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 
 	}
 	
-	private void changeColor(Color color){
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		List<TierGlyph> vgList = (List)getSeqMapView().getAllSelectedTiers();
-		if (!vgList.isEmpty()) {
-			for (TierGlyph vg : vgList) {
-				if (iterateMultigraph && vg.getTierType() == TierGlyph.TierType.GRAPH && vg.getChildren() != null) {
-					for (GlyphI child : vg.getChildren()) {
-						if (child instanceof GraphGlyph) {
-							ITrackStyleExtended style = ((GraphGlyph)child).getGraphState().getTierStyle();
-							if (style != null) {
-								setStyleColor(color, style);
-							}
+	private void changeColor(Color color) {
+		for (StyledGlyph vg : allGlyphs) {
+			if (iterateMultigraph && vg instanceof GraphGlyph && vg.getChildren() != null) {
+				for (GlyphI child : vg.getChildren()) {
+					if (child instanceof GraphGlyph) {
+						ITrackStyleExtended style = ((GraphGlyph) child).getGraphState().getTierStyle();
+						if (style != null) {
+							setStyleColor(color, style);
 						}
 					}
-					setStyleColor(color, vg.getAnnotStyle());
-				}else{
-					ITrackStyleExtended style = vg.getAnnotStyle();
-					if (style != null) {
-						setStyleColor(color, style);
-					}
 				}
-				
+				setStyleColor(color, vg.getAnnotStyle());
+			} else {
+				ITrackStyleExtended style = vg.getAnnotStyle();
+				if (style != null) {
+					setStyleColor(color, style);
+				}
 			}
+
 		}
 	}
 	

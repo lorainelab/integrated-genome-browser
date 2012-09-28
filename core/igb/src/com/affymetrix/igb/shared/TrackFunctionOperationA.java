@@ -37,11 +37,10 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		this(operator, null);
 	}
 
-	protected void addTier(List<? extends GlyphI> vgs) {
+	protected void addTier(List<StyledGlyph> vgs) {
 		java.util.List<DelegateParent> dps = new java.util.ArrayList<DelegateParent>();
 		
-		for (GlyphI gl : vgs) {
-			TierGlyph vg = (TierGlyph)gl;
+		for (StyledGlyph vg : vgs) {
 			if(vg.getAnnotStyle().getFeature() == null){
 				addNonUpdateableTier(vgs);
 				return;
@@ -52,7 +51,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			
 		}
 
-		GenericFeature feature = createFeature(getMethod(vgs), getOperator(), dps, ((TierGlyph)vgs.get(0)).getAnnotStyle());
+		GenericFeature feature = createFeature(getMethod(vgs), getOperator(), dps, vgs.get(0).getAnnotStyle());
 		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
 	}
 
@@ -68,7 +67,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			if (started) {
 				meth.append(", ");
 			}
-			meth.append(((TierGlyph)gl).getAnnotStyle().getTrackName()).append(((TierGlyph)gl).getDirection().getDisplay());
+			meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(((StyledGlyph)gl).getDirection().getDisplay());
 			started = true;
 		}
 		return meth.toString();
@@ -100,14 +99,14 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			else {
 				meth.append(operator.getDisplay()).append(": ");
 				for (GlyphI gl : vgs) {
-					meth.append(((TierGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
+					meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
 				}
 			}
 			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
 		}
 	}
 			
-	private static Boolean isForward(TierGlyph vg){
+	private static Boolean isForward(StyledGlyph vg){
 		if(vg.getAnnotStyle().isGraphTier()){
 			return null;
 		}

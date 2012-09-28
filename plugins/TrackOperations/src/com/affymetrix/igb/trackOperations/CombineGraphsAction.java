@@ -3,7 +3,6 @@ package com.affymetrix.igb.trackOperations;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,12 +11,10 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TrackUtils;
 
+import static com.affymetrix.igb.shared.Selections.*;
 /**
  *  Puts all selected graphs in the same tier.
  *  Current glyph factories do not support floating the combined graphs.
@@ -36,17 +33,13 @@ public class CombineGraphsAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<StyledGlyph> selected = (List)igbService.getSeqMapView().getAllSelectedTiers();
-		List<RootSeqSymmetry> rootSyms = TrackUtils.getInstance().getSymsTierGlyphs(selected);
 		int gcount = rootSyms.size();
 		float height = 0;
 
 		// Note that the combo_style does not implement IFloatableTierStyle
 		// because the glyph factory doesn't support floating combo graphs anyway.
 		ITrackStyleExtended combo_style = null;
-		String viewMode = "combo";
-
+	
 		Map<Color, Integer> colorMap = new HashMap<Color, Integer>();
 		// If any of them already has a combo style, use that one
 		for (int i = 0; i < gcount && combo_style == null; i++) {

@@ -42,10 +42,12 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
         transformationGoB = trackOpTab.transformationGoB;
         transformationParam = trackOpTab.transformationParam;
         transformationCB = trackOpTab.transformationCB;
+        transformationParamLabel = trackOpTab.transformationParamLabel;
         mtPanel = new javax.swing.JPanel();
         operationCB = trackOpTab.operationCB;
         operationParam = trackOpTab.operationParam;
         operationGoB = trackOpTab.operationGoB;
+        operationParamLabel = trackOpTab.operationParamLabel;
         btPanel = new javax.swing.JPanel();
         threshB = trackOpTab.threshB;
         splitB = trackOpTab.splitB;
@@ -59,6 +61,10 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         transformationParam.setEditable(false);
 
+        transformationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
+        transformationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
+        transformationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
+
         org.jdesktop.layout.GroupLayout stPanelLayout = new org.jdesktop.layout.GroupLayout(stPanel);
         stPanel.setLayout(stPanelLayout);
         stPanelLayout.setHorizontalGroup(
@@ -66,6 +72,8 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, stPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
                 .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
@@ -77,7 +85,8 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
             .add(stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                 .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(transformationGoB)
-                .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         mtPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Multi-Track Operation"));
@@ -86,6 +95,10 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         operationGoB.setText("Go");
 
+        operationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
+        operationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
+        operationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
+
         org.jdesktop.layout.GroupLayout mtPanelLayout = new org.jdesktop.layout.GroupLayout(mtPanel);
         mtPanel.setLayout(mtPanelLayout);
         mtPanelLayout.setHorizontalGroup(
@@ -93,6 +106,8 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
             .add(mtPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
                 .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(operationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
@@ -105,7 +120,8 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
                 .add(mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(operationGoB)
-                    .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(operationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 0, 0))
         );
 
@@ -146,11 +162,9 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
                 .add(0, 0, 0)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(btPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, mtPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(stPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(0, 0, 0))))
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(org.jdesktop.layout.GroupLayout.TRAILING, mtPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(stPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -172,12 +186,14 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;
     private javax.swing.JTextField operationParam;
+    private javax.swing.JLabel operationParamLabel;
     private javax.swing.JButton splitB;
     private javax.swing.JPanel stPanel;
     private javax.swing.JButton threshB;
     private javax.swing.JComboBox transformationCB;
     private javax.swing.JButton transformationGoB;
     private javax.swing.JTextField transformationParam;
+    private javax.swing.JLabel transformationParamLabel;
     // End of variables declaration//GEN-END:variables
 
 	@Override

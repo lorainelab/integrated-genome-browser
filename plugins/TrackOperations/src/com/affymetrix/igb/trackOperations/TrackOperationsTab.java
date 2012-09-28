@@ -140,10 +140,6 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 		});
 	}
 
-	public void trackstylePropertyChanged(EventObject eo) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	private void loadOperators(boolean enable) {
 		transformationCB.removeAllItems();
 		name2transformation.clear();
@@ -204,14 +200,14 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 	}
 
 	private void setTransformationDisplay(boolean enable) {
-		set___AtionDisplay(transformationCB, transformationParamLabel, transformationParam, name2transformation, transformationGoB, enable, true);
+		setAtionDisplay(transformationCB, transformationParamLabel, transformationParam, name2transformation, transformationGoB, enable, true);
 	}
 
 	private void setOperationDisplay(boolean enable) {
-		set___AtionDisplay(operationCB, operationParamLabel, operationParam, name2operation, operationGoB, enable, false);
+		setAtionDisplay(operationCB, operationParamLabel, operationParam, name2operation, operationGoB, enable, false);
 	}
 
-	private void set___AtionDisplay(
+	private void setAtionDisplay(
 		JRPComboBoxWithSingleListener ationCB,
 		JLabel ationParamLabel,
 		JTextField ationParam,

@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -28,6 +29,7 @@ public abstract class Selections {
 	public static final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
 	public static final List<GraphState> graphStates = new ArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+	public static final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 		
 	private static final IGBService igbService;
 	private static final EventListenerList listenerList;
@@ -57,6 +59,7 @@ public abstract class Selections {
 		graphStates.clear();
 		graphGlyphs.clear();
 		allGlyphs.clear();
+		rootSyms.clear();
 		for (StyledGlyph useGlyph : selected) {
 			FileTypeCategory category = useGlyph.getFileTypeCategory();
 			if (useGlyph instanceof GraphGlyph){
@@ -65,6 +68,7 @@ public abstract class Selections {
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
 				allGlyphs.add(gg);
+				rootSyms.add((RootSeqSymmetry)gg.getInfo());
 			}else if (useGlyph instanceof TierGlyph && ((TierGlyph)useGlyph).getTierType() == TierGlyph.TierType.GRAPH) {
 				if (useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
@@ -74,6 +78,7 @@ public abstract class Selections {
 							allStyles.add(gg.getGraphState().getTierStyle());
 							graphGlyphs.add(gg);
 							allGlyphs.add(gg);
+							rootSyms.add((RootSeqSymmetry)gg.getInfo());
 						}
 					}
 				}
@@ -81,6 +86,7 @@ public abstract class Selections {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
+				rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
 			}
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
@@ -91,6 +97,7 @@ public abstract class Selections {
 				graphStates.add(gg.getGraphState());
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
+				rootSyms.add((RootSeqSymmetry)gg.getInfo());
 			}
 		}
 		notifyRefreshListener();

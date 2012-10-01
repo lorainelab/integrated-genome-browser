@@ -113,7 +113,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar", PreferenceUtils.getTopNode(),
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
-        autoloadSequenceCheckBox = PreferenceUtils.createCheckBox("Autoload Sequence", PreferenceUtils.getTopNode(),       PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence);
 
         setPreferredSize(new java.awt.Dimension(545, 540));
 
@@ -385,7 +384,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                                     .add(confirmBeforeLoadCheckBox)
                                     .add(confirmBeforeDeleteCheckBox)
                                     .add(askBeforeExitCheckBox)
-                                    .add(autoloadSequenceCheckBox)
                                     .add(displayOption))
                                 .add(30, 30, 30)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -425,13 +423,11 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(confirmBeforeLoadCheckBox)
                     .add(showCollapseOptionCheckBox))
-                .add(8, 8, 8)
-                .add(autoloadSequenceCheckBox)
-                .add(16, 16, 16)
+                .add(10, 10, 10)
                 .add(displayOption)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -511,7 +507,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private com.jidesoft.combobox.ColorComboBox TColorComboBox;
     private javax.swing.JLabel aLabel;
     private javax.swing.JCheckBox askBeforeExitCheckBox;
-    private javax.swing.JCheckBox autoloadSequenceCheckBox;
     private javax.swing.JLabel backgroundLabel;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private com.jidesoft.combobox.ColorComboBox bgComboBox;

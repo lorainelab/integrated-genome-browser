@@ -31,7 +31,6 @@
                                   <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="autoloadSequenceCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="displayOption" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
@@ -84,13 +83,11 @@
                   <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
                   <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-              <Component id="autoloadSequenceCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="70" max="32767" attributes="0"/>
+              <EmptySpace pref="113" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -513,12 +510,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Display Errors on Status Bar&quot;, PreferenceUtils.getTopNode(),&#xa;            PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);"/>
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);&#xa;else&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="autoloadSequenceCheckBox">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Autoload Sequence&quot;, PreferenceUtils.getTopNode(),       PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence)"/>
-        <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
       </AuxValues>
     </Component>
   </SubComponents>

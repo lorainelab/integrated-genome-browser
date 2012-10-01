@@ -258,15 +258,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 	};
-	private final SeqSelectionListener seqSelectionListener = new SeqSelectionListener() {
-
-		@Override
-		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			if (PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence)) {
-				GeneralLoadView.getLoadView().loadResidues(false);
-			}
-		}
-	};
 
 	public SeqMapView(boolean add_popups, String theId) {
 		super();
@@ -350,9 +341,6 @@ public class SeqMapView extends JPanel
 
 		SmartDragScrollMonitor sdsm = new SmartDragScrollMonitor(this);
 		seqmap.setDragScrollMonitor(sdsm);
-
-		// Add listener to notify tiers about selection change event.
-		gmodel.addSeqSelectionListener(seqSelectionListener);
 
 		this.setLayout(new BorderLayout());
 

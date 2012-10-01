@@ -34,6 +34,7 @@ public interface TrackConstants {
 	static final String PREF_VIEW_MODE = "View Mode";
 	static final String PREF_DRAW_COLLAPSE_ICON = "Draw Collapse Icon";
 	static final String PREF_SHOW_IGB_TRACK_MARK = "Show IGB Track Mark";
+	static final String PREF_SHOW_LOCKED_TRACK_ICON = "Show Locked Track Icon";
 	static final boolean default_show = true;
 	static final boolean default_connected = true;
 	static final boolean default_collapsed = false;
@@ -42,6 +43,7 @@ public interface TrackConstants {
 	static final boolean default_show_summary = false;
 	static final boolean default_draw_collapse_icon = true;
 	static final boolean default_show_igb_track_mark = true;
+	static final boolean default_show_locked_track_icon = true;
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.decode("0x333399"); //Color.CYAN;
 	static final Color default_background = Color.decode("0xDEE0E0"); //Color.BLACK;

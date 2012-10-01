@@ -880,11 +880,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public static void setShowLockIcon(boolean b){
 		showLockIcon = b;
+		if (tiers_root_node != null) {
+			tiers_root_node.putBoolean(PREF_SHOW_LOCKED_TRACK_ICON, b);
+		}
 	}
 	
 	public static boolean getShowLockIcon(){
-		return showLockIcon;
+		return tiers_root_node.getBoolean(PREF_SHOW_LOCKED_TRACK_ICON, default_show_locked_track_icon);
 	}
+	
 	public void setDirectionType(DIRECTION_TYPE type) {
 		this.direction_type = type;
 		if (getNode() != null) {

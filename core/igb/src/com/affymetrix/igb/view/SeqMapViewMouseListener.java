@@ -4,10 +4,8 @@ import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -443,7 +441,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	// This is called ONLY at the end of a rubber-band drag.
-	private List<GlyphI> doTheSelection(List<GlyphI> glyphs) {	
+	private List<GlyphI> doTheSelection(List<GlyphI> glyphs) {
 		// Remove any children of the axis tier (like contigs) from the selections.
 		// Selecting contigs is something you usually do not want to do.  It is
 		// much more likely that if someone dragged across the axis, they want to
@@ -469,7 +467,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		glyphs = corrected;
 		
 		glyphs = new ArrayList<GlyphI>(SeqMapView.getParents(glyphs));
-			
+		
 		return glyphs;
 	}
 
@@ -484,27 +482,10 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			}
 			//First check of tier glyph intersects
 			if (tg.isVisible() && tg.intersects(coordrect, map.getView())) {
-				
-				List<GlyphI> childrens = tg.getChildren();
-
-				// Determine the start position
-				temp.setCoords(coordrect.x, coordrect.y, 1, coordrect.height);
-				int start = SearchUtils.binarySearch(childrens, temp, new GlyphMinXComparator());
-
-				// Determine the end position
-				temp.setCoords(coordrect.x + coordrect.width - 1, coordrect.y, 1, coordrect.height);
-				int end = SearchUtils.binarySearch(childrens, temp, new GlyphMinXComparator());
-
-				// Only check childrens from start to end position
-				for (int i = start; i <= end; i++) {
-					child = childrens.get(i);
-					if (child.isVisible() && child.hit(coordrect, map.getView())) {
-						glyphs.add(child);
-					}
-				}
+				glyphs.addAll(tg.pickTraversal(coordrect, map.getView()));
 			}
 		}
-				
+		
 		return glyphs;
 	}
 	

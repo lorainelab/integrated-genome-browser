@@ -421,7 +421,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 				} else if (rubber_band_start != null) {
 					// started outside axis tier: user is trying to select glyphs
-					doTheSelection(map.getItemsByCoord(cbox), rubber_band_start);
+					List<GlyphI> glyphs = doTheSelection(map.getItemsByCoord(cbox));
+					showSelection(glyphs, rubber_band_start);
 				}
 			}
 
@@ -442,7 +443,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	// This is called ONLY at the end of a rubber-band drag.
-	private void doTheSelection(List<GlyphI> glyphs, MouseEvent evt) {	
+	private List<GlyphI> doTheSelection(List<GlyphI> glyphs) {	
 		// Remove any children of the axis tier (like contigs) from the selections.
 		// Selecting contigs is something you usually do not want to do.  It is
 		// much more likely that if someone dragged across the axis, they want to
@@ -469,10 +470,10 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		
 		glyphs = new ArrayList<GlyphI>(SeqMapView.getParents(glyphs));
 			
-		showSelection(glyphs, evt);
+		return glyphs;
 	}
 
-	public void doTheSelection(Rectangle2D.Double coordrect, MouseEvent evt){
+	public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect){	
 		List<GlyphI> glyphs = new ArrayList<GlyphI>();
 		GlyphI child, temp = new Glyph(){};
 		
@@ -503,8 +504,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 				}
 			}
 		}
-
-		showSelection(glyphs, evt);
+				
+		return glyphs;
 	}
 	
 	private void showSelection(List<GlyphI> glyphs, MouseEvent evt){

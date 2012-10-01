@@ -71,7 +71,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	private GlyphI sub_sel_glyph;
 	private final int dismissdelay = ToolTipManager.sharedInstance().getDismissDelay();
 	private boolean shouldSubSelect = false;
-
+	
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
 		this.map = smv.seqmap;
@@ -439,9 +439,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	// This is called ONLY at the end of a rubber-band drag.
-	private void doTheSelection(List<GlyphI> glyphs, MouseEvent evt) {
-		boolean something_changed = true;
-
+	private void doTheSelection(List<GlyphI> glyphs, MouseEvent evt) {		
 		// Remove any children of the axis tier (like contigs) from the selections.
 		// Selecting contigs is something you usually do not want to do.  It is
 		// much more likely that if someone dragged across the axis, they want to
@@ -465,9 +463,15 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			}
 		}
 		glyphs = corrected;
-
+		
 		glyphs = new ArrayList<GlyphI>(SeqMapView.getParents(glyphs));
+				
+		showSelection(glyphs, evt);
+	}
 
+	private void showSelection(List<GlyphI> glyphs, MouseEvent evt){
+		boolean something_changed = true;
+		
 		if (isToggleSelectionEvent(evt)) {
 			if (glyphs.isEmpty()) {
 				something_changed = false;
@@ -491,14 +495,14 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		if (smv.show_edge_matches && something_changed) {
 			smv.doEdgeMatching(map.getSelected(), false);
 		}
-
+		
 		map.updateWidget();
 
 		if (something_changed) {
 			smv.postSelections();
 		}
 	}
-
+	
 	private boolean isInAxisTier(GlyphI g) {
 		if (smv.getAxisTier() == null) {
 			return false;
@@ -601,5 +605,5 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			}
 		}
 		shouldSubSelect = false;
-	}
+	}	
 }

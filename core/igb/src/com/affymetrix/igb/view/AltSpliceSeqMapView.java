@@ -349,6 +349,11 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 	
 	@Override
+	protected void addLoadResidueButton(String id) {
+		//Do nothing.
+	}
+	
+	@Override
 	protected void addDependentAndEmptyTrack(){
 		//Do Nothing for alt splice view.
 	}

@@ -14,7 +14,6 @@ import javax.swing.table.*;
 import com.jidesoft.combobox.ColorExComboBox;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 import com.affymetrix.genoviz.swing.*;
@@ -28,7 +27,6 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  * A table with two customizations: 1. An always-visible combo box. For a user,
@@ -94,11 +92,11 @@ public final class DataManagementTable {
 			JRPTextFieldTableCellRenderer trackNameFieldEditor;
 			if (vFeature.getStyle() != null) {
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-						vFeature.getStyle().getTrackName());
+						vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
 			} else {
 				Logger.getLogger(DataManagementTable.class.getName()).log(Level.WARNING, "Found a feature with null style", vFeature.getFeature().featureName);
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-						vFeature.getFeature().featureName);
+						vFeature.getFeature().featureName, Color.WHITE, Color.BLACK);
 			}
 			text.addEditorForRow(row, trackNameFieldEditor); 
 		}
@@ -235,9 +233,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
-				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
 			} else {
-				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName);
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName, Color.BLACK, Color.WHITE);
 			}
 
 		} else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {

@@ -1,24 +1,25 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
-import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
+import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 
 public class JRPTextFieldTableCellRenderer extends DefaultCellEditor
 		implements TableCellRenderer, TableCellEditorRenderer {
 	private static final long serialVersionUID = 1L;
 	private JRPTextField jrpTextField;
 
-	public JRPTextFieldTableCellRenderer(String id, String text) {
+	public JRPTextFieldTableCellRenderer(String id, String text, Color fg, Color bg) {
 		super(new JRPTextField(id,text));
 		this.jrpTextField = new JRPTextField(id,text);
 		this.jrpTextField = ((JRPTextField) this.editorComponent);
-		this.jrpTextField.setBackground(Color.white);
+		this.jrpTextField.setForeground(fg);
+		this.jrpTextField.setBackground(bg);
 		this.jrpTextField.setHorizontalAlignment(JRPTextField.RIGHT);
 
 		this.jrpTextField.addActionListener(new ActionListener() {

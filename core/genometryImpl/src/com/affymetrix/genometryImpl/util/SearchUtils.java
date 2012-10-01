@@ -136,4 +136,35 @@ public final class SearchUtils {
 		return result;
 	}
 
+	/**
+	 * Binary search that either looks for the exact key or the closest key
+	 * @param list, list to search
+	 * @param key, key to search
+	 * @param compare, Comparator to compare key and list values
+	 * @return key position
+	 */
+	public static <T> int binarySearch(List<T> list, T key, Comparator<T> compare) {
+		int low, high, med, c;
+		T temp;
+		high = list.size();
+		low = 0;
+		med = (high + low) / 2;
+
+		while (high != low+1) {
+			temp = list.get(med);
+			c = compare.compare(temp, key);
+
+			if (c == 0) {
+				return med;
+			} else if (c < 0){
+				low = med;
+			}else{
+				high = med;
+			}
+			
+			med = (high + low) / 2;
+		}
+
+		return med;	
+	}
 }

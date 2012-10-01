@@ -62,7 +62,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			smv = igb.getMapView();
 			map = (AffyLabelledTierMap)smv.getSeqMap();
 		}
-		
+		map.addTierOrderListener(this);
 		// Here we map the friendly string back to the LoadStrategy.
 		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {

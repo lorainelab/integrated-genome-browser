@@ -28,6 +28,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,10 @@ import java.util.Map;
  */
 public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private static final boolean DEBUG = false;
+	private static final DecimalFormat comma_format = new DecimalFormat("#,###.###");	
+	static{
+		comma_format.setDecimalSeparatorAlwaysShown(false);
+	}
 	/** Set to true if the we can assume the container SeqSymmetry being passed
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
 	 */
@@ -203,7 +208,14 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		if (AbstractTierGlyph.useLabel(the_style)) {
 			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, the_style.getLabelField());
-			String label = (property == null) ? "" : property.toString();
+			String label = "";
+			if(property != null){
+				if(property instanceof Number){
+					label = comma_format.format(property);
+				}else{
+					label = property.toString();
+				}
+			}
 			if (labelInSouth) {
 				lglyph.setLabelLocation(GlyphI.SOUTH);
 			} else {

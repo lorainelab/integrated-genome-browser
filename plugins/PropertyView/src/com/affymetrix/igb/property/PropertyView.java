@@ -3,6 +3,8 @@ package com.affymetrix.igb.property;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -15,17 +17,16 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
-
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.affymetrix.igb.shared.JRPStyledTable;
-
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.JRPStyledTable;
 
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
 	private static final int TAB_POSITION = 1;
+	private static final int MAX_SYM_PROPERTIES = 20;
 	
 	// the table showing name-value pairs
 	private static final JRPStyledTable table = new JRPStyledTable("PropertyView_table");
@@ -118,15 +119,18 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		}
 
 		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
+		int size = Math.max(selected_syms.size(), MAX_SYM_PROPERTIES);
+		if(selected_syms.size() > MAX_SYM_PROPERTIES){
+			Logger.getLogger(PropertyView.class.getName()).log(Level.INFO, "Skipping collecting properties; too many syms selected");
+		}
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		if (src instanceof PropertyHolder) {
 			PropertyHolder propertyHolder = (PropertyHolder)src;
-			for (SeqSymmetry sym : selected_syms) {
-				Map<String, Object> props = propertyHolder.determineProps(sym);
+			for(int i=0; i<size; i++){
+				Map<String, Object> props = propertyHolder.determineProps(selected_syms.get(i));
 				if (props != null) {
 					propList.add(props);
 				}
-
 			}
 			propList.addAll(propertyHolder.getProperties());
 		}

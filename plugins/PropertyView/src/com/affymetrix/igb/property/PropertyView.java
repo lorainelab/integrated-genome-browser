@@ -119,7 +119,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		}
 
 		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
-		int size = Math.max(selected_syms.size(), MAX_SYM_PROPERTIES);
+		int size = Math.min(selected_syms.size(), MAX_SYM_PROPERTIES);
 		if(selected_syms.size() > MAX_SYM_PROPERTIES){
 			Logger.getLogger(PropertyView.class.getName()).log(Level.INFO, "Skipping collecting properties; too many syms selected");
 		}

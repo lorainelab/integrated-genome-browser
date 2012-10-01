@@ -98,6 +98,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		table = new StyledJTable();
 		table.list.add(TierPrefsView.COL_BACKGROUND);
 		table.list.add(TierPrefsView.COL_FOREGROUND);
+		table.list.add(TierPrefsView.COL_LABEL_COLOR);
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
 		initTable();
@@ -195,6 +196,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 			trackDefaultTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
+			labelColorComboBox.setSelectedColor(selectedStyle.getLabelForeground());
 			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 
 			if (Arrays.asList(graphFormats).contains(selectedStyle.getTrackName())) {
@@ -340,6 +342,8 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 					return style.getForeground();
 				case COL_BACKGROUND:
 					return style.getBackground();
+				case COL_LABEL_COLOR:
+					return style.getLabelForeground();
 				case COL_TRACK_NAME_SIZE:
 					return style.getTrackNameSize();
 				default:
@@ -439,6 +443,13 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 								element.getPropertyMap().put(PROP_END_COLOR, value);
 							}
 							style.setReverseColor((Color) value);
+							break;
+						case COL_LABEL_COLOR:
+							if (!style.equals(default_annot_style)) {
+								element.getPropertyMap().put(PROP_LABEL_COLOR, value);
+							}
+							style.setLabelForeground((Color) value);
+							labelColorComboBox.setSelectedColor((Color) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

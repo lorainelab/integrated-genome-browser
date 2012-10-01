@@ -251,6 +251,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		show2TracksCheckBox.setEnabled(b);
 		bgColorComboBox.setEnabled(b);
 		fgColorComboBox.setEnabled(b);
+		labelColorComboBox.setEnabled(b);
 		trackNameSizeComboBox.setEnabled(b);
 		applyButton.setEnabled(b);
 	}
@@ -290,6 +291,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		bgColorComboBox.setSelectedColor((Color) getValueAt(COL_BACKGROUND));
 		fgColorComboBox.setSelectedColor((Color) getValueAt(COL_FOREGROUND));
+		labelColorComboBox.setSelectedColor((Color) getValueAt(COL_LABEL_COLOR));
 		trackNameSizeComboBox.setSelectedItem(getValueAt(COL_TRACK_NAME_SIZE));
 		labelFieldComboBox.setSelectedItem(getValueAt(COL_LABEL_FIELD));
 		maxDepthTextField.setText(String.valueOf(getValueAt(COL_MAX_DEPTH)));
@@ -387,6 +389,12 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 						break;
 					}
 					break;
+				case COL_LABEL_COLOR:
+					object = checkLabelColor(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
 			}
 		}
 
@@ -405,6 +413,15 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	private Color checkFG(TrackStyle style, TrackStyle temp) {
 		Color value = style.getForeground();
 		if (!value.equals(temp.getForeground())) {
+			return null;
+		}
+
+		return value;
+	}
+	
+	private Color checkLabelColor(TrackStyle style, TrackStyle temp) {
+		Color value = style.getLabelForeground();
+		if (!value.equals(temp.getLabelForeground())) {
 			return null;
 		}
 
@@ -494,6 +511,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		displayNameTextField.setText(style.getTrackName());
 		bgColorComboBox.setSelectedColor(style.getBackground());
 		fgColorComboBox.setSelectedColor(style.getForeground());
+		labelColorComboBox.setSelectedColor(style.getLabelForeground());
 		trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
 		labelFieldComboBox.setSelectedItem(style.getLabelField());
 		maxDepthTextField.setText((style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || style.isGraphTier()) ? "" : String.valueOf(style.getMaxDepth()));
@@ -731,6 +749,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 					return style.getForeground();
 				case COL_BACKGROUND:
 					return style.getBackground();
+				case COL_LABEL_COLOR:
+					return style.getLabelForeground();
 				case COL_TRACK_NAME_SIZE:
 					return style.getTrackNameSize();
 				case COL_TRACK_NAME:
@@ -800,6 +820,10 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 							break;
 						case COL_NEG_STRAND_COLOR:
 							style.setReverseColor((Color) value);
+							break;
+						case COL_LABEL_COLOR:
+							style.setLabelForeground((Color) value);
+							labelColorComboBox.setSelectedColor((Color) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

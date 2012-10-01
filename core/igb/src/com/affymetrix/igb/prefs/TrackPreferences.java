@@ -31,6 +31,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public int[] selectedRows;
 	public ColorComboBox bgColorComboBox;
 	public ColorComboBox fgColorComboBox;
+	public ColorComboBox labelColorComboBox;
 	public JComboBox labelFieldComboBox;
 	public JRPCheckBox show2TracksCheckBox;
 	public JTextField maxDepthTextField;
@@ -58,6 +59,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public static final int COL_POS_STRAND_COLOR = 10;
 	public static final int COL_NEG_STRAND_COLOR = 11;
 	public static final int COL_DIRECTION_TYPE = 9;
+	public static final int COL_LABEL_COLOR = 12;
 	protected float trackNameSize;
 	public String b1Text, b2Text, track, title;
 
@@ -65,6 +67,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		table = new StyledJTable(model);
 		table.list.add(TierPrefsView.COL_BACKGROUND);
 		table.list.add(TierPrefsView.COL_FOREGROUND);
+		table.list.add(TierPrefsView.COL_LABEL_COLOR);
 
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
@@ -101,6 +104,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		bgColorComboBox = new ColorComboBox();
 		trackNameSizeComboBox = new JComboBox();
 		fgColorComboBox = new ColorComboBox();
+		labelColorComboBox = new ColorComboBox();
 		labelFieldComboBox = new JComboBox();
 		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName() + "_maxDepth");
 		applyButton = new JRPButton(this.getClass().getCanonicalName() + "_applyButton");
@@ -137,6 +141,13 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		fgColorComboBox.setColorValueVisible(false);
 		fgColorComboBox.setMaximumSize(new Dimension(150, 20));
 		fgColorComboBox.setStretchToFit(true);
+		
+		labelColorComboBox.setBackground(new Color(255, 255, 255));
+		labelColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
+		labelColorComboBox.setButtonVisible(false);
+		labelColorComboBox.setColorValueVisible(false);
+		labelColorComboBox.setMaximumSize(new Dimension(150, 20));
+		labelColorComboBox.setStretchToFit(true);
 
 		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
 
@@ -181,6 +192,10 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public ColorComboBox getFgColorComboBox() {
 		return fgColorComboBox;
 	}
+	
+	public ColorComboBox getFieldColorComboBox() {
+		return labelColorComboBox;
+	}
 
 	public JComboBox getLabelFieldComboBox() {
 		return labelFieldComboBox;
@@ -211,6 +226,12 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public void fgColorComboBox() {
 		if (applyChanged) {
 			model.setValueAt(fgColorComboBox.getSelectedColor(), 0, COL_FOREGROUND);
+		}
+	}
+	
+	public void labelColorComboBox() {
+		if (applyChanged) {
+			model.setValueAt(labelColorComboBox.getSelectedColor(), 0, COL_LABEL_COLOR);
 		}
 	}
 

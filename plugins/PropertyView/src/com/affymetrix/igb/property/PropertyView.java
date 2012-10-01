@@ -120,7 +120,9 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
 		int size = Math.min(selected_syms.size(), MAX_SYM_PROPERTIES);
+		boolean skip_glyph_properties = false;
 		if(selected_syms.size() > MAX_SYM_PROPERTIES){
+			skip_glyph_properties = true;
 			Logger.getLogger(PropertyView.class.getName()).log(Level.INFO, "Skipping collecting properties; too many syms selected");
 		}
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
@@ -132,7 +134,10 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 					propList.add(props);
 				}
 			}
-			propList.addAll(propertyHolder.getProperties());
+			
+			if(!skip_glyph_properties){
+				propList.addAll(propertyHolder.getProperties());
+			}
 		}
 
 		@SuppressWarnings("unchecked")

@@ -10,18 +10,19 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.action.SetSummaryThresholdAction;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
@@ -324,6 +325,35 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		middle_glyphs.clear();
 	}
 	
+	@Override
+	public List<GlyphI> pickTraversal(Rectangle2D.Double coordrect, ViewI view) {
+		List<GlyphI> pickList = new ArrayList<GlyphI>();
+		GlyphI child, temp = new Glyph() {};
+		List<GlyphI> children = getChildren();
+
+		if(children == null){
+			return pickList;
+		}
+		
+		// Determine the start position
+		temp.setCoords(coordrect.x, coordrect.y, 1, coordrect.height);
+		int start = SearchUtils.binarySearch(children, temp, new GlyphMinXComparator());
+
+		// Determine the end position
+		temp.setCoords(coordrect.x + coordrect.width - 1, coordrect.y, 1, coordrect.height);
+		int end = SearchUtils.binarySearch(children, temp, new GlyphMinXComparator());
+
+		// Only check childrens from start to end position
+		for (int i = start; i <= end; i++) {
+			child = children.get(i);
+			if (child.isVisible() && child.hit(coordrect, view)) {
+				pickList.add(child);
+			}
+		}
+
+		return pickList;
+	}
+		
 	protected boolean isAutoLoadMode() {
 		if (this.getAnnotStyle() == null) {
 			return false;

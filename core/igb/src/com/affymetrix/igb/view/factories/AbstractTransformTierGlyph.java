@@ -38,6 +38,10 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph{
 		super.pickTraversal(pickRect, pickList, view);
 	}
 	
+	protected List<GlyphI> superPickTraversal(Rectangle2D.Double pickRect, ViewI view) {
+		return super.pickTraversal(pickRect, view);
+	}
+	
 	@Override
 	public void drawChildren(ViewI view) {
 		// MODIFY VIEW
@@ -99,5 +103,12 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph{
 				child.pickTraversal(internal_pickRect, pickList, view);
 			}
 		}
+	}
+	
+	@Override
+	public List<GlyphI> pickTraversal(Rectangle2D.Double pickRect, ViewI view) {
+		Rectangle2D.Double coordrect = new Rectangle2D.Double();
+		LinearTransform.inverseTransform(tier_transform, pickRect, coordrect);
+		return super.pickTraversal(coordrect, view);
 	}
 }

@@ -233,7 +233,16 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 			superPickTraversal(pickRect, pickList, view);
 		}
 	}
-		
+	
+	@Override
+	public List<GlyphI> pickTraversal(Rectangle2D.Double pickRect, ViewI view) {
+		if(isFixedHeight){
+			return super.pickTraversal(pickRect, view);
+		}else{
+			return superPickTraversal(pickRect, view);
+		}
+	}
+	
 	@Override
 	public void moveRelative(double diffx, double diffy) {
 		if(isFixedHeight){

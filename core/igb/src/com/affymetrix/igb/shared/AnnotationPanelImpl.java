@@ -371,22 +371,22 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
 	@Override
 	protected void lockTierHeightCheckBoxReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 
 	@Override
 	protected void setPxHeightTextBoxReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 
 	@Override
 	protected void pxGoButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 
 	@Override
 	protected void moreOptionButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 	
 	private boolean isAllStrandsColor() {

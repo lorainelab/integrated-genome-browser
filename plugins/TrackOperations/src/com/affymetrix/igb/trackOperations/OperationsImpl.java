@@ -29,8 +29,10 @@ import static com.affymetrix.igb.shared.Selections.*;
 
 public final class OperationsImpl extends Operations implements RefreshSelectionListener{ 
 
-	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
+
+	boolean is_listening = true; // used to turn on and off listening to GUI events
 	private final IGBService igbService;
 	
 	private final Map<String, Operator> name2transformation;
@@ -42,11 +44,7 @@ public final class OperationsImpl extends Operations implements RefreshSelection
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
 		
-		
-		getCombineB().setAction(new CombineGraphsAction(igbService));
-		getSplitB().setAction(new SplitGraphsAction(igbService));
-		
-		
+	
 		getTransformationCB().addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -62,6 +60,7 @@ public final class OperationsImpl extends Operations implements RefreshSelection
 			}
 		});
 
+		getTransformationParamLabel().setText(BUNDLE.getString("transformationLabel"));
 		getTransformationGoB().setAction(new TrackTransformAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -71,6 +70,7 @@ public final class OperationsImpl extends Operations implements RefreshSelection
 			}
 		});
 
+		this.getOperationParamLabel().setText(BUNDLE.getString("operationLabel"));
 		getOperationGoB().setAction(new TrackOperationAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -80,6 +80,8 @@ public final class OperationsImpl extends Operations implements RefreshSelection
 			}
 		});
 		
+		getCombineB().setAction(new CombineGraphsAction(igbService));
+		getSplitB().setAction(new SplitGraphsAction(igbService));
 		getThreshB().setAction(ThresholdingAction.createThresholdingAction(igbService));
 		
 		resetAll(false);

@@ -3,12 +3,10 @@ package com.affymetrix.igb.trackOperations;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import java.util.ResourceBundle;
 
 public class Operations extends javax.swing.JPanel {
 
 	private static final long serialVersionUID = 1L;
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	
 	public Operations() {
 		initComponents();
@@ -27,12 +25,12 @@ public class Operations extends javax.swing.JPanel {
         transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB");
         transformationParam = new JRPTextField("TrackOperationsTab_transformParam");
         transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
-        transformationParamLabel = new javax.swing.JLabel(BUNDLE.getString("transformationLabel"));
+        transformationParamLabel = new javax.swing.JLabel();
         mtPanel = new javax.swing.JPanel();
         operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
         operationParam = new JRPTextField("TrackOperationsTab_operationParam");
         operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
-        operationParamLabel = new javax.swing.JLabel(BUNDLE.getString("operationLabel"));
+        operationParamLabel = new javax.swing.JLabel();
         btPanel = new javax.swing.JPanel();
         threshB = new JRPButton("TrackOperationsTab_threshB");
         splitB = new JRPButton("TrackOperationsTab_splitB");

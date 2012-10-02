@@ -22,9 +22,9 @@ import static com.affymetrix.igb.shared.Selections.*;
 public class CombineGraphsAction extends GenericAction {
 
 	private static final long serialVersionUID = 1l;
-
+			
 	public CombineGraphsAction(IGBService igbService) {
-		super(OperationsImpl.BUNDLE.getString("combineButton"), null, null);
+		super("Join", null, null);
 		this.igbService = igbService;
 	}
 

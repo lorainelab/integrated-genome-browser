@@ -32,38 +32,24 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 	private static TrackOperationsTab singleton;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
-	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
-	public final JRPButton combineB;
-	public final JRPButton splitB;
 	private final IGBService igbService;
-	private final ThresholdingAction thresholdingAction;
-	private final HoverEffect hovereffect;
-
+	
 	private final Map<String, Operator> name2transformation;
+	private final Map<String, Operator> name2operation;
+	
+	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
+	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB");;
+	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB");
 	public final JLabel transformationLabel = new JLabel(BUNDLE.getString("transformationLabel"));
 	public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
 	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB");
 	public final JLabel transformationParamLabel = new JLabel("base");
 	public final JTextField transformationParam = new JTextField();
-	private final ItemListener transformationListener = new ItemListener() {
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			setTransformationDisplay(true);
-		}
-	};
-
-	private final Map<String, Operator> name2operation;
 	public final JLabel operationLabel = new JLabel(BUNDLE.getString("operationLabel"));
 	public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
 	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
 	public final JLabel operationParamLabel = new JLabel("base");
 	public final JTextField operationParam = new JTextField();
-	private final ItemListener operationListener = new ItemListener() {
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			setOperationDisplay(true);
-		}
-	};
 
 	public static void init(IGBService igbService) {
 		singleton = new TrackOperationsTab(igbService);
@@ -76,15 +62,28 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 
 	public TrackOperationsTab(IGBService igbS) {
 		igbService = igbS;
-		combineB = new JRPButton("TrackOperationsTab_combineB", new CombineGraphsAction(igbService));
-		splitB = new JRPButton("TrackOperationsTab_splitB", new SplitGraphsAction(igbService));
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
-		hovereffect = new HoverEffect();
-		transformationCB.addItemListener(transformationListener);
 		
-		operationCB.addMouseListener(hovereffect);
-		operationCB.addItemListener(operationListener);
+		
+		combineB.setAction(new CombineGraphsAction(igbService));
+		splitB.setAction(new SplitGraphsAction(igbService));
+		
+		
+		transformationCB.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				setTransformationDisplay(true);
+			}
+		});
+		
+		operationCB.addMouseListener(new HoverEffect());
+		operationCB.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				setOperationDisplay(true);
+			}
+		});
 
 		transformationGoB.setAction(new TrackTransformAction(null) {
 			private static final long serialVersionUID = 1L;
@@ -103,8 +102,9 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 				return name2operation.get(selection);
 			}
 		});
-		thresholdingAction = ThresholdingAction.createThresholdingAction(igbService);
-		threshB.setAction(thresholdingAction);
+		
+		threshB.setAction(ThresholdingAction.createThresholdingAction(igbService));
+		
 		resetAll(false);
 	}
 

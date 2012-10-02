@@ -1,19 +1,32 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.awt.event.ActionEvent;
 
 /**
  *
  * @author hiralv
  */
-public abstract class TrackViewPanel extends javax.swing.JPanel {
+public abstract class TrackViewPanel extends IGBTabPanel {
 	private boolean is_listening = false;
+	private final javax.swing.GroupLayout.SequentialGroup horizonatalGroup;
+	private final javax.swing.GroupLayout.ParallelGroup verticalGroup;
 	
 	/**
 	 * Creates new form TrackViewPanel
 	 */
-	public TrackViewPanel() {
+	public TrackViewPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
+		super(igbService, displayName, title, focus, position);
 		initComponents();
+		
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(componentPanel);
+		componentPanel.setLayout(layout);
+		horizonatalGroup = layout.createSequentialGroup();
+		verticalGroup = layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE);
+		
+		layout.setHorizontalGroup(horizonatalGroup);
+		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(verticalGroup));
 	}
 
 	/**
@@ -221,6 +234,12 @@ public abstract class TrackViewPanel extends javax.swing.JPanel {
 		restoreButtonReset();
 		
 		is_listening = true;
+	}
+	
+	public void addPanel(javax.swing.JPanel panel){
+		componentPanel.add(panel);
+	    horizonatalGroup.addComponent(panel);
+		verticalGroup.addComponent(panel);
 	}
 	
 }

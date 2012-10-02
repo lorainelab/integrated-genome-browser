@@ -24,16 +24,6 @@ public class GraphTrackPanel extends TrackViewPanel {
 	}
 
 	@Override
-	protected void saveButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
 	protected void selectAllButtonReset() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

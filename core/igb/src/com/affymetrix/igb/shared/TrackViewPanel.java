@@ -224,9 +224,14 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		com.affymetrix.igb.action.RestoreToDefaultAction.getAction().actionPerformed(evt);
 	}
 	
-	protected abstract void saveButtonActionPerformedA(java.awt.event.ActionEvent evt);
-	protected abstract void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt){
+		com.affymetrix.igb.action.CloseTracksAction.getAction().actionPerformed(evt);
+	}
 	
+	protected void saveButtonActionPerformedA(java.awt.event.ActionEvent evt){
+		com.affymetrix.igb.action.ExportFileAction.getAction().actionPerformed(evt);
+	}
+
 	protected abstract void selectAllButtonReset();
 	protected abstract void clearButtonReset();
 	protected abstract void saveButtonReset();

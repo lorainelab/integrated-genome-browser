@@ -17,14 +17,9 @@ public class GraphTrackPanel extends TrackViewPanel {
 	public GraphTrackPanel(IGBService _igbService) {
 		super(_igbService, "Graph", "Graph", false, TAB_POSITION);
 		
-		StylePanelImpl stylePanel = new StylePanelImpl(igbService);
-		GraphPanelImpl annotationPanel = new GraphPanelImpl(igbService);
-		YScaleAxisGUI yAxisPanel = new YScaleAxisGUI(igbService);
-		OperationsImpl trackOperation = new OperationsImpl(igbService);
-		addPanel(stylePanel);
-		addPanel(yAxisPanel);
-	    addPanel(annotationPanel);
-		addPanel(trackOperation);
+		addPanel(new StylePanelImpl(igbService));
+		addPanel( new GraphPanelImpl(igbService));
+	    addPanel(new YScaleAxisGUI(igbService));
 	}
 
 	@Override

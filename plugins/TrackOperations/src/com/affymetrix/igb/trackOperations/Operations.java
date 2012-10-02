@@ -3,8 +3,6 @@ package com.affymetrix.igb.trackOperations;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.util.ResourceBundle;
 
 public class Operations extends javax.swing.JPanel {

@@ -7,14 +7,12 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.util.ResourceBundle;
 
-public class TrackOperationsTabGUI extends IGBTabPanel {
+public class TrackOperationsTabGUI extends javax.swing.JPanel {
 
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
-	private static final int TAB_POSITION = 4;
-
-	public TrackOperationsTabGUI(IGBService _igbService) {
-		super(_igbService, BUNDLE.getString("trackOperationsTab"), BUNDLE.getString("trackOperationsTab"), false, TAB_POSITION);
+	
+	public TrackOperationsTabGUI() {
 		initComponents();
 	}
 
@@ -241,8 +239,4 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 		return transformationParamLabel;
 	}
 	
-	@Override
-	public boolean isEmbedded() {
-		return true;
-	}
 }

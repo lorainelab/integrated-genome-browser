@@ -38,8 +38,6 @@ public final class TrackOperationsTab extends TrackOperationsTabGUI implements R
 	
 
 	public TrackOperationsTab(IGBService igbS) {
-		super(igbS);
-		Selections.addRefreshSelectionListener(this);
 		this.igbService = igbS;
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
@@ -85,6 +83,7 @@ public final class TrackOperationsTab extends TrackOperationsTabGUI implements R
 		getThreshB().setAction(ThresholdingAction.createThresholdingAction(igbService));
 		
 		resetAll(false);
+		Selections.addRefreshSelectionListener(this);
 	}
 
 	public void addOperator(Operator operator) {

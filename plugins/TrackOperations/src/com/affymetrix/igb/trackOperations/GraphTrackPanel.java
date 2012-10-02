@@ -4,7 +4,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphPanelImpl;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
-import java.awt.event.ActionEvent;
 
 /**
  *
@@ -23,27 +22,27 @@ public class GraphTrackPanel extends TrackViewPanel {
 	}
 
 	@Override
-	protected void selectAllButtonActionPerformedA(ActionEvent evt) {
+	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	protected void clearButtonActionPerformedA(ActionEvent evt) {
+	protected void clearButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	protected void saveButtonActionPerformedA(ActionEvent evt) {
+	protected void saveButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	protected void deleteButtonActionPerformedA(ActionEvent evt) {
+	protected void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	protected void restoreButtonActionPerformedA(ActionEvent evt) {
+	protected void restoreButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

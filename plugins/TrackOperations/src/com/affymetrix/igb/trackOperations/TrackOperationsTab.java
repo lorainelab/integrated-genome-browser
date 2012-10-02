@@ -1,15 +1,16 @@
 package com.affymetrix.igb.trackOperations;
 
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.MessageFormat;
 import java.util.*;
-
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.common.ExtensionPointHandler;
-
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -23,7 +24,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
-
 import static com.affymetrix.igb.shared.Selections.*;
 
 public final class TrackOperationsTab implements RefreshSelectionListener{ 

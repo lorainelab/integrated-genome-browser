@@ -19,12 +19,12 @@ public class Activator extends WindowActivator implements BundleActivator {
 
 			@Override
 			public void addService(Operator operator) {
-				simpleTrackTabGUI.trackOpTab.addOperator(operator);
+				simpleTrackTabGUI.getTrackOpTab().addOperator(operator);
 			}
 
 			@Override
 			public void removeService(Operator operator) {
-				simpleTrackTabGUI.trackOpTab.removeOperator(operator);
+				simpleTrackTabGUI.getTrackOpTab().removeOperator(operator);
 			}
 		});
 		return simpleTrackTabGUI;

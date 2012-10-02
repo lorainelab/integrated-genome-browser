@@ -9,7 +9,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	private static final int TAB_POSITION = 4;
-	public TrackOperationsTab trackOpTab;
+	private TrackOperationsTab trackOpTab;
 	private static TrackOperationsTabGUI singleton;
 
 	public TrackOperationsTabGUI(IGBService _igbService) {
@@ -195,5 +195,12 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 	@Override
 	public boolean isEmbedded() {
 		return true;
+	}
+
+	/**
+	 * @return the trackOpTab
+	 */
+	public TrackOperationsTab getTrackOpTab() {
+		return trackOpTab;
 	}
 }

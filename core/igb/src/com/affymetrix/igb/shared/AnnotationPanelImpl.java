@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -11,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import com.jidesoft.combobox.ColorComboBox;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -184,11 +184,30 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	@Override
+	protected void lockTierHeightCheckBoxActionPerformedA(ActionEvent evt) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected void setPxHeightTextBoxActionPerformedA(ActionEvent evt) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected void pxGoButtonActionPerformedA(ActionEvent evt) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected void moreOptionButtonActionPerformedA(ActionEvent evt) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
 	protected void stackDepthTextFieldReset() {
 		JTextField stackDepthTextField = getStackDepthTextField();
 		boolean enabled = allGlyphs.size() > 0 && isAllAnnot();
 		stackDepthTextField.setEnabled(enabled);
-		getStackDepthLabel().setEnabled(enabled);
 		stackDepthTextField.setText("");
 		if (enabled) {
 			Integer stackDepth = -1;
@@ -350,6 +369,26 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 		stackDepthAllButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
 	}
 
+	@Override
+	protected void lockTierHeightCheckBoxReset() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected void setPxHeightTextBoxReset() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected void pxGoButtonReset() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected void moreOptionButtonReset() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
 	private boolean isAllStrandsColor() {
 		boolean allColor = true;
 		for (ITrackStyleExtended style : annotStyles) {

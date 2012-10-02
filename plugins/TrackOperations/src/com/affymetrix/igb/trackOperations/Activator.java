@@ -12,6 +12,7 @@ import com.affymetrix.igb.window.service.WindowActivator;
 public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
+		
 		final TrackOperationsTab totab = new TrackOperationsTab(igbService);
 	
 		ExtensionPointHandler<Operator> operatorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
@@ -29,6 +30,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 		});
 		
 		
-		return totab;
+		return new GraphTrackPanel(igbService);
 	}
 }

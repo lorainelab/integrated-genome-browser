@@ -192,6 +192,63 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private javax.swing.JLabel transformationParamLabel;
     // End of variables declaration//GEN-END:variables
 
+	
+	public javax.swing.JPanel getBtPanel() {
+		return btPanel;
+	}
+
+	public javax.swing.JButton getCombineB() {
+		return combineB;
+	}
+
+	public javax.swing.JPanel getMtPanel() {
+		return mtPanel;
+	}
+
+	public javax.swing.JComboBox getOperationCB() {
+		return operationCB;
+	}
+
+	public javax.swing.JButton getOperationGoB() {
+		return operationGoB;
+	}
+
+	public javax.swing.JTextField getOperationParam() {
+		return operationParam;
+	}
+
+	public javax.swing.JLabel getOperationParamLabel() {
+		return operationParamLabel;
+	}
+
+	public javax.swing.JButton getSplitB() {
+		return splitB;
+	}
+
+	public javax.swing.JPanel getStPanel() {
+		return stPanel;
+	}
+
+	public javax.swing.JButton getThreshB() {
+		return threshB;
+	}
+
+	public javax.swing.JComboBox getTransformationCB() {
+		return transformationCB;
+	}
+
+	public javax.swing.JButton getTransformationGoB() {
+		return transformationGoB;
+	}
+
+	public javax.swing.JTextField getTransformationParam() {
+		return transformationParam;
+	}
+
+	public javax.swing.JLabel getTransformationParamLabel() {
+		return transformationParamLabel;
+	}
+	
 	@Override
 	public boolean isEmbedded() {
 		return true;

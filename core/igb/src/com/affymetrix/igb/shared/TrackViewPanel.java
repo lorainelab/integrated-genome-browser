@@ -2,7 +2,6 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import java.awt.event.ActionEvent;
 
 /**
  *
@@ -211,11 +210,11 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 	}
 
 	
-	protected abstract void selectAllButtonActionPerformedA(ActionEvent evt);
-	protected abstract void clearButtonActionPerformedA(ActionEvent evt);
-	protected abstract void saveButtonActionPerformedA(ActionEvent evt);
-	protected abstract void deleteButtonActionPerformedA(ActionEvent evt);
-	protected abstract void restoreButtonActionPerformedA(ActionEvent evt);
+	protected abstract void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void clearButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void saveButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void restoreButtonActionPerformedA(java.awt.event.ActionEvent evt);
 	
 	
 	protected abstract void selectAllButtonReset();

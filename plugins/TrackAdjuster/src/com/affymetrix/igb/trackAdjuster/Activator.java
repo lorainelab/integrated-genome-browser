@@ -9,7 +9,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 
 	@Override
 	protected IGBTabPanel getPage(final IGBService igbService) {
-		TrackAdjusterTab trackAdjusterTab = new TrackAdjusterTab(igbService);
-		return trackAdjusterTab;
+		return new AnnotationTrackPanel(igbService);
 	}
 }

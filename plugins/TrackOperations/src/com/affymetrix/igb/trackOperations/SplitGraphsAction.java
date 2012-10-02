@@ -17,7 +17,7 @@ public class SplitGraphsAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 
 	public SplitGraphsAction(IGBService igbService) {
-		super(TrackOperationsTab.BUNDLE.getString("splitButton"), null, null);
+		super(OperationsImpl.BUNDLE.getString("splitButton"), null, null);
 		this.igbService = igbService;
 	}
 

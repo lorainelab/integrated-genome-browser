@@ -24,7 +24,7 @@ public class CombineGraphsAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 
 	public CombineGraphsAction(IGBService igbService) {
-		super(TrackOperationsTab.BUNDLE.getString("combineButton"), null, null);
+		super(OperationsImpl.BUNDLE.getString("combineButton"), null, null);
 		this.igbService = igbService;
 	}
 

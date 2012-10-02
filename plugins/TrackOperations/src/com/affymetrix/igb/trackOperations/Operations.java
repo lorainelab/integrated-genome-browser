@@ -7,12 +7,12 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.util.ResourceBundle;
 
-public class TrackOperationsTabGUI extends javax.swing.JPanel {
+public class Operations extends javax.swing.JPanel {
 
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	
-	public TrackOperationsTabGUI() {
+	public Operations() {
 		initComponents();
 	}
 

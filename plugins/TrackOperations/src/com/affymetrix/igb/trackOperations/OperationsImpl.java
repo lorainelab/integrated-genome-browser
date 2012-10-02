@@ -27,7 +27,7 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 import static com.affymetrix.igb.shared.Selections.*;
 
-public final class TrackOperationsTab extends TrackOperationsTabGUI implements RefreshSelectionListener{ 
+public final class OperationsImpl extends Operations implements RefreshSelectionListener{ 
 
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
@@ -37,7 +37,7 @@ public final class TrackOperationsTab extends TrackOperationsTabGUI implements R
 	private final Map<String, Operator> name2operation;
 	
 
-	public TrackOperationsTab(IGBService igbS) {
+	public OperationsImpl(IGBService igbS) {
 		this.igbService = igbS;
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();

@@ -13,7 +13,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		
-		final TrackOperationsTab totab = new TrackOperationsTab(igbService);
+		final OperationsImpl totab = new OperationsImpl(igbService);
 	
 		ExtensionPointHandler<Operator> operatorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		operatorExtensionPoint.addListener(new ExtensionPointListener<Operator>() {

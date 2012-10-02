@@ -20,7 +20,7 @@ public class GraphTrackPanel extends TrackViewPanel {
 		StylePanelImpl stylePanel = new StylePanelImpl(igbService);
 		GraphPanelImpl annotationPanel = new GraphPanelImpl(igbService);
 		YScaleAxisGUI yAxisPanel = new YScaleAxisGUI(igbService);
-		TrackOperationsTab trackOperation = new TrackOperationsTab(igbService);
+		OperationsImpl trackOperation = new OperationsImpl(igbService);
 		addPanel(stylePanel);
 		addPanel(yAxisPanel);
 	    addPanel(annotationPanel);

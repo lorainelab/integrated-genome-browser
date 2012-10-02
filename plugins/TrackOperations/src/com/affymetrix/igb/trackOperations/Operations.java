@@ -26,17 +26,19 @@ public class Operations extends javax.swing.JPanel {
         transformationParam = new JRPTextField("TrackOperationsTab_transformParam");
         transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
         transformationParamLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         mtPanel = new javax.swing.JPanel();
         operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
         operationParam = new JRPTextField("TrackOperationsTab_operationParam");
         operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
         operationParamLabel = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         btPanel = new javax.swing.JPanel();
         threshB = new JRPButton("TrackOperationsTab_threshB");
         splitB = new JRPButton("TrackOperationsTab_splitB");
         combineB = new JRPButton("TrackOperationsTab_combineB");
 
-        stPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Single Track Operation"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Operations"));
 
         transformationGoB.setText("Go");
 
@@ -47,31 +49,37 @@ public class Operations extends javax.swing.JPanel {
         transformationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         transformationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
 
+        jLabel1.setText("Single Graph");
+
         org.jdesktop.layout.GroupLayout stPanelLayout = new org.jdesktop.layout.GroupLayout(stPanel);
         stPanel.setLayout(stPanelLayout);
         stPanelLayout.setHorizontalGroup(
             stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, stPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
                 .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
-                .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(stPanelLayout.createSequentialGroup()
+                .add(0, 0, 0)
+                .add(jLabel1)
                 .add(0, 0, 0))
         );
         stPanelLayout.setVerticalGroup(
             stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(transformationGoB)
-                .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(stPanelLayout.createSequentialGroup()
+                .add(0, 0, 0)
+                .add(jLabel1)
+                .add(0, 0, 0)
+                .add(stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(transformationGoB)
+                    .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
-
-        mtPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Multi-Track Operation"));
 
         operationParam.setEditable(false);
 
@@ -82,12 +90,13 @@ public class Operations extends javax.swing.JPanel {
         operationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         operationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
 
+        jLabel2.setText("Multi Graph");
+
         org.jdesktop.layout.GroupLayout mtPanelLayout = new org.jdesktop.layout.GroupLayout(mtPanel);
         mtPanel.setLayout(mtPanelLayout);
         mtPanelLayout.setHorizontalGroup(
             mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mtPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
                 .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(operationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -95,10 +104,15 @@ public class Operations extends javax.swing.JPanel {
                 .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(operationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(mtPanelLayout.createSequentialGroup()
+                .add(0, 0, 0)
+                .add(jLabel2))
         );
         mtPanelLayout.setVerticalGroup(
             mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mtPanelLayout.createSequentialGroup()
+                .add(0, 0, 0)
+                .add(jLabel2)
                 .add(0, 0, 0)
                 .add(mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -155,15 +169,17 @@ public class Operations extends javax.swing.JPanel {
                 .add(stPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(mtPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
-                .add(btPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
+                .add(0, 0, Short.MAX_VALUE)
+                .add(btPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btPanel;
     private javax.swing.JButton combineB;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel mtPanel;
     private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;

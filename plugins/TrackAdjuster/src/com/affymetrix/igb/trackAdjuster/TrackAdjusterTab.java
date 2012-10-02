@@ -11,13 +11,9 @@ package com.affymetrix.igb.trackAdjuster;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 
 import java.util.*;
 import javax.swing.GroupLayout;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
-import javax.swing.plaf.basic.BasicSplitPaneUI.BasicHorizontalLayoutManager;
 
 /**
  * TrackAdjusterTab consists of two GUIBuilder designed panels, the
@@ -36,19 +32,13 @@ public final class TrackAdjusterTab extends IGBTabPanel {
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
 		TrackPreferencesSeqMapViewPanel trackPanel = new TrackPreferencesSeqMapViewPanel(igbService);
-		YScaleAxisGUI yAxisPanel= new YScaleAxisGUI(igbService);
 		add(trackPanel);
-	    add(yAxisPanel);
 		layout.setHorizontalGroup(
 				layout.createSequentialGroup()
-				.addComponent(trackPanel)
-				.addComponent(yAxisPanel)
-				);
+				.addComponent(trackPanel));
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(trackPanel)
-				.addComponent(yAxisPanel))
-				);
+				.addComponent(trackPanel)));
 	}
 }

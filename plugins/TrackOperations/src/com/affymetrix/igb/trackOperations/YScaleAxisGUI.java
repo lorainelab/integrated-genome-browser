@@ -1,4 +1,4 @@
-package com.affymetrix.igb.trackAdjuster;
+package com.affymetrix.igb.trackOperations;
 
 import java.awt.geom.Rectangle2D;
 
@@ -57,8 +57,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         minText = vis_bounds_setter.min_valT;
         maxText = vis_bounds_setter.max_valT;
         maxValLabel = new javax.swing.JLabel();
-        otherOptionsButton = new javax.swing.JButton();
-        heightLabel = new javax.swing.JLabel();
+        heightPanel = new javax.swing.JPanel();
         heightSlider = new javax.swing.JSlider(javax.swing.JSlider.HORIZONTAL, 10, 500, 50);
 
         jMenu1.setText("jMenu1");
@@ -108,27 +107,26 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         RangePanelLayout.setHorizontalGroup(
             RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(RangePanelLayout.createSequentialGroup()
-                .add(5, 5, 5)
+                .add(0, 0, 0)
                 .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(RangePanelLayout.createSequentialGroup()
                         .add(setByLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(10, 10, 10)
                         .add(by_valRB_val)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(10, 10, 10)
                         .add(by_percentileRB_val)
-                        .addContainerGap())
+                        .add(0, 0, 0))
                     .add(RangePanelLayout.createSequentialGroup()
                         .add(minValLabel)
                         .add(5, 5, 5)
-                        .add(minText)
-                        .add(18, 18, 18)
+                        .add(minText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
+                        .add(20, 20, 20)
                         .add(maxValLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(maxText)
-                        .add(34, 34, 34))))
+                        .add(5, 5, 5)
+                        .add(maxText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                        .add(0, 0, 0))))
             .add(RangePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(rangeSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(rangeSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, Short.MAX_VALUE))
         );
         RangePanelLayout.setVerticalGroup(
@@ -138,7 +136,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
                     .add(setByLabel)
                     .add(by_valRB_val)
                     .add(by_percentileRB_val))
-                .add(16, 16, 16)
+                .add(15, 15, 15)
                 .add(rangeSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -147,17 +145,10 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
                     .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                         .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(minValLabel)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .add(0, 0, 0))
         );
 
-        otherOptionsButton.setText("Other Options");
-        otherOptionsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                otherOptionsButtonActionPerformed(evt);
-            }
-        });
-
-        heightLabel.setText("Height:");
+        heightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Height"));
 
         heightSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -165,27 +156,40 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
             }
         });
 
+        org.jdesktop.layout.GroupLayout heightPanelLayout = new org.jdesktop.layout.GroupLayout(heightPanel);
+        heightPanel.setLayout(heightPanelLayout);
+        heightPanelLayout.setHorizontalGroup(
+            heightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(heightPanelLayout.createSequentialGroup()
+                .add(0, 0, 0)
+                .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 212, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0))
+        );
+        heightPanelLayout.setVerticalGroup(
+            heightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(heightPanelLayout.createSequentialGroup()
+                .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(heightLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, otherOptionsButton)
+                .add(0, 0, 0)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                    .add(heightPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(otherOptionsButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(heightSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(heightLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(0, 0, 0)
+                .add(heightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                .add(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -235,12 +239,6 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
 		}
 	}//GEN-LAST:event_heightSliderStateChanged
 
-	private void otherOptionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherOptionsButtonActionPerformed
-		if (is_listening) {
-			igbService.openPreferencesOtherPanel();
-		}
-	}//GEN-LAST:event_otherOptionsButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup DisplayButtonGroup;
     private javax.swing.ButtonGroup DisplayModeButtonGroup;
@@ -248,14 +246,13 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
     private javax.swing.ButtonGroup VisibleRangeButtonGroup;
     private javax.swing.JRadioButton by_percentileRB_val;
     private javax.swing.JRadioButton by_valRB_val;
-    private javax.swing.JLabel heightLabel;
+    private javax.swing.JPanel heightPanel;
     private javax.swing.JSlider heightSlider;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JTextField maxText;
     private javax.swing.JLabel maxValLabel;
     private javax.swing.JTextField minText;
     private javax.swing.JLabel minValLabel;
-    private javax.swing.JButton otherOptionsButton;
     private javax.swing.JSlider rangeSlider;
     private javax.swing.JLabel setByLabel;
     private javax.swing.ButtonGroup stylegroup;
@@ -336,7 +333,6 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
 	    minValLabel.setEnabled(enabled);
 	    rangeSlider.setEnabled(enabled);
 	    heightSlider.setEnabled(heightEnabled);
-	    heightLabel.setEnabled(heightEnabled);
 	    vis_bounds_setter.setGraphs(enabled ? graphGlyphs : null);
 		if (enabled && graphGlyphs.size() == 1) {
 			double the_height = graphGlyphs.get(0).getGraphState().getTierStyle().getHeight();

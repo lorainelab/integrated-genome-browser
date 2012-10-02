@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -8,14 +9,15 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
  * @author hiralv
  */
 public abstract class TrackViewPanel extends IGBTabPanel {
-	private boolean is_listening = false;
+	private boolean is_listening = true;
 	private final javax.swing.GroupLayout.SequentialGroup horizonatalGroup;
 	private final javax.swing.GroupLayout.ParallelGroup verticalGroup;
+	private final FileTypeCategory[] categories;
 	
 	/**
 	 * Creates new form TrackViewPanel
 	 */
-	public TrackViewPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
+	public TrackViewPanel(IGBService igbService, String displayName, String title, boolean focus, int position, FileTypeCategory... categories) {
 		super(igbService, displayName, title, focus, position);
 		initComponents();
 		
@@ -26,6 +28,7 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		
 		layout.setHorizontalGroup(horizonatalGroup);
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(verticalGroup));
+		this.categories = categories;
 	}
 
 	/**
@@ -209,13 +212,20 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		return selectAllButton;
 	}
 
+	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt){
+		SelectAllAction.getAction().execute(categories);
+	}
 	
-	protected abstract void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt);
-	protected abstract void clearButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected void clearButtonActionPerformedA(java.awt.event.ActionEvent evt){
+		com.affymetrix.igb.action.RemoveDataFromTracksAction.getAction().actionPerformed(evt);
+	}
+	
+	protected void restoreButtonActionPerformedA(java.awt.event.ActionEvent evt){
+		com.affymetrix.igb.action.RestoreToDefaultAction.getAction().actionPerformed(evt);
+	}
+	
 	protected abstract void saveButtonActionPerformedA(java.awt.event.ActionEvent evt);
 	protected abstract void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt);
-	protected abstract void restoreButtonActionPerformedA(java.awt.event.ActionEvent evt);
-	
 	
 	protected abstract void selectAllButtonReset();
 	protected abstract void clearButtonReset();

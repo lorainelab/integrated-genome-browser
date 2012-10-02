@@ -1,5 +1,6 @@
 package com.affymetrix.igb.trackAdjuster;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AnnotationPanelImpl;
 import com.affymetrix.igb.shared.StylePanelImpl;
@@ -14,22 +15,13 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 	private static final int TAB_POSITION = 4;
 	
 	public AnnotationTrackPanel(IGBService _igbService) {
-		super(_igbService, "Annotation", "Annotation", false, TAB_POSITION);
+		super(_igbService, "Annotation", "Annotation", false, TAB_POSITION, 
+				FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet);
 		
 		addPanel(new StylePanelImpl(igbService));
 	    addPanel(new AnnotationPanelImpl(igbService));
 	}
 	
-	@Override
-	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected void clearButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	@Override
 	protected void saveButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -37,11 +29,6 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 
 	@Override
 	protected void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected void restoreButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

@@ -1,7 +1,9 @@
 package com.affymetrix.igb.trackOperations;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphPanelImpl;
+import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
 
@@ -12,23 +14,13 @@ import com.affymetrix.igb.shared.TrackViewPanel;
 public class GraphTrackPanel extends TrackViewPanel {
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 4;
-
+	
 	public GraphTrackPanel(IGBService _igbService) {
-		super(_igbService, "Graph", "Graph", false, TAB_POSITION);
+		super(_igbService, "Graph", "Graph", false, TAB_POSITION, FileTypeCategory.Graph, FileTypeCategory.Mismatch);
 		
 		addPanel(new StylePanelImpl(igbService));
 	    addPanel(new YScaleAxisGUI(igbService));
 		addPanel( new GraphPanelImpl(igbService));
-	}
-
-	@Override
-	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected void clearButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
@@ -38,11 +30,6 @@ public class GraphTrackPanel extends TrackViewPanel {
 
 	@Override
 	protected void deleteButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected void restoreButtonActionPerformedA(java.awt.event.ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

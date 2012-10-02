@@ -1828,11 +1828,20 @@ public class SeqMapView extends JPanel
 		popup_listeners.add(listener);
 	}
 
-	private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory category) {
-		return rootSeqSymmetry.getCategory() == category || category == null;
+	private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory... categories) {
+		if(categories == null || categories.length == 0)
+			return true;
+		
+		for(FileTypeCategory category : categories){
+			if(rootSeqSymmetry.getCategory() == category){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
-	public void selectAll(FileTypeCategory category) {
+	public void selectAll(FileTypeCategory... category) {
 		clearAllSelections();
 		// this selects all regular tracks on the label
 		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
@@ -1870,7 +1879,7 @@ public class SeqMapView extends JPanel
 		gmodel.setSelectedSymmetries(glyphsToRootSyms(tier_manager.getSelectedTiers()), getSelectedSyms(), this);
 		seqmap.updateWidget();
 	}
-
+	
 	private void clearAllSelections() {
 		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
 		labelmap.clearSelected();

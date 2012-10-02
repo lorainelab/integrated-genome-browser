@@ -42,10 +42,10 @@ public class SelectAllAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		execute();
+		execute(category);
 	}
 
-	public void execute() {
-		getSeqMapView().selectAll(category);
+	public void execute(FileTypeCategory... categories) {
+		getSeqMapView().selectAll(categories);
 	}
 }

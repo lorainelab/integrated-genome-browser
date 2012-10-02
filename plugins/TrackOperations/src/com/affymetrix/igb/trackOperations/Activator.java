@@ -12,21 +12,23 @@ import com.affymetrix.igb.window.service.WindowActivator;
 public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
-		TrackOperationsTabGUI.init(igbService);
-		final TrackOperationsTabGUI simpleTrackTabGUI = TrackOperationsTabGUI.getSingleton();
+		final TrackOperationsTab totab = new TrackOperationsTab(igbService);
+	
 		ExtensionPointHandler<Operator> operatorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		operatorExtensionPoint.addListener(new ExtensionPointListener<Operator>() {
 
 			@Override
 			public void addService(Operator operator) {
-				simpleTrackTabGUI.getTrackOpTab().addOperator(operator);
+				totab.addOperator(operator);
 			}
 
 			@Override
 			public void removeService(Operator operator) {
-				simpleTrackTabGUI.getTrackOpTab().removeOperator(operator);
+				totab.removeOperator(operator);
 			}
 		});
-		return simpleTrackTabGUI;
+		
+		
+		return totab;
 	}
 }

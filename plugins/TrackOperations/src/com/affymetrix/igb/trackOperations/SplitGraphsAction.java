@@ -38,7 +38,6 @@ public class SplitGraphsAction extends GenericAction {
 			gstate.getTierStyle().setFloatTier(false); // for simplicity
 
 		}
-		TrackOperationsTab.getSingleton().updateViewer();
 		igbService.getSeqMapView().postSelections();
 	}
 }

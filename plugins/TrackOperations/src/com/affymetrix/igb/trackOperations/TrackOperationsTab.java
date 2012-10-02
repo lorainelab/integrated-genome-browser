@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;
 import java.util.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -18,7 +20,6 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -26,10 +27,8 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 import static com.affymetrix.igb.shared.Selections.*;
 
-public final class TrackOperationsTab implements RefreshSelectionListener{ 
+public final class TrackOperationsTab extends TrackOperationsTabGUI implements RefreshSelectionListener{ 
 
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
-	private static TrackOperationsTab singleton;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
 	private final IGBService igbService;
@@ -37,73 +36,53 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 	private final Map<String, Operator> name2transformation;
 	private final Map<String, Operator> name2operation;
 	
-	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
-	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB");;
-	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB");
-	public final JLabel transformationLabel = new JLabel(BUNDLE.getString("transformationLabel"));
-	public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
-	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB");
-	public final JLabel transformationParamLabel = new JLabel("base");
-	public final JTextField transformationParam = new JTextField();
-	public final JLabel operationLabel = new JLabel(BUNDLE.getString("operationLabel"));
-	public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
-	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
-	public final JLabel operationParamLabel = new JLabel("base");
-	public final JTextField operationParam = new JTextField();
-
-	public static void init(IGBService igbService) {
-		singleton = new TrackOperationsTab(igbService);
-		Selections.addRefreshSelectionListener(singleton);
-	}
-
-	public static synchronized TrackOperationsTab getSingleton() {
-		return singleton;
-	}
 
 	public TrackOperationsTab(IGBService igbS) {
-		igbService = igbS;
+		super(igbS);
+		Selections.addRefreshSelectionListener(this);
+		this.igbService = igbS;
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
 		
 		
-		combineB.setAction(new CombineGraphsAction(igbService));
-		splitB.setAction(new SplitGraphsAction(igbService));
+		getCombineB().setAction(new CombineGraphsAction(igbService));
+		getSplitB().setAction(new SplitGraphsAction(igbService));
 		
 		
-		transformationCB.addItemListener(new ItemListener() {
+		getTransformationCB().addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				setTransformationDisplay(true);
 			}
 		});
 		
-		operationCB.addMouseListener(new HoverEffect());
-		operationCB.addItemListener(new ItemListener() {
+		getOperationCB().addMouseListener(new HoverEffect());
+		getOperationCB().addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				setOperationDisplay(true);
 			}
 		});
 
-		transformationGoB.setAction(new TrackTransformAction(null) {
+		getTransformationGoB().setAction(new TrackTransformAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected Operator getOperator() {
-				String selection = (String) transformationCB.getSelectedItem();
+				String selection = (String) getTransformationCB().getSelectedItem();
 				return name2transformation.get(selection);
 			}
 		});
 
-		operationGoB.setAction(new TrackOperationAction(null) {
+		getOperationGoB().setAction(new TrackOperationAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected Operator getOperator() {
-				String selection = (String) operationCB.getSelectedItem();
+				String selection = (String) getOperationCB().getSelectedItem();
 				return name2operation.get(selection);
 			}
 		});
 		
-		threshB.setAction(ThresholdingAction.createThresholdingAction(igbService));
+		getThreshB().setAction(ThresholdingAction.createThresholdingAction(igbService));
 		
 		resetAll(false);
 	}
@@ -141,10 +120,12 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 	}
 
 	private void loadOperators(boolean enable) {
-		transformationCB.removeAllItems();
 		name2transformation.clear();
-		operationCB.removeAllItems();
 		name2operation.clear();
+		
+		getTransformationCB().removeAllItems();
+		getOperationCB().removeAllItems();
+		
 		if (rootSyms.size() == 0 || !enable) {
 			return;
 		}
@@ -163,56 +144,58 @@ public final class TrackOperationsTab implements RefreshSelectionListener{
 		for (Operator operator : operators) {
 			if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator, true)) {
 				name2transformation.put(operator.getDisplay(), operator);
-				transformationCB.addItem(operator.getDisplay());
+				getTransformationCB().addItem(operator.getDisplay());
 			}
 			if (TrackUtils.getInstance().checkCompatible(rootSyms, operator, true)) {
 				name2operation.put(operator.getDisplay(), operator);
-				operationCB.addItem(operator.getDisplay());
+				getOperationCB().addItem(operator.getDisplay());
 			}
 		}
 	}
 
 	public void setPanelEnabled(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-		combineB.setEnabled(enable && graphGlyphs.size() > 1 && !isAnyJoined());
-		splitB.setEnabled(enable && isAnyJoined());
-		threshB.setEnabled(enable && !graphGlyphs.isEmpty());
+		getCombineB().setEnabled(enable && graphGlyphs.size() > 1 && !isAnyJoined());
+		getSplitB().setEnabled(enable && isAnyJoined());
+		getThreshB().setEnabled(enable && !graphGlyphs.isEmpty());
 		int transformCount = name2transformation.size();
 		int operatorCount = name2operation.size();
 		boolean enableTransformation = enable && isAllRootSeqSymmetrySame() && transformCount > 0;
-		transformationLabel.setEnabled(enableTransformation);
-		transformationCB.setEnabled(enableTransformation);
+		
+		getTransformationParamLabel().setEnabled(enableTransformation);
+		getTransformationCB().setEnabled(enableTransformation);
 		if (!enableTransformation) {
-			transformationCB.removeAllItems();
+			getTransformationCB().removeAllItems();
 		}
-		transformationGoB.setEnabled(enableTransformation);
+		getTransformationGoB().setEnabled(enableTransformation);
 		setTransformationDisplay(enableTransformation);
 		boolean enableOperation = enable && allGlyphs.size() > 1 && operatorCount > 0;
-		operationLabel.setEnabled(enableOperation);
-		operationCB.setEnabled(enableOperation);
+		
+		getOperationParamLabel().setEnabled(enableOperation);
+		getOperationCB().setEnabled(enableOperation);
 		if (!enableOperation) {
-			operationCB.removeAllItems();
+			getOperationCB().removeAllItems();
 		}
-		operationGoB.setEnabled(enableOperation);
+		getOperationGoB().setEnabled(enableOperation);
 		setOperationDisplay(enableOperation);
 
 		is_listening = true; // turn back on GUI events
 	}
 
 	private void setTransformationDisplay(boolean enable) {
-		setAtionDisplay(transformationCB, transformationParamLabel, transformationParam, name2transformation, transformationGoB, enable, true);
+		setAtionDisplay(getTransformationCB(), getTransformationParamLabel(), getTransformationParam(), name2transformation, getTransformationGoB(), enable, true);
 	}
 
 	private void setOperationDisplay(boolean enable) {
-		setAtionDisplay(operationCB, operationParamLabel, operationParam, name2operation, operationGoB, enable, false);
+		setAtionDisplay(getOperationCB(), getOperationParamLabel(), getOperationParam(), name2operation, getOperationGoB(), enable, false);
 	}
 
-	private void setAtionDisplay(
-		JRPComboBoxWithSingleListener ationCB,
+	private static void setAtionDisplay(
+		JComboBox ationCB,
 		JLabel ationParamLabel,
 		JTextField ationParam,
 		Map<String, Operator> name2ation,
-		JRPButton ationGoB,
+		JButton ationGoB,
 		boolean enable,
 		boolean singleOK
 		) {

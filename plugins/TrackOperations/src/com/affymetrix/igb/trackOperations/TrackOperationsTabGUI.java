@@ -1,5 +1,8 @@
 package com.affymetrix.igb.trackOperations;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.util.ResourceBundle;
@@ -9,23 +12,10 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	private static final int TAB_POSITION = 4;
-	private TrackOperationsTab trackOpTab;
-	private static TrackOperationsTabGUI singleton;
 
 	public TrackOperationsTabGUI(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackOperationsTab"), BUNDLE.getString("trackOperationsTab"), false, TAB_POSITION);
-
-		TrackOperationsTab.init(igbService);
-		trackOpTab = TrackOperationsTab.getSingleton();
 		initComponents();
-	}
-
-	public static void init(IGBService igbService) {
-		singleton = new TrackOperationsTabGUI(igbService);
-	}
-
-	public static synchronized TrackOperationsTabGUI getSingleton() {
-		return singleton;
 	}
 
 	/** This method is called from within the constructor to
@@ -38,19 +28,19 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
     private void initComponents() {
 
         stPanel = new javax.swing.JPanel();
-        transformationGoB = trackOpTab.transformationGoB;
-        transformationParam = trackOpTab.transformationParam;
-        transformationCB = trackOpTab.transformationCB;
-        transformationParamLabel = trackOpTab.transformationParamLabel;
+        transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB");
+        transformationParam = new JRPTextField("TrackOperationsTab_transformParam");
+        transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
+        transformationParamLabel = new javax.swing.JLabel(BUNDLE.getString("transformationLabel"));
         mtPanel = new javax.swing.JPanel();
-        operationCB = trackOpTab.operationCB;
-        operationParam = trackOpTab.operationParam;
-        operationGoB = trackOpTab.operationGoB;
-        operationParamLabel = trackOpTab.operationParamLabel;
+        operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
+        operationParam = new JRPTextField("TrackOperationsTab_operationParam");
+        operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
+        operationParamLabel = new javax.swing.JLabel(BUNDLE.getString("operationLabel"));
         btPanel = new javax.swing.JPanel();
-        threshB = trackOpTab.threshB;
-        splitB = trackOpTab.splitB;
-        combineB = trackOpTab.combineB;
+        threshB = new JRPButton("TrackOperationsTab_threshB");
+        splitB = new JRPButton("TrackOperationsTab_splitB");
+        combineB = new JRPButton("TrackOperationsTab_combineB");
 
         stPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Single Track Operation"));
 
@@ -58,6 +48,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         transformationParam.setEditable(false);
 
+        transformationParamLabel.setText(null);
         transformationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         transformationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         transformationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
@@ -92,6 +83,7 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 
         operationGoB.setText("Go");
 
+        operationParamLabel.setText(null);
         operationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         operationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         operationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
@@ -252,12 +244,5 @@ public class TrackOperationsTabGUI extends IGBTabPanel {
 	@Override
 	public boolean isEmbedded() {
 		return true;
-	}
-
-	/**
-	 * @return the trackOpTab
-	 */
-	public TrackOperationsTab getTrackOpTab() {
-		return trackOpTab;
 	}
 }

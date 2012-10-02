@@ -87,6 +87,5 @@ public class CombineGraphsAction extends GenericAction {
 			}
 		}
 		combo_style.setHeight(height);
-		TrackOperationsTab.getSingleton().updateViewer();
 	}
 }

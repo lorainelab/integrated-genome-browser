@@ -26,13 +26,13 @@ public class Operations extends javax.swing.JPanel {
         transformationParam = new JRPTextField("TrackOperationsTab_transformParam");
         transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
         transformationParamLabel = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        singleTrackLabel = new javax.swing.JLabel();
         mtPanel = new javax.swing.JPanel();
         operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
         operationParam = new JRPTextField("TrackOperationsTab_operationParam");
         operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
         operationParamLabel = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        multiTrackLabel = new javax.swing.JLabel();
         btPanel = new javax.swing.JPanel();
         threshB = new JRPButton("TrackOperationsTab_threshB");
         splitB = new JRPButton("TrackOperationsTab_splitB");
@@ -49,7 +49,7 @@ public class Operations extends javax.swing.JPanel {
         transformationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         transformationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
 
-        jLabel1.setText("Single Graph");
+        singleTrackLabel.setText("Single Graph");
 
         org.jdesktop.layout.GroupLayout stPanelLayout = new org.jdesktop.layout.GroupLayout(stPanel);
         stPanel.setLayout(stPanelLayout);
@@ -65,14 +65,14 @@ public class Operations extends javax.swing.JPanel {
                 .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(stPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
-                .add(jLabel1)
+                .add(singleTrackLabel)
                 .add(0, 0, 0))
         );
         stPanelLayout.setVerticalGroup(
             stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(stPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
-                .add(jLabel1)
+                .add(singleTrackLabel)
                 .add(0, 0, 0)
                 .add(stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -90,7 +90,7 @@ public class Operations extends javax.swing.JPanel {
         operationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         operationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
 
-        jLabel2.setText("Multi Graph");
+        multiTrackLabel.setText("Multi Graph");
 
         org.jdesktop.layout.GroupLayout mtPanelLayout = new org.jdesktop.layout.GroupLayout(mtPanel);
         mtPanel.setLayout(mtPanelLayout);
@@ -106,13 +106,13 @@ public class Operations extends javax.swing.JPanel {
                 .add(operationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(mtPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
-                .add(jLabel2))
+                .add(multiTrackLabel))
         );
         mtPanelLayout.setVerticalGroup(
             mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mtPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
-                .add(jLabel2)
+                .add(multiTrackLabel)
                 .add(0, 0, 0)
                 .add(mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -178,13 +178,13 @@ public class Operations extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btPanel;
     private javax.swing.JButton combineB;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel mtPanel;
+    private javax.swing.JLabel multiTrackLabel;
     private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;
     private javax.swing.JTextField operationParam;
     private javax.swing.JLabel operationParamLabel;
+    private javax.swing.JLabel singleTrackLabel;
     private javax.swing.JButton splitB;
     private javax.swing.JPanel stPanel;
     private javax.swing.JButton threshB;

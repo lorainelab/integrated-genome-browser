@@ -12,7 +12,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.EventObject;
@@ -189,6 +191,40 @@ public abstract class Selections {
 		}
 		
 		return true;
+	}
+	
+	
+	public static boolean isAllStrandsColor() {
+		boolean allColor = true;
+		for (ITrackStyleExtended style : annotStyles) {
+			if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal() 
+					|| style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+				allColor = false;
+				break;
+			}
+		}
+		return allColor;
+	}
+	
+	public static boolean isAllStrandsArrow() {
+		boolean allArrow = true;
+		for (ITrackStyleExtended style : annotStyles) {
+			if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() 
+					|| style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+				allArrow = false;
+				break;
+			}
+		}
+		return allArrow;
+	}
+	
+	public static boolean isAnyLocked(){
+		for (StyledGlyph glyph : allGlyphs) {
+			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private static void notifyRefreshListener() {

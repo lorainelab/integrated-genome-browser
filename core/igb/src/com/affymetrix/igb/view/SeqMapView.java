@@ -1829,7 +1829,7 @@ public class SeqMapView extends JPanel
 	}
 
 	private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory... categories) {
-		if(categories == null || categories.length == 0)
+		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null))
 			return true;
 		
 		for(FileTypeCategory category : categories){

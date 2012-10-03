@@ -240,7 +240,16 @@ public abstract class Selections {
 		return getTotalLocked() == smv.getTierManager().getVisibleTierGlyphs().size() - 2;
 	}
 	
-	public static int getTotalLocked(){
+	public static int getLockedHeight(){
+		for (StyledGlyph glyph : allGlyphs) {
+			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
+				return ((DefaultTierGlyph)glyph).getFixedPixHeight();
+			}
+		}
+		return -1;
+	}
+	
+	private static int getTotalLocked(){
 		int no_of_locked = 0;
 		for (TierGlyph tier : smv.getSeqMap().getTiers()) {
 			ITrackStyleExtended style = tier.getAnnotStyle();

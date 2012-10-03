@@ -23,6 +23,7 @@ public class GraphOperationsImpl extends OperationsImpl{
 		combineB = new javax.swing.JButton(new CombineGraphsAction(igbS));
 		splitB = new javax.swing.JButton(new SplitGraphsAction(igbS));
 		threshB = new javax.swing.JButton(ThresholdingAction.createThresholdingAction(igbS));
+		threshB.setText("Thresholding");
 		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getBtPanel());
 		getBtPanel().setLayout(layout);	
@@ -37,6 +38,9 @@ public class GraphOperationsImpl extends OperationsImpl{
 				.addComponent(combineB)
 				.addComponent(splitB)
 				.addComponent(threshB)));
+		
+		getSingleTrackLabel().setText("Single Graph");
+		getMultiTrackLabel().setText("Multi Graph");
 	}
 	
 	public void setPanelEnabled(boolean enable) {

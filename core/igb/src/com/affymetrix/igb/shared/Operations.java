@@ -46,7 +46,7 @@ public class Operations extends javax.swing.JPanel {
         transformationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         transformationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
 
-        singleTrackLabel.setText("Single Graph");
+        singleTrackLabel.setText("Single Track");
 
         org.jdesktop.layout.GroupLayout stPanelLayout = new org.jdesktop.layout.GroupLayout(stPanel);
         stPanel.setLayout(stPanelLayout);
@@ -84,7 +84,7 @@ public class Operations extends javax.swing.JPanel {
         operationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
         operationParamLabel.setPreferredSize(new java.awt.Dimension(50, 16));
 
-        multiTrackLabel.setText("Multi Graph");
+        multiTrackLabel.setText("Multi Track");
 
         org.jdesktop.layout.GroupLayout mtPanelLayout = new org.jdesktop.layout.GroupLayout(mtPanel);
         mtPanel.setLayout(mtPanelLayout);
@@ -209,6 +209,14 @@ public class Operations extends javax.swing.JPanel {
 
 	public javax.swing.JLabel getTransformationParamLabel() {
 		return transformationParamLabel;
+	}
+
+	public javax.swing.JLabel getMultiTrackLabel() {
+		return multiTrackLabel;
+	}
+
+	public javax.swing.JLabel getSingleTrackLabel() {
+		return singleTrackLabel;
 	}
 	
 }

@@ -24,12 +24,12 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.*;
 
 public class OperationsImpl extends Operations implements RefreshSelectionListener{ 
 
 	boolean DEBUG_EVENTS = false;
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	protected final IGBService igbService;

@@ -27,13 +27,13 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 import static com.affymetrix.igb.shared.Selections.*;
 
-public final class OperationsImpl extends Operations implements RefreshSelectionListener{ 
+public class OperationsImpl extends Operations implements RefreshSelectionListener{ 
 
 	boolean DEBUG_EVENTS = false;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 
 	boolean is_listening = true; // used to turn on and off listening to GUI events
-	private final IGBService igbService;
+	protected final IGBService igbService;
 	
 	private final Map<String, Operator> name2transformation;
 	private final Map<String, Operator> name2operation;
@@ -80,14 +80,14 @@ public final class OperationsImpl extends Operations implements RefreshSelection
 			}
 		});
 		
-		getCombineB().setAction(new CombineGraphsAction(igbService));
-		getSplitB().setAction(new SplitGraphsAction(igbService));
-		getThreshB().setAction(ThresholdingAction.createThresholdingAction(igbService));
-		
+		setUpButtonPanel(igbS);
 		resetAll(false);
 		Selections.addRefreshSelectionListener(this);
 	}
 
+	protected void setUpButtonPanel(IGBService igbS){
+	}
+	
 	public void addOperator(Operator operator) {
 		resetAll(true);
 	}
@@ -156,9 +156,6 @@ public final class OperationsImpl extends Operations implements RefreshSelection
 
 	public void setPanelEnabled(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-		getCombineB().setEnabled(enable && graphGlyphs.size() > 1 && !isAnyJoined());
-		getSplitB().setEnabled(enable && isAnyJoined());
-		getThreshB().setEnabled(enable && !graphGlyphs.isEmpty());
 		int transformCount = name2transformation.size();
 		int operatorCount = name2operation.size();
 		boolean enableTransformation = enable && isAllRootSeqSymmetrySame() && transformCount > 0;

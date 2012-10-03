@@ -34,9 +34,6 @@ public class Operations extends javax.swing.JPanel {
         operationParamLabel = new javax.swing.JLabel();
         multiTrackLabel = new javax.swing.JLabel();
         btPanel = new javax.swing.JPanel();
-        threshB = new JRPButton("TrackOperationsTab_threshB");
-        splitB = new JRPButton("TrackOperationsTab_splitB");
-        combineB = new JRPButton("TrackOperationsTab_combineB");
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Operations"));
 
@@ -63,10 +60,7 @@ public class Operations extends javax.swing.JPanel {
                 .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(stPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(singleTrackLabel)
-                .add(0, 0, 0))
+            .add(singleTrackLabel)
         );
         stPanelLayout.setVerticalGroup(
             stPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -104,9 +98,7 @@ public class Operations extends javax.swing.JPanel {
                 .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(operationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(mtPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(multiTrackLabel))
+            .add(multiTrackLabel)
         );
         mtPanelLayout.setVerticalGroup(
             mtPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -122,33 +114,15 @@ public class Operations extends javax.swing.JPanel {
                 .add(0, 0, 0))
         );
 
-        threshB.setText("Threshhold");
-
-        splitB.setText("Split");
-
-        combineB.setText("Join");
-
         org.jdesktop.layout.GroupLayout btPanelLayout = new org.jdesktop.layout.GroupLayout(btPanel);
         btPanel.setLayout(btPanelLayout);
         btPanelLayout.setHorizontalGroup(
             btPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, btPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(combineB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
-                .add(splitB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
-                .add(threshB, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(0, 219, Short.MAX_VALUE)
         );
         btPanelLayout.setVerticalGroup(
             btPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(btPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(btPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(threshB)
-                    .add(splitB)
-                    .add(combineB))
-                .add(0, 0, 0))
+            .add(0, 29, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -177,7 +151,6 @@ public class Operations extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btPanel;
-    private javax.swing.JButton combineB;
     private javax.swing.JPanel mtPanel;
     private javax.swing.JLabel multiTrackLabel;
     private javax.swing.JComboBox operationCB;
@@ -185,9 +158,7 @@ public class Operations extends javax.swing.JPanel {
     private javax.swing.JTextField operationParam;
     private javax.swing.JLabel operationParamLabel;
     private javax.swing.JLabel singleTrackLabel;
-    private javax.swing.JButton splitB;
     private javax.swing.JPanel stPanel;
-    private javax.swing.JButton threshB;
     private javax.swing.JComboBox transformationCB;
     private javax.swing.JButton transformationGoB;
     private javax.swing.JTextField transformationParam;
@@ -199,9 +170,6 @@ public class Operations extends javax.swing.JPanel {
 		return btPanel;
 	}
 
-	public javax.swing.JButton getCombineB() {
-		return combineB;
-	}
 
 	public javax.swing.JPanel getMtPanel() {
 		return mtPanel;
@@ -223,16 +191,8 @@ public class Operations extends javax.swing.JPanel {
 		return operationParamLabel;
 	}
 
-	public javax.swing.JButton getSplitB() {
-		return splitB;
-	}
-
 	public javax.swing.JPanel getStPanel() {
 		return stPanel;
-	}
-
-	public javax.swing.JButton getThreshB() {
-		return threshB;
 	}
 
 	public javax.swing.JComboBox getTransformationCB() {

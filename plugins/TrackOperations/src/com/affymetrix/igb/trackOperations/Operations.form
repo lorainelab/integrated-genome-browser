@@ -63,11 +63,7 @@
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Component id="transformationGoB" min="-2" pref="61" max="-2" attributes="1"/>
               </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="singleTrackLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              </Group>
+              <Component id="singleTrackLabel" alignment="0" min="-2" max="-2" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -146,10 +142,7 @@
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Component id="operationGoB" min="-2" pref="61" max="-2" attributes="1"/>
               </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="multiTrackLabel" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="multiTrackLabel" alignment="0" min="-2" max="-2" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -220,56 +213,15 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="combineB" min="-2" pref="51" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="splitB" min="-2" pref="53" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="threshB" max="32767" attributes="0"/>
-              </Group>
+              <EmptySpace min="0" pref="219" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="threshB" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="splitB" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="combineB" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              </Group>
+              <EmptySpace min="0" pref="29" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="threshB">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Threshhold"/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPButton(&quot;TrackOperationsTab_threshB&quot;)"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JButton" name="splitB">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Split"/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPButton(&quot;TrackOperationsTab_splitB&quot;)"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JButton" name="combineB">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Join"/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPButton(&quot;TrackOperationsTab_combineB&quot;)"/>
-          </AuxValues>
-        </Component>
-      </SubComponents>
     </Container>
   </SubComponents>
 </Form>

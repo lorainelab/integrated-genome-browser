@@ -34,6 +34,7 @@ public class LockTierHeightAction extends SeqMapViewActionA{
 		}
 		
 		getTierMap().repackTheTiers(true, true);
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 	
 }

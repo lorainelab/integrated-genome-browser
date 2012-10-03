@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -26,7 +27,7 @@ import javax.swing.JTextField;
  *
  * @author auser
  */
-public class ChangeTierHeightAction extends SeqMapViewActionA {
+public class ChangeTierHeightAction extends SeqMapViewActionA implements ParameteredAction{
 	private static final long serialVersionUID = 1l;
 	private static final ChangeTierHeightAction ACTION = new ChangeTierHeightAction();
 	static{
@@ -46,7 +47,7 @@ public class ChangeTierHeightAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		List <TierLabelGlyph> labels = Application.getSingleton().getMapView().getTierManager().getSelectedTierLabels();
+		List <TierLabelGlyph> labels = getTierManager().getSelectedTierLabels();
 		String height = "";
 		if(labels.isEmpty() || labels == null){
 			ErrorHandler.errorPanel("changeTierHeight called with an empty list");
@@ -68,19 +69,29 @@ public class ChangeTierHeightAction extends SeqMapViewActionA {
 		int isOK = JOptionPane.showConfirmDialog(null, panel, "Change Track Height", JOptionPane.OK_CANCEL_OPTION);
 		if(isOK == JOptionPane.OK_OPTION){
 			try{
-				int updatedHeight = (Integer.parseInt(tierHeightField.getText()));
-				for(TierLabelGlyph tlg : labels){
-					TierGlyph currentTier = tlg.getReferenceTier();
-					if(currentTier instanceof TransformTierGlyph){
-						((TransformTierGlyph)currentTier).setFixedPixHeight(updatedHeight);
-						tlg.getPixelBox().height=updatedHeight;
-					}
-				}
-				AffyLabelledTierMap lm = (AffyLabelledTierMap)(this.getSeqMapView().getSeqMap());
-				lm.repackTheTiers(true, true);
+				changeHeight(Integer.parseInt(tierHeightField.getText()));
 			}catch(Exception ex){
 				ErrorHandler.errorPanel("Invalid Track Height");
 			}
 		}
+	}
+
+	private void changeHeight(int updatedHeight) throws NumberFormatException {
+		for(TierLabelGlyph tlg : getTierManager().getSelectedTierLabels()){
+			TierGlyph currentTier = tlg.getReferenceTier();
+			if(currentTier instanceof TransformTierGlyph){
+				((TransformTierGlyph)currentTier).setFixedPixHeight(updatedHeight);
+				tlg.getPixelBox().height=updatedHeight;
+			}
+		}
+		AffyLabelledTierMap lm = (AffyLabelledTierMap)(this.getSeqMapView().getSeqMap());
+		lm.repackTheTiers(true, true);
+	}
+
+	public void performAction(Object... parameters) {
+		if(parameters.length < 1 || parameters[0].getClass() != Integer.class)
+			return;
+		int height = Integer.valueOf(parameters[0].toString());
+		changeHeight(height);
 	}
 }

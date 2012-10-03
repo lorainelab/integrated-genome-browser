@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.trackAdjuster;
 
 import java.awt.event.ActionEvent;
 
@@ -40,7 +40,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         stackHeightPanel = new javax.swing.JPanel();
         stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField("trackPreference_maxDepth");
         stackDepthGoButton = new javax.swing.JButton();
-        stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction.getAction());
+        stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.getAction());
         trackHeightPanel = new javax.swing.JPanel();
         lockTierHeightCheckBox = new javax.swing.JCheckBox();
         setHeightInPxLabel = new javax.swing.JLabel();

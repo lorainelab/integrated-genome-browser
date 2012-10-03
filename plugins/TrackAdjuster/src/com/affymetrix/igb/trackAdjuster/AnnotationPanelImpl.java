@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.trackAdjuster;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -21,8 +21,12 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
+import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.ParameteredAction;
+import com.affymetrix.igb.shared.Selections;
+import com.affymetrix.igb.shared.StyledGlyph;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import static com.affymetrix.igb.shared.Selections.*;
 

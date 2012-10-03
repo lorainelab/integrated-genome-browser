@@ -2,7 +2,6 @@ package com.affymetrix.igb.trackAdjuster;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AnnotationPanelImpl;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;

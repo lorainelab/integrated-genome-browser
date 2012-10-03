@@ -16,7 +16,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	protected IGBTabPanel getPage(IGBService igbService) {
 		
 		GraphTrackPanel tabPanel = new GraphTrackPanel(igbService);
-		final OperationsImpl trackOperation = new OperationsImpl(igbService);
+		final GraphOperationsImpl trackOperation = new GraphOperationsImpl(igbService);
 		tabPanel.addPanel(trackOperation);
 		
 		ExtensionPointHandler<Operator> operatorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);

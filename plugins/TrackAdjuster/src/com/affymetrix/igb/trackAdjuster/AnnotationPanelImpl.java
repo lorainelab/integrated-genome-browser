@@ -368,19 +368,16 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
 	@Override
 	protected void setPxHeightTextBoxReset() {
-		
+		JTextField pxHeightTextField = getSetPxHeightTextBox();
+		pxHeightTextField.setEnabled(isAnyLocked());
 	}
 
 	@Override
 	protected void pxGoButtonReset() {
-		
+		JButton pxGoButton = getPxGoButton();
+		pxGoButton.setEnabled(isAnyLocked());
 	}
-
-	@Override
-	protected void moreOptionButtonReset() {
-		
-	}
-		
+	
 	private Set<String> getFields(ITrackStyleExtended style) {
 		Set<String> fields = new TreeSet<String>();
 		SeqSymmetry sym = GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());

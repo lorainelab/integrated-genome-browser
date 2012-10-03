@@ -477,8 +477,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 	protected abstract void lockTierHeightCheckBoxReset();
 	protected abstract void setPxHeightTextBoxReset();
 	protected abstract void pxGoButtonReset();
-	protected abstract void moreOptionButtonReset();
-	
 	
 	protected final void resetAll() {
 		is_listening = false;
@@ -497,8 +495,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 		lockTierHeightCheckBoxReset();
 		setPxHeightTextBoxReset();
 		pxGoButtonReset();
-		moreOptionButtonReset();
-		
+	
 		is_listening = true;
 	}
 	

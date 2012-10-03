@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.factories.DynamicStyleHeatMap;

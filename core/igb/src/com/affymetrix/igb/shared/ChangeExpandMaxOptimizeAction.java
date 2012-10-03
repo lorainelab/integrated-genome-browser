@@ -1,6 +1,7 @@
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;

@@ -123,7 +123,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         strandsReverseColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         stackDepthGoButton = new javax.swing.JButton();
-        stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.action.ChangeExpandMaxOptimizeAction.getAction());
+        stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.getAction());
         selectAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.SelectAllAction.getAction());
         hideButton = new javax.swing.JButton(com.affymetrix.igb.action.HideAction.getAction());
         clearButton = new javax.swing.JButton(com.affymetrix.igb.action.RemoveDataFromTracksAction.getAction());

@@ -23,11 +23,11 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TrackConstants;
 import static com.affymetrix.igb.shared.Selections.*;
 
 /**
@@ -188,11 +188,6 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	@Override
-	protected void lockTierHeightCheckBoxActionPerformedA(ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
 	protected void setPxHeightTextBoxActionPerformedA(ActionEvent evt) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
@@ -299,15 +294,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	protected void strandsArrowCheckBoxReset() {
 		JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
 		strandsArrowCheckBox.setEnabled(isAllAnnot() && isAllSupportTwoTrack());
-		boolean allArrow = isAllAnnot();
-		for (ITrackStyleExtended style : annotStyles) {
-			if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() 
-					|| style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
-				allArrow = false;
-				break;
-			}
-		}
-		strandsArrowCheckBox.setSelected(allArrow);
+		strandsArrowCheckBox.setSelected(isAllAnnot() && isAllStrandsArrow());
 	}
 
 	@Override
@@ -375,7 +362,8 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
 	@Override
 	protected void lockTierHeightCheckBoxReset() {
-		
+		JCheckBox lockTierHeightCheckBox = getLockTierHeightCheckBox();
+		lockTierHeightCheckBox.setAction(new LockTierHeightAction(isAnyLocked()));
 	}
 
 	@Override
@@ -392,19 +380,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	protected void moreOptionButtonReset() {
 		
 	}
-	
-	private boolean isAllStrandsColor() {
-		boolean allColor = true;
-		for (ITrackStyleExtended style : annotStyles) {
-			if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal() 
-					|| style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
-				allColor = false;
-				break;
-			}
-		}
-		return allColor;
-	}
-	
+		
 	private Set<String> getFields(ITrackStyleExtended style) {
 		Set<String> fields = new TreeSet<String>();
 		SeqSymmetry sym = GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
@@ -414,7 +390,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 				SeqSymmetry original = getMostOriginalSymmetry(child);
 				if (original instanceof SymWithProps) {
 					Map<String, Object> props = ((SymWithProps) original).getProperties();
-					fields.add(TrackConstants.NO_LABEL);
+					fields.add("* none *");
 					if(props != null){
 						fields.addAll(props.keySet());
 					}

@@ -128,11 +128,8 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                             .add(strands2TracksCheckBox)
                             .add(0, 0, 0)
                             .add(strandsArrowCheckBox))
-                        .add(annotationsPanelLayout.createSequentialGroup()
-                            .add(strandsLabel)
-                            .add(0, 0, 0)))
+                        .add(strandsLabel))
                     .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(0, 0, 0)
                         .add(strandsColorCheckBox)
                         .add(5, 5, 5)
                         .add(strandsForwardColorLabel)
@@ -219,11 +216,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         trackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Height"));
 
         lockTierHeightCheckBox.setText("Lock Tier");
-        lockTierHeightCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lockTierHeightCheckBoxActionPerformed(evt);
-            }
-        });
 
         setHeightInPxLabel.setText("Set Height (in Pixels):");
 
@@ -244,16 +236,12 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         trackHeightPanel.setLayout(trackHeightPanelLayout);
         trackHeightPanelLayout.setHorizontalGroup(
             trackHeightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(trackHeightPanelLayout.createSequentialGroup()
-                .add(trackHeightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(lockTierHeightCheckBox)
-                    .add(setHeightInPxLabel))
-                .add(0, 0, 0))
+            .add(lockTierHeightCheckBox)
+            .add(setHeightInPxLabel)
             .add(trackHeightPanelLayout.createSequentialGroup()
                 .add(setPxHeightTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
-                .add(pxGoButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
+                .add(pxGoButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 43, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         trackHeightPanelLayout.setVerticalGroup(
             trackHeightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -275,18 +263,14 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(stackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(layout.createSequentialGroup()
-                        .add(trackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0)))
+                    .add(trackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(layout.createSequentialGroup()
-                        .add(0, 0, 0)
-                        .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(stackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)
@@ -348,12 +332,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             stackDepthAllButtonActionPerformedA(evt);
         }
     }//GEN-LAST:event_stackDepthAllButtonActionPerformed
-
-    private void lockTierHeightCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockTierHeightCheckBoxActionPerformed
-        if (is_listening) {
-            lockTierHeightCheckBoxActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_lockTierHeightCheckBoxActionPerformed
 
     private void setPxHeightTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setPxHeightTextBoxActionPerformed
         if (is_listening) {
@@ -474,7 +452,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 	protected abstract void strandsForwardColorComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void stackDepthGoButtonActionPerformedA(ActionEvent evt);
 	protected abstract void stackDepthAllButtonActionPerformedA(ActionEvent evt);
-	protected abstract void lockTierHeightCheckBoxActionPerformedA(ActionEvent evt);
 	protected abstract void setPxHeightTextBoxActionPerformedA(ActionEvent evt);
 	protected abstract void pxGoButtonActionPerformedA(ActionEvent evt);
 	protected abstract void moreOptionButtonActionPerformedA(ActionEvent evt);

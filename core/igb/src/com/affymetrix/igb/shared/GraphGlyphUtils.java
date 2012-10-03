@@ -46,9 +46,9 @@ public final class GraphGlyphUtils {
 			Rectangle2D.Double gbox = gl.getCoordBox();
 			if (gbox.y < mapbox.y) {
 				gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
-			} else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
-				gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
-			}
+			} else if (gbox.y > (mapbox.y + mapbox.height - gbox.height)) {
+				gl.setCoords(gbox.x, mapbox.y + mapbox.height - gbox.height, gbox.width, gbox.height);
+			} 
 		}
 	}
 

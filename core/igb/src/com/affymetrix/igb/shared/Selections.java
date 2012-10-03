@@ -227,6 +227,30 @@ public abstract class Selections {
 		return false;
 	}
 	
+	public static boolean isAnyLockable(){
+		for (StyledGlyph glyph : allGlyphs) {
+			if(glyph instanceof TierGlyph && ((TierGlyph)glyph).getTierType() == TierGlyph.TierType.ANNOTATION){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isAllButOneLocked(){
+		return getTotalLocked() == smv.getTierManager().getVisibleTierGlyphs().size() - 2;
+	}
+	
+	public static int getTotalLocked(){
+		int no_of_locked = 0;
+		for (TierGlyph tier : smv.getSeqMap().getTiers()) {
+			ITrackStyleExtended style = tier.getAnnotStyle();
+			if(style.getShow() && tier instanceof DefaultTierGlyph && ((DefaultTierGlyph)tier).isHeightFixed()){
+				no_of_locked++;
+			}
+		}
+		return no_of_locked;
+	}
+	
 	private static void notifyRefreshListener() {
 		// Guaranteed to return a non-null array
 		RefreshSelectionListener[] listeners = listenerList.getListeners(RefreshSelectionListener.class);

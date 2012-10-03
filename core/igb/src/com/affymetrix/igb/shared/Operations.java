@@ -1,4 +1,4 @@
-package com.affymetrix.igb.trackOperations;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;

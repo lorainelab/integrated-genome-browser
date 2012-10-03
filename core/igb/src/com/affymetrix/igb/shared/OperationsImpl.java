@@ -1,4 +1,4 @@
-package com.affymetrix.igb.trackOperations;
+package com.affymetrix.igb.shared;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -24,7 +24,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 import static com.affymetrix.igb.shared.Selections.*;
 
 public class OperationsImpl extends Operations implements RefreshSelectionListener{ 
@@ -44,7 +43,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		name2transformation = new HashMap<String, Operator>();
 		name2operation = new HashMap<String, Operator>();
 		
-	
+		initComponents(igbS);
 		getTransformationCB().addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -80,12 +79,11 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			}
 		});
 		
-		setUpButtonPanel(igbS);
 		resetAll(false);
 		Selections.addRefreshSelectionListener(this);
 	}
 
-	protected void setUpButtonPanel(IGBService igbS){
+	protected void initComponents(IGBService igbS){
 	}
 	
 	public void addOperator(Operator operator) {

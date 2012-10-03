@@ -12,6 +12,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -74,10 +75,15 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 					break;
 			}
 			if (t.getTierType() == TierGlyph.TierType.GRAPH) {
-				// So far this has only been tested with annotation depth graphs.
-				com.affymetrix.igb.shared.GraphGlyph gg
-						= (com.affymetrix.igb.shared.GraphGlyph) t;
-				gg.setVisibleMaxY(a);
+				for(GlyphI g : t.getChildren()){
+					if(!(g instanceof com.affymetrix.igb.shared.GraphGlyph))
+						continue;
+					
+					// So far this has only been tested with annotation depth graphs.
+					com.affymetrix.igb.shared.GraphGlyph gg
+							= (com.affymetrix.igb.shared.GraphGlyph) g;
+					gg.setVisibleMaxY(a);
+				}
 			}
 		}
 		// Now repack with the newly appointed maxima.

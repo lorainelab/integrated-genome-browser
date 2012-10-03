@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -57,10 +58,15 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 					break;
 			}
 			if (t.getTierType() == TierGlyph.TierType.GRAPH) {
-				// So far this has only been tested with annotation depth graphs.
-				com.affymetrix.igb.shared.GraphGlyph gg
-						= (com.affymetrix.igb.shared.GraphGlyph) t;
-				gg.setVisibleMaxY(a);
+				for(GlyphI g : t.getChildren()){
+					if(!(g instanceof com.affymetrix.igb.shared.GraphGlyph))
+						continue;
+					
+					// So far this has only been tested with annotation depth graphs.
+					com.affymetrix.igb.shared.GraphGlyph gg
+							= (com.affymetrix.igb.shared.GraphGlyph) g;
+					gg.setVisibleMaxY(a);
+				}
 			}
 		}
 		// Now repack with the newly appointed maxima.

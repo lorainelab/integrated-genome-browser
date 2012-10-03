@@ -8,7 +8,6 @@ import javax.swing.JComboBox;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.osgi.service.IGBService;
 import static com.affymetrix.igb.shared.Selections.*;
 
@@ -58,11 +57,6 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 				.getGenericAction("com.affymetrix.igb.action.TierFontSizeAction");
 		action.performAction(fontsize);
 		updateDisplay();
-	}
-
-	@Override
-	protected void colorSchemeComboBoxActionPerformedA(ActionEvent evt) {
-		
 	}
 
 	@Override
@@ -130,13 +124,6 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 		else {
 			labelSizeComboBox.setSelectedItem(labelSize);
 		}
-	}
-
-	@Override
-	protected void colorSchemeComboBoxReset() {
-		ColorSchemeComboBox colorSchemeComboBox = getColorSchemeComboBox();
-		colorSchemeComboBox.setEnabled(allStyles.size() > 0);
-		getColorSchemeLabel().setEnabled(allStyles.size() > 0);
 	}
 
 	@Override

@@ -70,8 +70,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
         stylePanel = new javax.swing.JPanel();
         labelSizeComboBox = new javax.swing.JComboBox();
-        colorSchemeLabel = new javax.swing.JLabel();
-        colorSchemeComboBox = createColorSchemeComboBox();
         foregroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         backgroundColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         labelColorComboBox = new com.jidesoft.combobox.ColorComboBox();
@@ -87,15 +85,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
         labelSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 labelSizeComboBoxActionPerformed(evt);
-            }
-        });
-
-        colorSchemeLabel.setText("Scheme");
-
-        colorSchemeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        colorSchemeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorSchemeComboBoxActionPerformed(evt);
             }
         });
 
@@ -156,13 +145,10 @@ public abstract class StylePanel extends javax.swing.JPanel {
                         .add(0, 0, 0)
                         .add(backgroundColorLabel))
                     .add(stylePanelLayout.createSequentialGroup()
-                        .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(labelSizeLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(colorSchemeLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .add(0, 0, 0)
-                        .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(colorSchemeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(labelSizeLabel)
+                        .add(0, 0, 0)
+                        .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(foregroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)
@@ -175,22 +161,18 @@ public abstract class StylePanel extends javax.swing.JPanel {
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(foregroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(foregroundColorLabel))
-                .add(12, 12, 12)
+                .add(15, 15, 15)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(backgroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(backgroundColorLabel))
-                .add(12, 12, 12)
+                .add(15, 15, 15)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelColorLabel)
                     .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(0, 0, 0)
+                .add(15, 15, 15)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(labelSizeLabel))
-                .add(0, 0, 0)
-                .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(colorSchemeLabel)
-                    .add(colorSchemeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 0, 0))
         );
 
@@ -211,12 +193,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
             labelSizeComboBoxActionPerformedA(evt);
         }
     }//GEN-LAST:event_labelSizeComboBoxActionPerformed
-
-    private void colorSchemeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorSchemeComboBoxActionPerformed
-        if (is_listening) {
-            colorSchemeComboBoxActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_colorSchemeComboBoxActionPerformed
 
     private void foregroundColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_foregroundColorComboBoxActionPerformed
         if (is_listening) {
@@ -243,14 +219,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
 	public javax.swing.JLabel getBackgroundColorLabel() {
 		return backgroundColorLabel;
-	}
-
-	public com.affymetrix.genoviz.color.ColorSchemeComboBox getColorSchemeComboBox() {
-		return colorSchemeComboBox;
-	}
-
-	public javax.swing.JLabel getColorSchemeLabel() {
-		return colorSchemeLabel;
 	}
 	
 	public com.jidesoft.combobox.ColorComboBox getForegroundColorComboBox() {
@@ -289,7 +257,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
 	// "                                     
 	// " 
 	protected abstract void labelSizeComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void colorSchemeComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void foregroundColorComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void backgroundColorComboBoxActionPerformedA(ActionEvent evt);
 	protected abstract void labelColorComboBoxActionPerformedA(ActionEvent evt);
@@ -310,7 +277,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
 	// "                                     
 	// "
 	protected abstract void labelSizeComboBoxReset();
-	protected abstract void colorSchemeComboBoxReset();
 	protected abstract void foregroundColorComboBoxReset();
 	protected abstract void backgroundColorComboBoxReset();
 	protected abstract void labelColorComboBoxReset();
@@ -328,7 +294,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
 		//getAnnotationsPanel().setEnabled(annotStyles.size() > 0);
 		//getGraphPanel().setEnabled(graphStates.size() > 0);		
 		labelSizeComboBoxReset();
-		colorSchemeComboBoxReset();
 		backgroundColorComboBoxReset();
 		foregroundColorComboBoxReset();
 		labelColorComboBoxReset();
@@ -346,8 +311,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox backgroundColorComboBox;
     private javax.swing.JLabel backgroundColorLabel;
-    private com.affymetrix.genoviz.color.ColorSchemeComboBox colorSchemeComboBox;
-    private javax.swing.JLabel colorSchemeLabel;
     private com.jidesoft.combobox.ColorComboBox foregroundColorComboBox;
     private javax.swing.JLabel foregroundColorLabel;
     private com.jidesoft.combobox.ColorComboBox labelColorComboBox;

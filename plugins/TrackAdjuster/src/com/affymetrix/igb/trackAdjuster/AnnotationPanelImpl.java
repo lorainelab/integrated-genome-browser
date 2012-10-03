@@ -189,12 +189,22 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
 	@Override
 	protected void setPxHeightTextBoxActionPerformedA(ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		pxGoButtonActionPerformedA(evt);
 	}
 
 	@Override
 	protected void pxGoButtonActionPerformedA(ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		final JTextField pxTextField = this.getSetPxHeightTextBox();
+		if (igbService.getSeqMap() == null) {
+			return;
+		}
+		int height = Integer.valueOf(pxTextField.getText());
+		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
+				.getGenericAction("com.affymetrix.igb.action.ChangeTierHeightAction");
+		if (action != null) {
+			action.performAction(height);
+		}
+		updateDisplay();
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         trackHeightPanel = new javax.swing.JPanel();
         lockTierHeightCheckBox = new javax.swing.JCheckBox();
         setHeightInPxLabel = new javax.swing.JLabel();
-        setPxHeightTextBox = new javax.swing.JTextField();
+        setPxHeightTextBox = new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField("trackPreference_tierHeight");
         pxGoButton = new javax.swing.JButton();
 
         annotationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));

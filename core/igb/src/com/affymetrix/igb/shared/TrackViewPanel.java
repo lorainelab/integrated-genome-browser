@@ -12,12 +12,11 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 	private boolean is_listening = true;
 	private final javax.swing.GroupLayout.SequentialGroup horizonatalGroup;
 	private final javax.swing.GroupLayout.ParallelGroup verticalGroup;
-	private final FileTypeCategory[] categories;
 	
 	/**
 	 * Creates new form TrackViewPanel
 	 */
-	public TrackViewPanel(IGBService igbService, String displayName, String title, boolean focus, int position, FileTypeCategory... categories) {
+	public TrackViewPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
 		super(igbService, displayName, title, focus, position);
 		initComponents();
 		
@@ -28,7 +27,6 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		
 		layout.setHorizontalGroup(horizonatalGroup);
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(verticalGroup));
-		this.categories = categories;
 	}
 
 	/**
@@ -211,10 +209,6 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 	public javax.swing.JButton getSelectAllButton() {
 		return selectAllButton;
 	}
-
-	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt){
-		SelectAllAction.getAction().execute(categories);
-	}
 	
 	protected void clearButtonActionPerformedA(java.awt.event.ActionEvent evt){
 		com.affymetrix.igb.action.RemoveDataFromTracksAction.getAction().actionPerformed(evt);
@@ -232,6 +226,8 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		com.affymetrix.igb.action.ExportFileAction.getAction().actionPerformed(evt);
 	}
 
+	protected abstract void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	
 	protected abstract void selectAllButtonReset();
 	protected abstract void clearButtonReset();
 	protected abstract void saveButtonReset();

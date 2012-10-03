@@ -3,6 +3,7 @@ package com.affymetrix.igb.trackAdjuster;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AnnotationPanelImpl;
+import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
 
@@ -15,11 +16,16 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 	private static final int TAB_POSITION = 4;
 	
 	public AnnotationTrackPanel(IGBService _igbService) {
-		super(_igbService, "Annotation", "Annotation", false, TAB_POSITION, 
-				FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet);
+		super(_igbService, "Annotation", "Annotation", false, TAB_POSITION);
 		
 		addPanel(new StylePanelImpl(igbService));
 	    addPanel(new AnnotationPanelImpl(igbService));
+	}
+	
+	
+	@Override
+	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
+		SelectAllAction.getAction().execute(FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet);
 	}
 	
 	@Override

@@ -16,13 +16,18 @@ public class GraphTrackPanel extends TrackViewPanel {
 	private static final int TAB_POSITION = 4;
 	
 	public GraphTrackPanel(IGBService _igbService) {
-		super(_igbService, "Graph", "Graph", false, TAB_POSITION, FileTypeCategory.Graph, FileTypeCategory.Mismatch);
+		super(_igbService, "Graph", "Graph", false, TAB_POSITION);
 		
 		addPanel(new StylePanelImpl(igbService));
 	    addPanel(new YScaleAxisGUI(igbService));
 		addPanel( new GraphPanelImpl(igbService));
 	}
 
+	@Override
+	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
+		SelectAllAction.getAction().execute(FileTypeCategory.Graph, FileTypeCategory.Mismatch);
+	}
+	
 	@Override
 	protected void selectAllButtonReset() {
 		throw new UnsupportedOperationException("Not supported yet.");

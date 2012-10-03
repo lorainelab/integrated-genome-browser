@@ -351,6 +351,7 @@ public class Activator implements BundleActivator {
 		//com.affymetrix.igb.bookmarks.action.AddBookmarkAction.getAction(); // no singleton.
 		//ExitSeqViewerAction.getAction(); // no singleton.
 		ToggleEdgeMatchingAction.getAction();
+		ChangeTierHeightAction.getAction();
 		//UCSCViewAction.getAction(); // external class. no singleton.
 	}
 

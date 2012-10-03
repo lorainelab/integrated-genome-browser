@@ -1,7 +1,6 @@
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
-import java.awt.event.ActionEvent;
-import com.affymetrix.igb.shared.StyledGlyph;
+import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.shared.TierGlyph.TierType;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
@@ -21,7 +20,7 @@ public class LockTierHeightAction extends SeqMapViewActionA{
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
 		StyledGlyph[] glyphs = allGlyphs.toArray(new StyledGlyph[0]);
 		int len = getTierManager().getVisibleTierGlyphs().size() - 1 == glyphs.length? glyphs.length - 1 : glyphs.length;

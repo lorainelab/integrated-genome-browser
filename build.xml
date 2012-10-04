@@ -33,7 +33,7 @@
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
 		<property name="AnnotationTab"       value="${basedir}/plugins/AnnotationTab" />
-		<property name="TrackOperations"     value="${basedir}/plugins/TrackOperations" />
+		<property name="GraphTab"		     value="${basedir}/plugins/GraphTab" />
 		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
 		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
@@ -725,9 +725,7 @@
 				<dirset dir="${basedir}/plugins">
 					<include name="window_service_def" />
 				</dirset>
-				<dirset dir="${basedir}/plugins">
-					<patternset includes="${include.bundles}"/>
-				</dirset>
+				<filelist dir="${basedir}/plugins" files="${include.bundles}"/> 
 				<dirset dir="${basedir}">
 					<include name="protannot" />
 					<include name="das2_server" />

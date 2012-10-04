@@ -41,7 +41,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
 
         setPreferredSize(new java.awt.Dimension(214, 190));
 
-        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
+        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
         graphPanel.setPreferredSize(new java.awt.Dimension(155, 180));
 
         buttonGroup1.add(graphStyleLineRadioButton);

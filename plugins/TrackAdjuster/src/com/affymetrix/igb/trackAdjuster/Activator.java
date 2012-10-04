@@ -8,10 +8,11 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.OperationsImpl;
 import com.affymetrix.igb.shared.SelectAllAction;
+import com.affymetrix.igb.shared.Selections;
+import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.window.service.WindowActivator;
-import org.osgi.framework.BundleActivator;
 
-public class Activator extends WindowActivator implements BundleActivator {
+public class Activator extends WindowActivator implements org.osgi.framework.BundleActivator {
 	static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet};
 	
 	@Override
@@ -23,6 +24,21 @@ public class Activator extends WindowActivator implements BundleActivator {
 			}
 		};
 		
+		StylePanelImpl stylePanel = new StylePanelImpl(igbService) {
+
+			@Override
+			protected void setStyles() {
+				styles = Selections.annotStyles;
+			}
+
+			@Override
+			protected boolean isAnyFloat() {
+				return false;
+			}
+		};
+	
+		AnnotationPanelImpl  annotationPanel = new AnnotationPanelImpl(igbService);
+	    
 		final OperationsImpl trackOperation = new OperationsImpl(igbService){
 			@Override
 			protected boolean addThisOperator(Operator operator){
@@ -34,8 +50,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 				return false;
 			}
 		};
-		
-		tabPanel.addPanel(trackOperation);
 		
 		ExtensionPointHandler<Operator> operatorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		operatorExtensionPoint.addListener(new ExtensionPointListener<Operator>() {
@@ -50,6 +64,10 @@ public class Activator extends WindowActivator implements BundleActivator {
 				trackOperation.removeOperator(operator);
 			}
 		});
+		
+		tabPanel.addPanel(stylePanel);
+		tabPanel.addPanel(annotationPanel);
+		tabPanel.addPanel(trackOperation);
 		
 		return tabPanel;
 	}

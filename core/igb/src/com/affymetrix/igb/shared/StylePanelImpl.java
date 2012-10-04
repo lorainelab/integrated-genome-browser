@@ -3,21 +3,23 @@ package com.affymetrix.igb.shared;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.JComboBox;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import static com.affymetrix.igb.shared.Selections.*;
 
-public class StylePanelImpl extends StylePanel implements Selections.RefreshSelectionListener{
+public abstract class StylePanelImpl extends StylePanel implements Selections.RefreshSelectionListener{
 	private static final long serialVersionUID = 1L;
 	protected IGBService igbService;
+	protected List<ITrackStyleExtended> styles;
 	
 	public StylePanelImpl(IGBService _igbService){
 		super();
 		igbService = _igbService;
+		setStyles();
 		resetAll();
 		Selections.addRefreshSelectionListener(this);
 	}
@@ -106,7 +108,7 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 		JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		Integer labelSize = -1;
 		boolean labelSizeSet = false;
-		for (ITrackStyleExtended style: allStyles) {
+		for (ITrackStyleExtended style: styles) {
 			if (labelSize == -1 && !labelSizeSet) {
 				labelSize = (int)style.getTrackNameSize();
 				labelSizeSet = true;
@@ -115,7 +117,7 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 				labelSize = -1;
 			}
 		}
-		boolean enable = allStyles.size() > 0 && !isAnyFloat();
+		boolean enable = styles.size() > 0 && !isAnyFloat();
 		labelSizeComboBox.setEnabled(enable);
 		getLabelSizeLabel().setEnabled(enable);
 		if (!enable || labelSize == -1) {
@@ -129,13 +131,13 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 	@Override
 	protected void foregroundColorComboBoxReset() {
 		ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
-		boolean enable = allStyles.size() > 0;
+		boolean enable = styles.size() > 0;
 		foregroundColorComboBox.setEnabled(enable);
 		getForegroundColorLabel().setEnabled(enable);
 		Color foregroundColor = null;
 		if (enable) {
-			foregroundColor = allStyles.get(0).getForeground();
-			for (ITrackStyleExtended style : allStyles) {
+			foregroundColor = styles.get(0).getForeground();
+			for (ITrackStyleExtended style : styles) {
 				if (!(foregroundColor.equals(style.getForeground()))) {
 					foregroundColor = null;
 					break;
@@ -148,11 +150,11 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 	@Override
 	protected void backgroundColorComboBoxReset() {
 		ColorComboBox backgroundColorComboBox = getBackgroundColorComboBox();
-		boolean enable = allStyles.size() > 0 && !isAnyFloat();
+		boolean enable = styles.size() > 0 && !isAnyFloat();
 		Color backgroundColor = null;
 		if (enable) {
-			backgroundColor = allStyles.get(0).getBackground();
-			for (ITrackStyleExtended style : allStyles) {
+			backgroundColor = styles.get(0).getBackground();
+			for (ITrackStyleExtended style : styles) {
 				if (backgroundColor != style.getBackground()) {
 					backgroundColor = null;
 					break;
@@ -170,7 +172,7 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 		ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color labelColor = null;
 		boolean labelColorSet = false;
-		for (ITrackStyleExtended style : allStyles) {
+		for (ITrackStyleExtended style : styles) {
 			if (labelColor == null && !labelColorSet) {
 				labelColor = style.getLabelForeground();
 				labelColorSet = true;
@@ -180,7 +182,7 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 				break;
 			}
 		}
-		boolean enable = allStyles.size() > 0 && !isAnyFloat();
+		boolean enable = styles.size() > 0 && !isAnyFloat();
 		labelColorComboBox.setEnabled(enable);
 		getLabelColorLabel().setEnabled(enable);
 		labelColorComboBox.setSelectedColor(enable ? labelColor : null);
@@ -188,6 +190,10 @@ public class StylePanelImpl extends StylePanel implements Selections.RefreshSele
 
 	@Override
 	public void selectionRefreshed() {
+		setStyles();
 		resetAll();
 	}
+	
+	protected abstract void setStyles();
+	protected abstract boolean isAnyFloat();
 }

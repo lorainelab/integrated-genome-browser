@@ -1,9 +1,6 @@
 package com.affymetrix.igb.trackOperations;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.SelectAllAction;
-import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
 
 /**
@@ -16,10 +13,6 @@ public class GraphTrackPanel extends TrackViewPanel {
 	
 	public GraphTrackPanel(IGBService _igbService) {
 		super(_igbService, "Graph", "Graph", false, TAB_POSITION);
-		
-		addPanel(new StylePanelImpl(igbService));
-	    addPanel(new YScaleAxisGUI(igbService));
-		addPanel( new GraphPanelImpl(igbService));
 	}
 
 	@Override

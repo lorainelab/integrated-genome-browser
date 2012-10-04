@@ -1,9 +1,6 @@
 package com.affymetrix.igb.trackAdjuster;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.SelectAllAction;
-import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
 
 /**
@@ -16,9 +13,6 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 	
 	public AnnotationTrackPanel(IGBService _igbService) {
 		super(_igbService, "Annotation", "Annotation", false, TAB_POSITION);
-		
-		addPanel(new StylePanelImpl(igbService));
-	    addPanel(new AnnotationPanelImpl(igbService));
 	}
 	
 	@Override

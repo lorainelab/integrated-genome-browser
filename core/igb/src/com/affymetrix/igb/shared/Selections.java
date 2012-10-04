@@ -28,6 +28,7 @@ import javax.swing.event.EventListenerList;
 public abstract class Selections {
 	public static final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
+	public static final List<ITrackStyleExtended> graphStyles = new ArrayList<ITrackStyleExtended>();
 	public static final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
 	public static final List<GraphState> graphStates = new ArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
@@ -58,6 +59,7 @@ public abstract class Selections {
 		List<StyledGlyph> selected = (List)smv.getAllSelectedTiers();
 		allStyles.clear();
 		annotStyles.clear();
+		graphStyles.clear();
 		graphStates.clear();
 		graphGlyphs.clear();
 		allGlyphs.clear();
@@ -67,6 +69,7 @@ public abstract class Selections {
 			if (useGlyph instanceof GraphGlyph){
 				GraphGlyph gg = (GraphGlyph)useGlyph;
 				graphStates.add(gg.getGraphState());
+				graphStyles.add(gg.getGraphState().getTierStyle());
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
 				allGlyphs.add(gg);
@@ -77,6 +80,7 @@ public abstract class Selections {
 						if (g instanceof GraphGlyph) {
 							GraphGlyph gg = (GraphGlyph)g;
 							graphStates.add(gg.getGraphState());
+							graphStyles.add(gg.getGraphState().getTierStyle());
 							allStyles.add(gg.getGraphState().getTierStyle());
 							graphGlyphs.add(gg);
 							allGlyphs.add(gg);
@@ -97,6 +101,7 @@ public abstract class Selections {
 			if (glyph instanceof GraphGlyph) {
 				GraphGlyph gg = (GraphGlyph) glyph;
 				graphStates.add(gg.getGraphState());
+				graphStyles.add(gg.getGraphState().getTierStyle());
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
 				rootSyms.add((RootSeqSymmetry)gg.getInfo());

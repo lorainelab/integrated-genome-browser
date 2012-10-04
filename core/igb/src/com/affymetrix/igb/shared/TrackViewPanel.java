@@ -2,12 +2,13 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 
 /**
  *
  * @author hiralv
  */
-public abstract class TrackViewPanel extends IGBTabPanel {
+public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelectionListener{
 	private boolean is_listening = true;
 	private final javax.swing.GroupLayout.SequentialGroup horizonatalGroup;
 	private final javax.swing.GroupLayout.ParallelGroup verticalGroup;
@@ -26,6 +27,7 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		
 		layout.setHorizontalGroup(horizonatalGroup);
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(verticalGroup));
+		Selections.addRefreshSelectionListener(this);
 	}
 
 	/**
@@ -245,6 +247,11 @@ public abstract class TrackViewPanel extends IGBTabPanel {
 		restoreButtonReset();
 		
 		is_listening = true;
+	}
+	
+	@Override
+	public void selectionRefreshed(){
+		resetAll();
 	}
 	
 	public void addPanel(javax.swing.JPanel panel){

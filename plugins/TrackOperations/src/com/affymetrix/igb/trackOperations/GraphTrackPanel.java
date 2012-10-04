@@ -2,6 +2,7 @@ package com.affymetrix.igb.trackOperations;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import static com.affymetrix.igb.shared.Selections.*;
 
 /**
  *
@@ -17,27 +18,31 @@ public class GraphTrackPanel extends TrackViewPanel {
 
 	@Override
 	protected void selectAllButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 
 	@Override
 	protected void clearButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton clearButton = getClearButton();
+		clearButton.setEnabled(graphStyles.size() > 0);
 	}
 
 	@Override
 	protected void saveButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton saveButton = getSaveButton();
+		saveButton.setEnabled(graphStyles.size() > 0);
 	}
 
 	@Override
 	protected void deleteButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton deleteButton = getDeleteButton();
+		deleteButton.setEnabled(graphStyles.size() > 0);
 	}
 
 	@Override
 	protected void restoreButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton restoreButton = getRestoreButton();
+		restoreButton.setEnabled(graphStyles.size() > 0);
 	}
 	
 	@Override

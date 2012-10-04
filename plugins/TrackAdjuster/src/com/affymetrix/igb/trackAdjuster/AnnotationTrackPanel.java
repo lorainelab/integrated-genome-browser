@@ -2,12 +2,13 @@ package com.affymetrix.igb.trackAdjuster;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import static com.affymetrix.igb.shared.Selections.*;
 
 /**
  *
  * @author hiralv
  */
-public class AnnotationTrackPanel extends TrackViewPanel {
+public class AnnotationTrackPanel extends TrackViewPanel{
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 4;
 	
@@ -17,27 +18,31 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 	
 	@Override
 	protected void selectAllButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 
 	@Override
 	protected void clearButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton clearButton = getClearButton();
+		clearButton.setEnabled(annotStyles.size() > 0);
 	}
 
 	@Override
 	protected void saveButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton saveButton = getSaveButton();
+		saveButton.setEnabled(annotStyles.size() > 0);
 	}
 
 	@Override
 	protected void deleteButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton deleteButton = getDeleteButton();
+		deleteButton.setEnabled(annotStyles.size() > 0);
 	}
 
 	@Override
 	protected void restoreButtonReset() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		javax.swing.JButton restoreButton = getRestoreButton();
+		restoreButton.setEnabled(annotStyles.size() > 0);
 	}
 	
 	@Override

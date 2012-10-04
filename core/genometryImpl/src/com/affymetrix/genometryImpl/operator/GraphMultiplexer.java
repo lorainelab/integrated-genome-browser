@@ -30,7 +30,6 @@ public class GraphMultiplexer implements Operator {
 	private static final int MINIMUMINPUTGRAPHS = 2;
 	private static final int MAXIMUMINPUTGRAPHS = 9;
 
-	private Map<String, Class<?>> properties = new HashMap<String, Class<?>>();
 	private String name;
 
 	public GraphMultiplexer() {
@@ -101,7 +100,7 @@ public class GraphMultiplexer implements Operator {
 
 	@Override
 	public Map<String, Class<?>> getParameters() {
-		return this.properties;
+		return null;
 	}
 
 	/**

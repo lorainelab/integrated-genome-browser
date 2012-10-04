@@ -21,12 +21,6 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 	    addPanel(new AnnotationPanelImpl(igbService));
 	}
 	
-	
-	@Override
-	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		SelectAllAction.getAction().execute(FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet);
-	}
-	
 	@Override
 	protected void selectAllButtonReset() {
 		throw new UnsupportedOperationException("Not supported yet.");

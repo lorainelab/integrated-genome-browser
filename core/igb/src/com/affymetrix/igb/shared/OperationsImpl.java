@@ -141,6 +141,10 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		List<RootSeqSymmetry> transformSyms = new ArrayList<RootSeqSymmetry>(); // fake List to test compatibility of Transform operations
 		transformSyms.add(rootSyms.get(0));
 		for (Operator operator : operators) {
+			if(!addThisOperator(operator)){
+				continue;
+			}
+			
 			if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator, true)) {
 				name2transformation.put(operator.getDisplay(), operator);
 				getTransformationCB().addItem(operator.getDisplay());
@@ -152,6 +156,10 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		}
 	}
 
+	protected boolean addThisOperator(Operator operator){
+		return true;
+	}
+	
 	public void setPanelEnabled(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		int transformCount = name2transformation.size();

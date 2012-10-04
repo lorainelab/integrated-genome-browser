@@ -24,11 +24,6 @@ public class GraphTrackPanel extends TrackViewPanel {
 	}
 
 	@Override
-	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		SelectAllAction.getAction().execute(FileTypeCategory.Graph, FileTypeCategory.Mismatch);
-	}
-	
-	@Override
 	protected void selectAllButtonReset() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

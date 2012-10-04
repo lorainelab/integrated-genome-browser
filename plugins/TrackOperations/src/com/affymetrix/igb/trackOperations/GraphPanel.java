@@ -1,13 +1,9 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.trackOperations;
 
 import java.awt.event.ActionEvent;
 import javax.swing.DefaultComboBoxModel;
 import static com.affymetrix.igb.shared.Selections.*;
 
-/**
- *
- * @author hiralv
- */
 public abstract class GraphPanel extends javax.swing.JPanel {
 	protected boolean is_listening = true; // used to turn on and off listening to GUI events
 	private javax.swing.JRadioButton hiddenRadioButton;

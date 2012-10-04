@@ -1,18 +1,18 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.trackOperations;
 
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.DynamicStyleHeatMap;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.igb.action.FloatTiersAction;
-import com.affymetrix.igb.action.UnFloatTiersAction;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.view.factories.DynamicStyleHeatMap;
+import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
 
 public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSelectionListener {
@@ -63,9 +63,9 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 	@Override
 	protected void floatCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox floatCheckBox = getFloatCheckBox();
-	    GenericAction action = floatCheckBox.isSelected() ? 
-				FloatTiersAction.getAction() :
-				UnFloatTiersAction.getAction();
+	    GenericAction action = floatCheckBox.isSelected() ?
+				GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction") :
+				GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.UnFloatTiersAction");
 		action.actionPerformed(evt);
 	}
 

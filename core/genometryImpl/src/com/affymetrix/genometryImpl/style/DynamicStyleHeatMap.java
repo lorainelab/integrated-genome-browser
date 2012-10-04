@@ -1,9 +1,7 @@
-package com.affymetrix.igb.view.factories;
+package com.affymetrix.genometryImpl.style;
 
 import java.awt.Color;
 
-import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 
 public class DynamicStyleHeatMap extends HeatMap {
 	private final ITrackStyle style;

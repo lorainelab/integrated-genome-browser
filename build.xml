@@ -32,7 +32,7 @@
 		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
-		<property name="TrackAdjuster"       value="${basedir}/plugins/TrackAdjuster" />
+		<property name="AnnotationTab"       value="${basedir}/plugins/AnnotationTab" />
 		<property name="TrackOperations"     value="${basedir}/plugins/TrackOperations" />
 		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
 		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />

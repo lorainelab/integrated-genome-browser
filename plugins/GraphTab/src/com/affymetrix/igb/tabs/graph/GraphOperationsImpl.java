@@ -27,17 +27,17 @@ public class GraphOperationsImpl extends OperationsImpl{
 		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getBtPanel());
 		getBtPanel().setLayout(layout);	
-		layout.setHorizontalGroup(
-				layout.createSequentialGroup()
+		layout.setHorizontalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
 				.addComponent(combineB)
-				.addComponent(splitB)
-				.addComponent(threshB));
-		layout.setVerticalGroup(
-				layout.createSequentialGroup().
-				addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-				.addComponent(combineB)
-				.addComponent(splitB)
+				.addComponent(splitB))
 				.addComponent(threshB)));
+		layout.setVerticalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(combineB)
+				.addComponent(splitB))
+				.addComponent(threshB));
 		
 		getSingleTrackLabel().setText("Single-Graph:");
 		getMultiTrackLabel().setText("Multi-Graph:");

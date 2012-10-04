@@ -121,39 +121,36 @@ public abstract class StylePanel extends javax.swing.JPanel {
             }
         });
 
-        foregroundColorLabel.setText("Foreground Color");
+        foregroundColorLabel.setText("Foreground");
 
-        labelColorLabel.setText("Label Color");
+        labelColorLabel.setText("Label");
 
-        backgroundColorLabel.setText("Background Color");
+        backgroundColorLabel.setText("Background");
 
-        labelSizeLabel.setText("Font Size");
+        labelSizeLabel.setText("Track Label Font");
 
         org.jdesktop.layout.GroupLayout stylePanelLayout = new org.jdesktop.layout.GroupLayout(stylePanel);
         stylePanel.setLayout(stylePanelLayout);
         stylePanelLayout.setHorizontalGroup(
             stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(stylePanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(5, 5, 5)
+                .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0)
+                        .add(5, 5, 5)
                         .add(labelColorLabel))
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(backgroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0)
+                        .add(5, 5, 5)
                         .add(backgroundColorLabel))
-                    .add(stylePanelLayout.createSequentialGroup()
-                        .add(0, 0, 0)
-                        .add(labelSizeLabel)
-                        .add(0, 0, 0)
-                        .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(labelSizeLabel)
                     .add(stylePanelLayout.createSequentialGroup()
                         .add(foregroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0)
-                        .add(foregroundColorLabel)))
-                .add(0, 0, 0))
+                        .add(5, 5, 5)
+                        .add(foregroundColorLabel))
+                    .add(labelSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(5, 5, 5))
         );
         stylePanelLayout.setVerticalGroup(
             stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -161,19 +158,18 @@ public abstract class StylePanel extends javax.swing.JPanel {
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(foregroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(foregroundColorLabel))
-                .add(15, 15, 15)
+                .add(10, 10, 10)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(backgroundColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(backgroundColorLabel))
-                .add(15, 15, 15)
+                .add(10, 10, 10)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelColorLabel)
                     .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(15, 15, 15)
-                .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(labelSizeLabel))
-                .add(0, 0, 0))
+                .add(10, 10, 10)
+                .add(labelSizeLabel)
+                .add(0, 0, 0)
+                .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);

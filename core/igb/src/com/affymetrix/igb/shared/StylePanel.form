@@ -39,31 +39,27 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="labelColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="backgroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           <Component id="backgroundColorLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="labelSizeLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="labelSizeComboBox" min="-2" pref="85" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="labelSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="foregroundColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           <Component id="foregroundColorLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="labelSizeComboBox" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -74,22 +70,20 @@
                       <Component id="foregroundColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="foregroundColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="backgroundColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="backgroundColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="labelColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labelColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="labelSizeComboBox" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                      <Component id="labelSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="labelSizeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="labelSizeComboBox" min="-2" pref="28" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -170,22 +164,22 @@
         </Component>
         <Component class="javax.swing.JLabel" name="foregroundColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Foreground Color"/>
+            <Property name="text" type="java.lang.String" value="Foreground"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="labelColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Label Color"/>
+            <Property name="text" type="java.lang.String" value="Label"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="backgroundColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Background Color"/>
+            <Property name="text" type="java.lang.String" value="Background"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="labelSizeLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Font Size"/>
+            <Property name="text" type="java.lang.String" value="Track Label Font"/>
           </Properties>
         </Component>
       </SubComponents>

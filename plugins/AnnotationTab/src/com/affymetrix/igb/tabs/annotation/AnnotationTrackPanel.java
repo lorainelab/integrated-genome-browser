@@ -10,10 +10,11 @@ import static com.affymetrix.igb.shared.Selections.*;
  */
 public class AnnotationTrackPanel extends TrackViewPanel{
 	private static final long serialVersionUID = 1L;
+	public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("annotation");
 	private static final int TAB_POSITION = 4;
 	
 	public AnnotationTrackPanel(IGBService _igbService) {
-		super(_igbService, "Annotation", "Annotation", false, TAB_POSITION);
+		super(_igbService, BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTab"), false, TAB_POSITION);
 	}
 	
 	@Override

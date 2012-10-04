@@ -57,22 +57,7 @@ public class CombineGraphsAction extends GenericAction {
 
 		// otherwise, construct a new combo style
 		if (combo_style == null) {
-			combo_style = new SimpleTrackStyle("Joined Graphs", true);
-			combo_style.setTrackName("Joined Graphs");
-			combo_style.setExpandable(true);
-			//	combo_style.setCollapsed(true);
-			//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());
-			combo_style.setForeground(igbService.getDefaultForegroundColor());
-			Color background = igbService.getDefaultBackgroundColor();
-			int c = -1;
-			for (Entry<Color, Integer> color : colorMap.entrySet()) {
-				if (color.getValue() > c) {
-					background = color.getKey();
-				}
-			}
-			//combo_style.setLabelBackground(background);
-			combo_style.setBackground(background);
-			combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
+			combo_style = createComboStyle(igbService, colorMap);
 		}
 
 		// Now apply that combo style to all the selected graphs
@@ -87,5 +72,27 @@ public class CombineGraphsAction extends GenericAction {
 			}
 		}
 		combo_style.setHeight(height);
+	}
+	
+	private static ITrackStyleExtended createComboStyle(IGBService igbService, Map<Color, Integer> colorMap) {
+		ITrackStyleExtended combo_style = new SimpleTrackStyle("Joined Graphs", true);
+		combo_style.setTrackName("Joined Graphs");
+		combo_style.setExpandable(true);
+		//	combo_style.setCollapsed(true);
+		//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());
+		combo_style.setForeground(igbService.getDefaultForegroundColor());
+		Color background = igbService.getDefaultBackgroundColor();
+		int c = -1;
+		for (Entry<Color, Integer> color : colorMap.entrySet()) {
+			if (color.getValue() > c) {
+				background = color.getKey();
+				c = color.getValue();
+			}
+		}
+		//combo_style.setLabelBackground(background);
+		combo_style.setBackground(background);
+		combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
+		
+		return combo_style;
 	}
 }

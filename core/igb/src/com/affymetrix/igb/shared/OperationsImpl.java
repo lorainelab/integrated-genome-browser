@@ -59,7 +59,6 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			}
 		});
 
-		getTransformationParamLabel().setText(BUNDLE.getString("transformationLabel"));
 		getTransformationGoB().setAction(new TrackTransformAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -69,7 +68,6 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			}
 		});
 
-		this.getOperationParamLabel().setText(BUNDLE.getString("operationLabel"));
 		getOperationGoB().setAction(new TrackOperationAction(null) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -78,6 +76,12 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 				return name2operation.get(selection);
 			}
 		});
+		
+		getTransformationParamLabel().setVisible(false);
+		getTransformationParam().setVisible(false);
+		getOperationParamLabel().setVisible(false);
+		getOperationParam().setVisible(false);
+		invalidate();
 		
 		resetAll(false);
 		Selections.addRefreshSelectionListener(this);
@@ -188,10 +192,12 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
 	private void setTransformationDisplay(boolean enable) {
 		setAtionDisplay(getTransformationCB(), getTransformationParamLabel(), getTransformationParam(), name2transformation, getTransformationGoB(), enable, true);
+		invalidate();
 	}
 
 	private void setOperationDisplay(boolean enable) {
 		setAtionDisplay(getOperationCB(), getOperationParamLabel(), getOperationParam(), name2operation, getOperationGoB(), enable, false);
+		invalidate();
 	}
 
 	private static void setAtionDisplay(
@@ -209,6 +215,8 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			ationParamLabel.setEnabled(false);
 			ationParam.setEditable(false);
 			ationParam.setEnabled(false);
+			ationParam.setVisible(false);
+			ationParamLabel.setVisible(false);
 		} else {
 			Operator operator = name2ation.get(selection);
 			ationGoB.setToolTipText(getTooltipMessage(operator));
@@ -218,12 +226,16 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 				ationParamLabel.setEnabled(false);
 				ationParam.setEditable(false);
 				ationParam.setEnabled(false);
+				ationParam.setVisible(false);
+				ationParamLabel.setVisible(false);
 			} else {
 				ationParamLabel.setText(params.keySet().iterator().next() + " :"); // only one parameter, for now
 				ationParamLabel.setEnabled(true);
 				ationParam.setEditable(true);
 				ationParam.setText("");
 				ationParam.setEnabled(true);
+				ationParam.setVisible(true);
+				ationParamLabel.setVisible(true);
 			}
 		}
 	}

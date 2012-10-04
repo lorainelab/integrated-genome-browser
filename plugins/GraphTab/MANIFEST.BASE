@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TrackOperations
-Bundle-SymbolicName: com.affymetrix.igb.TrackOperations
+Bundle-SymbolicName: com.affymetrix.igb.tabs.graph.GraphTab
 Bundle-Version: @appVersion@
-Bundle-Activator: com.affymetrix.igb.trackOperations.Activator
+Bundle-Activator: com.affymetrix.igb.tabs.graph.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-TrackAdjusterPanel
-Bundle-Category: IGBTabPanel-com.affymetrix.igb.trackOperations.SimpleTrackTabGUI
+Bundle-Category: IGBTabPanel-com.affymetrix.igb.tabs.graph.GraphTrackPanel
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,

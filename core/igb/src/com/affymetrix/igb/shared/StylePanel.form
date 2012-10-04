@@ -179,7 +179,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="labelSizeLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Track Label Font"/>
+            <Property name="text" type="java.lang.String" value="Track Label Font:"/>
           </Properties>
         </Component>
       </SubComponents>

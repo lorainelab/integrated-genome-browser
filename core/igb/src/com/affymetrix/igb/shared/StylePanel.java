@@ -127,7 +127,7 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
         backgroundColorLabel.setText("Background");
 
-        labelSizeLabel.setText("Track Label Font");
+        labelSizeLabel.setText("Track Label Font:");
 
         org.jdesktop.layout.GroupLayout stylePanelLayout = new org.jdesktop.layout.GroupLayout(stylePanel);
         stylePanel.setLayout(stylePanelLayout);

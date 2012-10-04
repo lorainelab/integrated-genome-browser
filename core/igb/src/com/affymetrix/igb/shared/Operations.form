@@ -123,7 +123,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="singleTrackLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Single Track"/>
+            <Property name="text" type="java.lang.String" value="Single-Track:"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -203,7 +203,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="multiTrackLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Multi Track"/>
+            <Property name="text" type="java.lang.String" value="Multi-Track:"/>
           </Properties>
         </Component>
       </SubComponents>

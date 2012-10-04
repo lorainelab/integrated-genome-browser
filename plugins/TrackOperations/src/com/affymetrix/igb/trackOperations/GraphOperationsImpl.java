@@ -39,8 +39,8 @@ public class GraphOperationsImpl extends OperationsImpl{
 				.addComponent(splitB)
 				.addComponent(threshB)));
 		
-		getSingleTrackLabel().setText("Single Graph");
-		getMultiTrackLabel().setText("Multi Graph");
+		getSingleTrackLabel().setText("Single-Graph:");
+		getMultiTrackLabel().setText("Multi-Graph:");
 	}
 	
 	public void setPanelEnabled(boolean enable) {

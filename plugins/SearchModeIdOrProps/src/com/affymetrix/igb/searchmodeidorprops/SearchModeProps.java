@@ -5,10 +5,10 @@ import java.util.List;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
 
-public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeSym {
+public class SearchModeProps extends SearchModeIDOrProps implements IKeyWordSearch {
 	private static final int SEARCH_ALL_ORDINAL = -8000;
 	public SearchModeProps(IGBService igbService) {
 		super(igbService);

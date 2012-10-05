@@ -8,13 +8,14 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
 	private ServiceRegistration<ISearchModeSym> searchModeIDRegistration;
-	private ServiceRegistration<ISearchModeSym> searchModePropsRegistration;
+	private ServiceRegistration<IKeyWordSearch> searchModePropsRegistration;
 	private ServiceRegistration<ISearchHints> searchHints;
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
@@ -22,7 +23,7 @@ public class Activator implements BundleActivator {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
 			SearchModeID smID = new SearchModeID(igbService);
     		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, smID, null);
-    		searchModePropsRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeProps(igbService), null);
+    		searchModePropsRegistration = bundleContext.registerService(IKeyWordSearch.class, new SearchModeProps(igbService), null);
 			searchHints = bundleContext.registerService(ISearchHints.class, smID, null);
         }
         catch (Exception ex) {

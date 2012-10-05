@@ -18,10 +18,10 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
 
-public class SearchModeLucene implements ISearchModeSym {
+public class SearchModeLucene implements IKeyWordSearch {
 	private static final int SEARCH_ALL_ORDINAL = 1000;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodelucene");
 	private static final int MAX_HITS = 1000;

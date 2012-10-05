@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener, TableModelListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"", "", "FG", "BG", "2 Track", "Load Mode",
+	private static final String[] columnNames = {"", "", "FG", "BG", "+/-", "Load Mode",
 		"Track Name", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int REFRESH_FEATURE_COLUMN = 0;

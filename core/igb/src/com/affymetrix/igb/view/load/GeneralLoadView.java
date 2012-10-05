@@ -425,9 +425,9 @@ public final class GeneralLoadView {
 		table.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(27);
 		table.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(27);
 		table.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(27);
-		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
-		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
-		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
+		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(35);
+		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(35);
+		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(35);
 
 		// Don't enable combo box for full genome sequence
 		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()

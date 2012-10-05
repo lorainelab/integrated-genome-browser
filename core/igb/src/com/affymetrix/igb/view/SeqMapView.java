@@ -346,20 +346,7 @@ public class SeqMapView extends JPanel
 
 		xzoombox = Box.createHorizontalBox();
 		map_range_box = new MapRangeBox(this);
-		JRPButton searchButton = new JRPButton(this.id + "_search_button",
-			new GenericAction(null, BUNDLE.getString("goToRegionToolTip"),
-				"16x16/actions/system-search.png",
-				null, //"22x22/actions/system-search.png",
-				KeyEvent.VK_UNDEFINED) {
-				private static final long serialVersionUID = 1L;
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					super.actionPerformed(e);
-					map_range_box.actionPerformed(e);
-				}
-			}
-		);
-		xzoombox.add(searchButton);
+		addSearchButton(this.id);
 
 		xzoombox.add(map_range_box.range_box);
 
@@ -442,6 +429,25 @@ public class SeqMapView extends JPanel
 		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
 		partial_residuesB.setText("Load Sequence");
 		xzoombox.add(partial_residuesB);
+	}
+	
+	protected void addSearchButton(String id) {
+		JRPButton searchButton = new JRPButton(this.id + "_search_button",
+				new GenericAction(null, BUNDLE.getString("goToRegionToolTip"),
+				"16x16/actions/system-search.png",
+				null, //"22x22/actions/system-search.png",
+				KeyEvent.VK_UNDEFINED) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						super.actionPerformed(e);
+						map_range_box.actionPerformed(e);
+					}
+			}
+		);
+		xzoombox.add(searchButton);
 	}
 
 	protected Adjustable getXZoomer(String id) {

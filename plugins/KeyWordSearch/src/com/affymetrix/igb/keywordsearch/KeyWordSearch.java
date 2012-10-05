@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
  * @author hiralv
  */
 public class KeyWordSearch implements IKeyWordSearch{
+	private static final int SEARCH_ALL_ORDINAL = -8000;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("keywordsearch");
 	final private List<IKeyWordSearch> searchModes;
 	
@@ -28,7 +29,7 @@ public class KeyWordSearch implements IKeyWordSearch{
 	}
 	
 	public int searchAllUse(){
-		return 2;
+		return SEARCH_ALL_ORDINAL;
 	}
 	
 	public String getTooltip(){

@@ -1664,6 +1664,11 @@ public class SeqMapView extends JPanel
 					sym_used_for_title = sym;
 				}
 				if (id == null && sym instanceof SymWithProps) {
+					id = (String) ((SymWithProps) sym).getProperty("gene name");
+					sym_used_for_title = sym;
+					sym_info_used_for_title = "gene name";
+				}
+				if (id == null && sym instanceof SymWithProps) {
 					id = (String) ((SymWithProps) sym).getProperty("id");
 					sym_used_for_title = sym;
 					sym_info_used_for_title = "id";

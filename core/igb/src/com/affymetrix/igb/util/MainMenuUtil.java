@@ -109,6 +109,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_clampView", ClampViewAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_shrinkWrap", ShrinkWrapAction.getAction()));
 		view_menu.addSeparator();
+		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_clearVisualTools", ClearVisualTools.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_showHairline", ToggleHairlineAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_toggleToolTip", ToggleToolTipAction.getAction()));

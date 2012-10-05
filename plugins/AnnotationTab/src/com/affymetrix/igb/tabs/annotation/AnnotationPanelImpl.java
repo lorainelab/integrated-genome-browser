@@ -209,7 +209,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
 	@Override
 	protected void moreOptionButtonActionPerformedA(ActionEvent evt) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		igbService.openPreferencesOtherPanel();
 	}
 	
 	@Override

@@ -7,20 +7,24 @@ import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.action.SelectionRulesAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
@@ -30,6 +34,7 @@ import javax.swing.JToolBar;
  */
 public class IGBToolBar extends JToolBar {
 	private static final String no_selection_text = "Click the map below to select annotations";
+	private static final String selection_info = "Selection Info";
 	
 	private final JPanel toolbar_items_panel;
 	private final JTextField tf;
@@ -61,7 +66,7 @@ public class IGBToolBar extends JToolBar {
 		tf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		tf.setEditable(false);
 			
-		JLabel lf = new JLabel("Selection Info: ");
+		JLabel lf = new JLabel(selection_info+": ");
 		lf.setFont(lf.getFont().deriveFont(Font.ITALIC));
 		lf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		lf.setBackground(Color.WHITE);
@@ -167,4 +172,39 @@ public class IGBToolBar extends JToolBar {
 		}
     }
 	
+	private class SelectionRulesAction extends GenericAction {	
+		private static final long serialVersionUID = 1l;
+
+		public SelectionRulesAction() {
+			super(null, "toolbarButtonGraphics/general/Information16.gif", "toolbarButtonGraphics/general/Information16.gif");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFrame messageFrame = new JFrame();
+			JTextArea rules_text = new JTextArea();
+			rules_text.setEditable(false);
+			messageFrame.add(rules_text);
+			if(no_selection_text.equals(tf.getText())){
+				messageFrame.setTitle("Selection Rules in IGB");
+				rules_text.append(getRules());
+			}else{
+				messageFrame.setTitle(selection_info);
+				rules_text.append(tf.getText());
+			}
+			messageFrame.setMinimumSize(new Dimension(250,100));
+			messageFrame.pack();
+			messageFrame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+			messageFrame.setVisible(true);
+		}
+		
+		private String getRules(){
+			return "1. Click on an annotation to select it.\n"
+					+ "2. Double-click something to zoom in on it.\n"
+					+ "3. Click-drag a region to select and count many items.\n"
+					+ "4. Click-SHIFT to add to the currently selected items.\n"
+					+ "5. Control-SHIFT click to remove an item from the currently selected items.\n"
+					+ "6. Click-drag the axis to zoom in on a region.\n";
+		}
+	}
 }

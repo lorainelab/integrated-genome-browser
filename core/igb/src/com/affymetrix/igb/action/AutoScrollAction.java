@@ -44,7 +44,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	private static final AutoScrollAction ACTION = new AutoScrollAction();
 
 	private AutoScrollAction() {
-		super(BUNDLE.getString("autoScroll"), null,
+		super(BUNDLE.getString("configureAutoScroll"), null,
 			"toolbarButtonGraphics/media/Movie16.gif",
 			"toolbarButtonGraphics/media/Movie16.gif", // tool bar eligible
 			KeyEvent.VK_A, null, true);
@@ -70,6 +70,10 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	@Override
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		this.setEnabled(evt.getSelectedSeq() != null);
+		if(evt.getSelectedSeq() != null && as_start_pos == 0 && as_end_pos == 0){
+			as_start_pos = evt.getSelectedSeq().getMin();
+			as_end_pos = evt.getSelectedSeq().getMax();
+		}
 	}
 
 	public final void toggleAutoScroll() {
@@ -160,7 +164,6 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 				as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
 				as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
 				as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
-				toggleAutoScroll(seqMapView, as_bases_per_pix, as_pix_to_scroll, as_time_interval, as_start_pos, as_end_pos, true);
 			}
 		} else {
 			swing_timer.stop();
@@ -189,6 +192,17 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 		return result;
 	}
 
+	public GenericAction getStartAutoScroll(){
+		return startAutoScroll;
+	}
+	
+	private GenericAction startAutoScroll = new GenericAction(BUNDLE.getString("autoScroll"), null, null){
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			toggleAutoScroll(IGB.getSingleton().getMapView(), as_bases_per_pix, as_pix_to_scroll, as_time_interval, as_start_pos, as_end_pos, true);
+		}
+	};
+	
 	private void toggleAutoScroll(final SeqMapView seqMapView, int bases_per_pixel, int pix_to_scroll,
 					int timer_interval, final int start_coord, final int end_coord, final boolean cycle) {
 		double pix_per_coord = 1.0 / bases_per_pixel;

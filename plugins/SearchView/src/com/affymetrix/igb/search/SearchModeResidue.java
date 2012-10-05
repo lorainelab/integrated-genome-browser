@@ -30,7 +30,9 @@ public class SearchModeResidue implements ISearchModeExtended,
 	
 	private static final int SEARCH_ALL_ORDINAL = -1;
 	private static final String CONFIRM_BEFORE_SEQ_CHANGE = "Confirm before sequence change";
+	private static final String OVERLAY_RESULTS = "Overlay Results";
 	private static final boolean default_confirm_before_seq_change = true;
+	private static final boolean default_optionSelected = true;
 	
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
 	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
@@ -54,6 +56,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 		super();
 		this.igbService = igbService;
 		igbService.getSeqMapView().addToRefreshList(this);
+		optionSelected = PreferenceUtils.getBooleanParam(OVERLAY_RESULTS, default_optionSelected);
 		
 		gmodel.addSeqSelectionListener(this);
 	}
@@ -152,6 +155,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 	@Override
 	public void setOptionState(boolean selected){
 		optionSelected = selected;
+		PreferenceUtils.getTopNode().putBoolean(OVERLAY_RESULTS, selected);
 	}
 	
 	@Override

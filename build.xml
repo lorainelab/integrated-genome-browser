@@ -37,6 +37,7 @@
 		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
 		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
+		<property name="KeyWordSearch"		 value="${basedir}/plugins/KeyWordSearch" />
 		<property name="SearchModeSymmetryFilter"   value="${basedir}/plugins/SearchModeSymmetryFilter" />
 		<property name="SearchView"          value="${basedir}/plugins/SearchView" />
 		<property name="Thresholding"        value="${basedir}/plugins/Thresholding" />

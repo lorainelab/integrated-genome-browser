@@ -202,6 +202,7 @@ public class SeqMapView extends JPanel
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	private SeqSymmetry sym_used_for_title = null;
+	private String sym_info_used_for_title = null;
 	private PropertyHandler propertyHandler;
 	private final GenericAction refreshDataAction;
 	private SeqMapViewPopup popup;
@@ -1174,6 +1175,7 @@ public class SeqMapView extends JPanel
 
 	protected final void clearSelection() {
 		sym_used_for_title = null;
+		sym_info_used_for_title = null;
 		seqmap.clearSelected();
 		setSelectedRegion(null, false);
 		//  clear match_glyphs?
@@ -1197,6 +1199,7 @@ public class SeqMapView extends JPanel
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
 	public final void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
 		seq_selected_sym = region_sym;
+		sym_info_used_for_title = null;
 		// Note: SUBSELECT_SEQUENCE might possibly be set to false in the AltSpliceView
 		if (subselectSequence && seq_glyph != null) {
 			if (region_sym == null) {
@@ -1205,6 +1208,7 @@ public class SeqMapView extends JPanel
 				SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
 				// corrected for interbase coords
 				seq_glyph.select(seq_region.getMin(), seq_region.getMax() - 1);
+				sym_info_used_for_title = "selected sequence";
 				setSelectionStatus(SeqUtils.spanToString(seq_region));
 			}
 			if (update_widget) {
@@ -1628,8 +1632,9 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setSelectionStatus(String title){
-		Application.getSingleton().setSelField(title);
+		Application.getSingleton().setSelField(sym_info_used_for_title, title);
 	}
+	
 	private void setStatus(String title) {
 		if (!report_status_in_status_bar) {
 			return;
@@ -1645,6 +1650,7 @@ public class SeqMapView extends JPanel
 		if (selected_glyphs.isEmpty()) {
 			id = "";
 			sym_used_for_title = null;
+			sym_info_used_for_title = null;
 		} else {
 			if (selected_glyphs.size() == 1) {
 				GlyphI topgl = selected_glyphs.get(0);
@@ -1660,6 +1666,7 @@ public class SeqMapView extends JPanel
 				if (id == null && sym instanceof SymWithProps) {
 					id = (String) ((SymWithProps) sym).getProperty("id");
 					sym_used_for_title = sym;
+					sym_info_used_for_title = "id";
 				}
 				if (id == null && sym instanceof DerivedSeqSymmetry) {
 					SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
@@ -1669,19 +1676,23 @@ public class SeqMapView extends JPanel
 					} else if (original instanceof SymWithProps) {
 						id = (String) ((SymWithProps) original).getProperty("id");
 						sym_used_for_title = original;
+						sym_info_used_for_title = "id";
 					}
 				}
 				if (id == null && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
 					SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
 					id = SeqUtils.spanToString(seq_region);
 					sym_used_for_title = seq_selected_sym;
+					sym_info_used_for_title = "selected sequence";
 				}
 				if (id == null && topgl instanceof GraphGlyph) {
 					GraphGlyph gg = (GraphGlyph) topgl;
 					if (gg.getLabel() != null) {
 						id = "Graph: " + gg.getLabel();
+						sym_info_used_for_title = "label";
 					} else {
 						id = "Graph Selected";
+						sym_info_used_for_title = null;
 					}
 					sym_used_for_title = null;
 				}
@@ -1696,9 +1707,11 @@ public class SeqMapView extends JPanel
 						id = "Unknown Selection";
 						sym_used_for_title = null;
 					}
+					sym_info_used_for_title = null;
 				}
 			} else {
 				sym_used_for_title = null;
+				sym_info_used_for_title = null;
 				id = "" + selected_glyphs.size() + " Selections";
 			}
 		}

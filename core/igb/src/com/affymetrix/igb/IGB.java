@@ -448,8 +448,8 @@ public final class IGB extends Application
 	}
 
 	@Override
-	public void setSelField(String message){
-		tool_bar.setSelectionText(message);
+	public void setSelField(String type, String message){
+		tool_bar.setSelectionText(type, message);
 	}
 	
 	/**

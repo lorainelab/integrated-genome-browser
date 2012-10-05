@@ -96,7 +96,7 @@ public abstract class Application {
 		}
 	}
 
-	public abstract void setSelField(String s);
+	public abstract void setSelField(String type, String s);
 	
 	/**
 	 * Shows a panel asking for the user to confirm something.

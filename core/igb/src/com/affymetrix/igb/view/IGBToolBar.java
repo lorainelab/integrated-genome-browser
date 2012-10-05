@@ -40,6 +40,7 @@ public class IGBToolBar extends JToolBar {
 	private final JTextField tf;
 	private final Font selection_font;
 	private final Font no_selection_font;
+	private String type_of_info;
 	
 	public IGBToolBar(){
 		super();
@@ -85,10 +86,10 @@ public class IGBToolBar extends JToolBar {
 		
 		super.validate();
 		
-		setSelectionText(null);
+		setSelectionText(null, null);
 	}
 	
-	public void setSelectionText(String selection_text) {
+	public void setSelectionText(String type, String selection_text) {
 		if (selection_text == null || selection_text.length() == 0) {
 			tf.setForeground(Color.LIGHT_GRAY);
 			tf.setFont(no_selection_font);
@@ -100,6 +101,7 @@ public class IGBToolBar extends JToolBar {
 			tf.setText(selection_text);
 			tf.setEnabled(true);
 		}
+		type_of_info = type;
 	}
 
 	public void addToolbarAction(GenericAction genericAction, int index){
@@ -190,6 +192,9 @@ public class IGBToolBar extends JToolBar {
 				rules_text.append(getRules());
 			}else{
 				messageFrame.setTitle(selection_info);
+				if(type_of_info != null){
+					rules_text.append(type_of_info + ": ");
+				}
 				rules_text.append(tf.getText());
 			}
 			messageFrame.setMinimumSize(new Dimension(250,100));

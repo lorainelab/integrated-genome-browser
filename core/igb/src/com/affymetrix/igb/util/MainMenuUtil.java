@@ -98,7 +98,6 @@ public class MainMenuUtil {
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showPlus", ShowPlusStrandAction.getAction()));
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showMinus", ShowMinusStrandAction.getAction()));
 		view_menu.add(strands_menu);
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_autoscroll", AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewGenomicSequenceInSeqViewer", ViewGenomicSequenceInSeqViewerAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewAlignmentSequenceInSeqViewer", ViewReadSequenceInSeqViewerAction.getAction()));
 		ViewReadSequenceInSeqViewerAction.getAction().setEnabled(false);
@@ -141,6 +140,7 @@ public class MainMenuUtil {
 	private void toolMenu(JMenuBar menuBar, String id) {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_autoscroll", AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
 		JRPMenu scripts_menu = new JRPMenu(id + "_main_toolsMenu_scripts", BUNDLE.getString("scripts"));
 		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_runScript", RunScriptAction.getAction()));

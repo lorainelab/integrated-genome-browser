@@ -1205,7 +1205,7 @@ public class SeqMapView extends JPanel
 				SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
 				// corrected for interbase coords
 				seq_glyph.select(seq_region.getMin(), seq_region.getMax() - 1);
-				setStatus(SeqUtils.spanToString(seq_region));
+				setSelectionStatus(SeqUtils.spanToString(seq_region));
 			}
 			if (update_widget) {
 				seqmap.updateWidget();

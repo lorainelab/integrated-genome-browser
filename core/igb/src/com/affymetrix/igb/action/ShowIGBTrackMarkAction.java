@@ -29,9 +29,8 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		boolean b = !TrackStyle.getShowIGBTrackMarkState();
+		boolean b = (Boolean)getValue(SELECTED_KEY);
 		TrackStyle.setShowIGBTrackMark(b);
-		this.putValue(SELECTED_KEY, b);
 
 		for (TierLabelGlyph glyph : getTierManager().getAllTierLabels()) {
 			glyph.setShowIGBTrack(b);

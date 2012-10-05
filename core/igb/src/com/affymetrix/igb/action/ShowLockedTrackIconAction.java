@@ -32,9 +32,8 @@ public class ShowLockedTrackIconAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		boolean b = !TrackStyle.getShowLockIcon();
+		boolean b = (Boolean)getValue(SELECTED_KEY);
 		TrackStyle.setShowLockIcon(b);
-		this.putValue(SELECTED_KEY, b);
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().repackTheTiers(true, true);
 	}
 

@@ -32,9 +32,8 @@ public class DrawCollapseControlAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		boolean b = !TrackStyle.getDrawCollapseState();
+		boolean b = (Boolean)getValue(SELECTED_KEY);
 		TrackStyle.setDrawCollapseControl(b);
-		this.putValue(SELECTED_KEY, b);
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
 	}
 

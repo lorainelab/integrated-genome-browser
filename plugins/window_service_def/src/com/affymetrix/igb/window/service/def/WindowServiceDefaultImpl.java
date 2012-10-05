@@ -152,9 +152,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	@Override
-	public void setViewMenu(JMenu view_menu) {
-		view_menu.addSeparator();
-		tabs_menu = new JRPMenu("WindowServiceDefaultImpl_tabs_menu", BUNDLE.getString("showTabs"));
+	public void setViewMenu(JMenu tabs_menu) {
+		this.tabs_menu = (JRPMenu)tabs_menu;
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
 				JRPMenuItem change_tab_state_item = new JRPMenuItem(
@@ -191,7 +190,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			}
 		}
 		tabs_menu.addSeparator();
-		view_menu.add(tabs_menu);
 	}
 
 	/**

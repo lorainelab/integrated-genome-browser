@@ -307,7 +307,7 @@ public final class IGB extends Application
 			tool_bar = new IGBToolBar();
 		}
 		windowService.setToolBar(tool_bar);
-		windowService.setViewMenu(getMenu("view"));
+		windowService.setViewMenu(getMenu("tabs"));
 		windowService.setMenuCreator(
 				new IMenuCreator() {
 

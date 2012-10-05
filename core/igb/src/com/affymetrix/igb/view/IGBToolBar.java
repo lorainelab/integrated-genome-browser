@@ -60,7 +60,7 @@ public class IGBToolBar extends JToolBar {
 		
 		tf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		tf.setEditable(false);
-		
+			
 		JLabel lf = new JLabel("Selection Info: ");
 		lf.setFont(lf.getFont().deriveFont(Font.ITALIC));
 		lf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -68,9 +68,12 @@ public class IGBToolBar extends JToolBar {
 		
 		selection_panel.add(lf);
 		selection_panel.add(tf);
+		
 		SelectionRulesAction action = SelectionRulesAction.getAction();
 		JButton button = new JButton(action);
+		button.setBorder(null);
 		selection_panel.add(button);
+		
 		selection_panel.validate();
 		
 		add(toolbar_items_panel, BorderLayout.LINE_START);

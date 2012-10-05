@@ -1,22 +1,16 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
-import com.affymetrix.igb.IGB;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.igb.IGB;
 /**
  *
  * @author auser
@@ -33,7 +27,7 @@ public class SelectionRulesAction extends GenericAction{
 	}
 
 	private SelectionRulesAction() {
-		super(null, "16x16/actions/info.png", "16x16/actions/info.png", null,KeyEvent.VK_A, null, true);
+		super(null, "toolbarButtonGraphics/general/Information16.gif", "toolbarButtonGraphics/general/Information16.gif", null,KeyEvent.VK_A, null, true);
 	}
 
 	@Override

@@ -431,6 +431,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		customFormatting(residues_sym);
 		//this.createAllLists();
 		addFormattedResidues();
+		copyAnnotAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
 		seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES + OFFSET,INITIAL_NUMBER_OF_LINES));
 		mapframe.setPreferredSize(seqview.getPreferredSize());
 		mapframe.pack();
@@ -779,15 +780,12 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		Object evtSource = e.getSource();
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
-			boolean copyAnnotEnabled = (seqview.getCdsStart() < seqview.getCdsEnd())?true:false;
 			if (text.equals("Show cDNA")) {
 				showcDNASwitch = true;	
 				showcDNAButton.setText("Show genomic");
-				copyAnnotAction.setEnabled(copyAnnotEnabled);
 			} else {
 				showcDNASwitch = false;
 				showcDNAButton.setText("Show cDNA");
-				copyAnnotAction.setEnabled(false);
 			}
 			seqview.clearWidget();
 			addFormattedResidues();

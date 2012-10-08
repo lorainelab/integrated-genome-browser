@@ -43,6 +43,6 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
+		GeneralUtils.browse("http://sourceforge.net/p/genoviz/feature-requests/");
 	}
 }

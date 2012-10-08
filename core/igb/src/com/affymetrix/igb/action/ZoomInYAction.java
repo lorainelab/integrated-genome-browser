@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 public class ZoomInYAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ZoomInYAction ACTION = new ZoomInYAction();
+	private static final ZoomInYAction ICON_ONLY_ACTION = new ZoomInYAction("");
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -17,12 +18,22 @@ public class ZoomInYAction extends SeqMapViewActionA {
 	public static ZoomInYAction getAction() {
 		return ACTION;
 	}
+	
+	public static ZoomInYAction getIconOnlyAction() {
+		return ICON_ONLY_ACTION;
+	}
 
 	public ZoomInYAction() {
 		super("Zoom in vertically",
 				"16x16/actions/list-add.png", null
 				);
 		this.ordinal = -4004110;
+	}
+	
+	public ZoomInYAction(String label) {
+		super(label,
+				"16x16/actions/list-add.png", null
+				);
 	}
 
 	@Override

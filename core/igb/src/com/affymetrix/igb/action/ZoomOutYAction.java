@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 public class ZoomOutYAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ZoomOutYAction ACTION = new ZoomOutYAction();
+	private static final ZoomOutYAction ICON_ONLY_ACTION = new ZoomOutYAction("");
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -17,12 +18,22 @@ public class ZoomOutYAction extends SeqMapViewActionA {
 	public static ZoomOutYAction getAction() {
 		return ACTION;
 	}
+	
+	public static ZoomOutYAction getIconOnlyAction() {
+		return ICON_ONLY_ACTION;
+	}
 
 	public ZoomOutYAction() {
 		super("Zoom out vertically",
 				"16x16/actions/list-remove.png", null
 				);
 		this.ordinal = -4004220;
+	}
+	
+	public ZoomOutYAction(String label) {
+		super("",
+				"16x16/actions/list-remove.png", null
+				);
 	}
 
 	@Override

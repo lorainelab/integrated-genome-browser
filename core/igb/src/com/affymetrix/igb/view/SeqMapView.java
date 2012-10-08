@@ -400,7 +400,9 @@ public class SeqMapView extends JPanel
 //		specialZoomer.addChangeListener(zoomie);
 
 		yzoombox = Box.createVerticalBox();
+		addZoomOutYButton(this.id);
 		yzoombox.add((Component) yzoomer);
+		addZoomInYButton(this.id);
 //		yzoombox.add(specialZoomer);
 		boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 		if (y_left) {
@@ -461,10 +463,22 @@ public class SeqMapView extends JPanel
 		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
 		xzoombox.add(zoomInXB);
 	}
+	
+	protected void addZoomInYButton(String id) {
+		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
+		zoomInYB.setAlignmentX(Component.CENTER_ALIGNMENT);
+		yzoombox.add(zoomInYB);
+	}
 
 	protected void addZoomOutXButton(String id) {
 		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
 		xzoombox.add(zoomOutXB);
+	}
+	
+	protected void addZoomOutYButton(String id) {
+		zoomOutYB = new JRPButton(id + "_zoomOutY_button", ZoomOutYAction.getIconOnlyAction());
+		zoomOutYB.setAlignmentX(Component.CENTER_ALIGNMENT);
+		yzoombox.add(zoomOutYB);
 	}
 	
 	protected Adjustable getXZoomer(String id) {

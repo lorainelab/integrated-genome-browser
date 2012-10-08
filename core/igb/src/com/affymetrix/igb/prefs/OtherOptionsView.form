@@ -38,6 +38,7 @@
                                   <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
                                   <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
                                   <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="showIGBTrackMarkCheckBox" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="orfAnalyzerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
@@ -83,11 +84,19 @@
                   <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
                   <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      <Component id="displayOption" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="showIGBTrackMarkCheckBox" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="113" max="32767" attributes="0"/>
+              <EmptySpace pref="111" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -464,7 +473,9 @@
                   <Component id="edgeMatchLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace pref="420" max="32767" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="showEdgeMatchCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="380" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -473,6 +484,7 @@
               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                   <Component id="edgeMatchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="showEdgeMatchCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -487,6 +499,14 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Color:"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="showEdgeMatchCheckBox">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showEdgeMatchCheckBoxActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Edge Matching&quot;, PreferenceUtils.getTopNode(), PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching())"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -510,6 +530,14 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Display Errors on Status Bar&quot;, PreferenceUtils.getTopNode(),&#xa;            PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);"/>
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);&#xa;else&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="showIGBTrackMarkCheckBox">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showIGBTrackMarkCheckBoxActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show IGB Track Mark&quot;, PreferenceUtils.getTopNode(), TrackStyle.PREF_SHOW_IGB_TRACK_MARK, TrackStyle.default_show_igb_track_mark)"/>
       </AuxValues>
     </Component>
   </SubComponents>

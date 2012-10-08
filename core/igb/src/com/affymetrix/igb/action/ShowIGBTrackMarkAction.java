@@ -23,17 +23,16 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA{
 	private ShowIGBTrackMarkAction() {
 		super(BUNDLE.getString("showIGBTrackMark"), null, null);
 
-		this.putValue(SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
+		//this.putValue(SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		boolean b = (Boolean)getValue(SELECTED_KEY);
-		TrackStyle.setShowIGBTrackMark(b);
+		TrackStyle.setShowIGBTrackMark(!(TrackStyle.getShowIGBTrackMarkState()));
 
 		for (TierLabelGlyph glyph : getTierManager().getAllTierLabels()) {
-			glyph.setShowIGBTrack(b);
+			glyph.setShowIGBTrack(TrackStyle.getShowIGBTrackMarkState());
 		}
 
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();

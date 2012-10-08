@@ -6,6 +6,8 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
+import com.affymetrix.igb.action.ShowIGBTrackMarkAction;
+import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
@@ -108,11 +110,13 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
+        showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.getTopNode(), PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching());
         showCollapseOptionCheckBox = PreferenceUtils.createCheckBox("Show Collapse Option", PreferenceUtils.getTopNode(),     PreferenceUtils.SHOW_COLLAPSE_OPTION, TrackStyle.getDrawCollapseState());
         confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm before loading large data set", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar", PreferenceUtils.getTopNode(),
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
+        showIGBTrackMarkCheckBox = PreferenceUtils.createCheckBox("Show IGB Track Mark", PreferenceUtils.getTopNode(), TrackStyle.PREF_SHOW_IGB_TRACK_MARK, TrackStyle.default_show_igb_track_mark);
 
         setPreferredSize(new java.awt.Dimension(545, 540));
 
@@ -336,6 +340,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
         edgeMatchLabel.setText("Color:");
 
+        showEdgeMatchCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showEdgeMatchCheckBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout edgeMatchPanelLayout = new org.jdesktop.layout.GroupLayout(edgeMatchPanel);
         edgeMatchPanel.setLayout(edgeMatchPanelLayout);
         edgeMatchPanelLayout.setHorizontalGroup(
@@ -345,13 +355,16 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchLabel)
                 .add(10, 10, 10)
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(420, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(showEdgeMatchCheckBox)
+                .addContainerGap(380, Short.MAX_VALUE))
         );
         edgeMatchPanelLayout.setVerticalGroup(
             edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                 .add(edgeMatchLabel)
-                .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(showEdgeMatchCheckBox))
         );
 
         showCollapseOptionCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -367,6 +380,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         displayOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 displayOptionStateChanged(evt);
+            }
+        });
+
+        showIGBTrackMarkCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showIGBTrackMarkCheckBoxActionPerformed(evt);
             }
         });
 
@@ -389,7 +408,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(keepZoomStripeCheckBox)
                                     .add(showZoomStripLabelCheckBox)
-                                    .add(showCollapseOptionCheckBox)))
+                                    .add(showCollapseOptionCheckBox)
+                                    .add(showIGBTrackMarkCheckBox)))
                             .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -423,11 +443,16 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(confirmBeforeLoadCheckBox)
                     .add(showCollapseOptionCheckBox))
-                .add(10, 10, 10)
-                .add(displayOption)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(10, 10, 10)
+                        .add(displayOption))
+                    .add(layout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(showIGBTrackMarkCheckBox)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -497,6 +522,14 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		// TODO add your handling code here:
 	}//GEN-LAST:event_clear_prefsBActionPerformed
 
+	private void showEdgeMatchCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showEdgeMatchCheckBoxActionPerformed
+		ToggleEdgeMatchingAction.getAction().actionPerformed(evt);
+	}//GEN-LAST:event_showEdgeMatchCheckBoxActionPerformed
+
+	private void showIGBTrackMarkCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showIGBTrackMarkCheckBoxActionPerformed
+		ShowIGBTrackMarkAction.getAction().actionPerformed(evt);
+	}//GEN-LAST:event_showIGBTrackMarkCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;
     private com.jidesoft.combobox.ColorComboBox CColorComboBox;
@@ -531,6 +564,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private javax.swing.JLabel otherLabel;
     private javax.swing.JPanel residueColorPanel;
     private javax.swing.JCheckBox showCollapseOptionCheckBox;
+    private javax.swing.JCheckBox showEdgeMatchCheckBox;
+    private javax.swing.JCheckBox showIGBTrackMarkCheckBox;
     private javax.swing.JCheckBox showZoomStripLabelCheckBox;
     private javax.swing.JLabel stopCodonLabel;
     private javax.swing.JLabel tLabel;

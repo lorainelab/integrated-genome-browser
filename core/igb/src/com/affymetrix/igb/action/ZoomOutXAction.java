@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 public class ZoomOutXAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ZoomOutXAction ACTION = new ZoomOutXAction();
+	private static final ZoomOutXAction ICON_ONLY_ACTION = new ZoomOutXAction("");
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -17,13 +18,22 @@ public class ZoomOutXAction extends SeqMapViewActionA {
 	public static ZoomOutXAction getAction() {
 		return ACTION;
 	}
+	
+	public static ZoomOutXAction getIconOnlyAction() {
+		return ICON_ONLY_ACTION;
+	}
 
 	public ZoomOutXAction() {
 		super("Zoom out horizontally",
-				"toolbarButtonGraphics/general/ZoomOut16.gif",
-				"toolbarButtonGraphics/general/ZoomOut16.gif" // for tool bar
+				"16x16/actions/list-remove.png", null
 				);
 		this.ordinal = -4004020;
+	}
+	
+	public ZoomOutXAction(String label) {
+		super(label,
+				"16x16/actions/list-remove.png", null
+				);
 	}
 
 	@Override

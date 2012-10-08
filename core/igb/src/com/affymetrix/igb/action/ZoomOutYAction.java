@@ -20,8 +20,7 @@ public class ZoomOutYAction extends SeqMapViewActionA {
 
 	public ZoomOutYAction() {
 		super("Zoom out vertically",
-				"16x16/actions/list-remove.png",
-				"22x22/actions/list-remove.png"
+				"16x16/actions/list-remove.png", null
 				);
 		this.ordinal = -4004220;
 	}

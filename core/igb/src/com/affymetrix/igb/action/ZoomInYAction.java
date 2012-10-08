@@ -20,8 +20,7 @@ public class ZoomInYAction extends SeqMapViewActionA {
 
 	public ZoomInYAction() {
 		super("Zoom in vertically",
-				"16x16/actions/list-add.png",
-				"22x22/actions/list-add.png" // for tool bar
+				"16x16/actions/list-add.png", null
 				);
 		this.ordinal = -4004110;
 	}

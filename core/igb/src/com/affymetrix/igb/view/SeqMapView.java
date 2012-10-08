@@ -196,6 +196,10 @@ public class SeqMapView extends JPanel
 	protected TierLabelManager tier_manager;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
+	protected JRPButton zoomInXB;
+	protected JRPButton zoomInYB;
+	protected JRPButton zoomOutXB;
+	protected JRPButton zoomOutYB;
 	protected MapRangeBox map_range_box;
 	protected JRPButton partial_residuesB;
 	public static final Font axisFont = NeoConstants.default_bold_font;
@@ -374,9 +378,11 @@ public class SeqMapView extends JPanel
 		select_mode_button.doClick(); // default
 
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
+		addZoomOutXButton(this.id);
 		xzoombox.add((Component) xzoomer);
 
 		refreshDataAction = new RefreshDataAction(this);
+		addZoomInXButton(this.id);
 		addRefreshButton(this.id);
 		addLoadResidueButton(this.id);
 		
@@ -451,6 +457,16 @@ public class SeqMapView extends JPanel
 		xzoombox.add(searchButton);
 	}
 
+	protected void addZoomInXButton(String id) {
+		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
+		xzoombox.add(zoomInXB);
+	}
+
+	protected void addZoomOutXButton(String id) {
+		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
+		xzoombox.add(zoomOutXB);
+	}
+	
 	protected Adjustable getXZoomer(String id) {
 		return new ThresholdXZoomer(id, this);
 	}

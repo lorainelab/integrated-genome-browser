@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 public class ZoomInXAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ZoomInXAction ACTION = new ZoomInXAction();
+	private static final ZoomInXAction ICON_ONLY_ACTION = new ZoomInXAction("");
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -17,13 +18,22 @@ public class ZoomInXAction extends SeqMapViewActionA {
 	public static ZoomInXAction getAction() {
 		return ACTION;
 	}
+	
+	public static ZoomInXAction getIconOnlyAction() {
+		return ICON_ONLY_ACTION;
+	}
 
 	public ZoomInXAction() {
 		super("Zoom in horizontally",
-				"toolbarButtonGraphics/general/ZoomIn16.gif",
-				"toolbarButtonGraphics/general/ZoomIn16.gif" // for tool bar
+				"16x16/actions/list-add.png", null
 				);
 		this.ordinal = -4004010;
+	}
+	
+	public ZoomInXAction(String label) {
+		super(label,
+				"16x16/actions/list-add.png", null
+				);
 	}
 
 	@Override

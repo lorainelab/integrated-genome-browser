@@ -17,9 +17,6 @@ public class RepackAllTiersAction extends RepackTiersAction {
 		this.ordinal = -6008510;
 	}
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	
 	public static RepackAllTiersAction getAction() {
 		return ACTION;

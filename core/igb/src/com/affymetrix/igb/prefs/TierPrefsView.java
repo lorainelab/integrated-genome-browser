@@ -12,6 +12,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -295,7 +296,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		trackNameSizeComboBox.setSelectedItem(getValueAt(COL_TRACK_NAME_SIZE));
 		labelFieldComboBox.setSelectedItem(getValueAt(COL_LABEL_FIELD));
 		maxDepthTextField.setText(String.valueOf(getValueAt(COL_MAX_DEPTH)));
-		show2TracksCheckBox.setSelected((Boolean) getValueAt(COL_SHOW_2_TRACKS));
+		show2TracksCheckBox.setSelected(!(Boolean) getValueAt(COL_SHOW_2_TRACKS));
 		collapsedCheckBox.setSelected((Boolean) getValueAt(COL_COLLAPSED));
 
 		DIRECTION_TYPE type = (DIRECTION_TYPE) getValueAt(COL_DIRECTION_TYPE);
@@ -515,7 +516,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
 		labelFieldComboBox.setSelectedItem(style.getLabelField());
 		maxDepthTextField.setText((style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || style.isGraphTier()) ? "" : String.valueOf(style.getMaxDepth()));
-		show2TracksCheckBox.setSelected((style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate());
+		show2TracksCheckBox.setSelected(!(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || ((style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate())));
 		collapsedCheckBox.setSelected(style.getCollapsed());
 
 		setSelectedByDirection(style.getDirectionName());
@@ -661,6 +662,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			model.fireTableDataChanged();
 
 			refreshSeqMapViewAndSlicedView();
+			smv.getPopup().refreshMap(false, true);
 			if(previousSelectedRows.length >= 1)
 				table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
 		}
@@ -810,7 +812,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
 						case COL_SHOW_2_TRACKS:
-							style.setSeparate(((Boolean) value).booleanValue());
+							style.setSeparate(!(((Boolean) value).booleanValue()));
+							smv.getPopup().refreshMap(false, true);
 							break;
 						case COL_COLLAPSED:
 							style.setCollapsed(((Boolean) value).booleanValue());

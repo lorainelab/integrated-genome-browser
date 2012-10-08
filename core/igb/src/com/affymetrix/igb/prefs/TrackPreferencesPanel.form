@@ -70,7 +70,7 @@
               <Component id="tablePanel" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -101,7 +101,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="257" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="237" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="selectAndAddButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="deleteAndRestoreButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -158,7 +158,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="propertiesPanel" max="32767" attributes="0"/>
+                  <Component id="propertiesPanel" pref="359" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
@@ -177,10 +177,10 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="showStrandPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="75" max="32767" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
+              <Component id="propertiesPanel" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -201,6 +201,8 @@
                   <Component id="jSeparator2" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="show2TracksCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="collapsedCheckBox" min="-2" pref="103" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
@@ -218,10 +220,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="maxStackDepthTextField" min="-2" pref="53" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="collapsedCheckBox" min="-2" pref="103" max="-2" attributes="0"/>
-                                          <Component id="applyButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="applyButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -281,7 +280,7 @@
                           <Component id="nameSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="nameSizeComboBox" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="10" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" groupAlignment="2" attributes="0">
                               <Component id="labelFieldComboBox" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
@@ -439,24 +438,13 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="show2TracksCheckBox">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Show 2 Tracks"/>
+                <Property name="text" type="java.lang.String" value="Combine Plus/Minus strands (+/-)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="show2TracksCheckBoxActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.show2TracksCheckBox"/>
-              </AuxValues>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="collapsedCheckBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Collapsed"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.collapsedCheckBox"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
@@ -494,6 +482,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Label:"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="collapsedCheckBox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Collapsed"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.collapsedCheckBox"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

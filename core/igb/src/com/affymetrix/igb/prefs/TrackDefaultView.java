@@ -214,7 +214,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 				negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 				labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 				maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-				show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
+				show2TracksCheckBox.setSelected(!selectedStyle.getSeparate());
 				collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 				switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -422,9 +422,9 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 							break;
 						case COL_SHOW_2_TRACKS:
 							if (!style.equals(default_annot_style)) {
-								element.getPropertyMap().put(PROP_SEPARATE, value.toString());
+								element.getPropertyMap().put(PROP_SEPARATE, ((Object)(!(Boolean)value)).toString());
 							}
-							style.setSeparate(((Boolean) value).booleanValue());
+							style.setSeparate(!(((Boolean) value).booleanValue()));
 							break;
 						case COL_COLLAPSED:
 							if (!style.equals(default_annot_style)) {

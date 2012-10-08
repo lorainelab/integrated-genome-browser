@@ -162,8 +162,8 @@ public class MainMenuUtil {
 		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_aboutIGB", AboutIGBAction.getAction()));
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_forumHelp", ForumHelpAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_reportBug", ReportBugActionNew.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_requestFeature", RequestFeatureActionNew.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_reportBug", ReportBugAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_requestFeature", RequestFeatureAction.getAction()));
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_documentation", DocumentationAction.getAction()));
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_showConsole", ShowConsoleAction.getAction()));
 	}

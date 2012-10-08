@@ -16,9 +16,6 @@ public class CopyBookmarkToClipboardAction extends AddBookmarkAction {
 	private static final long serialVersionUID = 1L;
 	private static final CopyBookmarkToClipboardAction ACTION = new CopyBookmarkToClipboardAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	
 	public static CopyBookmarkToClipboardAction getAction() {
 		return ACTION;

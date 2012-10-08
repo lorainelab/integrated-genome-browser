@@ -34,10 +34,6 @@ import javax.swing.Action;
 public class ZoomingRepackAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ZoomingRepackAction ACTION = new ZoomingRepackAction();
-
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	
 	public static ZoomingRepackAction getAction() {
 		return ACTION;

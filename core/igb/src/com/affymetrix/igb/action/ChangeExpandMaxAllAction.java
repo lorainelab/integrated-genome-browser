@@ -21,10 +21,7 @@ public class ChangeExpandMaxAllAction extends ChangeExpandMaxActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ChangeExpandMaxAllAction ACTION = new ChangeExpandMaxAllAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
+		
 	public static ChangeExpandMaxAllAction getAction() {
 		return ACTION;
 	}

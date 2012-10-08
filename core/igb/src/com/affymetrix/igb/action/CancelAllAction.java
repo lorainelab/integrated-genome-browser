@@ -14,9 +14,6 @@ public class CancelAllAction extends GenericAction {
 	private static final Logger ourLogger =
 			Logger.getLogger(CancelAllAction.class.getPackage().getName());
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	public static CancelAllAction getAction() {
 		return ACTION;
 	}

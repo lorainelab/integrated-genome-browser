@@ -260,7 +260,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if(style.isGraphTier() || !style.getSeparable()){
 					return false;
 				}
-				return style.getSeparate();
+				return !(style.getSeparate());
 			case DELETE_FEATURE_COLUMN:
 				return "";
 			case HIDE_FEATURE_COLUMN:
@@ -386,7 +386,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				break;
 			case SEPARATE_COLUMN:
 				if (vFeature.getStyle() != null) {
-					vFeature.getStyle().setSeparate((Boolean) value);
+					vFeature.getStyle().setSeparate(!((Boolean) value));
 					smv.getPopup().refreshMap(false, true);
 					smv.getTierManager().sortTiers();
 				}

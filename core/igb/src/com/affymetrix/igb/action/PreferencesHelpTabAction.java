@@ -17,9 +17,6 @@ public class PreferencesHelpTabAction extends HelpActionA {
 	private static final PreferencesHelpTabAction ACTION = new PreferencesHelpTabAction();
 	private final static String HELP_TAB_ACTION_COMMAND = PreferencesPanel.WINDOW_NAME + " / " + BUNDLE.getString("PreferencesHelpForCurrentTab");
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	
 	public static PreferencesHelpTabAction getAction() {
 		return ACTION;

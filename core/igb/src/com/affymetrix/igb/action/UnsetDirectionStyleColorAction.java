@@ -17,7 +17,7 @@ public class UnsetDirectionStyleColorAction extends SetDirectionStyleActionA {
 	}
 
 	private UnsetDirectionStyleColorAction() {
-		super("Unset Direction Style Color", 
+		super("Strand: Hide Color", 
 				"16x16/actions/strandscoloredsame.png",
 				"22x22/actions/strandscoloredsame.png");
 		this.ordinal = -6006412;

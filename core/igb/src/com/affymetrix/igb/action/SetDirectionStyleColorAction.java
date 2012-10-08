@@ -17,7 +17,7 @@ public class SetDirectionStyleColorAction extends SetDirectionStyleActionA {
 	}
 
 	private SetDirectionStyleColorAction() {
-		super("Set Direction Style Color", 
+		super("Strand: Show Color", 
 				"16x16/actions/strandscoloreddifferently.png",
 				"22x22/actions/strandscoloreddifferently.png");
 		this.ordinal = -6006411;

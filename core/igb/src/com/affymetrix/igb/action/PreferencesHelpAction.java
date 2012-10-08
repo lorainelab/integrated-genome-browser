@@ -13,9 +13,6 @@ public class PreferencesHelpAction extends HelpActionA {
 	private static final PreferencesHelpAction ACTION = new PreferencesHelpAction();
 	private final static String HELP_ACTION_COMMAND = PreferencesPanel.WINDOW_NAME + " / " + BUNDLE.getString("PreferencesHelp");
 
-//	static{
-//		GenericActionHolder.getInstance().addGenericAction(ACTION);
-//	}
 	
 	public static PreferencesHelpAction getAction() {
 		return ACTION;

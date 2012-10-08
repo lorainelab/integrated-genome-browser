@@ -1,6 +1,7 @@
 package com.affymetrix.igb.bookmarks.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
@@ -19,14 +20,14 @@ public class SaveSessionAction extends GenericAction {
 
 	private static final long serialVersionUID = 1l;
 	private IGBService igbService;
-
+	
 	public SaveSessionAction(IGBService igbService) {
 		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null,
-				"16x16/devices/media-floppy.png", "22x22/devices/media-floppy.png",
+				"16x16/actions/save_session.png", "22x22/actions/save_session.png",
 				KeyEvent.VK_S, null, true);
 		this.igbService = igbService;
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);

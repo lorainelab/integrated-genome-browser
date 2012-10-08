@@ -108,8 +108,9 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
 	    String actionId = strands2TracksCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.ShowTwoTiersAction" :
-			"com.affymetrix.igb.action.ShowOneTierAction";
+			"com.affymetrix.igb.action.ShowOneTierAction" :
+			"com.affymetrix.igb.action.ShowTwoTiersAction";
+			
 		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
 		if (action != null) {
 			action.actionPerformed(evt);
@@ -297,7 +298,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 				break;
 			}
 		}
-		strands2TracksCheckBox.setSelected(all2Tracks);
+		strands2TracksCheckBox.setSelected(!(all2Tracks));
 	}
 
 	@Override

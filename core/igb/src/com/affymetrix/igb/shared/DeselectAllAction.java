@@ -11,10 +11,6 @@ public class DeselectAllAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static DeselectAllAction ACTION = new DeselectAllAction();
 
-	static {
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-
 	public static DeselectAllAction getAction() {
 		return ACTION;
 	}

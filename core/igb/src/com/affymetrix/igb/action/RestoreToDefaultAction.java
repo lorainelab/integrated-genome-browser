@@ -22,7 +22,7 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 	}
 
 	public RestoreToDefaultAction() {
-		super("Restore to Default", null, null);
+		super("Restore track to Default settings", null, null);
 	}
 
 	@Override

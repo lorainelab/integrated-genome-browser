@@ -13,9 +13,6 @@ public class TierFontSizeAction extends SeqMapViewActionA implements Parametered
 	private static final long serialVersionUID = 1L;
 	private final static TierFontSizeAction ACTION = new TierFontSizeAction();
 	
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	
 	public static TierFontSizeAction getAction(){
 		return ACTION;

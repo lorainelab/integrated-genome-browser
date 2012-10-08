@@ -47,6 +47,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private final JRPButton mainCancel;
 	private final JButton updateAvailable;
 	private final JPanel progressPanel;
+	private final JProgressBar progressBar;
 //	private final JPanel selectionPanel;
 //	private final JLabel selLabel;
 //	private final JTextField selField;
@@ -64,6 +65,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //		selectionPanel.add(selField);
 		status_ta = new JLabel("");
 		progressPanel = new JPanel();
+		progressBar = new JProgressBar();
 		memory_item = new MemoryStatusBarItem();
 		memory_item.setShowMaxMemory(true);
 		updateAvailable = new JButton(alertIcon);
@@ -76,9 +78,10 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		messageIcon.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setHideActionText(true);
+		progressBar.setIndeterminate(true);
 //		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
 		CThreadHolder.getInstance().addListener(this);
-		progressPanel.addMouseListener(
+		progressBar.addMouseListener(
 			new MouseAdapter() {
 			    public void mouseClicked(MouseEvent e) {
 			    	ThreadHandlerAction.getAction().actionPerformed(null);
@@ -95,7 +98,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
 		status_ta.setToolTipText(tt_status);
-		progressPanel.setMaximumSize(new Dimension(150, 5));
+		progressBar.setMaximumSize(new Dimension(150, 5));
 		displayProgress(false);
 //		progressBar.setVisible(false);
 		
@@ -115,7 +118,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 				
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
-				.addComponent(progressPanel)
+				.addComponent(progressBar)
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
 				.addGap(1, 250, Short.MAX_VALUE)
@@ -126,7 +129,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
-				.addComponent(progressPanel)
+				.addComponent(progressBar)
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
 //				.addComponent(selectionPanel)
@@ -158,7 +161,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	
 	public void displayProgress(boolean b) {
 		mainCancel.setVisible(b);
-		progressPanel.setVisible(b);
+		progressBar.setVisible(b);
 //		progressBar.setEnabled(b);
 //		progressBar.setIndeterminate(b);
 	}
@@ -213,12 +216,12 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 					count++;
 					if (count > barCount) {
 						break;
-					}
+		}
 					else if (count == MAX_PROGRESS_BARS && workerCount > MAX_PROGRESS_BARS) {
 						JLabel moreLabel = getMoreLabel(width);
 						progressPanel.add(moreLabel);
 						moreLabel.repaint();
-					}
+	}
 					else {
 						JProgressBar progressBar = getProgressBar(worker, width);
 						progressPanel.add(progressBar);
@@ -258,6 +261,9 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 
 	@Override
 	public void heardThreadEvent(CThreadEvent cte) {
-		rebuildProgress();
+		synchronized(progressBar) {
+			boolean workerInProgress = CThreadHolder.getInstance().getAllCThreadWorkers().size() > 0;
+			displayProgress(workerInProgress);
+		}
 	}
 }

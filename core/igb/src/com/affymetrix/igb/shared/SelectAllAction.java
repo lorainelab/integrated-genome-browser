@@ -35,7 +35,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 	}
 
 	protected SelectAllAction(FileTypeCategory category) {
-		super(category == null ? IGBConstants.BUNDLE.getString("selectAll") : category.toString(), null, null);
+		super(category == null ? IGBConstants.BUNDLE.getString("selectAll") : category.toString(), "16x16/actions/Select_all.png", "22x22/actions/Select_all.png");
 		this.category = category;
 	}
 

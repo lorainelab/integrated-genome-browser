@@ -19,10 +19,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 public class UseAsReferenceSeqAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final UseAsReferenceSeqAction ACTION = new UseAsReferenceSeqAction();
-
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
 	
 	public static UseAsReferenceSeqAction getAction() {
 		return ACTION;

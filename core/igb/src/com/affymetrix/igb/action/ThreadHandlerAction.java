@@ -33,7 +33,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	private static final Logger ourLogger =
 			Logger.getLogger(ThreadHandlerAction.class.getPackage().getName());
 	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		//GenericActionHolder.getInstance().addGenericAction(ACTION);
 		CThreadHolder.getInstance().addListener(ACTION);
 	}
 	public static ThreadHandlerAction getAction() {

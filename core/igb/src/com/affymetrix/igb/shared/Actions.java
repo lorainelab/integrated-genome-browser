@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.action.*;
 import java.awt.Color;
 
@@ -96,6 +97,11 @@ public class Actions {
 		GenericAction action = floatTier ? 
 				FloatTiersAction.getAction() : UnFloatTiersAction.getAction();
 		action.actionPerformed(null);
+	}
+	
+	public static void setRenameTier(ITrackStyleExtended style, String name){
+		ParameteredAction action = RenameTierAction.getAction();
+		action.performAction(style, name);
 	}
 
 }

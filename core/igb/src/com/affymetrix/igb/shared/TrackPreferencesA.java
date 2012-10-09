@@ -80,13 +80,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void floatCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox floatCheckBox = getFloatCheckBox();
-	    String actionId = floatCheckBox.isSelected() ?
-	    	"com.affymetrix.igb.action.FloatTiersAction" :
-	    	"com.affymetrix.igb.action.UnFloatTiersAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.setFloatTier(floatCheckBox.isSelected());
 //		updateDisplay();
 	}
 
@@ -199,9 +193,6 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (mdepth_string == null) {
 			return;
 		}
-		
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeExpandMaxAction");
 		try{
 			Actions.setStackDepth(Integer.parseInt(mdepth_string));
 			updateDisplay(true, false);
@@ -222,13 +213,11 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (igbService.getSeqMapView() == null || allStyles == null || allStyles.isEmpty()) {
 			return;
 		}
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.RenameTierAction");
 		if (allStyles.size() == 1) {
-			action.performAction(allStyles.get(0), name);
+			Actions.setRenameTier(allStyles.get(0), name);
 		} else if (isAllGraph()){ // Special case for joined graph
 			if(isOneJoined()){
-				action.performAction((graphStates.get(0)).getComboStyle(), name);
+				Actions.setRenameTier((graphStates.get(0)).getComboStyle(), name);
 			}
 		}
 	}

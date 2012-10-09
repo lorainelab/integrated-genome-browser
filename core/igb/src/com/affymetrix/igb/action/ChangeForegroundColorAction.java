@@ -22,7 +22,7 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeForegroundColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeFGColorAction"), "16x16/actions/FG color.png", "22x22/actions/FG color.png");
+		super(IGBConstants.BUNDLE.getString("changeFGColorAction"), "16x16/actions/FG_color.png", "22x22/actions/FG_color.png");
 	}
 
 	@Override

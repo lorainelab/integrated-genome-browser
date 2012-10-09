@@ -18,8 +18,8 @@ public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 
 	private UnsetDirectionStyleArrowAction() {
 		super("Strand: Hide Arrow",
-				"16x16/actions/no arrows.png",
-				"22x22/actions/no arrows.png");
+				"16x16/actions/no_arrows.png",
+				"22x22/actions/no_arrows.png");
 		this.ordinal = -8006512;
 	}
 

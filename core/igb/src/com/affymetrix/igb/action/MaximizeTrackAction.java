@@ -20,7 +20,7 @@ public class MaximizeTrackAction extends SeqMapViewActionA {
 	}
 
 	private MaximizeTrackAction() {
-		super(BUNDLE.getString("maximizeTrackAction"),"16x16/actions/fit to window.png", "22x22/actions/fit to window.png");
+		super(BUNDLE.getString("maximizeTrackAction"),"16x16/actions/fit_to_window.png", "22x22/actions/fit_to_window.png");
 	}
 
 	@Override

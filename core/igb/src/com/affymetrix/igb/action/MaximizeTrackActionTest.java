@@ -20,7 +20,7 @@ public class MaximizeTrackActionTest extends SeqMapViewActionA {
 	}
 
 	private MaximizeTrackActionTest() {
-		super("Focus on Track (2)","16x16/actions/fit to window like IGV.png", "22x22/actions/fit to window like IGV.png");
+		super("Focus on Track (2)","16x16/actions/fit_to_window_like_IGV.png", "22x22/actions/fit_to_window_like_IGV.png");
 	}
 
 	@Override

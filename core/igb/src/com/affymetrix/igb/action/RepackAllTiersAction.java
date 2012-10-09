@@ -12,8 +12,8 @@ public class RepackAllTiersAction extends RepackTiersAction {
 
 	public RepackAllTiersAction() {
 		super(IGBConstants.BUNDLE.getString("repackAllTracksAction"),
-				"16x16/actions/Repack all.png",
-				"22x22/actions/Repack all.png");
+				"16x16/actions/Repack_all.png",
+				"22x22/actions/Repack_all.png");
 		this.ordinal = -6008510;
 	}
 

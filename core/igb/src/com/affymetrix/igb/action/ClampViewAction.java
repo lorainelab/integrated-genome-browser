@@ -19,7 +19,7 @@ public class ClampViewAction extends GenericAction {
 	private static final ClampViewAction ACTION = new ClampViewAction();
 
 	private ClampViewAction() {
-		super(BUNDLE.getString("clampToView"),  null, "16x16/actions/Clamp to view.png", "22x22/actions/Clamp to view.png", KeyEvent.VK_V);
+		super(BUNDLE.getString("clampToView"),  null, "16x16/actions/Clamp_to_view.png", "22x22/actions/Clamp_to_view.png", KeyEvent.VK_V);
 		this.putValue(SELECTED_KEY, false);
 	}
 	

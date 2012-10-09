@@ -55,9 +55,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 		if (fontsize <= 0) {
 			return;
 		}
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.TierFontSizeAction");
-		action.performAction(fontsize);
+		Actions.setTierFontSize(fontsize);
 		updateDisplay();
 	}
 
@@ -68,11 +66,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 			return;
 		}
 		Color color = foregroundColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeForegroundColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setForegroundColor(color);
 		updateDisplay();
 	}
 
@@ -83,11 +77,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 			return;
 		}
 		Color color = backgroundColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeBackgroundColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setBackgroundColor(color);
 		updateDisplay();
 	}
 
@@ -95,11 +85,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
 		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color color = labelColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeLabelColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setLabelColor(color);
 		updateDisplay();
 	}
 

@@ -23,11 +23,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.LockTierHeightAction;
-import com.affymetrix.igb.shared.ParameteredAction;
-import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.shared.Selections.*;
 
 /**
@@ -76,10 +72,8 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			return;
 		}
 		
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeExpandMaxAction");
 		try{
-			action.performAction(Integer.parseInt(mdepth_string));
+			Actions.setStackDepth(Integer.parseInt(mdepth_string));
 			updateDisplay(true, false);
 		}catch(Exception ex){
 			ErrorHandler.errorPanel("Invalid value "+mdepth_string);
@@ -98,49 +92,28 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 		if (labelField == null) {
 			return;
 		}
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.LabelGlyphAction");
-		action.performAction(labelField);
+		Actions.setLabelField(labelField);
 		updateDisplay();
 	}
 
 	@Override
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-	    String actionId = strands2TracksCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.ShowOneTierAction" :
-			"com.affymetrix.igb.action.ShowTwoTiersAction";
-			
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.showOneTwoTier(!(strands2TracksCheckBox.isSelected()));
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsArrowCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
-		String actionId = strandsArrowCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.SetDirectionStyleArrowAction" :
-			"com.affymetrix.igb.action.UnsetDirectionStyleArrowAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.showArrow(strandsArrowCheckBox.isSelected());
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsColorCheckBoxActionPerformedA(ActionEvent evt) {
 		 final JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
-		String actionId = strandsColorCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.SetDirectionStyleColorAction" :
-			"com.affymetrix.igb.action.UnsetDirectionStyleColorAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.showStrandsColor(strandsColorCheckBox.isSelected());
 		is_listening = false;
 		strandsForwardColorComboBoxReset();
 		strandsReverseColorComboBoxReset();
@@ -155,11 +128,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			return;
 		}
 		Color color = strandsReverseColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeReverseColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setStrandsReverseColor(color);
 		updateDisplay();
 	}
 
@@ -170,11 +139,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			return;
 		}
 		Color color = strandsForwardColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeForwardColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setStrandsForwardColor(color);
 		updateDisplay();
 	}
 
@@ -200,11 +165,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			return;
 		}
 		int height = Integer.valueOf(pxTextField.getText());
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeTierHeightAction");
-		if (action != null) {
-			action.performAction(height);
-		}
+		Actions.setLockedTierHeight(height);
 		updateDisplay();
 	}
 

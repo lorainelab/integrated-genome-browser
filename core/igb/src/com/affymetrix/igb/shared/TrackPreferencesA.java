@@ -97,9 +97,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (fontsize <= 0) {
 			return;
 		}
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.TierFontSizeAction");
-		action.performAction(fontsize);
+		Actions.setTierFontSize(fontsize);
 		updateDisplay();
 	}
 
@@ -114,48 +112,28 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		if (labelField == null) {
 			return;
 		}
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.LabelGlyphAction");
-		action.performAction(labelField);
+		Actions.setLabelField(labelField);
 		updateDisplay();
 	}
 
 	@Override
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-	    String actionId = strands2TracksCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.ShowTwoTiersAction" :
-			"com.affymetrix.igb.action.ShowOneTierAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.showOneTwoTier(!(strands2TracksCheckBox.isSelected()));
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsArrowCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
-		String actionId = strandsArrowCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.SetDirectionStyleArrowAction" :
-			"com.affymetrix.igb.action.UnsetDirectionStyleArrowAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.showArrow(strandsArrowCheckBox.isSelected());
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsColorCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
-		String actionId = strandsColorCheckBox.isSelected() ?
-			"com.affymetrix.igb.action.SetDirectionStyleColorAction" :
-			"com.affymetrix.igb.action.UnsetDirectionStyleColorAction";
-		GenericAction action = GenericActionHolder.getInstance().getGenericAction(actionId);
-		if (action != null) {
-			action.actionPerformed(evt);
-		}
+		Actions.showStrandsColor(strandsColorCheckBox.isSelected());
 		is_listening = false;
 		strandsForwardColorComboBoxReset();
 		strandsReverseColorComboBoxReset();
@@ -167,11 +145,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
 		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color color = labelColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeLabelColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setLabelColor(color);
 		updateDisplay();
 	}
 
@@ -182,11 +156,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = strandsForwardColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeForwardColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setStrandsForwardColor(color);
 		updateDisplay();
 	}
 
@@ -197,11 +167,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = strandsReverseColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeReverseColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setStrandsReverseColor(color);
 		updateDisplay();
 	}
 
@@ -212,11 +178,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = backgroundColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeBackgroundColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setBackgroundColor(color);
 		updateDisplay();
 	}
 
@@ -227,11 +189,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			return;
 		}
 		Color color = foregroundColorComboBox.getSelectedColor();
-		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
-				.getGenericAction("com.affymetrix.igb.action.ChangeForegroundColorAction");
-		if (action != null && color != null) {
-			action.performAction(color);
-		}
+		Actions.setForegroundColor(color);
 		updateDisplay();
 	}
 
@@ -245,7 +203,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 		ParameteredAction action = (ParameteredAction) GenericActionHolder.getInstance()
 				.getGenericAction("com.affymetrix.igb.action.ChangeExpandMaxAction");
 		try{
-			action.performAction(Integer.parseInt(mdepth_string));
+			Actions.setStackDepth(Integer.parseInt(mdepth_string));
 			updateDisplay(true, false);
 		}catch(Exception ex){
 			ErrorHandler.errorPanel("Invalid value "+mdepth_string);

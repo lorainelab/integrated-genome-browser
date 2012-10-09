@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.DynamicStyleHeatMap;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.Actions;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
 
@@ -63,10 +64,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 	@Override
 	protected void floatCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox floatCheckBox = getFloatCheckBox();
-	    GenericAction action = floatCheckBox.isSelected() ?
-				GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction") :
-				GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.UnFloatTiersAction");
-		action.actionPerformed(evt);
+		Actions.setFloatTier(floatCheckBox.isSelected());
 	}
 
 	@Override

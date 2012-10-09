@@ -39,15 +39,25 @@
                     </node>
                     <node name="toolbar">
                         <map>
+							<entry key="com.affymetrix.igb.action.LoadFileAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.LoadURLAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.LoadFileAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.PrintAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ExportImageAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.RepackSelectedTiersAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ExportFileAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.PreferencesAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ExitAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.CopyResiduesAction" value="true"/>
+							<entry key="com.affymetrix.igb.shared.SelectAllAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.CustomizeAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ChangeForegroundColorAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ChangeBackgroundColorAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.ShowStrandAction" value="true"/>
-                            <entry key="com.affymetrix.igb.shared.CollapseExpandAction:ExpandAction;CollapseAction" value="true"/>
-                            <entry key="SeqMapToggleAction:ShowOneTierAction;ShowTwoTiersAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ChangeLabelColorAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.RepackSelectedTiersAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ShowAllAction" value="true"/>
+							<entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ForumHelpAction" value="true"/>
+							<entry key="com.affymetrix.genometryImpl.event.ReportBugAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.DocumentationAction" value="true"/>
                         </map>
                     </node>
                 </node>

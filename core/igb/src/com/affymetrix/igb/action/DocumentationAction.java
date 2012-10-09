@@ -28,10 +28,8 @@ public class DocumentationAction extends GenericAction {
 
 	private DocumentationAction() {
 		super(BUNDLE.getString("documentation"), null,
-//				"16x16/actions/edit-find-replace.png",
-//				"22x22/actions/edit-find-replace.png",
-				"16x16/apps/help-browser.png",
-				"22x22/apps/help-browser.png",
+				"16x16/actions/documentation.png",
+				"22x22/actions/documentation.png",
 				KeyEvent.VK_D, null, true);
 		this.ordinal = 110;
 	}

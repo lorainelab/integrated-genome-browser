@@ -120,6 +120,14 @@ public final class KeyStrokesView implements ListSelectionListener,
 					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
 							errMsg);
 				}
+				if(ga1 != null && ga2 != null){
+					if(ga1.getLargeIconPath() == null && ga2.getLargeIconPath() != null){
+						return 1;
+					}
+					if(ga1.getLargeIconPath() != null && ga2.getLargeIconPath() == null){
+						return -1;
+					}
+				}
 				return getSortField(ga1).compareTo(getSortField(ga2));
 			}
 		});

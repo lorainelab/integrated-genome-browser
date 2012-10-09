@@ -39,7 +39,7 @@ public class ChangeTierHeightAction extends SeqMapViewActionA implements Paramet
 	}
 
 	private ChangeTierHeightAction() {
-		super(BUNDLE.getString("changeTierHeightAction"), null, null);
+		super(BUNDLE.getString("changeTierHeightAction"), "16x16/actions/resize_track.png", "22x22/actions/resize_track.png");
 	}
 
 	@Override

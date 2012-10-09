@@ -21,7 +21,7 @@ public class CenterAtHairlineAction extends GenericAction {
 	}
 
 	private CenterAtHairlineAction() {
-		super(IGBConstants.BUNDLE.getString("centerZoomStripe"), null, null);
+		super(IGBConstants.BUNDLE.getString("centerZoomStripe"), "16x16/actions/center_on_zoom_stripe.png", "22x22/actions/center_on_zoom_stripe.png");
 	}
 
 	@Override

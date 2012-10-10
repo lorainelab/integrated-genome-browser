@@ -59,6 +59,7 @@
 							<entry key="com.affymetrix.genometryImpl.event.ReportBugAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.DocumentationAction" value="true"/>
 							
+							<!-- Toolbar Action Indices -->
 							<entry key="com.affymetrix.igb.action.LoadFileAction.index" value="0"/>
                             <entry key="com.affymetrix.igb.action.LoadURLAction.index" value="1"/>
 							<entry key="com.affymetrix.igb.action.PrintAction.index" value="2"/>

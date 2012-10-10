@@ -9,6 +9,8 @@ import com.affymetrix.igb.util.ReplaceInputStream;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -98,22 +100,35 @@ public abstract class PrefsLoader {
 	}
 
 	private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName, String prefsMode) {
-		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
-		try {
-			if (aNodeName != null && (PreferenceUtils.getTopNode()).nodeExists(aNodeName) && (PreferenceUtils.getTopNode()).node(aNodeName).keys().length > 0) {
-				return;
-			}
-		} catch (BackingStoreException ex) {
-		}
-
+		// This test is valid. But if we add more default preferences due this it won't load those preferences. - HV 10/10/2012
+//		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
+//		try {
+//			if (aNodeName != null && (PreferenceUtils.getTopNode()).nodeExists(aNodeName) && (PreferenceUtils.getTopNode()).node(aNodeName).keys().length > 0) {
+//				return;
+//			}
+//		} catch (BackingStoreException ex) {
+//		}
+//		
 		InputStream default_prefs_stream = null;
+		ByteArrayOutputStream outputStream = null;
+		ByteArrayInputStream outputInputStream = null;
 		/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
 		try {
+			//Save current preferences 
+			outputStream = new ByteArrayOutputStream();
+			PreferenceUtils.getTopNode().exportSubtree(outputStream);
+			
 			default_prefs_stream = IGB.class.getResourceAsStream(fileName);
 			if (default_prefs_stream != null) {
 				System.out.println("loading default User preferences from: " + fileName);
 				default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
 				Preferences.importPreferences(default_prefs_stream);
+				
+				//Load back saved preferences
+				if(outputStream != null){
+					outputInputStream = new ByteArrayInputStream(outputStream.toByteArray());
+					Preferences.importPreferences(outputInputStream);
+				}
 			}
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
@@ -121,6 +136,8 @@ public abstract class PrefsLoader {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
+			GeneralUtils.safeClose(outputStream);
+			GeneralUtils.safeClose(outputInputStream);
 		}
 	}
 

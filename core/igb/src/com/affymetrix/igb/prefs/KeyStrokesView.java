@@ -159,8 +159,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 	static final Set<GenericAction> smallTimeActions = new HashSet<GenericAction>();
 	static {
 		// Prefs Panel Only
-		smallTimeActions.add(ExportPreferencesAction.getAction());
-		smallTimeActions.add(ImportPreferencesAction.getAction());
+		//smallTimeActions.add(ExportPreferencesAction.getAction());
+		//smallTimeActions.add(ImportPreferencesAction.getAction());
 		smallTimeActions.add(ClearPreferencesAction.getAction());
 		smallTimeActions.add(PreferencesHelpAction.getAction());
 		smallTimeActions.add(PreferencesHelpTabAction.getAction());

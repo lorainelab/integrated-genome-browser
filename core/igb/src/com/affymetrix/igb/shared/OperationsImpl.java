@@ -67,6 +67,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 				return name2transformation.get(selection);
 			}
 		});
+		getTransformationGoB().setText("Go");
 
 		getOperationGoB().setAction(new TrackOperationAction(null) {
 			private static final long serialVersionUID = 1L;
@@ -76,6 +77,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 				return name2operation.get(selection);
 			}
 		});
+		getOperationGoB().setText("Go");
 		
 		getTransformationParamLabel().setVisible(false);
 		getTransformationParam().setVisible(false);

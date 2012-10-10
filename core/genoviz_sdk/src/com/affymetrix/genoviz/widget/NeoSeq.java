@@ -335,7 +335,9 @@ public class NeoSeq extends NeoContainerWidget
 
 		this.setScrollIncrementBehavior(Y, AUTO_SCROLL_INCREMENT);
 
-		widget_ready = true;
+//		Commenting below line to fix bug where it won't allow to select first 
+//		10 residues when map is first created - hv 10/10/2012
+//		widget_ready = true;
 
 		stretchToFit(false,false);
 		setRubberBandBehavior(false);
@@ -343,12 +345,13 @@ public class NeoSeq extends NeoContainerWidget
 		// added in attempt to fix bug # 157
 		// had to make it one space long, else get range calculation errors...
 		//
-		setResidues(" ");
+		// Doesn't seems to needed anymore? - hv 10/10/2012
+		//setResidues(" ");
 
 		setSelection(new Selection());
 
 		this.seq.addSequenceListener(this);
-
+		
 	}
 
 

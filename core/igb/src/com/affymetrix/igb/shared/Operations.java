@@ -37,7 +37,7 @@ public class Operations extends javax.swing.JPanel {
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Operations"));
 
-        transformationGoB.setText("Go");
+        transformationGoB.setText("Apply");
 
         transformationParam.setEditable(false);
 
@@ -60,7 +60,7 @@ public class Operations extends javax.swing.JPanel {
                         .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(stPanelLayout.createSequentialGroup()
                         .add(singleTrackLabel)
-                        .add(12, 12, 12)
+                        .add(5, 5, 5)
                         .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)
                         .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -81,7 +81,7 @@ public class Operations extends javax.swing.JPanel {
 
         operationParam.setEditable(false);
 
-        operationGoB.setText("Go");
+        operationGoB.setText("Apply");
 
         operationParamLabel.setText(null);
         operationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
@@ -102,7 +102,7 @@ public class Operations extends javax.swing.JPanel {
                         .add(operationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(mtPanelLayout.createSequentialGroup()
                         .add(multiTrackLabel)
-                        .add(25, 25, 25)
+                        .add(15, 15, 15)
                         .add(operationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)
                         .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -149,7 +149,7 @@ public class Operations extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(stPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
+                .add(10, 10, 10)
                 .add(mtPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(btPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

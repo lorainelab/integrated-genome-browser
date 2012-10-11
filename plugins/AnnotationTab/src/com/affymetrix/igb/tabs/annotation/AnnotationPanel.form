@@ -17,9 +17,9 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="stackHeightPanel" max="32767" attributes="0"/>
-                  <Component id="trackHeightPanel" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="stackHeightPanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="trackHeightPanel" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               <Component id="annotationsPanel" min="-2" max="-2" attributes="1"/>
@@ -47,7 +47,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Options"/>
+            <TitledBorder title="Labels and Strand"/>
           </Border>
         </Property>
       </Properties>
@@ -55,7 +55,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
@@ -67,30 +67,32 @@
                           <Component id="labelFieldComboBox" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="strands2TracksCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          <EmptySpace min="10" max="32767" attributes="0"/>
                       </Group>
-                  </Group>
-              </Group>
-              <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="strandsArrowCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Group type="102" attributes="0">
-                          <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="strandsArrowCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           <Component id="strandsForwardColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="strandsForwardColorLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="strandsReverseColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Component id="strandsReverseColorLabel" min="-2" pref="9" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="strandsReverseColorLabel" min="-2" pref="9" max="-2" attributes="0"/>
               </Group>
-              <Component id="moreOptionButton" alignment="1" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -100,7 +102,7 @@
                       <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="strandsLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -108,15 +110,14 @@
                       <Component id="strandsArrowCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="strandsColorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="strandsForwardColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="strandsForwardColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="strandsReverseColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="strandsReverseColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="moreOptionButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -151,7 +152,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="strandsColorCheckBox">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Color:"/>
+            <Property name="text" type="java.lang.String" value="Color by Strand:"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsColorCheckBoxActionPerformed"/>
@@ -212,14 +213,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsForwardColorComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="moreOptionButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="More Options"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreOptionButtonActionPerformed"/>
-          </Events>
-        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="stackHeightPanel">
@@ -235,12 +228,12 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="stackDepthTextField" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="stackDepthGoButton" min="-2" pref="43" max="-2" attributes="0"/>
+                  <Component id="stackDepthTextField" min="-2" pref="62" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="stackDepthAllButton" min="-2" pref="74" max="-2" attributes="0"/>
+                  <Component id="stackDepthGoButton" min="-2" pref="66" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="stackDepthAllButton" pref="81" max="32767" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -270,7 +263,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="stackDepthGoButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="text" type="java.lang.String" value="Apply"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
@@ -281,7 +274,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="stackDepthAllButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Optimal"/>
+            <Property name="text" type="java.lang.String" value="Optimize"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthAllButtonActionPerformed"/>
@@ -312,14 +305,14 @@
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="setHeightInPxLabel" min="-2" max="-2" attributes="0"/>
                               <Group type="102" attributes="0">
-                                  <Component id="setPxHeightTextBox" min="-2" pref="46" max="-2" attributes="0"/>
+                                  <Component id="setPxHeightTextBox" min="-2" pref="62" max="-2" attributes="0"/>
                                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                                  <Component id="pxGoButton" min="-2" pref="43" max="-2" attributes="0"/>
+                                  <Component id="pxGoButton" min="-2" pref="64" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -327,7 +320,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="lockTierHeightCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Component id="setHeightInPxLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -342,12 +335,12 @@
       <SubComponents>
         <Component class="javax.swing.JCheckBox" name="lockTierHeightCheckBox">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Lock Tier"/>
+            <Property name="text" type="java.lang.String" value="Lock Track Height (Pixels)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="setHeightInPxLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Set Height (in Pixels):"/>
+            <Property name="text" type="java.lang.String" value="Set Height (Pixels):"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="setPxHeightTextBox">
@@ -360,7 +353,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="pxGoButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="text" type="java.lang.String" value="Apply"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pxGoButtonActionPerformed"/>

@@ -170,11 +170,6 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	@Override
-	protected void moreOptionButtonActionPerformedA(ActionEvent evt) {
-		igbService.openPreferencesOtherPanel();
-	}
-	
-	@Override
 	protected void stackDepthTextFieldReset() {
 		JTextField stackDepthTextField = getStackDepthTextField();
 		boolean enabled = allGlyphs.size() > 0 && isAllAnnot();

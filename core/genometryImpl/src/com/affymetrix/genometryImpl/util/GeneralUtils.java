@@ -41,6 +41,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import java.util.ArrayList;
 
 public final class GeneralUtils {
 	public static final String UTF8 = "UTF-8";
@@ -549,4 +550,23 @@ public final class GeneralUtils {
 		}
 		return baos.toString();
 	}
+	
+	/**
+	 * http://stackoverflow.com/questions/740299/how-do-i-sort-a-set-to-a-list-in-java
+	 * @param <T>
+	 * @param collection
+	 * @return 
+	 */
+	public static <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> collection) {
+		List<T> list = new ArrayList<T>(collection);
+		java.util.Collections.sort(list);
+		return list;
+	}
+	
+	public static <T> List<T> asSortedList(Collection<T> collection, java.util.Comparator<T> comparator) {
+		List<T> list = new ArrayList<T>(collection);
+		java.util.Collections.sort(list, comparator);
+		return list;
+	}
+
 }

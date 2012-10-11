@@ -347,7 +347,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         undoNameButton.setBorder(null);
         redoNameButton.setBorder(null);
 
-        tabPane.addTab("Comment", commentPanel);
+        tabPane.addTab("Notes", commentPanel);
 
         iScrollPane.setViewportView(infoTable);
 
@@ -362,7 +362,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             .add(iScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
-        tabPane.addTab("Information", informationPanel);
+        tabPane.addTab("Location", informationPanel);
 
         dScrollPane.setViewportView(dataTable);
 
@@ -377,7 +377,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             .add(dScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
-        tabPane.addTab("Data List", datalistPanel);
+        tabPane.addTab("Details", datalistPanel);
 
         splitPane.setRightComponent(tabPane);
 
@@ -385,7 +385,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(splitPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+            .add(splitPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

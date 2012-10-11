@@ -19,7 +19,6 @@ public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
 		infoList.add("seqid");
 		infoList.add("start");
 		infoList.add("end");
-		infoList.add("loadresidues");
 		infoList.add("create");
 		infoList.add("modified");
 

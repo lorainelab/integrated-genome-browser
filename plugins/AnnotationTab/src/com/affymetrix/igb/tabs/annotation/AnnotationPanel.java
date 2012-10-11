@@ -164,6 +164,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 
         stackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stack Depth"));
 
+        stackDepthTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         stackDepthTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthTextFieldActionPerformed(evt);
@@ -215,6 +216,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 
         setHeightInPxLabel.setText("Set Height (Pixels):");
 
+        setPxHeightTextBox.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         setPxHeightTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setPxHeightTextBoxActionPerformed(evt);

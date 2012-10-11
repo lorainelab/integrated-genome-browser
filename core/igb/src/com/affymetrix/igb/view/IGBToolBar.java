@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -39,7 +40,7 @@ import javax.swing.JToolBar;
 public class IGBToolBar extends JToolBar {
 	private static final String no_selection_text = "Click the map below to select annotations";
 	private static final String selection_info = "Selection Info";
-	private static final Comparator comparator = new OrderComparator(PropertyHandler.prop_order);
+	private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
 	
 	private final JPanel toolbar_items_panel;
 	private final JTextField tf;
@@ -190,6 +191,7 @@ public class IGBToolBar extends JToolBar {
 		public void actionPerformed(ActionEvent e) {
 			JFrame messageFrame = new JFrame();
 			JTextArea rules_text = new JTextArea();
+			rules_text.setBorder(new EmptyBorder(10,10,10,10));
 			rules_text.setEditable(false);
 			messageFrame.add(rules_text);
 			if(no_selection_text.equals(tf.getText())){

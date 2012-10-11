@@ -42,6 +42,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
         graphPanel.setPreferredSize(new java.awt.Dimension(155, 180));
 
+        buttonGroup1.add(graphStyleLineRadioButton);
         graphStyleLineRadioButton.setText("Line");
         graphStyleLineRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleLineRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -50,6 +51,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
             }
         });
 
+        buttonGroup1.add(graphStyleBarRadioButton);
         graphStyleBarRadioButton.setText("Bar");
         graphStyleBarRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -58,6 +60,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
             }
         });
 
+        buttonGroup1.add(graphStyleStairStepRadioButton);
         graphStyleStairStepRadioButton.setText("StairStep");
         graphStyleStairStepRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleStairStepRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -86,6 +89,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
             }
         });
 
+        buttonGroup1.add(graphStyleHeatMapRadioButton);
         graphStyleHeatMapRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleHeatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -93,6 +97,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
             }
         });
 
+        buttonGroup1.add(graphStyleDotRadioButton);
         graphStyleDotRadioButton.setText("Dot");
         graphStyleDotRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleDotRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -101,6 +106,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
             }
         });
 
+        buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
         graphStyleMinMaxAvgRadioButton.setText("Min/Max/Mean");
         graphStyleMinMaxAvgRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleMinMaxAvgRadioButton.addActionListener(new java.awt.event.ActionListener() {

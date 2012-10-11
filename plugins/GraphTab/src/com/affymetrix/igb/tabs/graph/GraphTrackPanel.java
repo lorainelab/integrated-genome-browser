@@ -3,6 +3,7 @@ package com.affymetrix.igb.tabs.graph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackViewPanel;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 /**
  *
@@ -15,6 +16,7 @@ public class GraphTrackPanel extends TrackViewPanel {
 	
 	public GraphTrackPanel(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("graphTab"), BUNDLE.getString("graphTab"), false, TAB_POSITION);
+		getCustomButton().setText("Thresholding...");
 	}
 
 	@Override
@@ -22,6 +24,11 @@ public class GraphTrackPanel extends TrackViewPanel {
 		
 	}
 
+	@Override
+	protected void customButtonActionPerformedA(java.awt.event.ActionEvent evt) {
+		ThresholdingAction.createThresholdingAction(igbService).actionPerformed(evt);
+	}
+	
 	@Override
 	protected void clearButtonReset() {
 		javax.swing.JButton clearButton = getClearButton();
@@ -46,6 +53,11 @@ public class GraphTrackPanel extends TrackViewPanel {
 		restoreButton.setEnabled(graphStyles.size() > 0);
 	}
 	
+	@Override
+	protected void customButtonReset() {
+		getCustomButton().setEnabled(!graphGlyphs.isEmpty());
+	}
+		
 	@Override
 	public boolean isEmbedded() {
 		return true;

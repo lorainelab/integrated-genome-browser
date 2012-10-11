@@ -15,6 +15,7 @@ public class AnnotationTrackPanel extends TrackViewPanel{
 	
 	public AnnotationTrackPanel(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTab"), false, TAB_POSITION);
+		getCustomButton().setText("More Options...");
 	}
 	
 	@Override
@@ -22,6 +23,11 @@ public class AnnotationTrackPanel extends TrackViewPanel{
 		
 	}
 
+	@Override
+	protected void customButtonActionPerformedA(java.awt.event.ActionEvent evt) {
+		igbService.openPreferencesOtherPanel();
+	}
+	
 	@Override
 	protected void clearButtonReset() {
 		javax.swing.JButton clearButton = getClearButton();
@@ -47,7 +53,13 @@ public class AnnotationTrackPanel extends TrackViewPanel{
 	}
 	
 	@Override
+	protected void customButtonReset() {
+		
+	}
+	
+	@Override
 	public boolean isEmbedded() {
 		return true;
 	}
+	
 }

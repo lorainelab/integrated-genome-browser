@@ -45,6 +45,7 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
         deleteButton = new javax.swing.JButton();
         restoreButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
+        customButton = new javax.swing.JButton();
         componentPanel = new javax.swing.JPanel();
 
         selectAllButton.setText("Select All");
@@ -61,7 +62,7 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
             }
         });
 
-        deleteButton.setText("Deleted Selected");
+        deleteButton.setText("Delete Selected");
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -82,6 +83,13 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
             }
         });
 
+        customButton.setText("customButton");
+        customButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
         buttonsPanelLayout.setHorizontalGroup(
@@ -97,6 +105,8 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
                 .add(deleteButton)
                 .add(0, 0, 0)
                 .add(restoreButton)
+                .add(0, 0, 0)
+                .add(customButton)
                 .add(0, 0, 0))
         );
         buttonsPanelLayout.setVerticalGroup(
@@ -108,7 +118,8 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
                     .add(saveButton)
                     .add(deleteButton)
                     .add(restoreButton)
-                    .add(clearButton)))
+                    .add(clearButton)
+                    .add(customButton)))
         );
 
         org.jdesktop.layout.GroupLayout componentPanelLayout = new org.jdesktop.layout.GroupLayout(componentPanel);
@@ -173,10 +184,17 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
 		}
     }//GEN-LAST:event_restoreButtonActionPerformed
 
+    private void customButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButtonActionPerformed
+        if(is_listening){
+			customButtonActionPerformedA(evt);
+		}
+    }//GEN-LAST:event_customButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton clearButton;
     private javax.swing.JPanel componentPanel;
+    private javax.swing.JButton customButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton restoreButton;
     private javax.swing.JButton saveButton;
@@ -211,6 +229,10 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
 		return selectAllButton;
 	}
 	
+	public javax.swing.JButton getCustomButton(){
+		return customButton;
+	}
+	
 	protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt){
 		SelectAllAction.getAction().actionPerformed(evt);
 	}
@@ -231,12 +253,15 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
 		com.affymetrix.igb.action.ExportFileAction.getAction().actionPerformed(evt);
 	}
 
+	protected abstract void customButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	
 	protected abstract void selectAllButtonReset();
 	protected abstract void clearButtonReset();
 	protected abstract void saveButtonReset();
 	protected abstract void deleteButtonReset();
 	protected abstract void restoreButtonReset();
-	
+	protected abstract void customButtonReset();
+			
 	public void resetAll(){
 		is_listening = false;
 		
@@ -245,6 +270,7 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
 		saveButtonReset();
 		deleteButtonReset();
 		restoreButtonReset();
+		customButtonReset();
 		
 		is_listening = true;
 	}

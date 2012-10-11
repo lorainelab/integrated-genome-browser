@@ -1474,6 +1474,7 @@ public class SeqMapView extends JPanel
 				getEdgeMatcher().setColor(edge_match_fuzzy_color);
 			}
 			getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs, match_glyphs);
+			setStatus(null);
 		} else {
 			setStatus("Skipping edge matching; too many items selected.");
 		}

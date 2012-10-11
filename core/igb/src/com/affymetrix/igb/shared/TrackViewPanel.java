@@ -55,7 +55,7 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
             }
         });
 
-        saveButton.setText("Save Selected");
+        saveButton.setText("Save Track");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -76,7 +76,7 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
             }
         });
 
-        clearButton.setText("Clear Selected");
+        clearButton.setText("Clear Track");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearButtonActionPerformed(evt);

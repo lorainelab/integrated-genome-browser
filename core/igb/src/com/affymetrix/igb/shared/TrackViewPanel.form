@@ -88,7 +88,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="saveButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Save Selected"/>
+            <Property name="text" type="java.lang.String" value="Save Track"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveButtonActionPerformed"/>
@@ -112,7 +112,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="clearButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Clear Selected"/>
+            <Property name="text" type="java.lang.String" value="Clear Track"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearButtonActionPerformed"/>

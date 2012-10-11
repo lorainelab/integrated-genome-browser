@@ -120,7 +120,9 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 			BioSeq seq = group.getSeq(chrom_text);
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
-			spans.add(new SimpleSeqSpan(start, end, seq));
+			if(seq != null){
+				spans.add(new SimpleSeqSpan(start, end, seq));
+			}
 			return spans;
 		}
 	}
@@ -150,7 +152,9 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 			BioSeq seq = group.getSeq(chrom_text);
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
-			spans.add(new SimpleSeqSpan(start, end, seq));
+			if(seq != null){
+				spans.add(new SimpleSeqSpan(start, end, seq));
+			}
 			return spans;
 		}
 	}
@@ -182,12 +186,14 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			int end = start + width;
 			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 			BioSeq seq = group.getSeq(chrom_text);
-			if (end >= seq.getLength()) {
-				end = seq.getLength() - 1;
-				start = end - width;
-			}
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
-			spans.add(new SimpleSeqSpan(start, end, seq));
+			if (seq != null) {
+				if (end >= seq.getLength()) {
+					end = seq.getLength() - 1;
+					start = end - width;
+				}
+				spans.add(new SimpleSeqSpan(start, end, seq));
+			}
 			return spans;
 		}
 		@Override public int getZoomSpot(String search_text) {

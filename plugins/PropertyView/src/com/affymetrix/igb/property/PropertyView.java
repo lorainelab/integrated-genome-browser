@@ -33,12 +33,10 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private final JScrollPane scroll_pane = new JScrollPane();
 	private TableRowSorter<TableModel> sorter;
 	private static final String PROPERTY = "property";
-	private static final List<String> prop_order = determineOrder();
 	private Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
 	PropertyView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, TAB_POSITION);
-		determineOrder();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);
 		new JTableCutPasteAdapter(table, true);
@@ -48,65 +46,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
 		propertyListeners.add((PropertyListener)igbService.getSeqMapView().getMouseListener());
-	}
-
-	private static List<String> graphToolTipOrder(){
-		List<String> orderList = new ArrayList<String>(20);
-		orderList.add("id");
-		orderList.add("strand");
-		orderList.add("x coord");
-		orderList.add("y coord");
-		orderList.add("y total");
-		orderList.add("min score");
-		orderList.add("max score");
-		orderList.add("A");
-		orderList.add("T");
-		orderList.add("G");
-		orderList.add("C");
-		orderList.add("N");
-		return orderList;
-	}
-
-	private static List<String> toolTipOrder(){
-		List<String> orderList = new ArrayList<String>(20);
-		orderList.add("id");
-		orderList.add("start");
-		orderList.add("end");
-		orderList.add("length");
-		orderList.add("strand");
-		orderList.add("residues");
-		return orderList;
-	}
-
-	// The general order these fields should show up in.
-	private static List<String> determineOrder() {
-		List<String> orderList = new ArrayList<String>(20);
-		orderList.add("gene name");
-		orderList.add("name");
-		orderList.add("id");
-		orderList.add("chromosome");
-		orderList.add("start");
-		orderList.add("end");
-		orderList.add("length");
-		orderList.add("strand");
-		orderList.add("min score");
-		orderList.add("max score");
-		orderList.add("type");
-		orderList.add("same orientation");
-		orderList.add("query length");
-		orderList.add("# matches");
-		orderList.add("# target inserts");
-		orderList.add("# target bases inserted");
-		orderList.add("# query bases inserted");
-		orderList.add("# query inserts");
-		orderList.add("seq id");
-		orderList.add("cds min");
-		orderList.add("cds max");
-		orderList.add("description");
-		orderList.add("loadmode");
-		orderList.add("feature url");
-
-		return orderList;
 	}
 
 	@Override
@@ -217,7 +156,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	 * @param noData the value to use when a property value is null
 	 */
 	private void showProperties(Map<String, Object>[] props, 
-			List<String> preferred_prop_order, String noData, boolean limited) {
+			String[] preferred_prop_order, String noData, boolean limited) {
 
 		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData, limited);
 		String[] col_headings = getColumnHeadings(props);
@@ -266,7 +205,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		Map<String, Object> props = propertyHolder.determineProps(sym);
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]), toolTipOrder(), "", true);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), tooltip_order, "", true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -278,7 +217,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]), graphToolTipOrder(), "", true);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), graph_tooltip_order, "", true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -291,10 +230,10 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
-		this.showProperties(prop_array, graphToolTipOrder(), "", true);
+		this.showProperties(prop_array, graph_tooltip_order, "", true);
 	}
 
-	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData, boolean limited) {
+	private static String[][] getPropertiesRow(Map<String, Object>[] props, String[] preferred_prop_order, String noData, boolean limited) {
 		List<String[]> name_values = getNameValues(props, noData);
 		if (preferred_prop_order != null) {
 			name_values = reorderNames(name_values, preferred_prop_order, limited);
@@ -315,7 +254,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	 * column names
 	 * @return String array of re-ordered names
 	 */
-	private static List<String[]> reorderNames(List<String[]> name_values, List<String> preferred_ordering, boolean limited) {
+	private static List<String[]> reorderNames(List<String[]> name_values, String[] preferred_ordering, boolean limited) {
 		List<String[]> reordered = new ArrayList<String[]>(name_values.size());
 		for (String request : preferred_ordering) {
 			for (int k = 0; k < name_values.size(); k++) {

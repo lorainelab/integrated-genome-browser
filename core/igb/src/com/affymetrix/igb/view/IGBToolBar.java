@@ -178,7 +178,7 @@ public class IGBToolBar extends JToolBar {
 		private static final long serialVersionUID = 1l;
 
 		public SelectionRulesAction() {
-			super(null, "toolbarButtonGraphics/general/Information16.gif", "toolbarButtonGraphics/general/Information16.gif");
+			super(null, "16x16/actions/info.png", "16x16/actions/info.png");
 		}
 
 		@Override

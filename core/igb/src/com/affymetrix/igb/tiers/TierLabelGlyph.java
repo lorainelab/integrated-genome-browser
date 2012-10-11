@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -59,11 +60,12 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		reference_tier = tier;
 		setInfo(reference_tier);
 		setPosition(position);
-		isIGBTrack = false;/*reference_tier.getFileTypeCategory() == null;*/
+		setShowIGBTrack(TrackStyle.getShowIGBTrackMarkState());
 	}
 
 	public void setShowIGBTrack(boolean b) {
-		isIGBTrack = b && reference_tier.getFileTypeCategory() == null;
+		isIGBTrack = b && (reference_tier.getAnnotStyle() instanceof TrackStyle) && 
+				Delegate.EXT.equals(((TrackStyle)reference_tier.getAnnotStyle()).getExt());
 	}
 
 	public void setPosition(int position) {

@@ -169,7 +169,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="labelColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Label"/>
+            <Property name="text" type="java.lang.String" value="Track Label"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="backgroundColorLabel">

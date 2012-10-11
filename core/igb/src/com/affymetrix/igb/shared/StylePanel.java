@@ -123,7 +123,7 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
         foregroundColorLabel.setText("Foreground");
 
-        labelColorLabel.setText("Label");
+        labelColorLabel.setText("Track Label");
 
         backgroundColorLabel.setText("Background");
 

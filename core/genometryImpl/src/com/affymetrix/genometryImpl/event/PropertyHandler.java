@@ -7,4 +7,57 @@ public interface PropertyHandler {
 	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder);
 	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder);
 	public void showGraphProperties(GraphSym sym, int x, PropertyHolder propertyHolder);
+
+	// The general order these fields should show up in.
+	public static String[] prop_order = new String[]{
+		"gene name",
+		"name",
+		"id",
+		"chromosome",
+		"start",
+		"end",
+		"length",
+		"strand",
+		"min score",
+		"max score",
+		"type",
+		"same orientation",
+		"query length",
+		"# matches",
+		"# target inserts",
+		"# target bases inserted",
+		"# query bases inserted",
+		"# query inserts",
+		"seq id",
+		"cds min",
+		"cds max",
+		"description",
+		"loadmode",
+		"feature url"
+	};
+
+	public static String[] tooltip_order = new String[]{
+		"id",
+		"start",
+		"end",
+		"length",
+		"strand",
+		"residues"
+	};
+		
+	public static String[] graph_tooltip_order = new String[]{
+		"id",
+		"strand",
+		"x coord",
+		"y coord",
+		"y total",
+		"min score",
+		"max score",
+		"A",
+		"T",
+		"G",
+		"C",
+		"N"
+	};
+	
 }

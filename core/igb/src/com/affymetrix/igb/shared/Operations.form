@@ -61,7 +61,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="singleTrackLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="transformationParamLabel" min="-2" pref="38" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="transformationParam" min="-2" pref="46" max="-2" attributes="0"/>
@@ -148,9 +148,9 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="multiTrackLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                           <Component id="operationParamLabel" min="-2" pref="32" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="operationParam" min="-2" pref="46" max="-2" attributes="0"/>
                       </Group>
                   </Group>

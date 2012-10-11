@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.JRPStyledTable;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -121,10 +120,14 @@ public final class KeyStrokesView implements ListSelectionListener,
 							errMsg);
 				}
 				if(ga1 != null && ga2 != null){
-					if(ga1.getLargeIconPath() == null && ga2.getLargeIconPath() != null){
+					boolean ga1cnb = ga1.getLargeIconPath() == null || smallTimeActions.contains(ga1); 
+					boolean ga2cnb = ga2.getLargeIconPath() == null || smallTimeActions.contains(ga2);
+				
+					if(ga1cnb && !ga2cnb){
 						return 1;
 					}
-					if(ga1.getLargeIconPath() != null && ga2.getLargeIconPath() == null){
+					
+					if(!ga1cnb && ga2cnb){
 						return -1;
 					}
 				}
@@ -167,10 +170,12 @@ public final class KeyStrokesView implements ListSelectionListener,
 		// Actions that have a toggle should not be in the tool bar.
 		// Their toggles can be, but the actions have large icons (for the toggle).
 		// No. Michael says leave these in. 2012-06-15
-		//smallTimeActions.add(ExpandAction.getAction());
-		//smallTimeActions.add(CollapseAction.getAction());
-		//smallTimeActions.add(ShowOneTierAction.getAction());
-		//smallTimeActions.add(ShowTwoTiersAction.getAction());
+		smallTimeActions.add(ExpandAction.getAction());
+		smallTimeActions.add(CollapseAction.getAction());
+		smallTimeActions.add(ShowOneTierAction.getAction());
+		smallTimeActions.add(ShowTwoTiersAction.getAction());
+		smallTimeActions.add(FloatTiersAction.getAction());
+		smallTimeActions.add(UnFloatTiersAction.getAction());
 	}
 	/**
 	 * Build the underlying data array.

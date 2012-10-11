@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -448,8 +449,8 @@ public final class IGB extends Application
 	}
 
 	@Override
-	public void setSelField(String type, String message){
-		tool_bar.setSelectionText(type, message);
+	public void setSelField(Map<String, Object> properties, String message){
+		tool_bar.setSelectionText(properties, message);
 	}
 	
 	/**

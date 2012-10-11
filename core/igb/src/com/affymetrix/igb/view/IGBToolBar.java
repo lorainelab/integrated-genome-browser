@@ -2,6 +2,9 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.PropertyHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -17,8 +20,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -35,12 +39,13 @@ import javax.swing.JToolBar;
 public class IGBToolBar extends JToolBar {
 	private static final String no_selection_text = "Click the map below to select annotations";
 	private static final String selection_info = "Selection Info";
+	private static final Comparator comparator = new OrderComparator(PropertyHandler.prop_order);
 	
 	private final JPanel toolbar_items_panel;
 	private final JTextField tf;
 	private final Font selection_font;
 	private final Font no_selection_font;
-	private String type_of_info;
+	private Map<String, Object> properties;
 	
 	public IGBToolBar(){
 		super();
@@ -89,7 +94,7 @@ public class IGBToolBar extends JToolBar {
 		setSelectionText(null, null);
 	}
 	
-	public void setSelectionText(String type, String selection_text) {
+	public void setSelectionText(Map<String, Object> properties, String selection_text) {
 		if (selection_text == null || selection_text.length() == 0) {
 			tf.setForeground(Color.LIGHT_GRAY);
 			tf.setFont(no_selection_font);
@@ -101,7 +106,7 @@ public class IGBToolBar extends JToolBar {
 			tf.setText(selection_text);
 			tf.setEnabled(true);
 		}
-		type_of_info = type;
+		this.properties = properties;
 	}
 
 	public void addToolbarAction(GenericAction genericAction, int index){
@@ -192,10 +197,14 @@ public class IGBToolBar extends JToolBar {
 				rules_text.append(getRules());
 			}else{
 				messageFrame.setTitle(selection_info);
-				if(type_of_info != null){
-					rules_text.append(type_of_info + ": ");
+				if(properties != null && !properties.isEmpty()){
+					List<String> keys = GeneralUtils.asSortedList(properties.keySet(), comparator);
+					for(String key : keys){
+						rules_text.append(key + " : " + properties.get(key) + "\n");
+					}
+				}else{
+					rules_text.append(tf.getText());
 				}
-				rules_text.append(tf.getText());
 			}
 			messageFrame.setMinimumSize(new Dimension(250,100));
 			messageFrame.pack();

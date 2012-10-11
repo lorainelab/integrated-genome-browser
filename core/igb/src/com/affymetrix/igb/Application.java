@@ -1,9 +1,11 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.view.StatusBar;
 
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -96,7 +98,7 @@ public abstract class Application {
 		}
 	}
 
-	public abstract void setSelField(String type, String s);
+	public abstract void setSelField(Map<String, Object> properties, String s);
 	
 	/**
 	 * Shows a panel asking for the user to confirm something.

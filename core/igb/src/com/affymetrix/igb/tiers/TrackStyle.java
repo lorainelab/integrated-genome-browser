@@ -1283,4 +1283,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public void setSummaryThreshold(int level) {
 		summaryThreshold = level;
 	}
+
+	public String getExt() {
+		return file_type;
+	}
 }

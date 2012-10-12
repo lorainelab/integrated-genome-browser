@@ -8,7 +8,9 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -34,7 +36,6 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import java.util.logging.Level;
 
 public abstract class AbstractExportFileAction
 extends GenericAction implements SymSelectionListener {
@@ -42,12 +43,20 @@ extends GenericAction implements SymSelectionListener {
 	private static final String MIME_TYPE_PREFIX = "text/";
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	private static final Map<FileTypeCategory, Class<? extends AnnotationWriter>> annotationWriters
-			= new HashMap<FileTypeCategory, Class<? extends AnnotationWriter>>();
+	private static final Map<FileTypeCategory, List<Class<? extends AnnotationWriter>>> annotationWriters
+			= new HashMap<FileTypeCategory, List<Class<? extends AnnotationWriter>>>();
 	static {
-		annotationWriters.put(FileTypeCategory.Annotation, BedParser.class);
-		annotationWriters.put(FileTypeCategory.Graph, BedGraph.class);
-		annotationWriters.put(FileTypeCategory.Sequence, Fasta.class);
+		List<Class<? extends AnnotationWriter>> annotationList = new ArrayList<Class<? extends AnnotationWriter>>();
+		annotationList.add(BedParser.class);
+		annotationWriters.put(FileTypeCategory.Annotation, annotationList);
+		
+		List<Class<? extends AnnotationWriter>> graphList = new ArrayList<Class<? extends AnnotationWriter>>();
+		graphList.add(BedGraph.class);
+		annotationWriters.put(FileTypeCategory.Graph, graphList);
+		
+		List<Class<? extends AnnotationWriter>> sequenceList = new ArrayList<Class<? extends AnnotationWriter>>();
+		sequenceList.add(Fasta.class);
+		annotationWriters.put(FileTypeCategory.Sequence, sequenceList);
 	}
 	
 	protected AbstractExportFileAction(
@@ -89,32 +98,48 @@ extends GenericAction implements SymSelectionListener {
 
 	private void saveAsFile(TierGlyph atier) {
 		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getInfo();
-		AnnotationWriter annotationWriter;
-		try {
-			annotationWriter = annotationWriters.get(rootSym.getCategory()).newInstance();
-		}
-		catch (Exception x) {
+		List<Class<? extends AnnotationWriter>> availableWriters = annotationWriters.get(rootSym.getCategory());
+		if (availableWriters == null || availableWriters.size() == 0) {		
 			ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
 					+ rootSym.getCategory().name(), Level.WARNING);
 			return;
 		}
-		if (annotationWriter == null) {		
-			ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
-					+ rootSym.getCategory().name(), Level.WARNING);
-			return;
-		}
-		String mimeType = annotationWriter.getMimeType();
-		if (!mimeType.startsWith(MIME_TYPE_PREFIX)) {
-			throw new UnsupportedOperationException("Export file can't handle mime type "
-					+ mimeType);
-		}
-		String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
-		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+		
 		JFileChooser chooser = new GFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.setMultiSelectionEnabled(false);
-		chooser.addChoosableFileFilter(new UniFileFilter(extension, fth.getName()));
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+		
+		Map<UniFileFilter, AnnotationWriter> filter2writers = new HashMap<UniFileFilter, AnnotationWriter>();
+		for (Class<? extends AnnotationWriter> clazz : availableWriters) {
+			try {
+				AnnotationWriter writer = clazz.newInstance();
+				String mimeType = writer.getMimeType();
+				if (mimeType.startsWith(MIME_TYPE_PREFIX)) {
+					String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
+					FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+					
+					UniFileFilter filter = new UniFileFilter(extension, fth.getName());
+					chooser.addChoosableFileFilter(filter);
+					filter2writers.put(filter, writer);
+				}else{
+					Logger.getLogger(AbstractExportFileAction.class.getName()).log(
+						Level.WARNING, "Export file can't handle mime type {0}"
+							 ,mimeType);
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(AbstractExportFileAction.class.getName()).log(
+						Level.WARNING, "Couldn't not initiate class for {0} due to exception {1}",
+						new Object[]{clazz, ex.getMessage()});
+			}
+		}
+		
+		if (filter2writers.size() == 0) {		
+			ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
+					+ rootSym.getCategory().name(), Level.WARNING);
+			return;
+		}
+		
 		
 		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -124,7 +149,7 @@ extends GenericAction implements SymSelectionListener {
 			try {
 				File fil = chooser.getSelectedFile();
 				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-				exportFile(annotationWriter, dos, aseq, atier);
+				exportFile(filter2writers.get(chooser.getFileFilter()), dos, aseq, atier);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
 			} finally {

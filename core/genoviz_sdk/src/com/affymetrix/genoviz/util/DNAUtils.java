@@ -986,7 +986,12 @@ public class DNAUtils implements Translatable  {
 			return null;
 		}
 
-		int frame = FRAME_MAPPING[frametype];
+		int frame = Math.abs(FRAME_MAPPING[frametype]);
+		
+		if(frametype > 4) {
+			s = DNAUtils.reverseComplement(s);
+		}
+		
 		int length = s.length();
 		byte[] basenums = new byte[length];
 
@@ -1084,30 +1089,46 @@ public class DNAUtils implements Translatable  {
 		if (initial_string != null ) amino_acids.append(initial_string);
 		// checking for no spaces, can build non-spaced faster by avoiding
 		//     amino_acids.append("") calls
-		int extra_bases = (length - Math.abs(frame)) % 3;
+		int extra_bases = (length - frame) % 3;
 		if (pre_string == null && post_string == null) {
-			for (int i = frame; i < length-2; i += 3) {
-				residue = genetic_code[basenums[i]][basenums[i+1]][basenums[i+2]];
+			for (int i = frame; i < length - 2; i += 3) {
+				residue = genetic_code[basenums[i]][basenums[i + 1]][basenums[i + 2]];
 				amino_acids.append(residue);
 			}
 
 			for (int i = 0; i < extra_bases; i++) {
-				amino_acids.append(" ");
+				if (frametype > 4) {
+					amino_acids.reverse().append(" ").reverse(); // add the space to the beginning so that 
+					                                             // they will appear in the end when returned as reversed
+				} else {
+					amino_acids.append(" ");
+				}
 			}
-		}
-		else {
-			if (pre_string == null) { pre_string = ""; }
-			if (post_string == null) { post_string = ""; }
-			for (int i = frame; i< length-2; i+=3) {
-				residue = genetic_code[basenums[i]][basenums[i+1]][basenums[i+2]];
+		} else {
+			if (pre_string == null) {
+				pre_string = "";
+			}
+			if (post_string == null) {
+				post_string = "";
+			}
+			for (int i = frame; i < length - 2; i += 3) {
+				residue = genetic_code[basenums[i]][basenums[i + 1]][basenums[i + 2]];
 				amino_acids.append(pre_string);
 				amino_acids.append(residue);
 				amino_acids.append(post_string);
 			}
 			for (int i = 0; i < extra_bases; i++) {
-				amino_acids.append(" ");
+				if (frametype > 4) {
+					amino_acids.reverse().append(" ").reverse();
+				} else {
+					amino_acids.append(" ");
+				}
 			}
 		}
+		if (frametype > 4) {
+			return amino_acids.reverse().toString();
+		}
+		
 		return amino_acids.toString();
 	}
 

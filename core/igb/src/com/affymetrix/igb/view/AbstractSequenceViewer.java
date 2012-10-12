@@ -32,6 +32,7 @@ import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
 import com.affymetrix.igb.shared.FileTracker;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.action.CopyResiduesAction;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -559,7 +560,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
 	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
 	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation to ClipBoard");
-	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
+	CopyResiduesAction copyAction = new CopyResiduesAction(BUNDLE.getString("copySelectedResiduesToClipboard"), this);
 
 	public JFrame setupMenus(JFrame dock) {
 
@@ -826,22 +827,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	public void menuCanceled(MenuEvent me) {
 	}
 }	
-
-class CopyFromSeqViewerAction extends GenericAction {
-	private static final long serialVersionUID = 1l;
-
-	AbstractSequenceViewer sv;
-	public CopyFromSeqViewerAction(AbstractSequenceViewer sv) {
-		super(BUNDLE.getString("copySelectedResiduesToClipboard"), KeyEvent.VK_C);
-		this.sv=sv;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		sv.copyAction();
-	}
-}
 
 class CopyTransFromSeqViewerAction extends GenericAction{
 	

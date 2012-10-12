@@ -18,6 +18,7 @@ Import-Package: com.affymetrix.common,
  javax.swing.plaf.basic,
  javax.swing.table,
  javax.swing.tree,
+ javax.swing.text,
  javax.swing,
  org.osgi.framework,
  org.osgi.util.tracker

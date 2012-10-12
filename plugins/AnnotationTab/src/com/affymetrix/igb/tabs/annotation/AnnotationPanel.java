@@ -1,6 +1,7 @@
 package com.affymetrix.igb.tabs.annotation;
 
-import java.awt.event.ActionEvent;
+import com.affymetrix.genoviz.swing.NumericFilter;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -37,13 +38,15 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         strandsReverseColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         stackHeightPanel = new javax.swing.JPanel();
-        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField("trackPreference_maxDepth");
+        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
+        ((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());
         stackDepthGoButton = new javax.swing.JButton();
         stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.getAction());
         trackHeightPanel = new javax.swing.JPanel();
         lockTierHeightCheckBox = new javax.swing.JCheckBox();
         setHeightInPxLabel = new javax.swing.JLabel();
-        setPxHeightTextBox = new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField("trackPreference_tierHeight");
+        setPxHeightTextBox = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_tierHeight");
+        ((javax.swing.text.AbstractDocument)setPxHeightTextBox.getDocument()).setDocumentFilter(new NumericFilter());
         pxGoButton = new javax.swing.JButton();
 
         annotationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Labels and Strand"));
@@ -119,9 +122,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                         .add(0, 0, 0)
                         .add(labelFieldComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(strands2TracksCheckBox)
-                        .addContainerGap())
-                    .add(annotationsPanelLayout.createSequentialGroup()
                         .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(strandsArrowCheckBox)
                             .add(annotationsPanelLayout.createSequentialGroup()
@@ -129,15 +129,18 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                                 .add(5, 5, 5)))
                         .add(0, 0, Short.MAX_VALUE))
                     .add(annotationsPanelLayout.createSequentialGroup()
-                        .add(30, 30, 30)
-                        .add(strandsForwardColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0)
-                        .add(strandsForwardColorLabel)
-                        .add(18, 18, 18)
-                        .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0)
-                        .add(strandsReverseColorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(20, 20, 20))))
+                        .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(strands2TracksCheckBox)
+                            .add(annotationsPanelLayout.createSequentialGroup()
+                                .add(30, 30, 30)
+                                .add(strandsForwardColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(0, 0, 0)
+                                .add(strandsForwardColorLabel)
+                                .add(18, 18, 18)
+                                .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(0, 0, 0)
+                                .add(strandsReverseColorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
         );
         annotationsPanelLayout.setVerticalGroup(
             annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -438,17 +441,17 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 	// "// TODO add your handling code here:" to ""
 	// "                                     
 	// "       
-	protected abstract void stackDepthTextFieldActionPerformedA(ActionEvent evt);
-	protected abstract void labelFieldComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void strands2TracksCheckBoxActionPerformedA(ActionEvent evt);
-	protected abstract void strandsArrowCheckBoxActionPerformedA(ActionEvent evt);
-	protected abstract void strandsColorCheckBoxActionPerformedA(ActionEvent evt);
-	protected abstract void strandsReverseColorComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void strandsForwardColorComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void stackDepthGoButtonActionPerformedA(ActionEvent evt);
-	protected abstract void stackDepthAllButtonActionPerformedA(ActionEvent evt);
-	protected abstract void setPxHeightTextBoxActionPerformedA(ActionEvent evt);
-	protected abstract void pxGoButtonActionPerformedA(ActionEvent evt);
+	protected abstract void stackDepthTextFieldActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void labelFieldComboBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void strands2TracksCheckBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void strandsArrowCheckBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void strandsColorCheckBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void strandsReverseColorComboBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void strandsForwardColorComboBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void stackDepthGoButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void stackDepthAllButtonActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void setPxHeightTextBoxActionPerformedA(java.awt.event.ActionEvent evt);
+	protected abstract void pxGoButtonActionPerformedA(java.awt.event.ActionEvent evt);
 
 		
 	// you can "generate" these by copying all the event handlers

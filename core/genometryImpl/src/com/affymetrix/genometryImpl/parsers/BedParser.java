@@ -81,7 +81,7 @@ import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
  *
  * </pre>
  */
-public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
+public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	private static List<String> pref_list = new ArrayList<String>();
@@ -498,7 +498,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 
 
-	private static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
+	protected static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
 			out.write(propsym.getProperty("cds min").toString().getBytes());

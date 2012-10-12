@@ -91,7 +91,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		igb.addAction(RenameTierAction.getAction());
 		igb.addAction(ChangeFontSizeAction.getAction());
 		igb.addAction(ChangeExpandMaxAction.getAction());
-		igb.addAction(ChangeExpandMaxAllAction.getAction());
+//		igb.addAction(ChangeExpandMaxAllAction.getAction());
 		igb.addAction(ShowTwoTiersAction.getAction());
 		igb.addAction(ShowOneTierAction.getAction());
 		igb.addAction(SetColorByScoreAction.getAction());
@@ -177,9 +177,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
 		change_expand_max.setEnabled(any_are_expanded);
 		changeMenu.add(change_expand_max);
-		JMenuItem change_expand_max_all = new JRPMenuItemTLP(ChangeExpandMaxAllAction.getAction());
-		change_expand_max_all.setEnabled(num_selections > 0);
-		changeMenu.add(change_expand_max_all);
+//		JMenuItem change_expand_max_all = new JRPMenuItemTLP(ChangeExpandMaxAllAction.getAction());
+//		change_expand_max_all.setEnabled(num_selections > 0);
+//		changeMenu.add(change_expand_max_all);
 		return changeMenu;
 	}
 

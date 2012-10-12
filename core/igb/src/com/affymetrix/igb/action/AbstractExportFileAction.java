@@ -25,8 +25,9 @@ import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.BedGraph;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GFileChooser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
@@ -109,7 +110,10 @@ extends GenericAction implements SymSelectionListener {
 		}
 		String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
-		JFileChooser chooser = UniFileChooser.getFileChooser(fth.getName(), extension);
+		JFileChooser chooser = new GFileChooser();
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setMultiSelectionEnabled(false);
+		chooser.addChoosableFileFilter(new UniFileFilter(extension, fth.getName()));
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		
 		int option = chooser.showSaveDialog(null);

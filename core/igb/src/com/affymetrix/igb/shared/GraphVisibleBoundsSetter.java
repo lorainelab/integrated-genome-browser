@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.RangeSlider;
-import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.AbstractDocument;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public final class GraphVisibleBoundsSetter extends JPanel
@@ -140,11 +141,16 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 		widg = w;
 
-		min_valT = new JRPNumTextField("GraphVisibleBoundsSetter_min_valT", max_chars);
-		max_valT = new JRPNumTextField("GraphVisibleBoundsSetter_max_valT", max_chars);
-		min_perT = new JRPNumTextField("GraphVisibleBoundsSetter_min_perT", max_chars);
-		max_perT = new JRPNumTextField("GraphVisibleBoundsSetter_max_perT", max_chars);
+		min_valT = new JRPTextField("GraphVisibleBoundsSetter_min_valT", max_chars);
+		max_valT = new JRPTextField("GraphVisibleBoundsSetter_max_valT", max_chars);
+		min_perT = new JRPTextField("GraphVisibleBoundsSetter_min_perT", max_chars);
+		max_perT = new JRPTextField("GraphVisibleBoundsSetter_max_perT", max_chars);
 
+		((AbstractDocument)min_valT.getDocument()).setDocumentFilter(new NumericFilter());
+		((AbstractDocument)max_valT.getDocument()).setDocumentFilter(new NumericFilter());
+		((AbstractDocument)min_perT.getDocument()).setDocumentFilter(new NumericFilter());
+		((AbstractDocument)max_perT.getDocument()).setDocumentFilter(new NumericFilter());
+		
 		min_perT.setText(per_format.format(prev_min_per));
 		max_perT.setText(per_format.format(prev_max_per));
 		PercentSlider = new RangeSlider((int) (abs_min_percent * sliders_per_percent),

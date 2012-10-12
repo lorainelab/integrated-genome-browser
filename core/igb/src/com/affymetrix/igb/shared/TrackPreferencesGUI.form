@@ -80,10 +80,7 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="graphPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="annotationsPanel" alignment="0" max="32767" attributes="1"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="stylePanel" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="stylePanel" alignment="0" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -606,7 +603,8 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthTextFieldActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField(&quot;trackPreference_maxDepth&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.genoviz.swing.recordplayback.JRPTextField(&quot;trackPreference_maxDepth&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">

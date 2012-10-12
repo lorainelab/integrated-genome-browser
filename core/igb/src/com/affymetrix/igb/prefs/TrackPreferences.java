@@ -6,9 +6,10 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
-import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
@@ -20,6 +21,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -106,7 +108,8 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		fgColorComboBox = new ColorComboBox();
 		labelColorComboBox = new ColorComboBox();
 		labelFieldComboBox = new JComboBox();
-		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName() + "_maxDepth");
+		maxDepthTextField = new JRPTextField(this.getClass().getCanonicalName() + "_maxDepth");
+		((AbstractDocument)maxDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());
 		applyButton = new JRPButton(this.getClass().getCanonicalName() + "_applyButton");
 		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_show2TracksCheckBox");
 		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_collapsedCheckBox");

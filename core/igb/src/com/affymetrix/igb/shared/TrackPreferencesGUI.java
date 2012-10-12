@@ -7,12 +7,14 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
+import com.affymetrix.genoviz.swing.NumericFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JRadioButton;
 import static com.affymetrix.igb.shared.Selections.*;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -111,7 +113,8 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         trackNameTextField = new javax.swing.JTextField();
         annotationsPanel = new javax.swing.JPanel();
         stackDepthLabel = new javax.swing.JLabel();
-        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField("trackPreference_maxDepth");
+        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
+        ((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());
         labelFieldLabel = new javax.swing.JLabel();
         labelFieldComboBox = new javax.swing.JComboBox();
         strands2TracksCheckBox = new javax.swing.JCheckBox();
@@ -622,9 +625,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
-                        .add(0, 0, 0)
-                        .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .add(stylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 

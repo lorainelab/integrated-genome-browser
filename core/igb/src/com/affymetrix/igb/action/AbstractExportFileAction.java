@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.BedDetailWriter;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
@@ -47,6 +48,7 @@ extends GenericAction implements SymSelectionListener {
 			= new HashMap<FileTypeCategory, List<Class<? extends AnnotationWriter>>>();
 	static {
 		List<Class<? extends AnnotationWriter>> annotationList = new ArrayList<Class<? extends AnnotationWriter>>();
+		annotationList.add(BedDetailWriter.class);
 		annotationList.add(BedParser.class);
 		annotationWriters.put(FileTypeCategory.Annotation, annotationList);
 		
@@ -119,7 +121,10 @@ extends GenericAction implements SymSelectionListener {
 					String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
 					FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
 					
-					UniFileFilter filter = new UniFileFilter(extension, fth.getName());
+					// Hack to display as bed detail
+					String name = clazz == BedDetailWriter.class ? "BED Detail" : fth.getName();
+					
+					UniFileFilter filter = new UniFileFilter(extension, name);
 					chooser.addChoosableFileFilter(filter);
 					filter2writers.put(filter, writer);
 				}else{

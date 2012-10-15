@@ -233,7 +233,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
             }
         });
 
-        labelColorLabel.setText("Label:");
+        labelColorLabel.setText("Track Label:");
 
         collapsedCheckBox.setText("Collapsed");
         collapsedCheckBox.addActionListener(new java.awt.event.ActionListener() {

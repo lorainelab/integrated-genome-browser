@@ -29,8 +29,8 @@ public class ExportImageAction extends GenericAction {
 
 	private ExportImageAction() {
 		super(BUNDLE.getString("exportImage"), null,
-				"16x16/mimetypes/image-x-generic.png",
-				"22x22/mimetypes/image-x-generic.png",
+				"16x16/actions/export_image.png",
+				"22x22/actions/export_image.png",
 				KeyEvent.VK_UNDEFINED, null, true);
 		this.ordinal = -9002000;
 	}

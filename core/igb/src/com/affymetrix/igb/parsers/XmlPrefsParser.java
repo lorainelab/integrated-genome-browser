@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.IGBConstants;
@@ -27,6 +29,8 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.general.ServerList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -91,6 +95,24 @@ public final class XmlPrefsParser {
 	private XmlPrefsParser() {
 	}
 
+	public static void parse(String url) throws IOException {
+		InputStream stream = null;
+		try {
+			// Don't cache.  Don't warn user if the synonyms file doesn't exist.
+			stream = LocalUrlCacher.getInputStream(url, true, null, true);
+			if (stream == null) {
+				return;
+			}
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
+					"Preferences found at: {0}", url);
+			parse(stream);
+		} catch (IOException ioe) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Unable to load preferences from '" + url + "'", ioe);
+		} finally {
+			GeneralUtils.safeClose(stream);
+		}
+	}
+	
 	public static void parse(InputStream istr) throws IOException {
 		InputSource insource = new InputSource(istr);
 

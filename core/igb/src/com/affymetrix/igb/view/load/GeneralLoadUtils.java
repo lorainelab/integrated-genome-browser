@@ -45,6 +45,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
+import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -230,6 +231,9 @@ public final class GeneralLoadUtils {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					gServer.setEnabled(false);
 					return false;
+				}
+				if(gServer.serverType == ServerTypeI.QuickLoad){
+					XmlPrefsParser.parse(gServer.URL +  "preferences.xml");
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);

@@ -32,7 +32,7 @@ import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
 import com.affymetrix.igb.shared.FileTracker;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.action.CopyResiduesAction;
+import com.affymetrix.igb.action.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -458,7 +458,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			@Override
 			protected void setResiduesSelected(boolean bool) {
 				super.setResiduesSelected(bool);
-				copyAction.setEnabled(bool);
+				copySelectedSeqAction.setEnabled(bool);
 			}
 
 			@Override
@@ -559,12 +559,13 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
 	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
 	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
-	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation to ClipBoard");
-	CopyResiduesAction copyAction = new CopyResiduesAction(BUNDLE.getString("copySelectedResiduesToClipboard"), this);
+	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation");
+	CopyResiduesAction copySelectedSeqAction = new CopyResiduesAction(BUNDLE.getString("copySelectedSequence"), this);
+	CopySequenceAction copySeqAction = new CopySequenceAction(BUNDLE.getString("copySequence"), this);
 
 	public JFrame setupMenus(JFrame dock) {
 
-		copyAction.setEnabled(false);
+		copySelectedSeqAction.setEnabled(false);
 		copyAnnotAction.setEnabled(false);
 		copyToClipMenu.add(copyTransp1MenuItem);
 		copyToClipMenu.add(copyTransp2MenuItem);
@@ -578,7 +579,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(dock, seqview.getScroller())));
 		fileMenu.addSeparator();
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
-		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));
+		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySeq", copySeqAction));
+		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySelectedSeq", copySelectedSeqAction));
 		editMenu.add(copyToClipMenu);
 		editMenu.add(copyAnnotAction);
 		editMenu.addMenuListener(this);
@@ -640,6 +642,27 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		if (selectedSeq != null) {
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			StringBuffer hackbuf = new StringBuffer(selectedSeq);
+			String hackstr = new String(hackbuf);
+			StringSelection data = new StringSelection(hackstr);
+			clipboard.setContents(data, null);
+		} else {
+			ErrorHandler.errorPanel("Missing Sequence Residues",
+					"Don't have all the needed residues, can't copy to clipboard.\n"
+					+ "Please load sequence residues for this region.", Level.WARNING);
+		}
+	}
+
+	/*
+	 * Copy the whole original whole sequence in viewer
+	 */
+	public void copyWholeSeqAction() {
+		String sequence = seqview.getResidues().trim();
+		if(toggle_Reverse_Complement) {
+			sequence = DNAUtils.reverseComplement(sequence);
+		}
+		if (sequence != null) {
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			StringBuffer hackbuf = new StringBuffer(sequence);
 			String hackstr = new String(hackbuf);
 			StringSelection data = new StringSelection(hackstr);
 			clipboard.setContents(data, null);
@@ -814,9 +837,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		Object evtSource = me.getSource();
 		if (evtSource == editMenu) {
 			if (!seqview.getSelectedResidues().trim().isEmpty()) {
-				copyAction.setEnabled(true);
+				copySelectedSeqAction.setEnabled(true);
 			} else {
-				copyAction.setEnabled(false);
+				copySelectedSeqAction.setEnabled(false);
 			}
 		}
 	}

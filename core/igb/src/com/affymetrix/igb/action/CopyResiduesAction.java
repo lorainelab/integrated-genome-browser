@@ -28,7 +28,7 @@ import com.affymetrix.igb.view.AbstractSequenceViewer;
  */
 @SuppressWarnings("serial")
 public class CopyResiduesAction extends GenericAction {
-	private static final CopyResiduesAction ACTION = new CopyResiduesAction(BUNDLE.getString("copySelectedResiduesToClipboard"));
+	private static final CopyResiduesAction ACTION = new CopyResiduesAction(BUNDLE.getString("copySelectedSequenceToClipboard"));
 	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction("Copy");
 	
 	AbstractSequenceViewer sv = null;

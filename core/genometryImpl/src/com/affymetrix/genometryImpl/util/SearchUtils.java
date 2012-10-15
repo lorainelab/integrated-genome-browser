@@ -136,6 +136,43 @@ public final class SearchUtils {
 		return result;
 	}
 
+	public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
+		String[] props_to_search;
+		Set<SeqSymmetry> syms = null;
+		if (search_props) {
+			syms = new HashSet<SeqSymmetry>(group.findInSymProp(regex, limit));
+			props_to_search = new String[]{"id", "gene name", "description"};
+		} else {
+			syms = new HashSet<SeqSymmetry>(group.findSyms(regex, limit));
+			props_to_search = new String[]{"id"};
+		}
+
+		final Matcher matcher = regex.matcher("");
+		Set<String> results = new HashSet<String>(limit);
+		SymWithProps swp;
+		String match;
+		Object value;
+		for (SeqSymmetry seq : syms) {
+			if (seq instanceof SymWithProps) {
+				swp = (SymWithProps) seq;
+
+				// Iterate through each properties.
+				for (String prop : props_to_search) {
+					value = swp.getProperty(prop);
+					if (value != null) {
+						match = value.toString();
+						matcher.reset(match);
+						if (matcher.matches()) {
+							results.add(match);
+						}
+					}
+				}
+			}
+		}
+		
+		return results;
+	}
+		
 	/**
 	 * Binary search that either looks for the exact key or the closest key
 	 * @param list, list to search

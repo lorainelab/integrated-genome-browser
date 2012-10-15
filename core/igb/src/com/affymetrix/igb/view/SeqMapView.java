@@ -375,18 +375,11 @@ public class SeqMapView extends JPanel
 //		group.add(zoom_mode_button);
 		select_mode_button.doClick(); // default
 		
-		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
-		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
-		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
-		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
-		
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
-		
-		JPanel xzoompanel = new JPanel(new BorderLayout(-8, 0)); // Make the buttons more connected with the slider
-		xzoompanel.add(zoomOutXB, BorderLayout.WEST);
-		xzoompanel.add((Component)xzoomer, BorderLayout.CENTER);
-		xzoompanel.add(zoomInXB, BorderLayout.EAST);
-		xzoombox.add(xzoompanel);
+
+		addZoomOutXButton(this.id);
+		xzoombox.add((Component)xzoomer);
+		addZoomInXButton(this.id);
 		
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		
@@ -410,12 +403,10 @@ public class SeqMapView extends JPanel
 		yzoombox = Box.createVerticalBox();
 		
 		yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
-		
-		JPanel yzoompanel = new JPanel(new BorderLayout(0, -8)); // Make the buttons more connected with the slider
-		yzoompanel.add(zoomOutYB, BorderLayout.NORTH);
-		yzoompanel.add((Component)yzoomer, BorderLayout.CENTER);
-		yzoompanel.add(zoomInYB, BorderLayout.SOUTH);
-		yzoombox.add(yzoompanel);
+
+		addZoomOutYButton(this.id);
+		yzoombox.add((Component)yzoomer, BorderLayout.CENTER);
+		addZoomInYButton(this.id);
 		
 		yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		
@@ -436,6 +427,28 @@ public class SeqMapView extends JPanel
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 		
+	}
+	
+	protected void addZoomInXButton(String id) {
+		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
+		xzoombox.add(zoomInXB);
+	}
+
+	protected void addZoomOutXButton(String id) {
+		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
+		xzoombox.add(zoomOutXB);
+	}
+
+	protected void addZoomInYButton(String id) {
+		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
+		zoomInYB.setAlignmentX(CENTER_ALIGNMENT);
+		yzoombox.add(zoomInYB, BorderLayout.SOUTH);
+	}
+
+	protected void addZoomOutYButton(String id) {
+		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
+		zoomOutYB.setAlignmentX(CENTER_ALIGNMENT);
+		yzoombox.add(zoomOutYB, BorderLayout.NORTH);
 	}
 
 	protected void addRefreshButton(String id) {

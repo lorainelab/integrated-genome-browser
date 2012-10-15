@@ -362,4 +362,24 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	protected void addDependentAndEmptyTrack(){
 		//Do Nothing for alt splice view.
 	}
+	
+	@Override
+	protected void addZoomInXButton(String id) {
+		// Do nothing
+	}
+
+	@Override
+	protected void addZoomOutXButton(String id) {
+		// Do nothing
+	}
+
+	@Override
+	protected void addZoomInYButton(String id) {
+		// Do nothing
+	}
+
+	@Override
+	protected void addZoomOutYButton(String id) {
+		// Do nothing
+	}
 }

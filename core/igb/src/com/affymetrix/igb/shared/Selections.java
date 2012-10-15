@@ -15,10 +15,10 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.event.EventListenerList;
 
 /**
@@ -26,13 +26,13 @@ import javax.swing.event.EventListenerList;
  * @author hiralv
  */
 public abstract class Selections {
-	public static final List<ITrackStyleExtended> allStyles = new ArrayList<ITrackStyleExtended>();
-	public static final List<ITrackStyleExtended> annotStyles = new ArrayList<ITrackStyleExtended>();
-	public static final List<ITrackStyleExtended> graphStyles = new ArrayList<ITrackStyleExtended>();
-	public static final List<StyledGlyph> allGlyphs = new ArrayList<StyledGlyph>();
-	public static final List<GraphState> graphStates = new ArrayList<GraphState>();
-	public static final List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
-	public static final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
+	public static final List<ITrackStyleExtended> allStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
+	public static final List<ITrackStyleExtended> annotStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
+	public static final List<ITrackStyleExtended> graphStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
+	public static final List<StyledGlyph> allGlyphs = new CopyOnWriteArrayList<StyledGlyph>();
+	public static final List<GraphState> graphStates = new CopyOnWriteArrayList<GraphState>();
+	public static final List<GraphGlyph> graphGlyphs = new CopyOnWriteArrayList<GraphGlyph>();
+	public static final List<RootSeqSymmetry> rootSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
 	
 	private static final SeqMapView smv;
 	private static final EventListenerList listenerList;
@@ -54,7 +54,7 @@ public abstract class Selections {
 //		igbService.addListSelectionListener(this);
 	}
 	
-	private static void refreshSelection() {
+	private synchronized static void refreshSelection() {
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
 		List<StyledGlyph> selected = (List)smv.getAllSelectedTiers();
 		allStyles.clear();

@@ -288,8 +288,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		all_but_one_locked = no_of_locked == handler.getVisibleTierGlyphs().size() - 2;
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
-		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
-		popup.add(new JSeparator());
 		JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
 		popup.add(customize);
 		popup.add(addChangeMenu(num_selections, any_are_expanded, any_are_separate_tiers, any_are_single_tier, any_are_color_off, coordinates_track_selected));
@@ -377,6 +375,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(color_by_score);
 		JMenuItem set_color_by_score = new JRPMenuItemTLP(SetColorByScoreAction.getAction());
 		popup.add(set_color_by_score);
+		popup.add(new JSeparator());
+		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
 		if (DEBUG) {
 			popup.add(new AbstractAction("DEBUG") {
 

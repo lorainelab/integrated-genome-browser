@@ -314,7 +314,29 @@ public class AnnotatedSeqGroup {
 	}
 
 	final public Set<SeqSymmetry> findInSymProp(Pattern regex) {
-		final Set<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
+		return findInSymProp(regex, -1);
+	}
+
+	/**
+	 * 
+	 * @param regex
+	 * @param limit -1 for no limit
+	 * @return set of SeqSymmetries matching the pattern with any of it's properties.
+	 */
+	final public Set<SeqSymmetry> findInSymProp(Pattern regex, int limit) {
+		int size;
+		int count;
+		final Set<SeqSymmetry> symset;
+		if(limit > 0){
+			size = Math.min(limit,id2sym_hash.size());
+			count = 0;
+			symset = new HashSet<SeqSymmetry>(size);
+		}else{
+			size = -1;
+			count = Integer.MIN_VALUE;
+			symset = new HashSet<SeqSymmetry>();
+		}
+		
 		final Matcher matcher = regex.matcher("");
 		SymWithProps swp;
 		String match;
@@ -332,7 +354,7 @@ public class AnnotatedSeqGroup {
 
 					// Iterate through each properties.
 					for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
-						if(current_thread.isInterrupted())
+						if(current_thread.isInterrupted() || count > size)
 							break;
 						
 						if (prop.getValue() != null) {
@@ -340,6 +362,7 @@ public class AnnotatedSeqGroup {
 							matcher.reset(match);
 							if (matcher.matches()) {
 								symset.add(seq);
+								count++;
 							}
 						}
 					}
@@ -349,30 +372,53 @@ public class AnnotatedSeqGroup {
 		
 		return symset;
 	}
-
+	
 	/**
-	 * @return set of SeqSymmetries matching the pattern.
+	 * @return 
 	 */
 	final public Set<SeqSymmetry> findSyms(Pattern regex) {
-		final Set<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
+		return findSyms(regex, -1);
+	}
+
+	/**
+	 * @param regex
+	 * @param limit -1 for no limit.
+	 * @return set of SeqSymmetries matching the pattern.
+	 */
+	public Set<SeqSymmetry> findSyms(Pattern regex, int limit) {
+		int size;
+		int count;
+		final Set<SeqSymmetry> symset;
+		if(limit > 0){
+			size = Math.min(limit,id2sym_hash.size());
+			count = 0;
+			symset = new HashSet<SeqSymmetry>(size);
+		}else{
+			size = -1;
+			count = Integer.MIN_VALUE;
+			symset = new HashSet<SeqSymmetry>();
+		}
+		
 		final Matcher matcher = regex.matcher("");
 		Thread current_thread = Thread.currentThread();
 		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
-			if(current_thread.isInterrupted())
+			if (current_thread.isInterrupted() || count > size) {
 				break;
-			
+			}
+
 			String seid = ent.getKey();
 			Set<SeqSymmetry> val = ent.getValue();
 			if (seid != null && val != null) {
 				matcher.reset(seid);
 				if (matcher.matches()) {
 					symset.addAll(val);
+					count++;
 				}
 			}
 		}
 		return symset;
 	}
-
+	
 	/** Finds all symmetries with the given case-insensitive ID.
 	 *  @return a non-null List, possibly an empty one.
 	 */

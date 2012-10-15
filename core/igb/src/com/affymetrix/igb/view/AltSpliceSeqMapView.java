@@ -99,7 +99,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 			style2Style.put(style, style_copy);
 		}else{
 			// Properties that needs to be retained.
-			boolean show = style_copy.getShow();
+			boolean show = style.getShow();
 			
 			// Apply all properties.
 			style_copy.copyPropertiesFrom(style);

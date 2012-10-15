@@ -35,6 +35,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.jidesoft.hints.ListDataIntelliHints;
 
@@ -86,6 +87,13 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		BASE_SEARCH_MODES.add(new CenterSearch());
 	}
 
+	IStatus application_statusbar = new IStatus() {
+		@Override
+		public void setStatus(String text) {
+			Application.getSingleton().setStatus(text);
+		}
+	};
+	
 	private static abstract class EmptySearch {
 		protected abstract Matcher getMatcher(String search_text);
 		public boolean testInput(String search_text) {
@@ -437,12 +445,12 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		List<ISearchModeSym> modes = new ArrayList<ISearchModeSym>();
 		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
 		for (ISearchModeSym searchMode : modes) {
-			if (searchMode.checkInput(search_text, null, null) == null && searchMode.searchAllUse() >= 0) {
-				for (TypeContainerAnnot trackSym : trackSyms) {
+			if (searchMode.checkInput(search_text, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
+//				for (TypeContainerAnnot trackSym : trackSyms) {
 					List<SeqSymmetry> searchResults = null;
 					String errorMessage = searchMode.checkInput(search_text, null, null);
 					if (errorMessage == null) {
-						searchResults = searchMode.searchTrack(search_text, trackSym);
+						searchResults = searchMode.search(search_text, null, application_statusbar, false);
 					}
 					if (searchResults != null && searchResults.size() > 0) {
 						fireSearchResult(search_text, searchResults);
@@ -452,7 +460,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 							return rawSpans;
 						}
 					}
-				}
+//				}
 			}
 		}
 		return null;

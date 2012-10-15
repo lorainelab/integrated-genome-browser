@@ -13,8 +13,6 @@ import javax.swing.JTextField;
 import com.jidesoft.combobox.ColorComboBox;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -99,21 +97,21 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	@Override
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-		Actions.showOneTwoTier(!(strands2TracksCheckBox.isSelected()));
+		Actions.showOneTwoTier(!(strands2TracksCheckBox.isSelected()), evt);
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsArrowCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
-		Actions.showArrow(strandsArrowCheckBox.isSelected());
+		Actions.showArrow(strandsArrowCheckBox.isSelected(), evt);
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsColorCheckBoxActionPerformedA(ActionEvent evt) {
 		 final JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
-		Actions.showStrandsColor(strandsColorCheckBox.isSelected());
+		Actions.showStrandsColor(strandsColorCheckBox.isSelected(), evt);
 		is_listening = false;
 		strandsForwardColorComboBoxReset();
 		strandsReverseColorComboBoxReset();

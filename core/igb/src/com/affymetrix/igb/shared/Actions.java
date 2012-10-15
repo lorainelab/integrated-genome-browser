@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.action.*;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 
 /**
  *
@@ -60,29 +61,29 @@ public class Actions {
 	/**
 	 * @param showOneTier Show one tier
 	 */
-	public static void showOneTwoTier(boolean showOneTier) {
-		GenericAction action = showOneTier ? 
+	public static void showOneTwoTier(boolean showOneTier, ActionEvent e) {
+		GenericAction action = !showOneTier ? 
 				ShowOneTierAction.getAction() : ShowTwoTiersAction.getAction();
 		
-		action.actionPerformed(null);
+		action.actionPerformed(e);
 	}
 	
 	/**
 	 * @param showArrow Show arrow
 	 */
-	public static void showArrow(boolean showArrow) {
+	public static void showArrow(boolean showArrow, ActionEvent e) {
 		GenericAction action = showArrow ? 
 				SetDirectionStyleArrowAction.getAction() : UnsetDirectionStyleArrowAction.getAction();
-		action.actionPerformed(null);
+		action.actionPerformed(e);
 	}
 	
 	/**
 	 * @param showColor Show color
 	 */
-	public static void showStrandsColor(boolean showColor) {
+	public static void showStrandsColor(boolean showColor, ActionEvent e) {
 		GenericAction action = showColor?
 				SetDirectionStyleColorAction.getAction() : UnsetDirectionStyleColorAction.getAction();
-		action.actionPerformed(null);
+		action.actionPerformed(e);
 	}
 		
 	public static void setLockedTierHeight(int height) {
@@ -93,10 +94,10 @@ public class Actions {
 	/**
 	 * @param floatTier Float tier
 	 */
-	public static void setFloatTier(boolean floatTier){
+	public static void setFloatTier(boolean floatTier, ActionEvent e){
 		GenericAction action = floatTier ? 
 				FloatTiersAction.getAction() : UnFloatTiersAction.getAction();
-		action.actionPerformed(null);
+		action.actionPerformed(e);
 	}
 	
 	public static void setRenameTier(ITrackStyleExtended style, String name){

@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -64,7 +62,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 	@Override
 	protected void floatCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox floatCheckBox = getFloatCheckBox();
-		Actions.setFloatTier(floatCheckBox.isSelected());
+		Actions.setFloatTier(floatCheckBox.isSelected(), evt);
 	}
 
 	@Override

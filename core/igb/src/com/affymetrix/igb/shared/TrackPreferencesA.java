@@ -80,7 +80,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void floatCheckBoxActionPerformedA(ActionEvent evt) {
 		final JCheckBox floatCheckBox = getFloatCheckBox();
-		Actions.setFloatTier(floatCheckBox.isSelected());
+		Actions.setFloatTier(floatCheckBox.isSelected(), evt);
 //		updateDisplay();
 	}
 
@@ -113,21 +113,21 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 	@Override
 	protected void strands2TracksCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-		Actions.showOneTwoTier(!(strands2TracksCheckBox.isSelected()));
+		Actions.showOneTwoTier(!(strands2TracksCheckBox.isSelected()), evt);
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsArrowCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strandsArrowCheckBox = getStrandsArrowCheckBox();
-		Actions.showArrow(strandsArrowCheckBox.isSelected());
+		Actions.showArrow(strandsArrowCheckBox.isSelected(), evt);
 		updateDisplay();
 	}
 
 	@Override
 	protected void strandsColorCheckBoxActionPerformedA(ActionEvent evt) {
 	    final JCheckBox strandsColorCheckBox = getStrandsColorCheckBox();
-		Actions.showStrandsColor(strandsColorCheckBox.isSelected());
+		Actions.showStrandsColor(strandsColorCheckBox.isSelected(), evt);
 		is_listening = false;
 		strandsForwardColorComboBoxReset();
 		strandsReverseColorComboBoxReset();

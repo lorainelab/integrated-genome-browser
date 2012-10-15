@@ -201,7 +201,6 @@ public final class KeyStrokesView implements ListSelectionListener,
 					String logMsg = "!!! no GenericAction for key = " + key;
 					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, logMsg);
 				}
-				rows[i][IconColumn] = genericAction == null ? null : genericAction.getValue(Action.SMALL_ICON);
 				rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
 				rows[i][KeyStrokeColumn] = keystroke_node.get(key, "");
 				rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
@@ -211,6 +210,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 				if (smallTimeActions.contains(genericAction)) {
 					rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
 				}
+				rows[i][IconColumn] = genericAction == null || rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
 				rows[i][IdColumn] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
 			}
 		}

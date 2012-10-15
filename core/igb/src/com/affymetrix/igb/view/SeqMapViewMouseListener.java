@@ -419,7 +419,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 				} else if (rubber_band_start != null) {
 					// started outside axis tier: user is trying to select glyphs
-					List<GlyphI> glyphs = doTheSelection(map.getItemsByCoord(cbox));
+					List<GlyphI> glyphs = doTheSelection(cbox);
 					showSelection(glyphs, rubber_band_start);
 				}
 			}

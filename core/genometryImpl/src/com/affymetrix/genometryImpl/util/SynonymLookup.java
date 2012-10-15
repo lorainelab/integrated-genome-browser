@@ -84,19 +84,22 @@ public class SynonymLookup {
 		String line;
 		
 		try {
-			ireader = new InputStreamReader(istream);
-			br = new BufferedReader(ireader);
-			while ((line = br.readLine()) != null) {
-				//Ignore comments.
-				if(line.startsWith("#"))
-					continue;
-
-				String[] fields = LINE_REGEX.split(line);
-				if (fields.length >= 2) {
-					if (setPreferredNames) {
-						preferredNames.add(fields[0]);
+			synchronized (preferredNames) {
+				ireader = new InputStreamReader(istream);
+				br = new BufferedReader(ireader);
+				while ((line = br.readLine()) != null) {
+					//Ignore comments.
+					if (line.startsWith("#")) {
+						continue;
 					}
-					addSynonyms(fields);
+
+					String[] fields = LINE_REGEX.split(line);
+					if (fields.length >= 2) {
+						if (setPreferredNames) {
+							preferredNames.add(fields[0]);
+						}
+						addSynonyms(fields);
+					}
 				}
 			}
 		} finally {
@@ -283,7 +286,9 @@ public class SynonymLookup {
 	 * @return the preferred name of the synonym.
 	 */
 	public String getPreferredName(String synonym, boolean cs) {
-		return this.findMatchingSynonym(preferredNames, synonym, cs, false);
+		synchronized (preferredNames) {
+			return this.findMatchingSynonym(preferredNames, synonym, cs, false);
+		}
 	}
 
 	/**

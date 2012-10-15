@@ -24,7 +24,7 @@ public class Activator implements BundleActivator {
 			SearchModeID smID = new SearchModeID(igbService);
     		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, smID, null);
     		searchModePropsRegistration = bundleContext.registerService(IKeyWordSearch.class, new SearchModeProps(igbService), null);
-			searchHints = bundleContext.registerService(ISearchHints.class, smID, null);
+			searchHints = bundleContext.registerService(ISearchHints.class, new PropSearchHints(), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());

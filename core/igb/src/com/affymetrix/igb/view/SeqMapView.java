@@ -52,7 +52,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
@@ -375,18 +374,28 @@ public class SeqMapView extends JPanel
 		group.add(scroll_mode_button);
 //		group.add(zoom_mode_button);
 		select_mode_button.doClick(); // default
-
+		
+		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
+		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
+		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
+		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
+		
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
-		addZoomOutXButton(this.id);
-		xzoombox.add((Component) xzoomer);
-
+		
+		JPanel xzoompanel = new JPanel(new BorderLayout(-8, 0)); // Make the buttons more connected with the slider
+		xzoompanel.add(zoomOutXB, BorderLayout.WEST);
+		xzoompanel.add((Component)xzoomer, BorderLayout.CENTER);
+		xzoompanel.add(zoomInXB, BorderLayout.EAST);
+		xzoombox.add(xzoompanel);
+		
+		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
+		
 		refreshDataAction = new RefreshDataAction(this);
-		addZoomInXButton(this.id);
 		addRefreshButton(this.id);
 		addLoadResidueButton(this.id);
 		
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-		JPanel pan = new JPanel(new BorderLayout());
+		JPanel pan = new JPanel(new BorderLayout(0,0));
 		pan.add("Center", xzoombox);
 		if (x_above) {
 			this.add(BorderLayout.NORTH, pan);
@@ -399,10 +408,17 @@ public class SeqMapView extends JPanel
 //		specialZoomer.addChangeListener(zoomie);
 
 		yzoombox = Box.createVerticalBox();
-		addZoomOutYButton(this.id);
-		yzoombox.add((Component) yzoomer);
-		addZoomInYButton(this.id);
-//		yzoombox.add(specialZoomer);
+		
+		yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
+		
+		JPanel yzoompanel = new JPanel(new BorderLayout(0, -8)); // Make the buttons more connected with the slider
+		yzoompanel.add(zoomOutYB, BorderLayout.NORTH);
+		yzoompanel.add((Component)yzoomer, BorderLayout.CENTER);
+		yzoompanel.add(zoomInYB, BorderLayout.SOUTH);
+		yzoombox.add(yzoompanel);
+		
+		yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
+		
 		boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 		if (y_left) {
 			this.add(BorderLayout.WEST, yzoombox);
@@ -458,28 +474,6 @@ public class SeqMapView extends JPanel
 		xzoombox.add(searchButton);
 	}
 
-	protected void addZoomInXButton(String id) {
-		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
-		xzoombox.add(zoomInXB);
-	}
-	
-	protected void addZoomInYButton(String id) {
-		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
-		zoomInYB.setAlignmentX(Component.CENTER_ALIGNMENT);
-		yzoombox.add(zoomInYB);
-	}
-
-	protected void addZoomOutXButton(String id) {
-		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
-		xzoombox.add(zoomOutXB);
-	}
-	
-	protected void addZoomOutYButton(String id) {
-		zoomOutYB = new JRPButton(id + "_zoomOutY_button", ZoomOutYAction.getIconOnlyAction());
-		zoomOutYB.setAlignmentX(Component.CENTER_ALIGNMENT);
-		yzoombox.add(zoomOutYB);
-	}
-	
 	protected Adjustable getXZoomer(String id) {
 		return new ThresholdXZoomer(id, this);
 	}

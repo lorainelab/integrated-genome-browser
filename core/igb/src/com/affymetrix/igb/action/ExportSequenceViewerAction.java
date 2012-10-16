@@ -16,7 +16,7 @@ public class ExportSequenceViewerAction extends ExportComponentAction{
 	private final Adjustable scroller;
 	
 	public ExportSequenceViewerAction(Component comp, Adjustable scroller) {
-		super(BUNDLE.getString("exportImage"), "16x16/actions/Sequence Viewer export.png", "22x22/actions/Sequence Viewer export.png");
+		super(BUNDLE.getString("exportImage"), "16x16/actions/Sequence_Viewer_export.png", "22x22/actions/Sequence_Viewer_export.png");
 		this.comp = comp;
 		this.scroller = scroller;
 	}

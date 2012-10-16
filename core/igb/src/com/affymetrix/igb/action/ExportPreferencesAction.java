@@ -38,7 +38,7 @@ public class ExportPreferencesAction extends GenericAction {
 
 	private ExportPreferencesAction() {
 		super(BUNDLE.getString("ExportPreferences"), null, "16x16/actions/pref_export.png",
-				"22x22/actions/pref_export.png", KeyEvent.VK_E, null, true);
+				null, KeyEvent.VK_E, null, true);
 		putValue(ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
 	}
 

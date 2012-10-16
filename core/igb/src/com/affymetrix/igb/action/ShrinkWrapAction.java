@@ -19,7 +19,7 @@ public class ShrinkWrapAction extends GenericAction {
 	private static final ShrinkWrapAction ACTION = new ShrinkWrapAction();
 
 	private ShrinkWrapAction() {
-		super(BUNDLE.getString("toggleShrinkWrapping"), null, "16x16/actions/Shrinkwrap.png", "22x22/actions/Shrinkwrap.png", KeyEvent.VK_S);
+		super(BUNDLE.getString("toggleShrinkWrapping"), null, "16x16/actions/Shrinkwrap.png", null, KeyEvent.VK_S);
 		this.putValue(SELECTED_KEY, IGB.getSingleton().getMapView().getShrinkWrap());
 	}
 	

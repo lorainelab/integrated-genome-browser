@@ -32,7 +32,7 @@ public class ImportPreferencesAction extends GenericAction {
 
 	private ImportPreferencesAction() {
 		super(BUNDLE.getString("ImportPreferences"), null, "16x16/actions/pref_import.png",
-				"22x22/actions/pref_import.png", KeyEvent.VK_I, null, true);
+				null, KeyEvent.VK_I, null, true);
 		putValue(ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
 	}
 

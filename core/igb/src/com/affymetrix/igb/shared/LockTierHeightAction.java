@@ -14,9 +14,9 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class LockTierHeightAction extends SeqMapViewActionA{
 	private static final long serialVersionUID = 1L;
 	
-	public LockTierHeightAction(boolean lock) {
+	public LockTierHeightAction() {
 		super(BUNDLE.getString("lockTierHeightAction"), null, null);
-		this.putValue(SELECTED_KEY, lock);
+		this.putValue(SELECTED_KEY, Boolean.FALSE);
 	}
 	
 	@Override

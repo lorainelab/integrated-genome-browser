@@ -318,6 +318,12 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
     labelmap.repackTheTiers(full_repack, stretch_vertically);  
   }
 
+	@Override
+  protected void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
+	super.stretchToFit(fitx, fity, packTiers);
+	labelmap.stretchToFit(fitx, fity, packTiers);
+  }
+		
   /** Prints this component, including the label map. */
   @Override
 	public void print() throws java.awt.print.PrinterException {

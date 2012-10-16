@@ -309,7 +309,7 @@ public class AffyTieredMap extends NeoMap {
 		this.stretchToFit(fitx, fity, true);
 	}
 
-	private void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
+	protected void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
 		super.stretchToFit(fitx, fity);
 		if (packTiers) {
 			packTiers(false, true, false);

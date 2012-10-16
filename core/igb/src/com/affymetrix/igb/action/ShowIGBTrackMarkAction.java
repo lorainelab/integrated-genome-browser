@@ -1,17 +1,21 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import javax.swing.AbstractAction;
 
 /**
  *
  * @author nick
  */
-public class ShowIGBTrackMarkAction extends SeqMapViewActionA{
+public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements PreferenceChangeListener{
 
 	private static final long serialVersionUID = 1;
 	private static final ShowIGBTrackMarkAction ACTION = new ShowIGBTrackMarkAction();
@@ -23,6 +27,9 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA{
 	private ShowIGBTrackMarkAction() {
 		super(BUNDLE.getString("showIGBTrackMark"), null, null);
 		this.putValue(SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
+		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
+				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, PreferenceUtils.default_show_igb_track));
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -30,11 +37,24 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA{
 		super.actionPerformed(e);
 		boolean b = (Boolean)getValue(SELECTED_KEY);
 		TrackStyle.setShowIGBTrackMark(b);
-
+		ACTION.putValue(AbstractAction.SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
+		PreferenceUtils.getTopNode().putBoolean(
+				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, (Boolean)getValue(SELECTED_KEY));
 		for (TierLabelGlyph glyph : getTierManager().getAllTierLabels()) {
 			glyph.setShowIGBTrack(b);
 		}
 
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
+	}
+
+	public void preferenceChange(PreferenceChangeEvent pce) {
+		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
+          return;
+        }
+		if (pce.getKey().equals(PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION)) {
+			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
+				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, PreferenceUtils.default_show_igb_track));
+			TrackStyle.setShowIGBTrackMark((Boolean)(this.getValue(SELECTED_KEY)));
+        }
 	}
 }

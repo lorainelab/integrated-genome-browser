@@ -310,8 +310,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
 		expand.setEnabled(any_are_collapsed);
 		popup.add(expand);
-		JCheckBoxMenuItem lock = new JCheckBoxMenuItem(new LockTierHeightAction());
-		lock.setSelected(any_locked);
+		JCheckBoxMenuItem lock = new JCheckBoxMenuItem();
+		if(any_locked){
+			lock.setAction(UnlockTierHeightAction.getAction());
+			lock.setSelected(any_locked);
+			lock.setText(LockTierHeightAction.getAction().getDisplay());
+		}else{
+			lock.setAction(LockTierHeightAction.getAction());
+		}
 		lock.setEnabled(any_lockable);
 		if(!any_locked){
 			lock.setEnabled(!all_but_one_locked && any_lockable);

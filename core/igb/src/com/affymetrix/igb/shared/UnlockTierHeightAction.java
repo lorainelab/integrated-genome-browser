@@ -9,24 +9,24 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class LockTierHeightAction extends TierHeightAction{
+public class UnlockTierHeightAction extends TierHeightAction{
 	private static final long serialVersionUID = 1L;
-	private final static LockTierHeightAction lockTierAction = new LockTierHeightAction();
+	private final static UnlockTierHeightAction unlockTierAction = new UnlockTierHeightAction();
 	
-	public static LockTierHeightAction getAction(){
-		return lockTierAction;
+	public static UnlockTierHeightAction getAction(){
+		return unlockTierAction;
 	}
 	
 	static{
 		Selections.addRefreshSelectionListener(getAction().enabler);
 	}
 	
-	private LockTierHeightAction() {
-		super(BUNDLE.getString("lockTierHeightAction"),  null, null);
+	private UnlockTierHeightAction() {
+		super(BUNDLE.getString("unlockTierHeightAction"), null, null);
 	}
 
 	@Override
 	protected void setHeightFixed(DefaultTierGlyph dtg) {
-		dtg.setHeightFixed(true);
+		dtg.setHeightFixed(false);
 	}
 }

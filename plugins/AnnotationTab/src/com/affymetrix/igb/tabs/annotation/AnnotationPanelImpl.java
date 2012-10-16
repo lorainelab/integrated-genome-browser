@@ -157,6 +157,16 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	@Override
+	protected void lockTierHeightCheckBoxActionPerformedA(ActionEvent evt){
+		JCheckBox lockTierHeightCheckBox = getLockTierHeightCheckBox();
+		if(lockTierHeightCheckBox.isSelected()){
+			LockTierHeightAction.getAction().actionPerformed(evt);
+		}else{
+			UnlockTierHeightAction.getAction().actionPerformed(evt);
+		}
+	}
+	
+	@Override
 	protected void pxGoButtonActionPerformedA(ActionEvent evt) {
 		final JTextField pxTextField = this.getSetPxHeightTextBox();
 		if (igbService.getSeqMap() == null) {
@@ -329,7 +339,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	protected void lockTierHeightCheckBoxReset() {
 		JCheckBox lockTierHeightCheckBox = getLockTierHeightCheckBox();
 		if((!isAllButOneLocked() && isAnyLockable()) || isAnyLocked()){
-			lockTierHeightCheckBox.setAction(new LockTierHeightAction());
+			lockTierHeightCheckBox.setEnabled(true);
 			lockTierHeightCheckBox.setSelected(isAnyLocked());
 		}else{
 			lockTierHeightCheckBox.setEnabled(false);

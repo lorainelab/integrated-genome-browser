@@ -25,8 +25,8 @@ public class ShowAllAction extends RepackTiersAction {
 
 	private ShowAllAction() {
 		super(BUNDLE.getString("showAllAction"),
-				"16x16/status/weather-few-clouds.png",
-				"22x22/status/weather-few-clouds.png");
+				"16x16/actions/show_all.png",
+				"22x22/actions/show_all.png");
 		this.ordinal = -6008700;
 	}
 

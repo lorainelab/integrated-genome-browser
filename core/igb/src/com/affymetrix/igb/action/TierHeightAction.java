@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph.TierType;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -13,18 +12,7 @@ import static com.affymetrix.igb.shared.Selections.*;
  * @author hiralv
  */
 public abstract class TierHeightAction extends SeqMapViewActionA{
-	
-	protected Selections.RefreshSelectionListener enabler = new Selections.RefreshSelectionListener(){
-
-		@Override
-		public void selectionRefreshed() {
-			if((!isAllButOneLocked() && isAnyLockable())){
-				enableLock(isAnyLocked());
-			}
-		}
 		
-	};
-	
 	protected TierHeightAction(String name, String smallIcon, String largeIcon) {
 		super(name, smallIcon, largeIcon);
 	}
@@ -44,10 +32,6 @@ public abstract class TierHeightAction extends SeqMapViewActionA{
 		
 		getTierMap().repackTheTiers(true, true);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-	}
-	
-	protected void enableLock(boolean enableLock){
-		this.setEnabled(enableLock);
 	}
 	
 	protected abstract void setHeightFixed(DefaultTierGlyph dtg);

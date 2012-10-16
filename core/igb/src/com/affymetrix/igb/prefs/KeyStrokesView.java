@@ -16,6 +16,8 @@ import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.shared.LockTierHeightAction;
+import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -176,6 +178,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 		smallTimeActions.add(ShowTwoTiersAction.getAction());
 		smallTimeActions.add(FloatTiersAction.getAction());
 		smallTimeActions.add(UnFloatTiersAction.getAction());
+		smallTimeActions.add(LockTierHeightAction.getAction());
+		smallTimeActions.add(UnlockTierHeightAction.getAction());
 	}
 	/**
 	 * Build the underlying data array.

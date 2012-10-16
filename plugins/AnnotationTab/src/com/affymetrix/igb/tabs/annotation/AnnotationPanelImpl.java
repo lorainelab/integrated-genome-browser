@@ -338,9 +338,9 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	@Override
 	protected void lockTierHeightCheckBoxReset() {
 		JCheckBox lockTierHeightCheckBox = getLockTierHeightCheckBox();
+		lockTierHeightCheckBox.setSelected(isAnyLocked());
 		if((!isAllButOneLocked() && isAnyLockable()) || isAnyLocked()){
 			lockTierHeightCheckBox.setEnabled(true);
-			lockTierHeightCheckBox.setSelected(isAnyLocked());
 		}else{
 			lockTierHeightCheckBox.setEnabled(false);
 		}

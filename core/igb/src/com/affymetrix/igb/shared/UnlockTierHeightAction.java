@@ -1,9 +1,11 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.action.TierHeightAction;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static com.affymetrix.igb.shared.Selections.*;
 
 /**
  *
@@ -17,12 +19,26 @@ public class UnlockTierHeightAction extends TierHeightAction{
 		return unlockTierAction;
 	}
 	
+	protected Selections.RefreshSelectionListener enabler = new Selections.RefreshSelectionListener(){
+
+		@Override
+		public void selectionRefreshed() {
+			if(isAnyLocked()){
+				setEnabled(true);
+			}else{
+				setEnabled(false);
+			}
+		}
+		
+	};
+		
 	static{
-		Selections.addRefreshSelectionListener(getAction().enabler);
+		GenericActionHolder.getInstance().addGenericAction(unlockTierAction);
+		Selections.addRefreshSelectionListener(unlockTierAction.enabler);
 	}
 	
 	private UnlockTierHeightAction() {
-		super(BUNDLE.getString("unlockTierHeightAction"), null, null);
+		super(BUNDLE.getString("unlockTierHeightAction"), "16x16/actions/unlock_track.png", "22x22/actions/unlock_track.png");
 	}
 
 	@Override

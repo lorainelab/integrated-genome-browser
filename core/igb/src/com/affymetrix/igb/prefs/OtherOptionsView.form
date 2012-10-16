@@ -473,9 +473,9 @@
                   <Component id="edgeMatchLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="191" max="-2" attributes="0"/>
                   <Component id="showEdgeMatchCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="380" max="32767" attributes="0"/>
+                  <EmptySpace pref="201" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -484,7 +484,7 @@
               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                   <Component id="edgeMatchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="showEdgeMatchCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="showEdgeMatchCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

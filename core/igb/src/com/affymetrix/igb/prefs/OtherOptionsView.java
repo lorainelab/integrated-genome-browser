@@ -355,9 +355,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchLabel)
                 .add(10, 10, 10)
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(191, 191, 191)
                 .add(showEdgeMatchCheckBox)
-                .addContainerGap(380, Short.MAX_VALUE))
+                .addContainerGap(201, Short.MAX_VALUE))
         );
         edgeMatchPanelLayout.setVerticalGroup(
             edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

@@ -31,7 +31,6 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
 	boolean DEBUG_EVENTS = false;
 
-	boolean is_listening = true; // used to turn on and off listening to GUI events
 	protected final IGBService igbService;
 	
 	private final Map<String, Operator> name2transformation;
@@ -59,24 +58,8 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			}
 		});
 
-		getTransformationGoB().setAction(new TrackTransformAction(null) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected Operator getOperator() {
-				String selection = (String) getTransformationCB().getSelectedItem();
-				return name2transformation.get(selection);
-			}
-		});
 		getTransformationGoB().setText("Apply");
 
-		getOperationGoB().setAction(new TrackOperationAction(null) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected Operator getOperator() {
-				String selection = (String) getOperationCB().getSelectedItem();
-				return name2operation.get(selection);
-			}
-		});
 		getOperationGoB().setText("Apply");
 		
 		getTransformationParamLabel().setVisible(false);
@@ -124,6 +107,18 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		});
 	}
 
+	protected void transformationGoBActionPerformedA(java.awt.event.ActionEvent evt){
+		String selection = (String) getTransformationCB().getSelectedItem();
+		Operator operator = name2transformation.get(selection);
+		(new TrackTransformAction(operator)).actionPerformed(evt);
+	}
+
+	protected void operationGoBActionPerformedA(java.awt.event.ActionEvent evt){
+		String selection = (String) getOperationCB().getSelectedItem();
+		Operator operator = name2operation.get(selection);
+		(new TrackOperationAction(operator)).actionPerformed(evt);
+	}
+	
 	private void loadOperators(boolean enable) {
 		name2transformation.clear();
 		name2operation.clear();

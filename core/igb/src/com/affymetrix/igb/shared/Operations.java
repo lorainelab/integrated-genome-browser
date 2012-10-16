@@ -4,8 +4,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
-public class Operations extends javax.swing.JPanel {
-
+public abstract class Operations extends javax.swing.JPanel {
+	protected boolean is_listening = true; // used to turn on and off listening to GUI events
 	private static final long serialVersionUID = 1L;
 	
 	public Operations() {
@@ -38,6 +38,11 @@ public class Operations extends javax.swing.JPanel {
         setBorder(javax.swing.BorderFactory.createTitledBorder("Operations"));
 
         transformationGoB.setText("Apply");
+        transformationGoB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transformationGoBActionPerformed(evt);
+            }
+        });
 
         transformationParam.setEditable(false);
 
@@ -82,6 +87,11 @@ public class Operations extends javax.swing.JPanel {
         operationParam.setEditable(false);
 
         operationGoB.setText("Apply");
+        operationGoB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                operationGoBActionPerformed(evt);
+            }
+        });
 
         operationParamLabel.setText(null);
         operationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
@@ -157,6 +167,18 @@ public class Operations extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void transformationGoBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transformationGoBActionPerformed
+      if(is_listening){
+		  transformationGoBActionPerformedA(evt);
+	  }
+    }//GEN-LAST:event_transformationGoBActionPerformed
+
+    private void operationGoBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_operationGoBActionPerformed
+      if(is_listening){
+		  operationGoBActionPerformedA(evt);
+	  }
+    }//GEN-LAST:event_operationGoBActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btPanel;
     private javax.swing.JPanel mtPanel;
@@ -226,5 +248,9 @@ public class Operations extends javax.swing.JPanel {
 	public javax.swing.JLabel getSingleTrackLabel() {
 		return singleTrackLabel;
 	}
+
+	protected abstract void transformationGoBActionPerformedA(java.awt.event.ActionEvent evt);
+
+	protected abstract void operationGoBActionPerformedA(java.awt.event.ActionEvent evt);
 	
 }

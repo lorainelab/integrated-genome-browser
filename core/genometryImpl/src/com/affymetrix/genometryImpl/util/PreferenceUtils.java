@@ -81,6 +81,7 @@ public abstract class PreferenceUtils {
 	public static final boolean default_coverage_summary_heatmap = true;
 	public static final boolean default_show_edge_match = true;
 	public static final boolean default_show_igb_track = true;
+	public static final boolean default_show_collapse_option = true;
 	private static final String DEFAULT_PREFS_MODE = "igb";
 	private static final String SLASH_STANDIN = "%";
 	private static String prefs_mode = DEFAULT_PREFS_MODE;

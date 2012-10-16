@@ -3,16 +3,20 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import javax.swing.AbstractAction;
 /**
  *
  * @author hiralv
  */
-public class DrawCollapseControlAction extends GenericAction {
+public class DrawCollapseControlAction extends GenericAction implements PreferenceChangeListener{
 	private static final long serialVersionUID = 1L;
 	private static final DrawCollapseControlAction ACTION = new DrawCollapseControlAction();
 
@@ -27,6 +31,9 @@ public class DrawCollapseControlAction extends GenericAction {
 	private DrawCollapseControlAction() {
 		super(BUNDLE.getString("drawCollapseControl"), null, null);
 		this.putValue(SELECTED_KEY, TrackStyle.getDrawCollapseState());
+		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
+				PreferenceUtils.SHOW_COLLAPSE_OPTION, PreferenceUtils.default_show_collapse_option));
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
 	
 	@Override
@@ -35,10 +42,25 @@ public class DrawCollapseControlAction extends GenericAction {
 		boolean b = (Boolean)getValue(SELECTED_KEY);
 		TrackStyle.setDrawCollapseControl(b);
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
+		ACTION.putValue(AbstractAction.SELECTED_KEY, TrackStyle.getDrawCollapseState());
+		PreferenceUtils.getTopNode().putBoolean(
+				PreferenceUtils.SHOW_COLLAPSE_OPTION, (Boolean)getValue(SELECTED_KEY));
 	}
 
 	@Override
 	public boolean isToggle() {
 		return true;
+	}
+
+	public void preferenceChange(PreferenceChangeEvent pce) {
+		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
+          return;
+        }
+		if (pce.getKey().equals(PreferenceUtils.SHOW_COLLAPSE_OPTION)) {
+			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
+				PreferenceUtils.SHOW_COLLAPSE_OPTION, PreferenceUtils.default_show_collapse_option));
+			TrackStyle.setDrawCollapseControl((Boolean)(this.getValue(SELECTED_KEY)));
+			((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
+        }
 	}
 }

@@ -55,6 +55,10 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements Prefere
 			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, PreferenceUtils.default_show_igb_track));
 			TrackStyle.setShowIGBTrackMark((Boolean)(this.getValue(SELECTED_KEY)));
+			for (TierLabelGlyph glyph : getTierManager().getAllTierLabels()) {
+				glyph.setShowIGBTrack((Boolean)(this.getValue(SELECTED_KEY)));
+			}
+			((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
         }
 	}
 }

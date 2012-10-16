@@ -14,7 +14,8 @@ public class ClearVisualTools extends GenericAction{
 		ToggleHairlineLabelAction.getAction(),
 		DrawCollapseControlAction.getAction(),
 		ShowIGBTrackMarkAction.getAction(),
-		ShowLockedTrackIconAction.getAction()
+		ShowLockedTrackIconAction.getAction(),
+		ToggleEdgeMatchingAction.getAction()
 	};
 	
 	private static ClearVisualTools ACTION = new ClearVisualTools();

@@ -52,6 +52,8 @@ extends GenericAction implements SymSelectionListener {
 		annotationList.add(BedParser.class);
 		annotationWriters.put(FileTypeCategory.Annotation, annotationList);
 		
+		annotationWriters.put(FileTypeCategory.Alignment, annotationList);
+				
 		List<Class<? extends AnnotationWriter>> graphList = new ArrayList<Class<? extends AnnotationWriter>>();
 		graphList.add(BedGraph.class);
 		annotationWriters.put(FileTypeCategory.Graph, graphList);

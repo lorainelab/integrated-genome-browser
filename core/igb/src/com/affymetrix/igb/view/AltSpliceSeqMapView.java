@@ -50,6 +50,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		}
 		report_hairline_position_in_status_bar = false;
 		report_status_in_status_bar = false;
+		setEdgeMatching(false);
 		IGB.getSingleton().getMapView().addToRefreshList(this);
 	}
 

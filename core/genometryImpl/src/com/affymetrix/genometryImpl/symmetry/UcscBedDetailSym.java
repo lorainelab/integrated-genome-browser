@@ -46,7 +46,7 @@ public class UcscBedDetailSym extends UcscBedSym {
 	}
 
 	public void outputBedDetailFormat(DataOutputStream out) throws IOException {
-		outputBedDetailFormat(out);
+		outputBedFormat(out);
 		out.write('\t');
 		out.write(geneName.getBytes());
 		out.write('\t');

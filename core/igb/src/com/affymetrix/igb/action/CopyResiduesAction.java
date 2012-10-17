@@ -60,7 +60,7 @@ public class CopyResiduesAction extends GenericAction {
 		if(sv == null) {
 			copySelectedResidues(false);  // Call from sequence viewer
 		} else{
-			sv.copyAction();
+			sv.copyAction(false);
 		}
 	}
 	

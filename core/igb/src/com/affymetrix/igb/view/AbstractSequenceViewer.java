@@ -634,14 +634,20 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 	/* EVENT HANDLING */
 	/** ActionListener Implementation */
-	public void copyAction() {
-		String selectedSeq = seqview.getSelectedResidues().trim();
-		if (seqview.getShow(NeoSeq.COMPLEMENT)) {
-			selectedSeq = DNAUtils.complement(selectedSeq);
-		}
-		if (selectedSeq != null) {
+	public void copyAction(boolean wholeSequence) {
+		
+		String seqToBeCopied = seqview.getSelectedResidues().trim();
+		
+		if(wholeSequence) {
+			seqToBeCopied = seqview.getResidues().trim();
+		} 
+//	    else if (seqview.getShow(NeoSeq.COMPLEMENT)) {
+//			seqToBeCopied = DNAUtils.complement(seqToBeCopied);
+//		}
+		
+		if (seqToBeCopied != null) {
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			StringBuffer hackbuf = new StringBuffer(selectedSeq);
+			StringBuffer hackbuf = new StringBuffer(seqToBeCopied);
 			String hackstr = new String(hackbuf);
 			StringSelection data = new StringSelection(hackstr);
 			clipboard.setContents(data, null);
@@ -652,27 +658,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		}
 	}
 
-	/*
-	 * Copy the whole original whole sequence in viewer
-	 */
-	public void copyWholeSeqAction() {
-		String sequence = seqview.getResidues().trim();
-		if(toggle_Reverse_Complement) {
-			sequence = DNAUtils.reverseComplement(sequence);
-		}
-		if (sequence != null) {
-			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			StringBuffer hackbuf = new StringBuffer(sequence);
-			String hackstr = new String(hackbuf);
-			StringSelection data = new StringSelection(hackstr);
-			clipboard.setContents(data, null);
-		} else {
-			ErrorHandler.errorPanel("Missing Sequence Residues",
-					"Don't have all the needed residues, can't copy to clipboard.\n"
-					+ "Please load sequence residues for this region.", Level.WARNING);
-		}
-	}
-	
 	public void copyTransAction(int frametype){
 		String residues = seqview.getResidues().trim();
 		if(residues == null)

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -9,6 +10,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author hiralv
  */
 public class ClearVisualTools extends GenericAction{
+	private static final long serialVersionUID = 1l;
 	private static GenericAction[] actions = {
 		ToggleHairlineAction.getAction(),
 		ToggleHairlineLabelAction.getAction(),
@@ -20,6 +22,9 @@ public class ClearVisualTools extends GenericAction{
 	
 	private static ClearVisualTools ACTION = new ClearVisualTools();
 	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	public static ClearVisualTools getAction(){
 		return ACTION;
 	}

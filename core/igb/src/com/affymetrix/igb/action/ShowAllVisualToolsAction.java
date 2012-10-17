@@ -25,7 +25,7 @@ public class ShowAllVisualToolsAction extends GenericAction{
 	}
 
 	private ShowAllVisualToolsAction(){
-		super(BUNDLE.getString("showAllVisualTools"), null, null);
+		super(BUNDLE.getString("showAllVisualTools"), "16x16/actions/show_visual_tools.png", "22x22/actions/show_visual_tools.png");
 	}
 	
 	@Override

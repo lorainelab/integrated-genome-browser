@@ -25,7 +25,7 @@ public class ClearVisualTools extends GenericAction{
 	}
 
 	private ClearVisualTools(){
-		super(BUNDLE.getString("clearVisualTools"), null, null);
+		super(BUNDLE.getString("clearVisualTools"), "16x16/actions/hide_visual_tools.png", "22x22/actions/hide_visual_tools.png");
 	}
 	
 	@Override

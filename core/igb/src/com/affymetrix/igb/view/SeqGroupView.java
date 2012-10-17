@@ -566,7 +566,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
 	}
 
-	public void genericServerInit(GenericServerInitEvent evt) {
+	public synchronized void genericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer) evt.getSource();
 
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {

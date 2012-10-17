@@ -46,7 +46,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private boolean isIGBTrack;
 	private final TierGlyph reference_tier;
 	private boolean isLoading;
-
+	
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + getCoordBox());
@@ -151,13 +151,12 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Color fgcolor = trackStyle.getLabelForeground();
 		Color bgcolor = trackStyle.getBackground();
 
-		final Graphics g = view.getGraphics();
+		final Graphics2D g = view.getGraphics();
 		g.setPaintMode();
 
 		//bgcolor = trackStyle.getLabelBackground();
 		Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
-		g.setFont(newfnt);
-
+		
 		final Rectangle pixelbox = new Rectangle();
 		view.transformToPixels(getCoordBox(), pixelbox);
 
@@ -184,6 +183,8 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			g.setColor(fgcolor);
 		}
 
+		g.setFont(newfnt);
+		
 		drawLabel(g, view.getPixelBox(), pixelbox);
 		if (isLoading) {
 			drawLoading(g, pixelbox);
@@ -201,6 +202,35 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 		super.draw(view);
 	}
+	
+	int[] mark_x = new int[4];
+	int[] mark_y = new int[4];
+	/*
+	 * Draw a badge for igb track.
+	 */
+	private void drawIGBBadge(Graphics2D g, Rectangle pixelbox) {
+		
+		mark_x[0] = pixelbox.x + 3;
+		mark_x[1] = pixelbox.x + 3;
+		mark_x[2] = pixelbox.x + 15;
+		mark_x[3] = pixelbox.x + 30;
+		
+		mark_y[0] = pixelbox.y + 30;
+		mark_y[1] = pixelbox.y + 15;
+		mark_y[2] = pixelbox.y + 3;
+		mark_y[3] = pixelbox.y + 3;
+		g.fillPolygon(mark_x, mark_y, 4);
+		
+		g.setColor(Color.BLACK);
+		Font fnt = g.getFont().deriveFont(Font.BOLD, 10.0f);
+		g.setFont(fnt);
+		g.rotate(-45, pixelbox.x, pixelbox.y);
+		g.drawString("IGB", pixelbox.x-15, pixelbox.y+20);
+		g.rotate(45, pixelbox.x, pixelbox.y);
+		
+		
+	}
+	
 	private int textPixelHeight;
 	private double textCoordHeight;
 

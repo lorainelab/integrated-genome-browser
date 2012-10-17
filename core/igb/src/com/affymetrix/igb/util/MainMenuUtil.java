@@ -67,7 +67,6 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_printFrame", PrintFrameAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportImage", ExportImageAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportFile", ExportFileAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportSelectedAnnotationFile", ExportSelectedAnnotationFileAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_closeTracks", CloseTracksAction.getAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_preferences", PreferencesAction.getAction()));

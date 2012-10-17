@@ -83,17 +83,17 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
 
-		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(60);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(60);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(60);
 		
-	    table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(82);
+	    table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(60);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(60);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(60);
 		
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(60);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(60);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(60);
 	}
 
 	public void initCommonComponents() {

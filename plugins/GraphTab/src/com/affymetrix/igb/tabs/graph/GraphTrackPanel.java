@@ -26,7 +26,7 @@ public class GraphTrackPanel extends TrackViewPanel {
 
 	@Override
 	protected void customButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-		ThresholdingAction.createThresholdingAction(igbService).actionPerformed(evt);
+		ThresholdingAction.getAction().actionPerformed(evt);
 	}
 	
 	@Override

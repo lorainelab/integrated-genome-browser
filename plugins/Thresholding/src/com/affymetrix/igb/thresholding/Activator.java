@@ -20,12 +20,12 @@ public class Activator implements BundleActivator {
 	private SelectionListener selectionListener;
 
 	private void registerServices(IGBService igbService) {
-		ThresholdingAction thresholdingAction = new ThresholdingAction(igbService);
-		thresholdingActionRegistration = bundleContext.registerService(GenericAction.class, thresholdingAction, null);
-		JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding", thresholdingAction);
+		ThresholdingAction.createAction(igbService);
+		thresholdingActionRegistration = bundleContext.registerService(GenericAction.class, ThresholdingAction.getAction(), null);
+		JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding",  ThresholdingAction.getAction());
 		MenuUtil.addToMenu(igbService.getMenu("tools"), thresholdingMenuItem);
 		thresholdingMenuItem.setEnabled(false);
-		selectionListener = new SelectionListener(thresholdingAction, thresholdingMenuItem);
+		selectionListener = new SelectionListener(thresholdingMenuItem);
 		Selections.addRefreshSelectionListener(selectionListener);
 	}
 

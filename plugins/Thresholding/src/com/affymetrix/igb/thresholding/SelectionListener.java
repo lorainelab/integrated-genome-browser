@@ -5,12 +5,10 @@ import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 import static com.affymetrix.igb.shared.Selections.*;
 
 public class SelectionListener implements RefreshSelectionListener{
-	private final ThresholdingAction thresholdingAction;
 	private final JRPMenuItem thresholdingMenuItem;
 	
-	public SelectionListener(ThresholdingAction thresholdingAction, JRPMenuItem thresholdingMenuItem) {
+	public SelectionListener(JRPMenuItem thresholdingMenuItem) {
 		super();
-		this.thresholdingAction = thresholdingAction;
 		this.thresholdingMenuItem = thresholdingMenuItem;
 	}
 
@@ -20,7 +18,7 @@ public class SelectionListener implements RefreshSelectionListener{
 	}
 	
 	private void resetSelectedGraphGlyphs() {	
-		thresholdingAction.setGraphs(graphGlyphs);
+		 ThresholdingAction.getAction().setGraphs(graphGlyphs);
 		thresholdingMenuItem.setEnabled(!graphGlyphs.isEmpty());
 	}
 	

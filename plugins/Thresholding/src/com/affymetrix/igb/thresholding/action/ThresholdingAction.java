@@ -16,12 +16,17 @@ public class ThresholdingAction extends GenericAction {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("thresholding");
 //	private final IGBService igbService;
 	private GraphScoreThreshSetter score_thresh_adjuster;
-
-	public static ThresholdingAction createThresholdingAction(IGBService igbService) {
-		return new ThresholdingAction(igbService);
+	private static ThresholdingAction ACTION;
+	
+	public static void createAction(IGBService igbService) {
+		ACTION = new ThresholdingAction(igbService);
 	}
 
-	public ThresholdingAction(IGBService igbService) {
+	public static ThresholdingAction getAction(){
+		return ACTION;
+	}
+	
+	private ThresholdingAction(IGBService igbService) {
 		super(BUNDLE.getString("thresholding"), null, null, null, KeyEvent.VK_UNDEFINED, null, true);
 //		this.igbService = igbService;
 		score_thresh_adjuster = new GraphScoreThreshSetter(igbService);

@@ -53,7 +53,8 @@ public class BedDetailWriter extends BedParser implements AnnotationWriter{
 		if (sym instanceof UcscBedDetailSym) {
 			UcscBedDetailSym bedsym = (UcscBedDetailSym) sym;
 			if (seq == bedsym.getBioSeq()) {
-				bedsym.outputBedFormat(out);
+				bedsym.outputBedDetailFormat(out);
+				out.write('\n');
 			}
 			return;
 		}

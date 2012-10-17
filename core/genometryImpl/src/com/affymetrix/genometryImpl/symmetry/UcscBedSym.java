@@ -321,13 +321,10 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 							out.write(Integer.toString(blockMins[i]-txMin).getBytes());
 							out.write(',');
 						}
-						outputAdditional(out);
 					}
 				}
 			}
 		}
-		out.write('\n');
-
 	}
 
 	public int[] getBlockMins() {
@@ -337,8 +334,6 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 	public int[] getBlockMaxs() {
 		return blockMaxs;
 	}
-
-	protected void outputAdditional(DataOutputStream out) throws IOException  {}
 
 	@Override
 	public String toString() {

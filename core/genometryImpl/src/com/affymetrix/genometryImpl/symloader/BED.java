@@ -556,10 +556,20 @@ public class BED extends SymLoader implements LineProcessor {
 			return;
 		}
 
+		if (sym instanceof UcscBedDetailSym) {
+			UcscBedDetailSym bedsym = (UcscBedDetailSym) sym;
+			if (seq == bedsym.getBioSeq()) {
+				bedsym.outputBedDetailFormat(out);
+				out.write('\n');
+			}
+			return;
+		}
+		
 		if (sym instanceof UcscBedSym) {
 			UcscBedSym bedsym = (UcscBedSym) sym;
 			if (seq == bedsym.getBioSeq()) {
 				bedsym.outputBedFormat(out);
+				out.write('\n');
 			}
 			return;
 		}

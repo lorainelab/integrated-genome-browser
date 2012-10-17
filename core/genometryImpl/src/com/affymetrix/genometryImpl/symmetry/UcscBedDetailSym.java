@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import java.io.ByteArrayOutputStream;
 
 public class UcscBedDetailSym extends UcscBedSym {
 	private final String geneName;
@@ -44,10 +45,23 @@ public class UcscBedDetailSym extends UcscBedSym {
 		else return super.getProperty(key);
 	}
 
-	protected void outputAdditional(DataOutputStream out) throws IOException  {
+	public void outputBedDetailFormat(DataOutputStream out) throws IOException {
+		outputBedDetailFormat(out);
 		out.write('\t');
 		out.write(geneName.getBytes());
 		out.write('\t');
 		out.write(description.getBytes());
+	}
+	
+	@Override
+	public String toString() {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			outputBedDetailFormat(new DataOutputStream(baos));
+		}
+		catch (IOException x) {
+			return x.getMessage();
+		}
+		return baos.toString();
 	}
 }

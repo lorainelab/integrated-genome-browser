@@ -444,6 +444,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			UcscBedSym bedsym = (UcscBedSym) sym;
 			if (seq == bedsym.getBioSeq()) {
 				bedsym.outputBedFormat(out);
+				out.write('\n');
 			}
 			return;
 		}

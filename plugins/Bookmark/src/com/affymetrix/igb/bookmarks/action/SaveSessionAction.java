@@ -21,7 +21,17 @@ public class SaveSessionAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private IGBService igbService;
 	
-	public SaveSessionAction(IGBService igbService) {
+	private static SaveSessionAction ACTION;
+	
+	public static void createAction(IGBService igbService){
+		ACTION = new SaveSessionAction(igbService);
+	}
+	
+	public static SaveSessionAction getAction(){
+		return ACTION;
+	}
+	
+	private SaveSessionAction(IGBService igbService) {
 		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null,
 				"16x16/actions/save_session.png", "22x22/actions/save_session.png",
 				KeyEvent.VK_S, null, true);

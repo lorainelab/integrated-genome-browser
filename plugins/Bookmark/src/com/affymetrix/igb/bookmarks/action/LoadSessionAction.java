@@ -20,8 +20,17 @@ public class LoadSessionAction extends GenericAction {
 
 	private static final long serialVersionUID = 1l;
 	private IGBService igbService;
-
-	public LoadSessionAction(IGBService igbService) {
+	private static LoadSessionAction ACTION;
+	
+	public static void createAction(IGBService igbService){
+		ACTION = new LoadSessionAction(igbService);
+	}
+	
+	public static LoadSessionAction getAction(){
+		return ACTION;
+	}
+	
+	private LoadSessionAction(IGBService igbService) {
 		super(BookmarkManagerView.BUNDLE.getString("loadSession"), null,
 				"16x16/actions/load_session.png", "22x22/actions/load_session.png",
 				KeyEvent.VK_L, null, true);

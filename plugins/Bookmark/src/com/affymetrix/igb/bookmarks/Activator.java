@@ -1,6 +1,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -20,15 +21,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 public class Activator extends WindowActivator implements BundleActivator {
 	private BookmarkActionManager bmark_action;
+	private ServiceRegistration<GenericAction> saveSessionActionRegistration, loadSessionActionRegistration;
 	private static final Logger ourLogger
 		  = Logger.getLogger(Activator.class.getPackage().getName());
 
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
+		
+		SaveSessionAction.createAction(igbService);
+		LoadSessionAction.createAction(igbService);
+		
+		saveSessionActionRegistration = getContext().registerService(GenericAction.class, SaveSessionAction.getAction(), null);
+		loadSessionActionRegistration = getContext().registerService(GenericAction.class, LoadSessionAction.getAction(), null);
+		
+		//GenericActionHolder.getInstance().addGenericAction(saveSessionAction);
+		//GenericActionHolder.getInstance().addGenericAction(loadSessionAction);
+		
 		// Need to let the QuickLoad system get started-up before starting
 		//   the control server that listens to ping requests?
 		// Therefore start listening for http requests only after all set-up is done.
@@ -55,8 +68,8 @@ public class Activator extends WindowActivator implements BundleActivator {
 		JRPMenu file_menu = igbService.getMenu("file");
 		int index = file_menu.getItemCount() - 1;
 		file_menu.insertSeparator(index);
-		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_saveSession", new SaveSessionAction(igbService)), index);
-		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_loadSession", new LoadSessionAction(igbService)), index);
+		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_saveSession", SaveSessionAction.getAction()), index);
+		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_loadSession", LoadSessionAction.getAction()), index);
 
 		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
@@ -123,5 +136,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		if (bmark_action != null) {
 			bmark_action.autoSaveBookmarks();
 		}
+		saveSessionActionRegistration.unregister();
+		loadSessionActionRegistration.unregister();
 	}
 }

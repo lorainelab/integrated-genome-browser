@@ -4,11 +4,9 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import java.awt.event.ActionEvent;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.CodonGlyph;
-import javax.swing.event.MouseInputAdapter;
 
 /**
  */
@@ -20,11 +18,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
 	private static final ShowCodonGlyphAction HIDE_CODON_GLYPH = new ShowCodonGlyphAction("hide", 0);
 	
 	final private int size;
-	
-	static{
-		GenericActionHolder.getInstance().addGenericAction(SHOW_CODON_GLYPH_ACTION_ONE_LETTER);
-	}
-	
+		
 	public static ShowCodonGlyphAction getThreeLetterAction() {
 		return SHOW_CODON_GLYPH_ACTION_THREE_LETTER;
 	}

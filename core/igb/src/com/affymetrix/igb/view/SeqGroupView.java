@@ -566,7 +566,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
 	}
 
-	public synchronized void genericServerInit(GenericServerInitEvent evt) {
+	public void genericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer) evt.getSource();
 
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
@@ -586,7 +586,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 
 		String speciesName = (String) this.speciesCB.getSelectedItem();
-		refreshSpeciesCB();
+		synchronized(this){
+			refreshSpeciesCB();
+		}
 
 		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
 			lookForPersistentGenome = false;

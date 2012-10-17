@@ -216,7 +216,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			currentStyles.addAll(styles);
 		}
 
-		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyles.size());
+		Set<TrackStyle> customizables = new HashSet<TrackStyle>(currentStyles.size());
 		for (int i = 0; i < currentStyles.size(); i++) {
 			TrackStyle the_style = currentStyles.get(i);
 			if (the_style.getCustomizable()) {
@@ -685,11 +685,12 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		private int tempInt;
 
 		TierPrefsTableModel() {
-			this.tier_styles = Collections.<TrackStyle>emptyList();
+			this.tier_styles = new ArrayList<TrackStyle>();
 		}
 
-		public void setStyles(List<TrackStyle> tier_styles) {
-			this.tier_styles = tier_styles;
+		public void setStyles(Collection<TrackStyle> tier_styles) {
+			this.tier_styles.clear();
+			this.tier_styles.addAll(tier_styles);
 		}
 
 		public List<TrackStyle> getStyles() {

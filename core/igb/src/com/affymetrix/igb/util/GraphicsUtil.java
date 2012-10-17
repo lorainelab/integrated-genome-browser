@@ -4,7 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.ImageCapabilities;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
 /**
@@ -22,7 +24,7 @@ public class GraphicsUtil {
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
 		GraphicsConfiguration graphicConfiguration = screenDevice.getDefaultConfiguration();
-		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height);
+		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
 
 		return image;
 	}
@@ -40,8 +42,8 @@ public class GraphicsUtil {
 		int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
 		BufferedImage resizedImage = new BufferedImage(width, height, type);
 		Graphics2D g = resizedImage.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+//				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.drawImage(image, 0, 0, width, height, null);
 		g.dispose();
 

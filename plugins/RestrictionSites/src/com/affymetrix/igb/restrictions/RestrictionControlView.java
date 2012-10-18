@@ -145,6 +145,7 @@ public final class RestrictionControlView extends IGBTabPanel
 		return TabState.COMPONENT_STATE_RIGHT_TAB;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void valueChanged(ListSelectionEvent evt) {
 		Object src = evt.getSource();
 		if (src == siteList) {

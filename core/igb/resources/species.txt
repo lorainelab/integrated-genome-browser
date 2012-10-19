@@ -17,8 +17,8 @@ Caenorhabditis elegans	C. elegans (nematode)	C_elegans	ce	Caenorhabditis_elegans
 Caenorhabditis japonica	C. japonica (nematode)	C_japonica	caeJap
 Caenorhabditis remanei	C. remanei (nematode)	C_remanei	caeRem
 Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
-Candida albicans SC	Yeast (Human Flora)	C_albicans_SC
-Candida albicans WO	Yeast (Human Flora)	C_albicans_WO
+Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC
+Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
 Capsella rubella	Red shepherd's purse	C_rubella
 Carica papaya	Papaya	C_papaya

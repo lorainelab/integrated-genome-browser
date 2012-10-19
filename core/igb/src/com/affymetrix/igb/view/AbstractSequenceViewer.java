@@ -588,8 +588,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySeq", copySeqAction));
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySelectedSeq", copySelectedSeqAction));
 //		editMenu.add(copyToClipMenu);
-		editMenu.add(copySelectedTransAction);
 		editMenu.add(copyAnnotAction);
+		editMenu.add(copySelectedTransAction);
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);

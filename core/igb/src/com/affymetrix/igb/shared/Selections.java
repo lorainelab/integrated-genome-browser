@@ -104,6 +104,7 @@ public abstract class Selections {
 				graphStyles.add(gg.getGraphState().getTierStyle());
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
+				allGlyphs.add(gg);
 				rootSyms.add((RootSeqSymmetry)gg.getInfo());
 			}
 		}

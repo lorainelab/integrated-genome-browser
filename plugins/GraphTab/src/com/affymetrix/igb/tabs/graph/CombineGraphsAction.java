@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 import static com.affymetrix.igb.shared.Selections.*;
@@ -72,6 +73,19 @@ public class CombineGraphsAction extends GenericAction {
 			}
 		}
 		combo_style.setHeight(height);
+		updateDisplay();
+	}
+	
+	private void updateDisplay() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+	
+			public void run() {
+//				igbService.getSeqMap().updateWidget();
+//				igbService.getSeqMapView().setTierStyles();
+//				igbService.getSeqMapView().repackTheTiers(true, true);
+				igbService.getSeqMapView().updatePanel(true, true);
+			}
+		});
 	}
 	
 	private static ITrackStyleExtended createComboStyle(IGBService igbService, Map<Color, Integer> colorMap) {

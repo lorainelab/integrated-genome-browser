@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 
@@ -38,6 +39,18 @@ public class SplitGraphsAction extends GenericAction {
 			gstate.getTierStyle().setFloatTier(false); // for simplicity
 
 		}
-		igbService.getSeqMapView().postSelections();
+		//igbService.getSeqMapView().postSelections();
+		updateDisplay();
+	}
+	private void updateDisplay() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+	
+			public void run() {
+//				igbService.getSeqMap().updateWidget();
+//				igbService.getSeqMapView().setTierStyles();
+//				igbService.getSeqMapView().repackTheTiers(true, true);
+				igbService.getSeqMapView().updatePanel(true, true);
+			}
+		});
 	}
 }

@@ -285,8 +285,8 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			
 			// First see if the user is collaborator on 
 			// any annotations of the annotation grouping
-			for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-			  for (Iterator i = a.getCollaborators().iterator(); i.hasNext();) {
+			for(Object a : ag.getAnnotationGroupings()) {
+			  for (Iterator i = ((Annotation)a).getCollaborators().iterator(); i.hasNext();) {
 	        User collaborator = (User)i.next();
 	        if (user.getIdUser().equals(collaborator.getIdUser())) {
 	          canRead = true;
@@ -303,8 +303,8 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
         } else if (ag.hasVisibility(Visibility.MEMBERS)) {
           // Annotation groups for Annotations with Members visibility can be 
           // read by members or managers of the annotation's security group.  
-          for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-            if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
+          for(Object a : ag.getAnnotationGroupings()) {
+            if (this.isMember(((Annotation)a).getIdUserGroup()) || this.isManager(((Annotation)a).getIdUserGroup())) {
               canRead = true;
               break;
             }         
@@ -313,8 +313,8 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
           // Annotation groups for Annotations with Members & Collaborators 
           // visibility can be read by members, collaborators, or managers 
           // of the annotation's security group.        
-          for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-            if (this.belongsToGroup(a.getIdUserGroup())) {
+          for(Object a : ag.getAnnotationGroupings()) {
+            if (this.belongsToGroup(((Annotation)a).getIdUserGroup())) {
               canRead = true;
               break;
             }
@@ -323,8 +323,8 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
           // Annotation groups for Annotations with Institution
           // visibility can be read by users belonging to
           // the annotation's institute        
-          for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-            if (this.belongsToInstitute(a.getIdInstitute())) {
+          for(Object a : ag.getAnnotationGroupings()) {
+            if (this.belongsToInstitute(((Annotation)a).getIdInstitute())) {
               canRead = true;
               break;
             }

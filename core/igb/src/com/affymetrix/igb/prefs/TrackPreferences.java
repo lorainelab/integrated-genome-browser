@@ -109,7 +109,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		labelColorComboBox = new ColorComboBox();
 		labelFieldComboBox = new JComboBox();
 		maxDepthTextField = new JRPTextField(this.getClass().getCanonicalName() + "_maxDepth");
-		((AbstractDocument)maxDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());
+		((AbstractDocument)maxDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
 		applyButton = new JRPButton(this.getClass().getCanonicalName() + "_applyButton");
 		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_show2TracksCheckBox");
 		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_collapsedCheckBox");

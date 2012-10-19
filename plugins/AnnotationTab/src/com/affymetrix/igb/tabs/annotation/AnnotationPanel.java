@@ -39,14 +39,14 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         stackHeightPanel = new javax.swing.JPanel();
         stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
-        ((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());
+        ((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         stackDepthGoButton = new javax.swing.JButton();
         stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.getAction());
         trackHeightPanel = new javax.swing.JPanel();
         lockTierHeightCheckBox = new javax.swing.JCheckBox();
         setHeightInPxLabel = new javax.swing.JLabel();
         setPxHeightTextBox = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_tierHeight");
-        ((javax.swing.text.AbstractDocument)setPxHeightTextBox.getDocument()).setDocumentFilter(new NumericFilter());
+        ((javax.swing.text.AbstractDocument)setPxHeightTextBox.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         pxGoButton = new javax.swing.JButton();
 
         annotationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Labels and Strand"));

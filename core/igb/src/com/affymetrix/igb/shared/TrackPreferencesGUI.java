@@ -114,7 +114,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         annotationsPanel = new javax.swing.JPanel();
         stackDepthLabel = new javax.swing.JLabel();
         stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
-        ((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());
+        ((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         labelFieldLabel = new javax.swing.JLabel();
         labelFieldComboBox = new javax.swing.JComboBox();
         strands2TracksCheckBox = new javax.swing.JCheckBox();
@@ -393,7 +393,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelColorLabel)
                     .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 10, Short.MAX_VALUE)
                 .add(stylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(labelSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(labelSizeLabel))

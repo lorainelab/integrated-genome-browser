@@ -146,10 +146,10 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		min_perT = new JRPTextField("GraphVisibleBoundsSetter_min_perT", max_chars);
 		max_perT = new JRPTextField("GraphVisibleBoundsSetter_max_perT", max_chars);
 
-		((AbstractDocument)min_valT.getDocument()).setDocumentFilter(new NumericFilter());
-		((AbstractDocument)max_valT.getDocument()).setDocumentFilter(new NumericFilter());
-		((AbstractDocument)min_perT.getDocument()).setDocumentFilter(new NumericFilter());
-		((AbstractDocument)max_perT.getDocument()).setDocumentFilter(new NumericFilter());
+		((AbstractDocument)min_valT.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+		((AbstractDocument)max_valT.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+		((AbstractDocument)min_perT.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+		((AbstractDocument)max_perT.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 		
 		min_perT.setText(per_format.format(prev_min_per));
 		max_perT.setText(per_format.format(prev_max_per));

@@ -371,7 +371,7 @@
                       <Component id="labelColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labelColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="10" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="labelSizeComboBox" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
                       <Component id="labelSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -604,7 +604,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.genoviz.swing.recordplayback.JRPTextField(&quot;trackPreference_maxDepth&quot;)"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter());"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">

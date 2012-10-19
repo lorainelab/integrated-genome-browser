@@ -71,7 +71,7 @@ public class AltSpliceView extends IGBTabPanel
 		spliced_view.subselectSequence = false;
 		orf_analyzer = new OrfAnalyzer(spliced_view);
 		buffer_sizeTF = new JRPTextField("AltSpliceView_buffer_size", 4);
-		((AbstractDocument)buffer_sizeTF.getDocument()).setDocumentFilter(new NumericFilter());
+		((AbstractDocument)buffer_sizeTF.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
 		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());
 		slice_by_selectionCB = new JRPCheckBox("AltSpliceView_slice_by_selectionCB", "Slice By Selection", true);
 

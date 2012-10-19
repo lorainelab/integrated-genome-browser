@@ -21,6 +21,8 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genoviz.datamodel.NASequence;
+import com.affymetrix.genoviz.datamodel.Translatable;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -85,6 +87,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	Color[] okayColors = {Color.black, Color.black};
 	Color[] reverted = {Color.white, Color.white};
 	private String id;
+	int[] selectedFrames = new int[6];
 /* default constructor to get the singleton object of SeqMapView
  * This is required to get the symmetry of the selected glyphs and genomic sequence in IGB
  */
@@ -562,11 +565,14 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation");
 	CopyResiduesAction copySelectedSeqAction = new CopyResiduesAction(BUNDLE.getString("copySelectedSequence"), this);
 	CopySequenceAction copySeqAction = new CopySequenceAction(BUNDLE.getString("copySequence"), this);
+	
+	CopySelectedTransFromSeqViewerAction copySelectedTransAction = new CopySelectedTransFromSeqViewerAction(this, selectedFrames);
 
 	public JFrame setupMenus(JFrame dock) {
 
 		copySelectedSeqAction.setEnabled(false);
 		copyAnnotAction.setEnabled(false);
+		copySelectedTransAction.setEnabled(false);
 		copyToClipMenu.add(copyTransp1MenuItem);
 		copyToClipMenu.add(copyTransp2MenuItem);
 		copyToClipMenu.add(copyTransp3MenuItem);
@@ -581,7 +587,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySeq", copySeqAction));
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySelectedSeq", copySelectedSeqAction));
-		editMenu.add(copyToClipMenu);
+//		editMenu.add(copyToClipMenu);
+		editMenu.add(copySelectedTransAction);
 		editMenu.add(copyAnnotAction);
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
@@ -657,7 +664,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 					+ "Please load sequence residues for this region.", Level.WARNING);
 		}
 	}
-
+	
 	public void copyTransAction(int frametype){
 		String residues = seqview.getResidues().trim();
 		if(residues == null)
@@ -676,6 +683,33 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		}
 	}
 	
+	public void copySelectedTransAction(int[] frameArray) {
+		int frameType;
+		StringBuffer selectedTrans = new StringBuffer();
+		
+		for(int i =0; i< frameArray.length; i++) {
+			frameType = frameArray[i];
+			if(frameType < Translatable.FRAME_ONE)
+				continue;
+			selectedTrans.append(">Frame " + BUNDLE.getString("copyTranslation"+frameType+"ToClipBoard").substring(0, 2) + "\n");
+			selectedTrans.append(getSelectedResidues(frameType).trim().replaceAll("\\s", "") + "\n\n");
+		}
+		
+		if(selectedTrans != null || selectedTrans.length() < 0) {
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			StringSelection data = new StringSelection(selectedTrans.toString());
+			clipboard.setContents(data, null);
+		}else {
+			ErrorHandler.errorPanel("Missing Translations",
+					"Don't have all the needed residues, can't copy to clipboard.\n"
+					+ "Please select the translations with correct sequence to be copied.", Level.WARNING);
+		}
+	}
+	
+	private String getSelectedResidues(int frame) {
+		return ((NASequence) seqview.getSequence()).getTranslation(frame).substring(seqview.getSelectedStart(), seqview.getSelectedEnd()).trim();
+	}
+
 	public void copyAnnotatedTransAction(){
 		String residues = seqview.getResidues().trim();
 		int cdsMinOffset = seqview.getCdsStart();
@@ -694,6 +728,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 					+ "Please load sequence residues for this region.", Level.WARNING);
 		}
 	}
+	
 	/** ItemListener Implementation */
 	public void itemStateChanged(ItemEvent e) {
 		Object theItem = e.getSource();
@@ -750,12 +785,20 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 				this.colorSwitching();
 			}
 		}
+
+		for(int i = Translatable.FRAME_ONE; i <= Translatable.FRAME_NEG_THREE; i++) {
+			if(seqview.getShow(i)) {
+				selectedFrames[i-2] = i;
+			} else {
+				selectedFrames[i-2] = 0;
+			}
+		}
 	}
 	private void colorSwitching() {
 		seqview.clearWidget();
 			addFormattedResidues();
 	}
-
+	
 	/** WindowListener Implementation */
 	public void windowActivated(WindowEvent e) {
 	}
@@ -823,8 +866,17 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		if (evtSource == editMenu) {
 			if (!seqview.getSelectedResidues().trim().isEmpty()) {
 				copySelectedSeqAction.setEnabled(true);
+				if(seqview.getShow(Translatable.FRAME_ONE)  || 
+					seqview.getShow(Translatable.FRAME_TWO) ||
+					seqview.getShow(Translatable.FRAME_THREE) ||
+					seqview.getShow(Translatable.FRAME_NEG_ONE) ||
+					seqview.getShow(Translatable.FRAME_NEG_TWO) ||
+					seqview.getShow(Translatable.FRAME_NEG_THREE)) {
+						copySelectedTransAction.setEnabled(true);
+				}
 			} else {
 				copySelectedSeqAction.setEnabled(false);
+				copySelectedTransAction.setEnabled(false);
 			}
 		}
 	}
@@ -845,13 +897,31 @@ class CopyTransFromSeqViewerAction extends GenericAction{
 		this.sv=sv;
 		this.frameType = frameType;
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		sv.copyTransAction(frameType);
 	}
 	
+}
+
+class CopySelectedTransFromSeqViewerAction extends GenericAction {
+	
+	AbstractSequenceViewer sv;
+	int frameTypeArray[];
+	
+	public CopySelectedTransFromSeqViewerAction (AbstractSequenceViewer sv, int frameTypeArray[]) {
+		super(BUNDLE.getString("copySelectedTranslation"), KeyEvent.VK_C);
+		this.sv = sv;
+		this.frameTypeArray = frameTypeArray;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		sv.copySelectedTransAction(frameTypeArray);
+	}
 }
 
 class CopyAnnotatedTranslationToClipBoardAction extends GenericAction{

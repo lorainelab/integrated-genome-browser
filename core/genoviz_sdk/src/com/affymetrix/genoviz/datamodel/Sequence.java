@@ -122,7 +122,7 @@ public class Sequence implements EditableSequenceI {
 	 */
 	public void setResidues ( String residues ) {
 		if (residues != null) {
-			this.residues = new StringBuffer(residues);
+			this.residues = new StringBuffer(residues.toUpperCase()); // Show residues on seq viewer with upper case
 			length = residues.length();
 			if (length == 0) {
 				this.end = this.start;

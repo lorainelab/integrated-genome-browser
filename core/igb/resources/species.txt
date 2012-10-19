@@ -25,6 +25,7 @@ Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
 Chlamydomonas reinhardtii	motile single-celled green alga	C_reinhardtii
 Choloepus hoffmanni	Two-toed sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
+Chrysemys picta	painted turtle	C_picta	Chrysemys_picta	chrPic
 Citrus clementina	Clementine mandarin	C_clementina
 Citrus sinensis	Sweet orange	C_sinensis
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
@@ -32,7 +33,7 @@ Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus		Dasypus_novemcinctus
-Dictyostelium discoideum	sequenced slice mold strain	D_discoideum
+Dictyostelium discoideum	slime mold	D_discoideum
 Drosophila ananassae	D. ananassae (fruit fly)	D_ananassae	droAna
 Drosophila erecta	D. erecta (fruit fly)	D_erecta	droEre
 Drosophila grimshawi	D. grimshawi (fruit fly)	D_grimshawi	droGri
@@ -45,7 +46,7 @@ Drosophila simulans	D. simulans (fruit fly)	D_simulans	droSim
 Drosophila virilis	D. virilis (fruit fly)	D_virilis	droVir
 Drosophila yakuba	D. yakuba (fruit fly)	D_yakuba	droYak
 Dipodomys ordii	Kangaroo rat	D_ordii	dipOrd	Dipodomys_ordii
-Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi
+Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi	echTel
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus		Erinaceus_europaeus
 Escherichia coli	E. coli	E_coli
@@ -55,10 +56,12 @@ Felis catus	House Cat	F_catus	felCat	Felis_catus
 Fragaria vesca	woodland strawberry	F_vesca
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
+Geospiza fortis	medium ground finch	Geospiza_fortis	G_fortis	geoFor
 Glycine max	Soybean	G_max	
 Gorilla gorilla	Western gorilla	G_gorilla	gorGor	Gorilla_gorilla
 Gossypium hirsutum	Upland cotton	G_hirsutum
 Gossypium raimondii	Cotton D	G_raimondii
+Heterocephalus glaber	Naked mole rat	Heterocephalus_glaber	H_glaber	hetGla
 Homo sapiens	Human	H_sapiens	hg	Homo_sapiens
 Hordeum vulgare	Barley	H_vulgare
 Lemna gibba	Gibbous duckweed	L_gibba
@@ -67,11 +70,11 @@ Loligo pealeii	Longfin inshore squid	L_pealeii
 Loxodonta africana	African bush elephant	L_africana	loxAfr	Loxodonta_africana
 Lotus japonicus	a model legume	L_japonicus
 Macaca mulatta	Rhesus monkey	M_mulatta	rheMac	Macaca_mulatta
-Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii
+Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii	macEug
 Malus domestica	Apple	M_domestica
 Manihot esculenta	Cassava	M_esculenta
 Medicago truncatula	Barrel medic	M_truncatula	
-Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo
+Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo	melGal
 Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
 Monodelphis domestica	Opossum	M_domestica	monDom	Monodelphis_domestica
@@ -80,9 +83,10 @@ Mus musculus	House mouse	M_musculus	mm	Mus_musculus
 Mycobacterium abscessus	M. abcessus	M_abscessus	
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
 Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
-Myotis lucifugus	Little brown bat	M_lucifugus		Myotis_lucifugus
+Myotis lucifugus	Little brown bat	M_lucifugus		Myotis_lucifugus	myoLuc
 Nematostella vectensis	starlet sea anemone	N_vectensis
 Nicotiana tabacum	Tobacco	N_tabacum
+Nomascus leucogenys	Northern white-cheeked gibbon	Nomascus_leucogenys	N_leucogenys	nomLeu
 Ochotona princeps	American pika	O_princeps		Ochotona_princeps
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun
@@ -109,6 +113,7 @@ Prunus persica	Peach	P_persica
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
 Ricinus communis	Castor oil plant	R_communis
 Saccharomyces cerevisiae	Budding Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
+Sarcophilus harrisii	Tasmanian devil	Sarcophilus_harrisii	S_harrisii	sarHar
 Schizosaccharomyces pombe	Fission Yeast	S_pombe
 Selaginella moellendorffii	Spikemoss	S. moellendorffii	S_moellendorffii
 Setaria italica	Foxtail millet	S. italica	S_italica

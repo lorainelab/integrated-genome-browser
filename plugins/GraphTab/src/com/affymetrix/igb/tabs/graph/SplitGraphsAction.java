@@ -32,6 +32,7 @@ public class SplitGraphsAction extends GenericAction {
 			GraphSym gsym = (GraphSym) gg.getInfo();
 			GraphState gstate = gsym.getGraphState();
 			gstate.setComboStyle(null, 0);
+			gstate.getTierStyle().setJoin(false);
 //			igbService.selectTrack(child, true);
 
 			// For simplicity, set the floating state of all new tiers to false.

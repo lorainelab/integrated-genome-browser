@@ -46,6 +46,7 @@ public class CombineGraphsAction extends GenericAction {
 		for (int i = 0; i < gcount && combo_style == null; i++) {
 			if (rootSyms.get(i) instanceof GraphSym) {
 				GraphSym gsym = (GraphSym)rootSyms.get(i);
+				gsym.getGraphState().getTierStyle().setJoin(true);
 				combo_style = gsym.getGraphState().getComboStyle();
 				Color col = gsym.getGraphState().getTierStyle().getBackground();
 				int c = 0;

@@ -76,6 +76,8 @@ public interface ITrackStyleExtended extends ITrackStyle {
 
 	boolean getFloatTier();
 	void setFloatTier(boolean b);
+	boolean getJoin();
+	void setJoin(boolean b);
 	public void setTrackNameSize(float font_size);
 	public float getTrackNameSize();
 	public Color getLabelForeground();

@@ -230,4 +230,15 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public void setSummaryThreshold(int level) {
 		
 	}
+	
+	boolean join;
+	@Override
+	public boolean getJoin(){
+		return join;
+	}
+	
+	@Override
+	public void setJoin(boolean b){
+		join = b;
+	}
 }

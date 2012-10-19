@@ -263,7 +263,7 @@ public class TrackView {
 		}else {
 			//rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
 			TierGlyph tg = gviewer.getTrack(style, TierGlyph.Direction.NONE);
-			if(tg.getChildCount() == 0 && !style.getFloatTier()){
+			if(tg.getChildCount() == 0 && !style.getFloatTier() && !style.getJoin()){
 				((AbstractTierGlyph)tg).initUnloaded();
 			}
 		}

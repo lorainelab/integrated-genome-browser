@@ -72,6 +72,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public boolean customise = false;
 	private int summaryThreshold;
 	private boolean separable = true;
+	private boolean join = false;
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
@@ -1286,5 +1287,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public String getExt() {
 		return file_type;
+	}
+	
+	@Override
+	public boolean getJoin(){
+		return join;
+	}
+	
+	@Override
+	public void setJoin(boolean b){
+		join = b;
 	}
 }

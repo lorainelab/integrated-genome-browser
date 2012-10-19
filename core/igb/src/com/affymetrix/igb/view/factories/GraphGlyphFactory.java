@@ -217,6 +217,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					result.addChild(graphGlyph);
 					result.setTierType(TierGlyph.TierType.GRAPH);
+					result.setInfo(graf);
 					doMiddlegroundShading(result, smv, seq);
 				}
 			}

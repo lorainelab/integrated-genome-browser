@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Translatable;
+import com.affymetrix.genoviz.util.Selection;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -329,7 +330,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private void addSequenceViewerItem(SeqSymmetry sym, int type, BioSeq aseq) {
 		SeqSpan span;
 		SequenceViewerItems sequenceViewerItems = new SequenceViewerItems();
-		sequenceViewerItems.setResidues(getResidues(sym, aseq));
+		sequenceViewerItems.setResidues(getResidues(sym, aseq).toUpperCase());
 		span = sym.getSpan(aseq);
 		sequenceViewerItems.setType(type);
 
@@ -436,6 +437,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		//this.createAllLists();
 		addFormattedResidues();
 		copyAnnotAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
+		copyAnnotatedSeqAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
 		seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES + OFFSET,INITIAL_NUMBER_OF_LINES));
 		mapframe.setPreferredSize(seqview.getPreferredSize());
 		mapframe.pack();
@@ -560,18 +562,20 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	CopyAnnotatedTranslationToClipBoardAction copyAnnotAction = new CopyAnnotatedTranslationToClipBoardAction(this);
 	JRPMenu showMenu = new JRPMenu("sequenceViewer_show", "Show");
 	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
-	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
+	JRPMenu copyMenu = new JRPMenu("sequenceViewer_copy", "Copy");
 	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
 	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation");
 	CopyResiduesAction copySelectedSeqAction = new CopyResiduesAction(BUNDLE.getString("copySelectedSequence"), this);
-	CopySequenceAction copySeqAction = new CopySequenceAction(BUNDLE.getString("copySequence"), this);
+	SelectAllInSeqViewerAction selectAllAction = new SelectAllInSeqViewerAction(BUNDLE.getString("selectAll"), this);
 	
 	CopySelectedTransFromSeqViewerAction copySelectedTransAction = new CopySelectedTransFromSeqViewerAction(this, selectedFrames);
+	CopyAnnotatedSequenceToClipBoardAction copyAnnotatedSeqAction = new CopyAnnotatedSequenceToClipBoardAction(this);
 
 	public JFrame setupMenus(JFrame dock) {
 
 		copySelectedSeqAction.setEnabled(false);
 		copyAnnotAction.setEnabled(false);
+		copyAnnotatedSeqAction.setEnabled(false);
 		copySelectedTransAction.setEnabled(false);
 		copyToClipMenu.add(copyTransp1MenuItem);
 		copyToClipMenu.add(copyTransp2MenuItem);
@@ -585,12 +589,13 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(dock, seqview.getScroller())));
 		fileMenu.addSeparator();
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
-		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySeq", copySeqAction));
-		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copySelectedSeq", copySelectedSeqAction));
-//		editMenu.add(copyToClipMenu);
-		editMenu.add(copyAnnotAction);
-		editMenu.add(copySelectedTransAction);
-		editMenu.addMenuListener(this);
+		MenuUtil.addToMenu(copyMenu, new JRPMenuItem("sequenceViewer_copySeq", selectAllAction));
+		MenuUtil.addToMenu(copyMenu, new JRPMenuItem("sequenceViewer_copySelectedSeq", copySelectedSeqAction));
+		copyMenu.add(copyAnnotatedSeqAction);
+//		copyMenu.add(copyToClipMenu);
+		copyMenu.add(copyAnnotAction);
+		copyMenu.add(copySelectedTransAction);
+		copyMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);
 		showMenu.add(transOneCBMenuItem);
@@ -630,7 +635,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		// add the menus to the menubar
 		JMenuBar bar = new JMenuBar();
 		bar.add(fileMenu);
-		bar.add(editMenu);
+		bar.add(copyMenu);
 		bar.add(showMenu);
 		bar.add(colorMenu);
 		bar.add(showcDNAButton);
@@ -727,6 +732,82 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 					"Don't have all the needed residues, can't copy to clipboard.\n"
 					+ "Please load sequence residues for this region.", Level.WARNING);
 		}
+	}
+	
+	/*
+	 * Copy the annotated sequence and replace the 'starting', 'ending' and introns with lower cases
+	 */
+	public void copyAnnotatedSequenceAction() {
+		StringBuffer copyAnnotatedSeqString = new StringBuffer();
+		
+		int start = 0, end = 0;
+		Iterator<SequenceViewer.CreateValueSet> it_working = null;
+		if (toggle_Reverse_Complement) {
+			it_working = reverse_complement.listIterator();
+		} else {
+			it_working = working_list.listIterator();
+		}
+		while (it_working.hasNext()) {
+			SequenceViewer.CreateValueSet cv = it_working.next();
+			if(showcDNASwitch){
+				if(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
+					continue;
+				}
+			}
+			String residues = cv.getSi().getResidues();
+			String reverse_residues = cv.getSi().getReverseResidues();
+			int cdsStart = cv.getSi().getCdsStart();
+			int cdsEnd = cv.getSi().getCdsEnd();
+			int revCdsStart = cv.getSi().getReverseCdsStart();
+			int revCdsEnd = cv.getSi().getReverseCdsEnd();
+			
+			if (toggle_Reverse_Complement) {
+				copyAnnotatedSeqString.append(reverse_residues);
+			} else {
+				copyAnnotatedSeqString.append(residues);
+			}
+			
+			end += cv.getSi().getResidues().length();
+			
+			if (cv.getSi().getType() == SequenceViewerItems.TYPE.INTRON.ordinal()) {
+				copyAnnotatedSeqString.replace(start, end, copyAnnotatedSeqString.substring(start, end).toLowerCase());
+			}
+			
+			if (cv.getSi().getCdsStart() >= 0) {
+				if (toggle_Reverse_Complement) {
+					copyAnnotatedSeqString.replace(start + revCdsStart - 3, start + revCdsStart, copyAnnotatedSeqString.substring(start + revCdsStart - 3, start + revCdsStart).toLowerCase());
+				} else {
+					copyAnnotatedSeqString.replace(start + cdsStart, start + cdsStart + 3, copyAnnotatedSeqString.substring(start + cdsStart, start + cdsStart + 3).toLowerCase());
+				}
+			}
+
+			if (cv.getSi().getCdsEnd() >= 0) {
+				if (toggle_Reverse_Complement) {
+					copyAnnotatedSeqString.replace(start + revCdsEnd, start + revCdsEnd + 3, copyAnnotatedSeqString.substring(start + revCdsEnd, start + revCdsEnd + 3).toLowerCase());
+				} else {
+					copyAnnotatedSeqString.replace(start + cdsEnd - 3, start + cdsEnd, copyAnnotatedSeqString.substring(start + cdsEnd - 3, start + cdsEnd).toLowerCase());
+				}
+			}
+			start += cv.getSi().getResidues().length();
+		}
+		
+		
+		if(copyAnnotatedSeqString!=null) {
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			StringSelection data = new StringSelection(copyAnnotatedSeqString.toString());
+			clipboard.setContents(data, null);
+		} else {
+			ErrorHandler.errorPanel("Copy",
+					"Can't copy annotated sequence to clipboard.\n", Level.WARNING);
+		}
+	}
+	
+	public void selectAll() {
+		String residues = seqview.getResidues().trim();
+		Selection selectAll = new Selection();
+		selectAll.setRange(0, residues.length());
+		seqview.highlightResidues(0, residues.length());
+		seqview.setSelection(selectAll);
 	}
 	
 	/** ItemListener Implementation */
@@ -863,7 +944,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 	public void menuSelected(MenuEvent me) {
 		Object evtSource = me.getSource();
-		if (evtSource == editMenu) {
+		if (evtSource == copyMenu) {
 			if (!seqview.getSelectedResidues().trim().isEmpty()) {
 				copySelectedSeqAction.setEnabled(true);
 				if(seqview.getShow(Translatable.FRAME_ONE)  || 
@@ -938,3 +1019,18 @@ class CopyAnnotatedTranslationToClipBoardAction extends GenericAction{
 		sv.copyAnnotatedTransAction();
 	}
 } 
+
+class CopyAnnotatedSequenceToClipBoardAction extends GenericAction {
+	AbstractSequenceViewer sv;
+	public CopyAnnotatedSequenceToClipBoardAction(AbstractSequenceViewer sv) {
+		super(BUNDLE.getString("copyAnnotatedSequence"), KeyEvent.VK_C);
+		
+		this.sv = sv;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		sv.copyAnnotatedSequenceAction();
+	}
+}

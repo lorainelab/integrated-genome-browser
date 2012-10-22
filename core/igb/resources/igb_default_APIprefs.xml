@@ -29,6 +29,7 @@
                             <entry key="com.affymetrix.igb.action.ZoomOutFullyAction" value="ctrl shift HOME"/>
                             <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift DOWN"/>
                             <entry key="com.affymetrix.igb.action.CopyResiduesAction" value="ctrl C"/>
+							<entry key="com.affymetrix.igb.action.SelectAllInSeqViewerAction" value="ctrl A"/>
                             <entry key="com.affymetrix.igb.action.ToggleEdgeMatchingAction" value="ctrl M"/>
                             <entry key="com.affymetrix.igb.external.UCSCViewAction" value="ctrl U"/>
                             <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>

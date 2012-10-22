@@ -716,9 +716,69 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	}
 
 	public void copyAnnotatedTransAction(){
-		String residues = seqview.getResidues().trim();
-		int cdsMinOffset = seqview.getCdsStart();
-		int cdsMaxOffset = seqview.getCdsEnd();
+		
+		int intronLengthBeforeCDSStart = 0;
+		int intronLengthBeforeCDSEnd = 0;
+		boolean computeIntronLengthForCDSStart = true;
+		boolean computerIntronLengthForCDSEnd = true;
+		
+		StringBuffer annotatedSeqStringBuffer = new StringBuffer();
+		
+		int start = 0, end = 0;
+		Iterator<SequenceViewer.CreateValueSet> it_working = null;
+		if (toggle_Reverse_Complement) {
+			it_working = reverse_complement.listIterator();
+		} else {
+			it_working = working_list.listIterator();
+		}
+		while (it_working.hasNext()) {
+			SequenceViewer.CreateValueSet cv = it_working.next();
+			String reverse_residues = cv.getSi().getReverseResidues();
+			String residues = cv.getSi().getResidues();
+			
+			if (cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()) {
+				if(computeIntronLengthForCDSStart) {
+					intronLengthBeforeCDSStart += residues.length();
+				}
+				
+				if(computerIntronLengthForCDSEnd) {
+					intronLengthBeforeCDSEnd += residues.length();
+				}
+				continue;
+			}
+			
+			if (toggle_Reverse_Complement) {
+				annotatedSeqStringBuffer.append(reverse_residues);
+			} else {
+				annotatedSeqStringBuffer.append(residues);
+			}
+			
+			end += cv.getSi().getResidues().length();
+			
+			if (cv.getSi().getCdsStart() >= 0) {
+				computeIntronLengthForCDSStart = false;
+			}
+
+			if (cv.getSi().getCdsEnd() >= 0) {
+				computerIntronLengthForCDSEnd = false;
+			}
+			
+			start += cv.getSi().getResidues().length();
+		}
+		
+		String residues ="";
+		int cdsMinOffset = -1, cdsMaxOffset = -1;
+		
+		if(showcDNASwitch) {
+			residues = seqview.getResidues().trim();
+			cdsMinOffset = seqview.getCdsStart();
+			cdsMaxOffset = seqview.getCdsEnd();
+		} else {
+			residues = annotatedSeqStringBuffer.toString();
+			cdsMinOffset = seqview.getCdsStart() - intronLengthBeforeCDSStart;
+			cdsMaxOffset = seqview.getCdsEnd() - intronLengthBeforeCDSEnd;
+		}
+		 
 		String annotatedResidues = residues.substring(cdsMinOffset, cdsMaxOffset+3);
 		annotatedResidues = DNAUtils.translate(annotatedResidues, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
 		if(annotatedResidues != null){
@@ -738,7 +798,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	 * Copy the annotated sequence and replace the 'starting', 'ending' and introns with lower cases
 	 */
 	public void copyAnnotatedSequenceAction() {
-		StringBuffer copyAnnotatedSeqString = new StringBuffer();
+		StringBuffer copyAnnotatedSeqStringBuffer = new StringBuffer();
 		
 		int start = 0, end = 0;
 		Iterator<SequenceViewer.CreateValueSet> it_working = null;
@@ -762,39 +822,38 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			int revCdsEnd = cv.getSi().getReverseCdsEnd();
 			
 			if (toggle_Reverse_Complement) {
-				copyAnnotatedSeqString.append(reverse_residues);
+				copyAnnotatedSeqStringBuffer.append(reverse_residues);
 			} else {
-				copyAnnotatedSeqString.append(residues);
+				copyAnnotatedSeqStringBuffer.append(residues);
 			}
 			
 			end += cv.getSi().getResidues().length();
 			
 			if (cv.getSi().getType() == SequenceViewerItems.TYPE.INTRON.ordinal()) {
-				copyAnnotatedSeqString.replace(start, end, copyAnnotatedSeqString.substring(start, end).toLowerCase());
+				copyAnnotatedSeqStringBuffer.replace(start, end, copyAnnotatedSeqStringBuffer.substring(start, end).toLowerCase());
 			}
 			
 			if (cv.getSi().getCdsStart() >= 0) {
 				if (toggle_Reverse_Complement) {
-					copyAnnotatedSeqString.replace(start + revCdsStart - 3, start + revCdsStart, copyAnnotatedSeqString.substring(start + revCdsStart - 3, start + revCdsStart).toLowerCase());
+					copyAnnotatedSeqStringBuffer.replace(start + revCdsStart - 3, start + revCdsStart, copyAnnotatedSeqStringBuffer.substring(start + revCdsStart - 3, start + revCdsStart).toLowerCase());
 				} else {
-					copyAnnotatedSeqString.replace(start + cdsStart, start + cdsStart + 3, copyAnnotatedSeqString.substring(start + cdsStart, start + cdsStart + 3).toLowerCase());
+					copyAnnotatedSeqStringBuffer.replace(start + cdsStart, start + cdsStart + 3, copyAnnotatedSeqStringBuffer.substring(start + cdsStart, start + cdsStart + 3).toLowerCase());
 				}
 			}
 
 			if (cv.getSi().getCdsEnd() >= 0) {
 				if (toggle_Reverse_Complement) {
-					copyAnnotatedSeqString.replace(start + revCdsEnd, start + revCdsEnd + 3, copyAnnotatedSeqString.substring(start + revCdsEnd, start + revCdsEnd + 3).toLowerCase());
+					copyAnnotatedSeqStringBuffer.replace(start + revCdsEnd, start + revCdsEnd + 3, copyAnnotatedSeqStringBuffer.substring(start + revCdsEnd, start + revCdsEnd + 3).toLowerCase());
 				} else {
-					copyAnnotatedSeqString.replace(start + cdsEnd - 3, start + cdsEnd, copyAnnotatedSeqString.substring(start + cdsEnd - 3, start + cdsEnd).toLowerCase());
+					copyAnnotatedSeqStringBuffer.replace(start + cdsEnd - 3, start + cdsEnd, copyAnnotatedSeqStringBuffer.substring(start + cdsEnd - 3, start + cdsEnd).toLowerCase());
 				}
 			}
 			start += cv.getSi().getResidues().length();
 		}
 		
-		
-		if(copyAnnotatedSeqString!=null) {
+		if(copyAnnotatedSeqStringBuffer!=null) {
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			StringSelection data = new StringSelection(copyAnnotatedSeqString.toString());
+			StringSelection data = new StringSelection(copyAnnotatedSeqStringBuffer.toString());
 			clipboard.setContents(data, null);
 		} else {
 			ErrorHandler.errorPanel("Copy",

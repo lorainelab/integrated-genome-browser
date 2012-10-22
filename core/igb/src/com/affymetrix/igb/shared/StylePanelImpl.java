@@ -1,12 +1,10 @@
 package com.affymetrix.igb.shared;
 
-import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JComboBox;
+import com.jidesoft.combobox.ColorComboBox;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -49,7 +47,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 	}
 	
 	@Override
-	protected void labelSizeComboBoxActionPerformedA(ActionEvent evt) {
+	protected void labelSizeComboBoxActionPerformedA() {
 		final JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		int fontsize = (Integer)labelSizeComboBox.getSelectedItem();
 		if (fontsize <= 0) {
@@ -60,7 +58,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 	}
 
 	@Override
-	protected void foregroundColorComboBoxActionPerformedA(ActionEvent evt) {
+	protected void foregroundColorComboBoxActionPerformedA() {
 		final ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
 		if (igbService.getSeqMap() == null) {
 			return;
@@ -71,7 +69,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 	}
 
 	@Override
-	protected void backgroundColorComboBoxActionPerformedA(ActionEvent evt) {
+	protected void backgroundColorComboBoxActionPerformedA() {
 		final ColorComboBox backgroundColorComboBox = getBackgroundColorComboBox();
 		if (igbService.getSeqMap() == null) {
 			return;
@@ -82,7 +80,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 	}
 
 	@Override
-	protected void labelColorComboBoxActionPerformedA(ActionEvent evt) {
+	protected void labelColorComboBoxActionPerformedA() {
 		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color color = labelColorComboBox.getSelectedColor();
 		Actions.setLabelColor(color);

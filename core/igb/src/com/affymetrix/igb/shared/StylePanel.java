@@ -1,16 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genoviz.color.ColorScheme;
-import com.affymetrix.genoviz.color.ColorSchemeComboBox;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import javax.swing.DefaultComboBoxModel;
-
-/**
- *
- * @author hiralv
- */
 public abstract class StylePanel extends javax.swing.JPanel {
 	protected boolean is_listening = true; // used to turn on and off listening to GUI events
 	private static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
@@ -21,43 +10,6 @@ public abstract class StylePanel extends javax.swing.JPanel {
 	public StylePanel() {
 		initComponents();
 	}
-
-	private ColorSchemeComboBox createColorSchemeComboBox() {
-		final ItemListener itemListener = new ItemListener() {
-
-			public void itemStateChanged(ItemEvent ie) {
-				switch (ie.getStateChange()) {
-					case ItemEvent.DESELECTED:
-						break;
-					case ItemEvent.SELECTED:
-						Object o = ie.getSource();
-						if (o instanceof ColorSchemeComboBox) {
-							ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
-							ColorScheme s = (ColorScheme) csb.getSelectedItem();
-							ColorSchemeAction.getAction().tempAction(s);
-						}
-						break;
-					default:
-						System.err.println(
-								"SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
-								+ ie.getStateChange());
-				}
-			}
-		};
-		ColorSchemeComboBox colorSchemeBox = new ColorSchemeComboBox() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void setChoices(int i) {
-				this.removeItemListener(itemListener);
-				super.setChoices(i);
-				this.addItemListener(itemListener);
-			}
-		};
-		colorSchemeBox.addItemListener(itemListener);
-		colorSchemeBox.setChoices(0);
-		return colorSchemeBox;
-    }
 	
 	/**
 	 * This method is called from within the constructor to initialize the form.
@@ -80,7 +32,7 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
         stylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
 
-        labelSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
+        labelSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(SUPPORTED_SIZE));
         labelSizeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
         labelSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -186,25 +138,25 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
     private void labelSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelSizeComboBoxActionPerformed
         if (is_listening) {
-            labelSizeComboBoxActionPerformedA(evt);
+            labelSizeComboBoxActionPerformedA();
         }
     }//GEN-LAST:event_labelSizeComboBoxActionPerformed
 
     private void foregroundColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_foregroundColorComboBoxActionPerformed
         if (is_listening) {
-            foregroundColorComboBoxActionPerformedA(evt);
+            foregroundColorComboBoxActionPerformedA();
         }
     }//GEN-LAST:event_foregroundColorComboBoxActionPerformed
 
     private void backgroundColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backgroundColorComboBoxActionPerformed
         if (is_listening) {
-            backgroundColorComboBoxActionPerformedA(evt);
+            backgroundColorComboBoxActionPerformedA();
         }
     }//GEN-LAST:event_backgroundColorComboBoxActionPerformed
 
     private void labelColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelColorComboBoxActionPerformed
         if (is_listening) {
-            labelColorComboBoxActionPerformedA(evt);
+            labelColorComboBoxActionPerformedA();
         }
     }//GEN-LAST:event_labelColorComboBoxActionPerformed
 
@@ -252,10 +204,10 @@ public abstract class StylePanel extends javax.swing.JPanel {
 	// "// TODO add your handling code here:" to ""
 	// "                                     
 	// " 
-	protected abstract void labelSizeComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void foregroundColorComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void backgroundColorComboBoxActionPerformedA(ActionEvent evt);
-	protected abstract void labelColorComboBoxActionPerformedA(ActionEvent evt);
+	protected abstract void labelSizeComboBoxActionPerformedA();
+	protected abstract void foregroundColorComboBoxActionPerformedA();
+	protected abstract void backgroundColorComboBoxActionPerformedA();
+	protected abstract void labelColorComboBoxActionPerformedA();
 	
 	
 //	protected abstract void trackNameTextFieldActionPerformedA(ActionEvent evt);

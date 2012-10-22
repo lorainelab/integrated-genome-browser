@@ -15,7 +15,7 @@ public class AnnotationTrackPanel extends TrackViewPanel{
 	
 	public AnnotationTrackPanel(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTab"), false, TAB_POSITION);
-		getCustomButton().setText("More Options...");
+		getCustomButton().setText("Other Options...");
 	}
 	
 	@Override

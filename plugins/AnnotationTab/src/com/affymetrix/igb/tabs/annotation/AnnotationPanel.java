@@ -127,7 +127,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                             .add(annotationsPanelLayout.createSequentialGroup()
                                 .add(strandsColorCheckBox)
                                 .add(5, 5, 5)))
-                        .add(0, 0, Short.MAX_VALUE))
+                        .add(0, 76, Short.MAX_VALUE))
                     .add(annotationsPanelLayout.createSequentialGroup()
                         .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(strands2TracksCheckBox)
@@ -277,7 +277,8 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                     .add(stackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(trackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 0, 0)
-                .add(annotationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

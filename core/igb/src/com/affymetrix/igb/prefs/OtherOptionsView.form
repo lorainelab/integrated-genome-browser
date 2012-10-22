@@ -94,9 +94,9 @@
                       <Component id="showIGBTrackMarkCheckBox" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="111" max="32767" attributes="0"/>
+              <EmptySpace pref="92" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -481,10 +481,10 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+              <Component id="showEdgeMatchCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="edgeMatchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="showEdgeMatchCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

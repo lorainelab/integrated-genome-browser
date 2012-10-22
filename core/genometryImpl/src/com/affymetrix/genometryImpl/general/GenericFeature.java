@@ -59,8 +59,9 @@ public final class GenericFeature {
 	static {
 		standardLoadChoices.add(LoadStrategy.NO_LOAD);
 		standardLoadChoices.add(LoadStrategy.VISIBLE);
-		//standardLoadChoices.add(LoadStrategy.CHROMOSOME);
+		standardLoadChoices.add(LoadStrategy.GENOME);
 	}
+	
 	// Requests that have been made for this feature (to avoid overlaps)
 	private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
 	// Request that are currently going on. (To avoid parsing more than once)

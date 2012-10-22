@@ -7,7 +7,10 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.util.ExportDialog;
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -28,7 +31,26 @@ public class IGBScriptEngine implements ScriptEngine {
     private final ScriptEngineFactory igbFactory;
 
 	private static String splitter = "\\s";
-	private final IGBService igbService;
+	static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
+	public static enum ExportMode {
+
+		MAIN("mainView"),
+		MAINWITHLABELS("mainViewWithLabels"),
+		SLICEDWITHLABELS("slicedViewWithLabels"),
+		WHOLEFRAME("wholeFrame");
+		private String name;
+
+		ExportMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	};
+	
+	private static IGBService igbService;
 	private static final Logger LOG
 			= Logger.getLogger(IGBScriptEngine.class.getPackage().getName());
 	static {
@@ -261,11 +283,82 @@ public class IGBScriptEngine implements ScriptEngine {
 			}
 			return;
 		}
+		
+		if (action.startsWith("snapshot")) {
+			// determine the export mode
+			action = action.substring(8, action.length());
+			IGBScriptEngine.ExportMode exportMode = IGBScriptEngine.ExportMode.WHOLEFRAME;
+			if (action.length() == 0 || action.equalsIgnoreCase(IGBScriptEngine.ExportMode.WHOLEFRAME.toString())) {
+				exportMode = IGBScriptEngine.ExportMode.WHOLEFRAME;
+			} else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.MAIN.toString())) {
+				exportMode = IGBScriptEngine.ExportMode.MAIN;
+			} else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.MAINWITHLABELS.toString())) {
+				exportMode = IGBScriptEngine.ExportMode.MAINWITHLABELS;
+			} else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.SLICEDWITHLABELS.toString())) {
+				exportMode = IGBScriptEngine.ExportMode.SLICEDWITHLABELS;
+			}
+
+			// determine the file name, and export.
+			if (fields.length >= 1) {
+				snapShot(exportMode, new File(join(fields, 1)));	// second field and possibly others are a single filename
+			} else {
+				// base filename upon organism and timestamp
+				String id = GenometryModel.getGenometryModel().getSelectedSeqGroup() == null ? "default"
+						: GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
+				snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
+			}
+			return;
+		}
+		
 		if (action.startsWith("homescreen")) {
 			igbService.setHome();
 			return;
 		}
 		LOG.log(Level.WARNING, "Unrecognized or invalid command: {0}", action);
+	}
+	
+	/**
+	 * Take a snapshot, i.e., export to a file.
+	 *
+	 * @param f
+	 */
+	private static void snapShot(IGBScriptEngine.ExportMode exportMode, File f) {
+		Logger.getLogger(IGBScriptEngine.class.getName()).log(
+				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
+		String ext = ParserController.getExtension(f.getName().toLowerCase());
+		if (ext.length() == 0) {
+			Logger.getLogger(IGBScriptEngine.class.getName()).log(
+					Level.SEVERE, "no file extension given for file", f.getName());
+			return;
+		}
+
+		if (!isExt(ext)) {
+			Logger.getLogger(IGBScriptEngine.class.getName()).log(
+					Level.SEVERE, "image file extension {0} is not supported", ext);
+			return;
+		}
+
+		try {
+			Component c = null;
+			switch (exportMode) {
+				case WHOLEFRAME:
+					c = igbService.getFrame();
+					break;
+				case MAIN:
+					c = igbService.getSeqMapView().getSeqMap().getNeoCanvas();
+					break;
+				case MAINWITHLABELS:
+					c = igbService.getSeqMapView().getSeqMap();
+					break;
+				case SLICEDWITHLABELS:
+					c = igbService.determineSlicedComponent();
+					break;
+			}
+			igbService.setComponent(c);
+			igbService.exportScreenshot(f, ext, true);
+		} catch (Exception ex) {
+			Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	private void goToGenome(String genomeVersion) {
@@ -391,5 +484,19 @@ public class IGBScriptEngine implements ScriptEngine {
 			buffer.append(fields[i]);
 		}
 		return buffer.toString();
+	}
+	
+	/**
+	 * Return whether the passed extention is contained in IGB support image
+	 * extention list or not.
+	 */
+	private static boolean isExt(String ext) {
+		for (String s : EXTENSION) {
+			if (s.equalsIgnoreCase(ext)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

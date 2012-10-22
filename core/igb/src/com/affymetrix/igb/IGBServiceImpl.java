@@ -43,6 +43,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
+import com.affymetrix.igb.util.ExportDialog;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -51,9 +52,12 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.print.PrinterException;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
@@ -498,5 +502,20 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void removeServer(GenericServer gServer) {
 		ServerList.getServerInstance().removeServer(gServer.URL);
 		DataLoadPrefsView.getSingleton().refreshServers();
+	}
+	
+	@Override
+	public Component determineSlicedComponent() {
+		return ExportDialog.determineSlicedComponent();
+	}
+	
+	@Override
+	public void setComponent(Component c) {
+		ExportDialog.setComponent(c);
+	}
+	
+	@Override
+	public void exportScreenshot (File f, String ext, boolean isScript) throws IOException {
+		ExportDialog.exportScreenshot(f, ext, isScript);
 	}
 }

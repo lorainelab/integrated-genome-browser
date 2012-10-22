@@ -596,6 +596,8 @@ public class ExportDialog implements ExportConstants {
 						component.getWidth(), component.getHeight());
 				Graphics g = exportImage.createGraphics();
 				component.paintAll(g);
+				initImageInfo();
+				imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
 			}
 			
 			exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());

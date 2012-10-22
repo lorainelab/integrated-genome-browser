@@ -69,19 +69,19 @@ import java.util.*;
  * </pre>
  */
 public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, TypedSym, SymWithProps, Scored  {
-	BioSeq seq; // "chrom"
-	int txMin; // "chromStart"
-	int txMax; // "chromEnd"
-	String name; // "name"
-	float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
-	boolean forward; // "strand"
-	int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
-	int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
-	int[] blockMins; // "blockStarts" + "txMin"
-	int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
-	String type;
-	Map<String,Object> props;
-	boolean hasCdsSpan = false;
+	protected BioSeq seq; // "chrom"
+	protected int txMin; // "chromStart"
+	protected int txMax; // "chromEnd"
+	protected String name; // "name"
+	protected float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
+	protected boolean forward; // "strand"
+	protected int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
+	protected int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
+	protected int[] blockMins; // "blockStarts" + "txMin"
+	protected int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
+	protected String type;
+	protected Map<String,Object> props;
+	protected boolean hasCdsSpan = false;
 
 	/**
 	 *  Constructs a SeqSymmetry optimized for BED-file format.

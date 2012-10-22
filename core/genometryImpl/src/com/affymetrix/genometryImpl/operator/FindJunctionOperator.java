@@ -12,6 +12,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -279,6 +281,66 @@ public class FindJunctionOperator implements Operator{
 		
 		public boolean isRare(){
 			return rare;
+		}
+
+		@Override
+		public void outputBedFormat(DataOutputStream out) throws IOException {
+			out.write(seq.getID().getBytes());
+			out.write('\t');
+			out.write(Integer.toString(txMin).getBytes());
+			out.write('\t');
+			out.write(Integer.toString(txMax).getBytes());
+			// only first three fields are required
+
+			// only keep going if has name
+			if (name != null) {
+				out.write('\t');
+				out.write(getName().getBytes());
+				// only keep going if has score field
+				if (getScore() > Float.NEGATIVE_INFINITY) {
+					out.write('\t');
+					if (getScore() == 0) {
+						out.write('0');
+					} else {
+						out.write(Integer.toString((int) getScore()).getBytes());
+					}
+					out.write('\t');
+					if (isForward()) {
+						out.write('+');
+					} else {
+						out.write('-');
+					}
+					// only keep going if has thickstart/thickend
+					if (cdsMin > Integer.MIN_VALUE
+							&& cdsMax > Integer.MIN_VALUE) {
+						out.write('\t');
+						out.write(Integer.toString(cdsMin).getBytes());
+						out.write('\t');
+						out.write(Integer.toString(cdsMax).getBytes());
+						// only keep going if has blockcount/blockSizes/blockStarts
+						int child_count = this.getChildCount();
+						if (child_count > 0) {
+							out.write('\t');
+							// writing out extra "reserved" field, which currently should always be 0
+							out.write('0');
+							out.write('\t');
+							out.write(Integer.toString(child_count).getBytes());
+							out.write('\t');
+							// writing blocksizes
+							for (int i = 0; i < child_count; i++) {
+								out.write(Integer.toString(blockMaxs[i] - blockMins[i]).getBytes());
+								out.write(',');
+							}
+							out.write('\t');
+							// writing blockstarts
+							for (int i = 0; i < child_count; i++) {
+								out.write(Integer.toString(blockMins[i] - txMin).getBytes());
+								out.write(',');
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

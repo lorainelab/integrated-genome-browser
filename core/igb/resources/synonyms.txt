@@ -1,5 +1,6 @@
 A_californica_Sep_2008	aplCal1
 A_carolinensis_Feb_2007	anoCar1	Anolis_carolinensis.AnoCar1.0.reference
+A_carolinensis_May_2010	anoCar2	
 A_gambiae_Jul_2003	anoGam1	Anopheles_Jul_2003	Ag	ag	ag:Jul_2003	Ag:Jul_2003
 A_melanoleuca_Dec_2009	ailMel1	Ailuropoda_melanoleuca.ailMel1.reference
 A_mellifera_Jan_2005	apiMel2
@@ -11,6 +12,7 @@ B_floridae_Mar_2006	braFlo1
 B_taurus_Aug_2006	bosTau3	Cow_Aug_2006
 B_taurus_Mar_2005	bosTau2	Cow_Mar_2005
 B_taurus_Oct_2007	bosTau4	Cow_Oct_2007	Bos_taurus.Btau_4.0.reference
+B_taurus_Nov_2009	bosTau6	Cow_Nov_2009
 B_taurus_Oct_2011	bosTau7	Btau_4.6.1
 C_brenneri_Feb_2008	caePb2
 C_brenneri_Jan_2007	caePb1
@@ -30,8 +32,10 @@ C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wor
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
 C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
 C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
+C_elegans_Oct_2010	ce10
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
+C_familiaris_Sep_2011	canFam3
 C_hoffmanni_Sep_2008	Choloepus_hoffmanni.choHof1.reference
 C_intestinalis_Dec_2002	ci1	Ciona_intestinalis.JGI1.reference
 C_intestinalis_Mar_2005	ci2	Ciona_intestinalis.JGI2.reference
@@ -41,6 +45,7 @@ C_japonica_Jan_2009	caeJap2
 C_japonica_Mar_2008	caeJap1
 C_japonica_Mar_2008	caeJap1
 C_porcellus_Mar_2008	cavPor3	Cavia_porcellus.cavPor3.reference
+C_picta_Dec_2011	chrPic1
 C_remanei_Mar_2005	caeRem1
 C_remanei_Mar_2006	caeRem2
 C_remanei_May_2007	caeRem3
@@ -60,6 +65,7 @@ D_ordii_Jul_2008	dipOrd1	Dipodomys_ordii.dipOrd1.reference
 D_persimilis_Oct_2005	droPer1
 D_pseudoobscura_Nov_2004	dp3
 D_pseudoobscura_Aug_2003	dp2
+D_rerio_Jul_2010	danRer7
 D_rerio_Dec_2008	danRer6	Zv8	Zebrafish_Dec_2008	Danio_rerio.Zv8.reference
 D_rerio_Jul_2007	danRer5	Zv7	Zebrafish_Jul_2007
 D_rerio_Mar_2006	danRer4	Zv6	Zebrafish_Mar_2006
@@ -72,15 +78,19 @@ D_yakuba_Apr_2004	droYak1
 D_yakuba_Nov_2005	droYak2
 E_caballus_Jan_2007	equCab1
 E_caballus_Sep_2007	equCab2	Equus_caballus.EquCab2.reference
+E_telfairi_Jul_2005	echTel1
 F_catus_Mar_2006	felCat3
 F_catus_Dec_2008	felCat4	felCatV17e
 G_aculeatus_Feb_2006	gasAcu1	Gasterosteus_aculeatus.BROADS1.reference
+G_fortis_Apr_2012	geoFor1	GeoFor_1.0
+G_gallus_Nov_2011	galGal4
 G_gallus_Feb_2004	galGal2
 G_gallus_May_2006	galGal3	Chicken_May_2006	Gallus_gallus.WASHUC2.reference
-gorGor3	Gorilla_gorilla.gorGor3.reference
+G_gorilla_May_2011	gorGor3	Gorilla_gorilla.gorGor3.reference
 G_gorilla_Aug_2009	gorGor2
 G_gorilla_Oct_2008	gorGor1
 G_max_Dec_2008	Glyma1	Soybean_Dec_2008	JGI_Soybean_v101
+H_glaber_Jul_2011	hetGla1
 H_sapiens_Apr_2001	Human_Apr_2001	Human 1apr2002	Human_1apr2001	Chr_21_22 ABC Human	hg7	hs:Apr_2001	Hs:Apr_2001
 H_sapiens_Apr_2003	H_sapiens_Apr_2003_Encode	Human_Apr_2003	Human 10apr2003	Human_10apr2003	hs.NCBIv33	hg15	human_ncbi33	ncbi.v33	Human_Apr_2003_Encode	hs:Apr_2003	Hs:Apr_2003	hs:NCBIv33	Hs:NCBIv33	Hs;NCBIv33	Hs:NCBI33
 H_sapiens_Apr_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33/
@@ -106,8 +116,11 @@ L_africana_May_2005	loxAfr1
 M_domestica_Oct_2006	monDom5	Monodelphus_domestica.BROAD05.reference	Monodelphis_domestica.BROADO5.reference
 M_domestica_Jan_2006	monDom4
 M_domestica_Oct_2004	monDom1
+M_eugenii_Sep_2009	macEug2
+M_gallopavo_Dec_2009	melGal1
 M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference
 M_mulatta_Jan_2006	Rhesus_Jan_2006	Macaque_Jan_2006	Rhesus_macaque_Jan_2006	rheMac2	Baylor Mmul_051212 v.1.0	Macaca_mulatta.MMUL_1.reference
+M_musculus_Dec_2011	mm10
 M_musculus_Jul_2007	Mm:NCBIv37	Mm:NCBI37	mm9
 M_musculus_Feb_2006	Mm:NCBIv36	Mm:NCBI36	mm8
 M_musculus_Aug_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1/
@@ -128,6 +141,8 @@ MoEx-1_0-st-Transcripts	MoEx-1_0-st-v1-Transcripts	moex-1_0-st-transcripts	moex-
 MoGene-1_0-st-Probes	MoGene-1_0-st-v1	MoGene-1_0-st	MoGene-1_0-st-v1-Probes	mogene-1_0-st-probes	mogene-1_0-st-v1-probes	affy/mogene-1_0-st-v1-probes	affy/mogene-1_0-st-probes
 MoGene-1_0-st-Transcripts	MoGene-1_0-st-v1-Transcripts	mogene-1_0-st-transcripts	mogene-1_0-st-v1-transcripts	affy/mogene-1_0-st-transcripts	affy/mogene-1_0-st-v1-transcripts
 M_lucifugus_Mar_2006	myoLuc1	Myotis_lucifugus.MICROBAT1.reference
+M_lucifugus_Jul_2010	myoLuc2
+N_leucogenys_Jan_2010	nomLeu1
 O_anatinus_Mar_2007	ornAna1
 O_aries_Feb_2010	oviAri1
 O_cuniculus_Apr_2009	oryCun2	Oryctolagus_cuniculus.oryCun2.reference
@@ -141,6 +156,7 @@ P_abelii_Jul_2007	ponAbe2
 P_capensis_Jul_2008	proCap1	Procavia_capensis.proCap1.reference
 P_marinus_Mar_2007	petMar1
 P_pacificus_Feb_2007	priPac1
+P_troglodytes_Oct_2010	panTro3
 P_troglodytes_Mar_2006	panTro2	Pan_troglodytes.CHIMP2.1.reference
 P_troglodytes_Nov_2003	panTro1	Chimp_Nov_2003	CGSC Build 1 Version 1
 P_vampyrus_Jul_2008	pteVam1	Pteropus_vampyrus.pteVam1.reference
@@ -152,9 +168,12 @@ R_norvegicus_Jan_2003	Rat_Jan_2003	Rat jan2003	rn2	rn:Jan_2003	Rn:Jan_2003
 R_norvegicus_Jun_2003	Rat_Jun_2003	Rat jun2003	rn3	rn:Jun_2003	Rn:Jun_2003
 R_norvegicus_Nov_2002	Rat_Nov_2002	Rat nov2002	rn1	rn:Nov_2002	Rn:Nov_2002
 R_norvegicus_Nov_2004	Rat_Nov_2004	Rat nov2004	rn4	rn:Nov_2004	Rn:Nov_2004
+R_norvegicus_Mar_2012	Rat_Mar_2012	Rat mar2012	rn5
+S_cerevisiae_Apr_2011	sacCer3
 S_cerevisiae_Jun_2008	sacCer2
 S_cerevisiae_Oct_2003	sacCer1	sc:Oct_2003	Sc:Oct_2003	S_cerevisiae_Oct_2003_and_S_pombe_Jul_2005
 S_araneus_Jun_2006	sorAra1	Sorex_araneus.COMMON_SHREW1.reference
+S_harrisii_Feb_2011	sarHar1
 S_pombe_Sep_2004	Sp:Sep_2004	sp:Sep_2004
 S_purpuratus_Apr_2005	strPur1
 S_purpuratus_Sep_2006	strPur2
@@ -165,9 +184,11 @@ T_nigroviridis_Feb_2004	tetNig1
 T_nigroviridis_Mar_2007	tetNig2
 T_rubripes_Aug_2002	fr1
 T_rubripes_Oct_2004	fr2
+T_rubripes_Oct_2011	fr3
 T_belangeri_Dec_2006	tupBel1	Tupaia_belangeri.TREESHREW.reference
 T_truncatus_Feb_2008	turTru1	Tursiops_truncatus.turTru1.reference
 T_syrichta_Aug_2008	tarSyr1	Tarsius_syrichta.tarSyr1.reference
 V_pacos_Jul_2008	vicPac1	Vicugna_pacos.vicPac1.reference
+X_tropicalis_Nov_2009	xenTro3
 X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
 X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference

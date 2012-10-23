@@ -127,6 +127,7 @@ public class GeneConfiguration extends Configuration {
 					g.setFont(f);
 					version = version.split(".png")[0];
 					String species = SpeciesLookup.getSpeciesName(version);
+					String speciesName = new String(species);
 					//If name is very long shorten the name by abbreviating the first name.
 					if (species.length() > 8) {
 						String delims = "[ ]+";
@@ -152,7 +153,7 @@ public class GeneConfiguration extends Configuration {
 					} else {
 						n = new CargoPicture(scaleImage(img, 10));
 					}
-					n.setCargo(version);
+					n.setCargo(speciesName);
 					shapes[i] = n;
 
 				} catch (IOException ex) {

@@ -40,7 +40,7 @@ public final class DataManagementTable {
 	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("16x16/actions/delete.gif");
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("16x16/actions/hide.png");
-	static final Icon visible_icon = CommonUtils.getInstance().getIcon("16x16/actions/show_all.png");
+	static final Icon visible_icon = CommonUtils.getInstance().getIcon("16x16/actions/show.png");
 	static final Icon error_icon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
 	static final Icon igb_icon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 	

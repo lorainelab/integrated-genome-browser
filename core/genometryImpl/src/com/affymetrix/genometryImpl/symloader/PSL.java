@@ -382,8 +382,11 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			}
 		};
 		
-		return tabixParse(it, uri.toString(), 0, Integer.MAX_VALUE, query_group, target_group, other_group);
-				
+		if(is_link_psl){
+			return tabixParse(it, uri.toString(), 0, Integer.MAX_VALUE, query_group, target_group, other_group);
+		}
+		
+		return parse(it, uri.toString(), 0, Integer.MAX_VALUE, query_group, target_group, other_group);
 	}
 	
 	private List<UcscPslSym> tabixParse(

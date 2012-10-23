@@ -716,12 +716,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		});
 	}
 
-	/**
-	 * Refresh the genome versions.
-	 *
-	 * @param speciesName
-	 */
-	private void refreshVersionCB(final String speciesName) {
+	public List<String> getAllVersions(final String speciesName) {
 		final List<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
 		final List<String> versionNames = new ArrayList<String>();
 		if (versionList != null) {
@@ -730,11 +725,24 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				String versionName = gVersion.versionName;
 				if (!versionNames.contains(versionName)) {
 					versionNames.add(versionName);
-					versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
 				}
 			}
 			Collections.sort(versionNames, new StringVersionDateComparator());
 		}
+		return versionNames;
+	}
+	
+	/**
+	 * Refresh the genome versions.
+	 *
+	 * @param speciesName
+	 */
+	private void refreshVersionCB(final String speciesName) {
+		final List<String> versionNames = getAllVersions(speciesName);
+		for (String versionName : versionNames) {
+			versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
+		}
+		
 		// Sort the versions (by date)
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
@@ -743,7 +751,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				versionCB.removeItemListener(SeqGroupView.this);
 				String oldVersion = (String) versionCB.getSelectedItem();
 
-				if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
+				if (versionNames.isEmpty() || speciesName.equals(SELECT_SPECIES)) {
 					versionCB.setSelectedIndex(0);
 					versionCB.setEnabled(false);
 					return;

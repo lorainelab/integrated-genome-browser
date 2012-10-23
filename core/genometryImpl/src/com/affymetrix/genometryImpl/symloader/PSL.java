@@ -382,8 +382,126 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			}
 		};
 		
-		return parse(it, uri.toString(), 0, Integer.MAX_VALUE, query_group, target_group, other_group);
+		return tabixParse(it, uri.toString(), 0, Integer.MAX_VALUE, query_group, target_group, other_group);
 				
+	}
+	
+	private List<UcscPslSym> tabixParse(
+			Iterator<String> it, String annot_type, int min, int max, 
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+			AnnotatedSeqGroup other_group) {
+
+		if (DEBUG) {
+			System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
+		}
+		List<UcscPslSym> results = new ArrayList<UcscPslSym>();
+
+		// Make temporary seq groups for any unspecified group.
+		// These temporary groups do not require synonym matching, because they should
+		// only refer to sequences from a single file.
+		if (query_group == null) {
+			query_group = new AnnotatedSeqGroup("Query");
+			query_group.setUseSynonyms(false);
+		}
+		if (target_group == null) {
+			target_group = new AnnotatedSeqGroup("Target");
+			target_group.setUseSynonyms(false);
+		}
+		if (other_group == null) {
+			other_group = new AnnotatedSeqGroup("Other");
+			other_group.setUseSynonyms(false);
+		}
+
+		boolean in_bottom_of_link_psl = false;
+
+		// the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
+		Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+
+//		int line_count = 0;
+		String line = null;
+		@SuppressWarnings("unused")
+		int total_annot_count = 0;
+		@SuppressWarnings("unused")
+		int total_child_count = 0;
+		Thread thread = Thread.currentThread();
+//		try {
+			while ((line = it.next()) != null && (!thread.isInterrupted())) {
+				notifyReadLine(line.length());
+//				line_count++;
+				// Ignore psl header lines
+				if(line.trim().length() == 0)
+					continue;
+				char firstchar = line.charAt(0);
+
+				if (firstchar == '#' ||
+						(firstchar == 'm' && line.startsWith("match\t")) ||
+						(firstchar == '-' && line.startsWith("-------"))) {
+					continue;
+				}
+
+				if (firstchar == 't' && line.startsWith("track")) {
+					// Always parse the track line, but
+					// only set the AnnotStyle properties from it
+					// if this is NOT a ".link.psl" file.
+					track_line_parser.parseTrackLine(line, track_name_prefix);
+					if (!is_link_psl) {
+						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type, extension);
+					}
+					// You can later get the track properties with getCurrentTrackHash();
+					continue;
+				}
+				String[] fields = line_regex.split(line);
+				in_bottom_of_link_psl = false;
+				String[] f21 = Arrays.copyOfRange(fields, 0, 21);
+				
+				// Main method to determine the symmetry
+				UcscPslSym sym = createSym(annot_type, min, max, query_group, 
+						target_group, other_group, in_bottom_of_link_psl, f21, 
+						target2types, query2types, other2types);
+				
+				if(sym == null)
+					continue;
+				
+				
+				total_annot_count++;
+				total_child_count += sym.getChildCount();
+				results.add(sym);
+				
+				if(fields.length != 42){
+					continue;
+				}
+				
+				in_bottom_of_link_psl = true;
+				f21 = Arrays.copyOfRange(fields, 21, 42);
+				
+				// Main method to determine the symmetry
+				createSym(annot_type, min, max, query_group, 
+						target_group, other_group, in_bottom_of_link_psl, f21, 
+						target2types, query2types, other2types);
+				
+				if (DEBUG) {
+					if (total_annot_count % 5000 == 0) {
+						System.out.println("current annot count: " + total_annot_count);
+					}
+				}
+			}
+//		} catch (Exception e) {
+//			StringBuilder sb = new StringBuilder();
+//			sb.append("Error parsing PSL file\n");
+//			sb.append("line count: ").append(line_count).append("\n");
+//			sb.append("child count: ").append(childcount).append("\n");
+//			if (block_size_array != null && block_size_array.length != 0) {
+//				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
+//			}
+//		} 
+		if (DEBUG) {
+			System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
+					", child count: " + total_child_count);
+		}
+
+		return results;
 	}
 	
 	/**
@@ -430,12 +548,10 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
 //		int line_count = 0;
 		String line = null;
-		int childcount = 0;
 		@SuppressWarnings("unused")
 		int total_annot_count = 0;
 		@SuppressWarnings("unused")
 		int total_child_count = 0;
-		String[] block_size_array = null;
 		Thread thread = Thread.currentThread();
 //		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
@@ -975,14 +1091,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		return ((UcscPslSym) sym).getTargetMax();
 	}
 
-	@Override
-	public List<String> getFormatPrefList() {
-		if (is_link_psl) {
-			return PSL.link_psl_pref_list;
-		}
-		return PSL.psl_pref_list;
-	}
-
 	public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		return parse(dis, annot_type, Integer.MIN_VALUE, Integer.MAX_VALUE, null, group, null);
 	}
@@ -1003,6 +1111,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		return "text/plain";
 	}
 
+	@Override
+	public List<String> getFormatPrefList() {
+		if (is_link_psl) {
+			return PSL.link_psl_pref_list;
+		}
+		return PSL.psl_pref_list;
+	}
+		
 	@Override
 	public SeqSpan getSpan(String line) {
 		return null; // not used yet

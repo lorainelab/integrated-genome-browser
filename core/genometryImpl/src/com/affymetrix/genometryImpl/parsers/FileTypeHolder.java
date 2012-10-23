@@ -217,7 +217,7 @@ public class FileTypeHolder {
 					PSL psl = new PSL(uri, featureName, group);
 					psl.setIsLinkPsl(true);
 					psl.enableSharedQueryTarget(true);
-					return psl;
+					return SymLoaderTabix.getSymLoader(psl);
 				}
 				@Override
 				public Parser getParser() { return new LinkPSLParser(); }

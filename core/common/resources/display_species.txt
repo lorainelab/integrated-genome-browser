@@ -33,7 +33,7 @@ R_norvegicus_Mar_2012.png
 S_bicolor_Jan_2009.png
 S_cerevisiae_Apr_2011.png
 S_pombe_Sep_2007.png
-T_rubripes_Oct_2004.png
+T_rubripes_Oct_2011.png
 V_carteri_Jul_2010.png
 V_vinifera_Mar_2010.png
 X_tropicalis_Aug_2005.png

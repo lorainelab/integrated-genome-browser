@@ -8,7 +8,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
 
 import static com.affymetrix.igb.shared.Selections.*;
@@ -75,23 +74,18 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	private void changeColor(Color color) {
 		for (StyledGlyph vg : allGlyphs) {
-			if (iterateMultigraph && vg instanceof GraphGlyph && vg.getChildren() != null) {
-				for (GlyphI child : vg.getChildren()) {
-					if (child instanceof GraphGlyph) {
-						ITrackStyleExtended style = ((GraphGlyph) child).getGraphState().getTierStyle();
-						if (style != null) {
-							setStyleColor(color, style);
-						}
-					}
-				}
-				setStyleColor(color, vg.getAnnotStyle());
-			} else {
-				ITrackStyleExtended style = vg.getAnnotStyle();
+			ITrackStyleExtended style = vg.getAnnotStyle();
+			if (style != null) {
+				setStyleColor(color, style);
+			}
+			
+			//If graphs is joined then apply color to combo styl too.
+			if (vg instanceof GraphGlyph) {
+				style = ((GraphGlyph) vg).getGraphState().getComboStyle();
 				if (style != null) {
 					setStyleColor(color, style);
 				}
 			}
-
 		}
 	}
 	

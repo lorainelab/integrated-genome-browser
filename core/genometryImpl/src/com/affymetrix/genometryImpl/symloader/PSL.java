@@ -477,87 +477,15 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 					continue;
 				}
 				String[] fields = line_regex.split(line);
-				// filtering out header lines (and any other line that doesn't start with a first field of all digits)
-				String field0 = fields[0];
-				boolean non_digits_present = non_digit.matcher(field0).find(0);
-				if (non_digits_present) {
-					continue;
-				}
-
-				int findex = 0;
-
-				findex = skipExtraBinField(findex, fields);
-
-				int match = Integer.parseInt(fields[findex++]);
-				int mismatch = Integer.parseInt(fields[findex++]);
-				int repmatch = Integer.parseInt(fields[findex++]);
-				int n_count = Integer.parseInt(fields[findex++]);
-				int q_gap_count = Integer.parseInt(fields[findex++]);
-				int q_gap_bases = Integer.parseInt(fields[findex++]);
-				int t_gap_count = Integer.parseInt(fields[findex++]);
-				int t_gap_bases = Integer.parseInt(fields[findex++]);
-				String strandstring = fields[findex++];
-				boolean same_orientation = true;
-				boolean qforward = true;
-				boolean tforward = true;
-				if (strandstring.length() == 1) {
-					same_orientation = strandstring.equals("+");
-					qforward = (strandstring.charAt(0) == '+');
-					tforward = true;
-				} else if (strandstring.length() == 2) {
-					// need to deal with cases (as mentioned in PSL docs) where
-					//    strand field is "++", "+-", "-+", "--"
-					//  (where first char indicates strand of query, and second is strand for ? [target??]
-					//  for now, just call strand based on them being different,
-					//   so "++" OR "--" ==> forward
-					//      "+-" OR "-+" ==> reverse
-					// current implentation assumes "++", "--", "+-", "-+" are the only possibilities
-					same_orientation = (strandstring.equals("++") || strandstring.equals("--"));
-					qforward = (strandstring.charAt(0) == '+');
-					tforward = (strandstring.charAt(1) == '+');
-				} else {
-					System.err.println("strand field longer than two characters! ==> " + strandstring);
-				}
-
-				String qname = fields[findex++];
-				int qsize = Integer.parseInt(fields[findex++]);
-				int qmin = Integer.parseInt(fields[findex++]);
-				int qmax = Integer.parseInt(fields[findex++]);
-				String tname = fields[findex++];
-				int tsize = Integer.parseInt(fields[findex++]);
-				int tmin = Integer.parseInt(fields[findex++]);
-				int tmax = Integer.parseInt(fields[findex++]);
-				int maximum = Math.max(tmin, tmax);
-				int minimum = Math.min(tmin, tmax);
-
-				if((maximum < min || minimum > max) && !is_link_psl)
+				
+				// Main method to determine the symmetry
+				UcscPslSym sym = createSym(annot_type, min, max, query_group, 
+						target_group, other_group, in_bottom_of_link_psl, fields, 
+						target2types, query2types, other2types);
+				
+				if(sym == null)
 					continue;
 				
-				int blockcount = Integer.parseInt(fields[findex++]);
-
-				block_size_array = comma_regex.split(fields[findex++]);
-				String[] q_start_array = comma_regex.split(fields[findex++]);
-				String[] t_start_array = comma_regex.split(fields[findex++]);
-				childcount = block_size_array.length;
-
-				// skipping entries that have problems with block_size_array
-				if ((block_size_array.length == 0) ||
-						(block_size_array[0] == null) ||
-						(block_size_array[0].length() == 0)) {
-					System.err.println("PSL found problem with blockSizes list, skipping this line: ");
-					System.err.println(line);
-					continue;
-				}
-				if (blockcount != block_size_array.length) {
-					System.err.println("PSL found disagreement over number of blocks, skipping this line: ");
-					System.err.println(line);
-					continue;
-				}
-
-				// Main method to determine the symmetry
-				UcscPslSym sym = determineSym(
-						query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, annot_type, fields, findex, childcount, other_group, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, other2types, annotate_query, query2types, annotate_target, target2types);
-		
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
 				results.add(sym);
@@ -584,6 +512,102 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		return results;
 	}
 
+	private UcscPslSym createSym(String annot_type, int min, int max, 
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+			AnnotatedSeqGroup other_group, boolean in_bottom_of_link_psl, String[] fields, 
+			Map<BioSeq, Map<String, SimpleSymWithProps>> target2types,
+			Map<BioSeq, Map<String, SimpleSymWithProps>> query2types,
+			Map<BioSeq, Map<String, SimpleSymWithProps>> other2types) {
+
+		// filtering out header lines (and any other line that doesn't start with a first field of all digits)
+		String field0 = fields[0];
+		boolean non_digits_present = non_digit.matcher(field0).find(0);
+		if (non_digits_present) {
+			return null;
+		}
+
+		int findex = 0;
+
+		findex = skipExtraBinField(findex, fields);
+
+		int match = Integer.parseInt(fields[findex++]);
+		int mismatch = Integer.parseInt(fields[findex++]);
+		int repmatch = Integer.parseInt(fields[findex++]);
+		int n_count = Integer.parseInt(fields[findex++]);
+		int q_gap_count = Integer.parseInt(fields[findex++]);
+		int q_gap_bases = Integer.parseInt(fields[findex++]);
+		int t_gap_count = Integer.parseInt(fields[findex++]);
+		int t_gap_bases = Integer.parseInt(fields[findex++]);
+		String strandstring = fields[findex++];
+		boolean same_orientation = true;
+		boolean qforward = true;
+		boolean tforward = true;
+		if (strandstring.length() == 1) {
+			same_orientation = strandstring.equals("+");
+			qforward = (strandstring.charAt(0) == '+');
+			tforward = true;
+		} else if (strandstring.length() == 2) {
+			// need to deal with cases (as mentioned in PSL docs) where
+			//    strand field is "++", "+-", "-+", "--"
+			//  (where first char indicates strand of query, and second is strand for ? [target??]
+			//  for now, just call strand based on them being different,
+			//   so "++" OR "--" ==> forward
+			//      "+-" OR "-+" ==> reverse
+			// current implentation assumes "++", "--", "+-", "-+" are the only possibilities
+			same_orientation = (strandstring.equals("++") || strandstring.equals("--"));
+			qforward = (strandstring.charAt(0) == '+');
+			tforward = (strandstring.charAt(1) == '+');
+		} else {
+			System.err.println("strand field longer than two characters! ==> " + strandstring);
+		}
+
+		String qname = fields[findex++];
+		int qsize = Integer.parseInt(fields[findex++]);
+		int qmin = Integer.parseInt(fields[findex++]);
+		int qmax = Integer.parseInt(fields[findex++]);
+		String tname = fields[findex++];
+		int tsize = Integer.parseInt(fields[findex++]);
+		int tmin = Integer.parseInt(fields[findex++]);
+		int tmax = Integer.parseInt(fields[findex++]);
+		int maximum = Math.max(tmin, tmax);
+		int minimum = Math.min(tmin, tmax);
+
+		if ((maximum < min || minimum > max) && !is_link_psl) {
+			return null;
+		}
+
+		int blockcount = Integer.parseInt(fields[findex++]);
+
+		String[] block_size_array = comma_regex.split(fields[findex++]);
+		String[] q_start_array = comma_regex.split(fields[findex++]);
+		String[] t_start_array = comma_regex.split(fields[findex++]);
+		int childcount = block_size_array.length;
+
+		// skipping entries that have problems with block_size_array
+		if ((block_size_array.length == 0)
+				|| (block_size_array[0] == null)
+				|| (block_size_array[0].length() == 0)) {
+			System.err.println("PSL found problem with blockSizes list, skipping this line: ");
+			System.err.println(fields);
+			return null;
+		}
+		if (blockcount != block_size_array.length) {
+			System.err.println("PSL found disagreement over number of blocks, skipping this line: ");
+			System.err.println(fields);
+			return null;
+		}
+
+		// Main method to determine the symmetry
+		return determineSym(
+				query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, 
+				tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, 
+				annot_type, fields, findex, childcount, other_group, match, mismatch, 
+				repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, 
+				same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, 
+				other2types, annotate_query, query2types, annotate_target, target2types);
+
+	}
+	
 	private static int skipExtraBinField(int findex, String[] fields) {
 		/*
 		 *  includes_bin_field is so PSL can serve double duty:

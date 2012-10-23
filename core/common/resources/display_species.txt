@@ -19,14 +19,14 @@ E_coli_Oct_2007.png
 S_cerevisiae_Apr_2011.png
 A_thaliana_Jun_2009.png
 H_sapiens_Feb_2009.png
-M_musculus_Jul_2007.png
+M_musculus_Dec_2011.png
 D_rerio_Jul_2010.png
 D_melanogaster_Apr_2006.png
 A_gambiae_Feb_2003.png
 A_melanoleuca_Dec_2009.png
 A_mellifera_Jan_2005.png
 B_taurus_Oct_2011.png
-C_elegans_May_2008.png
+C_elegans_Oct_2010.png
 C_porcellus_Feb_2008.png
 F_catus_Dec_2008.png
 G_gallus_Nov_2011.png
@@ -37,4 +37,4 @@ O_aries_Feb_2010.png
 P_troglodytes_Oct_2010.png
 R_norvegicus_Mar_2012.png
 T_rubripes_Oct_2011.png
-X_tropicalis_Aug_2005.png
+X_tropicalis_Nov_2009.png

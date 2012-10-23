@@ -22,7 +22,7 @@ H_sapiens_Feb_2009.png
 M_musculus_Jul_2007.png
 D_rerio_Jul_2010.png
 D_melanogaster_Apr_2006.png
-A_gambiae_Jul_2003.png
+A_gambiae_Feb_2003.png
 A_melanoleuca_Dec_2009.png
 A_mellifera_Jan_2005.png
 B_taurus_Oct_2011.png

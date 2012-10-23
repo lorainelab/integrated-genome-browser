@@ -321,14 +321,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			GeneralUtils.safeClose(istr);
 		}
 	}
-	
-	public List<UcscPslSym> parse(InputStream istr, String annot_type,
-			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-			boolean annotate_query, boolean annotate_target) throws IOException {
-		return parse(istr, annot_type, Integer.MIN_VALUE, Integer.MAX_VALUE, 
-				query_group, target_group, null);
-	}
-		
+			
 	private List<UcscPslSym> parse(InputStream istr, String annot_type, int min, int max,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group) {
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(istr));

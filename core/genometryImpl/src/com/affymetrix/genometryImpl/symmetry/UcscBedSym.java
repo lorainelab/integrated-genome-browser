@@ -69,19 +69,19 @@ import java.util.*;
  * </pre>
  */
 public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, TypedSym, SymWithProps, Scored  {
-	protected BioSeq seq; // "chrom"
-	protected int txMin; // "chromStart"
-	protected int txMax; // "chromEnd"
-	protected String name; // "name"
-	protected float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
-	protected boolean forward; // "strand"
-	protected int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
-	protected int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
-	protected int[] blockMins; // "blockStarts" + "txMin"
-	protected int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
-	protected String type;
-	protected Map<String,Object> props;
-	protected boolean hasCdsSpan = false;
+	BioSeq seq; // "chrom"
+	int txMin; // "chromStart"
+	int txMax; // "chromEnd"
+	String name; // "name"
+	float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
+	boolean forward; // "strand"
+	int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
+	int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
+	int[] blockMins; // "blockStarts" + "txMin"
+	int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
+	String type;
+	Map<String,Object> props;
+	boolean hasCdsSpan = false;
 
 	/**
 	 *  Constructs a SeqSymmetry optimized for BED-file format.
@@ -271,6 +271,10 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 		return true;
 	}
 
+	protected String getScoreString(){
+		return Float.toString(getScore());
+	}
+	
 	public void outputBedFormat(DataOutputStream out) throws IOException  {
 		out.write(seq.getID().getBytes());
 		out.write('\t');
@@ -289,7 +293,7 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 				if (getScore() == 0) {
 					out.write('0');
 				} else {
-					out.write(Float.toString(getScore()).getBytes());
+					out.write((getScoreString()).getBytes());
 				}
 				out.write('\t');
 				if (isForward()) { out.write('+'); }

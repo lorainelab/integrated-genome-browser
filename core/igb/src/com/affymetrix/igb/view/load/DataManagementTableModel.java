@@ -167,7 +167,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 		}
 		
-		virtualFeatures.addAll(tempVirtualFeatures);
+		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
+			virtualFeatures.add(tempVirtualFeature);
+		}
+		
 		tempVirtualFeatures.clear();
 		
 		fireTableDataChanged();

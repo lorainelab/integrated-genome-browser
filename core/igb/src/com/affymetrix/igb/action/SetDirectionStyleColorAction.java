@@ -8,9 +8,9 @@ public class SetDirectionStyleColorAction extends SetDirectionStyleActionA {
 	private static final SetDirectionStyleColorAction ACTION
 			= new SetDirectionStyleColorAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
 
 	public static SetDirectionStyleColorAction getAction() {
 		return ACTION;

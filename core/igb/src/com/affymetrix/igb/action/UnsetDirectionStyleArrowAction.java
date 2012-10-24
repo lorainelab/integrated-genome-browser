@@ -8,9 +8,9 @@ public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 	private static final UnsetDirectionStyleArrowAction ACTION
 			= new UnsetDirectionStyleArrowAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
 	
 	public static UnsetDirectionStyleArrowAction getAction() {
 		return ACTION;

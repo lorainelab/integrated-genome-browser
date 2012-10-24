@@ -8,9 +8,9 @@ public class UnsetDirectionStyleColorAction extends SetDirectionStyleActionA {
 	private static final UnsetDirectionStyleColorAction ACTION
 			= new UnsetDirectionStyleColorAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
 	
 	public static UnsetDirectionStyleColorAction getAction() {
 		return ACTION;

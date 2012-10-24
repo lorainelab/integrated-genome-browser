@@ -8,9 +8,9 @@ public class SetDirectionStyleArrowAction extends SetDirectionStyleActionA {
 	private static final SetDirectionStyleArrowAction ACTION
 			= new SetDirectionStyleArrowAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
 
 	public static SetDirectionStyleArrowAction getAction() {
 		return ACTION;

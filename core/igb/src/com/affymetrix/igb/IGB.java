@@ -124,33 +124,33 @@ public final class IGB extends Application
 		// user is used to in their operating system, so leave as false.
 		JFrame.setDefaultLookAndFeelDecorated(false);
 
-		// if this is != null, then the user-requested l-and-f has already been applied
-		if (System.getProperty("swing.defaultlaf") == null) {
-			String os = System.getProperty("os.name");
-			if (os != null && os.toLowerCase().contains("windows")) {
-				try {
-					// It this is Windows, then use the Windows look and feel.
-					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-					if (look_and_feel.isSupportedLookAndFeel()) {
-						LookAndFeelFactory.installJideExtension();
-						// Is there a better way to do it? HV 03/02/12
-						for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
-							UIManager.getDefaults().put(obj.getKey(), obj.getValue());
-						}
-						UIManager.setLookAndFeel(look_and_feel);
-					}
-				} catch (Exception ulfe) {
-					// Windows look and feel is only supported on Windows, and only in
-					// some version of the jre.  That is perfectly ok.
-				}
-			}
-		}
+//		// if this is != null, then the user-requested l-and-f has already been applied
+//		if (System.getProperty("swing.defaultlaf") == null) {
+//			String os = System.getProperty("os.name");
+//			if (os != null && os.toLowerCase().contains("windows")) {
+//				try {
+//					// It this is Windows, then use the Windows look and feel.
+//					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+//					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+//
+//					if (look_and_feel.isSupportedLookAndFeel()) {
+//						LookAndFeelFactory.installJideExtension();
+//						// Is there a better way to do it? HV 03/02/12
+//						for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
+//							UIManager.getDefaults().put(obj.getKey(), obj.getValue());
+//						}
+//						UIManager.setLookAndFeel(look_and_feel);
+//					}
+//				} catch (Exception ulfe) {
+//					// Windows look and feel is only supported on Windows, and only in
+//					// some version of the jre.  That is perfectly ok.
+//				}
+//			}
+//		}
 	}
 
 	public void init(String[] args) {
-//		setLaf();
+		setLaf();
 	
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates

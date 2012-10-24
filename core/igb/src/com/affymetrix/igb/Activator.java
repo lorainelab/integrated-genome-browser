@@ -356,6 +356,7 @@ public class Activator implements BundleActivator {
 		//ExitSeqViewerAction.getAction(); // no singleton.
 		ToggleEdgeMatchingAction.getAction();
 		ChangeTierHeightAction.getAction();
+		ChangeExpandMaxOptimizeAction.getAction();
 		//UCSCViewAction.getAction(); // external class. no singleton.
 	}
 

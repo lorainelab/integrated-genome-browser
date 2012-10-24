@@ -3,8 +3,6 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -18,12 +16,16 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 	private static final ChangeExpandMaxOptimizeAction ACTION
 			= new ChangeExpandMaxOptimizeAction();
 	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ChangeExpandMaxOptimizeAction getAction() {
 		return ACTION;
 	}
 
 	private ChangeExpandMaxOptimizeAction() {
-		super(BUNDLE.getString("changeExpandMaxOptimizeAction"), null, null);
+		super(BUNDLE.getString("changeExpandMaxOptimizeAction"), "16x16/actions/optimize_stack_depth.png", "22x22/actions/optimize_stack_depth.png");
 		putValue(SHORT_DESCRIPTION, BUNDLE.getString("changeExpandMaxOptimizeActionTooltip"));
 	}
 

@@ -1,7 +1,6 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
@@ -95,10 +94,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	private void initComponents() {
 		trackDefaultTextField = new JTextField();
 		trackDefaultTextField.setEnabled(false);
-		table = new StyledJTable();
-		table.list.add(TierPrefsView.COL_BACKGROUND);
-		table.list.add(TierPrefsView.COL_FOREGROUND);
-		table.list.add(TierPrefsView.COL_LABEL_COLOR);
+		table = new JTable();
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
 		initTable();

@@ -78,7 +78,7 @@ public class IGBToolBar extends JToolBar {
 		selection_panel.add(tf);
 		
 		JButton button = new JButton(new SelectionRulesAction());
-		button.setMargin(new Insets(0,0,0,0));
+		button.setMargin(new Insets(2,2,2,2));
 //		button.setBorder(null);
 		selection_panel.add(button);
 		

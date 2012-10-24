@@ -431,23 +431,27 @@ public class SeqMapView extends JPanel
 	
 	protected void addZoomInXButton(String id) {
 		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
+		zoomInXB.setMargin(new Insets(0,0,0,0));
 		xzoombox.add(zoomInXB);
 	}
 
 	protected void addZoomOutXButton(String id) {
 		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
+		zoomOutXB.setMargin(new Insets(0,0,0,0));
 		xzoombox.add(zoomOutXB);
 	}
 
 	protected void addZoomInYButton(String id) {
 		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
 		zoomInYB.setAlignmentX(CENTER_ALIGNMENT);
+		zoomInYB.setMargin(new Insets(0,0,0,0));
 		yzoombox.add(zoomInYB, BorderLayout.SOUTH);
 	}
 
 	protected void addZoomOutYButton(String id) {
 		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
 		zoomOutYB.setAlignmentX(CENTER_ALIGNMENT);
+		zoomOutYB.setMargin(new Insets(0,0,0,0));
 		yzoombox.add(zoomOutYB, BorderLayout.NORTH);
 	}
 

@@ -150,7 +150,7 @@ public final class IGB extends Application
 	}
 
 	public void init(String[] args) {
-		setLaf();
+//		setLaf();
 	
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates

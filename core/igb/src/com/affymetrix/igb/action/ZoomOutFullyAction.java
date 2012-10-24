@@ -12,9 +12,9 @@ public class ZoomOutFullyAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static ZoomOutFullyAction ACTION = new ZoomOutFullyAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
 	
 	public static ZoomOutFullyAction getAction() {
 		return ACTION;

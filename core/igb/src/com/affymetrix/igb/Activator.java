@@ -326,7 +326,7 @@ public class Activator implements BundleActivator {
 		ZoomOutXAction.getAction();
 		ZoomInYAction.getAction();
 		ZoomOutYAction.getAction();
-		ZoomOutFullyAction.getAction();
+		HomeAction.getAction();
 		ScrollUpAction.getAction();
 		ScrollDownAction.getAction();
 		ScrollLeftAction.getAction();

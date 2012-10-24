@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -28,7 +27,6 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -129,21 +127,8 @@ public final class IGB extends Application
 			String os = System.getProperty("os.name");
 			if (os != null && os.toLowerCase().contains("windows")) {
 				try {
-					Class<?> cl = null;
-					try {
-						for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-							if ("Nimbus".equals(info.getName())) {
-								cl = Class.forName(info.getClassName());
-								break;
-							}
-						}
-					} catch (Exception e) {
-						// If Nimbus is not available, you can set the GUI to another look and feel.
-					}
-					if(cl == null){
-						// If this is Windows and Nimbus is not installed, then use the Windows look and feel.
-						cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-					}
+					// If this is Windows and Nimbus is not installed, then use the Windows look and feel.
+					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
 
 					if (look_and_feel.isSupportedLookAndFeel()) {

@@ -30,23 +30,23 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	 *
 	 */
 	protected JRPTabbedPane createTabbedPane(String id, int tabPlacement) {
-		//if(isMac()){
+		if(isMac()){
 			 return new JRPTabbedPane(id, tabPlacement);
-		//}
+		}
 
-//        Object textIconGap = UIManager.get("TabbedPane.textIconGap");
-//        Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
-//        UIManager.put("TabbedPane.textIconGap", new Integer(1));
-//        UIManager.put("TabbedPane.tabInsets", new Insets(tabInsets.left, tabInsets.top, tabInsets.right, tabInsets.bottom));
-//        JRPTabbedPane tabPane = new JRPTabbedPane(id, tabPlacement) {
-//			private static final long serialVersionUID = 1L;
-//		    public void insertTab(String title, Icon icon, Component component, String tip, int index) {
-//		    	super.insertTab(null, new VerticalTextIcon(" " + title + " ", tabPlacement==JTabbedPane.RIGHT), component, tip, index);
-//		    }
-//        };
-//        UIManager.put("TabbedPane.textIconGap", textIconGap);
-//        UIManager.put("TabbedPane.tabInsets", tabInsets);
-//        return tabPane;
+        Object textIconGap = UIManager.get("TabbedPane.textIconGap");
+        Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
+        UIManager.put("TabbedPane.textIconGap", new Integer(1));
+        UIManager.put("TabbedPane.tabInsets", new Insets(tabInsets.left, tabInsets.top, tabInsets.right, tabInsets.bottom));
+        JRPTabbedPane tabPane = new JRPTabbedPane(id, tabPlacement) {
+			private static final long serialVersionUID = 1L;
+		    public void insertTab(String title, Icon icon, Component component, String tip, int index) {
+		    	super.insertTab(null, new VerticalTextIcon(" " + title + " ", tabPlacement==JTabbedPane.RIGHT), component, tip, index);
+		    }
+        };
+        UIManager.put("TabbedPane.textIconGap", textIconGap);
+        UIManager.put("TabbedPane.tabInsets", tabInsets);
+        return tabPane;
 	}
 
 	/**

@@ -1702,6 +1702,7 @@ public class SeqMapView extends JPanel
 					Map<String,Object> props = TierLabelManager.getTierProperties(tierglyphs.get(0));
 					if(props != null && !props.isEmpty() && props.containsKey("Name")){
 						id = props.get("Name").toString();
+						sym_used_for_title = (SeqSymmetry)tierglyphs.get(0).getInfo();
 					}
 				}
 			}

@@ -12,13 +12,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -56,6 +51,7 @@ public class IGBToolBar extends JToolBar {
 		toolbar_items_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 		
 		tf = new JTextField(25);
+		tf.setBackground(Color.WHITE);
 		selection_font = tf.getFont();
 		no_selection_font = selection_font.deriveFont(Font.ITALIC);
 		setLayout(new BorderLayout());
@@ -113,6 +109,8 @@ public class IGBToolBar extends JToolBar {
 	public void addToolbarAction(GenericAction genericAction, int index){
 		JRPButton button = new JRPButtonTLP(genericAction, index);
 		button.setHideActionText(true);
+		//button.setBorder(new LineBorder(Color.BLACK));
+		button.setMargin(new Insets(0,0,0,0));
 		
 		int local_index = 0;
 		while (local_index < index && local_index < toolbar_items_panel.getComponentCount() 

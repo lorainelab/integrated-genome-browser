@@ -1684,6 +1684,18 @@ public class SeqMapView extends JPanel
 		if (selected_glyphs.isEmpty()) {
 			id = "";
 			sym_used_for_title = null;
+			List<TierGlyph> tierglyphs = getTierManager().getSelectedTiers();
+			if(!tierglyphs.isEmpty()){
+				if(tierglyphs.size() > 1){
+					id = "" + tierglyphs.size() + " Selections";
+					sym_used_for_title = null;
+				}else{
+					Map<String,Object> props = TierLabelManager.getTierProperties(tierglyphs.get(0));
+					if(props != null && !props.isEmpty() && props.containsKey("Name")){
+						id = props.get("Name").toString();
+					}
+				}
+			}
 		} else {
 			if (selected_glyphs.size() == 1) {
 				GlyphI topgl = selected_glyphs.get(0);

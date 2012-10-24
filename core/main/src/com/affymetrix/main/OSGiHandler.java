@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -271,23 +272,35 @@ public class OSGiHandler {
 		JFrame.setDefaultLookAndFeelDecorated(false);
 
 		// if this is != null, then the user-requested l-and-f has already been applied
-//		if (System.getProperty("swing.defaultlaf") == null) {
-//			String os = System.getProperty("os.name");
-//			if (os != null && os.toLowerCase().contains("windows")) {
-//				try {
-//					// It this is Windows, then use the Windows look and feel.
-//					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-//					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-//
-//					if (look_and_feel.isSupportedLookAndFeel()) {
-//						UIManager.setLookAndFeel(look_and_feel);
-//					}
-//				} catch (Exception ulfe) {
-//					// Windows look and feel is only supported on Windows, and only in
-//					// some version of the jre.  That is perfectly ok.
-//				}
-//			}
-//		}
+		if (System.getProperty("swing.defaultlaf") == null) {
+			String os = System.getProperty("os.name");
+			if (os != null && os.toLowerCase().contains("windows")) {
+				try {
+					Class<?> cl = null;
+					try {
+						for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+							if ("Nimbus".equals(info.getName())) {
+								cl = Class.forName(info.getClassName());
+								break;
+							}
+						}
+					} catch (Exception e) {
+						// If Nimbus is not available, you can set the GUI to another look and feel.
+					}
+					if(cl == null){
+						// If this is Windows and Nimbus is not installed, then use the Windows look and feel.
+						cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+					}
+					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+					if (look_and_feel.isSupportedLookAndFeel()) {
+						UIManager.setLookAndFeel(look_and_feel);
+					}
+				} catch (Exception ulfe) {
+					// Windows look and feel is only supported on Windows, and only in
+					// some version of the jre.  That is perfectly ok.
+				}
+			}
+		}
 	}
 
 	public BundleContext getBundleContext() {

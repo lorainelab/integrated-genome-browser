@@ -10,6 +10,7 @@ import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.combobox.ColorExComboBox;
@@ -20,6 +21,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.text.AbstractDocument;
 
 /**
@@ -45,7 +47,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public JRPCheckBox arrowCheckBox;
 	public JCheckBox autoRefreshCheckBox;
 	public JRPButton refreshButton;
-	public JTable table;
+	public StyledJTable table;
 	public ListSelectionModel lsm;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public boolean applyChanged; // Whether apply the changed value to track or not. 
@@ -65,8 +67,15 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public String b1Text, b2Text, track, title;
 
 	public void initTable() {
-		table = new JTable(model);
-	
+		table = new StyledJTable(model);
+		TableCellEditor editor = table.getDefaultEditor(String.class);
+		((DefaultCellEditor) editor).setClickCountToStart(2);
+		table.setDefaultEditor(String.class, editor);
+		
+		table.list.add(TierPrefsView.COL_BACKGROUND);
+		table.list.add(TierPrefsView.COL_FOREGROUND);
+		table.list.add(TierPrefsView.COL_LABEL_COLOR);
+
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

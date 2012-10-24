@@ -3,6 +3,7 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
@@ -17,6 +18,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
 
 /**
  *
@@ -94,7 +96,15 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	private void initComponents() {
 		trackDefaultTextField = new JTextField();
 		trackDefaultTextField.setEnabled(false);
-		table = new JTable();
+		table = new StyledJTable();
+		TableCellEditor editor = table.getDefaultEditor(String.class);
+		((DefaultCellEditor) editor).setClickCountToStart(2);
+		table.setDefaultEditor(String.class, editor);
+		
+		table.list.add(TierPrefsView.COL_BACKGROUND);
+		table.list.add(TierPrefsView.COL_FOREGROUND);
+		table.list.add(TierPrefsView.COL_LABEL_COLOR);
+		
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
 		initTable();

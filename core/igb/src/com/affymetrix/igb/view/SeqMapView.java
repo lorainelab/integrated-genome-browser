@@ -357,12 +357,14 @@ public class SeqMapView extends JPanel
 				new MapModeSelectAction(this.id));
 		select_mode_button.setText("");
 		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
+		select_mode_button.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(select_mode_button);
 
 		scroll_mode_button = new JRPToggleButton(this.id + "_scroll_mode_button",
 				new MapModeScrollAction(this.id));
 		scroll_mode_button.setText("");
 		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
+		scroll_mode_button.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(scroll_mode_button);
 
 //		zoom_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapZoomMode));
@@ -459,6 +461,7 @@ public class SeqMapView extends JPanel
 		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
 //		refresh_button.setText("");
 		refresh_button.setIcon(MenuUtil.getIcon("16x16/actions/refresh.png"));
+		refresh_button.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(refresh_button);
 				
 		AutoLoadThresholdHandler autoload = new AutoLoadThresholdHandler(this);
@@ -469,6 +472,7 @@ public class SeqMapView extends JPanel
 		partial_residuesB.setToolTipText(MessageFormat.format(IGBConstants.BUNDLE.getString("load"), IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
 		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
 		partial_residuesB.setText("Load Sequence");
+		partial_residuesB.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(partial_residuesB);
 	}
 	
@@ -488,6 +492,7 @@ public class SeqMapView extends JPanel
 					}
 			}
 		);
+		searchButton.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(searchButton);
 	}
 

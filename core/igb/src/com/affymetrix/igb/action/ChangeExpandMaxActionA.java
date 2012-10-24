@@ -62,21 +62,6 @@ implements ParameteredAction {
 	}
 	
 	/**
-	 * Get the optimal limit considering all tiers
-	 * returned by {@link #getTiers}.
-	 */
-	public int getOptimum() {
-		List<TierLabelGlyph> theTiers = getTiers();
-		int ourOptimum = 1;
-		for (TierLabelGlyph tlg : theTiers) {
-			TierGlyph tg = tlg.getReferenceTier();
-			int slotsNeeded = tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView());
-			ourOptimum = Math.max(ourOptimum, slotsNeeded);
-		}
-		return ourOptimum;
-	}
-
-	/**
 	 * Figure out the actual and optimal limit for the tiers
 	 * and present a dialog to choose a value.
 	 */

@@ -148,7 +148,12 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
 	@Override
 	protected void stackDepthAllButtonActionPerformedA(ActionEvent evt) {
-		getStackDepthTextField().setText("" + ChangeExpandMaxOptimizeAction.getAction().getOptimum());
+		int optimum = getOptimum();
+		if(optimum != -1){
+			getStackDepthTextField().setText("" + optimum);
+		}else{
+			getStackDepthTextField().setText("");
+		}
 	}
 
 	@Override

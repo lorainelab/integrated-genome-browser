@@ -9,8 +9,6 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
@@ -229,7 +227,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 
 	@Override
 	protected void stackDepthAllButtonActionPerformedA(ActionEvent evt) {
-		getStackDepthTextField().setText("" + ChangeExpandMaxOptimizeAction.getAction().getOptimum());
+		getStackDepthTextField().setText("" + Selections.getOptimum());
 	}
 
 	@Override

@@ -255,6 +255,24 @@ public abstract class Selections {
 		return -1;
 	}
 	
+	public static int getOptimum() {
+		int ourOptimum = -1;
+		boolean optimumSet = false;
+		for (StyledGlyph glyph : allGlyphs) {
+			if(glyph instanceof TierGlyph){
+				TierGlyph tg = (TierGlyph)glyph;
+				int slotNeeded = tg.getSlotsNeeded(smv.getSeqMap().getView());
+				if(optimumSet && ourOptimum != slotNeeded){
+					ourOptimum = -1;
+					break;
+				}
+				ourOptimum = slotNeeded;
+				optimumSet = true;
+			}
+		}
+		return ourOptimum;
+	}
+	
 	private static int getTotalLocked(){
 		int no_of_locked = 0;
 		for (TierGlyph tier : smv.getSeqMap().getTiers()) {

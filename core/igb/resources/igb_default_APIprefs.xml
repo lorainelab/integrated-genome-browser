@@ -14,7 +14,6 @@
                             <entry key="com.affymetrix.igb.action.ScrollDownAction" value="alt DOWN"/>
                             <entry key="com.affymetrix.igb.action.PreferencesAction" value="alt P"/>
                             <entry key="com.affymetrix.igb.action.ToggleHairlineLabelAction" value="ctrl H"/>
-                            <entry key="com.affymetrix.igb.action.PrintAction" value="ctrl P"/>
                             <entry key="com.affymetrix.igb.action.LoadFileAction" value="ctrl O"/>
                             <entry key="com.affymetrix.igb.action.ScrollLeftAction" value="alt LEFT"/>
                             <entry key="com.affymetrix.igb.action.ScrollRightAction" value="alt RIGHT"/>

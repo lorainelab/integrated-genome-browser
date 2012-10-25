@@ -6,9 +6,10 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
@@ -97,8 +98,24 @@ public class Delegate extends QuickLoadSymLoader {
 		if(sym == null)
 			return result;
 		
+		if(!(sym instanceof RootSeqSymmetry)){
+			if(operator.getOutputCategory() == FileTypeCategory.Alignment ||
+					operator.getOutputCategory() == FileTypeCategory.Annotation){
+				TypeContainerAnnot container = new TypeContainerAnnot(uri.toString(), EXT);
+				for(int i=0; i<sym.getChildCount(); i++){
+					container.addChild(sym.getChild(i));
+				}
+				sym = container;
+			}else{
+				Logger.getLogger(Delegate.class.getName()).log(Level.SEVERE, 
+						"{0} does not output rootseqsymmetry and output format is {1}", 
+						new Object[]{operator.getName(), operator.getOutputCategory()});
+			}
+		}else{
+			sym.setProperty("meth", uri.toString());
+		}
+		
 		sym.setProperty("method", uri.toString());
-		sym.setProperty("meth", uri.toString());
 		sym.setProperty("id", uri.toString());
 		result.add(sym);
 		return result;

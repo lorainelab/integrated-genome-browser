@@ -1,12 +1,13 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.ContinuousAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 
-public class ScrollDownAction extends SeqMapViewActionA {
+public class ScrollDownAction extends SeqMapViewActionA implements ContinuousAction{
 	private static final long serialVersionUID = 1L;
 	private static final ScrollDownAction ACTION = new ScrollDownAction();
 

@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.event.ContinuousAction;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -14,6 +15,8 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 /**
  *
@@ -112,6 +115,9 @@ public class IGBToolBar extends JToolBar {
 		button.setHideActionText(true);
 		//button.setBorder(new LineBorder(Color.BLACK));
 		button.setMargin(new Insets(0,0,0,0));
+		if(genericAction instanceof ContinuousAction){
+			button.addMouseListener(continuousActionListener);
+		}
 		
 		int local_index = 0;
 		while (local_index < index && local_index < toolbar_items_panel.getComponentCount() 
@@ -130,6 +136,9 @@ public class IGBToolBar extends JToolBar {
 				toolbar_items_panel.remove(i);
 				toolbar_items_panel.validate();
 				toolbar_items_panel.repaint(); // to really make it gone.
+				if(action instanceof ContinuousAction){
+					((JButton)toolbar_items_panel.getComponent(i)).removeMouseListener(continuousActionListener);
+				}
 				removed = true;
 				break;
 			}
@@ -162,6 +171,28 @@ public class IGBToolBar extends JToolBar {
 		return ordinal;
 	}
 
+	private MouseListener continuousActionListener = new MouseListener() {
+		private Timer timer;
+
+		public void mousePressed(MouseEvent e) {
+			if (!(e.getSource() instanceof JButton)
+					|| ((JButton) e.getSource()).getAction() == null) {
+				return;
+			}
+
+			timer = new Timer(200, ((JButton) e.getSource()).getAction());
+			timer.start();
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			timer.stop();
+		}
+
+		public void mouseClicked(MouseEvent e) { }
+		public void mouseEntered(MouseEvent e) { }
+		public void mouseExited(MouseEvent e)  { }
+	};
+		
 	private class JRPButtonTLP extends JRPButton implements TrackListProvider {
 		private static final long serialVersionUID = 1L;
 		private final int index;

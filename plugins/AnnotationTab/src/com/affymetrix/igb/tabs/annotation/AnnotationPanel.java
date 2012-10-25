@@ -41,7 +41,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
         ((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         stackDepthGoButton = new javax.swing.JButton();
-        stackDepthAllButton = new javax.swing.JButton(com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.getAction());
         trackHeightPanel = new javax.swing.JPanel();
         lockTierHeightCheckBox = new javax.swing.JCheckBox();
         setHeightInPxLabel = new javax.swing.JLabel();
@@ -182,13 +181,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        stackDepthAllButton.setText("Optimize");
-        stackDepthAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthAllButtonActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout stackHeightPanelLayout = new org.jdesktop.layout.GroupLayout(stackHeightPanel);
         stackHeightPanel.setLayout(stackHeightPanelLayout);
         stackHeightPanelLayout.setHorizontalGroup(
@@ -198,9 +190,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                 .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(stackDepthGoButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 66, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
-                .add(stackDepthAllButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, Short.MAX_VALUE)
-                .add(0, 0, 0))
+                .add(0, 81, Short.MAX_VALUE))
         );
         stackHeightPanelLayout.setVerticalGroup(
             stackHeightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -208,8 +198,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                 .add(0, 0, 0)
                 .add(stackHeightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(stackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(stackDepthGoButton)
-                    .add(stackDepthAllButton))
+                    .add(stackDepthGoButton))
                 .add(0, 0, 0))
         );
 
@@ -341,12 +330,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_stackDepthGoButtonActionPerformed
 
-    private void stackDepthAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stackDepthAllButtonActionPerformed
-        if (is_listening) {
-            stackDepthAllButtonActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_stackDepthAllButtonActionPerformed
-
     private void setPxHeightTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setPxHeightTextBoxActionPerformed
         if (is_listening) {
             setPxHeightTextBoxActionPerformedA(evt);
@@ -414,10 +397,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 		return strandsReverseColorLabel;
 	}
 
-	public javax.swing.JButton getStackDepthAllButton() {
-		return stackDepthAllButton;
-	}
-
 	public javax.swing.JButton getStackDepthGoButton() {
 		return stackDepthGoButton;
 	}
@@ -461,7 +440,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 	protected abstract void strandsReverseColorComboBoxActionPerformedA(java.awt.event.ActionEvent evt);
 	protected abstract void strandsForwardColorComboBoxActionPerformedA(java.awt.event.ActionEvent evt);
 	protected abstract void stackDepthGoButtonActionPerformedA(java.awt.event.ActionEvent evt);
-	protected abstract void stackDepthAllButtonActionPerformedA(java.awt.event.ActionEvent evt);
 	protected abstract void setPxHeightTextBoxActionPerformedA(java.awt.event.ActionEvent evt);
 	protected abstract void pxGoButtonActionPerformedA(java.awt.event.ActionEvent evt);
 	protected abstract void lockTierHeightCheckBoxActionPerformedA(java.awt.event.ActionEvent evt);
@@ -482,7 +460,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 	protected abstract void strandsReverseColorComboBoxReset();
 	protected abstract void strandsForwardColorComboBoxReset();
 	protected abstract void stackDepthGoButtonReset();
-	protected abstract void stackDepthAllButtonReset();
 	protected abstract void lockTierHeightCheckBoxReset();
 	protected abstract void setPxHeightTextBoxReset();
 	protected abstract void pxGoButtonReset();
@@ -500,7 +477,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 		strandsReverseColorComboBoxReset();
 		strandsForwardColorComboBoxReset();
 		stackDepthGoButtonReset();
-		stackDepthAllButtonReset();
 		lockTierHeightCheckBoxReset();
 		setPxHeightTextBoxReset();
 		pxGoButtonReset();
@@ -516,7 +492,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JButton pxGoButton;
     private javax.swing.JLabel setHeightInPxLabel;
     private javax.swing.JTextField setPxHeightTextBox;
-    private javax.swing.JButton stackDepthAllButton;
     private javax.swing.JButton stackDepthGoButton;
     private javax.swing.JTextField stackDepthTextField;
     private javax.swing.JPanel stackHeightPanel;

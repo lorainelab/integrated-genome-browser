@@ -57,8 +57,11 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 		for (TierLabelGlyph tlg : theTiers) {
 			TierGlyph tg = tlg.getReferenceTier();
 			int slotsNeeded = tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView());
-			changeExpandMax(slotsNeeded);
+			changeExpandMax(tg, slotsNeeded);
 		}
+		repack(true, false);
+		getSeqMapView().seqMapRefresh();
+		getSeqMapView().getSeqMap().updateWidget();
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 }

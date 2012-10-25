@@ -226,7 +226,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 	}//GEN-LAST:event_unlimitterKeyPressed
 	public void change(){
 		try{
-			ac.changeExpandMax(Integer.parseInt(maxSlots.getText()));
+			ac.changeExpandMaxForAll(Integer.parseInt(maxSlots.getText()));
 		}
 		catch(NumberFormatException e){
 			ErrorHandler.errorPanel(e.getLocalizedMessage()

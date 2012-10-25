@@ -147,6 +147,17 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	@Override
+	protected void stackDepthAllButtonActionPerformedA(ActionEvent evt) {
+		ChangeExpandMaxOptimizeAction.getAction().actionPerformed(evt);
+		int optimum = getOptimum();
+		if(optimum != -1){
+			getStackDepthTextField().setText("" + optimum);
+		}else{
+			getStackDepthTextField().setText("");
+		}
+	}
+
+	@Override
 	protected void setPxHeightTextBoxActionPerformedA(ActionEvent evt) {
 		pxGoButtonActionPerformedA(evt);
 	}
@@ -322,6 +333,12 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	protected void stackDepthGoButtonReset() {
 		JButton stackDepthGoButton = getStackDepthGoButton();
 		stackDepthGoButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
+	}
+
+	@Override
+	protected void stackDepthAllButtonReset() {
+		JButton stackDepthAllButton = getStackDepthAllButton();
+		stackDepthAllButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
 	}
 
 	@Override

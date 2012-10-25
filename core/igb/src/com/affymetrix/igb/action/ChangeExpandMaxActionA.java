@@ -29,24 +29,10 @@ implements ParameteredAction {
 	 * Sets the maximum stack depth for all tiers
 	 * returned by {@link #getTiers}.
 	 */
-	public void changeExpandMax(int max) {
+	public void changeExpandMaxForAll(int max) {
 		List<TierLabelGlyph> tier_label_glyphs = getTiers();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = tlg.getReferenceTier();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			switch (tier.getDirection()) {
-				case FORWARD:
-					style.setForwardMaxDepth(max);
-					break;
-				case REVERSE:
-					style.setReverseMaxDepth(max);
-					break;
-				default:
-				case BOTH:
-				case NONE:
-				case AXIS:
-					style.setMaxDepth(max);
-			}
+			changeExpandMax(tlg.getReferenceTier(), max);
 		}
 		repack(true, false);
 		this.getSeqMapView().seqMapRefresh();
@@ -58,7 +44,7 @@ implements ParameteredAction {
 		if(parameters.length < 1 || parameters[0].getClass() != Integer.class) {
 			return;
 		}
-		changeExpandMax((Integer)parameters[0]);
+		changeExpandMaxForAll((Integer)parameters[0]);
 	}
 	
 	/**
@@ -100,4 +86,20 @@ implements ParameteredAction {
 		chooser.setVisible(true);
 	}
 
+	protected void changeExpandMax(TierGlyph tier, int max) {
+		ITrackStyleExtended style = tier.getAnnotStyle();
+		switch (tier.getDirection()) {
+			case FORWARD:
+				style.setForwardMaxDepth(max);
+				break;
+			case REVERSE:
+				style.setReverseMaxDepth(max);
+				break;
+			default:
+			case BOTH:
+			case NONE:
+			case AXIS:
+				style.setMaxDepth(max);
+		}
+	}
 }

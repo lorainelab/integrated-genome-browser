@@ -1,6 +1,6 @@
 A_lyrata_Apr_2011.png
 B_distachyon_Aug_2010.png
-C_albicans_WO-1_Jul_2010.png
+C_albicans_SC5314_Nov_2008.png
 C_papaya_Aug_2010.png
 C_reinhardtii_Nov_2010.png
 D_discoideum_Ax4_May_2009.png

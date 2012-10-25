@@ -245,7 +245,11 @@ public class IndexFiles {
 					URI uri = file.toURI();
 					String extension = FileTypeHolder.getInstance().getExtensionForURI(uri.toString());
 					FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
-					if (FileUtil.getInstance().isDirName(uri.toString()) || fth == null || fth.getFileTypeCategory() != FileTypeCategory.Annotation) {
+					if (FileUtil.getInstance().isDirName(uri.toString()) || fth == null 
+							|| fth.getFileTypeCategory() == FileTypeCategory.Graph 
+							|| fth.getFileTypeCategory() == FileTypeCategory.Mismatch
+							|| fth.getFileTypeCategory() == FileTypeCategory.ScoredContainer
+							|| fth.getFileTypeCategory() == FileTypeCategory.Sequence) {
 						DUMP_STREAM.println("skipping " + file);
 						return;
 					}

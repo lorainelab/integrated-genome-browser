@@ -48,8 +48,8 @@ extends GenericAction implements SymSelectionListener {
 			= new HashMap<FileTypeCategory, List<Class<? extends AnnotationWriter>>>();
 	static {
 		List<Class<? extends AnnotationWriter>> annotationList = new ArrayList<Class<? extends AnnotationWriter>>();
-		annotationList.add(BedDetailWriter.class);
 		annotationList.add(BedParser.class);
+		annotationList.add(BedDetailWriter.class);
 		annotationWriters.put(FileTypeCategory.Annotation, annotationList);
 		
 		annotationWriters.put(FileTypeCategory.Alignment, annotationList);
@@ -147,7 +147,7 @@ extends GenericAction implements SymSelectionListener {
 			return;
 		}
 		
-		
+		chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
 		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());

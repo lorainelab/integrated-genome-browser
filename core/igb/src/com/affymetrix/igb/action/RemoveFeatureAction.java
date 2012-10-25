@@ -36,6 +36,10 @@ public class RemoveFeatureAction extends SeqMapViewActionA {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(allStyles.isEmpty()){
+			return;
+		}
+
 		super.actionPerformed(e);
 		String message = "Really remove all selected data set ?";
 		if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),

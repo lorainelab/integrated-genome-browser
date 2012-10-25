@@ -39,43 +39,25 @@
                     <node name="toolbar">
                         <map>
 							<entry key="com.affymetrix.igb.action.LoadFileAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.LoadURLAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ExportImageAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.ExportFileAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.PreferencesAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.ExitAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.CopyResiduesAction" value="true"/>
-							<entry key="com.affymetrix.igb.shared.SelectAllAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.CustomizeAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.ChangeForegroundColorAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.ChangeBackgroundColorAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.ChangeLabelColorAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.RepackSelectedTiersAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.ShowAllAction" value="true"/>
-							<entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction" value="true"/>
-							<entry key="com.affymetrix.igb.action.ForumHelpAction" value="true"/>
-							<entry key="com.affymetrix.genometryImpl.event.ReportBugAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.DocumentationAction" value="true"/>
+							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ScrollLeftAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ScrollRightAction" value="true"/>
+							
 							
 							<!-- Toolbar Action Indices -->
 							<entry key="com.affymetrix.igb.action.LoadFileAction.index" value="0"/>
-                            <entry key="com.affymetrix.igb.action.LoadURLAction.index" value="1"/>
-                            <entry key="com.affymetrix.igb.action.ExportImageAction.index" value="2"/>
-							<entry key="com.affymetrix.igb.action.ExportFileAction.index" value="3"/>
-							<entry key="com.affymetrix.igb.action.PreferencesAction.index" value="4"/>
-							<entry key="com.affymetrix.igb.action.ExitAction.index" value="5"/>
-							<entry key="com.affymetrix.igb.action.CopyResiduesAction.index" value="6"/>
-							<entry key="com.affymetrix.igb.shared.SelectAllAction.index" value="7"/>
-							<entry key="com.affymetrix.igb.action.CustomizeAction.index" value="8"/>
-                            <entry key="com.affymetrix.igb.action.ChangeForegroundColorAction.index" value="9"/>
-                            <entry key="com.affymetrix.igb.action.ChangeBackgroundColorAction.index" value="10"/>
-							<entry key="com.affymetrix.igb.action.ChangeLabelColorAction.index" value="11"/>
-							<entry key="com.affymetrix.igb.action.RepackSelectedTiersAction.index" value="12"/>
-							<entry key="com.affymetrix.igb.action.ShowAllAction.index" value="13"/>
-							<entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction.index" value="14"/>
-							<entry key="com.affymetrix.igb.action.ForumHelpAction.index" value="15"/>
-							<entry key="com.affymetrix.genometryImpl.event.ReportBugAction.index" value="16"/>
-							<entry key="com.affymetrix.igb.action.DocumentationAction.index" value="17"/>
+                            <entry key="com.affymetrix.igb.action.ExportImageAction.index" value="1"/>
+							<entry key="com.affymetrix.igb.action.PreferencesAction.index" value="2"/>
+							<entry key="com.affymetrix.igb.action.ExitAction.index" value="3"/>
+							<entry key="com.affymetrix.igb.action.DocumentationAction.index" value="4"/>
+							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction.index" value="5"/>
+							<entry key="com.affymetrix.igb.action.ScrollLeftAction.index" value="6"/>
+							<entry key="com.affymetrix.igb.action.ScrollRightAction.index" value="7"/>
+							
                         </map>
                     </node>
                 </node>

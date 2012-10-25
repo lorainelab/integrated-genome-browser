@@ -17,6 +17,9 @@ public class GraphTrackPanel extends TrackViewPanel {
 	public GraphTrackPanel(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("graphTab"), BUNDLE.getString("graphTab"), false, TAB_POSITION);
 		getCustomButton().setText("Thresholding...");
+		getClearButton().setText("Clear Graph");
+		getSaveButton().setText("Save Graph");
+		getDeleteButton().setText(("Delete Graph"));
 	}
 
 	@Override

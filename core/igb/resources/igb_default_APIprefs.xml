@@ -10,7 +10,6 @@
                     <map/>
                     <node name="keystrokes">
                         <map>
-                            <entry key="com.affymetrix.igb.action.AboutIGBAction" value="ctrl shift A"/>
                             <entry key="com.affymetrix.igb.action.ScrollDownAction" value="alt DOWN"/>
                             <entry key="com.affymetrix.igb.action.PreferencesAction" value="alt P"/>
                             <entry key="com.affymetrix.igb.action.ToggleHairlineLabelAction" value="ctrl H"/>

@@ -29,8 +29,8 @@ public class RemoveFeatureAction extends SeqMapViewActionA {
 
 	protected RemoveFeatureAction() {
 		super(IGBConstants.BUNDLE.getString("deleteFeatureAction"), null,
-				"16x16/actions/delete.png",
-				"16x16/actions/delete.png", KeyEvent.VK_UNDEFINED);
+				"16x16/actions/delete_track.png",
+				"22x22/actions/delete_track.png", KeyEvent.VK_UNDEFINED);
 		this.ordinal = -9007300;
 	}
 

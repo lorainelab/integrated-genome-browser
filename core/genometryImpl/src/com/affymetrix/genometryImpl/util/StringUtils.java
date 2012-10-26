@@ -19,7 +19,7 @@ import java.util.List;
 public final class StringUtils {
 	private static final String ELLIPSIS = "\u2026";
 	private static final String SPACE = " ";
-	private static final String SEPRATORS = "\\s+/\\\\._-";
+	private static final String SEPRATORS = "\\s/\\\\._";
 	private static final String SEPRATOR_REGEX = "(?<=["+SEPRATORS+"])";
 
 	public static boolean isAllDigits(CharSequence cseq) {

@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
  */
 public interface StyledGlyph extends GlyphI {
 	public static enum Direction {
-		FORWARD(" (+)"), NONE(""), REVERSE(" (-)"), BOTH(" (+/-)"), AXIS("");
+		FORWARD(" (+)"), NONE(""), REVERSE(" (-)"), BOTH(" (+|-)"), AXIS("");
 		private final String display;
 		private Direction(String display) {
 			this.display = display;

@@ -171,6 +171,10 @@ public class Delegate extends QuickLoadSymLoader {
 			GraphSym graphSym = (GraphSym)results.get(0);
 			if (results.size() == 1 && graphSym.isSpecialGraph()) {
 				BioSeq seq = graphSym.getGraphSeq();
+				SeqSymmetry previousGraph = seq.getAnnotation(uri.toString());
+				if(previousGraph != null){
+					seq.removeAnnotation(previousGraph);
+				}
 				seq.addAnnotation(graphSym);
 				feature.addMethod(uri.toString());
 				graphSym.getGraphName(); //Temp fix to setGraphTier true in TrackStyle

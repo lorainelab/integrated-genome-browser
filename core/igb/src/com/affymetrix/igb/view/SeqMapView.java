@@ -1718,6 +1718,10 @@ public class SeqMapView extends JPanel
 					id = ((LeafSingletonSymmetry) sym).getID();
 					sym_used_for_title = sym;
 				}
+				if (id == null && sym instanceof GraphSym) {
+					id = ((GraphSym) sym).getGraphName();
+					sym_used_for_title = sym;
+				}
 				if (id == null && sym instanceof SymWithProps) {
 					id = (String) ((SymWithProps) sym).getProperty("gene name");
 					sym_used_for_title = sym;

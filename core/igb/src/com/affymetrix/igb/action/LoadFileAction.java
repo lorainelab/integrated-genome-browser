@@ -43,7 +43,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	private static final long serialVersionUID = 1L;
 	private static final LoadFileAction ACTION = new LoadFileAction();
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
-	private static boolean mergeSelected = false;
+	private boolean mergeSelected = false;
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);

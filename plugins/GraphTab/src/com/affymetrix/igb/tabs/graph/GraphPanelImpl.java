@@ -209,7 +209,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 					break;
 				}
 			}
-			if (graphType == null) {
+			if (graphType == null || isAllGraphStyleLocked()) {
 				unselectGraphStyle();
 				if (isAllGraphStyleLocked()) {
 					getGraphStyleLineRadioButton().setEnabled(false);

@@ -551,8 +551,7 @@ public final class GeneralLoadView {
 	void removeAllFeautres(Set<GenericFeature> features) {
 		for (GenericFeature feature : features) {
 			if (feature.isVisible()) {
-				GeneralLoadView.getLoadView().removeFeature(feature, true);
-				TrackStyle.removeInstance(feature.getURI().toString());
+				removeFeature(feature, true);
 			}
 		}
 	}
@@ -574,6 +573,7 @@ public final class GeneralLoadView {
 					for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
 						for (String method : feature.getMethods()) {
 							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
+							TrackStyle.removeInstance(method);
 						}
 					}
 				}

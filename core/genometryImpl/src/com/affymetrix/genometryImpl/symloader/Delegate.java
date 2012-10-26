@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -171,10 +172,17 @@ public class Delegate extends QuickLoadSymLoader {
 			GraphSym graphSym = (GraphSym)results.get(0);
 			if (results.size() == 1 && graphSym.isSpecialGraph()) {
 				BioSeq seq = graphSym.getGraphSeq();
+				
+				// Remove previous graph
 				SeqSymmetry previousGraph = seq.getAnnotation(uri.toString());
 				if(previousGraph != null){
 					seq.removeAnnotation(previousGraph);
 				}
+				
+				// Add full length span
+				graphSym.removeSpan(graphSym.getSpan(seq));
+				graphSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+				
 				seq.addAnnotation(graphSym);
 				feature.addMethod(uri.toString());
 				graphSym.getGraphName(); //Temp fix to setGraphTier true in TrackStyle

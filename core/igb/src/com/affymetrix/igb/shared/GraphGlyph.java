@@ -740,7 +740,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 	}
 	
 	public void setGraphStyle(GraphStyle style) {
-		if(!state.getGraphStyleLocked()){
+		if(!state.getGraphStyleLocked() || this.graphStyle == null){
 			this.graphStyle = style;
 		}
 	}

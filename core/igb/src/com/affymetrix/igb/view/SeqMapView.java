@@ -1935,7 +1935,7 @@ public class SeqMapView extends JPanel
 			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
 				boolean matches = matchesCategory((RootSeqSymmetry) floatGlyph.getInfo(), category);
 				if (matches) {
-					floatGlyph.setSelected(true);
+					seqmap.select(floatGlyph);
 				}
 			}
 		}
@@ -1945,7 +1945,7 @@ public class SeqMapView extends JPanel
 				for (GlyphI child : tierGlyph.getChildren()) {
 					boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
 					if (matches) {
-						child.setSelected(true);
+						seqmap.select(child);
 					}
 				}
 			}

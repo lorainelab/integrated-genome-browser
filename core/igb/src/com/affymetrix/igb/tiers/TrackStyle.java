@@ -102,6 +102,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return style;
 	}
 	
+	public static void removeInstance(String unique_name) {
+		static_map.remove(unique_name.toLowerCase());
+	}
+	
 	public void restoreToDefault() {
 		TrackStyle template = getDefaultInstance();
 
@@ -160,7 +164,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		return result;
 	}
-
+	
 	protected TrackStyle() {
 		method_name = null;
 	}
@@ -563,7 +567,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		return default_instance;
 	}
-
+	
 	@Override
 	public String getUniqueName() {
 		return unique_name;

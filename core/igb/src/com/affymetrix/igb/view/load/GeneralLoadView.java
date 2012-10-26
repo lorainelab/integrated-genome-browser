@@ -44,6 +44,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
@@ -551,6 +552,7 @@ public final class GeneralLoadView {
 		for (GenericFeature feature : features) {
 			if (feature.isVisible()) {
 				GeneralLoadView.getLoadView().removeFeature(feature, true);
+				TrackStyle.removeInstance(feature.getURI().toString());
 			}
 		}
 	}

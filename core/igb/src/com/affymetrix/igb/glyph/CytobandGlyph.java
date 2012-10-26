@@ -28,6 +28,7 @@ import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
+import com.affymetrix.igb.shared.StyledGlyph;
 
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -52,9 +53,6 @@ public abstract class CytobandGlyph {
 			return null;
 		}
 
-		String meth = BioSeq.determineMethod(cyto_annots);
-		ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-		
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;
@@ -94,13 +92,43 @@ public abstract class CytobandGlyph {
 			smv.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
 
 			if (q <= centromerePoint) {
-				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, axis_tier, efg, style);
+				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, axis_tier, efg);
 			} else {
-				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, axis_tier, efg, style);
+				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, axis_tier, efg);
 			}
 		}
 
-		InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph();
+		String meth = BioSeq.determineMethod(cyto_annots);
+		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+		smv.getTrack(style, StyledGlyph.Direction.NONE);
+		
+		InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph() {
+			@Override
+			public void setVisibility(boolean isVisible) {
+				style.setShow(isVisible);
+				super.setVisibility(isVisible);
+			}
+
+			@Override
+			public boolean isVisible() {
+				return style.getShow();
+			}
+			
+			@Override
+			public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
+				if(isVisible()){
+					super.pickTraversal(pickRect, pickList, view);
+				}
+			}
+		
+			@Override
+			public void drawTraversal(ViewI view)  {
+				if(isVisible()){
+					super.drawTraversal(view);
+				}
+			}
+		
+		};
 		cytoband_glyph.setMoveChildren(false);
 		if (cytoband_glyph_A != null && cytoband_glyph_B != null) {
 			cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
@@ -123,50 +151,14 @@ public abstract class CytobandGlyph {
 	}
 
 	private static RoundRectMaskGlyph createSingleCytobandGlyph(
-			RoundRectMaskGlyph cytobandGlyph, GlyphI axis_tier, GlyphI efg, ITrackStyleExtended style) {
+			RoundRectMaskGlyph cytobandGlyph, GlyphI axis_tier, GlyphI efg) {
 		if (cytobandGlyph == null) {
-			cytobandGlyph = new RoundRectMaskGlyphWithStyle(style, axis_tier.getBackgroundColor());
+			cytobandGlyph = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
 			//cytobandGlyph.setColor(Color.GRAY);
 			cytobandGlyph.setCoordBox(efg.getCoordBox());
 		}
 		cytobandGlyph.addChild(efg);
 		cytobandGlyph.getCoordBox().add(efg.getCoordBox());
 		return cytobandGlyph;
-	}
-
-	private static class RoundRectMaskGlyphWithStyle extends RoundRectMaskGlyph {
-
-		final ITrackStyleExtended the_style;
-
-		RoundRectMaskGlyphWithStyle(ITrackStyleExtended the_style, Color background) {
-			super(background);
-			this.the_style = the_style;
-		}
-
-		@Override
-		public void setVisibility(boolean isVisible) {
-			the_style.setShow(isVisible);
-			super.setVisibility(isVisible);
-		}
-
-		@Override
-		public boolean isVisible() {
-			return the_style.getShow();
-		}
-		
-		@Override
-		public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
-			ViewI view)  {
-			if(isVisible()){
-				super.pickTraversal(pickRect, pickList, view);
-			}
-		}
-		
-		@Override
-		public void drawTraversal(ViewI view)  {
-			if(isVisible()){
-				super.drawTraversal(view);
-			}
-		}
 	}
 }

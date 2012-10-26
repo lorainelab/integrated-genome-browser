@@ -43,6 +43,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	private static final long serialVersionUID = 1L;
 	private static final LoadFileAction ACTION = new LoadFileAction();
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
+	private static boolean mergeSelected = false;
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -62,6 +63,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 			String speciesName = getSpeciesName();
 			for (File f : files) {
 				openURIOrRunScript(f.toURI(), loadGroup, speciesName, f.getAbsolutePath(), f.getName());
+					mergeSelected = true; // loadGroup will not be null at this point
 			}
 		}
 
@@ -108,7 +110,6 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		getFileChooser(getId());
 		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
-		boolean mergeSelected = loadGroup == null ? false : true;
 		if (!checkFriendlyName(friendlyName)) {
 			return false;
 		}
@@ -120,7 +121,10 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	private AnnotatedSeqGroup getloadGroup(){
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
 		if (loadGroup == null) {
+			mergeSelected = false;
 			loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
+		} else {
+			mergeSelected = true;
 		}
 		return loadGroup;
 	}

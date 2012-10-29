@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -13,7 +14,6 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import java.awt.Color;
 
 
 /**
@@ -25,13 +25,12 @@ import java.awt.Color;
  * and at high resolution overlays the residue letters.
  *
  */
-public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
-		 {
+public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	protected SearchableCharIterator chariter;
 	private int residue_length = 0;
 	private final BitSet residueMask = new BitSet();
 	private static final Font mono_default_font = NeoConstants.default_bold_font;
-	
+		
 	// default to true for backward compatability
 	private boolean hitable = true;
 	//public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
@@ -188,12 +187,16 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 	protected abstract void drawResidueRectangles(
 			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask);
 
+	protected Color getResidueStringsColor(){
+		return Color.BLACK;
+	}
+	
 	private void drawResidueStrings(
 			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int pixelStart, boolean show_mask) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
-			g.setColor(getEffectiveContrastColor(getParent().getBackgroundColor()));
+			g.setColor(getResidueStringsColor());
 			int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			int pixelOffset = (int) (pixelsPerBase - this.font_width);
 			pixelOffset = pixelOffset > 2 ? pixelOffset/2 : pixelOffset;
@@ -231,20 +234,4 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 		return isVisible() && isHitable() && coord_hitbox.intersects(getCoordBox());
 	}
 
-	/*
-	 * Calculate the effective contrast color
-	 * Credit: http://24ways.org/2010/calculating-color-contrast
-	 */
-	protected Color getEffectiveContrastColor(Color color){
-		Color constractColor = default_bg_color;
-		if(null != color) {
-			int red = color.getRed();
-			int green = color.getGreen();
-			int blue = color.getBlue();
-			
-			int yiq = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
-			constractColor = (yiq >= 128) ? Color.BLACK : Color.WHITE;
-		}
-		return constractColor;
-	}
 }

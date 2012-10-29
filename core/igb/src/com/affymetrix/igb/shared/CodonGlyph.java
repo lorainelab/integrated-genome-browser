@@ -259,6 +259,28 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		offset = residueRange.getStartPos();
 		return aminoAcidsSB.substring(residueRange.getStartPos(), residueRange.getEndPos());
 	}
+	
+	@Override
+	protected Color getResidueStringsColor(){
+		return getEffectiveContrastColor(getParent().getBackgroundColor());
+	}
+		
+	/*
+	 * Calculate the effective contrast color
+	 * Credit: http://24ways.org/2010/calculating-color-contrast
+	 */
+	protected Color getEffectiveContrastColor(Color color){
+		Color constractColor = default_bg_color;
+		if(null != color) {
+			int red = color.getRed();
+			int green = color.getGreen();
+			int blue = color.getBlue();
+			
+			int yiq = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
+			constractColor = (yiq >= 128) ? Color.BLACK : Color.WHITE;
+		}
+		return constractColor;
+	}
 /*
 	private synchronized void loadInBackground(final ViewI view, final SeqSpan span) {
 		final SeqSpan useSpan = new SimpleSeqSpan(Math.min(span.getStart(), span.getEnd()), Math.max(span.getStart(), span.getEnd()), span.getBioSeq());

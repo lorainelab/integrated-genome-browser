@@ -18,23 +18,28 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
 		if (sym != null) {
 			TierGlyph tierGlyph = smv.getTrack(style, TierGlyph.Direction.NONE);
-			SimpleSymWithResidues childSym = (SimpleSymWithResidues) sym.getChild(0);
-			SeqSpan pspan = smv.getViewSeqSpan(childSym);
-			if (pspan == null || pspan.getLength() == 0) {
-				return;
-			}  // if no span corresponding to seq, then return;
-			tierGlyph.setTierType(TierGlyph.TierType.ANNOTATION);
+			tierGlyph.setTierType(TierGlyph.TierType.SEQUENCE);
 			tierGlyph.setDirection(TierGlyph.Direction.NONE);
-			tierGlyph.setInfo(sym);	
-			GlyphI residueGlyph = getAlignedResiduesGlyph(childSym, smv.getAnnotatedSeq(), false);
-			if(residueGlyph != null){
-				FillRectGlyph childGlyph = new FillRectGlyph();
-				childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
-				childGlyph.setColor(style.getForeground());
-				residueGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
-				smv.setDataModelFromOriginalSym(childGlyph, childSym);
-				childGlyph.addChild(residueGlyph);
-				tierGlyph.addChild(childGlyph);
+			tierGlyph.setInfo(sym);
+			for (int i = 0; i < sym.getChildCount(); i++) {
+				if (!(sym.getChild(i) instanceof SimpleSymWithResidues)) {
+					continue;
+				}
+				SimpleSymWithResidues childSym = (SimpleSymWithResidues) sym.getChild(i);
+				SeqSpan pspan = smv.getViewSeqSpan(childSym);
+				if (pspan == null || pspan.getLength() == 0) {
+					return;
+				}  // if no span corresponding to seq, then return;	
+				GlyphI residueGlyph = getAlignedResiduesGlyph(childSym, smv.getAnnotatedSeq(), false);
+				if (residueGlyph != null) {
+					FillRectGlyph childGlyph = new FillRectGlyph();
+					childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
+					childGlyph.setColor(style.getForeground());
+					residueGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
+					smv.setDataModelFromOriginalSym(childGlyph, childSym);
+					childGlyph.addChild(residueGlyph);
+					tierGlyph.addChild(childGlyph);
+				}
 			}
 			doMiddlegroundShading(tierGlyph, smv, seq);
 		}

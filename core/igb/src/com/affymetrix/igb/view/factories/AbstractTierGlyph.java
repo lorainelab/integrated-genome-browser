@@ -195,7 +195,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 
 		//If any visibilty bug occurs, fix here. -HV 22/03/2012
 		setVisibility(style.getShow());
-		if (style.getCollapsed()) {
+		if (style.getCollapsed() || this.tierType == TierType.SEQUENCE) {
 			setPacker(collapse_packer);
 		} else {
 			setPacker(expand_packer);

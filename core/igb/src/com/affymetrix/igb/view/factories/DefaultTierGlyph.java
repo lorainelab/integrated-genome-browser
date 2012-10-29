@@ -272,7 +272,7 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 					child = getChildren().get(i);
 					// TransientGlyphs are usually NOT drawn in standard drawTraversal
 					if (!(child instanceof TransientGlyph) || drawTransients()) {
-						if (child.isOverlapped()) {
+						if (child.isOverlapped() && this.tierType != TierType.SEQUENCE) {
 							if (!child.getSkipDraw()) {
 								Graphics2D g = view.getGraphics();
 								Composite dac = g.getComposite();

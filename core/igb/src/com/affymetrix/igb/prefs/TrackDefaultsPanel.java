@@ -18,7 +18,6 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel{
 	{
 		autoRefreshCheckBox.setVisible(false);
 		refreshButton.setVisible(false);
-		applyButton.setVisible(false);
 	}
 	@Override
 	protected void deleteAndRestoreButtonActionPerformed(java.awt.event.ActionEvent evt) {

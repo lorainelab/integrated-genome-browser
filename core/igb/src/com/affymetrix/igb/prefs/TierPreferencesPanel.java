@@ -21,7 +21,6 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 	{
 		autoRefreshCheckBox.setVisible(true);
 		refreshButton.setVisible(true);
-		applyButton.setVisible(true);
 	}
 	@Override
 	public void refresh()

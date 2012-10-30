@@ -1,7 +1,5 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -12,8 +10,10 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import java.text.MessageFormat;
 import javax.swing.*;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -52,10 +52,10 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-import java.text.MessageFormat;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -205,6 +205,7 @@ public class SeqMapView extends JPanel
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	private SeqSymmetry sym_used_for_title = null;
+	private TierGlyph tier_used_in_selection_info = null;
 	private PropertyHandler propertyHandler;
 	private final GenericAction refreshDataAction;
 	private SeqMapViewPopup popup;
@@ -1220,6 +1221,7 @@ public class SeqMapView extends JPanel
 
 	protected final void clearSelection() {
 		sym_used_for_title = null;
+		tier_used_in_selection_info = null;
 		seqmap.clearSelected();
 		setSelectedRegion(null, false);
 		//  clear match_glyphs?
@@ -1675,7 +1677,13 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setSelectionStatus(String title){
-		Application.getSingleton().setSelField(determineProps(sym_used_for_title), title);
+		Map<String, Object> props = null;
+		if(tier_used_in_selection_info != null){
+			props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
+		}else{
+			 props = determineProps(sym_used_for_title);
+		}
+		Application.getSingleton().setSelField(props, title);
 	}
 	
 	private void setStatus(String title) {
@@ -1690,6 +1698,7 @@ public class SeqMapView extends JPanel
 	// should be similar in both places, or else users could get confused.
 	private String getSelectionTitle(List<GlyphI> selected_glyphs) {
 		String id = null;
+		tier_used_in_selection_info = null;
 		if (selected_glyphs.isEmpty()) {
 			id = "";
 			sym_used_for_title = null;
@@ -1699,7 +1708,8 @@ public class SeqMapView extends JPanel
 					id = "" + tierglyphs.size() + " Selections";
 					sym_used_for_title = null;
 				}else{
-					Map<String,Object> props = TierLabelManager.getTierProperties(tierglyphs.get(0));
+					tier_used_in_selection_info = tierglyphs.get(0);
+					Map<String,Object> props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
 					if(props != null && !props.isEmpty() && props.containsKey("Name")){
 						id = props.get("Name").toString();
 						sym_used_for_title = (SeqSymmetry)tierglyphs.get(0).getInfo();

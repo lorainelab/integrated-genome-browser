@@ -511,6 +511,11 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	@Override
+	public boolean supportsTwoTrack() {
+		return true;
+	}
+	
+	@Override
 	public String getName() {
 		return "probeset";
 	}

@@ -217,15 +217,15 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 		VirtualFeature vFeature = ftm.getFeature(row);
 
 		if (column == DataManagementTableModel.REFRESH_FEATURE_COLUMN) {
-			if (!vFeature.isPrimary()) {
-				return new LabelTableCellRenderer(null, false);
-			}
+//			if (!vFeature.isPrimary()) {
+//				return new LabelTableCellRenderer(null, false);
+//			}
 			boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && vFeature.getLoadStrategy() != LoadStrategy.GENOME);
 			return new LabelTableCellRenderer(DataManagementTable.refresh_icon, enabled);
 		} else if (column == DataManagementTableModel.LOAD_STRATEGY_COLUMN) {
-			if (!vFeature.isPrimary()) {
-				return new LabelTableCellRenderer(null, false);
-			}
+//			if (!vFeature.isPrimary()) {
+//				return new LabelTableCellRenderer(null, false);
+//			}
 			return new DataManagementTable.ColumnRenderer();
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
 			if (vFeature.getStyle() != null) {
@@ -239,9 +239,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			}
 
 		} else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {
-			if (!vFeature.isPrimary()) {
-				return new LabelTableCellRenderer(null, false);
-			}
+//			if (!vFeature.isPrimary()) {
+//				return new LabelTableCellRenderer(null, false);
+//			}
 			return new LabelTableCellRenderer(DataManagementTable.delete_icon, true);
 		} else if (column == DataManagementTableModel.HIDE_FEATURE_COLUMN) {
 			currentTiers = smv.getSeqMap().getTiers();

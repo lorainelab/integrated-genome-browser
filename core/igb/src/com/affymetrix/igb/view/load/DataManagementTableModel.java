@@ -258,9 +258,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				return "";
 			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
-				if (!vFeature.isPrimary()) {
-					return "";
-				}
+//				if (!vFeature.isPrimary()) {
+//					return "";
+//				}
 				return vFeature.getLoadStrategy().toString();
 			case TRACK_NAME_COLUMN:
 				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
@@ -320,10 +320,12 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				return true;
 			}
 			return false;
-		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
-				&& !vFeature.isPrimary()) {
-			return false;
-		} else if (smv.getPixelFloater().getChildren() != null
+		} 
+//		else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
+//				&& !vFeature.isPrimary()) {
+//			return false;
+//		} 
+		else if (smv.getPixelFloater().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
 			for (GlyphI i : smv.getPixelFloater().getChildren()) {
 				if (((StyledGlyph) i).getAnnotStyle() == style) {

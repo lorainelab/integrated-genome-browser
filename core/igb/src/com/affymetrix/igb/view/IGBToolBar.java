@@ -15,6 +15,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Comparator;
@@ -171,9 +172,10 @@ public class IGBToolBar extends JToolBar {
 		return ordinal;
 	}
 
-	private MouseListener continuousActionListener = new MouseListener() {
+	private MouseListener continuousActionListener = new MouseAdapter() {
 		private Timer timer;
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 			if (!(e.getSource() instanceof JButton)
 					|| ((JButton) e.getSource()).getAction() == null) {
@@ -184,13 +186,10 @@ public class IGBToolBar extends JToolBar {
 			timer.start();
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			timer.stop();
 		}
-
-		public void mouseClicked(MouseEvent e) { }
-		public void mouseEntered(MouseEvent e) { }
-		public void mouseExited(MouseEvent e)  { }
 	};
 		
 	private class JRPButtonTLP extends JRPButton implements TrackListProvider {

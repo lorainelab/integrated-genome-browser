@@ -5,7 +5,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -28,9 +27,9 @@ import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
-import com.affymetrix.igb.shared.StyledGlyph;
 
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 public abstract class CytobandGlyph {
 	public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
@@ -43,7 +42,7 @@ public abstract class CytobandGlyph {
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	public static Glyph makeCytobandGlyph(BioSeq sma, GlyphI axis_tier, SeqMapView smv) {
+	public static Glyph makeCytobandGlyph(BioSeq sma, GlyphI axis_tier, int tier_index, SeqMapView smv) {
 		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
 		if (cyto_tiers.isEmpty()) {
 			return null;
@@ -100,7 +99,13 @@ public abstract class CytobandGlyph {
 
 		String meth = BioSeq.determineMethod(cyto_annots);
 		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-		smv.getTrack(style, StyledGlyph.Direction.NONE);
+		TransformTierGlyph cytobandTier = new TransformTierGlyph(style);
+		
+		if (smv.getSeqMap().getTiers().size() >= tier_index) {
+			smv.getSeqMap().addTier(cytobandTier, tier_index);
+		} else {
+			smv.getSeqMap().addTier(cytobandTier, false);
+		}
 		
 		InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph() {
 			@Override

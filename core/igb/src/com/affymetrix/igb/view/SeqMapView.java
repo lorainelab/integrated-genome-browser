@@ -964,7 +964,7 @@ public class SeqMapView extends JPanel
 		resultAxisTier.setForegroundColor(axis_fg);
 		setAxisFormatFromPrefs(axis);
 
-		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, this);
+		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, tier_index, this);
 		if (cytoband_glyph != null) {
 			resultAxisTier.addChild(cytoband_glyph);
 			resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);

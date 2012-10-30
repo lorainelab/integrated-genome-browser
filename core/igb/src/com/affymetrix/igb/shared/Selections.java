@@ -88,7 +88,7 @@ public abstract class Selections {
 						}
 					}
 				}
-			}else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment) {
+			}else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment || category == FileTypeCategory.ProbeSet) {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);

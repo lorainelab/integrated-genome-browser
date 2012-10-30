@@ -263,6 +263,26 @@ public class SeqMapView extends JPanel
 		}
 	};
 
+	private MouseListener continuousActionListener = new MouseAdapter() {
+		private javax.swing.Timer timer;
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (!(e.getSource() instanceof JButton)
+					|| ((JButton) e.getSource()).getAction() == null) {
+				return;
+			}
+
+			timer = new javax.swing.Timer(200, ((JButton) e.getSource()).getAction());
+			timer.start();
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			timer.stop();
+		}
+	};
+		
 	public SeqMapView(boolean add_popups, String theId) {
 		super();
 		this.id = theId;
@@ -435,12 +455,14 @@ public class SeqMapView extends JPanel
 	protected void addZoomInXButton(String id) {
 		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
 		zoomInXB.setMargin(new Insets(0,0,0,0));
+		zoomInXB.addMouseListener(continuousActionListener);
 		xzoombox.add(zoomInXB);
 	}
 
 	protected void addZoomOutXButton(String id) {
 		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
 		zoomOutXB.setMargin(new Insets(0,0,0,0));
+		zoomOutXB.addMouseListener(continuousActionListener);
 		xzoombox.add(zoomOutXB);
 	}
 
@@ -448,6 +470,7 @@ public class SeqMapView extends JPanel
 		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
 		zoomInYB.setAlignmentX(CENTER_ALIGNMENT);
 		zoomInYB.setMargin(new Insets(0,0,0,0));
+		zoomInYB.addMouseListener(continuousActionListener);
 		yzoombox.add(zoomInYB, BorderLayout.SOUTH);
 	}
 
@@ -455,6 +478,7 @@ public class SeqMapView extends JPanel
 		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
 		zoomOutYB.setAlignmentX(CENTER_ALIGNMENT);
 		zoomOutYB.setMargin(new Insets(0,0,0,0));
+		zoomOutYB.addMouseListener(continuousActionListener);
 		yzoombox.add(zoomOutYB, BorderLayout.NORTH);
 	}
 

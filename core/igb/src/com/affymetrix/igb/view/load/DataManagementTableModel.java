@@ -167,9 +167,32 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 		}
 		
-		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
-			virtualFeatures.add(tempVirtualFeature);
+		// Fix for link.psl files
+		List<TierLabelGlyph> tierGlyphs = map.getTierLabels();
+		size = tierGlyphs.size();
+		for(int i=0; i<size; i++){
+			TierGlyph tg = tierGlyphs.get(i).getReferenceTier();
+			// If tier is invisible and it has no children then do not add it.
+			if(!tg.isVisible() && tg.getChildCount() == 0){
+				continue;
+			}
+			
+			ITrackStyleExtended style = tg.getAnnotStyle();
+			//Only consider positive track.
+			if(style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE){
+				continue;
+			}
+			
+			vf = style2Feature.get(style);
+			if(vf != null && !virtualFeatures.contains(vf)){
+				virtualFeatures.add(vf);
+				tempVirtualFeatures.remove(vf);
+			}
 		}
+		
+//		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
+//			virtualFeatures.add(tempVirtualFeature);
+//		}
 		
 		tempVirtualFeatures.clear();
 		

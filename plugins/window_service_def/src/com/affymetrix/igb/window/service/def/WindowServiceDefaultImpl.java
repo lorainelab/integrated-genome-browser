@@ -262,6 +262,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
 				frame.setVisible(true);
+				
+				// Resize all tab holder after frame is set to visible.
+				for(TabHolder tabHolder : tabHolders.values()){
+					tabHolder.resize();
+				}
 			}
 		});
 	}

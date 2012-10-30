@@ -258,9 +258,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			public void componentShown(ComponentEvent e) {
 		    	resize();
 			}
-		    public void componentResized(ComponentEvent e) {
-		    	resize();
-		    }
+//		    public void componentResized(ComponentEvent e) {
+//		    	resize();
+//		    }
+			@Override
 		    public void componentMoved(ComponentEvent e) {
 		    	resize();
 		    }

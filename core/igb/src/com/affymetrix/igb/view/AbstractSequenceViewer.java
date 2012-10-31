@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
+import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -69,7 +70,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	public SeqSymmetry residues_sym;
 	BioSeq aseq;
 	boolean isGenomicRequest;
-	SequenceViewer sv;
 	private final int INITIAL_NUMBER_OF_RESIDUES = 50;
 	private final int INITIAL_NUMBER_OF_LINES = 10;
 	private final int OFFSET = 3; 
@@ -82,7 +82,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	private boolean toggle_Reverse_Complement = false;;
-	List<SequenceViewer.CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
+	List<CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
 	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
 	Color[] okayColors = {Color.black, Color.black};
@@ -267,7 +267,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		}
 	}
 */
-	public static class CreateValueSet implements Comparable<SequenceViewer.CreateValueSet>{
+	public static class CreateValueSet implements Comparable<CreateValueSet>{
+		static final SeqSpanComparator spanCompare = new SeqSpanComparator();
 		public SeqSpan span;
 		public SequenceViewerItems si;
 
@@ -284,20 +285,13 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			return this.si;
 		}
 		
-		public int compareTo(SequenceViewer.CreateValueSet t) {
-			final int start1 = span.getStart();
-			final int start2 = t.getSpan().getStart();
-			if (start1 != start2) {
-				return ((Integer) start1).compareTo(start2);
-			}
-			
-			// secondary sort by end
-			return ((Integer) span.getEnd()).compareTo(t.getSpan().getEnd());
+		public int compareTo(CreateValueSet t) {
+			return spanCompare.compare(span, t.getSpan());
 		}	
 	}
 
 	private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
-		bundle = new ArrayList<SequenceViewer.CreateValueSet>();
+		bundle = new ArrayList<CreateValueSet>();
 		if (isGenomicRequest || (residues_sym.getChildCount() == 0)) {
 			addSequenceViewerItem(residues_sym, SequenceViewerItems.TYPE.EXON.ordinal(), aseq);
 		} else {
@@ -310,11 +304,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			SeqSpan span = residues_sym.getSpan(aseq);
 			if (!span.isForward()) {
 				Collections.reverse(bundle);
-				working_list = new ArrayList<SequenceViewer.CreateValueSet>(bundle);
+				working_list = new ArrayList<CreateValueSet>(bundle);
 			} else {
-				working_list = new ArrayList<SequenceViewer.CreateValueSet>(bundle);
+				working_list = new ArrayList<CreateValueSet>(bundle);
 			}
-			reverse_complement = new ArrayList<SequenceViewer.CreateValueSet>(working_list);
+			reverse_complement = new ArrayList<CreateValueSet>(working_list);
 			Collections.reverse(reverse_complement);
 		}
 	}
@@ -348,7 +342,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 		}
 		sequenceViewerItems.setReverseResidues((DNAUtils.reverseComplement(sequenceViewerItems.getResidues())));
-		bundle.add(new SequenceViewer.CreateValueSet(span, sequenceViewerItems));
+		bundle.add(new CreateValueSet(span, sequenceViewerItems));
 	}
 	
 	public abstract String getResidues(SeqSymmetry sym, BioSeq aseq);
@@ -356,7 +350,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private void addFormattedResidues() {
 		Color[] cols = getColorScheme();
 		int start = 0, end = 0;
-		Iterator<SequenceViewer.CreateValueSet> it_working = null;
+		Iterator<CreateValueSet> it_working = null;
 		seqview.setResidues("");
 		if (toggle_Reverse_Complement) {
 			it_working = reverse_complement.listIterator();
@@ -364,7 +358,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			it_working = working_list.listIterator();
 		}
 		while (it_working.hasNext()) {
-			SequenceViewer.CreateValueSet cv = it_working.next();
+			CreateValueSet cv = it_working.next();
 			if(showcDNASwitch){
 				if(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
 					continue;
@@ -413,7 +407,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private void enableShowCDNA(){
 		showcDNAButton.setEnabled(false);
 		if(!bundle.isEmpty()){
-			for(SequenceViewer.CreateValueSet b : bundle){
+			for(CreateValueSet b : bundle){
 				if(b.getSi().getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
 					showcDNAButton.setEnabled(true);
 					break;
@@ -725,14 +719,14 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		StringBuffer annotatedSeqStringBuffer = new StringBuffer();
 		
 		int start = 0, end = 0;
-		Iterator<SequenceViewer.CreateValueSet> it_working = null;
+		Iterator<CreateValueSet> it_working = null;
 		if (toggle_Reverse_Complement) {
 			it_working = reverse_complement.listIterator();
 		} else {
 			it_working = working_list.listIterator();
 		}
 		while (it_working.hasNext()) {
-			SequenceViewer.CreateValueSet cv = it_working.next();
+			CreateValueSet cv = it_working.next();
 			String reverse_residues = cv.getSi().getReverseResidues();
 			String residues = cv.getSi().getResidues();
 			
@@ -801,14 +795,14 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		StringBuffer copyAnnotatedSeqStringBuffer = new StringBuffer();
 		
 		int start = 0, end = 0;
-		Iterator<SequenceViewer.CreateValueSet> it_working = null;
+		Iterator<CreateValueSet> it_working = null;
 		if (toggle_Reverse_Complement) {
 			it_working = reverse_complement.listIterator();
 		} else {
 			it_working = working_list.listIterator();
 		}
 		while (it_working.hasNext()) {
-			SequenceViewer.CreateValueSet cv = it_working.next();
+			CreateValueSet cv = it_working.next();
 			if(showcDNASwitch){
 				if(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
 					continue;

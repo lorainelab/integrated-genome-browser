@@ -283,11 +283,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 		public SequenceViewerItems getSi() {
 			return this.si;
-		}
+		}	
 		
 		public int compareTo(CreateValueSet t) {
 			return spanCompare.compare(span, t.getSpan());
-		}	
+		}
 	}
 
 	private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
@@ -302,7 +302,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		
 		if (!bundle.isEmpty()) {
 			SeqSpan span = residues_sym.getSpan(aseq);
-			if (!span.isForward()) {
+			if (!span.isForward() && shouldReverseOnNegative()) {
 				Collections.reverse(bundle);
 				working_list = new ArrayList<CreateValueSet>(bundle);
 			} else {
@@ -314,6 +314,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	}
 
 	protected abstract void addIntron(SeqSymmetry residues_sym, BioSeq aseq);
+	
+	protected abstract boolean shouldReverseOnNegative();
 	
 	protected void addSequenceViewerItems(SeqSymmetry sym, int type, BioSeq aseq) {
 		for (int i = 0; i < sym.getChildCount(); i++) {

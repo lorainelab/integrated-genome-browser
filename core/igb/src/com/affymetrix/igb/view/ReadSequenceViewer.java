@@ -37,4 +37,9 @@ public class ReadSequenceViewer extends AbstractSequenceViewer{
 			addSequenceViewerItem(bamSym.getInsChild(i), SequenceViewerItems.TYPE.INTRON.ordinal(), aseq);
 		}
 	}
+	
+	@Override
+	protected boolean shouldReverseOnNegative(){
+		return false;
+	}
 }

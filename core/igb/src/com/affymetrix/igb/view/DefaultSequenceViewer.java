@@ -31,4 +31,9 @@ public class DefaultSequenceViewer extends AbstractSequenceViewer{
 	protected void addIntron(SeqSymmetry residues_sym, BioSeq aseq) {
 		addSequenceViewerItems(SeqUtils.getIntronSym(residues_sym, aseq), SequenceViewerItems.TYPE.INTRON.ordinal(), aseq);
 	}
+	
+	@Override
+	protected boolean shouldReverseOnNegative(){
+		return true;
+	}
 }

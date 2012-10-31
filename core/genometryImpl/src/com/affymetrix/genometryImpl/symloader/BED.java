@@ -501,6 +501,9 @@ public class BED extends SymLoader implements LineProcessor {
 	}
 
 	public static int[] parseIntArray(String int_array) {
+		if(int_array == null || int_array.length() == 0){
+			return new int[0];
+		}
 		String[] intstrings = comma_regex.split(int_array);
 		int count = intstrings.length;
 		int[] results = new int[count];

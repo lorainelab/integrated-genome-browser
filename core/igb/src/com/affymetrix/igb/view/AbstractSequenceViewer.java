@@ -297,9 +297,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	}
 
 	private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
-		bundle = new ArrayList<SequenceViewer.CreateValueSet>();		
+		bundle = new ArrayList<SequenceViewer.CreateValueSet>();
 		if (isGenomicRequest || (residues_sym.getChildCount() == 0)) {
-			addSequenceViewerItem(residues_sym, 0, aseq);
+			addSequenceViewerItem(residues_sym, SequenceViewerItems.TYPE.EXON.ordinal(), aseq);
 		} else {
 			addSequenceViewerItems(residues_sym, SequenceViewerItems.TYPE.EXON.ordinal(), aseq);
 			addIntron(residues_sym, aseq);
@@ -327,7 +327,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		}
 	}
 
-	private void addSequenceViewerItem(SeqSymmetry sym, int type, BioSeq aseq) {
+	protected void addSequenceViewerItem(SeqSymmetry sym, int type, BioSeq aseq) {
 		SeqSpan span;
 		SequenceViewerItems sequenceViewerItems = new SequenceViewerItems();
 		sequenceViewerItems.setResidues(getResidues(sym, aseq).toUpperCase());

@@ -18,6 +18,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.AMenuItem;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -31,6 +33,7 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -176,7 +179,8 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
-		
+
+		addMenuItemListener();
 		addPrefEditorComponentListener();
 		initSeqMapViewActions();
 		addShortcuts();
@@ -431,6 +435,37 @@ public class Activator implements BundleActivator {
 				}
 			},
 			null
+		);
+	}
+	
+	private void addMenuItemListener(){
+		ExtensionPointHandler<AMenuItem> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AMenuItem.class);
+		stopRoutineExtensionPoint.addListener(
+			new ExtensionPointListener<AMenuItem>() {
+				@Override
+				public void addService(AMenuItem amenuItem) {
+					JMenu parent = ((IGB)Application.getSingleton()).getMenu(amenuItem.getParentMenu());
+					if(parent == null){
+						ourLogger.log(Level.WARNING, "No menu found with name {0}. {1} is not added.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
+						return;
+					}
+					if(amenuItem.getLocation() == -1){
+						MenuUtil.addToMenu(parent, amenuItem.getMenuItem());
+					}else{
+						MenuUtil.insertIntoMenu(parent, amenuItem.getMenuItem(), amenuItem.getLocation());
+					}
+					
+				}
+				@Override
+				public void removeService(AMenuItem amenuItem) {	
+					JMenu parent = ((IGB)Application.getSingleton()).getMenu(amenuItem.getParentMenu());
+					if(parent == null){
+						ourLogger.log(Level.WARNING, "No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
+						return;
+					}
+					parent.remove(amenuItem.getMenuItem());
+				}
+			}
 		);
 	}
 }

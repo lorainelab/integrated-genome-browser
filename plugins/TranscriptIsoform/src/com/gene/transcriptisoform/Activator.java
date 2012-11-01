@@ -13,18 +13,19 @@ import javax.swing.JRadioButtonMenuItem;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 
-public class Activator implements BundleActivator {
-	private BundleContext bundleContext;
+public class Activator extends ServiceRegistrar implements BundleActivator {
 	private TranscriptIsoformEvidenceVisualizationManager tievListener;
 	private JMenu transcriptIsoformMenu;
-
-	private void registerServices(final IGBService igbService) {
+	
+	@Override
+	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
 		tievListener = new TranscriptIsoformEvidenceVisualizationManager(igbService);
 		igbService.getSeqMapView().addToRefreshList(tievListener);
 		igbService.getSeqMap().addMouseListener(tievListener);
@@ -94,28 +95,9 @@ public class Activator implements BundleActivator {
 	    group.add(brightnessMenuItem);
 	    brightnessMenuItem.setSelected(false);
 	    transcriptIsoformMenu.add(densityMenu);
+		
+		return null;
 	}
-
-	@Override
-	public void start(BundleContext bundleContext_) throws Exception {
-		this.bundleContext = bundleContext_;
-    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
-
-        if (igbServiceReference != null) {
-        	IGBService igbService = bundleContext.getService(igbServiceReference);
-        	registerServices(igbService);
-        }
-        else {
-        	ServiceTracker<IGBService,Object> serviceTracker = new ServiceTracker<IGBService,Object>(bundleContext, IGBService.class, null) {
-        	    public Object addingService(ServiceReference<IGBService> igbServiceReference) {
-                	IGBService igbService = bundleContext.getService(igbServiceReference);
-                   	registerServices(igbService);
-                    return super.addingService(igbServiceReference);
-        	    }
-        	};
-        	serviceTracker.open();
-        }
-    }
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {

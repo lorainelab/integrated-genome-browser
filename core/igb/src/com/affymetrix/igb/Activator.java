@@ -463,7 +463,7 @@ public class Activator implements BundleActivator {
 						ourLogger.log(Level.WARNING, "No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
 						return;
 					}
-					parent.remove(amenuItem.getMenuItem());
+					MenuUtil.removeFromMenu(parent, amenuItem.getMenuItem());
 				}
 			}
 		);

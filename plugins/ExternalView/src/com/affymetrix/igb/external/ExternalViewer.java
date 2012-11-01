@@ -5,9 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -24,25 +22,17 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
 	private static final int TAB_POSITION = 5;
-	private static final int VIEW_MENU_POS = 2;
 
 	private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
 	final JRPComboBox ucscBox;
 	final JRPComboBox ensemblBox;
 	
-	private final UCSCViewAction ucscViewAction;
-	private final JRPMenuItem menuItem;
-
-	public ExternalViewer(IGBService igbService_) {
+	public ExternalViewer(IGBService igbService_, UCSCViewAction ucscViewAction) {
 		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
 		this.setLayout(new CardLayout());
 		ucscBox = createBox("ExternalViewer_ucsc");
 		ensemblBox = createBox("ExternalViewer_ensemble");
 		
-		ucscViewAction = new UCSCViewAction(igbService);
-		menuItem = new JRPMenuItem("ExternalViewer_ucscView", ucscViewAction);
-		MenuUtil.insertIntoMenu(igbService.getMenu("view"), menuItem, VIEW_MENU_POS);
-
 		final UCSCView ucsc = new UCSCView(ucscBox, igbService, ucscViewAction);
 		add(ucsc, ucsc.getViewName());
 		final EnsemblView ensembl = new EnsemblView(ensemblBox, igbService, ucscViewAction);
@@ -56,10 +46,6 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 		box.setEditable(false);
 		box.addItemListener(this);
 		return box;
-	}
-
-	public void removeViewer() {
-		MenuUtil.removeFromMenu(igbService.getMenu("view"), menuItem);
 	}
 
 	@Override

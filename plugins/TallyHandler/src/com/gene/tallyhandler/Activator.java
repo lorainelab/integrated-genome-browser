@@ -12,7 +12,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	@Override
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
-			bundleContext.registerService(FileTypeHandler.class, tallyHandler, null)
+			bundleContext.registerService(FileTypeHandler.class, new TallyHandler(), null)
 		};
 	}
 }

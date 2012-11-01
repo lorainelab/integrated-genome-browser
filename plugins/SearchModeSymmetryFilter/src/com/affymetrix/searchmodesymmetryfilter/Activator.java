@@ -13,8 +13,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	@Override
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
-				bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterProps(), 2000), null))
-			};
-        }
+			bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterProps(), 2000), null)
+		};
 	}
 }

@@ -25,7 +25,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	private JMenu transcriptIsoformMenu;
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(final IGBService igbService) throws Exception {
 		tievListener = new TranscriptIsoformEvidenceVisualizationManager(igbService);
 		igbService.getSeqMapView().addToRefreshList(tievListener);
 		igbService.getSeqMap().addMouseListener(tievListener);

@@ -13,14 +13,13 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 //	private static final String _1000_GENOMES_US = "ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/";
 	static final String _1000_GENOMES_US = "ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/phase1/";
 //	private static final String _1000_GENOMES_EUROPE = "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/";
-	private BundleContext bundleContext;
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
 		igbService.addServer(ThousandGenomesServerType.getInstance(), "1000 Genomes", _1000_GENOMES_US, Integer.MAX_VALUE);
 		return new ServiceRegistration[] {
-			bundleContext.registerService(ServerTypeI.class, ThousandGenomesServerType.getInstance(), null)}
+			bundleContext.registerService(ServerTypeI.class, ThousandGenomesServerType.getInstance(), null)
 		};
 	}
 

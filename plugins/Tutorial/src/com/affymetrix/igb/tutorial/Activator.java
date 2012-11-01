@@ -3,6 +3,7 @@ package com.affymetrix.igb.tutorial;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -20,16 +21,19 @@ import javax.swing.JMenuItem;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
-
-	private BundleContext bundleContext;
+	
 	private static final String DEFAULT_PREFS_TUTORIAL_RESOURCE = "/tutorial_default_prefs.xml";
 	private static final Logger ourLogger =
 			Logger.getLogger(Activator.class.getPackage().getName());
 
-	private void handleWindowService(JRPMenu help_menu, ServiceReference<IWindowService> windowServiceReference) {
+	private BundleContext bundleContext;
+	private ServiceRegistration<AMenuItem> menuRegistration;
+	
+	private void handleWindowService(ServiceReference<IWindowService> windowServiceReference) {
 		loadDefaultTutorialPrefs();
 		try {
 			IWindowService windowService = bundleContext.getService(windowServiceReference);
@@ -54,7 +58,7 @@ public class Activator implements BundleActivator {
 						tutorialMenu.add(item);
 					}
 				}
-				help_menu.add(tutorialMenu);
+			menuRegistration = bundleContext.registerService(AMenuItem.class, new AMenuItem(tutorialMenu, "help"), null);
 			} catch (FileNotFoundException fnfe) {
 				ourLogger.log(Level.WARNING,
 						"Could not find file {0}.\n          coninuing...",
@@ -73,18 +77,14 @@ public class Activator implements BundleActivator {
 
 	private void handleIGBService(ServiceReference<IGBService> igbServiceReference) {
 		try {
-			IGBService igbService = bundleContext.getService(igbServiceReference);
-			final JRPMenu help_menu = igbService.getMenu("help");
-
 			ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
 			if (windowServiceReference != null) {
-				handleWindowService(help_menu, windowServiceReference);
+				handleWindowService(windowServiceReference);
 			} else {
 				ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class.getName(), null) {
-
 					@Override
 					public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-						handleWindowService(help_menu, windowServiceReference);
+						handleWindowService(windowServiceReference);
 						return super.addingService(windowServiceReference);
 					}
 				};
@@ -123,6 +123,9 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
+		if(menuRegistration != null){
+			menuRegistration.unregister();
+		}
 	}
 
 	private void initActions(){

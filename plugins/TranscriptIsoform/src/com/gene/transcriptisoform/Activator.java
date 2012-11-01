@@ -16,13 +16,12 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 
 public class Activator extends ServiceRegistrar implements BundleActivator {
 	private TranscriptIsoformEvidenceVisualizationManager tievListener;
-	private JMenu transcriptIsoformMenu;
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(final IGBService igbService) throws Exception {
@@ -31,9 +30,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		igbService.getSeqMap().addMouseListener(tievListener);
 		igbService.getSeqMap().addMouseMotionListener(tievListener);
 		GenometryModel.getGenometryModel().addSeqSelectionListener(tievListener);
-		JMenu view_menu = igbService.getMenu("view");
-		transcriptIsoformMenu = new JMenu("Transcript Isoform");
-		view_menu.add(transcriptIsoformMenu);
+		JMenu transcriptIsoformMenu = new JMenu("Transcript Isoform");
 		final JMenuItem selectRefTiersMenuItem = new JMenuItem("select reference tiers");
 		selectRefTiersMenuItem.addActionListener(
 	    	new ActionListener() {
@@ -96,7 +93,9 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	    brightnessMenuItem.setSelected(false);
 	    transcriptIsoformMenu.add(densityMenu);
 		
-		return null;
+		return new ServiceRegistration[]{
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(transcriptIsoformMenu, "view"), null)
+		};
 	}
 
 	@Override
@@ -106,7 +105,6 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
         if (igbServiceReference != null) {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
         	igbService.getSeqMap().updateWidget();
-    		MenuUtil.removeFromMenu(igbService.getMenu("view"), transcriptIsoformMenu);
         }
 	}
 }

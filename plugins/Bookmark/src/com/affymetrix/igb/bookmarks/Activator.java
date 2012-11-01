@@ -24,10 +24,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 public class Activator extends WindowActivator implements BundleActivator {
-	private BookmarkActionManager bmark_action;
 	private ServiceRegistration<GenericAction> saveSessionActionRegistration, loadSessionActionRegistration;
-	private static final Logger ourLogger
-		  = Logger.getLogger(Activator.class.getPackage().getName());
+	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
@@ -74,7 +72,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		BookmarkActionManager.init(igbService, bookmark_menu);
-		bmark_action = BookmarkActionManager.getInstance();
+		final BookmarkActionManager bmark_action = BookmarkActionManager.getInstance();
 		bundleContext.registerService(IStopRoutine.class.getName(), 
 			new IStopRoutine() {
 				@Override
@@ -133,9 +131,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {
 		super.stop(_bundleContext);
-		if (bmark_action != null) {
-			bmark_action.autoSaveBookmarks();
-		}
 		saveSessionActionRegistration.unregister();
 		loadSessionActionRegistration.unregister();
 	}

@@ -8,7 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: BETA release of transcript isoform evidence visualization
 Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/TranscriptIsoform-0.0.9/TranscriptIsoform.html
-Import-Package: com.affymetrix.common;version="[6.7.0,6.7.0]",
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.util,

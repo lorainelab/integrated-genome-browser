@@ -9,7 +9,7 @@ Bundle-Activator: com.gene.tallyhandler.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Category: FileTypeHandler-com.gene.tallyhandler.TallyHandler
-Import-Package: com.affymetrix.common;version="[6.7.0,6.7.0]",
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.parsers,
  com.affymetrix.genometryImpl.span,

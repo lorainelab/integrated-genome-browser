@@ -166,6 +166,7 @@ public class Activator implements BundleActivator {
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
+		//TODO: Probably should implement using extension point listener.
 		GenericActionHolder.getInstance().addGenericActionListener(
     		new GenericActionListener() {
 				@Override

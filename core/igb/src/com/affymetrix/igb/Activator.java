@@ -162,88 +162,22 @@ public class Activator implements BundleActivator {
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
 	private void run(ServiceReference<IWindowService> windowServiceReference) {
-        IWindowService windowService = bundleContext.getService(windowServiceReference);
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
-
-		//TODO: Probably should implement using extension point listener.
-		GenericActionHolder.getInstance().addGenericActionListener(
-    		new GenericActionListener() {
-				@Override
-				public void onCreateGenericAction(GenericAction genericAction) {
-					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
-						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
-						if (isToolbar) {
-//							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
-							Preferences p = PreferenceUtils.getKeystrokesNode();
-							if (null != p) {
-								String ak = p.get(genericAction.getId(), "");
-								if (null != ak & 0 < ak.length()) {
-									KeyStroke ks = KeyStroke.getKeyStroke(ak);
-									genericAction.putValue(Action.ACCELERATOR_KEY, ks);
-								}
-							}
-							int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId()+".index", -1);
-							if(index == -1){
-								((IGB)Application.getSingleton()).addToolbarAction(genericAction);
-							}else{
-								((IGB)Application.getSingleton()).addToolbarAction(genericAction, index);
-							}
-						}
-					}
-				}
-				@Override
-				public void notifyGenericAction(GenericAction genericAction) {}
-			}
-    	);
-			
+		
+		addGenericActionListener();
 		// To avoid race condition on startup
 		initMapViewGlyphFactorys();
 		
         igb.init(args);
-        final IGBTabPanel[] tabs = igb.setWindowService(windowService);
-        // set IGBService
-		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
-		bundleContext.registerService(GeneralLoadView.class, GeneralLoadView.getLoadView(), null);
-		// register tabs created in IGB itself - IGBTabPanel is an extension point
-		for (IGBTabPanel tab : tabs) {
-			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
-		}
+		registerServices(windowServiceReference, igb);
+		addStopRotineListener(igb);
+		
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
-		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
-		stopRoutineExtensionPoint.addListener(
-			new ExtensionPointListener<IStopRoutine>() {
-				@Override
-				public void removeService(IStopRoutine routine) {	/*cannot remove*/ }
-				@Override
-				public void addService(IStopRoutine routine) {
-					igb.addStopRoutine(routine);
-				}
-			}
-		);
-		ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
-		preferencesExtensionPoint.addListener(
-			new ExtensionPointListener<IPrefEditorComponent>() {
-				@Override
-				public void removeService(IPrefEditorComponent prefs) {	/*cannot remove*/ }
-				@Override
-				public void addService(IPrefEditorComponent prefs) {
-					PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
-				}
-			}
-		);
-		bundleContext.registerService(IStopRoutine.class, 
-			new IStopRoutine() {
-				@Override
-				public void stop() {
-					WebLink.autoSave();
-					((IGB)Application.getSingleton()).saveToolBar();
-				}
-			},
-			null
-		);
+		
+		addPrefEditorComponentListener();
 		initSeqMapViewActions();
 		addShortcuts();
 	}
@@ -415,5 +349,88 @@ public class Activator implements BundleActivator {
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);
+	}
+
+	private void addGenericActionListener() {
+		//TODO: Probably should implement using extension point listener.
+		GenericActionHolder.getInstance().addGenericActionListener(
+			new GenericActionListener() {
+				@Override
+				public void onCreateGenericAction(GenericAction genericAction) {
+					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
+						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
+						if (isToolbar) {
+//							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
+							Preferences p = PreferenceUtils.getKeystrokesNode();
+							if (null != p) {
+								String ak = p.get(genericAction.getId(), "");
+								if (null != ak & 0 < ak.length()) {
+									KeyStroke ks = KeyStroke.getKeyStroke(ak);
+									genericAction.putValue(Action.ACCELERATOR_KEY, ks);
+								}
+							}
+							int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId()+".index", -1);
+							if(index == -1){
+								((IGB)Application.getSingleton()).addToolbarAction(genericAction);
+							}else{
+								((IGB)Application.getSingleton()).addToolbarAction(genericAction, index);
+							}
+						}
+					}
+				}
+				@Override
+				public void notifyGenericAction(GenericAction genericAction) {}
+			}
+		);
+	}
+
+	private void addStopRotineListener(final IGB igb) {
+		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
+		stopRoutineExtensionPoint.addListener(
+			new ExtensionPointListener<IStopRoutine>() {
+				@Override
+				public void addService(IStopRoutine routine) {
+					igb.addStopRoutine(routine);
+				}
+				@Override
+				public void removeService(IStopRoutine routine) {	/*cannot remove*/ }
+			}
+		);
+	}
+
+	private void addPrefEditorComponentListener() {
+		ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
+		preferencesExtensionPoint.addListener(
+			new ExtensionPointListener<IPrefEditorComponent>() {
+				@Override
+				public void removeService(IPrefEditorComponent prefs) {	/*cannot remove*/ }
+				@Override
+				public void addService(IPrefEditorComponent prefs) {
+					PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
+				}
+			}
+		);
+	}
+
+	private void registerServices(ServiceReference<IWindowService> windowServiceReference, final IGB igb) {
+		IWindowService windowService = bundleContext.getService(windowServiceReference);
+		final IGBTabPanel[] tabs = igb.setWindowService(windowService);
+		// set IGBService
+		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
+		bundleContext.registerService(GeneralLoadView.class, GeneralLoadView.getLoadView(), null);
+		// register tabs created in IGB itself - IGBTabPanel is an extension point
+		for (IGBTabPanel tab : tabs) {
+			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
+		}
+		bundleContext.registerService(IStopRoutine.class, 
+			new IStopRoutine() {
+				@Override
+				public void stop() {
+					WebLink.autoSave();
+					((IGB)Application.getSingleton()).saveToolBar();
+				}
+			},
+			null
+		);
 	}
 }

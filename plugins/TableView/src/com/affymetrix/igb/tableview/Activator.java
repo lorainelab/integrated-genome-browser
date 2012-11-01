@@ -22,6 +22,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 
 public class Activator extends ServiceRegistrar implements BundleActivator {
+	private static final int MENU_POS = 3;
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
@@ -31,7 +32,8 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		frame.setLocation(100, 100);
 		frame.pack();
 
-		mi.addActionListener(
+		JMenuItem menuItem = new JMenuItem("Open with TableView...", CommonUtils.getInstance().getIcon(TableView.class, "TableView16.png"));
+		menuItem.addActionListener(
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -66,7 +68,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 				});
 		
 		return new ServiceRegistration[]{ 
-			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JMenuItem("Open with TableView...", CommonUtils.getInstance().getIcon(TableView.class, "TableView16.png")), "file", 3), null)
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(menuItem, "file", MENU_POS), null)
 		};
 	}
 }

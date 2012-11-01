@@ -9,7 +9,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
-	private static final int VIEW_MENU_POS = 2;
+	private static final int VIEW_MENU_POS = 3;
 	
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {

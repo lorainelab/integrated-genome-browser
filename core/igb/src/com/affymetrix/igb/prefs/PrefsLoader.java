@@ -52,6 +52,9 @@ public abstract class PrefsLoader {
 			(new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath()
 			+ ";"
 			+ (new File(user_dir, DEFAULT_PREFS_FILENAME)).getAbsolutePath();
+	
+	private static final String COMMAND_KEY = "meta";
+	private static final String CONTROL_KEY = "ctrl";
 
 	/**
 	 *  Returns IGB prefs hash
@@ -123,6 +126,20 @@ public abstract class PrefsLoader {
 				System.out.println("loading default User preferences from: " + fileName);
 				default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
 				Preferences.importPreferences(default_prefs_stream);
+				
+				// Use command key instead of control for Mac, only applies after resetting preferences
+				// Because user's preferences will be loaded back next
+				if(isMac()){
+					String[] keys = PreferenceUtils.getKeystrokesNode().keys();
+					for(int i =0; i< keys.length; i++) {
+						String action = PreferenceUtils.getKeystrokesNode().keys()[i];
+						String keyStroke = PreferenceUtils.getKeystrokesNode().get(action, "");
+						if(keyStroke.contains(CONTROL_KEY)){
+							keyStroke = keyStroke.replace(CONTROL_KEY, COMMAND_KEY);
+							PreferenceUtils.getKeystrokesNode().put(action, keyStroke);
+						}
+					}
+				}
 				
 				//Load back saved preferences
 				if(outputStream != null){
@@ -325,4 +342,17 @@ public abstract class PrefsLoader {
 			return is;
 		}
 	}
+	
+	/**
+	 * determines if the OS is windows
+	 * @return true if the OS is windows, false for MacOS, Linux, etc.
+	 */
+	protected static boolean isMac(){
+		String os = System.getProperty("os.name");
+		if (os != null && "Mac OS X".equals(os)) {
+			return true;
+		}
+		return false;
+	}
+
 }

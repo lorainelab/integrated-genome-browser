@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 /**
  *  A parser for UCSC's BED format.
@@ -157,10 +158,11 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			}
 			else if (line.startsWith("track")) {
 				track_line_parser.parseTrackLine(line);
-				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
+				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				style.setColorByRGB(use_item_rgb);
 				bedType = track_line_parser.getCurrentTrackHash().get("type");
 				continue;
 			}

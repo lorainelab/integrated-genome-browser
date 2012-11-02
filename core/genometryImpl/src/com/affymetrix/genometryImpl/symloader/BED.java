@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.net.URI;
@@ -225,10 +226,11 @@ public class BED extends SymLoader implements LineProcessor {
 				continue;
 			} else if (firstChar == 't' && line.startsWith("track")) {
 				track_line_parser.parseTrackLine(line);
-				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
+				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				style.setColorByRGB(true);
 				bedType = track_line_parser.getCurrentTrackHash().get("type");
 				bedDetail = "bedDetail".equals(bedType);
 				continue;

@@ -719,6 +719,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 			PreferenceUtils.putColor(getNode(), PREF_FOREGROUND, c);
 		}
+		// When a user sets foreground color turn off color by RGB
+		setColorByRGB(false);
 	}
 
 	/**
@@ -761,6 +763,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 			PreferenceUtils.putColor(getNode(), PREF_START_COLOR, c);
 		}
+		// When a user sets forward color turn off color by RGB
+		setColorByRGB(false);
 	}
 
 	/**
@@ -780,6 +784,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 			PreferenceUtils.putColor(getNode(), PREF_END_COLOR, c);
 		}
+		// When a user sets reverse color turn off color by RGB
+		setColorByRGB(false);
 	}
 
 	/**

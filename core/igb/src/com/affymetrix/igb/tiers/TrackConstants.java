@@ -44,6 +44,8 @@ public interface TrackConstants {
 	static final boolean default_draw_collapse_icon = true;
 	static final boolean default_show_igb_track_mark = true;
 	static final boolean default_show_locked_track_icon = true;
+	static final boolean default_color_by_score = false;
+	static final boolean default_color_by_rgb = true;
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.decode("0x333399"); //Color.CYAN;
 	static final Color default_background = Color.decode("0xDEE0E0"); //Color.BLACK;

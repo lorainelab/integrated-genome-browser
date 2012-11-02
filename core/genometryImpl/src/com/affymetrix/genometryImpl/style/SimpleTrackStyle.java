@@ -241,4 +241,15 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public void setJoin(boolean b){
 		join = b;
 	}
+
+	boolean colorByRGB = true;
+	@Override
+	public void setColorByRGB(boolean b) {
+		colorByRGB = b;
+	}
+
+	@Override
+	public boolean getColorByRGB() {
+		return colorByRGB;
+	}
 }

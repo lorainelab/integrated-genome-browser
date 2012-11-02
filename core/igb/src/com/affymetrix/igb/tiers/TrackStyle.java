@@ -52,9 +52,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Color end_color = default_end;
 	private float min_score_color = default_min_score_color;
 	private float max_score_color = default_max_score_color;
+	private boolean color_by_score = default_color_by_score;
+	private boolean color_by_rgb = default_color_by_rgb;
 	private String url = null;
 	private String file_type = null;
-	private boolean color_by_score = false;
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
 	private String track_name;
@@ -531,6 +532,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 //		this.setViewMode(template.getViewMode());
 		this.setDirectionType(template.getDirectionName());
 		this.setLabelForeground(null);
+		this.setColorByScore(template.getColorByScore());
+		this.setColorByRGB(template.getColorByRGB());
 	}
 
 	// Returns the preferences node, or null if this is a non-persistent instance.
@@ -1011,6 +1014,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return color_by_score;
 	}
 
+	@Override
+	public void setColorByRGB(boolean b){
+		color_by_rgb = b;
+	}
+	
+	@Override
+	public boolean getColorByRGB(){
+		return color_by_rgb;
+	}
+	
 	public void setMinScoreColor(float min_score_color) {
 		this.min_score_color = min_score_color;
 	}

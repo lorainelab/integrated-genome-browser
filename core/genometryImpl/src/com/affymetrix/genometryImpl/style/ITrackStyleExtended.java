@@ -24,7 +24,10 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	boolean getColorByScore();
 
 	Color getScoreColor(float f);
-
+	
+	void setColorByRGB(boolean b);
+	boolean getColorByRGB();
+	
 	/** Controls a parameter of the GenericAnnotGlyphFactory. */
 	void setGlyphDepth(int i);
 	/** Returns a parameter used by the GenericAnnotGlyphFactory. */

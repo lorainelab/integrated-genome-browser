@@ -229,7 +229,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		}
 		pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
 		boolean use_score_colors = the_style.getColorByScore();
-		boolean use_item_rgb = "on".equalsIgnoreCase((String) the_style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
+		boolean use_item_rgb = the_style.getColorByRGB();
 		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), DIRECTION_TYPE.valueFor(the_style.getDirectionType()), use_score_colors, use_item_rgb));
 		gviewer.setDataModelFromOriginalSym(pglyph, sym);
 		return pglyph;
@@ -278,7 +278,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		//    orginal annotation are completely outside the view
 
 		boolean use_score_colors = the_style.getColorByScore();
-		boolean use_item_rgb = "on".equalsIgnoreCase((String) the_style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
+		boolean use_item_rgb = the_style.getColorByRGB();
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());

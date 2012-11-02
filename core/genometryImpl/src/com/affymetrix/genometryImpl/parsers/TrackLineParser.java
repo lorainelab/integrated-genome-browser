@@ -131,11 +131,11 @@ public final class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	public static ITrackStyle createTrackStyle(Map<String,String> track_hash, String default_track_name, String file_type) {
+	public static ITrackStyleExtended createTrackStyle(Map<String,String> track_hash, String default_track_name, String file_type) {
 		String human_name = appendTrackName(track_hash, default_track_name);
 		String name = track_hash.get(NAME);
 		
-		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type, null);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type, null);
 		applyTrackProperties(track_hash, style);
 		return style;
 	}

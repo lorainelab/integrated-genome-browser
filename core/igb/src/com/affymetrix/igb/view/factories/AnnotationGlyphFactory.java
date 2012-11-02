@@ -228,7 +228,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			pglyph = (GlyphI) glyphClass.newInstance();
 		}
 		pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), DIRECTION_TYPE.valueFor(the_style.getDirectionType())));
+		boolean use_score_colors = the_style.getColorByScore();
+		boolean use_item_rgb = "on".equalsIgnoreCase((String) the_style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
+		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), DIRECTION_TYPE.valueFor(the_style.getDirectionType()), use_score_colors, use_item_rgb));
 		gviewer.setDataModelFromOriginalSym(pglyph, sym);
 		return pglyph;
 	}
@@ -275,6 +277,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 
+		boolean use_score_colors = the_style.getColorByScore();
+		boolean use_item_rgb = "on".equalsIgnoreCase((String) the_style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
@@ -289,7 +293,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
-				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
+				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type, use_score_colors, use_item_rgb);
 				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
@@ -335,17 +339,15 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		return (GlyphI) child_glyph_class.newInstance();
 	}
 		
-	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, DIRECTION_TYPE direction_type) {
-		if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
-			if(isForward)
-				return style.getForwardColor();
-			return style.getReverseColor();
-		}
-		
-		boolean use_score_colors = style.getColorByScore();
-		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
-
+	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, 
+			boolean isForward, DIRECTION_TYPE direction_type, boolean use_score_colors, boolean use_item_rgb) {
 		if (!(use_score_colors || use_item_rgb)) {
+			if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
+				if(isForward){
+					return style.getForwardColor();
+				}
+				return style.getReverseColor();
+			}
 			return style.getForeground();
 		}
 

@@ -9,6 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: plugin to allow the user to load ftp sites as servers 
 Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/ThousandGenomesServerType-0.0.9/ThousandGenomesServerType.html
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.general,
  com.affymetrix.genometryImpl.parsers,
  com.affymetrix.genometryImpl.symloader,
  com.affymetrix.genometryImpl.util,

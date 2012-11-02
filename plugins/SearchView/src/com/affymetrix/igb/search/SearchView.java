@@ -52,8 +52,6 @@ import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.jidesoft.hints.ListDataIntelliHints;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
@@ -62,7 +60,8 @@ public final class SearchView extends IGBTabPanel implements
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
 	private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
 	private static final int TAB_POSITION = 2;
-
+	private static String[] regexChars = new String[]{"|"};
+	
 	public class SearchModeAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 
@@ -111,6 +110,7 @@ public final class SearchView extends IGBTabPanel implements
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
+			final boolean search_hint_selection = e == null;
 			selectedSearchMode = searchModeMap.get(searchMode);
 			String chrStr = (String) SearchView.this.sequenceCB.getSelectedItem();
 			final BioSeq chrfilter = Constants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
@@ -127,7 +127,13 @@ public final class SearchView extends IGBTabPanel implements
 							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
 						}
 						else {
-							List<SeqSymmetry> syms = ((ISearchModeSym)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							String search_term = SearchView.this.searchTF.getText().trim();
+							if(search_hint_selection){
+								for(String c : regexChars){
+									search_term = search_term.replace(c, "\\"+c);
+								}
+							}
+							List<SeqSymmetry> syms = ((ISearchModeSym)selectedSearchMode).search(search_term, chrfilter, SearchView.this, optionCheckBox.isSelected());
 							return new SymSearchResultsTableModel(syms);
 						}
 					}

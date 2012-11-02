@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -1880,7 +1881,12 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 			popup.add(selectParentMI);
-			popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+			
+			// Disable view seq in seq viewer option for insertion
+			ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();
+			viewGenomicSequenceInSeqViewerAction.setEnabled(!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph));
+			
+			popup.add(new JMenuItem(viewGenomicSequenceInSeqViewerAction));
 			popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
 		}
 

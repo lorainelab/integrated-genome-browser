@@ -9,22 +9,25 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.igb.view.DefaultSequenceViewer;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
  *
  * @author auser
  */
-public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener {
+public class ViewGenomicSequenceInSeqViewerAction extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1l;
 	private static final ViewGenomicSequenceInSeqViewerAction ACTION = new ViewGenomicSequenceInSeqViewerAction();
 
@@ -62,5 +65,16 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 		} else {
 			setEnabled(true);
 		}
+		
+		// Disable option in 'View' menu for insertion glyph
+		Iterator<SeqSymmetry> iter = evt.getSelectedGraphSyms().iterator();
+		while (iter.hasNext()) {
+			SeqSymmetry sym = iter.next();
+			GlyphI g = this.getTierMap().<GlyphI>getItem(sym);
+			if (g instanceof InsertionSeqGlyph) {
+				setEnabled(false);
+			}
+		}
+		
 	}
 }

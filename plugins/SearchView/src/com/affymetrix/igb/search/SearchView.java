@@ -367,8 +367,12 @@ public final class SearchView extends IGBTabPanel implements
 					sequenceCB.setEnabled(false);
 				}
 
-				sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
 				sequenceCB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
+				if (selectedSearchMode instanceof SearchModeResidue) {
+					sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getID());
+				}else{
+					sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
+				}
 			}
 		});
 	}

@@ -1175,9 +1175,17 @@ public final class GeneralLoadUtils {
 					return true;
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) gFeature.symL).logException(ex);
-					return removeFeature("Unable to load data set for this file. \nWould you like to remove this file from the list?");
+					return removeFeatureAndRefresh("Unable to load data set for this file. \nWould you like to remove this file from the list?");
 				}
 
+			}
+			
+			private boolean removeFeatureAndRefresh(String msg) {
+				if (Application.confirmPanel(msg)) {
+					GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+					return true;
+				}
+				return false;
 			}
 
 			@Override

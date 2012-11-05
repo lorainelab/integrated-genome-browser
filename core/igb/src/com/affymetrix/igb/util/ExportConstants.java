@@ -22,7 +22,7 @@ public interface ExportConstants {
 	};
 	static final String DEFAULT_FILE = "export.png";
 	
-	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600};
+	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
 	static final Object[] UNIT = { "pixels", "inches"};
 }
 

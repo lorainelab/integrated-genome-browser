@@ -24,7 +24,8 @@ public class GraphicsUtil {
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
 		GraphicsConfiguration graphicConfiguration = screenDevice.getDefaultConfiguration();
-		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
+		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height);
+				//, Transparency.TRANSLUCENT);
 
 		return image;
 	}

@@ -1175,7 +1175,7 @@ public final class GeneralLoadUtils {
 					return true;
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) gFeature.symL).logException(ex);
-					return removeFeature("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName);
+					return removeFeature("Unable to load data set for this file. \nWould you like to remove this file from the list?");
 				}
 
 			}

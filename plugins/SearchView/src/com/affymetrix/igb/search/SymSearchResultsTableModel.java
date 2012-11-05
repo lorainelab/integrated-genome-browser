@@ -21,6 +21,7 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
 		SearchView.BUNDLE.getString("searchTableID"),
 		SearchView.BUNDLE.getString("searchTableTier"),
 		SearchView.BUNDLE.getString("searchTableGeneName"),
+		SearchView.BUNDLE.getString("searchTableDescription"),
 		SearchView.BUNDLE.getString("searchTableStart"),
 		SearchView.BUNDLE.getString("searchTableEnd"),
 		SearchView.BUNDLE.getString("searchTableChromosome"),
@@ -29,10 +30,11 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
 	private static final int ID_COLUMN = 0;
 	private static final int TIER_COLUMN = 1;
 	private static final int GENE_NAME_COLUMN = 2;
-	private static final int START_COLUMN = 3;
-	private static final int END_COLUMN = 4;
-	private static final int CHROM_COLUMN = 5;
-	private static final int STRAND_COLUMN = 6;
+	private static final int DESCRIPTION_COLUMN = 3;
+	private static final int START_COLUMN = 4;
+	private static final int END_COLUMN = 5;
+	private static final int CHROM_COLUMN = 6;
+	private static final int STRAND_COLUMN = 7;
 
 	public SymSearchResultsTableModel(List<SeqSymmetry> results) {
 		super();
@@ -57,6 +59,12 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
 				if (sym instanceof SymWithProps) {
 					String geneName = (String)((SymWithProps)sym).getProperty("gene name");
 					return geneName == null ? "" : geneName;
+				}
+				return "";
+			case DESCRIPTION_COLUMN:
+				if (sym instanceof SymWithProps) {
+					String description = (String)((SymWithProps)sym).getProperty("description");
+					return description == null ? "" : description;
 				}
 				return "";
 			case START_COLUMN:

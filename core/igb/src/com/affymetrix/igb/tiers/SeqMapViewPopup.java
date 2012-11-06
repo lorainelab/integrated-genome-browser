@@ -108,7 +108,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		igb.addAction(ExpandAction.getAction());
 		igb.addAction(RemoveDataFromTracksAction.getAction());
 		igb.addAction(RepackSelectedTiersAction.getAction());
-		igb.addAction(RepackAllTiersAction.getAction());
 		igb.addAction(AutoLoadThresholdAction.getAction());
 	}
 
@@ -325,9 +324,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
 		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
 		popup.add(repack_selected_tiers);
-		JMenuItem repack_all_tiers = new JRPMenuItemTLP(RepackAllTiersAction.getAction());
-		repack_all_tiers.setEnabled(!coordinates_track_selected);
-		popup.add(repack_all_tiers);
 		popup.add(new JSeparator());
 		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
 		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != TierGlyph.Direction.AXIS) {

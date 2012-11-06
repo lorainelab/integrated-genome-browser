@@ -249,7 +249,6 @@ public class Activator implements BundleActivator {
 	 */
 	private void initSeqMapViewActions() {
 		RepackSelectedTiersAction.getAction();
-		RepackAllTiersAction.getAction();
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
 		ChangeLabelColorAction.getAction();

@@ -31,12 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 
-import org.apache.felix.bundlerepository.Capability;
-import org.apache.felix.bundlerepository.Property;
-import org.apache.felix.bundlerepository.impl.PropertyImpl;
-import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
-import org.apache.felix.bundlerepository.impl.wrapper.CapabilityWrapper;
-import org.apache.felix.bundlerepository.impl.wrapper.RepositoryAdminWrapper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -49,7 +43,6 @@ import org.osgi.service.obr.Requirement;
 import org.osgi.service.obr.Resolver;
 import org.osgi.service.obr.Resource;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -132,11 +125,13 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
 	private HashMap<String, Bundle> latest;
 	private BundleFilter bundleFilter;
-
+	private OSGIImpl osgiImpl;
+	
 	public PluginsView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false, TAB_POSITION);
 		latest = new HashMap<String, Bundle>();
-
+		osgiImpl = new Felix();
+		
 		igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
 		setLayout(new BorderLayout());
 		BundleTableModel.setPluginsHandler(this); // is there a better way ?
@@ -457,30 +452,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return bundleFilter;
 	}
 
-	private static final Capability COMMON_CAPABILITY = new Capability() {
-		@Override
-		public String getName() {
-			return Capability.PACKAGE;
-		}
-
-		@Override
-		public Property[] getProperties() {
-			return new Property[]{new PropertyImpl("package", null, "com.affymetrix.common"), new PropertyImpl("version", Property.VERSION, CommonUtils.getInstance().getAppVersion())};
-		}
-
-		@Override
-		public Map<String, Object> getPropertiesAsMap() {
-			Map<String, Object> propertiesMap = new HashMap<String, Object>();
-			propertiesMap.put("package", "com.affymetrix.common");
-			propertiesMap.put("version", new Version(CommonUtils.getInstance().getAppVersion()));
-			return propertiesMap;
-		}
-	};
-	private static final CapabilityWrapper COMMON_CAPABILITY_WRAPPER = new CapabilityWrapper(COMMON_CAPABILITY);
 	private boolean checkRequirements(Requirement[] requirements) {
 		boolean checked = false;
 		for (Requirement requirement :requirements) {
-			checked |= requirement.isSatisfied(COMMON_CAPABILITY_WRAPPER);
+			checked |= requirement.isSatisfied(osgiImpl.getCapability());
 		}
 		return checked;
 	}
@@ -511,7 +486,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
 //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-		repoAdmin = new RepositoryAdminWrapper(new RepositoryAdminImpl(bundleContext, new org.apache.felix.utils.log.Logger(bundleContext)));
+		repoAdmin = osgiImpl.getRepositoryAdmin(bundleContext);
 		for (String url : igbService.getRepositoryChangerHolder().getRepositories().values()) {
 			repositoryAdded(url);
 		}

@@ -9,6 +9,7 @@ import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
+import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
@@ -181,6 +182,7 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
 
 		addMenuItemListener();
+		addPopupListener();
 		addPrefEditorComponentListener();
 		initSeqMapViewActions();
 		addShortcuts();
@@ -463,6 +465,22 @@ public class Activator implements BundleActivator {
 						return;
 					}
 					MenuUtil.removeFromMenu(parent, amenuItem.getMenuItem());
+				}
+			}
+		);
+	}
+	
+	private void addPopupListener(){
+		ExtensionPointHandler<ContextualPopupListener> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ContextualPopupListener.class);
+		stopRoutineExtensionPoint.addListener(
+			new ExtensionPointListener<ContextualPopupListener>() {
+				@Override
+				public void addService(ContextualPopupListener listener) {
+					Application.getSingleton().getMapView().addPopupListener(listener);
+				}
+				@Override
+				public void removeService(ContextualPopupListener listener) {	
+					Application.getSingleton().getMapView().removePopupListener(listener);
 				}
 			}
 		);

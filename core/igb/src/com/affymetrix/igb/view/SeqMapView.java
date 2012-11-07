@@ -1944,6 +1944,11 @@ public class SeqMapView extends JPanel
 		popup_listeners.add(listener);
 	}
 
+	@Override
+	public void removePopupListener(ContextualPopupListener listener) {
+		popup_listeners.remove(listener);
+	}
+	
 	private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory... categories) {
 		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null))
 			return true;

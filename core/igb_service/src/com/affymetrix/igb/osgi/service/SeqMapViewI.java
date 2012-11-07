@@ -97,6 +97,7 @@ public interface SeqMapViewI {
 	public void setPropertyHandler(PropertyHandler propertyHandler);
 	public Object getMouseListener();
 	public void addPopupListener(ContextualPopupListener listener);
+	public void removePopupListener(ContextualPopupListener listener);
 	public void selectAllGraphs();
 	public void select(List<SeqSymmetry> sym_list, boolean call_listener);
 	public void setTierStyles();

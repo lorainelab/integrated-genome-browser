@@ -1329,6 +1329,7 @@ public class SeqMapView extends JPanel
 	 *
 	 * @return a List of SeqSymmetry objects, possibly empty.
 	 */
+	@Override
 	public List<SeqSymmetry> getSelectedSyms() {
 		return glyphsToSyms(seqmap.getSelected());
 	}
@@ -2275,6 +2276,7 @@ public class SeqMapView extends JPanel
 		seqmap_refresh_list.add(smr);
 	}
 
+	@Override
 	public SeqSymmetry getSeqSymmetry() {
 		return seq_selected_sym;
 	}

@@ -49,7 +49,7 @@ Dipodomys ordii	Kangaroo rat	D_ordii	dipOrd	Dipodomys_ordii
 Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi	echTel
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus		Erinaceus_europaeus
-Escherichia coli K12-MG1655	E. coli	E_coli
+Escherichia coli K12-MG1655	E. coli K12	E. coli	E_coli
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
 Eucalyptus grandis	Eucalyptus	E_grandis
 Felis catus	House Cat	F_catus	felCat	Felis_catus

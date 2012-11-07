@@ -20,7 +20,7 @@ D_melanogaster_Apr_2006.png
 M_musculus_Dec_2011.png
 H_sapiens_Feb_2009.png
 A_thaliana_Jun_2009.png
-E_coli_K12-MG1655_Jan_2012.png
+E_coli_K12_Jan_2012.png
 O_sativa_japonica_Oct_2011.png
 S_pombe_Sep_2007.png
 A_lyrata_Apr_2011.png

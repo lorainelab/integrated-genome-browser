@@ -129,13 +129,14 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 				protected Void runInBackground() {
 					enableSeqMap(false);
 					sliceAndDiceNow(slice_symmetry);
-					enableSeqMap(true);
-					runnable.run();
 					return null;
 				}
 
 				@Override
 				protected void finished() {
+					setAnnotatedSeq(aseq);
+					enableSeqMap(true);
+					runnable.run();
 				}
 			};
 			CThreadHolder.getInstance().execute(this, slice_thread);
@@ -157,13 +158,14 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 				SimpleSymWithProps unionSym = new SimpleSymWithProps();
 				SeqUtils.union(syms, unionSym, aseq);
 				sliceAndDiceNow(unionSym);
-				enableSeqMap(true);
-				runnable.run();
 				return null;
 			}
 
 			@Override
 			protected void finished() {
+				setAnnotatedSeq(aseq);
+				enableSeqMap(true);
+				runnable.run();
 			}
 		};
 
@@ -208,12 +210,14 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	public void dataRemoved(){
 		if(slicing_in_effect && slice_symmetry != null){
 			sliceAndDiceNow(slice_symmetry);
+			setAnnotatedSeq(aseq);
 		}
 	}
 	
 	public void mapRefresh() {
 		if(slicing_in_effect && slice_symmetry != null){
 			sliceAndDiceNow(slice_symmetry);
+			setAnnotatedSeq(aseq);
 		}
 	}
 	
@@ -293,7 +297,6 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		transform_path[0] = seq2viewSym;
 		slicing_in_effect = true;
 
-		setAnnotatedSeq(aseq);
 	}
 
 	/**

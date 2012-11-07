@@ -16,7 +16,7 @@ public class CopySequenceAction extends CopyResiduesAction{
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		if(sv != null) {
-			sv.copyAction(true);
+			sv.copyWholeSequence();
 		}
 	}
 }

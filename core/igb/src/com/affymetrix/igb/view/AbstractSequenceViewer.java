@@ -639,20 +639,16 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		dock.setJMenuBar(bar);
 		return dock;
 	}
-
-	/* EVENT HANDLING */
-	/** ActionListener Implementation */
-	public void copyAction(boolean wholeSequence) {
-		
-		String seqToBeCopied = seqview.getSelectedResidues().trim();
-		
-		if(wholeSequence) {
-			seqToBeCopied = seqview.getResidues().trim();
-		} 
-//	    else if (seqview.getShow(NeoSeq.COMPLEMENT)) {
-//			seqToBeCopied = DNAUtils.complement(seqToBeCopied);
-//		}
-		
+	
+	public void copySelectedResidues(){
+		copyToClipBoard(seqview.getSelectedResidues().trim());
+	}
+	
+	public void copyWholeSequence(){
+		copyToClipBoard(seqview.getResidues().trim());
+	}
+	
+	private void copyToClipBoard(String seqToBeCopied){
 		if (seqToBeCopied != null) {
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			StringBuffer hackbuf = new StringBuffer(seqToBeCopied);

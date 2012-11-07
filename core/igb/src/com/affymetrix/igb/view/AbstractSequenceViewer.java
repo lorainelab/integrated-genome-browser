@@ -561,7 +561,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JRPMenu copyMenu = new JRPMenu("sequenceViewer_copy", "Copy");
 	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
 	JRPMenu copyToClipMenu = new JRPMenu("copy_translations", "Copy Translation");
-	CopyResiduesAction copySelectedSeqAction = new CopyResiduesAction(BUNDLE.getString("copySelectedSequence"), this);
+	CopyResidueAction copySelectedSeqAction = new CopyResidueAction(this);
 	SelectAllInSeqViewerAction selectAllAction = new SelectAllInSeqViewerAction(BUNDLE.getString("selectAll"), this);
 	
 	CopySelectedTransFromSeqViewerAction copySelectedTransAction = new CopySelectedTransFromSeqViewerAction(this, selectedFrames);
@@ -1075,7 +1075,6 @@ class CopyAnnotatedSequenceToClipBoardAction extends GenericAction {
 	AbstractSequenceViewer sv;
 	public CopyAnnotatedSequenceToClipBoardAction(AbstractSequenceViewer sv) {
 		super(BUNDLE.getString("copyAnnotatedSequence"), KeyEvent.VK_C);
-		
 		this.sv = sv;
 	}
 	
@@ -1083,5 +1082,21 @@ class CopyAnnotatedSequenceToClipBoardAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		sv.copyAnnotatedSequenceAction();
+	}
+}
+
+ class CopyResidueAction extends GenericAction {
+	AbstractSequenceViewer sv;
+	public CopyResidueAction(AbstractSequenceViewer sv) {
+		super(BUNDLE.getString("copySelectedSequence"), KeyEvent.VK_C);
+		this.sv = sv;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		if(sv != null) {
+			sv.copySelectedResidues();
+		}
 	}
 }

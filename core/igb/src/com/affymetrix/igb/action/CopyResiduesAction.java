@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBServiceImpl;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.view.AbstractSequenceViewer;
 
 /**
  * Copies residues of selection to clipboard If a region of sequence is
@@ -31,8 +30,6 @@ public class CopyResiduesAction extends GenericAction {
 	private static final CopyResiduesAction ACTION = new CopyResiduesAction(BUNDLE.getString("copySelectedSequenceToClipboard"));
 	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction("Copy");
 	
-	AbstractSequenceViewer sv = null;
-
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 		//GenericActionHolder.getInstance().addGenericAction(ACTION_SHORT);
@@ -45,11 +42,6 @@ public class CopyResiduesAction extends GenericAction {
 		return ACTION_SHORT;
 	}
 	
-	public CopyResiduesAction(String text, AbstractSequenceViewer sv) {
-		super(text, null, null, null, KeyEvent.VK_C);
-		this.sv = sv;
-	}
-
 	protected CopyResiduesAction(String text) {
 		super(text, null, "16x16/actions/copy_sequence.png", "22x22/actions/copy_sequence.png", KeyEvent.VK_C);
 	}
@@ -57,11 +49,7 @@ public class CopyResiduesAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		if(sv == null) {
-			copySelectedResidues(false);  // Call from sequence viewer
-		} else{
-			sv.copySelectedResidues();
-		}
+		copySelectedResidues(false);
 	}
 	
 	private void copySelectedResidues(boolean allResidues){

@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.ActionEvent;

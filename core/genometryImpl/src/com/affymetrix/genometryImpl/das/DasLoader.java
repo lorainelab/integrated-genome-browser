@@ -101,6 +101,9 @@ public abstract class DasLoader {
 		NodeList top_children = top_element.getChildNodes();
 
 		for (int i = 0; i < top_children.getLength(); i++) {
+			if(Thread.currentThread().isInterrupted()){
+				return null;
+			}
 			Node top_child = top_children.item(i);
 			String cname = top_child.getNodeName();
 			if (cname == null || !cname.equalsIgnoreCase("sequence")) {
@@ -108,12 +111,18 @@ public abstract class DasLoader {
 			}
 			NodeList seq_children = top_child.getChildNodes();
 			for (int k = 0; k < seq_children.getLength(); k++) {
+				if(Thread.currentThread().isInterrupted()){
+					return null;
+				}
 				Node seq_child = seq_children.item(k);
 				if (seq_child == null || !seq_child.getNodeName().equalsIgnoreCase("DNA")) {
 					continue;
 				}
 				NodeList dna_children = seq_child.getChildNodes();
 				for (int m = 0; m < dna_children.getLength(); m++) {
+					if(Thread.currentThread().isInterrupted()){
+						return null;
+					}
 					Node dna_child = dna_children.item(m);
 					if (dna_child instanceof org.w3c.dom.Text) {
 						String residues = ((Text) dna_child).getData();

@@ -1736,8 +1736,8 @@ public class SeqMapView extends JPanel
 				}else{
 					tier_used_in_selection_info = tierglyphs.get(0);
 					Map<String,Object> props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
-					if(props != null && !props.isEmpty() && props.containsKey("Name")){
-						id = props.get("Name").toString();
+					if(props != null && !props.isEmpty() && props.containsKey("File Name")){
+						id = props.get("File Name").toString();
 						sym_used_for_title = (SeqSymmetry)tierglyphs.get(0).getInfo();
 					}
 				}

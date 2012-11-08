@@ -92,6 +92,8 @@ public final class WebLinksView implements ListSelectionListener {
 
 		if (localTable.getRowCount() > 0) {
 			localTable.setRowSelectionInterval(0, 0);
+		}else{
+			setEnabled(false);
 		}
 	}
 

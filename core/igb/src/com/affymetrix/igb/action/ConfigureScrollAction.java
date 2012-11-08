@@ -6,20 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.Collections;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.tiers.AutoScroll;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -27,7 +21,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id: AutoScrollAction.java 11333 2012-05-01 17:54:56Z anuj4159 $
  */
-public class ConfigureScrollAction extends GenericAction implements SeqSelectionListener {
+public class ConfigureScrollAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1l;
 	/*
 	 *  units to scroll are either in pixels or bases
@@ -37,7 +31,7 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 	private int as_time_interval = 20;
 	private int as_start_pos = 0;
 	private int as_end_pos;
-	
+	private AutoScroll autoScroll;
 
 	private static final ConfigureScrollAction ACTION = new ConfigureScrollAction();
 
@@ -55,10 +49,6 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		GenometryModel model = GenometryModel.getGenometryModel();
-		model.addSeqSelectionListener(ACTION);
-		ACTION.seqSelectionChanged(new SeqSelectionEvent(
-				ACTION, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
 	}
 	
 	public static ConfigureScrollAction getAction() { return ACTION; }
@@ -66,16 +56,7 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		this.configure(IGB.getSingleton().getMapView());
-	}
-
-	@Override
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		this.setEnabled(evt.getSelectedSeq() != null);
-		if(evt.getSelectedSeq() != null && get_start_pos() == 0 && get_end_pos() == 0){
-			as_start_pos = evt.getSelectedSeq().getMin();
-			as_end_pos = evt.getSelectedSeq().getMax();
-		}
+		this.configure(getSeqMapView());
 	}
 
 	private void configure(final SeqMapView seqMapView) {
@@ -83,8 +64,10 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 			return;
 		}
 		
+		autoScroll = seqMapView.getAutoScroll();
+		
 		// turn OFF autoscroll while configuring
-		AutoScrollAction.getAction().stop();
+		autoScroll.stop();
 		
 		JPanel pan = new JPanel();
 
@@ -98,18 +81,18 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 		// as_bases_per_pix *should* be a float, or else should simply
 		// use the current resolution without asking the user,
 		// but since it is an integer, we have to set the minimum value as 1
-		if (get_bases_per_pix() < 1) {
+		if (as_bases_per_pix < 1) {
 			as_bases_per_pix = 1;
 		}
 
-		final JRPTextField bases_per_pixTF = new JRPTextField("AutoScrollAction_bases_per_pix", "" + get_bases_per_pix());
-		final JRPTextField pix_to_scrollTF = new JRPTextField("AutoScrollAction_pix_to_scroll", "" + get_pix_to_scroll());
-		final JRPTextField time_intervalTF = new JRPTextField("AutoScrollAction_time_interval", "" + get_time_interval());
-		final JRPTextField start_posTF = new JRPTextField("AutoScrollAction_start_pos", "" + get_start_pos());
-		final JRPTextField end_posTF = new JRPTextField("AutoScrollAction_end_pos", "" + get_end_pos());
+		final JRPTextField bases_per_pixTF = new JRPTextField("AutoScrollAction_bases_per_pix", "" + as_bases_per_pix);
+		final JRPTextField pix_to_scrollTF = new JRPTextField("AutoScrollAction_pix_to_scroll", "" + as_pix_to_scroll);
+		final JRPTextField time_intervalTF = new JRPTextField("AutoScrollAction_time_interval", "" + as_time_interval);
+		final JRPTextField start_posTF = new JRPTextField("AutoScrollAction_start_pos", "" + as_start_pos);
+		final JRPTextField end_posTF = new JRPTextField("AutoScrollAction_end_pos", "" + as_end_pos);
 
 		float bases_per_minute = (float) // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-				(1.0 * get_bases_per_pix() * get_pix_to_scroll() * 1000 * 60 / get_time_interval());
+				(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
 		bases_per_minute = Math.abs(bases_per_minute);
 		float minutes_per_seq = seqMapView.getViewSeq().getLength() / bases_per_minute;
 		final JLabel bases_per_minuteL = new JLabel("" + (bases_per_minute / 1000000));
@@ -134,16 +117,16 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 		ActionListener al = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				as_bases_per_pix = normalizeTF(bases_per_pixTF, get_bases_per_pix(), 1, Integer.MAX_VALUE);
-				as_pix_to_scroll = normalizeTF(pix_to_scrollTF, get_pix_to_scroll(), -1000, 1000);
-				as_time_interval = normalizeTF(time_intervalTF, get_time_interval(), 1, 1000);
-				as_end_pos = normalizeTF(end_posTF, get_end_pos(), 1, seqMapView.getViewSeq().getLength());
-				as_start_pos = normalizeTF(start_posTF, get_start_pos(), 0, get_end_pos());
+				as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
+				as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
+				as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
+				as_end_pos = normalizeTF(end_posTF, as_end_pos, 1, seqMapView.getViewSeq().getLength());
+				as_start_pos = normalizeTF(start_posTF, as_start_pos, 0, as_end_pos);
 
 				float bases_per_minute = (float) // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-						(1.0 * get_bases_per_pix() * get_pix_to_scroll() * 1000 * 60 / get_time_interval());
+						(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
 				bases_per_minute = Math.abs(bases_per_minute);
-				float minutes_per_seq = (get_end_pos() - get_start_pos()) / bases_per_minute;
+				float minutes_per_seq = (as_end_pos - as_start_pos) / bases_per_minute;
 				bases_per_minuteL.setText("" + (bases_per_minute / 1000000));
 				minutes_per_seqL.setText("" + (minutes_per_seq));
 			}
@@ -160,9 +143,15 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 				JOptionPane.PLAIN_MESSAGE,
 				null, null, null);
 		if (val == JOptionPane.OK_OPTION) {
-			as_bases_per_pix = normalizeTF(bases_per_pixTF, get_bases_per_pix(), 1, Integer.MAX_VALUE);
-			as_pix_to_scroll = normalizeTF(pix_to_scrollTF, get_pix_to_scroll(), -1000, 1000);
-			as_time_interval = normalizeTF(time_intervalTF, get_time_interval(), 1, 1000);
+			as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
+			as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
+			as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
+			
+			autoScroll.set_start_pos(as_start_pos);
+			autoScroll.set_end_pos(as_end_pos);
+			autoScroll.set_bases_per_pix(as_bases_per_pix);
+			autoScroll.set_pix_to_scroll(as_pix_to_scroll);
+			autoScroll.set_time_interval(as_time_interval);
 		}
 	}
 
@@ -185,24 +174,4 @@ public class ConfigureScrollAction extends GenericAction implements SeqSelection
 		tf.setText(Integer.toString(result));
 		return result;
 	}	
-
-	public int get_bases_per_pix() {
-		return as_bases_per_pix;
-	}
-
-	public int get_pix_to_scroll() {
-		return as_pix_to_scroll;
-	}
-
-	public int get_time_interval() {
-		return as_time_interval;
-	}
-
-	public int get_start_pos() {
-		return as_start_pos;
-	}
-
-	public int get_end_pos() {
-		return as_end_pos;
-	}
 }

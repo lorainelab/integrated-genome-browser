@@ -99,7 +99,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 
 		// turn OFF autoscroll in mousePressed()
-		AutoScrollAction.getAction().stop();
+		smv.getAutoScroll().stop();
 
 		if (PROCESS_SUB_SELECTION) {
 			processSubSelection(evt);

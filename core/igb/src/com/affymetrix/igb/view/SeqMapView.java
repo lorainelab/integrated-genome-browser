@@ -174,6 +174,7 @@ public class SeqMapView extends JPanel
 	private static final boolean default_y_zoomer_left = true;
 	private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
+	private final AutoScroll autoScroll = new AutoScroll();
 	private final GlyphEdgeMatcher edge_matcher;
 	private JPopupMenu sym_popup = null;
 	private JLabel sym_info;
@@ -859,6 +860,11 @@ public class SeqMapView extends JPanel
 		//A Temporary hack to solve problem when a 'genome' is selected
 		if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
+		}
+		
+		if(autoScroll.get_start_pos() == 0 && autoScroll.get_end_pos() == 0){
+			autoScroll.set_start_pos(seq.getMin());
+			autoScroll.set_end_pos(seq.getMax());
 		}
 		
 		//GeneralLoadView.getLoadView().getTableModel().fireTableDataChanged(); //for updating cell renderers/editors
@@ -2425,6 +2431,10 @@ public class SeqMapView extends JPanel
 		return popup;
 	}
 
+	public AutoScroll getAutoScroll(){
+		return autoScroll;
+	}
+	
 	@Override
 	public String getId() {
 		return id;

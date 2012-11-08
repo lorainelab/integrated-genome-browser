@@ -137,7 +137,7 @@ public final class FastaParser implements Parser {
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
 			String header = br.readLine();
-			while (br.ready()) {  // loop through lines till find a header line
+			while (br.ready() && !Thread.currentThread().isInterrupted()) {  // loop through lines till find a header line
 				if (header == null) {
 					break;
 				}  // skip null lines
@@ -150,7 +150,7 @@ public final class FastaParser implements Parser {
 				StringBuffer buf = new StringBuffer();
 				String line = null;
 				char ch;
-				while (br.ready()) {
+				while (br.ready() && !Thread.currentThread().isInterrupted()) {
 					line = br.readLine();
 					if (line == null) {
 						break;
@@ -189,6 +189,10 @@ public final class FastaParser implements Parser {
 			GeneralUtils.safeClose(istr);
 			
 		}
+		
+		if(Thread.currentThread().isInterrupted())
+			return null;
+		
 		return result;
 	}
 

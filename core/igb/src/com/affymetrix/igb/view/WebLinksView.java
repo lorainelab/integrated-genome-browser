@@ -422,14 +422,12 @@ public final class WebLinksView implements ListSelectionListener {
 					switch (col) {
 						case COL_NAME:
 							webLink.setName((String) value);
-							nameTextField.setText((String) value);
 							break;
 						case COL_REGEX:
 							webLink.setRegex((String) value);
 							break;
 						case COL_URL:
 							webLink.setUrl((String) value);
-							urlTextField.setText((String) value);
 							break;
 						case COL_TYPE:
 							webLink.setRegexType((RegexType) value);

@@ -483,19 +483,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		});
 	}
 
-	public static String getClipboard() {
-		Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-		try {
-			if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				String text = (String) t.getTransferData(DataFlavor.stringFlavor);
-
-				return text.trim();
-			}
-		} catch (Exception e) {
-		}
-		return "";
-	}
-
 	public void exportSequenceFasta(Boolean isReverse) {
 		JFileChooser chooser = UniFileChooser.getFileChooser("Fasta file", "fasta");
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());

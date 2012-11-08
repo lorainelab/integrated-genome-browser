@@ -41,6 +41,12 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import java.awt.Toolkit;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 
 public final class GeneralUtils {
@@ -569,4 +575,17 @@ public final class GeneralUtils {
 		return list;
 	}
 
+	// Can be improved to get any data flavor
+	public static String getClipboard() {
+		Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+		try {
+			if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				String text = (String) t.getTransferData(DataFlavor.stringFlavor);
+				return text.trim();
+			}
+		} catch (Exception e) {
+		}
+		return "";
+	}
+		
 }

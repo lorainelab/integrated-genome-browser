@@ -711,6 +711,17 @@ public final class LocalUrlCacher {
 		return null;
 	}
 
+	public static boolean isURL(String url){
+		if(url != null && url.length() != 0){
+			char fc = url.charAt(0);
+			if((fc == 'h' && (url.startsWith("http:") || url.startsWith("https:"))) 
+					|| (fc == 'f' && url.startsWith("ftp:"))){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static boolean isValidURL(String url){
 		URI uri = null;
 

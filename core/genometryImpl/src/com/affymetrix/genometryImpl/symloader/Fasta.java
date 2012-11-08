@@ -186,6 +186,10 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
 				}
 			}
 
+			if(Thread.currentThread().isInterrupted()){
+				return null;
+			}
+			
 			return residues;
 		
 		} catch (Exception ex){

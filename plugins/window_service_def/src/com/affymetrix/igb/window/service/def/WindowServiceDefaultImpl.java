@@ -21,6 +21,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -35,6 +36,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
+import javax.swing.AbstractAction;
 
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
@@ -57,8 +59,28 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		public TabState getTabState() {
 			return tabState;
 		}
+		
+		public void actionPerformed(ActionEvent evt){
+			fireActionPerformed(evt);
+		}
 	}
-
+	
+	private class ActionWrapper extends AbstractAction{
+		private final TabStateMenuItem menuItem;
+		private final ButtonGroup group;
+		ActionWrapper(TabStateMenuItem menuItem, ButtonGroup group){
+			super(menuItem.getText());
+			this.menuItem = menuItem;
+			this.group = group;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent evt){
+			group.setSelected(menuItem.getModel(), true);
+			menuItem.actionPerformed(evt);
+		}
+	}
+	
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
 	private final HashMap<TabState, JRPMenuItem> move_tab_to_window_items;
 	private final HashMap<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
@@ -226,15 +248,17 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		else if (tabPanel.getName().equals(PreferenceUtils.getSelectedTab(tabHolder.getName()))) {
 			tabHolder.selectTab(tabPanel);
 		}
+		JPopupMenu popup = new JPopupMenu();
 		JRPMenu pluginMenu = new JRPMenu("WindowServiceDefaultImpl_tabPanel_" + tabPanel.getName().replaceAll(" ", "_"), tabPanel.getDisplayName());
 		tabMenus.put(tabPanel, pluginMenu);
 		tabMenuPositions.put(pluginMenu, tabPanel.getPosition());
 		ButtonGroup group = new ButtonGroup();
 
 		for (TabState tabStateLoop : tabPanel.getDefaultState().getCompatibleTabStates()) {
-		    JRPRadioButtonMenuItem menuItem = new TabStateMenuItem("WindowServiceDefaultImpl_tabPanel_" + tabPanel.getName().replaceAll(" ", "_") + "_" + tabStateLoop.name().replaceAll(" ", "_"), tabPanel, tabStateLoop);
+		    TabStateMenuItem menuItem = new TabStateMenuItem("WindowServiceDefaultImpl_tabPanel_" + tabPanel.getName().replaceAll(" ", "_") + "_" + tabStateLoop.name().replaceAll(" ", "_"), tabPanel, tabStateLoop);
 		    group.add(menuItem);
 		    pluginMenu.add(menuItem);
+			popup.add(new ActionWrapper(menuItem, group));
 		}
 		setTabMenu(tabPanel);
 		if (tabPanel.getPosition() == IGBTabPanel.DEFAULT_TAB_POSITION) {
@@ -253,6 +277,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			}
 			tabs_menu.insert(pluginMenu, menuPosition);
 		}
+		tabPanel.setComponentPopupMenu(popup);
 	}
 
 	public void showTabs() {

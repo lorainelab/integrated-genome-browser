@@ -143,17 +143,17 @@
   <!-- db_xref linkouts -->
   <!-- see http://www.ncbi.nlm.nih.gov/projects/collab/db_xref.html to support more --> 
   <annotation_url annot_id_regex="^FLYBASE:.*$" id_field="db_xref" 
-    name="Flybase db_xref"
+    name="Flybase"
     url="http://flybase.org/.bin/fbidq.html?$$"
 	type="default"
   />
   <annotation_url annot_id_regex="^dictyBase:.*$" id_field="db_xref" 
-    name="DictyBase db_xref"
+    name="DictyBase"
     url="http://dictybase.org/db/cgi-bin/search/search.pl?query=$$"
 	type="default"
   />
   <annotation_url annot_id_regex="^GeneID:.*$" id_field="db_xref" 
-    name="Entrez db_xref"
+    name="Entrez"
     url="http://www.ncbi.nlm.nih.gov/gene/$$"
 	type="default"
   />

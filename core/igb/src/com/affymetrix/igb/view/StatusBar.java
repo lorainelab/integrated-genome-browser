@@ -262,7 +262,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	@Override
 	public void heardThreadEvent(CThreadEvent cte) {
 		synchronized(progressBar) {
-			boolean workerInProgress = CThreadHolder.getInstance().getAllCThreadWorkers().size() > 0;
+			boolean workerInProgress = CThreadHolder.getInstance().getCThreadWorkerCount() > 0;
 			displayProgress(workerInProgress);
 		}
 	}

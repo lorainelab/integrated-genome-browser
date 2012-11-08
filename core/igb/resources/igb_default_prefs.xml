@@ -43,32 +43,16 @@
 
 
 <!-- Any RefSeq mRNA alignment -->
-  <annotation_url annot_type_regex="(?i).*RefSeq$"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
-	type="default"
-  />
-  <annotation_url annot_type_regex="(?i)^RefGene$"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
-	type="default"
-  />
   <annotation_url annot_type_regex="NCBI EST.*" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
 	type="default"
   />
-  <annotation_url annot_type_regex="(?i)^EST.*" 
+  <annotation_url annot_type_regex="(EST)|(mRNA)|(RefGene)|(RefSeq)" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
 	type="default"
   />
-  <annotation_url annot_type_regex="(?i)^mRNA$" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
-	type="default"
-  />
-
 
 
 <!-- model organism databases -->

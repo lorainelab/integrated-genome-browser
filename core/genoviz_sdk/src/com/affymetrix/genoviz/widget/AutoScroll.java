@@ -1,11 +1,9 @@
-package com.affymetrix.igb.tiers;
+package com.affymetrix.genoviz.widget;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import javax.swing.Timer;
-
-import com.affymetrix.genoviz.widget.NeoWidget;
 
 /**
  *

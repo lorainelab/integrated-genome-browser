@@ -2,6 +2,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.EventUtils;
 import com.affymetrix.genometryImpl.event.PropertyHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -79,18 +80,6 @@ public final class TierLabelManager implements PropertyHolder {
 			restoreCursor();
 		}
 		
-		/**
-		 * Should trigger a pop up menu on whatever platform is being used.
-		 * Notice that this differs from
-		 * {@link java.awt.event.MouseEvent#isPopupTrigger() AWT's Version}.
-		 */
-		boolean isOurPopupTrigger(MouseEvent evt) {
-			int mods = evt.getModifiers();
-			return (evt.isMetaDown()
-					|| evt.isControlDown()  // (for Apple Macintosh Computers)
-					|| ((mods & InputEvent.BUTTON3_MASK) != 0));
-		}
-
 		@Override
 		public void mousePressed(MouseEvent evt) {
 			int cursorType = labelmap.getCursor().getType();
@@ -118,7 +107,7 @@ public final class TierLabelManager implements PropertyHolder {
 				boolean preserve_selections = false;
 				if (nevt.isAltDown() || nevt.isShiftDown()) {
 					preserve_selections = true;
-				} else if (topgl != null && isOurPopupTrigger(nevt)) {
+				} else if (topgl != null && EventUtils.isOurPopupTrigger(nevt)) {
 					if (labelmap.getSelected().contains(topgl)) {
 						preserve_selections = true;
 					}
@@ -130,7 +119,7 @@ public final class TierLabelManager implements PropertyHolder {
 				labelmap.select(selected);
 				
 				// make sure selections becomes visible
-				if (isOurPopupTrigger(evt)) {
+				if (EventUtils.isOurPopupTrigger(evt)) {
 					doPopup(evt);
 				} else if (selected.size() > 0) {
 					// take glyph at end of selected, just in case there is more

@@ -141,7 +141,7 @@ public final class GeneralLoadView {
 			@Override
 			public void finished() {
 				try {
-					if (get()) {
+					if (!isCancelled() && get()) {
 						gviewer.setAnnotatedSeq(seq, true, true, true);
 					}
 				} catch (Exception ex) {
@@ -174,7 +174,8 @@ public final class GeneralLoadView {
 			final SeqSpan viewspan, final boolean partial, final boolean tryFull, final boolean show_error_panel) {
 		try {
 			if (partial) {
-				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)
+						&& !Thread.currentThread().isInterrupted()) {
 					if (!tryFull) {
 						if (show_error_panel) {
 							ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.", Level.INFO);
@@ -193,7 +194,8 @@ public final class GeneralLoadView {
 					}
 				}
 			} else {
-				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
+				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)
+						&& !Thread.currentThread().isInterrupted()) {
 					if (show_error_panel) {
 						ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.", Level.SEVERE);
 					}

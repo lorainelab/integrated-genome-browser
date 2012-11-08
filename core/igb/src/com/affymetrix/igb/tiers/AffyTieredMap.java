@@ -187,6 +187,8 @@ public class AffyTieredMap extends NeoMap {
 		for (TierGlyph mtg : tiersCopy) {
 			if (mtg.getChildCount() == 0) {
 				mtg.setVisibility(false);
+			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
+				mtg.setVisibility(false);
 			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
 				mtg.setVisibility(false);
 			} else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.Direction.BOTH)) {

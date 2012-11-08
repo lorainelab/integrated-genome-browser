@@ -136,13 +136,15 @@ public class TwoBitNew extends SymLoader {
 		setCurrentSequencePosition(start);
         for (int qnt = 0; (qnt < residues.length); qnt++) {
 			ch = read();
-			if (ch < 0) {
+			if (ch < 0 || Thread.currentThread().isInterrupted()) {
 				break;
 			}
 			residues[qnt] = (char) ch;
 		}
 		close();
-		
+		if(Thread.currentThread().isInterrupted()){
+			return null;
+		}
 		return new String(residues);
 	}
 	

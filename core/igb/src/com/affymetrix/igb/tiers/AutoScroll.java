@@ -5,8 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import javax.swing.Timer;
 
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.widget.NeoWidget;
 
 /**
  *
@@ -30,15 +29,15 @@ public class AutoScroll {
 		map_auto_scroller = null;
 	}
 	
-	public void start(final NeoMap map) {
+	public void start(final NeoWidget map) {
 		stop();
 		
 		final boolean cycle = true;
 		final double pix_per_coord = 1.0 / bases_per_pix;
 		final double coords_to_scroll = pix_to_scroll / pix_per_coord;
 		
-		map.zoom(NeoAbstractWidget.X, pix_per_coord);
-		map.scroll(NeoAbstractWidget.X, start_pos);
+		map.zoom(NeoWidget.X, pix_per_coord);
+		map.scroll(NeoWidget.X, start_pos);
 		
 		map_auto_scroller = new ActionListener() {
 
@@ -48,13 +47,13 @@ public class AutoScroll {
 				int scrollpos = (int) (vbox.x + coords_to_scroll);
 				if ((scrollpos + vbox.width) > end_pos) {
 					if (cycle) {
-						map.scroll(NeoAbstractWidget.X, start_pos);
+						map.scroll(NeoWidget.X, start_pos);
 						map.updateWidget();
 					} else {
 						stop();
 					}
 				} else {
-					map.scroll(NeoAbstractWidget.X, scrollpos);
+					map.scroll(NeoWidget.X, scrollpos);
 					map.updateWidget();
 				}
 			}

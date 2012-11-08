@@ -915,6 +915,9 @@ public final class GeneralLoadUtils {
 			if (!server.isEnabled()) {
 				continue;
 			}
+			if(Thread.currentThread().isInterrupted()){
+				return false;
+			}
 			String serverDescription = server.serverName + " " + server.serverType;
 //			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
 //			Application.getSingleton().addNotLockedUpMsg(msg);

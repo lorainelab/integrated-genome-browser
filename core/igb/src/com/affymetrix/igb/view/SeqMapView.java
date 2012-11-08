@@ -2233,8 +2233,8 @@ public class SeqMapView extends JPanel
 	}
 
 	public boolean togglePropertiesTooltip() {
-		show_prop_tooltip = !show_prop_tooltip;
-		((AffyLabelledTierMap) seqmap).setToolTip(null);
+//		show_prop_tooltip = !show_prop_tooltip;
+//		((AffyLabelledTierMap) seqmap).setToolTip(null);
 		return show_prop_tooltip;
 	}
 

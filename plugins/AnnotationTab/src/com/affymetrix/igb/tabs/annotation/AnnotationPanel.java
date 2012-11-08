@@ -165,7 +165,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                 .add(0, 0, 0))
         );
 
-        stackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stack Depth"));
+        stackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stack Height"));
 
         stackDepthTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         stackDepthTextField.addActionListener(new java.awt.event.ActionListener() {

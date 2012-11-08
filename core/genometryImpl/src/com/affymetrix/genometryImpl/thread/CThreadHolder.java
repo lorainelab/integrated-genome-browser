@@ -92,29 +92,11 @@ public class CThreadHolder implements WaitHelperI {
 		fireThreadEvent(worker, CThreadEvent.STARTED);
 	}
 
-	public void notifyBackgroundDone (CThreadWorker<?,?> worker){
-		if (DEBUG) System.out.println("))))) notifyBackgroundDone CThreadWorker = " + worker.getMessage());
-		synchronized(thread2CThreadWorker) {
-			Thread thread = null;
-			for (Thread threadLoop : thread2CThreadWorker.keySet()) {
-				if (worker == thread2CThreadWorker.get(threadLoop)) {
-					thread = threadLoop;
-					break;
-				}
-			}
-			if (thread == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "could not find thread for " + worker.getMessage());
-			}
-			else {
-				if (DEBUG) System.out.println("))))) notifyBackgroundDone thread2CThreadWorker.remove Thread = " + Thread.currentThread() + "=" + thread2CThreadWorker.get(Thread.currentThread()).getMessage());
-				thread2CThreadWorker.remove(thread);
-			}
-		}
-//		notifyEndThread(worker);
+	private void notifyBackgroundDone (CThreadWorker<?,?> worker){
+		removeThread(worker);
 	}
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){
-		fireThreadEvent(worker, CThreadEvent.ENDED);
 		synchronized (RUNNING_CTHREADWORKERS) {
 			if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.remove Thread = " + Thread.currentThread() + "=" + worker.getMessage());
 			RUNNING_CTHREADWORKERS.remove(worker);
@@ -131,6 +113,8 @@ public class CThreadHolder implements WaitHelperI {
 				);
 			}
 		}
+		removeThread(worker);
+		fireThreadEvent(worker, CThreadEvent.ENDED);
 	}
 
 	private void fireThreadEvent(CThreadWorker<?,?> worker, int state){		
@@ -168,5 +152,26 @@ public class CThreadHolder implements WaitHelperI {
 		threadLatch = null; // !!! this means that that waitForAll() is not multithreaded
 		if (DEBUG) System.out.println("))))) waitForAll returned, Thread = " + Thread.currentThread());
 		return Boolean.TRUE;
+	}
+
+	private void removeThread(CThreadWorker<?, ?> worker) {
+		if (DEBUG) System.out.println("))))) notifyBackgroundDone CThreadWorker = " + worker.getMessage());
+		synchronized(thread2CThreadWorker) {
+			Thread thread = null;
+			for (Thread threadLoop : thread2CThreadWorker.keySet()) {
+				if (worker == thread2CThreadWorker.get(threadLoop)) {
+					thread = threadLoop;
+					break;
+				}
+			}
+			if (thread == null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "could not find thread for " + worker.getMessage());
+			}
+			else {
+				if (DEBUG) System.out.println("))))) notifyBackgroundDone thread2CThreadWorker.remove Thread = " + Thread.currentThread() + "=" + thread2CThreadWorker.get(Thread.currentThread()).getMessage());
+				thread2CThreadWorker.remove(thread);
+			}
+		}
+//		notifyEndThread(worker);
 	}
 }

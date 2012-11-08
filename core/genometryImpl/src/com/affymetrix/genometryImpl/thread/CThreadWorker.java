@@ -82,7 +82,7 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 			}
 		}
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
-		CThreadHolder.getInstance().notifyBackgroundDone(this);
+		//CThreadHolder.getInstance().notifyBackgroundDone(this);
 		return t;
 	}
 

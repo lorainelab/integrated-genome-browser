@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -36,7 +37,6 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
-import javax.swing.AbstractAction;
 
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 

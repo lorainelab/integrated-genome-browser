@@ -32,7 +32,7 @@ C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wor
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
 C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
 C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
-C_elegans_Oct_2010	ce10
+C_elegans_Oct_2010	ce10	WS 140	WS140
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
 C_familiaris_Sep_2011	canFam3	CanFam3.1

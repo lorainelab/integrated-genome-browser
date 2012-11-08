@@ -3,6 +3,8 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.IGB;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -52,8 +54,13 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	}
 
 	private void loadURL() {
-		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION );
+		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, 
+				JOptionPane.OK_CANCEL_OPTION);
 		pane.setWantsInput(true);
+		String clipBoardContent = GeneralUtils.getClipboard();
+		if(LocalUrlCacher.isURL(clipBoardContent)){
+			pane.setInitialSelectionValue(clipBoardContent);
+		}
 		chooser = getFileChooser(getID());
 		Box mergeOptionBox = chooser.box;
 		chooser.refreshSpeciesList();
@@ -63,7 +70,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 		dialog.pack();
 		dialog.setLocationRelativeTo(gviewerFrame);
 		dialog.setVisible(true);
-
+		
 		String urlStr = (String)pane.getInputValue();
 		if(urlStr == null || JOptionPane.UNINITIALIZED_VALUE.equals(urlStr)){
 			return;

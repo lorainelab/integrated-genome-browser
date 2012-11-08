@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -29,6 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.event.EventUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -227,6 +229,14 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 						}
 						if (index == 0) {
 							tab_pane.setSelectedIndex(beforeIndex);
+						}else if (EventUtils.isOurPopupTrigger(e)) {
+							if(tab_pane.getSelectedComponent() instanceof JComponent){
+								JComponent jc = (JComponent)tab_pane.getSelectedComponent();
+								JPopupMenu popup = jc.getComponentPopupMenu();
+								if(popup != null && popup.getComponentCount() > 0){
+									popup.show(e.getComponent(), e.getX(), e.getY());
+								}
+							}
 						}
 					}
 

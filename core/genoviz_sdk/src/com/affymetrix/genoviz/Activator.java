@@ -2,6 +2,7 @@ package com.affymetrix.genoviz;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
@@ -14,7 +15,8 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
  */
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
-
+	private ServiceRegistration<ScriptManager> scriptManagerServiceReference;
+	
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
@@ -32,9 +34,15 @@ public class Activator implements BundleActivator {
 				ScriptManager.getInstance().addDecorator(decorator);
 			}
 		});
-		bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
+		scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
 	}
 
 	@Override
-	public void stop(BundleContext _bundleContext) throws Exception {}
+	public void stop(BundleContext _bundleContext) throws Exception {
+		if(scriptManagerServiceReference != null){
+			scriptManagerServiceReference.unregister();
+			scriptManagerServiceReference = null;
+		}
+		bundleContext = null;
+	}
 }

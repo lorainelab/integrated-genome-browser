@@ -1892,7 +1892,7 @@ public class SeqMapView extends JPanel
 			
 			// Disable view seq in seq viewer option for insertion
 			ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();
-			viewGenomicSequenceInSeqViewerAction.setEnabled(!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph));
+			viewGenomicSequenceInSeqViewerAction.setEnabled(selected_glyphs.size() > 1 || (!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph)));
 			
 			popup.add(new JMenuItem(viewGenomicSequenceInSeqViewerAction));
 			popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));

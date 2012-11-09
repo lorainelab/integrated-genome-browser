@@ -65,16 +65,5 @@ public class ViewGenomicSequenceInSeqViewerAction extends SeqMapViewActionA impl
 		} else {
 			setEnabled(true);
 		}
-		
-		// Disable option in 'View' menu for insertion glyph
-		Iterator<SeqSymmetry> iter = evt.getSelectedGraphSyms().iterator();
-		while (iter.hasNext()) {
-			SeqSymmetry sym = iter.next();
-			GlyphI g = this.getTierMap().<GlyphI>getItem(sym);
-			if (g instanceof InsertionSeqGlyph) {
-				setEnabled(false);
-			}
-		}
-		
 	}
 }

@@ -1,24 +1,18 @@
 package com.gene.tutorialhelper;
 
 import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 
-public class Activator implements BundleActivator {
+public class Activator extends ServiceRegistrar implements BundleActivator {
 
-	private static BundleContext context;
-
-	static BundleContext getContext() {
-		return context;
-	}
-
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-		bundleContext.registerService(JRPWidgetDecorator.class, new WidgetIdTooltip(), null);
-	}
-
-	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
+	@Override
+	public ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+		return new ServiceRegistration[]{
+			bundleContext.registerService(JRPWidgetDecorator.class, new WidgetIdTooltip(), null)
+		};
 	}
 }

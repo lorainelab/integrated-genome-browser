@@ -124,14 +124,25 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			return defaultColors;
 		}
 	}
-/*This is the starting point for sequence viewer
- * syms.size()=1 valid case for sequenceviewer and it is not a genomic request
- * syms.size()>1 there are multiple selections done in IGB and it would throw an error
- * syms.size()=0 it is a genomic request
- * residues_syms1 instanceof SupportsCdsSpan) this is true when the selection in IGB has cds start and end.
- */
-	public void startSequenceViewer(){
-				List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
+	
+	public String validate(){
+		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
+		if (syms.size() >= 1) {
+			if (syms.size() != 1) {
+				return "Multiple selections, please select only one feature at a time";
+			}
+		}
+		return null;
+	}
+	
+	/*This is the starting point for sequence viewer
+	 * syms.size()=1 valid case for sequenceviewer and it is not a genomic request
+	 * syms.size()>1 there are multiple selections done in IGB and it would throw an error
+	 * syms.size()=0 it is a genomic request
+	 * residues_syms1 instanceof SupportsCdsSpan) this is true when the selection in IGB has cds start and end.
+	 */
+	public void startSequenceViewer() {
+		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
 		if (syms.size() >= 1) {
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
@@ -157,20 +168,20 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			}
 		} else {
 			residues_sym = seqmapview.getSeqSymmetry();
-			if(residues_sym!= null)
+			if (residues_sym != null) {
 				this.isGenomicRequest = false;
-			else
+			} else {
 				this.isGenomicRequest = true;
+			}
 		}
-/*This loads the reads for the selection in IGB if they are not already loaded
- *
- */
+		/*
+		 * This loads the reads for the selection in IGB if they are not already loaded
+		 */
 		try {
 			if (this.errorMessage == null) {
 				this.aseq = seqmapview.getAnnotatedSeq();
 
 				final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
-
 					public void actionDone(GenericAction action) {
 						mapframe = new JFrame();
 						System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
@@ -180,13 +191,13 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 				if (!isGenomicRequest) {
 					doBackground(doneback);
-					
+
 				} else {
 					if (residues_sym == null) {
 						final SeqSpan span = seqmapview.getVisibleSpan();
 						residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax(), span.getBioSeq());
 						//doneback.actionDone(null);
-						
+
 						SequenceViewWorker worker = new SequenceViewWorker("start abstract sequence viewer", span, doneback);
 						CThreadHolder.getInstance().execute(this, worker);
 					}

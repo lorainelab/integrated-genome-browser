@@ -19,6 +19,10 @@ public class ScriptProcessorHolder {
 		scriptProcessors.put(scriptProcessor.getExtension(), scriptProcessor);
 	}
 
+	public void removeScriptProcessor(ScriptProcessor scriptProcessor){
+		scriptProcessors.remove(scriptProcessor.getExtension());
+	}
+	
 	public ScriptProcessor getScriptProcessor(String extension) {
 		return scriptProcessors.get(extension);
 	}

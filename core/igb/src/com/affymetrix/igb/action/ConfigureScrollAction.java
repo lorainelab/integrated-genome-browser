@@ -3,8 +3,8 @@ package com.affymetrix.igb.action;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -98,25 +98,36 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 		final JLabel bases_per_minuteL = new JLabel("" + (bases_per_minute / 1000000));
 		final JLabel minutes_per_seqL = new JLabel("" + (minutes_per_seq));
 
-		pan.setLayout(new GridLayout(7, 2));
+		pan.setLayout(new GridLayout(8, 3));
+		pan.add(new JLabel("<html><B>  Key </B></html>"));
+		pan.add(new JLabel("<html><B>  Value </B></html>"));
+		pan.add(new JLabel("<html><B>  [Current Value] </B></html>"));
 		pan.add(new JLabel("Resolution (bases per pixel)"));
 		pan.add(bases_per_pixTF);
+		pan.add(new JLabel("[" + autoScroll.get_bases_per_pix() + "]"));
 		pan.add(new JLabel("Scroll increment (pixels)"));
 		pan.add(pix_to_scrollTF);
+		pan.add(new JLabel("[" + autoScroll.get_pix_to_scroll() + "]"));
 		pan.add(new JLabel("Starting base position"));
 		pan.add(start_posTF);
+		pan.add(new JLabel("[" + autoScroll.get_start_pos() + "]"));
 		pan.add(new JLabel("Ending base position"));
 		pan.add(end_posTF);
+		pan.add(new JLabel("[" + autoScroll.get_end_pos() + "]"));
 		pan.add(new JLabel("Time interval (milliseconds)"));
 		pan.add(time_intervalTF);
+		pan.add(new JLabel("[" + autoScroll.get_time_interval() + "]"));
 		pan.add(new JLabel("Megabases per minute:  "));
 		pan.add(bases_per_minuteL);
+		pan.add(new JLabel(""));
 		pan.add(new JLabel("Total minutes for seq:  "));
 		pan.add(minutes_per_seqL);
+		pan.add(new JLabel(""));
 
-		ActionListener al = new ActionListener() {
+		KeyAdapter kl = new KeyAdapter() {
+			
 			@Override
-			public void actionPerformed(ActionEvent evt) {
+			public void keyReleased(KeyEvent e) {
 				as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
 				as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
 				as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
@@ -132,12 +143,12 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 			}
 		};
 
-		bases_per_pixTF.addActionListener(al);
-		pix_to_scrollTF.addActionListener(al);
-		time_intervalTF.addActionListener(al);
-		start_posTF.addActionListener(al);
-		end_posTF.addActionListener(al);
-
+		bases_per_pixTF.addKeyListener(kl);
+		pix_to_scrollTF.addKeyListener(kl);
+		time_intervalTF.addKeyListener(kl);
+		start_posTF.addKeyListener(kl);
+		end_posTF.addKeyListener(kl);
+		
 		int val = JOptionPane.showOptionDialog(seqMapView, pan, "AutoScroll Parameters",
 				JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE,
@@ -147,11 +158,7 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 			as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
 			as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
 			
-			autoScroll.set_start_pos(as_start_pos);
-			autoScroll.set_end_pos(as_end_pos);
-			autoScroll.set_bases_per_pix(as_bases_per_pix);
-			autoScroll.set_pix_to_scroll(as_pix_to_scroll);
-			autoScroll.set_time_interval(as_time_interval);
+			autoScroll.configure(as_bases_per_pix, as_pix_to_scroll, as_time_interval, as_start_pos, as_end_pos);
 		}
 	}
 

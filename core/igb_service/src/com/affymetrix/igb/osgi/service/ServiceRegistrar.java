@@ -19,7 +19,7 @@ public abstract class ServiceRegistrar implements BundleActivator {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-			registerService(igbService);
+			registrations = registerService(igbService);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.registerService() -> " + ex.getMessage());

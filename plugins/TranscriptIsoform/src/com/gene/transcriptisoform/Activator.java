@@ -100,6 +100,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
+		super.stop(bundleContext);
 		tievListener.clearExonConnectorGlyphs();
     	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
         if (igbServiceReference != null) {

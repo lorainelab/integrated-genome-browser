@@ -21,6 +21,8 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -183,6 +185,7 @@ public class Activator implements BundleActivator {
 
 		addMenuItemListener();
 		addPopupListener();
+		addScriptListener();
 		addPrefEditorComponentListener();
 		initSeqMapViewActions();
 		addShortcuts();
@@ -441,8 +444,8 @@ public class Activator implements BundleActivator {
 	}
 	
 	private void addMenuItemListener(){
-		ExtensionPointHandler<AMenuItem> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AMenuItem.class);
-		stopRoutineExtensionPoint.addListener(
+		ExtensionPointHandler<AMenuItem> menuExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AMenuItem.class);
+		menuExtensionPoint.addListener(
 			new ExtensionPointListener<AMenuItem>() {
 				@Override
 				public void addService(AMenuItem amenuItem) {
@@ -472,8 +475,8 @@ public class Activator implements BundleActivator {
 	}
 	
 	private void addPopupListener(){
-		ExtensionPointHandler<ContextualPopupListener> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ContextualPopupListener.class);
-		stopRoutineExtensionPoint.addListener(
+		ExtensionPointHandler<ContextualPopupListener> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ContextualPopupListener.class);
+		popupExtensionPoint.addListener(
 			new ExtensionPointListener<ContextualPopupListener>() {
 				@Override
 				public void addService(ContextualPopupListener listener) {
@@ -482,6 +485,22 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(ContextualPopupListener listener) {	
 					Application.getSingleton().getMapView().removePopupListener(listener);
+				}
+			}
+		);
+	}
+	
+	private void addScriptListener(){
+		ExtensionPointHandler<ScriptProcessor> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ScriptProcessor.class);
+		popupExtensionPoint.addListener(
+			new ExtensionPointListener<ScriptProcessor>() {
+				@Override
+				public void addService(ScriptProcessor scriptProcessor) {
+					ScriptProcessorHolder.getInstance().addScriptProcessor(scriptProcessor);
+				}
+				@Override
+				public void removeService(ScriptProcessor scriptProcessor) {	
+					ScriptProcessorHolder.getInstance().removeScriptProcessor(scriptProcessor);
 				}
 			}
 		);

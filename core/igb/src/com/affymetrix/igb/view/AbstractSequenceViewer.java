@@ -125,15 +125,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		}
 	}
 	
-	public String validate(){
-		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
-		if (syms.size() >= 1) {
-			if (syms.size() != 1) {
-				return "Multiple selections, please select only one feature at a time";
-			}
-		}
-		return null;
-	}
 	
 	/*This is the starting point for sequence viewer
 	 * syms.size()=1 valid case for sequenceviewer and it is not a genomic request

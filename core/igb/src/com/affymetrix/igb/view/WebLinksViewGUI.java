@@ -77,7 +77,7 @@ public class WebLinksViewGUI extends JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         defaultTable = wlv.serverTable;
 
-        localPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Added Web Link"));
+        localPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Custom Web Links - Click To Edit"));
 
         localTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {

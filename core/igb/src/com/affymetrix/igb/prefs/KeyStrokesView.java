@@ -180,6 +180,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 		smallTimeActions.add(UnFloatTiersAction.getAction());
 		smallTimeActions.add(LockTierHeightAction.getAction());
 		smallTimeActions.add(UnlockTierHeightAction.getAction());
+		smallTimeActions.add(StartAutoScrollAction.getAction());
+		smallTimeActions.add(StopAutoScrollAction.getAction());
 	}
 	/**
 	 * Build the underlying data array.

@@ -8,20 +8,21 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class AutoScrollAction extends SeqMapViewActionA {
+public class StartAutoScrollAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1l;
-	private static AutoScrollAction ACTION = new AutoScrollAction();
+	private static StartAutoScrollAction ACTION = new StartAutoScrollAction();
 	
-	private AutoScrollAction(){
-		super(BUNDLE.getString("autoScroll"), "toolbarButtonGraphics/media/Play16.gif",
+	private StartAutoScrollAction(){
+		super(BUNDLE.getString("startAutoScroll"), "toolbarButtonGraphics/media/Play16.gif",
 			"toolbarButtonGraphics/media/Play24.gif");
+		setEnabled(true);
 	}
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
 	
-	public static AutoScrollAction getAction() { 
+	public static StartAutoScrollAction getAction() { 
 		return ACTION; 
 	}
 
@@ -29,5 +30,7 @@ public class AutoScrollAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		getSeqMapView().getAutoScroll().start(this.getTierMap());
+		setEnabled(false);
+		StopAutoScrollAction.getAction().setEnabled(true);
 	}
 }

@@ -301,7 +301,10 @@ public class Activator implements BundleActivator {
 		ChangeTierHeightAction.getAction();
 		ChangeExpandMaxOptimizeAction.getAction();
 		RemoveFeatureAction.getAction();
-		AutoScrollAction.getAction();
+		GenericActionHolder.getInstance().addGenericAction(
+				new SeqMapToggleAction(
+				StartAutoScrollAction.getAction(),
+				StopAutoScrollAction.getAction()));
 		//UCSCViewAction.getAction(); // external class. no singleton.
 	}
 

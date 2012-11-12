@@ -46,7 +46,7 @@
 							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.ScrollLeftAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.ScrollRightAction" value="true"/>
-							
+							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction" value="true" />
 							
 							<!-- Toolbar Action Indices -->
 							<entry key="com.affymetrix.igb.action.LoadFileAction.index" value="0"/>
@@ -57,7 +57,8 @@
 							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction.index" value="5"/>
 							<entry key="com.affymetrix.igb.action.ScrollLeftAction.index" value="6"/>
 							<entry key="com.affymetrix.igb.action.ScrollRightAction.index" value="7"/>
-							
+							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction" value="8" />
+
                         </map>
                     </node>
                 </node>

@@ -231,24 +231,23 @@ public final class XmlPrefsParser {
 		if (type == null) {
 			type = WebLink.LOCAL;
 		}
+		WebLink link = new WebLink();
+		link.setRegexType(type_regex);
+		link.setName(name);
+		link.setIDField(IDField);
+		link.setUrl(url);
+		link.setType(type);
+		link.setSpeciesName(species);	
 		try {
-			WebLink link = new WebLink();
-			link.setRegexType(type_regex);
-			link.setName(name);
-			link.setIDField(IDField);
-			link.setUrl(url);
-			link.setType(type);
-			link.setSpeciesName(species);
 			if ("false".equalsIgnoreCase((String)attmap.get("match_case"))) {
 				link.setRegex("(?-i)" + annot_regex_string);
 			} else {
 				link.setRegex(annot_regex_string);
 			}
-
-			WebLink.addWebLink(link);
 		} catch (PatternSyntaxException pse) {
 			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
 		}
+		WebLink.addWebLink(link);
 	}
 
 	private static void processAnnotStyle(Element el) {

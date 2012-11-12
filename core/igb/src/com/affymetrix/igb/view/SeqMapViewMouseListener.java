@@ -12,6 +12,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.action.StopAutoScrollAction;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -98,7 +99,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 
 		// turn OFF autoscroll in mousePressed()
-		smv.getAutoScroll().stop();
+		StopAutoScrollAction.getAction().actionPerformed(null);
 
 		if (PROCESS_SUB_SELECTION) {
 			processSubSelection(evt);

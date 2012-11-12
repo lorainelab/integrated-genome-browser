@@ -155,6 +155,17 @@ public class WebLinksViewGUI extends JPanel {
         matchTip.setToolTipText("Choose for Regular Expression Matches");
         matchTip.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
         matchTip.setText(" ");
+        matchTip.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                matchTipMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                matchTipMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                matchTipMouseEntered(evt);
+            }
+        });
 
         regexLabel.setText("Regular Expression:");
 
@@ -351,6 +362,19 @@ public class WebLinksViewGUI extends JPanel {
 	private void regularExpressionTipMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_regularExpressionTipMouseExited
 		setCursor(WebLinksView.defaultCursor);
 	}//GEN-LAST:event_regularExpressionTipMouseExited
+
+	private void matchTipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_matchTipMouseEntered
+		setCursor(WebLinksView.handCursor);
+	}//GEN-LAST:event_matchTipMouseEntered
+
+	private void matchTipMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_matchTipMouseExited
+		setCursor(WebLinksView.defaultCursor);
+	}//GEN-LAST:event_matchTipMouseExited
+
+	private void matchTipMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_matchTipMouseReleased
+		wlv.regexTipMouseReleased();
+	}//GEN-LAST:event_matchTipMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel builderPanel;
     private javax.swing.JButton createButton;

@@ -272,6 +272,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value=" "/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="matchTipMouseReleased"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="matchTipMouseExited"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="matchTipMouseEntered"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="matchTip.setToolTipText(&quot;Choose for Regular Expression Matches&quot;);&#xa;matchTip.setIcon(CommonUtils.getInstance().getIcon(&quot;16x16/actions/info.png&quot;));"/>
               </AuxValues>

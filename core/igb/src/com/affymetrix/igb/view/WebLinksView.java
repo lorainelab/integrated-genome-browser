@@ -16,9 +16,13 @@ import java.util.List;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
@@ -230,7 +234,13 @@ public final class WebLinksView implements ListSelectionListener {
 		if (localTable.getSelectedRow() != -1) {
 			String regex = regexTextField.getText();
 			if (!isEmpty(regex)) {
-				localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+				try {
+					Pattern.compile(regex);
+					regexTextField.setForeground(Color.BLACK);
+					localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+				}catch (PatternSyntaxException e){
+					regexTextField.setForeground(Color.RED);
+				}	
 			}
 		}
 	}
@@ -334,7 +344,13 @@ public final class WebLinksView implements ListSelectionListener {
 			nameTextField.setText(link.getName());
 			urlTextField.setText(link.getUrl());
 			regexTextField.setText(link.getRegex());
-
+			
+			if(link.getPattern() == null && !".*".equals(link.getRegex()) && !"(?i).*".equals(link.getRegex())){
+				regexTextField.setForeground(Color.red);
+			}else{
+				regexTextField.setForeground(Color.BLACK);
+			}
+			
 			if (link.getRegexType() == RegexType.TYPE) {
 				nameRadioButton.setSelected(true);
 			} else if (link.getRegexType() == RegexType.ID) {
@@ -416,9 +432,10 @@ public final class WebLinksView implements ListSelectionListener {
 
 		@Override
 		public void setValueAt(Object value, int row, int col) {
+			WebLink webLink = null;
 			if (value != null && !initializationDetector) {
 				try {
-					WebLink webLink = webLinks.get(row);
+					webLink = webLinks.get(row);
 					switch (col) {
 						case COL_NAME:
 							webLink.setName((String) value);
@@ -435,7 +452,12 @@ public final class WebLinksView implements ListSelectionListener {
 						default:
 							System.out.println("Unknown column selected: " + col);
 					}
-				} catch (Exception e) {
+				} catch (PatternSyntaxException e) {
+					Logger.getLogger(WebLinksView.class.getName()).log(Level.WARNING,
+							MessageFormat.format("Invalid regular expression {0} for {1}",
+							new Object[]{webLink.getRegexType(), webLink.getName()}));
+
+				}catch (Exception e) {
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in WebLinksView.setValueAt(): " + e);
 				}

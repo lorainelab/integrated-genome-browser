@@ -52,9 +52,14 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (column == KeyStrokesView.KeyStrokeColumn
-				|| column == KeyStrokesView.ToolbarColumn) {
+		if (column == KeyStrokesView.KeyStrokeColumn) {
 			return true;
+		}
+		if (column == KeyStrokesView.ToolbarColumn) {
+			if(rows[row][column] == ExistentialTriad.IS || 
+					rows[row][column] == ExistentialTriad.ISNOT){
+				return true;
+			}
 		}
 		return false;
 	}

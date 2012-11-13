@@ -29,7 +29,8 @@ import javax.swing.Action;
  */
 public class SeqMapToggleAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-
+	// Buffer space for add .index or something else at the end.
+	private static int BUFFER = 8;
 	/**
 	 * This is used to answer {@link #getId()}.
 	 * It is not the same as "id" in the super class.
@@ -68,11 +69,11 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 		two.addPropertyChangeListener(toggle);
 		this.identifier = this.getClass().getName() +
 				":" + one.getId() + ";" + two.getId();
-		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length()) {
+		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length() + BUFFER) {
 			this.identifier = this.getClass().getName() + ":" +
 					one.getClass().getSimpleName() + ";" + two.getClass().getSimpleName();
 		}
-		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length()) {
+		if (java.util.prefs.AbstractPreferences.MAX_KEY_LENGTH < this.identifier.length() + BUFFER) {
 			this.identifier = this.getClass().getSimpleName() + ":" +
 					one.getClass().getSimpleName() + ";" + two.getClass().getSimpleName();
 		}

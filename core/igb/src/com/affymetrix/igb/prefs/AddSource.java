@@ -11,6 +11,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
@@ -73,7 +75,13 @@ public class AddSource extends JFrame {
 				addServerButton.setText("Add Repository");
 			}
 
-			urlText.setText("http://");
+			String clipBoardContent = GeneralUtils.getClipboard();
+			if(LocalUrlCacher.isURL(clipBoardContent)){
+				urlText.setText(clipBoardContent);
+			}else{
+				urlText.setText("http://");
+			}
+			
 		}
 
 		setTitle(title);

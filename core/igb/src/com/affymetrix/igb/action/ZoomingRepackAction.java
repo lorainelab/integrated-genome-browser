@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.Action;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  * Size the tiers vertically so that all glyphs in view horizontally will fit.
@@ -47,8 +48,8 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 	 * Create an action for the given tiered map.
 	 */
 	public ZoomingRepackAction() {
-		super("Optimize All Tracks", "Optimize stack height for all annotation tracks so that all annotations are shown","16x16/actions/optimize_all.png", "22x22/actions/optimize_all.png", KeyEvent.VK_UNDEFINED);
-		putValue(Action.SHORT_DESCRIPTION, "Optimize Stack Height for All Annotation Tracks");
+		super(BUNDLE.getString("optimizeAll"),"16x16/actions/optimize_all.png", "22x22/actions/optimize_all.png");
+		putValue(Action.SHORT_DESCRIPTION, BUNDLE.getString("optimizeAllToolTip"));
 	}
 
 	/**

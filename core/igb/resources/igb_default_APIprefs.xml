@@ -57,7 +57,7 @@
 							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction.index" value="5"/>
 							<entry key="com.affymetrix.igb.action.ScrollLeftAction.index" value="6"/>
 							<entry key="com.affymetrix.igb.action.ScrollRightAction.index" value="7"/>
-							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction" value="8" />
+							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction.index" value="8" />
 
                         </map>
                     </node>

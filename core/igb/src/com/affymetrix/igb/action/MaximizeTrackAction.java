@@ -41,7 +41,7 @@ public class MaximizeTrackAction extends SeqMapViewActionA {
 			}
 			coord_value += tierGlyph.getCoordBox().getHeight();
 		}
-		//coord_value += 1; // fudge factor
+		coord_value += 0.2; // fudge factor
 		getTierMap().scroll(getSeqMapView().getSeqMap().Y, coord_value);
 		getTierMap().updateWidget();
 	}

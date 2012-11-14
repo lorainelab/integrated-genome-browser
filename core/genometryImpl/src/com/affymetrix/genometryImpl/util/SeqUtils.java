@@ -47,6 +47,22 @@ public abstract class SeqUtils {
 		return max_child_depth;
 	}
 
+	/**
+	 * Returns depth for provided sym
+	 * @param sym
+	 * @return 
+	 */
+	public static int getDepthFor(SeqSymmetry sym) {
+		int depth = 1;
+		if (sym != null) {
+			SeqSymmetry current = sym;
+			while (current.getChildCount() != 0) {
+				current = current.getChild(0);
+				depth++;
+			}
+		}
+		return depth;
+	}
 
 
 	/**

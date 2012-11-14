@@ -98,23 +98,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	public boolean supportsTwoTrack() {
 		return true;
 	}
-
-	private static int getDepth(SeqSymmetry sym) {
-		int depth = 1;
-		if (sym != null) {
-			SeqSymmetry current = sym;
-			while (current.getChildCount() != 0) {
-				current = current.getChild(0);
-				depth++;
-			}
-		}
-		return depth;
-	}
 	
 	protected void addLeafsToTier(SeqMapViewExtendedI gviewer, SeqSymmetry sym,
 			TierGlyph ftier, TierGlyph rtier,
 			int desired_leaf_depth) {
-		int depth = getDepth(sym);
+		int depth = SeqUtils.getDepthFor(sym);
 		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
 			int childCount = sym.getChildCount();
 			for (int i = 0; i < childCount; i++) {

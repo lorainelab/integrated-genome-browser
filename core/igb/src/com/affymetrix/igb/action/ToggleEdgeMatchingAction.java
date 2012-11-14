@@ -21,7 +21,7 @@ public class ToggleEdgeMatchingAction extends GenericAction implements Preferenc
 	private SeqMapView map_view = IGB.getSingleton().getMapView();
 
 	private ToggleEdgeMatchingAction(){
-		super(BUNDLE.getString("toggleEdgeMatching"), KeyEvent.VK_M);
+		super(BUNDLE.getString("toggleEdgeMatching"), null, "16x16/actions/blank_placeholder.png", null, KeyEvent.VK_M);
 		this.putValue(SELECTED_KEY, map_view.getEdgeMatching());
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));

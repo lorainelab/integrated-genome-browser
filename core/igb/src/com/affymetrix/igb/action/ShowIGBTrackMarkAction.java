@@ -25,7 +25,7 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements Prefere
 	}
 
 	private ShowIGBTrackMarkAction() {
-		super(BUNDLE.getString("showIGBTrackMark"), null, null);
+		super(BUNDLE.getString("showIGBTrackMark"), "16x16/actions/blank_placeholder.png", null);
 		this.putValue(SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, PreferenceUtils.default_show_igb_track));

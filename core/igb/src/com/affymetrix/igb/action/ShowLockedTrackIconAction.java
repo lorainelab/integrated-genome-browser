@@ -25,7 +25,7 @@ public class ShowLockedTrackIconAction extends GenericAction {
 	}
 
 	private ShowLockedTrackIconAction() {
-		super(BUNDLE.getString("showLockedTrackIcon"), null, null);
+		super(BUNDLE.getString("showLockedTrackIcon"), "16x16/actions/blank_placeholder.png", null);
 		this.putValue(SELECTED_KEY, TrackStyle.getShowLockIcon());
 	}
 	

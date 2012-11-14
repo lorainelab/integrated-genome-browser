@@ -29,7 +29,7 @@ public class DrawCollapseControlAction extends GenericAction implements Preferen
 	}
 
 	private DrawCollapseControlAction() {
-		super(BUNDLE.getString("drawCollapseControl"), null, null);
+		super(BUNDLE.getString("drawCollapseControl"), "16x16/actions/blank_placeholder.png", null);
 		this.putValue(SELECTED_KEY, TrackStyle.getDrawCollapseState());
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_COLLAPSE_OPTION, PreferenceUtils.default_show_collapse_option));

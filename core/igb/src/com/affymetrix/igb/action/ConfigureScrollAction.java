@@ -37,8 +37,8 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 
 	private ConfigureScrollAction() {
 		super(BUNDLE.getString("configureAutoScroll"), null,
-			"toolbarButtonGraphics/media/Movie16.gif",
-			"toolbarButtonGraphics/media/Movie24.gif", // tool bar eligible
+			"16x16/actions/configure_autoscroll.png",
+			"22x22/actions/configure_autoscroll.png", // tool bar eligible
 			KeyEvent.VK_A, null, true);
 		this.ordinal = -4009000;
 	}

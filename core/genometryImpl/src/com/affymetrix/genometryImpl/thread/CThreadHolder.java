@@ -32,11 +32,13 @@ public class CThreadHolder {
 	}
 
 	public void cancelAllTasks() {
-		for (final CThreadWorker<?,?> worker : getAllCThreadWorkers()) {
-			if(worker != null && !worker.isCancelled() && !worker.isDone()){
-				worker.cancelThread(true);
+		synchronized (RUNNING_CTHREADWORKERS) {
+			for (final CThreadWorker<?, ?> worker : RUNNING_CTHREADWORKERS) {
+				if (worker != null && !worker.isCancelled() && !worker.isDone()) {
+					worker.cancelThread(true);
+				}
 			}
-		}		
+		}
 	}
 	
 	public void execute(Object obj, CThreadWorker<?,?> worker){
@@ -75,7 +77,10 @@ public class CThreadHolder {
 
 	public void notifyStartThread(CThreadWorker<?,?> worker) {
 		if (DEBUG) System.out.println("))))) notifyStartThread CThreadWorker = " + worker.getMessage());
-		RUNNING_CTHREADWORKERS.add(worker);
+		synchronized (RUNNING_CTHREADWORKERS) {
+			RUNNING_CTHREADWORKERS.add(worker);
+			fireThreadEvent(worker, CThreadEvent.STARTED);
+		}
 		if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.add Thread = " + Thread.currentThread() + "=" + worker.getMessage());
 //		synchronized(thread2CThreadWorker) {
 //			if (thread2CThreadWorker.get(Thread.currentThread()) != null) {
@@ -86,13 +91,13 @@ public class CThreadHolder {
 //			}
 //			thread2CThreadWorker.put(Thread.currentThread(), worker);
 //		}
-		fireThreadEvent(worker, CThreadEvent.STARTED);
 	}
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){
 		synchronized (RUNNING_CTHREADWORKERS) {
 			if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.remove Thread = " + Thread.currentThread() + "=" + worker.getMessage());
 			RUNNING_CTHREADWORKERS.remove(worker);
+			fireThreadEvent(worker, CThreadEvent.ENDED);
 //			if (RUNNING_CTHREADWORKERS.size() == 0 && threadLatch != null) {
 //				ThreadUtils.runOnEventQueue(
 //					new Runnable() {
@@ -107,7 +112,6 @@ public class CThreadHolder {
 //			}
 		}
 //		removeThread(worker);
-		fireThreadEvent(worker, CThreadEvent.ENDED);
 	}
 
 	private void fireThreadEvent(CThreadWorker<?,?> worker, int state){		

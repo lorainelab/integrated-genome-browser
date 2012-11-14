@@ -188,7 +188,9 @@ public class IGBToolBar extends JToolBar {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			timer.stop();
+			if(timer != null) {
+				timer.stop();
+			}
 		}
 	};
 		

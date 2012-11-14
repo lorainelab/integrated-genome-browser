@@ -27,7 +27,7 @@ public class ThresholdingAction extends GenericAction {
 	}
 	
 	private ThresholdingAction(IGBService igbService) {
-		super(BUNDLE.getString("thresholding"), null, null, null, KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("thresholding"), null, "16x16/actions/blank_placeholder.png", null, KeyEvent.VK_UNDEFINED, null, true);
 //		this.igbService = igbService;
 		score_thresh_adjuster = new GraphScoreThreshSetter(igbService);
 	}

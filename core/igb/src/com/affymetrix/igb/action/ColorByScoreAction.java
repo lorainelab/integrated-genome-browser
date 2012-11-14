@@ -22,7 +22,7 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private ColorByScoreAction(String transKey) {
-		super(BUNDLE.getString(transKey), null, null);
+		super(BUNDLE.getString(transKey), "16x16/actions/blank_placeholder.png", null);
 	}
 
 	private void setColorByScore(TierLabelGlyph tlg) {

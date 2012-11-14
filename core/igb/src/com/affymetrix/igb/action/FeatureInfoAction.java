@@ -16,7 +16,7 @@ public class FeatureInfoAction extends GenericAction {
 	final String url ;
 
 	public FeatureInfoAction(String url){
-		super(BUNDLE.getString("trackInfo"), null, null);
+		super(BUNDLE.getString("trackInfo"), "16x16/actions/blank_placeholder.png", null);
 		this.url = url;
 	}
 

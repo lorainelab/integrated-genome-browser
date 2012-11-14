@@ -26,7 +26,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private SetColorByScoreAction() {
-		super(BUNDLE.getString("setColorByScore"), null, null);
+		super(BUNDLE.getString("setColorByScore"), "16x16/actions/blank_placeholder.png", null);
 	}
 
 	public void updateColorByScore(List<TierLabelGlyph> theTiers){

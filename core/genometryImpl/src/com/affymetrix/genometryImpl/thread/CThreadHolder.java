@@ -11,7 +11,8 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
-public class CThreadHolder implements WaitHelperI {
+public class CThreadHolder {
+//implements WaitHelperI {
 	private static final boolean DEBUG = false;
 	private final Set<CThreadWorker<?,?>> RUNNING_CTHREADWORKERS = new HashSet<CThreadWorker<?,?>>();
 	private static final CThreadWorker<?,?> NOOP = new CThreadWorker<Void,Void>("noop") {
@@ -124,35 +125,35 @@ public class CThreadHolder implements WaitHelperI {
 		}
 	}
 
-	public Boolean waitForAll() {
-		if (DEBUG) System.out.println("))))) waitForAll Thread = " + Thread.currentThread());
-		
-		synchronized (RUNNING_CTHREADWORKERS) {
-			if (DEBUG) System.out.println("))))) RUNNING_CTHREADWORKERS.size() = " + RUNNING_CTHREADWORKERS.size());
-			if (DEBUG) {
-				for (CThreadWorker<?, ?> worker : RUNNING_CTHREADWORKERS) {
-					System.out.println("))))) worker = " + worker.getMessage());
-				}
-			}
-			if (RUNNING_CTHREADWORKERS.size() == 0){
-				if (DEBUG) System.out.println("))))) no active thread.");
-				return Boolean.TRUE;
-			}
-			if (threadLatch == null || threadLatch.getCount() == 0) {
-				threadLatch = new CountDownLatch(1);
-			}
-		}
-		try {
-			if (DEBUG) System.out.println("))))) waitForAll await() Thread = " + Thread.currentThread());
-			threadLatch.await();
-			if (DEBUG) System.out.println("))))) waitForAll await() returned, Thread = " + Thread.currentThread());
-		} catch (InterruptedException x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Script getWaitHelper().run() interrupted", x);
-		}
-		threadLatch = null; // !!! this means that that waitForAll() is not multithreaded
-		if (DEBUG) System.out.println("))))) waitForAll returned, Thread = " + Thread.currentThread());
-		return Boolean.TRUE;
-	}
+//	public Boolean waitForAll() {
+//		if (DEBUG) System.out.println("))))) waitForAll Thread = " + Thread.currentThread());
+//		
+//		synchronized (RUNNING_CTHREADWORKERS) {
+//			if (DEBUG) System.out.println("))))) RUNNING_CTHREADWORKERS.size() = " + RUNNING_CTHREADWORKERS.size());
+//			if (DEBUG) {
+//				for (CThreadWorker<?, ?> worker : RUNNING_CTHREADWORKERS) {
+//					System.out.println("))))) worker = " + worker.getMessage());
+//				}
+//			}
+//			if (RUNNING_CTHREADWORKERS.size() == 0){
+//				if (DEBUG) System.out.println("))))) no active thread.");
+//				return Boolean.TRUE;
+//			}
+//			if (threadLatch == null || threadLatch.getCount() == 0) {
+//				threadLatch = new CountDownLatch(1);
+//			}
+//		}
+//		try {
+//			if (DEBUG) System.out.println("))))) waitForAll await() Thread = " + Thread.currentThread());
+//			threadLatch.await();
+//			if (DEBUG) System.out.println("))))) waitForAll await() returned, Thread = " + Thread.currentThread());
+//		} catch (InterruptedException x) {
+//			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Script getWaitHelper().run() interrupted", x);
+//		}
+//		threadLatch = null; // !!! this means that that waitForAll() is not multithreaded
+//		if (DEBUG) System.out.println("))))) waitForAll returned, Thread = " + Thread.currentThread());
+//		return Boolean.TRUE;
+//	}
 
 	private void removeThread(CThreadWorker<?, ?> worker) {
 		if (DEBUG) System.out.println("))))) notifyBackgroundDone CThreadWorker = " + worker.getMessage());

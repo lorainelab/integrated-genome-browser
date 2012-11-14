@@ -536,6 +536,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 
 		WigFormat current_format = WigFormat.BED4;
 		boolean previous_track_line = false;
+		String previous_seq_id = null;
 		String line, current_seq_id = null, trackLine = null;
 		int current_start = 0;
 		int current_step = 0;
@@ -565,13 +566,6 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 					continue;
 				}
 				if ((firstChar == 'v' && line.startsWith("variableStep")) || (firstChar == 'f' && line.startsWith("fixedStep"))) {
-					if (!previous_track_line) {
-						trackLine = MessageFormat.format(TRACK, new Object[]{uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++}) ;
-						Logger.getLogger(Wiggle.class.getName()) .log(Level.WARNING,"Wiggle format error: line does not have a previous ''track'' line."
-								+ " Creating a dummy track line. {0}", trackLine);
-						//throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");
-					}
-
 					String[] fields = field_regex.split(line);
 					if (firstChar == 'v') {
 						current_format = WigFormat.VARSTEP;
@@ -587,7 +581,19 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 						current_step = Integer.parseInt(Wiggle.parseFormatFields(fields, "step", "1"));
 						current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
 					}
-
+					
+					if (!previous_track_line) {
+						// Creat a dummy track only it's the same sequence
+						if(current_seq_id.equals(previous_seq_id)){
+							trackLine = MessageFormat.format(TRACK, new Object[]{uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++}) ;
+							Logger.getLogger(Wiggle.class.getName()) .log(Level.WARNING,"Wiggle format error: line does not have a previous ''track'' line."
+								+ " Creating a dummy track line. {0}", trackLine);
+							//throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");
+						}
+					}
+					
+					previous_seq_id = current_seq_id;
+					
 					if (!chrs.containsKey(current_seq_id)) {
 						addToLists(chrs, current_seq_id, chrFiles, chrLength, ".wig");
 					}

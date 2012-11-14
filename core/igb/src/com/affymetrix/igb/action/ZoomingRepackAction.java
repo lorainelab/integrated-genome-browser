@@ -19,6 +19,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.Action;
 
@@ -34,6 +35,9 @@ import javax.swing.Action;
 public class ZoomingRepackAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ZoomingRepackAction ACTION = new ZoomingRepackAction();
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	
 	public static ZoomingRepackAction getAction() {
 		return ACTION;
@@ -43,8 +47,8 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 	 * Create an action for the given tiered map.
 	 */
 	public ZoomingRepackAction() {
-		super("Optimize All Tracks", null, null);
-		putValue(Action.SHORT_DESCRIPTION, "Optimize track stack heights for the region in view.");
+		super("Optimize All Tracks", "Optimize stack height for all annotation tracks so that all annotations are shown","16x16/actions/optimize_all.png", "22x22/actions/optimize_all.png", KeyEvent.VK_UNDEFINED);
+		putValue(Action.SHORT_DESCRIPTION, "Optimize Stack Height for All Annotation Tracks");
 	}
 
 	/**

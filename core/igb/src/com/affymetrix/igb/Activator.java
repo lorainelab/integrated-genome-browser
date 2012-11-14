@@ -387,6 +387,8 @@ public class Activator implements BundleActivator {
 							}else{
 								((IGB)Application.getSingleton()).addToolbarAction(genericAction, index);
 							}
+						}else{
+							((IGB)Application.getSingleton()).addAction(genericAction);
 						}
 					}
 				}

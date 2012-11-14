@@ -63,7 +63,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		};
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
-		addActions();
+//		addActions();
 	}
 
 	/**
@@ -80,36 +80,37 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	 * even before this pop up is ever popped up.
 	 * Sigh. - elb
 	 */
-	private void addActions() {
-		IGB igb = (IGB) Application.getSingleton();
-		igb.addAction(ShowPlusStrandAction.getAction());
-		igb.addAction(ShowMinusStrandAction.getAction());
-		igb.addAction(ChangeForegroundColorAction.getAction());
-		igb.addAction(ChangeBackgroundColorAction.getAction());
-		igb.addAction(ChangeForwardColorAction.getAction());
-		igb.addAction(ChangeReverseColorAction.getAction());
-		igb.addAction(RenameTierAction.getAction());
-		igb.addAction(ChangeFontSizeAction.getAction());
-		igb.addAction(ChangeExpandMaxAction.getAction());
-//		igb.addAction(ChangeExpandMaxAllAction.getAction());
-		igb.addAction(ShowTwoTiersAction.getAction());
-		igb.addAction(ShowOneTierAction.getAction());
-		igb.addAction(SetColorByScoreAction.getAction());
-		igb.addAction(ColorByScoreAction.getAction());
-		igb.addAction(ExportFileAction.getAction());
-		igb.addAction(ExportSelectedAnnotationFileAction.getAction());
-		igb.addAction(UseAsReferenceSeqAction.getAction());
-		igb.addAction(CustomizeAction.getAction());
-		igb.addAction(HideAction.getAction());
-		igb.addAction(ShowAllAction.getAction());
-		igb.addAction(CenterAtHairlineAction.getAction());
-		igb.addAction(MaximizeTrackAction.getAction());
-		igb.addAction(CollapseAction.getAction());
-		igb.addAction(ExpandAction.getAction());
-		igb.addAction(RemoveDataFromTracksAction.getAction());
-		igb.addAction(RepackSelectedTiersAction.getAction());
-		igb.addAction(AutoLoadThresholdAction.getAction());
-	}
+	// Replacing this with GenericActionListener in Activator. HV 11/14/12
+//	private void addActions() {
+//		IGB igb = (IGB) Application.getSingleton();
+//		igb.addAction(ShowPlusStrandAction.getAction());
+//		igb.addAction(ShowMinusStrandAction.getAction());
+//		igb.addAction(ChangeForegroundColorAction.getAction());
+//		igb.addAction(ChangeBackgroundColorAction.getAction());
+//		igb.addAction(ChangeForwardColorAction.getAction());
+//		igb.addAction(ChangeReverseColorAction.getAction());
+//		igb.addAction(RenameTierAction.getAction());
+//		igb.addAction(ChangeFontSizeAction.getAction());
+//		igb.addAction(ChangeExpandMaxAction.getAction());
+////		igb.addAction(ChangeExpandMaxAllAction.getAction());
+//		igb.addAction(ShowTwoTiersAction.getAction());
+//		igb.addAction(ShowOneTierAction.getAction());
+//		igb.addAction(SetColorByScoreAction.getAction());
+//		igb.addAction(ColorByScoreAction.getAction());
+//		igb.addAction(ExportFileAction.getAction());
+//		igb.addAction(ExportSelectedAnnotationFileAction.getAction());
+//		igb.addAction(UseAsReferenceSeqAction.getAction());
+//		igb.addAction(CustomizeAction.getAction());
+//		igb.addAction(HideAction.getAction());
+//		igb.addAction(ShowAllAction.getAction());
+//		igb.addAction(CenterAtHairlineAction.getAction());
+//		igb.addAction(MaximizeTrackAction.getAction());
+//		igb.addAction(CollapseAction.getAction());
+//		igb.addAction(ExpandAction.getAction());
+//		igb.addAction(RemoveDataFromTracksAction.getAction());
+//		igb.addAction(RepackSelectedTiersAction.getAction());
+//		igb.addAction(AutoLoadThresholdAction.getAction());
+//	}
 
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {

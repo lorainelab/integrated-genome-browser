@@ -1,13 +1,8 @@
 package com.affymetrix.genometryImpl.thread;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
@@ -19,10 +14,10 @@ public class CThreadHolder {
 		@Override protected Void runInBackground() { return null; }
 		@Override protected void finished() {}
 	};
-	private final Map<Thread, CThreadWorker<?,?>> thread2CThreadWorker = new HashMap<Thread, CThreadWorker<?,?>>();
+//	private final Map<Thread, CThreadWorker<?,?>> thread2CThreadWorker = new HashMap<Thread, CThreadWorker<?,?>>();
 	private static CThreadHolder singleton;
 	private final Set<CThreadListener> listeners;
-	private CountDownLatch threadLatch;
+//	private CountDownLatch threadLatch;
 	
 	public static CThreadHolder getInstance(){
 		if(singleton == null){
@@ -56,24 +51,25 @@ public class CThreadHolder {
 	}
 
 	public CThreadWorker<?,?> getCurrentCThreadWorker() {
-		synchronized(thread2CThreadWorker) {
-			CThreadWorker<?,?> currentCThreadWorker = thread2CThreadWorker.get(Thread.currentThread());
-			if (currentCThreadWorker == null) { // to prevent NPE in test programs
-				currentCThreadWorker = NOOP;
-			}
-			return currentCThreadWorker;
-		}
+//		synchronized(thread2CThreadWorker) {
+//			CThreadWorker<?,?> currentCThreadWorker = thread2CThreadWorker.get(Thread.currentThread());
+//			if (currentCThreadWorker == null) { // to prevent NPE in test programs
+//				currentCThreadWorker = NOOP;
+//			}
+//			return currentCThreadWorker;
+//		}
+		return NOOP;
 	}
 
 	public Set<CThreadWorker<?,?>> getAllCThreadWorkers() {
-		synchronized(thread2CThreadWorker) {
-			return new CopyOnWriteArraySet<CThreadWorker<?,?>>(thread2CThreadWorker.values());
+		synchronized(RUNNING_CTHREADWORKERS) {
+			return new CopyOnWriteArraySet<CThreadWorker<?,?>>(RUNNING_CTHREADWORKERS);
 		}
 	}
 
 	public int getCThreadWorkerCount() {
-		synchronized(thread2CThreadWorker) {
-			return thread2CThreadWorker.size();
+		synchronized(RUNNING_CTHREADWORKERS) {
+			return RUNNING_CTHREADWORKERS.size();
 		}
 	}
 
@@ -81,40 +77,36 @@ public class CThreadHolder {
 		if (DEBUG) System.out.println("))))) notifyStartThread CThreadWorker = " + worker.getMessage());
 		RUNNING_CTHREADWORKERS.add(worker);
 		if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.add Thread = " + Thread.currentThread() + "=" + worker.getMessage());
-		synchronized(thread2CThreadWorker) {
-			if (thread2CThreadWorker.get(Thread.currentThread()) != null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-					"Thread " + Thread.currentThread() + " already has " + thread2CThreadWorker.get(Thread.currentThread()) +
-					" = " + thread2CThreadWorker.get(Thread.currentThread()).getMessage() + 
-					", and is starting " + worker + " = " + worker.getMessage());
-			}
-			thread2CThreadWorker.put(Thread.currentThread(), worker);
-		}
+//		synchronized(thread2CThreadWorker) {
+//			if (thread2CThreadWorker.get(Thread.currentThread()) != null) {
+//				Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+//					"Thread " + Thread.currentThread() + " already has " + thread2CThreadWorker.get(Thread.currentThread()) +
+//					" = " + thread2CThreadWorker.get(Thread.currentThread()).getMessage() + 
+//					", and is starting " + worker + " = " + worker.getMessage());
+//			}
+//			thread2CThreadWorker.put(Thread.currentThread(), worker);
+//		}
 		fireThreadEvent(worker, CThreadEvent.STARTED);
-	}
-
-	private void notifyBackgroundDone (CThreadWorker<?,?> worker){
-		removeThread(worker);
 	}
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){
 		synchronized (RUNNING_CTHREADWORKERS) {
 			if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.remove Thread = " + Thread.currentThread() + "=" + worker.getMessage());
 			RUNNING_CTHREADWORKERS.remove(worker);
-			if (RUNNING_CTHREADWORKERS.size() == 0 && threadLatch != null) {
-				ThreadUtils.runOnEventQueue(
-					new Runnable() {
-						@Override
-						public void run() {
-							if (DEBUG) System.out.println("))))) notifyBackgroundDone countDown Thread = " + Thread.currentThread());
-							threadLatch.countDown();
-							if (DEBUG) System.out.println("))))) notifyBackgroundDone countDown returned, Thread = " + Thread.currentThread());
-						}
-					}
-				);
-			}
+//			if (RUNNING_CTHREADWORKERS.size() == 0 && threadLatch != null) {
+//				ThreadUtils.runOnEventQueue(
+//					new Runnable() {
+//						@Override
+//						public void run() {
+//							if (DEBUG) System.out.println("))))) notifyBackgroundDone countDown Thread = " + Thread.currentThread());
+//							threadLatch.countDown();
+//							if (DEBUG) System.out.println("))))) notifyBackgroundDone countDown returned, Thread = " + Thread.currentThread());
+//						}
+//					}
+//				);
+//			}
 		}
-		removeThread(worker);
+//		removeThread(worker);
 		fireThreadEvent(worker, CThreadEvent.ENDED);
 	}
 
@@ -125,6 +117,10 @@ public class CThreadHolder {
 		}
 	}
 
+//	private void notifyBackgroundDone (CThreadWorker<?,?> worker){
+//		removeThread(worker);
+//	}
+	
 //	public Boolean waitForAll() {
 //		if (DEBUG) System.out.println("))))) waitForAll Thread = " + Thread.currentThread());
 //		
@@ -155,24 +151,24 @@ public class CThreadHolder {
 //		return Boolean.TRUE;
 //	}
 
-	private void removeThread(CThreadWorker<?, ?> worker) {
-		if (DEBUG) System.out.println("))))) notifyBackgroundDone CThreadWorker = " + worker.getMessage());
-		synchronized(thread2CThreadWorker) {
-			Thread thread = null;
-			for (Thread threadLoop : thread2CThreadWorker.keySet()) {
-				if (worker == thread2CThreadWorker.get(threadLoop)) {
-					thread = threadLoop;
-					break;
-				}
-			}
-			if (thread == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "could not find thread for " + worker.getMessage());
-			}
-			else {
-				if (DEBUG) System.out.println("))))) notifyBackgroundDone thread2CThreadWorker.remove Thread = " + Thread.currentThread() + "=" + thread2CThreadWorker.get(Thread.currentThread()).getMessage());
-				thread2CThreadWorker.remove(thread);
-			}
-		}
-//		notifyEndThread(worker);
-	}
+//	private void removeThread(CThreadWorker<?, ?> worker) {
+//		if (DEBUG) System.out.println("))))) notifyBackgroundDone CThreadWorker = " + worker.getMessage());
+//		synchronized(thread2CThreadWorker) {
+//			Thread thread = null;
+//			for (Thread threadLoop : thread2CThreadWorker.keySet()) {
+//				if (worker == thread2CThreadWorker.get(threadLoop)) {
+//					thread = threadLoop;
+//					break;
+//				}
+//			}
+//			if (thread == null) {
+//				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "could not find thread for " + worker.getMessage());
+//			}
+//			else {
+//				if (DEBUG) System.out.println("))))) notifyBackgroundDone thread2CThreadWorker.remove Thread = " + Thread.currentThread() + "=" + thread2CThreadWorker.get(Thread.currentThread()).getMessage());
+//				thread2CThreadWorker.remove(thread);
+//			}
+//		}
+////		notifyEndThread(worker);
+//	}
 }

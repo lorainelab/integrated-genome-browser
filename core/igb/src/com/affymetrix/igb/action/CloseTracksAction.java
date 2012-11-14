@@ -17,11 +17,11 @@ extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final CloseTracksAction ACTION = new CloseTracksAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		ACTION.setEnabled(false);
-		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
-	}
+	//static{
+	//	GenericActionHolder.getInstance().addGenericAction(ACTION);
+	//	ACTION.setEnabled(false);
+	//	GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+	//}
 	
 	public static CloseTracksAction getAction() {
 		return ACTION;

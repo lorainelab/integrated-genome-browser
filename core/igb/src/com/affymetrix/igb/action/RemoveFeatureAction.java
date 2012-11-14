@@ -1,6 +1,9 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
@@ -9,18 +12,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import java.util.List;
 
 /**
  *
  * @author hiralv
  */
-public class RemoveFeatureAction extends SeqMapViewActionA {
+public class RemoveFeatureAction extends SeqMapViewActionA implements SymSelectionListener{
 	
 	private static final long serialVersionUID = 1L;
 	private static final RemoveFeatureAction ACTION = new RemoveFeatureAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		ACTION.setEnabled(false);
+		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
 	}
 	
 	public static RemoveFeatureAction getAction() {
@@ -51,5 +58,10 @@ public class RemoveFeatureAction extends SeqMapViewActionA {
 			}
 		}
 		getSeqMapView().dataRemoved();	// refresh
+	}
+
+	public void symSelectionChanged(SymSelectionEvent evt) {
+		List<TierLabelGlyph> tiers = getTierManager().getSelectedTierLabels();
+		this.setEnabled(0 < tiers.size());
 	}
 }

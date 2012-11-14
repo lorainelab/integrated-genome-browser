@@ -46,12 +46,14 @@ public class WrapStripes extends WrapGlyph {
 		if (residues_per_stripe > 0) {
 			if (orientation == VERTICAL) {
 				if (residues_per_stripe > 0) {
-					int total_stripes = residues_per_line/residues_per_stripe;
+					// Add extra stipe to avoid showing background color.
+					int total_stripes = residues_per_line/residues_per_stripe + 1;
 					
+					// Add extra stripe in case any remainder is left
 					if(residues_per_line%residues_per_stripe > 0){
 						total_stripes += 1;
 					}
-					
+										
 					int stripe_num = 0;
 
 					while (stripe_num < total_stripes)  {

@@ -28,8 +28,8 @@ public class ShowConsoleAction extends GenericAction {
 
 	private ShowConsoleAction() {
 		super(BUNDLE.getString("showConsole"), null,
-				"16x16/apps/utilities-terminal.png",
-				"22x22/apps/utilities-terminal.png",
+				"16x16/actions/console.png",
+				"22x22/actions/console.png",
 				KeyEvent.VK_C, null, true);
 		this.ordinal = 150;
 	}

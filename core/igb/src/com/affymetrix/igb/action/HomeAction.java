@@ -19,8 +19,8 @@ public class HomeAction extends GenericAction{
 	}
 
 	private HomeAction() {
-		super("Home Position", "Zoom out fully", "16x16/actions/go-home.png",
-				"22x22/actions/go-home.png", KeyEvent.VK_UNDEFINED);
+		super("Home Position", "Zoom out fully", "16x16/actions/home.png",
+				"22x22/actions/home.png", KeyEvent.VK_UNDEFINED);
 	}
 
 	@Override

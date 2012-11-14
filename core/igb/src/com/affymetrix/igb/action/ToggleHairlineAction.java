@@ -16,8 +16,8 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 
 	private ToggleHairlineAction() {
 		super(BUNDLE.getString("toggleHairline"),
-				"16x16/actions/mail-send-receive.png",
-				"22x22/actions/mail-send-receive.png");
+				"16x16/actions/show_zoom_stripe.png",
+				"22x22/actions/show_zoom_stripe.png");
 		//this.putValue(MNEMONIC_KEY, java.awt.event.KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		//this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);

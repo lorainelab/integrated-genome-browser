@@ -70,6 +70,14 @@ public class AutoScroll {
 		this.end_pos = as_end_pos;
 	}
 	
+	public void configure(int as_bases_per_pix, int as_start_pos, int as_end_pos){
+		this.configure(as_bases_per_pix, pix_to_scroll, time_interval, as_start_pos, as_end_pos);
+	}
+	
+	public void configure(int as_start_pos, int as_end_pos){
+		this.configure(bases_per_pix, pix_to_scroll, time_interval, as_start_pos, as_end_pos);
+	}
+	
 	public int get_bases_per_pix() {
 		return bases_per_pix;
 	}
@@ -86,16 +94,7 @@ public class AutoScroll {
 		return start_pos;
 	}
 
-	public void set_start_pos(int as_start_pos) {
-		this.start_pos = as_start_pos;
-	}
-
 	public int get_end_pos() {
 		return end_pos;
-	}
-
-	public void set_end_pos(int as_end_pos) {
-		this.end_pos = as_end_pos;
-	}
-		
+	}		
 }

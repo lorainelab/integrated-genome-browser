@@ -864,8 +864,7 @@ public class SeqMapView extends JPanel
 		}
 		
 		if(autoScroll.get_start_pos() == 0 && autoScroll.get_end_pos() == 0){
-			autoScroll.set_start_pos(seq.getMin());
-			autoScroll.set_end_pos(seq.getMax());
+			autoScroll.configure(seq.getMin(), seq.getMax());
 		}
 		
 		//GeneralLoadView.getLoadView().getTableModel().fireTableDataChanged(); //for updating cell renderers/editors

@@ -31,11 +31,6 @@ public class StopAutoScrollAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		getSeqMapView().getAutoScroll().stop();
-		
-		//Should configure stop as well?
-		Rectangle2D.Double cbox = this.getTierMap().getViewBounds();
-		getSeqMapView().getAutoScroll().set_start_pos((int)cbox.x);
-	
 		setEnabled(false);
 		StartAutoScrollAction.getAction().setEnabled(true);
 	}

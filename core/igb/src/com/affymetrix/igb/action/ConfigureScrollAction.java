@@ -149,16 +149,18 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 		start_posTF.addKeyListener(kl);
 		end_posTF.addKeyListener(kl);
 		
+		Object[] options = {"Start", "Cancel"};
 		int val = JOptionPane.showOptionDialog(seqMapView, pan, "AutoScroll Parameters",
 				JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE,
-				null, null, null);
+				null, options, options[0]);
 		if (val == JOptionPane.OK_OPTION) {
 			as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
 			as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
 			as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
 			
 			autoScroll.configure(as_bases_per_pix, as_pix_to_scroll, as_time_interval, as_start_pos, as_end_pos);
+			StartAutoScrollAction.getAction().start();
 		}
 	}
 

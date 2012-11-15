@@ -41,7 +41,10 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 			bases_per_pix = 1;
 		}
 		getSeqMapView().getAutoScroll().configure(bases_per_pix, start_pos, end_pos);
-		
+		start();
+	}
+	
+	public void start(){
 		getSeqMapView().getAutoScroll().start(this.getTierMap());
 		setEnabled(false);
 		StopAutoScrollAction.getAction().setEnabled(true);

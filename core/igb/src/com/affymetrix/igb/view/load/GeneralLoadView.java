@@ -129,13 +129,12 @@ public final class GeneralLoadView {
 	 * buttons.
 	 */
 	public void loadResidues(final boolean partial) {
-		final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
 		final BioSeq seq = gmodel.getSelectedSeq();
 
 		CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>(MessageFormat.format(BUNDLE.getString(partial ? "loadPartialResidues" : "loadAllResidues"), seq.getID()), Thread.MIN_PRIORITY) {
 
 			public Boolean runInBackground() {
-				return loadResidues(genomeVersionName, seq, gviewer.getVisibleSpan(), partial, false, true);
+				return loadResidues(seq, gviewer.getVisibleSpan(), partial, false, true);
 			}
 
 			@Override
@@ -156,22 +155,16 @@ public final class GeneralLoadView {
 		CThreadHolder.getInstance().execute(this, worker);
 	}
 
-	public boolean loadResiduesInView(boolean tryFull) {
-		final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
-		SeqSpan visibleSpan = gviewer.getVisibleSpan();
-		return loadResidues(genomeVersionName, visibleSpan.getBioSeq(), visibleSpan, true, tryFull, false);
-	}
-
 	public boolean loadResidues(SeqSpan span, boolean tryFull) {
-		final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
 		if (!span.isForward()) {
 			span = new SimpleSeqSpan(span.getMin(), span.getMax(), span.getBioSeq());
 		}
-		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull, false);
+		return loadResidues(span.getBioSeq(), span, true, tryFull, false);
 	}
 
-	public boolean loadResidues(final String genomeVersionName, final BioSeq seq,
+	private boolean loadResidues(final BioSeq seq,
 			final SeqSpan viewspan, final boolean partial, final boolean tryFull, final boolean show_error_panel) {
+		final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
 		try {
 			if (partial) {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)

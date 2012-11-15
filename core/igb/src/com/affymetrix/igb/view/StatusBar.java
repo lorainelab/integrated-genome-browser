@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
@@ -37,7 +38,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private static final Color warningColor = new Color(255,127,36);
 	private static final Color infoColor = new Color(0,100,0);
 	private final JLabel status_ta, messageIcon;
-	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel;
 	private final JButton updateAvailable;
 	private final JPanel progressPanel;
@@ -60,8 +60,13 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		status_ta = new JLabel("");
 		progressPanel = new JPanel();
 		progressBar = new JProgressBar();
-		memory_item = new MemoryStatusBarItem();
-		memory_item.setShowMaxMemory(true);
+		MemoryStatusBarItem memory_item = null;
+		try{
+			memory_item = new MemoryStatusBarItem();
+			memory_item.setShowMaxMemory(true);
+		}catch(Exception ex){
+			Logger.getLogger(StatusBar.class.getName()).log(Level.WARNING, "Error with jidesoft component", ex);
+		}
 		updateAvailable = new JButton(alertIcon);
 		updateAvailable.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		updateAvailable.setVisible(CommonUtils.getInstance().getUpdateAvailable());

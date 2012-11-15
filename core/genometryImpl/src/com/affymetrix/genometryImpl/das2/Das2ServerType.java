@@ -500,7 +500,11 @@ public class Das2ServerType implements ServerTypeI {
 			{
 				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "   response is in raw format, parsing...");
 				buff = new BufferedReader(new InputStreamReader(istr));
-				aseq.setResidues(buff.readLine());
+				String line = buff.readLine();
+				if(line == null){
+					return false;
+				}
+				aseq.setResidues(line);
 				return true;
 			}
 

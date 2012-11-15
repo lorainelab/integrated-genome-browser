@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.awt.geom.Rectangle2D;
 
 /**
  *
@@ -29,6 +30,18 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		
+		Rectangle2D.Double cbox = getTierMap().getViewBounds();
+		int bases_in_view = (int) cbox.width;
+		int start_pos = (int) cbox.x;
+		int end_pos = getSeqMapView().getViewSeq().getLength();
+		int pixel_width = getTierMap().getView().getPixelBox().width;
+		int bases_per_pix = bases_in_view / pixel_width;
+		if (bases_per_pix < 1) {
+			bases_per_pix = 1;
+		}
+		getSeqMapView().getAutoScroll().configure(bases_per_pix, start_pos, end_pos);
+		
 		getSeqMapView().getAutoScroll().start(this.getTierMap());
 		setEnabled(false);
 		StopAutoScrollAction.getAction().setEnabled(true);

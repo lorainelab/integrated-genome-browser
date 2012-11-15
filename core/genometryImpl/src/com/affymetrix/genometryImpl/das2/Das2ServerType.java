@@ -653,6 +653,10 @@ public class Das2ServerType implements ServerTypeI {
 				formats = partial_load ? new FORMAT[]{FORMAT.RAW, FORMAT.FASTA} : new FORMAT[]{FORMAT.BNIB, FORMAT.RAW, FORMAT.FASTA};
 			}
 			for (FORMAT formatLoop : formats) {
+				if(Thread.currentThread().isInterrupted()){
+					return false;
+				}
+				
 				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, formatLoop);
 				if (loadDAS2Residues(aseq, uri, span, partial_load)) {
 					return true;

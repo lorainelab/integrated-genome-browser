@@ -825,13 +825,19 @@ public final class GeneralLoadUtils {
 
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 
-			loaded.addAll(feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature));
-				
+			List<? extends SeqSymmetry> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
+
+			// If thread was interruped then it might return null. 
+			// So avoid null pointer exception, check it here.
+			if(results != null && !results.isEmpty()){
+				loaded.addAll(results);
+			}
+			
 			if (thread.isInterrupted()) {
 				feature.removeCurrentRequest(optimized_span);
 				break;
 			}
-
+			
 			feature.addLoadedSpanRequest(optimized_span);
 		}
 

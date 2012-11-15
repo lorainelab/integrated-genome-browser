@@ -124,7 +124,7 @@ public final class FastaParser implements Parser {
 
 	public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
 		List <BioSeq> bioList = parseAll(istr,group);
-		if (bioList == null)
+		if (bioList == null || bioList.isEmpty())
 			return null;
 		return bioList.get(0);
 	}

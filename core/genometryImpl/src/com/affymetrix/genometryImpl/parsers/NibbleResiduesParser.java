@@ -112,8 +112,9 @@ public final class NibbleResiduesParser implements Parser {
 			Logger.getLogger(NibbleResiduesParser.class.getName()).log(
 					Level.INFO, "Chromosome: {0} : residues: {1}", new Object[]{result_seq, num_residues});
 			SetResiduesIterator(start, end, dis, result_seq);
-		}
-		finally {
+		}catch (IOException ex){
+			Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(bis);
 		}

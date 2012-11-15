@@ -36,7 +36,11 @@ public class StatusBarOutput extends Handler {
 	public void publish(LogRecord record) {
 		if(isLoggable(record)){
 			//System.out.println("Received log: "+ MessageFormat.format(record.getMessage(),record.getParameters()));
-			Application.status_bar.showError(null, MessageFormat.format(record.getMessage(),record.getParameters()), null, record.getLevel());
+			if(record.getParameters() != null){
+				Application.status_bar.showError(null, MessageFormat.format(record.getMessage(),record.getParameters()), null, record.getLevel());
+			}else{
+				Application.status_bar.showError(null, record.getMessage(), null, record.getLevel());
+			}
 		}
 	}
 

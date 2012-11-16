@@ -26,6 +26,7 @@ public class ToggleEdgeMatchingAction extends GenericAction implements Preferenc
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+		map_view.setEdgeMatching((Boolean)(this.getValue(SELECTED_KEY)));
 	}
 	
 	static{

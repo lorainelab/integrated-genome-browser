@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genoviz.widget.AutoScroll;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -44,6 +43,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.widget.AutoScroll;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -183,7 +183,7 @@ public class SeqMapView extends JPanel
 	// for menu items whose real definitions are commented-out in the code
 	private static final JMenuItem empty_menu_item = new JMenuItem("");
 	//JMenuItem zoomtoMI = empty_menu_item;
-	JMenuItem selectParentMI = empty_menu_item;
+//	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
 //	JMenu seqViewerOptions = new JMenu("Show genomic sequence for ..");
 	JMenuItem seqViewerOptions = empty_menu_item;
@@ -575,13 +575,13 @@ public class SeqMapView extends JPanel
 //		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
-		selectParentMI = new JRPMenuItem("SeqMapView_" + getId() + "_popup_selectParent", SelectParentAction.getAction());
-		KeyStroke ks = MenuUtil.addAccelerator(this,
-				SelectParentAction.getAction(), SelectParentAction.getAction().getId());
-		if (ks != null) {
-			// Make the accelerator be visible in the menu item.
-			selectParentMI.setAccelerator(ks);
-		}
+//		selectParentMI = new JRPMenuItem("SeqMapView_" + getId() + "_popup_selectParent", SelectParentAction.getAction());
+//		KeyStroke ks = MenuUtil.addAccelerator(this,
+//				SelectParentAction.getAction(), SelectParentAction.getAction().getId());
+//		if (ks != null) {
+//			// Make the accelerator be visible in the menu item.
+//			selectParentMI.setAccelerator(ks);
+//		}
 //		setThreshold = setUpMenuItem(sym_popup, "Set AutoLoad Threshold to Current View");
 //		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
 //		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
@@ -1887,7 +1887,7 @@ public class SeqMapView extends JPanel
 //		}
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
-			popup.add(selectParentMI);
+			popup.add(SelectParentAction.getAction());
 			
 			// Disable view seq in seq viewer option for insertion
 			ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();

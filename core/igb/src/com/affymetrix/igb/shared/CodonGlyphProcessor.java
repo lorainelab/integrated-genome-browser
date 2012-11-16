@@ -2,6 +2,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -37,7 +38,8 @@ public class CodonGlyphProcessor {
 	 * will draw the one without on its turn.
 	 */
 	public void processGlyph(GlyphI glyph, BioSeq seq) {
-		if (glyph.getParent() != null && glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
+		if (glyph.getParent() != null && !(glyph.getParent().getInfo() instanceof BAMSym) 
+				&& glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
 			CodonGlyph codonGlyph = new CodonGlyph(codeSize);
 			codonGlyph.setHitable(false);
 			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {

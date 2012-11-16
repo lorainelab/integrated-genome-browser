@@ -53,21 +53,19 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="tablePanel" max="32767" attributes="0"/>
-          <Group type="102" attributes="0">
-              <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="tablePanel" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
-                      <Component id="showStrandPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jPanel1" max="32767" attributes="0"/>
+                          <Component id="showStrandPanel" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
+              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -76,11 +74,11 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="tablePanel" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="showStrandPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" pref="60" max="-2" attributes="0"/>
                   </Group>
                   <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
@@ -116,7 +114,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="314" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="313" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="selectAndAddButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="deleteAndRestoreButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -195,7 +193,7 @@
                       <Component id="arrowCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="show2TracksCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="10" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -384,6 +382,14 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="trackTypeNameLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="trackNameTypeTextField" min="-2" pref="197" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="applyButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                           <Component id="FieldLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -395,21 +401,13 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="nameSizeComboBox" min="-2" pref="82" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                          <Component id="trackTypeNameLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                          <Component id="trackNameTypeTextField" min="-2" pref="191" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="applyButton" min="-2" max="-2" attributes="0"/>
-                      </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="5" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="fgColorLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="fgColorComboBox" min="-2" pref="16" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="bgColorLabel" min="-2" max="-2" attributes="0"/>
@@ -419,7 +417,7 @@
                   <Component id="labelColorLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="labelColorComboBox" min="-2" pref="16" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -431,7 +429,7 @@
                       <Component id="trackNameTypeTextField" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="applyButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="fgColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -459,7 +457,7 @@
         <Component class="javax.swing.JLabel" name="trackTypeNameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="tdv.track" type="code"/>
+              <Connection code="tdv.track+&quot;:&quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -478,7 +476,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="bgColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Background :"/>
+            <Property name="text" type="java.lang.String" value="Background:"/>
           </Properties>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
@@ -501,7 +499,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="fgColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Foreground :"/>
+            <Property name="text" type="java.lang.String" value="Foreground:"/>
           </Properties>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
@@ -578,7 +576,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="labelColorLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Track Label :"/>
+            <Property name="text" type="java.lang.String" value="Track Label:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="applyButton">

@@ -115,6 +115,11 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 		num_last_selections = map.getSelected().size();
 
+		if(isOurPopupTrigger(evt) && isTopParentAlreadySelected(evt)){
+			smv.showPopup((NeoMouseEvent) evt);
+			return;
+		}
+			
 		if (PROCESS_SUB_SELECTION) {
 			processSubSelection(evt);
 		}
@@ -209,6 +214,30 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 	}
 
+	private boolean isTopParentAlreadySelected(MouseEvent evt){
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+		Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
+		List<GlyphI> hits = nevt.getItems();
+	
+		GlyphI topgl = null;
+		if (!hits.isEmpty()) {
+			topgl = nevt.getItems().get(hits.size() - 1);
+			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
+		}
+		
+		if(topgl == null){
+			return false;
+		}
+		
+		GlyphI parent = null;
+		while(topgl != null && !(topgl instanceof TierGlyph)){
+			parent = topgl;
+			topgl = topgl.getParent();
+		}
+		
+		return parent.isSelected();
+	}
+	
 	private void processSelections(MouseEvent evt, boolean post_selections) {
 
 		if (!(evt instanceof NeoMouseEvent) || is_graph_dragging) {

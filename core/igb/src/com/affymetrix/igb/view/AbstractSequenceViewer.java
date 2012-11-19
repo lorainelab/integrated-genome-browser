@@ -44,11 +44,10 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -535,6 +534,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	JCheckBoxMenuItem transNegOneCBMenuItem = new JCheckBoxMenuItem(BUNDLE.getString("copyTranslation5ToClipBoard"));
 	JCheckBoxMenuItem transNegTwoCBMenuItem = new JCheckBoxMenuItem(BUNDLE.getString("copyTranslation6ToClipBoard"));
 	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(BUNDLE.getString("copyTranslation7ToClipBoard"));
+	JCheckBoxMenuItem showAllPositiveTranslation = new JCheckBoxMenuItem(new ShowAllPositiveTranslationAction(this));
+	JCheckBoxMenuItem showAllNegativeTranslation = new JCheckBoxMenuItem(new ShowAllNegativeTranslationAction(this));
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
 	JRPMenuItem exportRComplementFasta = new JRPMenuItem("sequenceViewer_exportRComplementFasta", "Save As Fasta (Reverse Complement)");
@@ -583,12 +584,16 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		copyMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);
+		showMenu.addSeparator();
 		showMenu.add(transOneCBMenuItem);
 		showMenu.add(transTwoCBMenuItem);
 		showMenu.add(transThreeCBMenuItem);
 		showMenu.add(transNegOneCBMenuItem);
 		showMenu.add(transNegTwoCBMenuItem);
 		showMenu.add(transNegThreeCBMenuItem);
+		showMenu.addSeparator();
+		showMenu.add(showAllPositiveTranslation);
+		showMenu.add(showAllNegativeTranslation);
 		colorMenu.add(colorScheme1);
 		colorMenu.add(colorScheme2);
 		exportRComplementFasta.addActionListener(new ActionListener() {
@@ -871,26 +876,32 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			seqview.updateWidget();
 		} else if (theItem == transOneCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			setShowAllTranslation(true); // Select 'All + Translation' menu item if all the +1 +2 +3 are selected
 			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
 			seqview.updateWidget();
 		} else if (theItem == transTwoCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			setShowAllTranslation(true);
 			seqview.setShow(NeoSeq.FRAME_TWO, mi.getState());
 			seqview.updateWidget();
 		} else if (theItem == transThreeCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			setShowAllTranslation(true);
 			seqview.setShow(NeoSeq.FRAME_THREE, mi.getState());
 			seqview.updateWidget();
 		} else if (theItem == transNegOneCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			setShowAllTranslation(false);  // Enable 'All - Translation' menu item if all the -1 -2 -3 are selected
 			seqview.setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
 			seqview.updateWidget();
 		} else if (theItem == transNegTwoCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			setShowAllTranslation(false);
 			seqview.setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
 			seqview.updateWidget();
 		} else if (theItem == transNegThreeCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			setShowAllTranslation(false);
 			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
 			seqview.updateWidget();
 		} else if (theItem == colorScheme1) {
@@ -915,6 +926,25 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			}
 		}
 	}
+	
+	private void setShowAllTranslation(boolean forPositive) {
+		if (forPositive) {
+			if (transOneCBMenuItem.isSelected() == transTwoCBMenuItem.isSelected()
+					&& transTwoCBMenuItem.isSelected() == transThreeCBMenuItem.isSelected()) {
+				showAllPositiveTranslation.setSelected(transOneCBMenuItem.isSelected());
+			} else {
+				showAllPositiveTranslation.setSelected(false);
+			}
+		} else {
+			if (transNegOneCBMenuItem.isSelected() == transNegTwoCBMenuItem.isSelected()
+					&& transNegTwoCBMenuItem.isSelected() == transNegThreeCBMenuItem.isSelected()) {
+				showAllNegativeTranslation.setSelected(transNegOneCBMenuItem.isSelected());
+			} else {
+				showAllNegativeTranslation.setSelected(false);
+			}
+		}
+	}
+	
 	private void colorSwitching() {
 		seqview.clearWidget();
 			addFormattedResidues();
@@ -979,7 +1009,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 //				seqview.setResidues(seq1);
 //				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 //			}
-		}
+		} 
 	}
 
 	public void menuSelected(MenuEvent me) {
@@ -1003,12 +1033,12 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	}
 
 	public void menuDeselected(MenuEvent me) {
-	}
+		}
 
 	public void menuCanceled(MenuEvent me) {
 	}
 }	
-
+	
 class CopyTransFromSeqViewerAction extends GenericAction{
 	
 	AbstractSequenceViewer sv;
@@ -1087,5 +1117,43 @@ class CopyAnnotatedSequenceToClipBoardAction extends GenericAction {
 		if(sv != null) {
 			sv.copySelectedResidues();
 		}
+	}
+}
+
+class ShowAllPositiveTranslationAction extends GenericAction {
+
+	AbstractSequenceViewer sv;
+
+	public ShowAllPositiveTranslationAction(AbstractSequenceViewer sv) {
+		super(BUNDLE.getString("showAllPositiveTranslations"), KeyEvent.VK_UNDEFINED);
+		this.sv = sv;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		boolean showAllStatus = ((JCheckBoxMenuItem)e.getSource()).getState();
+		sv.transOneCBMenuItem.setSelected(showAllStatus);
+		sv.transTwoCBMenuItem.setSelected(showAllStatus);
+		sv.transThreeCBMenuItem.setSelected(showAllStatus);
+	}
+}
+
+class ShowAllNegativeTranslationAction extends GenericAction {
+
+	AbstractSequenceViewer sv;
+
+	public ShowAllNegativeTranslationAction(AbstractSequenceViewer sv) {
+		super(BUNDLE.getString("showAllNegativeTranslations"), KeyEvent.VK_UNDEFINED);
+		this.sv = sv;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		boolean showAllStatus = ((JCheckBoxMenuItem)e.getSource()).getState();
+		sv.transNegOneCBMenuItem.setSelected(showAllStatus);
+		sv.transNegTwoCBMenuItem.setSelected(showAllStatus);
+		sv.transNegThreeCBMenuItem.setSelected(showAllStatus);
 	}
 }

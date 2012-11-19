@@ -22,7 +22,7 @@ H_sapiens_Feb_2009.png
 A_thaliana_Jun_2009.png
 E_coli_K12-MG1655_Jan_2012.png
 O_sativa_japonica_Oct_2011.png
-S_pombe_Sep_2007.png
+S_pombe_May_2012.png
 A_lyrata_Apr_2011.png
 B_distachyon_Aug_2010.png
 C_albicans_SC5314_Nov_2008.png

@@ -1888,6 +1888,7 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 			popup.add(SelectParentAction.getAction());
+			popup.add(ZoomOnSelectedSymsAction.getAction());
 			
 			// Disable view seq in seq viewer option for insertion
 			ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();

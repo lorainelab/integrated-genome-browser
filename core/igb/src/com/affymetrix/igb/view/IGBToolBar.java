@@ -134,12 +134,12 @@ public class IGBToolBar extends JToolBar {
 		boolean removed = false;
 		for (int i = 0; i < toolbar_items_panel.getComponentCount(); i++) {
 			if (((JButton)toolbar_items_panel.getComponent(i)).getAction() == action) {
-				toolbar_items_panel.remove(i);
-				toolbar_items_panel.validate();
-				toolbar_items_panel.repaint(); // to really make it gone.
 				if(action instanceof ContinuousAction){
 					((JButton)toolbar_items_panel.getComponent(i)).removeMouseListener(continuousActionListener);
 				}
+				toolbar_items_panel.remove(i);
+				toolbar_items_panel.validate();
+				toolbar_items_panel.repaint(); // to really make it gone.
 				removed = true;
 				break;
 			}

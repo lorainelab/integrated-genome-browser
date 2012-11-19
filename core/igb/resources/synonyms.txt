@@ -175,6 +175,7 @@ S_cerevisiae_Oct_2003	sacCer1	sc:Oct_2003	Sc:Oct_2003	S_cerevisiae_Oct_2003_and_
 S_araneus_Jun_2006	sorAra1	Sorex_araneus.COMMON_SHREW1.reference
 S_harrisii_Feb_2011	sarHar1
 S_pombe_Sep_2004	Sp:Sep_2004	sp:Sep_2004
+S_pombe_May_2012	sp:May_2012
 S_purpuratus_Apr_2005	strPur1
 S_purpuratus_Sep_2006	strPur2
 S_scrofa_Nov_2009	susScr2	Sscrofa9.2

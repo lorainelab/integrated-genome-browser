@@ -203,7 +203,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 			return null;
 		}
 
-		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchConfirmLoad"), friendlySearchStr));
+		statusHolder.setStatus(friendlySearchStr);
 
 		int residuesLength = chrFilter.getLength();
 		int hit_count1 = 0;

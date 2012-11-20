@@ -862,11 +862,7 @@ public class SeqMapView extends JPanel
 		if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
-		
-		if(autoScroll.get_start_pos() == 0 && autoScroll.get_end_pos() == 0){
-			autoScroll.configure(seq.getMin(), seq.getMax());
-		}
-		
+				
 		//GeneralLoadView.getLoadView().getTableModel().fireTableDataChanged(); //for updating cell renderers/editors
 	}
 	

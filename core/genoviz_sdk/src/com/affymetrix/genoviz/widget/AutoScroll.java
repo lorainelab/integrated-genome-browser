@@ -70,12 +70,15 @@ public class AutoScroll {
 		this.end_pos = as_end_pos;
 	}
 	
-	public void configure(int as_bases_per_pix, int as_start_pos, int as_end_pos){
-		this.configure(as_bases_per_pix, pix_to_scroll, time_interval, as_start_pos, as_end_pos);
+	public void configure(int as_pix_to_scroll, int as_time_interval){
+		this.pix_to_scroll = as_pix_to_scroll;
+		this.time_interval = as_time_interval;
 	}
-	
-	public void configure(int as_start_pos, int as_end_pos){
-		this.configure(bases_per_pix, pix_to_scroll, time_interval, as_start_pos, as_end_pos);
+		
+	public void configure(int as_bases_per_pix, int as_start_pos, int as_end_pos){
+		this.bases_per_pix = as_bases_per_pix;
+		this.start_pos = as_start_pos;
+		this.end_pos = as_end_pos;
 	}
 	
 	public int get_bases_per_pix() {

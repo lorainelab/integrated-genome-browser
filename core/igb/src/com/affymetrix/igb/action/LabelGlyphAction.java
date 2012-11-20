@@ -14,9 +14,9 @@ public class LabelGlyphAction extends SeqMapViewActionA implements ParameteredAc
 	private static final long serialVersionUID = 1L;
 	private final static LabelGlyphAction ACTION = new LabelGlyphAction();
 	
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
 	
 	public static LabelGlyphAction getAction(){
 		return ACTION;

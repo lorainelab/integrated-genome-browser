@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -8,11 +7,10 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-public class ChangeExpandMaxAction extends ChangeExpandMaxActionA implements EnableDisableAbleAction{
+public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ChangeExpandMaxAction ACTION = new ChangeExpandMaxAction();
 
@@ -41,7 +39,8 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA implements Ena
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
-	public boolean getEnableDisable() {
+	@Override
+	public boolean isEnabled() {
 		return (Selections.allGlyphs.size() > 0 && Selections.isAllAnnot());
 	}
 

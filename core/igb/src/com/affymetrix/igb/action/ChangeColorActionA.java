@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.shared.Selections.*;
@@ -14,7 +13,7 @@ import javax.swing.JDialog;
  * is just one instance using the regular SeqMapView, no instance for
  * AltSpliceView
  */
-public abstract class ChangeColorActionA extends SeqMapViewActionA implements ParameteredAction, EnableDisableAbleAction{
+public abstract class ChangeColorActionA extends SeqMapViewActionA implements ParameteredAction{
 	protected static final java.awt.Color DEFAULT_COLOR = javax.swing.UIManager.getColor("Button.background");
 	private static final long serialVersionUID = 1L;
 	private boolean iterateMultigraph = true;
@@ -96,7 +95,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	}
 	
 	@Override
-	public boolean getEnableDisable(){
+	public boolean isEnabled(){
 		return Selections.allGlyphs.size() > 0;
 	}
 }

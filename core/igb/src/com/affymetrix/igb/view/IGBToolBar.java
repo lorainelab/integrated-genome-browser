@@ -2,7 +2,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.ContinuousAction;
-import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -182,9 +181,9 @@ public class IGBToolBar extends JToolBar {
 		@Override
 		public void selectionRefreshed() {
 			for (Component c : toolbar_items_panel.getComponents()) {
-				if (c instanceof JButton && ((JButton) c).getAction() instanceof EnableDisableAbleAction) {
-					EnableDisableAbleAction edaAction = (EnableDisableAbleAction) ((JButton) c).getAction();
-					c.setEnabled(edaAction.getEnableDisable());
+				if (c instanceof JButton && ((JButton) c).getAction() instanceof AbstractAction) {
+					AbstractAction action = (AbstractAction) ((JButton) c).getAction();
+					c.setEnabled(action.isEnabled());
 				}
 			}
 		}

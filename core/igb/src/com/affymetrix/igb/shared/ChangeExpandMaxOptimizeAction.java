@@ -68,6 +68,6 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA implem
 	
 	@Override
 	public boolean getEnableDisable() {
-		return Selections.allGlyphs.size() > 0;
+		return (Selections.allGlyphs.size() > 0 && Selections.isAllAnnot());
 	}
 }

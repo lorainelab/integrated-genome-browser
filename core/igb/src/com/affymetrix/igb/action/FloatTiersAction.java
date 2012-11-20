@@ -7,13 +7,10 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 import javax.swing.SwingUtilities;
 import static com.affymetrix.igb.shared.Selections.*;
 
@@ -36,19 +33,12 @@ public class FloatTiersAction extends SeqMapViewActionA {
 				return;
 			}
 
-			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
-
 			boolean hasFloater = false;
 			boolean hasAnchored = false;
-			for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
-				if (tg.getAnnotStyle().isGraphTier()) {
-					SeqSymmetry ss = (SeqSymmetry) tg.getInfo();
-					if (selected_syms.contains(ss)) { // Need this? Action doesn't.
-						boolean floating = tg.getAnnotStyle().getFloatTier();
-						hasFloater |= floating;
-						hasAnchored |= !floating;
-					}
-				}
+			for (GraphState gs : graphStates) {
+				boolean floating = gs.getTierStyle().getFloatTier();
+				hasFloater |= floating;
+				hasAnchored |= !floating;
 			}
 			ACTION.setEnabled(hasAnchored);
 

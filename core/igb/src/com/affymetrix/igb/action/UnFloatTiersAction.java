@@ -7,8 +7,6 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -45,15 +43,10 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				return;
 			}
 
-			List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
-
 			boolean hasFloater = false;
-			boolean hasAnchored = false;
-			List<GraphGlyph> selectedTiers = getSeqMapView().getFloatingGraphGlyphs();
-			for (GraphGlyph vg : selectedTiers) {
-				//SeqSymmetry ss = (SeqSymmetry) vg.getInfo();
-				//if (selected_syms.contains(ss)) { // Need this? Action doesn't.
-				boolean floating = vg.getGraphState().getTierStyle().getFloatTier();
+			boolean hasAnchored = false;			
+			for (GraphState gs : graphStates) {
+				boolean floating = gs.getTierStyle().getFloatTier();
 				hasFloater |= floating;
 				hasAnchored |= !floating;
 			}
@@ -118,19 +111,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				GenometryModel m = GenometryModel.getGenometryModel();
 				BioSeq s = m.getSelectedSeq();
 				v.setAnnotatedSeq(s, true, true);
-				// Compensating for what I think is a bug in setAnnotatedSeq:
-				// Select the label glyph to generate a selection change event.
-				TierLabelManager mgr = v.getTierManager();
-				List<TierLabelGlyph> labels = mgr.getAllTierLabels();
-				for (TierLabelGlyph g : labels) {
-					TierGlyph tg = g.getReferenceTier();
-					int iteration = 0;
-					if (tg.isSelected()) {
-						mgr.select(tg);
-						mgr.doGraphSelections(0 == iteration);
-						iteration += 1;
-					}
-				}
+				v.postSelections(); // to disable partner.
 			}
 		});
 	}

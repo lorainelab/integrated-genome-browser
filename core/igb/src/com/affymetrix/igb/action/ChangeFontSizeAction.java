@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -10,13 +11,14 @@ import javax.swing.JOptionPane;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
 
-public class ChangeFontSizeAction extends SeqMapViewActionA {
+public class ChangeFontSizeAction extends SeqMapViewActionA implements EnableDisableAbleAction {
 	private static final long serialVersionUID = 1L;
 	private static final ChangeFontSizeAction ACTION = new ChangeFontSizeAction();
 
@@ -75,5 +77,9 @@ public class ChangeFontSizeAction extends SeqMapViewActionA {
 		super.actionPerformed(e);
 		changeFontSize(getTierManager().getSelectedTierLabels());
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+
+	public boolean getEnableDisable() {
+		return Selections.allGlyphs.size() > 0;
 	}
 }

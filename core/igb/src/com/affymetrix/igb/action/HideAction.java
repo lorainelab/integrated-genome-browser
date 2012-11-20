@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -8,11 +9,12 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 
-public class HideAction extends RepackTiersAction {
+public class HideAction extends RepackTiersAction implements EnableDisableAbleAction{
 	private static final long serialVersionUID = 1L;
 	private static final HideAction ACTION = new HideAction();
 
@@ -67,5 +69,9 @@ public class HideAction extends RepackTiersAction {
 		super.actionPerformed(e);
 		hideTiers(getTierManager().getSelectedTierLabels());
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+
+	public boolean getEnableDisable() {
+		return Selections.allGlyphs.size() > 0;
 	}
 }

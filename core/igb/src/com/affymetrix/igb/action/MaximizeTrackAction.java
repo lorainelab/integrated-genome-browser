@@ -1,10 +1,12 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.Selections;
 
-public class MaximizeTrackAction extends SeqMapViewActionA {
+public class MaximizeTrackAction extends SeqMapViewActionA implements EnableDisableAbleAction{
 	private static final long serialVersionUID = 1L;
 	private static final MaximizeTrackAction ACTION = new MaximizeTrackAction();
 
@@ -44,5 +46,9 @@ public class MaximizeTrackAction extends SeqMapViewActionA {
 		coord_value += 0.2; // fudge factor
 		getTierMap().scroll(getSeqMapView().getSeqMap().Y, coord_value);
 		getTierMap().updateWidget();
+	}
+
+	public boolean getEnableDisable() {
+		return Selections.allGlyphs.size() == 1;
 	}
 }

@@ -2,6 +2,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.ContinuousAction;
+import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -11,6 +12,8 @@ import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.Selections;
+import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.*;
@@ -94,6 +97,8 @@ public class IGBToolBar extends JToolBar {
 		super.validate();
 		
 		setSelectionText(null, null);
+		
+		Selections.addRefreshSelectionListener(refreshSelectionListener);
 	}
 	
 	public void setSelectionText(Map<String, Object> properties, String selection_text) {
@@ -172,6 +177,18 @@ public class IGBToolBar extends JToolBar {
 		return ordinal;
 	}
 
+	private RefreshSelectionListener refreshSelectionListener = new RefreshSelectionListener(){
+		@Override
+		public void selectionRefreshed() {
+			for (Component c : toolbar_items_panel.getComponents()) {
+				if (c instanceof JButton && ((JButton) c).getAction() instanceof EnableDisableAbleAction) {
+					EnableDisableAbleAction edaAction = (EnableDisableAbleAction) ((JButton) c).getAction();
+					c.setEnabled(edaAction.getEnableDisable());
+				}
+			}
+		}
+	};
+			
 	private MouseListener continuousActionListener = new MouseAdapter() {
 		private Timer timer;
 

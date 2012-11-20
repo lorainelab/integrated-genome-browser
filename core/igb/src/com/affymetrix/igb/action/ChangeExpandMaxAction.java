@@ -49,14 +49,4 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
-	private static class RefreshSelectionListenerImpl implements RefreshSelectionListener {
-
-		public RefreshSelectionListenerImpl() {
-		}
-
-		@Override
-		public void selectionRefreshed() {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
-	}
 }

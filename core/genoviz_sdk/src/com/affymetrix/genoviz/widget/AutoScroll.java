@@ -60,16 +60,7 @@ public class AutoScroll {
 		swing_timer = new javax.swing.Timer(time_interval, map_auto_scroller);
 		swing_timer.start();
 	}
-	
-	public void configure(int as_bases_per_pix, int as_pix_to_scroll, int as_time_interval,
-			int as_start_pos, int as_end_pos){
-		this.bases_per_pix = as_bases_per_pix;
-		this.pix_to_scroll = as_pix_to_scroll;
-		this.time_interval = as_time_interval;
-		this.start_pos = as_start_pos;
-		this.end_pos = as_end_pos;
-	}
-	
+		
 	public void configure(int as_pix_to_scroll, int as_time_interval){
 		this.pix_to_scroll = as_pix_to_scroll;
 		this.time_interval = as_time_interval;

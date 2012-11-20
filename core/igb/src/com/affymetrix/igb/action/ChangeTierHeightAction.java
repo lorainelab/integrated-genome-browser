@@ -4,10 +4,12 @@
  */
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ParameteredAction;
+import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -23,7 +25,7 @@ import javax.swing.JTextField;
  *
  * @author auser
  */
-public class ChangeTierHeightAction extends SeqMapViewActionA implements ParameteredAction{
+public class ChangeTierHeightAction extends SeqMapViewActionA implements ParameteredAction, EnableDisableAbleAction{
 	private static final long serialVersionUID = 1l;
 	private static final ChangeTierHeightAction ACTION = new ChangeTierHeightAction();
 	static{
@@ -87,5 +89,10 @@ public class ChangeTierHeightAction extends SeqMapViewActionA implements Paramet
 			return;
 		int height = Integer.valueOf(parameters[0].toString());
 		changeHeight(height);
+	}
+
+	@Override
+	public boolean getEnableDisable() {
+		return Selections.allGlyphs.size() > 0;
 	}
 }

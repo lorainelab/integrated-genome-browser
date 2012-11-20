@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Change the max slot depth on all selected tracks to an optimal value.
  */
-public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
+public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA implements EnableDisableAbleAction{
 	private static final long serialVersionUID = 1L;
 	private static final ChangeExpandMaxOptimizeAction ACTION
 			= new ChangeExpandMaxOptimizeAction();
@@ -63,5 +64,10 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 		getSeqMapView().seqMapRefresh();
 		getSeqMapView().getSeqMap().updateWidget();
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+	
+	@Override
+	public boolean getEnableDisable() {
+		return Selections.allGlyphs.size() > 0;
 	}
 }

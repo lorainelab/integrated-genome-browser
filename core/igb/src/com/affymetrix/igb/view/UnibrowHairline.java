@@ -51,7 +51,6 @@ public final class UnibrowHairline {
   private double focus = 1;
 
   private static boolean keep_hairline_in_view = true;
-  private static boolean keep_hairlinelabel_in_view = true;
 
   PreferenceChangeListener pcl;
 
@@ -121,23 +120,15 @@ public final class UnibrowHairline {
 	hairline.setShowHairline(b);
 	map.updateWidget();
   }
-
-  public static boolean getHairlineInView(){
-	  return keep_hairline_in_view;
-  }
   /**
    * Sets the flag determining whether the hairline should show label.
    * @param b 
    */
   public void setShowHairlineLabel(boolean b){
-	keep_hairlinelabel_in_view = b;
 	hairline.setLabeled(b);
 	map.updateWidget();
   }
   
-  public static boolean getHairlineLabelInView(){
-	  return keep_hairlinelabel_in_view;
-  }
   /** Sets the location of the hairline.  This is the only supported
    *  way to move the hairline.  Does *NOT* call map.updateWidget() and
    *  but you will probably want to do that after calling this method.

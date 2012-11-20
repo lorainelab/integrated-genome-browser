@@ -40,7 +40,6 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		this.putValue(SELECTED_KEY, !UnibrowHairline.getHairlineLabelInView());
 		PreferenceUtils.getTopNode().putBoolean(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, (Boolean)getValue(SELECTED_KEY));
 	}

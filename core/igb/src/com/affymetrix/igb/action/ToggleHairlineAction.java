@@ -39,7 +39,6 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		this.putValue(SELECTED_KEY, !UnibrowHairline.getHairlineInView());
 		PreferenceUtils.getTopNode().putBoolean(
 				UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, (Boolean)getValue(SELECTED_KEY));
 		

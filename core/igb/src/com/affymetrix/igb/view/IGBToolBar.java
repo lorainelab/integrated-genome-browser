@@ -24,6 +24,7 @@ import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -221,6 +222,14 @@ public class IGBToolBar extends JToolBar {
     	}
 		public int getIndex(){
 			return index;
+		}
+		@Override
+		public void fireActionPerformed(ActionEvent evt){
+			if(((GenericAction)getAction()).isToggle() && this.getAction().getValue(AbstractAction.SELECTED_KEY) != null){
+				this.getAction().putValue(AbstractAction.SELECTED_KEY, 
+						!Boolean.valueOf(getAction().getValue(AbstractAction.SELECTED_KEY).toString()));
+			}
+			super.fireActionPerformed(evt);
 		}
 		@Override
 		public List<TierGlyph> getTrackList() {

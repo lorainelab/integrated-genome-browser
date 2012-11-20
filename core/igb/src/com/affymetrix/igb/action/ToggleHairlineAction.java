@@ -3,9 +3,11 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.UnibrowHairline;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.view.SeqMapView;
 /**
  *
  * @author hiralv
@@ -13,7 +15,8 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class ToggleHairlineAction extends GenericAction implements java.util.prefs.PreferenceChangeListener {
 	private static final long serialVersionUID = 1;
 	private static final ToggleHairlineAction ACTION = new ToggleHairlineAction();
-
+	private SeqMapView map_view = IGB.getSingleton().getMapView();
+	
 	private ToggleHairlineAction() {
 		super(BUNDLE.getString("toggleHairline"),
 				"16x16/actions/show_zoom_stripe.png",
@@ -39,8 +42,10 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
+		this.putValue(SELECTED_KEY, !UnibrowHairline.getHairlineInView());
 		PreferenceUtils.getTopNode().putBoolean(
 				UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, (Boolean)getValue(SELECTED_KEY));
+		
 	}
 
 	public void preferenceChange(java.util.prefs.PreferenceChangeEvent pce) {

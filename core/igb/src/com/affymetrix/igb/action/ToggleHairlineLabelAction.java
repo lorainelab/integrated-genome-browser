@@ -23,7 +23,6 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 		super(BUNDLE.getString("toggleHairlineLabel"), null, "16x16/apps/office-calendar.png", "22x22/apps/office-calendar.png", KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
-
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label));
 		this.ordinal = -4003100;
@@ -41,6 +40,7 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
+		this.putValue(SELECTED_KEY, !UnibrowHairline.getHairlineLabelInView());
 		PreferenceUtils.getTopNode().putBoolean(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, (Boolean)getValue(SELECTED_KEY));
 	}

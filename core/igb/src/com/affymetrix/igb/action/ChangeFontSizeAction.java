@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.EnableDisableAbleAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -18,7 +17,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
 
-public class ChangeFontSizeAction extends SeqMapViewActionA implements EnableDisableAbleAction {
+public class ChangeFontSizeAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ChangeFontSizeAction ACTION = new ChangeFontSizeAction();
 
@@ -79,7 +78,8 @@ public class ChangeFontSizeAction extends SeqMapViewActionA implements EnableDis
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
-	public boolean getEnableDisable() {
+	@Override
+	public boolean isEnabled(){
 		return Selections.allGlyphs.size() > 0;
 	}
 }

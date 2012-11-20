@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.Selections;
 
 public class ChangeForegroundColorAction extends ChangeColorActionA {
 	private static final long serialVersionUID = 1L;
@@ -15,6 +16,7 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		Selections.addRefreshSelectionListener(ACTION.listener);
 	}
 	
 	public static ChangeForegroundColorAction getAction() {

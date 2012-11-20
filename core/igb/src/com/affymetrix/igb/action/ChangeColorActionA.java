@@ -8,15 +8,17 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.*;
 
 import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.view.SeqMapView;
 /**
  * note - this class contains an instance of SeqMapView. For now, there
  * is just one instance using the regular SeqMapView, no instance for
  * AltSpliceView
  */
-public abstract class ChangeColorActionA extends SeqMapViewActionA implements ParameteredAction {
+public abstract class ChangeColorActionA extends SeqMapViewActionA implements ParameteredAction{
 	protected static final java.awt.Color DEFAULT_COLOR = javax.swing.UIManager.getColor("Button.background");
 	private static final long serialVersionUID = 1L;
 	private boolean iterateMultigraph = true;
@@ -96,5 +98,14 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 		
 		changeColor((Color)parameters[0]);
 	}
+	
+	public Selections.RefreshSelectionListener listener= new Selections.RefreshSelectionListener() {
 
+		public void selectionRefreshed() {
+			if(getTierManager().getSelectedTiers().size() > 0)
+			setEnabled(true);
+				else
+			setEnabled(false);
+		}
+	};
 }

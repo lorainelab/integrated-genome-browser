@@ -66,10 +66,21 @@ public class AutoScroll {
 		this.time_interval = as_time_interval;
 	}
 		
-	public void configure(int as_bases_per_pix, int as_start_pos, int as_end_pos){
-		this.bases_per_pix = as_bases_per_pix;
+	public void configure(NeoWidget map, int as_start_pos, int as_end_pos){
 		this.start_pos = as_start_pos;
 		this.end_pos = as_end_pos;
+		Rectangle2D.Double cbox = map.getViewBounds();
+		int bases_in_view = (int) cbox.width;
+		
+		int pixel_width = map.getView().getPixelBox().width;
+		bases_per_pix = bases_in_view / pixel_width;
+		
+		// as_bases_per_pix *should* be a float, or else should simply
+		// use the current resolution without asking the user,
+		// but since it is an integer, we have to set the minimum value as 1
+		if (bases_per_pix < 1) {
+			bases_per_pix = 1;
+		}
 	}
 	
 	public int get_bases_per_pix() {

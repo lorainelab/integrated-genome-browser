@@ -36,20 +36,10 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 	public void start(){
 		// Calculate start, end and bases per pixels
 		Rectangle2D.Double cbox = getTierMap().getViewBounds();
-		int bases_in_view = (int) cbox.width;
 		int start_pos = (int) cbox.x;
 		int end_pos = getSeqMapView().getViewSeq().getLength();
-		int pixel_width = getTierMap().getView().getPixelBox().width;
-		int bases_per_pix = bases_in_view / pixel_width;
-		
-		// as_bases_per_pix *should* be a float, or else should simply
-		// use the current resolution without asking the user,
-		// but since it is an integer, we have to set the minimum value as 1
-		if (bases_per_pix < 1) {
-			bases_per_pix = 1;
-		}
-		
-		getSeqMapView().getAutoScroll().configure(bases_per_pix, start_pos, end_pos);
+	
+		getSeqMapView().getAutoScroll().configure(this.getTierMap(), start_pos, end_pos);
 		getSeqMapView().getAutoScroll().start(this.getTierMap());
 		setEnabled(false);
 		StopAutoScrollAction.getAction().setEnabled(true);

@@ -253,7 +253,6 @@ public class Activator implements BundleActivator {
 	 * Must be done after SeqMapView is created and assigned to IGB.map_view.
 	 */
 	private void initSeqMapViewActions() {
-		RepackSelectedTiersAction.getAction();
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
 		ChangeLabelColorAction.getAction();

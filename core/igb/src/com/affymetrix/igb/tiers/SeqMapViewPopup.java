@@ -322,9 +322,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			lock.setEnabled(!all_but_one_locked && any_lockable);
 		}
 		popup.add(lock);
-		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
-		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
-		popup.add(repack_selected_tiers);
+//		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
+//		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
+//		popup.add(repack_selected_tiers);
 		popup.add(new JSeparator());
 		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
 		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != TierGlyph.Direction.AXIS) {

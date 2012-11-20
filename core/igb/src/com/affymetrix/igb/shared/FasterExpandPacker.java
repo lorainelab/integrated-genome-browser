@@ -257,7 +257,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		
 		int child_count = parent.getChildCount();
 		if (child_count == 0) {
-			return 0;
+			return 1;
 		}
 
 		/*  A potential improvement to this layout algorithm is to also keep track of
@@ -329,7 +329,7 @@ public class FasterExpandPacker extends ExpandPacker {
 
 		slot_maxes.trimToSize();
 		
-		return slot_maxes.size();
+		return slot_maxes.size() == 0? 1 : slot_maxes.size();
 	}
 
 	/**

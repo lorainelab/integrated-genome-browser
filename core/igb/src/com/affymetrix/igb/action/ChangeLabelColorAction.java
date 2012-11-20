@@ -15,7 +15,6 @@ public class ChangeLabelColorAction extends ChangeColorActionA {
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		Selections.addRefreshSelectionListener(ACTION.listener);
 	}
 	public static ChangeLabelColorAction getAction() {
 		return ACTION;

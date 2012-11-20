@@ -15,7 +15,6 @@ public class ChangeForwardColorAction extends ChangeColorActionA {
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		Selections.addRefreshSelectionListener(ACTION.listener);
 	}
 	public static ChangeForwardColorAction getAction() {
 		return ACTION;

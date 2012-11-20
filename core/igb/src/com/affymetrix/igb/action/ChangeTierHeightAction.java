@@ -6,18 +6,13 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.Application;
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ParameteredAction;
-import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -31,15 +26,8 @@ import javax.swing.JTextField;
 public class ChangeTierHeightAction extends SeqMapViewActionA implements ParameteredAction{
 	private static final long serialVersionUID = 1l;
 	private static final ChangeTierHeightAction ACTION = new ChangeTierHeightAction();
-	public Selections.RefreshSelectionListener enabler = new Selections.RefreshSelectionListener() {
-
-		public void selectionRefreshed() {
-			setEnabled(getTierManager().getSelectedTiers().size()>0);
-		}
-	};
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		Selections.addRefreshSelectionListener(ACTION.enabler);
 	}
 	
 	public static ChangeTierHeightAction getAction() {

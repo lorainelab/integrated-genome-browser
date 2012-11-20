@@ -16,7 +16,6 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		Selections.addRefreshSelectionListener(ACTION.listener);
 	}
 	
 	public static ChangeForegroundColorAction getAction() {

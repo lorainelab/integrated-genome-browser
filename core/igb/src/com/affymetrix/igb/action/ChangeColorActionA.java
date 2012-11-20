@@ -1,18 +1,13 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.*;
+import static com.affymetrix.igb.shared.Selections.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
-
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.*;
-
-import static com.affymetrix.igb.shared.Selections.*;
-import com.affymetrix.igb.view.SeqMapView;
 /**
  * note - this class contains an instance of SeqMapView. For now, there
  * is just one instance using the regular SeqMapView, no instance for
@@ -98,14 +93,4 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 		
 		changeColor((Color)parameters[0]);
 	}
-	
-	public Selections.RefreshSelectionListener listener= new Selections.RefreshSelectionListener() {
-
-		public void selectionRefreshed() {
-			if(getTierManager().getSelectedTiers().size() > 0)
-			setEnabled(true);
-				else
-			setEnabled(false);
-		}
-	};
 }

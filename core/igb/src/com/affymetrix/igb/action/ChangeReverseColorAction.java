@@ -15,7 +15,6 @@ public class ChangeReverseColorAction extends ChangeColorActionA {
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		Selections.addRefreshSelectionListener(ACTION.listener);
 	}
 	public static ChangeReverseColorAction getAction() {
 		return ACTION;

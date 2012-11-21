@@ -181,6 +181,10 @@ public class IGBScriptEngine implements ScriptEngine {
 		try {
 			String[] lines = scriptString.split("\n");
 			for (String line : lines) {
+				if(Thread.currentThread().isInterrupted()){
+					break;
+				}
+				
 				// Ignore comments and blank lines.
 				if (line.startsWith("#") || line.trim().length() == 0) {
 					continue;
@@ -192,7 +196,10 @@ public class IGBScriptEngine implements ScriptEngine {
 					// User actions don't happen instantaneously.
 					// So, give a short sleep time between batch actions.
 					Thread.sleep(1000);
-				} finally {
+				} catch(InterruptedException ex){
+					LOG.log(Level.WARNING, "Thread interrupted while sleeping. Cancelling the script.");
+					break;
+				}finally {
 					igbService.removeNotLockedUpMsg("Executing script line: " + line);
 				}
 			}

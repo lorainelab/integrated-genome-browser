@@ -232,8 +232,11 @@ public final class QuickLoadServerModel {
 				return false;
 			}
 
-			if(annots_found)
+			if(annots_found){
+				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+					Level.FINE, "Found {0} files in {1} on server {2}.", new Object[]{annotList.size(), genome_name, root_url});
 				return true;
+			}
 
 			Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 					Level.FINE, "Couldn''t found annots.xml for {0}. Looking for annots.txt now.", genome_name);
@@ -246,6 +249,9 @@ public final class QuickLoadServerModel {
 				ErrorHandler.errorPanelWithReportBug("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
 					+ "file for requested genome version {1}. "
 					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}), Level.SEVERE);
+			}else{
+				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+					Level.FINE, "Found {0} files in {1} on server {2}.", new Object[]{annotList.size(), genome_name, root_url});	
 			}
 			
 			return annots_found;

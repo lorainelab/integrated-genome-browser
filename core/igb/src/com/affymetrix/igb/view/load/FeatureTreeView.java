@@ -80,8 +80,10 @@ import java.util.logging.Logger;
  * View of genome features as a tree.
  */
 public final class FeatureTreeView extends JComponent implements ActionListener, DragSourceListener {
-
+	
 	private static final long serialVersionUID = 1L;
+	private static boolean DEBUG = false;
+	
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
 	private final JRPButton serverPrefsB;
@@ -265,7 +267,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			}
 
 		}
-
+		
 		return root;
 	}
 
@@ -601,18 +603,34 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			}
 
 			if (genericData instanceof GenericServer) {
-				return renderServer((GenericServer) genericData, tree, sel, expanded, leaf, row, hasFocus);
+				return renderServer((GenericServer) genericData, tree, sel, expanded, leaf, row, hasFocus, node);
 			}
 			if (leaf && genericData instanceof GenericFeature) {
 				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
 			}
 
+			if(DEBUG){
+				value = value + " [" + leafCount(node) + "]";
+			}
+			
 			return super.getTreeCellRendererComponent(
 					tree, value, sel,
 					expanded, leaf, row,
 					hasFocus);
 		}
 
+		private int leafCount(DefaultMutableTreeNode node){
+			int count = 0;
+			Enumeration em = node.depthFirstEnumeration();
+			while(em.hasMoreElements()){
+				DefaultMutableTreeNode child = (DefaultMutableTreeNode) em.nextElement();
+				if(!child.getAllowsChildren()){
+					count++;
+				}
+			}
+			return count;
+		}
+		
 		private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, GenericFeature gFeature, Object nodeUObject) {
 			// You must call super before each return.
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
@@ -646,7 +664,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			return leafCheckBox;
 		}
 
-		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
 			String serverNameString = "";
 			if (gServer.friendlyURL != null && gServer.serverType.hasFriendlyURL()) {
 				// TODO - hack to ignore server hyperlinks for DAS/1.
@@ -655,6 +673,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				serverNameString = "<b>" + gServer.serverName + "</b>";
 			}
 			serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.getName() + ")";
+			
+			if(DEBUG){
+				serverNameString = serverNameString + " [" + leafCount(node) + "]";
+			}
+			
 			super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
 			if (gServer.getFriendlyIcon() != null) {
 				setIcon(gServer.getFriendlyIcon());

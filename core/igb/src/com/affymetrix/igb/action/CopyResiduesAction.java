@@ -117,4 +117,9 @@ public class CopyResiduesAction extends GenericAction {
 			clipboard.setContents(new StringSelection(" "), null);
 		}
 	}
+	
+	@Override
+	public boolean isEnabled(){
+		return ((IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1));
+	}
 }

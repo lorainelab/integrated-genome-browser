@@ -52,7 +52,7 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	public final void done() {
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " done");
 		finished();
-		CThreadHolder.getInstance().notifyEndThread(this);
+		//CThreadHolder.getInstance().notifyEndThread(this);
 	}
 
 	public void setProgressAsPercent(double percent) {
@@ -82,6 +82,7 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 			}
 		}
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
+		CThreadHolder.getInstance().notifyEndThread(this);
 		//CThreadHolder.getInstance().notifyBackgroundDone(this);
 		return t;
 	}

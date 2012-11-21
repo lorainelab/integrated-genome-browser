@@ -45,6 +45,7 @@ public class CodonGlyphProcessor {
 			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
 				if (saveCodonGlyph != null) {
 					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);
+					codonGlyph.setCoordBox(glyph.getCoordBox());
 				}
 				saveCodonGlyph = null;
 			}

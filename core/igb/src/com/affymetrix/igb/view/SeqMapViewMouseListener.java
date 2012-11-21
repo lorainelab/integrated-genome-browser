@@ -623,6 +623,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		} else if (sub_sel_glyph != null && id == MouseEvent.MOUSE_RELEASED) {
 			updateSubSelection(nevt);
 			subSelectionEnd();
+			smv.postSelections();
 		}
 
 		if (sub_sel_glyph != null) {

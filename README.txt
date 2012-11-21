@@ -43,7 +43,7 @@ http://sourceforge.net/projects/genoviz
 
 An IGB user's guide is available on-line here:
 
-https://wiki.transvar.org/confluence/display/igbman/Home
+http://wiki.transvar.org/confluence/display/igbman/Home
 
 There are demos and tutorials for the GenoViz code inside
 the genoviz_sdk directory.  These are described later below.

@@ -138,7 +138,4 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 		return this;
 	}
 	
-	public boolean isEnabled(){
-		return (shownAction.isEnabled() || hiddenAction.isEnabled());
 	}
-}

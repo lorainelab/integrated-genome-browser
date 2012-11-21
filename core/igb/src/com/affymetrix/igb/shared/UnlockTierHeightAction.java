@@ -19,8 +19,22 @@ public class UnlockTierHeightAction extends TierHeightAction{
 		return unlockTierAction;
 	}
 	
+	protected Selections.RefreshSelectionListener enabler = new Selections.RefreshSelectionListener(){
+
+		@Override
+		public void selectionRefreshed() {
+			if(isAnyLocked()){
+				setEnabled(true);
+			}else{
+				setEnabled(false);
+			}
+		}
+		
+	};
+		
 	static{
 		GenericActionHolder.getInstance().addGenericAction(unlockTierAction);
+		Selections.addRefreshSelectionListener(unlockTierAction.enabler);
 	}
 	
 	private UnlockTierHeightAction() {
@@ -30,10 +44,5 @@ public class UnlockTierHeightAction extends TierHeightAction{
 	@Override
 	protected void setHeightFixed(DefaultTierGlyph dtg) {
 		dtg.setHeightFixed(false);
-	}
-		
-	@Override
-	public boolean isEnabled(){
-		return isAnyLocked();
 	}
 }

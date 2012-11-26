@@ -268,9 +268,9 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		// (This only really matters when SELECT_ON_MOUSE_PRESSED is false.
 		//  If SELECT_ON_MOUSE_PRESSED is true, topgl will already be null
 		//  because a drag can only start when you begin the drag on blank space.)
-		if (startedInAxisTier()) {
-			topgl = null;
-		}
+//		if (startedInAxisTier()) {
+//			topgl = null;
+//		}
 
 		// Normally, clicking will clear previons selections before selecting new things.
 		// but we preserve the current selections if:

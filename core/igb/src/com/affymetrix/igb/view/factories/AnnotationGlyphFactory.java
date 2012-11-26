@@ -47,7 +47,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
 	 */
 	private static Class<?> default_eparent_class = (new EfficientLineContGlyph()).getClass();
-	private static Class<?> default_echild_class = (new EfficientOutlinedRectGlyph()).getClass();
+	private static Class<?> default_echild_class = (new FillRectGlyph()).getClass();
 	private static Class<?> default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 //	private static final int DEFAULT_THICK_HEIGHT = 25;
 //	private static final int DEFAULT_THIN_HEIGHT = 15;
@@ -282,11 +282,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type, use_score_colors, use_item_rgb);
-				boolean cds = (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan));
-				double cheight = thin_height;
-				if(cds){
-					cheight = child_height;
-				}
+				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
@@ -307,9 +303,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
 				codon_glyph_processor.processGlyph(cglyph, annotseq);
-				if(!cds){
-					handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
-				}
 			}
 		}
 				

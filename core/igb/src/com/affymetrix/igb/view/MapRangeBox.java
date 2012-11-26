@@ -28,7 +28,6 @@ import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
-import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
@@ -333,7 +332,6 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		range_box.addActionListener(this);
 		range_box.addFocusListener(focus_listener);
 		
-		range_box.setComponentPopupMenu(CCPUtils.getCCPPopup());
 		map.addViewBoxListener(this);
 		
 		SearchHints hints = new SearchHints(range_box);

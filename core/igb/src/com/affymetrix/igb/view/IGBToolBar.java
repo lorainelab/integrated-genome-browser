@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.Application;
@@ -60,7 +59,6 @@ public class IGBToolBar extends JToolBar {
 		
 		tf = new JTextField(25);
 		tf.setBackground(Color.WHITE);
-		tf.setComponentPopupMenu(CCPUtils.getCCPPopup());
 		selection_font = tf.getFont();
 		no_selection_font = selection_font.deriveFont(Font.ITALIC);
 		setLayout(new BorderLayout());

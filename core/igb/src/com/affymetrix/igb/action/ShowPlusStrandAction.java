@@ -20,7 +20,7 @@ public class ShowPlusStrandAction extends GenericAction {
 	}
 
 	private ShowPlusStrandAction() {
-		super("Show (+) tiers", null, null);
+		super("Show (+) tiers", "16x16/actions/blank_placeholder.png", null);
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowPlus());
 	}
 

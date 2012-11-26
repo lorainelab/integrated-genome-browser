@@ -27,7 +27,7 @@ public class RenameTierAction extends SeqMapViewActionA implements ParameteredAc
 	}
 
 	private RenameTierAction() {
-		super(BUNDLE.getString("renameAction"), null, null);
+		super(BUNDLE.getString("renameAction"), "16x16/actions/blank_placeholder.png", null);
 	}
 
 	@Override

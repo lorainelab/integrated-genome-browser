@@ -542,7 +542,7 @@ public class ExportDialog implements ExportConstants {
 	 * whether the image size is valid or not.
 	 */
 	private boolean isValidExportFile(String previousPath) {
-		if (!exportFile.getParentFile().isDirectory()) {
+		if (exportFile.getParentFile() == null || !exportFile.getParentFile().isDirectory()) {
 			// if output path is invalid, reset to previous correct path
 			ErrorHandler.errorPanel("The output path is invalid.");
 			resetPath(previousPath);

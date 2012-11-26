@@ -417,7 +417,7 @@ public final class IGB extends Application
 			};
 			gl.setInfo(props);
 			gl.setColor(hitColor);
-			double pos = forward ? 10 : 15;
+			double pos = forward ? 27 : 32;
 			gl.setCoords(start, pos, end - start, 10);
 			axis_tier.addChild(gl);
 			glyphs.add(gl);

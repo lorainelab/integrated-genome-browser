@@ -977,9 +977,10 @@ public class SeqMapView extends JPanel
 	 */
 	private TierGlyph addAxisTier(int tier_index) {
 		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
-		resultAxisTier.setFixedPixHeight(45);
+		resultAxisTier.setPacker(null);
+		resultAxisTier.setFixedPixHeight(54);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
-		AxisGlyph axis = seqmap.addAxis(0);
+		AxisGlyph axis = seqmap.addAxis(27);
 		axis.setHitable(true);
 		axis.setFont(axisFont);
 
@@ -1012,7 +1013,8 @@ public class SeqMapView extends JPanel
 		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);
 
 		resultAxisTier.addChild(seq_glyph);
-
+		resultAxisTier.setCoords(0, 0, seqmap.getScene().getCoordBox().getWidth(), 54);
+		
 		return resultAxisTier;
 	}
 

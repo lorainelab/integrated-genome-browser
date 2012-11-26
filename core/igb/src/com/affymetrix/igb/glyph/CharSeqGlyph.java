@@ -241,7 +241,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 		seq_glyph.setShowBackground(false);
 		seq_glyph.setHitable(true);
 		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-		seq_glyph.setCoords(viewSeq.getMin(), 0, viewSeq.getLengthDouble(), 10);
+		seq_glyph.setCoords(viewSeq.getMin(), axis.getCoordBox().getY() + axis.getCoordBox().getHeight() + 4, viewSeq.getLengthDouble(), 10);
 		seq_glyph.setResiduesProvider(viewSeq, viewSeq.getLength());
 		SeqSymmetry compsym = viewSeq.getComposition();
 		if (compsym != null) {

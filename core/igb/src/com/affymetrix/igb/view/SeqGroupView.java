@@ -612,8 +612,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	private void populateSpeciesData() {
-		final Set<GenericServer> servers = new HashSet<GenericServer>();
-		servers.addAll(ServerList.getServerInstance().getEnabledServers());
+//		final Set<GenericServer> servers = new HashSet<GenericServer>();
+//		servers.addAll(ServerList.getServerInstance().getEnabledServers());
 		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
 			CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
 
@@ -624,13 +624,13 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 				@Override
 				public void finished() {
-					synchronized (servers) {
-						servers.remove(gServer);
-
-						if (servers.isEmpty()) {
-							runBatchOrRestore();
-						}
-					}
+//					synchronized (servers) {
+//						servers.remove(gServer);
+//
+//						if (servers.isEmpty()) {
+//							runBatchOrRestore();
+//						}
+//					}
 				}
 			};
 

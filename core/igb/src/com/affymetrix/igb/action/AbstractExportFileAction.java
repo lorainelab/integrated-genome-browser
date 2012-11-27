@@ -54,7 +54,7 @@ extends GenericAction implements SymSelectionListener {
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
-		setEnabled(1 == answer.size());
+		setEnabled(1 == answer.size() && answer.get(0).getInfo() != null);
 	}
 
 	@Override

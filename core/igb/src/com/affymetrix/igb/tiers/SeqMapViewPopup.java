@@ -343,7 +343,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		remove_data_from_tracks.setEnabled(num_selections > 0 && !coordinates_track_selected);
 		popup.add(remove_data_from_tracks); // Remove data from selected tracks.
 		JMenuItem save_track = new JRPMenuItemTLP(ExportFileAction.getAction());
-		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected);
+		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null);
 		popup.add(save_track);
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
 		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty());

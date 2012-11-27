@@ -227,7 +227,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			}
 		}
 
-		if (!isContained) {
+		if (!isContained || ((TierPrefsTableModel) model).getStyles().size() > currentStyles.size()) {
 			((TierPrefsTableModel) model).setStyles(customizables);
 			model.fireTableDataChanged();
 		}

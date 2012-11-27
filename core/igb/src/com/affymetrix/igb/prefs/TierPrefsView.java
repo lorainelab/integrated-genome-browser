@@ -625,7 +625,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	public void selectAll() {
 		if (table.getRowCount() > 1) {
-			table.setRowSelectionInterval(0, table.getRowCount() - 2);
+			table.setRowSelectionInterval(0, table.getRowCount() - 1);
 		}
 	}
 

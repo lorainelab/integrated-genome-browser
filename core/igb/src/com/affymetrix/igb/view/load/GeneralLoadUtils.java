@@ -1184,17 +1184,9 @@ public final class GeneralLoadUtils {
 					return true;
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) gFeature.symL).logException(ex);
-					return removeFeatureAndRefresh("Unable to load data set for this file. \nWould you like to remove this file from the list?");
+					return removeFeatureAndRefresh(gFeature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
 				}
 
-			}
-			
-			private boolean removeFeatureAndRefresh(String msg) {
-				if (Application.confirmPanel(msg)) {
-					GeneralLoadView.getLoadView().removeFeature(gFeature, true);
-					return true;
-				}
-				return false;
 			}
 
 			@Override
@@ -1239,6 +1231,14 @@ public final class GeneralLoadUtils {
 		CThreadHolder.getInstance().execute(gFeature, worker);
 	}
 
+	private static boolean removeFeatureAndRefresh(GenericFeature gFeature, String msg) {
+		if (Application.confirmPanel(msg)) {
+			GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+			return true;
+		}
+		return false;
+	}
+				
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
 		GenericFeature gFeature = GeneralLoadUtils.getLoadedFeature(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
@@ -1414,6 +1414,7 @@ public final class GeneralLoadUtils {
 					quickLoad.loadAndAddAllSymmetries(feature);
 				} catch (Exception ex) {
 					quickLoad.logException(ex);
+					removeFeatureAndRefresh(feature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
 				}
 				return null;
 			}

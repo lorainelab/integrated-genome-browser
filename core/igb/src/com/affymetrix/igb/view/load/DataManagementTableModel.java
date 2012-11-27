@@ -190,9 +190,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 		}
 		
-//		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
-//			virtualFeatures.add(tempVirtualFeature);
-//		}
+		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
+			//virtualFeatures.add(tempVirtualFeature);
+			if(tempVirtualFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME) || 
+					tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND) || 
+					tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS )){
+				virtualFeatures.add(tempVirtualFeature);
+			}
+		}
 		
 		tempVirtualFeatures.clear();
 		
@@ -263,8 +268,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				}
 				return vFeature.getLoadStrategy().toString();
 			case TRACK_NAME_COLUMN:
-				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
-					return "";
+				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME) ||
+					vFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND) || 
+					vFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)){
+					return vFeature.getFeature().featureName;
 				} else if (style == null) {
 					return "";
 				}

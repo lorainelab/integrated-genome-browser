@@ -30,7 +30,10 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 	}
 				
 	private ExportSelectedAnnotationFileAction() {
-		super(BUNDLE.getString("saveSelectedAnnotationAction"), null, "16x16/actions/blank_placeholder.png", null, KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("saveSelectedAnnotationAction"), null,
+				"16x16/actions/save.png",
+				"22x22/actions/save.png", 
+				KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override

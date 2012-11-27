@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.io.IOException;
 
 /**
  * This is an extension of the QuickLoadSymLoader class, specifically for chp files.
@@ -64,9 +65,11 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 			// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 			File f = LocalUrlCacher.convertURIToFile(this.uri);
 			return ChpParser.parse(f.getAbsolutePath(), true);
-		} catch (Exception ex) {
+		} catch(IOException ex){
+			throw new RuntimeException(ex);
+		}catch (Exception ex) {
 			logException(ex);
-			return null;
+			throw new RuntimeException(ex);
 		}
 	}
 }

@@ -72,7 +72,7 @@ public final class ChpParser {
 		FusionCHPData chp = FusionCHPDataReg.read(file_name);
 		if (chp == null) {
 			ErrorHandler.errorPanel("Could not parse file: " + file_name);
-			return null;
+			throw new IOException("Cannot load data from the file");
 		}
 
 		// The following function will determine if the CHP file read contains "legacy" format data. This
@@ -135,6 +135,9 @@ public final class ChpParser {
 			 *  make lazy stub annotations for each sequence in genome
 			 *
 			 */
+		}
+		if(results == null){
+			throw new IOException("Cannot load data from the file");
 		}
 		return results;
 	}
@@ -483,7 +486,6 @@ public final class ChpParser {
 	}
 
 	private static List<? extends SeqSymmetry> parseLegacyChp(FusionCHPLegacyData chp) throws Exception  {
-		List<? extends SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		FusionCHPHeader header = chp.getHeader();
 		System.out.println("Alg name: " + header.getAlgName());
 		System.out.println("Alg version: " + header.getAlgVersion());
@@ -507,7 +509,7 @@ public final class ChpParser {
 		}
 		System.out.println("Stopped loading, parsing Legacy CHP data only partially implemented!");
 		ErrorHandler.errorPanel("CHP file is in legacy format, cannot be loaded");
-		return results;
+		return null;
 	}
 
 	private static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) throws Exception  {

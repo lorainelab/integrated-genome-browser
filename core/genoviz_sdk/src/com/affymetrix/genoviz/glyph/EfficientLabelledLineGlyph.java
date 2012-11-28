@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
@@ -24,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.List;
-import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 /** A subclass of EfficientLabelledGlyph that makes all its children
@@ -102,7 +102,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 	    Font xmax_font = xpix2fonts[xpix_per_char];
 	    Font ymax_font = ypix2fonts[ypix_per_char];
 	    Font chosen_font = (xmax_font.getSize()<ymax_font.getSize()) ? xmax_font : ymax_font;
-	    //	    Graphics2D g2 = (Graphics2D)g;
+//	    Graphics2D g2 = (Graphics2D)g;
 	    Graphics g2 = g;
 	    g2.setFont(chosen_font);
 	    FontMetrics fm = g2.getFontMetrics();
@@ -115,6 +115,22 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 		((! toggle_by_height) ||
 		 (text_height <= (pixel_separation + pixelbox.height/2))) )  {
 	      int xpos = pixelbox.x + (pixelbox.width/2) - (text_width/2);
+//		  int ypos = pixelbox.y + pixelbox.height/2  - pixel_separation - 2;
+//		  FontRenderContext frc = g2.getFontRenderContext();
+//		  TextLayout tl = new TextLayout(label, chosen_font, frc);
+//		  AffineTransform shift = AffineTransform.getTranslateInstance(xpos, ypos);
+//		  Shape shp = shift.createTransformedShape(tl.getOutline(null));
+//		  g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//          g2.fill(shp);
+//		  
+//		  if(chosen_font.getSize() > 25){
+//			Stroke old_strokeL = g2.getStroke();
+//			g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, null, 0));
+//			g2.setColor(getBackgroundColor().darker());
+//			g2.draw(shp);
+//			g2.setStroke(old_strokeL);
+//		  }
+		
 	      if (label_loc == NORTH) {
 		g2.drawString(label, xpos,
 			      //		       pixelbox.y + text_height);
@@ -138,6 +154,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
         drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
       }
     }
+	
   }
 
   

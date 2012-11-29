@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -308,6 +309,7 @@ public final class SearchView extends IGBTabPanel implements
 		bottom_row.add(status_bar);
 		validate();
 
+		searchTF.setComponentPopupMenu(CCPUtils.getCCPPopup());
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
 		searchCB.addActionListener(searchModeAction);

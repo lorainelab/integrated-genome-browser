@@ -709,7 +709,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		@Override
 		public boolean isCellEditable(int row, int column) {
 			TrackStyle style = tier_styles.get(row);
-			if(style.getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)){
+			if(style.getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && (column == COL_TRACK_NAME)){
 				return false;
 			}
 			//if (column == COL_TRACK_NAME) {

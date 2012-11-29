@@ -282,7 +282,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type, use_score_colors, use_item_rgb);
-				double cheight = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
+				boolean cds = (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan));
+				double cheight = thin_height;
+				if(cds){
+					cheight = child_height;
+				}
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
@@ -303,6 +307,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
 				codon_glyph_processor.processGlyph(cglyph, annotseq);
+				if(!cds){
+					handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
+				}
 			}
 		}
 				

@@ -186,7 +186,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			g.fillRect(pixelbox.x + 1, pixelbox.y + 1, pbBuffer_x, pixelbox.height - 3);
 			g.setColor(fgcolor);
 		}
-
+		
 		g.setFont(newfnt);
 		
 		drawLabel(g, view.getPixelBox(), pixelbox);
@@ -226,12 +226,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		g.fillPolygon(mark_x, mark_y, 4);
 		
 		g.setColor(Color.BLACK);
-		Font fnt = g.getFont().deriveFont(Font.BOLD, 10.0f);
-		g.setFont(fnt);
-		g.rotate(-45, pixelbox.x, pixelbox.y);
-		g.drawString("IGB", pixelbox.x-15, pixelbox.y+20);
-		g.rotate(45, pixelbox.x, pixelbox.y);
-		
+		Stroke oldStroke = g.getStroke();
+		g.setStroke(new TextStroke("IGB", g.getFont().deriveFont(Font.BOLD, 10.0f), false, false));
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.drawLine(mark_x[1]+4, mark_y[1]+8, mark_x[2]+8, mark_y[2]+4);
+		g.setStroke(oldStroke);
 		
 	}
 	

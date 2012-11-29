@@ -38,20 +38,19 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
     Graphics g = view.getGraphics();
     g.setColor(getColor());
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-    if (pixelbox.width > 2 && pixelbox.height > 2) {
+    if (pixelbox.width > 3 && pixelbox.height > 3) {
       g.setColor(bgcolor);
-      g.fillRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-1, pixelbox.height-1);
+      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
     }
-
-    super.draw(view);
   }
   
+	
   /** Sets the outline color; the fill color is automatically calculated as  
    *  a darker shade. 
    */
 	@Override
   public void setColor(Color c) {
-	bgcolor = c;
-    super.setColor(c.darker());
+	super.setColor(c);
+	bgcolor = c.darker();
   }
 }

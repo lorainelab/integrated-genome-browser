@@ -40,7 +40,7 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
     if (pixelbox.width > 2 && pixelbox.height > 2) {
       g.setColor(bgcolor);
-      g.fillRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-2, pixelbox.height-2);
+      g.fillRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-1, pixelbox.height-1);
     }
 
     super.draw(view);
@@ -51,7 +51,7 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
    */
 	@Override
   public void setColor(Color c) {
-    super.setColor(c);
-    bgcolor = c.darker();
+	bgcolor = c;
+    super.setColor(c.darker());
   }
 }

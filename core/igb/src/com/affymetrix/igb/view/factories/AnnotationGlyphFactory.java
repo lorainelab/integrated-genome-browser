@@ -329,7 +329,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			return new DeletionGlyph();
 		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
 				(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH))
-			return new PointedGlyph();
+			return new PointedOutlinedGlyph();
 			
 		return (GlyphI) child_glyph_class.newInstance();
 	}

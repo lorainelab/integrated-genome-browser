@@ -30,6 +30,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -92,6 +94,7 @@ public class View implements ViewI, NeoPaintListener,
 	private boolean firstScrollOptimizedDraw = true;
 	private boolean firstDamageOptimizedDraw = true;
 	private boolean firstBufferOptimizedDraw = true;
+	private Map<Key, Object> rendering_hints;
 	protected final Rectangle damagePixelBox = new Rectangle();
 	protected Dimension component_size;
 	protected Rectangle component_bounds;
@@ -108,7 +111,7 @@ public class View implements ViewI, NeoPaintListener,
 	private final Point2D.Double scratch_coord;
 	protected Rectangle scene_pixelbox;
 	protected Rectangle2D.Double scene_coordbox;
-
+	
 	public View() {
 		full_view = this;
 		// transforms initialized to Identity transform
@@ -712,8 +715,18 @@ public class View implements ViewI, NeoPaintListener,
 		return full_view;
 	}
 
+	public void setRenderingHint(Key key, Object value){
+		if(rendering_hints == null){
+			rendering_hints = new HashMap<Key, Object>();
+		}
+		rendering_hints.put(key, value);
+	}
+	
 	public void setGraphics(Graphics2D g) {
 		graphics = g;
+		if(rendering_hints != null){
+			graphics.addRenderingHints(rendering_hints);
+		}
 	}
 
 	public Graphics2D getGraphics() {

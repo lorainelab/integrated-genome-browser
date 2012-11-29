@@ -31,6 +31,7 @@ import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.print.PageFormat;
@@ -75,6 +76,9 @@ public class AffyTieredMap extends NeoMap {
 	
 	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
+		this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
+		this.getView().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		this.getView().setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
 		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_plus));
 		ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_minus));
 		ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_mixed));

@@ -47,7 +47,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
 	 */
 	private static Class<?> default_eparent_class = (new EfficientLineContGlyph()).getClass();
-	private static Class<?> default_echild_class = (new FillRectGlyph()).getClass();
+	private static Class<?> default_echild_class = (new EfficientOutlinedRectGlyph()).getClass();
 	private static Class<?> default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 //	private static final int DEFAULT_THICK_HEIGHT = 25;
 //	private static final int DEFAULT_THIN_HEIGHT = 15;

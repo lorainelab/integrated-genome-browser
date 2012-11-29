@@ -459,6 +459,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 	boolean refresh = false;
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
 		if(!refresh){
+			CoordinateStyle.coordinate_annot_style.setBackground(bgColorComboBox.getSelectedColor());
 			TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
 		}
@@ -466,6 +467,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
 		if(!refresh){
+			CoordinateStyle.coordinate_annot_style.setForeground(fgColorComboBox.getSelectedColor());
 			TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
 		}

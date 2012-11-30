@@ -220,22 +220,24 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 */
 	private void drawIGBBadge(Graphics2D g, Rectangle pixelbox) {
 		
-		mark_x[0] = pixelbox.x + 3;
-		mark_x[1] = pixelbox.x + 3;
+		mark_x[0] = pixelbox.x;
+		mark_x[1] = pixelbox.x;
 		mark_x[2] = pixelbox.x + 15;
 		mark_x[3] = pixelbox.x + 30;
 		
 		mark_y[0] = pixelbox.y + 30;
 		mark_y[1] = pixelbox.y + 15;
-		mark_y[2] = pixelbox.y + 3;
-		mark_y[3] = pixelbox.y + 3;
+		mark_y[2] = pixelbox.y;
+		mark_y[3] = pixelbox.y;
 		g.fillPolygon(mark_x, mark_y, 4);
+		g.setColor(g.getColor().darker());
+		g.drawPolygon(mark_x, mark_y, 4);
 		
 		g.setColor(Color.BLACK);
 		Stroke oldStroke = g.getStroke();
 		g.setStroke(new TextStroke("IGB", g.getFont().deriveFont(Font.BOLD, 10.0f), false, false));
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.drawLine(mark_x[1]+4, mark_y[1]+8, mark_x[2]+8, mark_y[2]+4);
+		g.drawLine(mark_x[1]+8, mark_y[1]+8, mark_x[2]+10, mark_y[2]+4);
 		g.setStroke(oldStroke);
 		
 	}

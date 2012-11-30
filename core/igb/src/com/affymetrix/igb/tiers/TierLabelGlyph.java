@@ -197,12 +197,18 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		
 		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed() && TrackStyle.getShowLockIcon()){
 			g.setColor(fgcolor);
-			g.fillRect(pixelbox.x + 5, pixelbox.y + 10, 10, 10);
 			g.fillArc(pixelbox.x + 6, pixelbox.y + 2, 8, 15, 0, 180);
-		
+			g.fillRect(pixelbox.x + 5, pixelbox.y + 10, 10, 10);
+						
 			g.setColor(bgcolor);
 			g.fillArc(pixelbox.x + 8, pixelbox.y + 4, 4, 12, 0, 180);
 			g.fillRect(pixelbox.x + 9, pixelbox.y + 15, 2, 4);
+			
+			g.setColor(fgcolor.darker());
+			g.drawArc(pixelbox.x + 6, pixelbox.y + 2, 8, 15, 0, 180);
+			g.drawRect(pixelbox.x + 5, pixelbox.y + 10, 10, 10);
+			g.drawArc(pixelbox.x + 8, pixelbox.y + 4, 4, 12, 0, 180);
+			g.drawRect(pixelbox.x + 9, pixelbox.y + 15, 2, 4);
 		}
 		super.draw(view);
 	}

@@ -57,7 +57,7 @@ public class CachingInputStream extends FilterInputStream {
 
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
-		try {
+		try {			
 			int bytesRead = super.read(b, off, len);
 			if (bytesRead > 0 && this.outputStream != null) {
 				this.outputStream.write(b, off, bytesRead);
@@ -117,8 +117,13 @@ public class CachingInputStream extends FilterInputStream {
 		try {
 			if (outputStream != null) {
 				try {
-					/* consume the entire stream before closing */
-					this.skip(Long.MAX_VALUE);
+					/* If thread is interrupted then invalidate cache */
+//					if(Thread.currentThread().isInterrupted()){
+//						LocalUrlCacher.invalidateCacheFile(url);
+//					}else{
+						/* consume the entire stream before closing */
+						this.skip(Long.MAX_VALUE);
+//					}
 				} catch (IOException e) {}
 
 				GeneralUtils.safeClose(outputStream);

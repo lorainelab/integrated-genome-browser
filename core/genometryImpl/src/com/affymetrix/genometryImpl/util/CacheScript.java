@@ -166,6 +166,10 @@ public class CacheScript extends Thread {
 					ServerTypeI server_type = getServerType(el.getAttribute("type"));
 					String server_name = el.getAttribute("name").replaceAll("\\W", "");
 					String server_url = el.getAttribute("url");
+
+					// fwang4:qlmirror - Quickload Mirror Server
+					String mirror_url = el.getAttribute("mirror");
+					
 					String en = el.getAttribute("enabled");
 					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
 					String d = el.getAttribute("default");
@@ -173,7 +177,7 @@ public class CacheScript extends Thread {
 					String serverURL = ServerUtils.formatURL(server_url, server_type);
 					Object serverInfo = server_type.getServerInfo(serverURL, server_name);
 					GenericServer server = new GenericServer(server_name, serverURL,
-							server_type, enabled, serverInfo, isDefault);
+							server_type, enabled, serverInfo, isDefault, mirror_url);
 					serverList.add(server);
 				}
 			}

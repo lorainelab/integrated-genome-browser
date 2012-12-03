@@ -33,7 +33,7 @@ public abstract class SymLoader implements LineTrackerI {
 	public static final String FILE_PREFIX = "file:";
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
 	public String extension;	// used for ServerUtils call
-	public final URI uri;
+	public URI uri; //fwang4:qlmirror
 	protected boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
 	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
@@ -153,6 +153,9 @@ public abstract class SymLoader implements LineTrackerI {
 
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			if(bis == null) {
+				throw new IOException("Input Stream NULL");
+			}
 			if(parseLines(bis, chrLength, chrFiles)){
 				createResults(chrLength, chrFiles);
 				Logger.getLogger(SymLoader.class.getName()).fine("Indexing successful");
@@ -282,6 +285,14 @@ public abstract class SymLoader implements LineTrackerI {
 		if (parseLinesProgressUpdater != null) {
 			parseLinesProgressUpdater.lineRead(lineLength + 1);
 		}
+	}
+	
+	public URI getURI() {
+		return this.uri;
+	}
+	
+	public void setURI(URI newURI) {
+		this.uri = newURI;
 	}
 
     /**

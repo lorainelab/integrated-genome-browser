@@ -41,11 +41,13 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.affymetrix.igb.prefs.KeyStrokeEditPanel;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -148,7 +150,7 @@ public final class GeneralLoadUtils {
 	 * @return success of server add.
 	 */
 	public static GenericServer addServer(ServerList serverList, ServerTypeI serverType,
-			String serverName, String serverURL, int order, boolean isDefault) {
+			String serverName, String serverURL, int order, boolean isDefault, String mirrorURL) {
 		/*
 		 * should never happen
 		 */
@@ -157,7 +159,7 @@ public final class GeneralLoadUtils {
 		}
 
 		GenericServer gServer = serverList.addServer(serverType,
-				serverName, serverURL, true, order, isDefault);
+				serverName, serverURL, true, order, isDefault, mirrorURL);
 		if (gServer == null) {
 			return null;
 		}
@@ -209,6 +211,19 @@ public final class GeneralLoadUtils {
 			return versionName2species.get(versionName);
 		}
 	};
+	
+	private static boolean isURLReachable(URI uri) {
+			try {
+				if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
+					return false;
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
+
+			return true;
+		}
 
 	public static boolean discoverServer(GenericServer gServer) {
 		if (gServer.isPrimary()) {
@@ -217,7 +232,7 @@ public final class GeneralLoadUtils {
 		if (gServer.serverType == null) { // bundle repository
 			return IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryAdded(gServer.URL);
 		}
-
+				
 		Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 		try {
 			if (gServer == null || gServer.serverType == ServerTypeI.LocalFiles) {
@@ -225,12 +240,21 @@ public final class GeneralLoadUtils {
 				return false;
 			}
 			if (gServer.serverType != null) {
+				
+				// fwang4:qlmirror - Quickload Mirror Server
+				if(!isURLReachable(URI.create(gServer.URL)) && gServer.serverType==ServerTypeI.QuickLoad && gServer.mirrorURL!=null && 
+						isURLReachable(URI.create(gServer.mirrorURL)) && IGB.confirmPanel("Use mirror site for quickload?")) {
+					gServer.serverObj = gServer.mirrorURL;
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotInitialized);
+				}
+				///fwang4:qlmirror
+				
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 				URL primaryURL = getServerDirectory(gServer.URL);
 				if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
-					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-					gServer.setEnabled(false);
-					return false;
+							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+							gServer.setEnabled(false);
+							return false;
 				}
 				if(gServer.serverType == ServerTypeI.QuickLoad){
 					XmlPrefsParser.parse(gServer.URL +  "preferences.xml");

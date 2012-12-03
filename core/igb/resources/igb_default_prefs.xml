@@ -13,6 +13,7 @@
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="6" default="true"/>
 <server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="7" default="true"/>
 <server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="8" default="true"/>
+<server type="quickload" name="New Quickload" url="http://128.196.142.71/Quickload/" order="9" default="true" mirror="http://128.196.142.73/Quickload/"/>
 
 <!-- caching of slow servers (e.g., UCSC and Ensembl) -->
 

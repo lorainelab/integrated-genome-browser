@@ -228,7 +228,7 @@ public class QuickloadServerType implements ServerTypeI {
 				uri = URI.create(fileName);
 			} else {
 				uri = URI.create(
-						version.gServer.URL
+						version.gServer.serverObj // Changed from 'version.gServer.URL' since quickload uses serverObj
 						+ version.versionID + "/"
 						+ determineFileName(version, featureName));
 			}

@@ -7,11 +7,13 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.genoviz.util.Idable;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
@@ -722,12 +724,27 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 						String message;
 						if (checkbox.isSelected()) {
 							// check whether the selected feature url is reachable or not
-							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
-									&& !isURLReachable(feature.getURI())) {
-								message = "The feature " + feature.getURI() + " is not reachable.";
-								ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
-								tn.setChecked(false);
-								return;
+							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad && !isURLReachable(feature.getURI())) {
+								
+								// fwang4:qlmirror - Quickload Mirror Server
+								GenericServer gServer = feature.gVersion.gServer;
+								if (gServer.mirrorURL != null && IGB.confirmPanel("Use mirror site?")) {
+									for(GenericFeature gFeature : feature.gVersion.getFeatures()) {
+										if(!gFeature.isVisible() && gFeature.getMethods().isEmpty()) {
+											URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL.toString(), gServer.mirrorURL.toString()));
+											gFeature.symL.setURI(newURI);
+											((QuickLoadSymLoader)gFeature.symL).getSymLoader().setURI(newURI);
+										}
+									}
+									tn.setChecked(true);
+								} else {
+								///fwang4:qlmirror
+									
+									message = "The feature " + feature.getURI() + " is not reachable.";
+									ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
+									tn.setChecked(false);
+									return;
+								}
 							}
 
 							// prevent from adding duplicated features

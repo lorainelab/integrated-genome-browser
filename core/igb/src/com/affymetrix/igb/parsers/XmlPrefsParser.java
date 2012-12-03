@@ -164,6 +164,7 @@ public final class XmlPrefsParser {
 	private static void processServer(Element el, ServerList serverList, ServerTypeI server_type) {
 		String server_name = el.getAttribute("name");
 		String server_url = el.getAttribute("url");
+		String mirror_url = el.getAttribute("mirror"); //fwang4:qlmirror
 		String en = el.getAttribute("enabled");
 		String orderString = el.getAttribute("order");
 		Integer order = orderString == null || orderString.isEmpty() ? 0 : Integer.valueOf(orderString);
@@ -175,11 +176,11 @@ public final class XmlPrefsParser {
 		
 		if (IGBConstants.DEBUG) {
 			System.out.println("XmlPrefsParser adding " + server_type 
-					+ " server: " + server_name + ",  " + server_url 
+					+ " server: " + server_name + ",  " + server_url + " mirror: " + mirror_url
 					+ ", enabled: " + enabled + "default: " + isDefault);
 		}
 		serverList.addServer(server_type, server_name, server_url, 
-				enabled, primary, order.intValue(), isDefault);
+				enabled, primary, order.intValue(), isDefault, mirror_url); //fwang4:qlmirror
 	}
 
 	private static ServerTypeI getServerType(String type) {

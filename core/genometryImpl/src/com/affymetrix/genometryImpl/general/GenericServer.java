@@ -33,6 +33,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	 * URL/file that points to the server.
 	 */
 	public String URL;
+	
+	/**
+	 * Mirror site url
+	 */
+	public String mirrorURL; //fwang4:qlmirror
 	/**
 	 * DAS, DAS2, QuickLoad, Unknown (local file)
 	 */
@@ -56,7 +61,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	/**
 	 * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	 */
-	public final Object serverObj;
+	public Object serverObj; //fwang4:qlmirror
 	/**
 	 * friendly URL that users may look at.
 	 */
@@ -77,7 +82,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private final boolean isDefault;
 
 	public GenericServer(String serverName, String URL, ServerTypeI serverType,
-			boolean enabled, Object serverObj, boolean primary, boolean isDefault) {
+			boolean enabled, Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
 		this(
 				serverName,
 				URL,
@@ -86,11 +91,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				false,
 				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
 				: serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(URL)) : null,
-				serverObj, primary, isDefault);
+				serverObj, primary, isDefault, mirrorURL);
 	}
 
-	public GenericServer(String serverName, String URL, ServerTypeI serverType,
-			boolean enabled, Object serverObj, boolean isDefault) {
+	public GenericServer(String serverName, String URL, ServerTypeI serverType, 
+			boolean enabled, Object serverObj, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
 		this(
 				serverName,
 				URL,
@@ -99,11 +104,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				false,
 				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
 				: PreferenceUtils.getServersNode().node(getHash(URL)),
-				serverObj, false, isDefault);
+				serverObj, false, isDefault, mirrorURL);
 	}
 
 	public GenericServer(Preferences node, Object serverObj,
-			ServerTypeI serverType, boolean isDefault) {
+			ServerTypeI serverType, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
 		this(
 				node.get(GenericServerPref.NAME, "Unknown"),
 				GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")),
@@ -111,7 +116,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				true,
 				false,
 				node,
-				serverObj, false, isDefault);
+				serverObj, false, isDefault, mirrorURL);
 	}
 
 	/**
@@ -129,9 +134,10 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private GenericServer(
 			String serverName, String URL, ServerTypeI serverType,
 			boolean enabled, boolean referenceOnly, Preferences node,
-			Object serverObj, boolean primary, boolean isDefault) {
+			Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
 		this.serverName = serverName;
 		this.URL = URL;
+		this.mirrorURL = mirrorURL; //fwang4:qlmirror
 		this.serverType = serverType;
 		this.enabled = enabled;
 		this.node = node;

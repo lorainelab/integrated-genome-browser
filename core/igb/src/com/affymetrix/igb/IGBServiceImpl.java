@@ -493,7 +493,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public GenericServer addServer(ServerTypeI serverType,
 			String serverName, String serverURL, int order) {
 		GenericServer server = GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
-				serverName, serverURL, order, false);
+				serverName, serverURL, order, false, null); // fwang4:qlmirror
+		DataLoadPrefsView.getSingleton().refreshServers();
+		return server;
+	}
+	
+	@Override
+	public GenericServer addServer(ServerTypeI serverType,
+			String serverName, String serverURL, int order, String mirrorURL) { // fwang4:qlmirror
+		GenericServer server = GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
+				serverName, serverURL, order, false, mirrorURL);
 		DataLoadPrefsView.getSingleton().refreshServers();
 		return server;
 	}

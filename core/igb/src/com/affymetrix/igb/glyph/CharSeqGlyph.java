@@ -237,7 +237,8 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	public static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
 		CharSeqGlyph seq_glyph = new CharSeqGlyph();
-		seq_glyph.setForegroundColor(axis_fg);
+		//seq_glyph.setForegroundColor(axis_fg);
+		seq_glyph.setForegroundColor(Color.BLACK);
 		seq_glyph.setShowBackground(false);
 		seq_glyph.setHitable(true);
 		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);

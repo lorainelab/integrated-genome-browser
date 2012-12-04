@@ -17,6 +17,8 @@ import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.*;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,6 +26,8 @@ import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -57,6 +61,12 @@ public class IGBToolBar extends JToolBar {
 		toolbar_items_panel = new DragAndDropJPanel();
 		toolbar_items_panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		toolbar_items_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+		((DragAndDropJPanel)toolbar_items_panel).addDropTargetListener(new DropTargetAdapter(){
+			@Override
+			public void drop(DropTargetDropEvent dtde) {
+				reIndex();
+			}
+		});
 		
 		tf = new JTextField(25);
 		tf.setBackground(Color.WHITE);
@@ -151,12 +161,23 @@ public class IGBToolBar extends JToolBar {
 				break;
 			}
 		}
-		if (!removed) {
-			System.err.println(this.getClass().getName()
-					+ ".removeToolbarAction: Could not find " + action);
+		
+		if (removed) {
+			reIndex();
+		}else{
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, ".removeToolbarAction: Could not find " + action);
 		}
 	}
 
+	public void reIndex(){
+		int index = 0;
+		for(Component c : toolbar_items_panel.getComponents()){
+			if(c instanceof JRPButtonTLP){
+				((JRPButtonTLP)c).setIndex(index++);
+			}
+		}
+	}
+	
 	public void saveToolBar() {
 		int index = 0;
 		for(Component c : toolbar_items_panel.getComponents()){
@@ -215,14 +236,17 @@ public class IGBToolBar extends JToolBar {
 		
 	private class JRPButtonTLP extends JRPButton implements TrackListProvider {
 		private static final long serialVersionUID = 1L;
-		private final int index;
+		private int index;
 		private JRPButtonTLP(GenericAction genericAction, int index) {
     		super("Toolbar_" + genericAction.getId(), genericAction);
 			setHideActionText(true);
 			this.index = index;
     	}
-		public int getIndex(){
+		private int getIndex(){
 			return index;
+		}
+		private void setIndex(int i) {
+			this.index = i;
 		}
 		@Override
 		public void fireActionPerformed(ActionEvent evt){

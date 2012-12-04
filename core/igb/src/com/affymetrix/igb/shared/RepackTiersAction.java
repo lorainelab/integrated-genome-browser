@@ -57,17 +57,17 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 					style.setForwardMaxDepth(a);
 					break;
 			}
-			if (t.getTierType() == TierGlyph.TierType.GRAPH) {
-				for(GlyphI g : t.getChildren()){
-					if(!(g instanceof com.affymetrix.igb.shared.GraphGlyph))
-						continue;
-					
-					// So far this has only been tested with annotation depth graphs.
-					com.affymetrix.igb.shared.GraphGlyph gg
-							= (com.affymetrix.igb.shared.GraphGlyph) g;
-					gg.setVisibleMaxY(a);
-				}
-			}
+//			if (t.getTierType() == TierGlyph.TierType.GRAPH) {
+//				for(GlyphI g : t.getChildren()){
+//					if(!(g instanceof com.affymetrix.igb.shared.GraphGlyph))
+//						continue;
+//					
+//					// So far this has only been tested with annotation depth graphs.
+//					com.affymetrix.igb.shared.GraphGlyph gg
+//							= (com.affymetrix.igb.shared.GraphGlyph) g;
+//					gg.setVisibleMaxY(a);
+//				}
+//			}
 		}
 		// Now repack with the newly appointed maxima.
 		repack(true, false);

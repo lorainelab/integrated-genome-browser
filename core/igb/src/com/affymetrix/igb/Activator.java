@@ -304,7 +304,28 @@ public class Activator implements BundleActivator {
 				new SeqMapToggleAction(
 				StartAutoScrollAction.getAction(),
 				StopAutoScrollAction.getAction()));
-		//UCSCViewAction.getAction(); // external class. no singleton.
+		ZoomingRepackAction.getAction();
+		ShowPlusStrandAction.getAction();
+		ShowMinusStrandAction.getAction();
+		ChangeForwardColorAction.getAction();
+		ChangeReverseColorAction.getAction();
+		ChangeFontSizeAction.getAction();
+		ChangeExpandMaxAllAction.getAction();
+		SetColorByScoreAction.getAction();
+		ColorByScoreAction.getAction();
+		ExportFileAction.getAction();
+		ExportSelectedAnnotationFileAction.getAction();
+		UseAsReferenceSeqAction.getAction();
+		CustomizeAction.getAction();
+		HideAction.getAction();
+		ShowAllAction.getAction();
+		CenterAtHairlineAction.getAction();
+		MaximizeTrackAction.getAction();
+		CollapseAction.getAction();
+		ExpandAction.getAction();
+		RemoveDataFromTracksAction.getAction();
+		RepackSelectedTiersAction.getAction();
+		AutoLoadThresholdAction.getAction();
 	}
 
 	private void initOperators() {

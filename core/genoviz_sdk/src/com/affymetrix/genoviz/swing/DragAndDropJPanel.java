@@ -15,25 +15,33 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import javax.swing.JPanel;
 
 /**
  *
  * @author hiralv
  */
-public class DragAndDropJPanel extends JPanel implements DragSourceListener, DropTargetListener, DragGestureListener {
+public class DragAndDropJPanel extends javax.swing.JPanel implements DragSourceListener, DropTargetListener, DragGestureListener {
 	private final DragSource source;
 	private TransferableComponent transferable;
+	private java.util.List<DropTargetAdapter> drop_target_listener;
 	
 	public DragAndDropJPanel() {
 		source = new DragSource();
 		setDropTarget(new DropTarget(this, this));
+	}
+	
+	public void addDropTargetListener(DropTargetAdapter listener){
+		if(drop_target_listener == null){
+			drop_target_listener = new java.util.concurrent.CopyOnWriteArrayList<DropTargetAdapter>();
+		}
+		drop_target_listener.add(listener);
 	}
 	
 	/** Drag Source Listener method start */
@@ -55,11 +63,16 @@ public class DragAndDropJPanel extends JPanel implements DragSourceListener, Dro
 	}
 	
 	@Override
-	public void drop(DropTargetDropEvent dtde) {
+	public void drop(final DropTargetDropEvent dtde) {
 		dtde.acceptDrop(dtde.getDropAction());
 		dtde.dropComplete(true);
 		moveTo(dtde.getLocation());
 		transferable = null;
+		if(drop_target_listener != null){
+			for(DropTargetAdapter dtl : drop_target_listener){
+				dtl.drop(dtde);
+			}
+		}
 	}
 	/** Drag Target Listener method end */
 	

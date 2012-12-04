@@ -7,7 +7,6 @@ package findjunction;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.operator.FindJunctionOperator;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
@@ -17,9 +16,6 @@ import com.affymetrix.igb.IGB;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import sun.management.FileSystem;
 
 /**
  *

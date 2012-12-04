@@ -118,12 +118,13 @@ public class CachingInputStream extends FilterInputStream {
 			if (outputStream != null) {
 				try {
 					/* If thread is interrupted then invalidate cache */
-//					if(Thread.currentThread().isInterrupted()){
-//						LocalUrlCacher.invalidateCacheFile(url);
-//					}else{
+					if(Thread.currentThread().isInterrupted()){
+						Logger.getLogger(CachingInputStream.class.getName()).log(Level.INFO, "Thread interrupted. Invalidating for url {0}.", url);
+						LocalUrlCacher.invalidateCacheFile(url);
+					}else{
 						/* consume the entire stream before closing */
 						this.skip(Long.MAX_VALUE);
-//					}
+					}
 				} catch (IOException e) {}
 
 				GeneralUtils.safeClose(outputStream);

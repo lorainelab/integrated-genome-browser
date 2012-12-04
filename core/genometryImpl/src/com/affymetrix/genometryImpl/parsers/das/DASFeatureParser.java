@@ -1,10 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.das;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.parsers.Parser;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
@@ -19,6 +14,11 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.Parser;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  *
@@ -71,6 +71,13 @@ public final class DASFeatureParser implements Parser {
 			}
 		}
 
+		if(Thread.currentThread().isInterrupted()){
+			for(SeqSymmetry sym : groupMap.values()){
+				seqGroup.removeSymmetry(sym);
+			}
+			return Collections.<DASSymmetry>emptyList();
+		}
+		
 		return new ArrayList<DASSymmetry>(groupMap.values());
 	}
 

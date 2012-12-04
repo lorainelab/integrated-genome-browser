@@ -145,6 +145,7 @@ public class IGBToolBar extends JToolBar {
 		
 		toolbar_items_panel.add(button, local_index);	
 		toolbar_items_panel.validate();
+		toolbar_items_panel.repaint();
 	}
 	
 	public void removeToolbarAction(GenericAction action) {

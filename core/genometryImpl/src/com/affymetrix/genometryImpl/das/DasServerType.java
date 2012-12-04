@@ -390,7 +390,9 @@ public class DasServerType implements ServerTypeI {
 			if (!server.equals(version.gServer)) {
 				continue;
 			}
-			String residues = DasLoader.getDasResidues(version, seq_name, min, max);
+			DasResiduesHandler dasResiduesHandler = new DasResiduesHandler();
+			String residues = dasResiduesHandler.getDasResidues(version, seq_name, min, max);
+//			String residues = DasLoader.getDasResidues(version, seq_name, min, max);
 			if (residues != null) {
 				BioSeq.addResiduesToComposition(aseq, residues, span);
 				return true;

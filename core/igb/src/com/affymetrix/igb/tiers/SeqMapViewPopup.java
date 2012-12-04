@@ -326,11 +326,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
 //		popup.add(repack_selected_tiers);
 		popup.add(new JSeparator());
-		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
-		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != TierGlyph.Direction.AXIS) {
-			JMenuItem maximize_track = new JRPMenuItemTLP(MaximizeTrackAction.getAction());
-			popup.add(maximize_track);
-		}
+//		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
+//		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != TierGlyph.Direction.AXIS) {
+//			JMenuItem maximize_track = new JRPMenuItemTLP(MaximizeTrackAction.getAction());
+//			popup.add(maximize_track);
+//		}
 		popup.add(new JSeparator());
 		JMenuItem hide = new JRPMenuItemTLP(HideAction.getAction());
 		hide.setEnabled(num_selections > 0);

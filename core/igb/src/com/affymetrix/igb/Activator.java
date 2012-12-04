@@ -319,8 +319,8 @@ public class Activator implements BundleActivator {
 		CustomizeAction.getAction();
 		HideAction.getAction();
 		ShowAllAction.getAction();
-		CenterAtHairlineAction.getAction();
-		MaximizeTrackAction.getAction();
+		//CenterAtHairlineAction.getAction();
+		//MaximizeTrackAction.getAction();
 		CollapseAction.getAction();
 		ExpandAction.getAction();
 		RemoveDataFromTracksAction.getAction();

@@ -1825,8 +1825,8 @@ public class SeqMapView extends JPanel
 		sym_popup.removeAll();
 
 		if (seqmap.getSelected().isEmpty()) { // if no glyphs selected, use regular popup
-			sym_popup.setVisible(true);
-			getTierManager().doPopup(nevt);
+//			sym_popup.setVisible(true);
+//			getTierManager().doPopup(nevt);
 			return;
 		}
 
@@ -1878,6 +1878,18 @@ public class SeqMapView extends JPanel
 	 */
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		List<GlyphI> selected_glyphs = seqmap.getSelected();
+		JMenuItem select_parent_action = new JMenuItem(SelectParentAction.getAction());
+		select_parent_action.setIcon(null);
+		JMenuItem zoom_on_selected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());
+		zoom_on_selected.setIcon(null);
+		JMenuItem view_genomic_sequence_action = new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction());
+		view_genomic_sequence_action.setIcon(null);
+		JMenuItem view_read_sequence_action = new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction());
+		view_read_sequence_action.setIcon(null);
+		JMenuItem load_partial_sequence = new JMenuItem(LoadPartialSequenceAction.getAction());
+		load_partial_sequence.setIcon(null);
+		JMenuItem copy_residues_action = new JMenuItem(CopyResiduesAction.getAction());
+		copy_residues_action.setIcon(null);
 
 		setPopupMenuTitle(sym_info, selected_glyphs);
 
@@ -1887,15 +1899,18 @@ public class SeqMapView extends JPanel
 //		}
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
-			popup.add(SelectParentAction.getAction());
-			popup.add(ZoomOnSelectedSymsAction.getAction());
-			
+
+			//popup.add(SelectParentAction.getAction());
+			popup.add(select_parent_action);
+			//popup.add(ZoomOnSelectedSymsAction.getAction());
+			popup.add(zoom_on_selected);
 			// Disable view seq in seq viewer option for insertion
-			ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();
-			viewGenomicSequenceInSeqViewerAction.setEnabled(selected_glyphs.size() > 1 || (!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph)));
-			
-			popup.add(new JMenuItem(viewGenomicSequenceInSeqViewerAction));
-			popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
+			//ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();
+			view_genomic_sequence_action.setEnabled(selected_glyphs.size() > 1 || (!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph)));
+			popup.add(view_genomic_sequence_action);
+			//popup.add(new JMenuItem(viewGenomicSequenceInSeqViewerAction));
+			popup.add(view_read_sequence_action);
+			//popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
 		}
 
 		for (ContextualPopupListener listener : popup_listeners) {
@@ -1911,13 +1926,18 @@ public class SeqMapView extends JPanel
 				if (tglyph == axis_tier) {
 					SeqSpan visible = getVisibleSpan();
 					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
-						popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));
+						popup.add(load_partial_sequence);
+						//popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));
 					}
 
 					if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
-						popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
-						popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
-						popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
+						//popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
+						//popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+						//popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
+						popup.add(copy_residues_action);
+						view_genomic_sequence_action.setEnabled(true);
+						popup.add(view_genomic_sequence_action);
+						popup.add(view_read_sequence_action);
 					}
 				}
 
@@ -1925,7 +1945,9 @@ public class SeqMapView extends JPanel
 			}
 
 			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
-				popup.add(new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature)));
+				JMenuItem refresh_a_feature= new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature));
+				refresh_a_feature.setIcon(null);
+				popup.add(refresh_a_feature);
 			}
 		}
 	}

@@ -186,7 +186,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private JMenu addShowMenu(boolean containHiddenTiers) {
 		final JMenu showMenu = new JMenu(BUNDLE.getString("showMenu"));
 		showMenu.removeAll();
-		showMenu.setEnabled(false);
+		JMenuItem show_all_action = new JMenuItem(ShowAllAction.getAction());
+		show_all_action.setIcon(null);
+		show_all_action.setText("All");
+		showMenu.add(show_all_action);
+		showMenu.add(new JSeparator());
+		//showMenu.setEnabled(false);
 		List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
 
 		for (TierLabelGlyph label : tiervec) {

@@ -20,7 +20,7 @@ public class ShowMinusStrandAction extends GenericAction {
 	}
 
 	private ShowMinusStrandAction() {
-		super("Show (-) tiers", "16x16/actions/blank_placeholder.png", null);
+		super("Show All (-) tiers", "16x16/actions/blank_placeholder.png", null);
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMinus());
 	}
 

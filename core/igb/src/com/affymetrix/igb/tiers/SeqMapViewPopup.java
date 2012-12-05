@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -287,41 +288,72 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		all_but_one_locked = no_of_locked == handler.getVisibleTierGlyphs().size() - 2;
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
-		JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
-		popup.add(customize);
-		popup.add(addChangeMenu(num_selections, any_are_expanded, any_are_separate_tiers, any_are_single_tier, any_are_color_off, coordinates_track_selected));
-		strandsMenu.removeAll();
-		strandsMenu.add(at1);
-		strandsMenu.add(at2);
-		JMenuItem show_two_tiers = new JRPMenuItemTLP(ShowTwoTiersAction.getAction());
-		GenericActionHolder.getInstance().addGenericAction(ShowTwoTiersAction.getAction());
-		show_two_tiers.setEnabled(any_are_single_tier && num_selections > 0 && !coordinates_track_selected);
-		strandsMenu.add(show_two_tiers);
-		JMenuItem show_one_tier = new JRPMenuItemTLP(ShowOneTierAction.getAction());
-		GenericActionHolder.getInstance().addGenericAction(ShowOneTierAction.getAction());
-		show_one_tier.setEnabled(any_are_separate_tiers);
-		strandsMenu.add(show_one_tier);
-		strandsMenu.setEnabled(!coordinates_track_selected);
-		popup.add(strandsMenu);
-		JMenuItem collapse = new JRPMenuItemTLP(CollapseAction.getAction());
-		collapse.setEnabled(any_are_expanded);
+		JMenuItem optimize_stack_height = new JRPMenuItemTLP(ChangeExpandMaxOptimizeAction.getAction());
+		optimize_stack_height.setIcon(null);
+		optimize_stack_height.setText("Optimize Stack Height");
+		popup.add(optimize_stack_height);
+		JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
+		change_expand_max.setEnabled(any_are_expanded);
+		change_expand_max.setText("Set Stack Height...");
+		change_expand_max.setIcon(null);
+		popup.add(change_expand_max);
+//		popup.add(addChangeMenu(num_selections, any_are_expanded, any_are_separate_tiers, any_are_single_tier, any_are_color_off, coordinates_track_selected));
+//		strandsMenu.removeAll();
+//		strandsMenu.add(at1);
+//		strandsMenu.add(at2);
+//		JMenuItem show_two_tiers = new JRPMenuItemTLP(ShowTwoTiersAction.getAction());
+//		GenericActionHolder.getInstance().addGenericAction(ShowTwoTiersAction.getAction());
+//		show_two_tiers.setEnabled(any_are_single_tier && num_selections > 0 && !coordinates_track_selected);
+//		strandsMenu.add(show_two_tiers);
+//		JMenuItem show_one_tier = new JRPMenuItemTLP(ShowOneTierAction.getAction());
+//		GenericActionHolder.getInstance().addGenericAction(ShowOneTierAction.getAction());
+//		show_one_tier.setEnabled(any_are_separate_tiers);
+//		strandsMenu.add(show_one_tier);
+//		strandsMenu.setEnabled(!coordinates_track_selected);
+//		popup.add(strandsMenu);
+		JMenuItem hide = new JMenuItem();
+		hide.setAction(HideAction.getAction());
+		hide.setIcon(null);
+		hide.setEnabled(num_selections > 0);
+		popup.add(hide);
+		popup.add(addShowMenu(containHiddenTiers));
+		JMenuItem collapse = new JCheckBoxMenuItem();
+		if(any_are_expanded && any_are_collapsed){
+			collapse.setEnabled(false);
+		}
+		else if(any_are_expanded){
+			collapse.setEnabled(true);
+			collapse.setAction(CollapseAction.getAction());
+			collapse.setSelected(false);
+		}
+		else if(any_are_collapsed){
+			collapse.setEnabled(true);
+			collapse.setAction(ExpandAction.getAction());
+			collapse.setSelected(true);
+		}
+		collapse.setText("Collapse");
+		collapse.setIcon(null);
 		popup.add(collapse);
-		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
-		expand.setEnabled(any_are_collapsed);
-		popup.add(expand);
-		JCheckBoxMenuItem lock = new JCheckBoxMenuItem();
-		if(any_locked){
-			lock.setAction(UnlockTierHeightAction.getAction());
-			lock.setSelected(any_locked);
-			lock.setText(LockTierHeightAction.getAction().getDisplay());
-		}else{
-			lock.setAction(LockTierHeightAction.getAction());
-		}
-		lock.setEnabled(any_lockable);
-		if(!any_locked){
-			lock.setEnabled(!all_but_one_locked && any_lockable);
-		}
-		popup.add(lock);
+		JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
+		customize.setIcon(null);
+		customize.setText("Customize...");
+		popup.add(customize);
+//		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
+//		expand.setEnabled(any_are_collapsed);
+//		popup.add(expand);
+//		JCheckBoxMenuItem lock = new JCheckBoxMenuItem();
+//		if(any_locked){
+//			lock.setAction(UnlockTierHeightAction.getAction());
+//			lock.setSelected(any_locked);
+//			lock.setText(LockTierHeightAction.getAction().getDisplay());
+//		}else{
+//			lock.setAction(LockTierHeightAction.getAction());
+//		}
+//		lock.setEnabled(any_lockable);
+//		if(!any_locked){
+//			lock.setEnabled(!all_but_one_locked && any_lockable);
+//		}
+//		popup.add(lock);
 //		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
 //		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
 //		popup.add(repack_selected_tiers);
@@ -331,40 +363,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //			JMenuItem maximize_track = new JRPMenuItemTLP(MaximizeTrackAction.getAction());
 //			popup.add(maximize_track);
 //		}
-		popup.add(new JSeparator());
-		JMenuItem hide = new JRPMenuItemTLP(HideAction.getAction());
-		hide.setEnabled(num_selections > 0);
-		popup.add(hide);
-		popup.add(addShowMenu(containHiddenTiers));
-		JMenuItem show_all = new JRPMenuItemTLP(ShowAllAction.getAction());
-		show_all.setEnabled(containHiddenTiers);
-		popup.add(show_all);
-		JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
-		remove_data_from_tracks.setEnabled(num_selections > 0 && !coordinates_track_selected);
-		popup.add(remove_data_from_tracks); // Remove data from selected tracks.
-		JMenuItem save_track = new JRPMenuItemTLP(ExportFileAction.getAction());
-		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null);
-		popup.add(save_track);
-		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
-		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty());
-		popup.add(save_selected_annotations);
-		if (tierGlyph != null) {
-			// Check whether this selection is a graph or an annotation
-			ITrackStyleExtended style = tierGlyph.getAnnotStyle();
-			GenericFeature feature = style.getFeature();
-			if (feature != null) {
-				if (tierGlyph.getFileTypeCategory() == FileTypeCategory.Sequence) {
-					popup.add(new JSeparator());
-					JMenuItem use_as_reference_seq = new JRPMenuItemTLP(UseAsReferenceSeqAction.getAction());
-					popup.add(use_as_reference_seq);
-				}
-
-				if (feature.friendlyURL != null) {
-					popup.add(new JRPMenuItemTLP(new FeatureInfoAction(feature.friendlyURL.toString())));
-				}
-			}
-		}
-		popup.add(new JSeparator());
+		//popup.add(new JSeparator());
+		//JMenuItem show_all = new JRPMenuItemTLP(ShowAllAction.getAction());
+		//show_all.setEnabled(containHiddenTiers);
+		//popup.add(show_all);
+		//JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
+		//remove_data_from_tracks.setEnabled(num_selections > 0 && !coordinates_track_selected);
+		//popup.add(remove_data_from_tracks); // Remove data from selected tracks.
 		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
 		if (operationsMenu != null) {
 			popup.add(operationsMenu);
@@ -372,11 +377,39 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
 		color_by_score.setSelected(!any_are_color_off && num_selections > 0 && !coordinates_track_selected);
 		color_by_score.setEnabled(num_selections == 1);
+		color_by_score.setIcon(null);
 		popup.add(color_by_score);
 		JMenuItem set_color_by_score = new JRPMenuItemTLP(SetColorByScoreAction.getAction());
+		set_color_by_score.setIcon(null);
 		popup.add(set_color_by_score);
-		popup.add(new JSeparator());
-		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
+		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
+		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty());
+		save_selected_annotations.setIcon(null);
+		popup.add(save_selected_annotations);
+		JMenuItem save_track = new JRPMenuItemTLP(ExportFileAction.getAction());
+		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null);
+		save_track.setIcon(null);
+		popup.add(save_track);
+		
+	//	if (tierGlyph != null) {
+	//		// Check whether this selection is a graph or an annotation
+	//		ITrackStyleExtended style = tierGlyph.getAnnotStyle();
+	//		GenericFeature feature = style.getFeature();
+	//		if (feature != null) {
+	//			if (tierGlyph.getFileTypeCategory() == FileTypeCategory.Sequence) {
+	//				popup.add(new JSeparator());
+	//				JMenuItem use_as_reference_seq = new JRPMenuItemTLP(UseAsReferenceSeqAction.getAction());
+	//				popup.add(use_as_reference_seq);
+	//			}
+//
+//				if (feature.friendlyURL != null) {
+//					popup.add(new JRPMenuItemTLP(new FeatureInfoAction(feature.friendlyURL.toString())));
+//				}
+//			}
+//		}
+		//popup.add(new JSeparator());
+		//popup.add(new JSeparator());
+//		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
 		if (DEBUG) {
 			popup.add(new AbstractAction("DEBUG") {
 

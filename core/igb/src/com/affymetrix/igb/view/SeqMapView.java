@@ -2160,12 +2160,12 @@ public class SeqMapView extends JPanel
 	 *
 	 * @param glyphs
 	 */
-	public final void setToolTip(List<GlyphI> glyphs) {
+	public final void setToolTip(MouseEvent evt, List<GlyphI> glyphs) {
 		if (!show_prop_tooltip) {
 			return;
 		}
 
-		((AffyLabelledTierMap) seqmap).setToolTip(null);
+		((AffyLabelledTierMap) seqmap).setToolTip(evt, null);
 
 		if (glyphs.isEmpty()) {
 			return;
@@ -2177,13 +2177,13 @@ public class SeqMapView extends JPanel
 			if (propertyHandler != null) {
 				String[][] properties = propertyHandler.getPropertiesRow(sym.get(0), this);
 				String tooltip = convertPropsToString(properties);
-				((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+				((AffyLabelledTierMap) seqmap).setToolTip(evt, tooltip);
 			}
 		} else if (glyphs.get(0) instanceof TierLabelGlyph) {
 			Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
 			String tooltip = convertPropsToString(properties);
-			((AffyLabelledTierMap) seqmap).getLabelMap().setToolTip(tooltip);
-		}
+			((AffyLabelledTierMap) seqmap).getLabelMap().setToolTip(evt, tooltip);
+		} 
 	}
 
 	/**
@@ -2191,12 +2191,12 @@ public class SeqMapView extends JPanel
 	 *
 	 * @param glyph
 	 */
-	public final void setToolTip(int x, GraphGlyph glyph) {
+	public final void setToolTip(MouseEvent evt, int x, GraphGlyph glyph) {
 		if (!show_prop_tooltip) {
 			return;
 		}
 
-		((AffyLabelledTierMap) seqmap).setToolTip(null);
+		((AffyLabelledTierMap) seqmap).setToolTip(evt, null);
 
 		List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 		glyphs.add(glyph);
@@ -2206,7 +2206,7 @@ public class SeqMapView extends JPanel
 			if (propertyHandler != null) {
 				String[][] properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) sym.get(0), x, this);
 				String tooltip = convertPropsToString(properties);
-				((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+				((AffyLabelledTierMap) seqmap).setToolTip(evt, tooltip);
 			}
 		}
 	}

@@ -172,7 +172,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			if (evt.getSource() == map) {
 				smv.getSeqMap().setCursor(SeqMapView.openHandCursor);
 			}
-			smv.setToolTip(glyphs);
+			smv.setToolTip(evt, glyphs);
 			return;
 		}
 
@@ -182,7 +182,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			smv.getSeqMap().setCursor(smv.getMapMode().defCursor);
 		}
 
-		smv.setToolTip(glyphs);	// empty tooltip
+		smv.setToolTip(evt, glyphs);	// empty tooltip
 	}
 
 	// show properites in tool tip or display in selection info tab table
@@ -196,7 +196,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 				map.getView().transformToCoords(pbox, cbox);
 
 				if (isToolTip) {
-					smv.setToolTip((int) cbox.getX(), glyph);
+					smv.setToolTip(evt, (int) cbox.getX(), glyph);
 				} else {
 					smv.showProperties((int) cbox.getX(), glyph);
 				}

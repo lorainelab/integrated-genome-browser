@@ -32,6 +32,7 @@ import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.print.PageFormat;
@@ -555,7 +556,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 	}
 
-	public void setToolTip(String text){
+	public void setToolTip(MouseEvent evt, String text) {
 		getNeoCanvas().setToolTipText(text);
 	}
 

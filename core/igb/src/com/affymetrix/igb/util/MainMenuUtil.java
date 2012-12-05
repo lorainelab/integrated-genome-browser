@@ -83,6 +83,7 @@ public class MainMenuUtil {
 //		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_colorChoice", ColorSchemeChoiceAction.getAction()));
 //		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_canonicalize", CanonicalizeTracksAction.getAction()));
 		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectTracks"));
+		select_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_deselect_all", DeselectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {
@@ -96,6 +97,7 @@ public class MainMenuUtil {
 		JRPMenu view_menu = MenuUtil.getRPMenu(menuBar, id + "_main_viewMenu", BUNDLE.getString("viewMenu"));
 		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
 		JRPMenu strands_menu = new JRPMenu(id + "_main_viewMenu_strands", BUNDLE.getString("strands"));
+		strands_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showPlus", ShowPlusStrandAction.getAction()));
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showMinus", ShowMinusStrandAction.getAction()));
 		view_menu.add(strands_menu);
@@ -121,6 +123,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_showLockTrackIcon", ShowLockedTrackIconAction.getAction()));
 		view_menu.addSeparator();
 		JRPMenu track_resize_behavior = MenuUtil.getRPMenu(menuBar, id + "_main_viewMenu_trackResizeBehavior", BUNDLE.getString("trackResizeBehavior"));
+		track_resize_behavior.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
 		MenuUtil.addToMenu(view_menu, track_resize_behavior);
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAllTrack", ToggleTrackResizingAction.getAction().getAdjustAllAction()));
 		MenuUtil.addToMenu(track_resize_behavior, new JRPCheckBoxMenuItem(id + "_main_viewMenu_trackResizeBehavior_adjustAdjacentTrack", ToggleTrackResizingAction.getAction().getAdjustAdjacentAction()));
@@ -128,6 +131,7 @@ public class MainMenuUtil {
 		
 		ButtonGroup codonDisplayMenuItemGroup = new ButtonGroup();
 		JRPMenu codon_display_menu = new JRPMenu(id + "_main_viewMenu_codonDisplay", BUNDLE.getString("codonDisplay"));
+		codon_display_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
 		MenuUtil.addToMenu(view_menu, codon_display_menu);
 		JRPRadioButtonMenuItem threeLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_threeLetter", ShowCodonGlyphAction.getThreeLetterAction());
 		JRPRadioButtonMenuItem oneLetterMenuItem = new JRPRadioButtonMenuItem(id + "_main_viewMenu_codonDisplay_oneLetter", ShowCodonGlyphAction.getOneLetterAction());
@@ -153,6 +157,7 @@ public class MainMenuUtil {
 		tools_menu.addSeparator();
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
 		JRPMenu scripts_menu = new JRPMenu(id + "_main_toolsMenu_scripts", BUNDLE.getString("scripts"));
+		scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
 		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_runScript", RunScriptAction.getAction()));
 //		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_saveScript", SaveScriptAction.getAction()));
 		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_cancelScript", CancelScriptAction.getAction()));

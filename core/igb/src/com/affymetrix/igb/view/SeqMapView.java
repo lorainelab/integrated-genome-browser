@@ -1829,7 +1829,7 @@ public class SeqMapView extends JPanel
 			return;
 		}
 
-		//preparePopup(sym_popup, nevt);
+		preparePopup(sym_popup, nevt);
 
 		if (sym_popup.getComponentCount() > 0) {
 

@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
@@ -1941,14 +1940,14 @@ public class SeqMapView extends JPanel
 					}
 				}
 
-				return;
+//				return;
 			}
 
-			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
-				JMenuItem refresh_a_feature= new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature));
-				refresh_a_feature.setIcon(null);
-				popup.add(refresh_a_feature);
-			}
+//			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
+//				JMenuItem refresh_a_feature= new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature));
+//				refresh_a_feature.setIcon(null);
+//				popup.add(refresh_a_feature);
+//			}
 		}
 	}
 

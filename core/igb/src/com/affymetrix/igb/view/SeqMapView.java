@@ -571,7 +571,8 @@ public class SeqMapView extends JPanel
 	private void setupPopups() {
 		sym_info = new JLabel("");
 		sym_info.setEnabled(false); // makes the text look different (usually lighter)
-
+		sym_info.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		
 //		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 

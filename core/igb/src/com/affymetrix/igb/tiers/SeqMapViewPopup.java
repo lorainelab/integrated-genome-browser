@@ -11,16 +11,11 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
@@ -29,11 +24,13 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
@@ -293,6 +290,19 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		all_but_one_locked = no_of_locked == handler.getVisibleTierGlyphs().size() - 2;
 
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
+		
+		Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+		Border colorBorder, finalBorder;
+		if(num_selections == 1 && tierGlyph != null){
+			colorBorder = BorderFactory.createLineBorder(tierGlyph.getAnnotStyle().getForeground());
+			finalBorder = BorderFactory.createCompoundBorder(colorBorder, emptyBorder);
+			
+		} else {
+			colorBorder = BorderFactory.createLineBorder(Color.BLACK);
+			finalBorder = BorderFactory.createCompoundBorder(colorBorder, emptyBorder);
+		}
+		popup.setBorder(finalBorder);
+		
 		JMenuItem optimize_stack_height = new JRPMenuItemTLP(ChangeExpandMaxOptimizeAction.getAction());
 		optimize_stack_height.setIcon(null);
 		optimize_stack_height.setText("Optimize Stack Height");
@@ -321,7 +331,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		hide.setIcon(null);
 		hide.setEnabled(num_selections > 0);
 		popup.add(hide);
-		popup.add(addShowMenu(containHiddenTiers));
+		JMenu showMenu = addShowMenu(containHiddenTiers);
+		popup.add(showMenu);
+		showMenu.getPopupMenu().setBorder(finalBorder);
 		JMenuItem collapse = new JCheckBoxMenuItem();
 		if(any_are_expanded && any_are_collapsed){
 			collapse.setEnabled(false);
@@ -378,6 +390,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
 		if (operationsMenu != null) {
 			popup.add(operationsMenu);
+			operationsMenu.getPopupMenu().setBorder(finalBorder);
 		}
 		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
 		color_by_score.setSelected(!any_are_color_off && num_selections > 0 && !coordinates_track_selected);

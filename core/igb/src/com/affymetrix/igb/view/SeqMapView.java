@@ -57,6 +57,7 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import javax.swing.border.Border;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -1877,6 +1878,16 @@ public class SeqMapView extends JPanel
 	 */
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		List<GlyphI> selected_glyphs = seqmap.getSelected();
+		
+		Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+		if(selected_glyphs.size() == 1){
+			Border colorBorder = BorderFactory.createLineBorder(selected_glyphs.get(0).getColor());
+			popup.setBorder(BorderFactory.createCompoundBorder(colorBorder, emptyBorder));
+		} else {
+			Border colorBorder = BorderFactory.createLineBorder(Color.BLACK);
+			popup.setBorder(BorderFactory.createCompoundBorder(colorBorder, emptyBorder));
+		}
+		
 		JMenuItem select_parent_action = new JMenuItem(SelectParentAction.getAction());
 		select_parent_action.setIcon(null);
 		JMenuItem zoom_on_selected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());

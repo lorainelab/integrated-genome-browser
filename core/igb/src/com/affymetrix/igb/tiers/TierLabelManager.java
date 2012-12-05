@@ -22,12 +22,12 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 
 import java.awt.Cursor;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
@@ -600,8 +600,8 @@ public final class TierLabelManager implements PropertyHolder {
 			return;
 
 		String label;
-		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getFeature() != null)
-			label = tiers.get(0).getAnnotStyle().getFeature().featureName;
+		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getTrackName() != null)
+			label = tiers.get(0).getAnnotStyle().getTrackName();
 		else
 			label = tiers.size() + " Selections";
 
@@ -612,6 +612,7 @@ public final class TierLabelManager implements PropertyHolder {
 		if(label != null && label.length() > 0){
 			JLabel label_name = new JLabel(label);
 			label_name.setEnabled(false); // makes the text look different (usually lighter)
+			label_name.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 			popup.add(label_name);
 		}
 	}

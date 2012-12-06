@@ -1,16 +1,19 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import static com.affymetrix.igb.shared.Selections.*;
 
 public class CloseTracksAction
 extends SeqMapViewActionA implements SymSelectionListener {
@@ -37,10 +40,23 @@ extends SeqMapViewActionA implements SymSelectionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		List<TierLabelGlyph> tiers = getTierManager().getSelectedTierLabels();
-		for (TierLabelGlyph tlg : tiers) {
-			TierGlyph tg = (TierGlyph)tlg.getInfo();
-			GenericFeature gFeature = tg.getAnnotStyle().getFeature();
+		
+		// First split the graph.
+		for (StyledGlyph vg : allGlyphs) {
+			//If graphs is joined then apply color to combo style too.
+			// TODO: Use code from split graph
+			if (vg instanceof GraphGlyph) {
+				ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
+				if (style != null) {
+					GraphState gstate = ((GraphGlyph) vg).getGraphState();
+					gstate.setComboStyle(null, 0);
+					gstate.getTierStyle().setJoin(false);
+				}
+			}
+		}
+		
+		for (StyledGlyph vg : allGlyphs) {
+			GenericFeature gFeature = vg.getAnnotStyle().getFeature();
 			if (gFeature != null) {
 				GeneralLoadView.getLoadView().removeFeature(gFeature, true);
 			}

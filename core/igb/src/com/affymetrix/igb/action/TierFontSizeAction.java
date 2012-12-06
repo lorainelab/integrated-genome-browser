@@ -1,10 +1,11 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.StyledGlyph;
 
+import static com.affymetrix.igb.shared.Selections.*;
 /**
  *
  * @author hiralv
@@ -23,10 +24,18 @@ public class TierFontSizeAction extends SeqMapViewActionA implements Parametered
 	}
 
 	private void setFontSize(int fontsize){
-		for (TierGlyph tier : getTierManager().getSelectedTiers()) {
-			ITrackStyleExtended style = tier.getAnnotStyle();
+		for (StyledGlyph sg : allGlyphs) {
+			ITrackStyleExtended style = sg.getAnnotStyle();
 			if (style != null) {
 				style.setTrackNameSize(fontsize);
+			}
+			
+			//If graphs is joined then apply color to combo style too.
+			if (sg instanceof GraphGlyph) {
+				style = ((GraphGlyph) sg).getGraphState().getComboStyle();
+				if (style != null) {
+					style.setTrackNameSize(fontsize);
+				}
 			}
 		}
 	}

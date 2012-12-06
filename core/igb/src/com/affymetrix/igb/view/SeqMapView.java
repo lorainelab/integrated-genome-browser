@@ -286,7 +286,6 @@ public class SeqMapView extends JPanel
 		}
 	};
 	
-	PopupInfo popupInfo;
 	public SeqMapView(boolean add_popups, String theId) {
 		super();
 		this.id = theId;
@@ -445,9 +444,7 @@ public class SeqMapView extends JPanel
 		}
 
 		this.add(BorderLayout.CENTER, seqmap);
-
-		popupInfo = new PopupInfo(com.affymetrix.igb.Application.getSingleton().getFrame());
-		
+	
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
@@ -2219,7 +2216,7 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setToolTip(MouseEvent evt, String text) {
-		popupInfo.setToolTip(evt, text);
+		seqmap.getNeoCanvas().setToolTipText(text);
 	}
 	
 	public void showProperties(int x, GraphGlyph glyph) {

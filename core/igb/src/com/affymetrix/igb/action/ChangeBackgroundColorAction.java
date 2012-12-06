@@ -24,6 +24,7 @@ public class ChangeBackgroundColorAction extends ChangeColorActionA {
 				"16x16/actions/BG_color.png",
 				"22x22/actions/BG_color.png");
 		this.ordinal = -6008100;
+		iterateMultiGraph(false);
 	}
 
 	@Override

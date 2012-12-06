@@ -71,17 +71,22 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	private void changeColor(Color color) {
 		for (StyledGlyph vg : allGlyphs) {
-			ITrackStyleExtended style = vg.getAnnotStyle();
-			if (style != null) {
-				setStyleColor(color, style);
-			}
+			ITrackStyleExtended style;
 			
-			//If graphs is joined then apply color to combo styl too.
+			//If graphs is joined then apply color to combo style too.
 			if (vg instanceof GraphGlyph) {
 				style = ((GraphGlyph) vg).getGraphState().getComboStyle();
 				if (style != null) {
 					setStyleColor(color, style);
+					if(!iterateMultigraph){
+						continue;
+					}
 				}
+			}
+			
+			style = vg.getAnnotStyle();
+			if (style != null) {
+				setStyleColor(color, style);
 			}
 		}
 	}

@@ -176,17 +176,19 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			return;
 		}
 
-		showGraphProperties(true, evt);
+		boolean isShowingGraphToolTip = showGraphProperties(true, evt);
 
 		if (smv.getSeqMap().getCursor() != smv.getMapMode().defCursor && evt.getSource() == map) {
 			smv.getSeqMap().setCursor(smv.getMapMode().defCursor);
 		}
 
-		smv.setToolTip(evt, glyphs);	// empty tooltip
+		if(!isShowingGraphToolTip){
+			smv.setToolTip(evt, glyphs);	// empty tooltip
+		}
 	}
 
 	// show properites in tool tip or display in selection info tab table
-	private void showGraphProperties(boolean isToolTip, MouseEvent evt) {
+	private boolean showGraphProperties(boolean isToolTip, MouseEvent evt) {
 		// Do we intersect any graph glyphs?
 		List<GraphGlyph> glyphlist = smv.collectGraphs();
 		Point2D pbox = evt.getPoint();
@@ -197,12 +199,14 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 				if (isToolTip) {
 					smv.setToolTip(evt, (int) cbox.getX(), glyph);
+					return true;
 				} else {
 					smv.showProperties((int) cbox.getX(), glyph);
 				}
 				break;
 			}
 		}
+		return false;
 	}
 
 	public void heardGlyphDrag(NeoGlyphDragEvent evt) {

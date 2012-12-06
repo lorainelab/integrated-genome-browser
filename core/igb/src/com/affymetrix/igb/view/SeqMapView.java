@@ -179,6 +179,7 @@ public class SeqMapView extends JPanel
 	private final GlyphEdgeMatcher edge_matcher;
 	private JPopupMenu sym_popup = null;
 	private JLabel sym_info;
+	private String currentToolTip;
 	// A fake menu item, prevents null pointer exceptions in loadResidues()
 	// for menu items whose real definitions are commented-out in the code
 	private static final JMenuItem empty_menu_item = new JMenuItem("");
@@ -2169,25 +2170,23 @@ public class SeqMapView extends JPanel
 			return;
 		}
 
-		setToolTip(evt, (String)null);
-
-		if (glyphs.isEmpty()) {
-			return;
-		}
-
-		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
-
-		if (!sym.isEmpty()) {
-			if (propertyHandler != null) {
-				String[][] properties = propertyHandler.getPropertiesRow(sym.get(0), this);
-				String tooltip = convertPropsToString(properties);
-				setToolTip(evt, tooltip);
+		String toolTip = null;
+		if (!glyphs.isEmpty()) {
+			List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
+			if (!sym.isEmpty()) {
+				if (propertyHandler != null) {
+					String[][] properties = propertyHandler.getPropertiesRow(sym.get(0), this);
+					toolTip = convertPropsToString(properties);
+				}
+			} else if (glyphs.get(0) instanceof TierLabelGlyph) {
+				Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
+				toolTip = convertPropsToString(properties);
+			} else {
+				toolTip = null;
 			}
-		} else if (glyphs.get(0) instanceof TierLabelGlyph) {
-			Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
-			String tooltip = convertPropsToString(properties);
-			setToolTip(evt, tooltip);
-		} 
+		}
+		
+		setToolTip(evt, toolTip);
 	}
 
 	/**
@@ -2200,23 +2199,37 @@ public class SeqMapView extends JPanel
 			return;
 		}
 
-		setToolTip(evt, (String)null);
-
 		List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 		glyphs.add(glyph);
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
+		String toolTip = null;
 		if (!sym.isEmpty()) {
 			if (propertyHandler != null) {
 				String[][] properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) sym.get(0), x, this);
-				String tooltip = convertPropsToString(properties);
-				setToolTip(evt, tooltip);
+				toolTip = convertPropsToString(properties);
 			}
+		} else {
+			toolTip = null;
 		}
+		
+		setToolTip(evt, toolTip);
 	}
 
-	private void setToolTip(MouseEvent evt, String text) {
-		seqmap.getNeoCanvas().setToolTipText(text);
+	private void setToolTip(MouseEvent evt, String toolTip) {
+		
+		// Nothing has changed return
+		if(currentToolTip == null && toolTip == null) {
+			return;
+		}
+		
+		// Check if tooltip has changed from current tooltip.
+		if ((currentToolTip == null && toolTip != null) 
+				|| (currentToolTip != null && toolTip == null)
+				|| !(currentToolTip.equals(toolTip))){
+			currentToolTip = toolTip;
+			seqmap.getNeoCanvas().setToolTipText(toolTip);
+		}
 	}
 	
 	public void showProperties(int x, GraphGlyph glyph) {

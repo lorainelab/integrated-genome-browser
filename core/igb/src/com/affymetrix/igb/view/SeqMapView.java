@@ -285,7 +285,8 @@ public class SeqMapView extends JPanel
 			timer.stop();
 		}
 	};
-		
+	
+	PopupInfo popupInfo;
 	public SeqMapView(boolean add_popups, String theId) {
 		super();
 		this.id = theId;
@@ -445,6 +446,8 @@ public class SeqMapView extends JPanel
 
 		this.add(BorderLayout.CENTER, seqmap);
 
+		popupInfo = new PopupInfo(com.affymetrix.igb.Application.getSingleton().getFrame());
+		
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
@@ -1989,6 +1992,10 @@ public class SeqMapView extends JPanel
 	}
 	
 	private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory... categories) {
+		if (rootSeqSymmetry == null){
+			return false;
+		}
+		
 		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null))
 			return true;
 		
@@ -2212,7 +2219,7 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setToolTip(MouseEvent evt, String text) {
-		seqmap.getNeoCanvas().setToolTipText(text);
+		popupInfo.setToolTip(evt, text);
 	}
 	
 	public void showProperties(int x, GraphGlyph glyph) {

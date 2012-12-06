@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -31,6 +32,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
@@ -44,7 +46,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
@@ -568,7 +569,12 @@ public final class GeneralLoadView {
 					for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
 						for (String method : feature.getMethods()) {
 							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
-							TrackStyle.removeInstance(method);
+							
+							if(GraphSymUtils.isAGraphExtension(feature.getExtension())){
+								DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
+							}else{
+								DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
+							}
 						}
 					}
 				}

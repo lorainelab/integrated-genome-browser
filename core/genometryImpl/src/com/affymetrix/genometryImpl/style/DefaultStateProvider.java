@@ -68,4 +68,18 @@ public class DefaultStateProvider implements StateProvider {
 		return state;
 	}
 	
+	public void removeAnnotStyle(String name){
+		id2annotState.remove(name);
+	}
+	  
+	public void removeGraphState(String name){
+		GraphState state = id2graphState.get(name);
+		if(state != null){
+			ITrackStyleExtended style = state.getTierStyle();
+			if(style != null){
+				getGlobalStateProvider().removeAnnotStyle(style.getMethodName());
+			}
+		}
+		id2graphState.remove(name);
+	}
 }

@@ -16,7 +16,12 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	}
 	return super.getGraphState(id, human_name, extension, props);
   }
-  	
+  
+  @Override
+  public void removeAnnotStyle(String name){
+	  TrackStyle.removeInstance(name);
+  }
+  
   @Override
   public ITrackStyleExtended getAnnotStyle(String name) {
     return TrackStyle.getInstance(name);

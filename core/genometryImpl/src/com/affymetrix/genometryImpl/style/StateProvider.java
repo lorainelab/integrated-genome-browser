@@ -17,6 +17,9 @@ import java.util.Map;
 public interface StateProvider {
 	public ITrackStyleExtended getAnnotStyle(String name);
 	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String,String> props);
+	public void removeAnnotStyle(String name);
+	 
 	public GraphState getGraphState(String name);
 	public GraphState getGraphState(String name, String human_name, String file_type, Map<String,String> props);
+	public void removeGraphState(String name);
 }

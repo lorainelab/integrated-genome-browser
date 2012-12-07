@@ -175,7 +175,6 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         stackDepthGoButton.setText("Apply");
-        stackDepthGoButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         stackDepthGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthGoButtonActionPerformed(evt);

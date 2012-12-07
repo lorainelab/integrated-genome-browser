@@ -270,9 +270,6 @@
         <Component class="javax.swing.JButton" name="stackDepthGoButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Apply"/>
-            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-              <Insets value="[0, 0, 0, 0]"/>
-            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthGoButtonActionPerformed"/>

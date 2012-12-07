@@ -2289,13 +2289,12 @@ public class SeqMapView extends JPanel
 			return "";
 		}
 		
-		String value;
 		int strlen = string.length();
-		value = string.substring(0, Math.min(25, strlen));
-		if (strlen > 30) {
-			value += " ...";
+		if (strlen < 30) {
+			return string;
 		}
-		return value;
+		
+		return " ..." + string.substring(strlen - 25, strlen);
 	}
 	
 	public boolean togglePropertiesTooltip() {

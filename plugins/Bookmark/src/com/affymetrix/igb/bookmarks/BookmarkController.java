@@ -77,7 +77,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-	public static void applyProperties(IGBService igbService, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
+	public static void applyProperties(IGBService igbService, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
 		double default_ypos = GraphState.DEFAULT_YPOS;
 		double default_yheight = GraphState.DEFAULT_YHEIGHT;
 		Color default_col = GraphState.DEFAULT_COL;
@@ -91,7 +91,6 @@ public abstract class BookmarkController {
 		int default_maxgap_thresh = GraphState.DEFAULT_MAXGAP_THRESH;
 		boolean default_show_thresh = GraphState.DEFAULT_SHOW_THRESH;
 		int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
-		Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
 
 		try {
 			for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
@@ -269,21 +268,11 @@ public abstract class BookmarkController {
 		gstate.setThresholdDirection(thresh_direction);
 		if (combo_name != null) {
 			ITrackStyleExtended combo_style = combos.get(combo_name);
-			if (combo_style == null) {
-				combo_style = new SimpleTrackStyle("Joined Graphs", true);
-				combo_style.setTrackName("Joined Graphs");
-				combo_style.setExpandable(true);
-				combo_style.setCollapsed(true);
-				//combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
-				combo_style.setBackground(igbService.getDefaultBackgroundColor());
-				//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
-				combo_style.setForeground(igbService.getDefaultForegroundColor());
-				combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
-				combos.put(combo_name, combo_style);
+			if (combo_style != null) {
+				gstate.setComboStyle(combo_style, 0);
+				gstate.getTierStyle().setJoin(true);
 			}
-			gstate.setComboStyle(combo_style, 0);
 		}
-
 	}
 
 	public static void addSymmetries(Bookmarks bookmark) {

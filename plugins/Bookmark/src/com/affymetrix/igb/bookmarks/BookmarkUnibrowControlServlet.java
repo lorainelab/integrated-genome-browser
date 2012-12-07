@@ -20,6 +20,8 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -33,6 +35,7 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -220,7 +223,27 @@ public final class BookmarkUnibrowControlServlet {
 
 					if (has_properties) {
 						List<String> graph_urls = getGraphUrls(parameters);
-
+						final Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
+						
+						for (int i = 0; parameters.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
+							String combo_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(parameters, Bookmark.GRAPH.COMBO.toString() + i);
+							if (combo_name != null) {
+								ITrackStyleExtended combo_style = combos.get(combo_name);
+								if (combo_style == null) {
+									combo_style = new SimpleTrackStyle("Joined Graphs", true);
+									combo_style.setTrackName("Joined Graphs");
+									combo_style.setExpandable(true);
+									//combo_style.setCollapsed(true);
+									//combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
+									combo_style.setBackground(igbService.getDefaultBackgroundColor());
+									//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
+									combo_style.setForeground(igbService.getDefaultForegroundColor());
+									combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
+									combos.put(combo_name, combo_style);
+								}
+							}
+						}
+						
 						for (int i = 0; i < gFeatures.length; i++) {
 							final GenericFeature feature = gFeatures[i];
 
@@ -229,7 +252,7 @@ public final class BookmarkUnibrowControlServlet {
 
 									@Override
 									public void run() {
-										BookmarkController.applyProperties(igbService, seq, parameters, feature);
+										BookmarkController.applyProperties(igbService, seq, parameters, feature, combos);
 									}
 								});
 							}

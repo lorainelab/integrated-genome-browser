@@ -445,7 +445,7 @@ public class SeqMapView extends JPanel
 		}
 
 		this.add(BorderLayout.CENTER, seqmap);
-	
+		
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
@@ -2250,16 +2250,12 @@ public class SeqMapView extends JPanel
 		}
 
 		StringBuilder props = new StringBuilder();
-		String value = null;
-		props.append("<html>");
+		props.append("<html>");		
 		for (Entry<String, Object> prop : properties.entrySet()) {
 			props.append("<b>");
 			props.append(prop.getKey());
 			props.append(" : </b>");
-			if (prop.getValue() != null) {
-				value = prop.getValue().toString();
-				props.append(value);
-			}
+			props.append(getSortString((String)prop.getValue()));
 			props.append("<br>");
 		}
 		props.append("</html>");
@@ -2272,19 +2268,15 @@ public class SeqMapView extends JPanel
 	 */
 	private static String convertPropsToString(String[][] properties) {
 		StringBuilder props = new StringBuilder();
-		String value = null;
 		props.append("<html>");
+		if(properties.length >= 1){
+			props.append("<div align='center'> <b> ").append(getSortString(properties[0][1])).append(" </b> </div> <hr>");
+		}
 		for (int i = 0; i < properties.length; i++) {
 			props.append("<b>");
 			props.append(properties[i][0]);
 			props.append(" : </b>");
-			if ((value = properties[i][1]) != null) {
-				int vallen = value.length();
-				props.append(value.substring(0, Math.min(25, vallen)));
-				if (vallen > 30) {
-					props.append(" ...");
-				}
-			}
+			props.append(getSortString(properties[i][1]));
 			props.append("<br>");
 		}
 		props.append("</html>");
@@ -2292,6 +2284,20 @@ public class SeqMapView extends JPanel
 		return props.toString();
 	}
 
+	private static String getSortString(String string){
+		if(string == null){
+			return "";
+		}
+		
+		String value;
+		int strlen = string.length();
+		value = string.substring(0, Math.min(25, strlen));
+		if (strlen > 30) {
+			value += " ...";
+		}
+		return value;
+	}
+	
 	public boolean togglePropertiesTooltip() {
 //		show_prop_tooltip = !show_prop_tooltip;
 //		setToolTip(null);

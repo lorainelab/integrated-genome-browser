@@ -22,7 +22,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 	private final JSlider zoomer;
 	private final JScrollBar scroller;
 	private final NeoMap map;
-	private boolean was_dragging = false;
+//	private boolean was_dragging = false;
 	public int threshold = ThresholdReader.default_threshold;
 	private boolean autoLoadEnabled;
 
@@ -73,10 +73,10 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 	}
 
 	private void update(Object src){
-		if (src == map && !was_dragging) {
-			was_dragging = false;
-			return;
-		}
+//		if (src == map && !was_dragging) {
+//			was_dragging = false;
+//			return;
+//		}
 
 		if (src == scroller) {
 			scroller_value = scroller.getValue();
@@ -97,7 +97,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 	}
 	
 	public void mouseDragged(MouseEvent e) {
-		was_dragging = true;
+//		was_dragging = true;
 	}
 
 	public boolean shouldAutoLoad(){

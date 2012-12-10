@@ -988,7 +988,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
 	private static String[] targetResidues(String residues, boolean tforward){
 		if(tforward){
-			comma_regex.split(residues);
+			return comma_regex.split(residues);
 		}
 		
 		String[] residues_array = comma_regex.split(residues);

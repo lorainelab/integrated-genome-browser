@@ -2255,7 +2255,7 @@ public class SeqMapView extends JPanel
 			props.append("<b>");
 			props.append(prop.getKey());
 			props.append(" : </b>");
-			props.append(getSortString((String)prop.getValue()));
+			props.append(getSortString(prop.getValue()));
 			props.append("<br>");
 		}
 		props.append("</html>");
@@ -2284,11 +2284,12 @@ public class SeqMapView extends JPanel
 		return props.toString();
 	}
 
-	private static String getSortString(String string){
-		if(string == null){
+	private static String getSortString(Object str){
+		if(str == null){
 			return "";
 		}
 		
+		String string = str.toString();
 		int strlen = string.length();
 		if (strlen < 30) {
 			return string;

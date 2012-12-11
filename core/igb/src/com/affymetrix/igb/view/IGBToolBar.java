@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -143,9 +144,8 @@ public class IGBToolBar extends JToolBar {
 			local_index++;
 		}
 		
-		toolbar_items_panel.add(button, local_index);	
-		toolbar_items_panel.validate();
-		toolbar_items_panel.repaint();
+		toolbar_items_panel.add(button, local_index);
+		refreshToolbar();
 	}
 	
 	public void removeToolbarAction(GenericAction action) {
@@ -156,8 +156,7 @@ public class IGBToolBar extends JToolBar {
 					((JButton)toolbar_items_panel.getComponent(i)).removeMouseListener(continuousActionListener);
 				}
 				toolbar_items_panel.remove(i);
-				toolbar_items_panel.validate();
-				toolbar_items_panel.repaint(); // to really make it gone.
+				refreshToolbar();
 				removed = true;
 				break;
 			}
@@ -170,6 +169,14 @@ public class IGBToolBar extends JToolBar {
 		}
 	}
 
+	private void refreshToolbar(){
+		toolbar_items_panel.validate();
+		toolbar_items_panel.repaint();
+		
+		validate();
+		repaint();
+	}
+	
 	public void reIndex(){
 		int index = 0;
 		for(Component c : toolbar_items_panel.getComponents()){

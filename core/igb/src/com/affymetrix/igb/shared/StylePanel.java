@@ -1,5 +1,7 @@
 package com.affymetrix.igb.shared;
 
+import java.awt.event.ActionEvent;
+
 public abstract class StylePanel extends javax.swing.JPanel {
 	protected boolean is_listening = true; // used to turn on and off listening to GUI events
 	private static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
@@ -138,25 +140,25 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
     private void labelSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelSizeComboBoxActionPerformed
         if (is_listening) {
-            labelSizeComboBoxActionPerformedA();
+            labelSizeComboBoxActionPerformedA(evt);
         }
     }//GEN-LAST:event_labelSizeComboBoxActionPerformed
 
     private void foregroundColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_foregroundColorComboBoxActionPerformed
         if (is_listening) {
-            foregroundColorComboBoxActionPerformedA();
+            foregroundColorComboBoxActionPerformedA(evt);
         }
     }//GEN-LAST:event_foregroundColorComboBoxActionPerformed
 
     private void backgroundColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backgroundColorComboBoxActionPerformed
         if (is_listening) {
-            backgroundColorComboBoxActionPerformedA();
+            backgroundColorComboBoxActionPerformedA(evt);
         }
     }//GEN-LAST:event_backgroundColorComboBoxActionPerformed
 
     private void labelColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelColorComboBoxActionPerformed
         if (is_listening) {
-            labelColorComboBoxActionPerformedA();
+            labelColorComboBoxActionPerformedA(evt);
         }
     }//GEN-LAST:event_labelColorComboBoxActionPerformed
 
@@ -204,10 +206,10 @@ public abstract class StylePanel extends javax.swing.JPanel {
 	// "// TODO add your handling code here:" to ""
 	// "                                     
 	// " 
-	protected abstract void labelSizeComboBoxActionPerformedA();
-	protected abstract void foregroundColorComboBoxActionPerformedA();
-	protected abstract void backgroundColorComboBoxActionPerformedA();
-	protected abstract void labelColorComboBoxActionPerformedA();
+	protected abstract void labelSizeComboBoxActionPerformedA(ActionEvent e);
+	protected abstract void foregroundColorComboBoxActionPerformedA(ActionEvent e);
+	protected abstract void backgroundColorComboBoxActionPerformedA(ActionEvent e);
+	protected abstract void labelColorComboBoxActionPerformedA(ActionEvent e);
 	
 	
 //	protected abstract void trackNameTextFieldActionPerformedA(ActionEvent evt);

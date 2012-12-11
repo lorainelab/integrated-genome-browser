@@ -151,7 +151,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 	}
 
-	public void setRowSelection(ITrackStyle style) {
+	private void setRowSelection(ITrackStyle style) {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			if (model != null && style != null) {
 				if (model.getValueAt(i, 0).equals(style.getTrackName())) {

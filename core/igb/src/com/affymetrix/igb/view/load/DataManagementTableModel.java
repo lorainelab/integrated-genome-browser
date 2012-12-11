@@ -437,9 +437,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 		fireTableCellUpdated(row, col);
 		update(col);
-		if (!ScriptManager.SCRIPTING.equals(value)) {
-			TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
-		}
+		//if (!ScriptManager.SCRIPTING.equals(value)) {
+		//	TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
+		//}
 	}
 
 	private void update(int col) {

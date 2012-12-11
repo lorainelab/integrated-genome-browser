@@ -8,6 +8,7 @@ import com.jidesoft.combobox.ColorComboBox;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import java.awt.event.ActionEvent;
 
 public abstract class StylePanelImpl extends StylePanel implements Selections.RefreshSelectionListener{
 	private static final long serialVersionUID = 1L;
@@ -47,7 +48,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 	}
 	
 	@Override
-	protected void labelSizeComboBoxActionPerformedA() {
+	protected void labelSizeComboBoxActionPerformedA(ActionEvent e) {
 		final JComboBox labelSizeComboBox = getLabelSizeComboBox();
 		int fontsize = (Integer)labelSizeComboBox.getSelectedItem();
 		if (fontsize <= 0) {
@@ -55,10 +56,11 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 		}
 		Actions.setTierFontSize(fontsize);
 		updateDisplay();
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
 	@Override
-	protected void foregroundColorComboBoxActionPerformedA() {
+	protected void foregroundColorComboBoxActionPerformedA(ActionEvent e) {
 		final ColorComboBox foregroundColorComboBox = getForegroundColorComboBox();
 		if (igbService.getSeqMap() == null) {
 			return;
@@ -66,10 +68,11 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 		Color color = foregroundColorComboBox.getSelectedColor();
 		Actions.setForegroundColor(color);
 		updateDisplay();
-	}
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+		}
 
 	@Override
-	protected void backgroundColorComboBoxActionPerformedA() {
+	protected void backgroundColorComboBoxActionPerformedA(ActionEvent e) {
 		final ColorComboBox backgroundColorComboBox = getBackgroundColorComboBox();
 		if (igbService.getSeqMap() == null) {
 			return;
@@ -77,14 +80,16 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 		Color color = backgroundColorComboBox.getSelectedColor();
 		Actions.setBackgroundColor(color);
 		updateDisplay();
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
 	@Override
-	protected void labelColorComboBoxActionPerformedA() {
+	protected void labelColorComboBoxActionPerformedA(ActionEvent e) {
 		final ColorComboBox labelColorComboBox = getLabelColorComboBox();
 		Color color = labelColorComboBox.getSelectedColor();
 		Actions.setLabelColor(color);
 		updateDisplay();
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 
 	@Override

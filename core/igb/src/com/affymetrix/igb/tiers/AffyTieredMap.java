@@ -32,6 +32,8 @@ import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.print.PageFormat;
@@ -74,6 +76,7 @@ public class AffyTieredMap extends NeoMap {
 	public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
 	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
 	
+	private int toolTipInitialDelay, toolTipDismissDelay;
 	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
 		this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
@@ -82,6 +85,8 @@ public class AffyTieredMap extends NeoMap {
 		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_plus));
 		ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_minus));
 		ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_mixed));
+		toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+		toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 	}
 
 	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
@@ -644,4 +649,19 @@ public class AffyTieredMap extends NeoMap {
 		return null;
 	}
 		
+	@Override
+	public void mouseEntered(MouseEvent e) { 
+		super.mouseEntered(e);
+		toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+		toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+		ToolTipManager.sharedInstance().setInitialDelay(0);
+	}
+	
+	@Override
+	public void mouseExited(MouseEvent e) { 
+		super.mouseExited(e);
+		ToolTipManager.sharedInstance().setDismissDelay(toolTipInitialDelay);
+		ToolTipManager.sharedInstance().setInitialDelay(toolTipDismissDelay);
+	}
 }

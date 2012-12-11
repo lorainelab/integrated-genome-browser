@@ -70,7 +70,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	private int no_of_prop_being_displayed = 0;
 	int select_start, select_end;
 	private GlyphI sub_sel_glyph;
-	private final int dismissdelay = ToolTipManager.sharedInstance().getDismissDelay();
+	private final int toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+	private final int toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 	private boolean shouldSubSelect = false;
 	
 	SeqMapViewMouseListener(SeqMapView smv) {
@@ -78,13 +79,19 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		this.map = smv.seqmap;
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent evt) {
-		ToolTipManager.sharedInstance().setDismissDelay(dismissdelay);
-	}
-
-	public void mouseExited(MouseEvent evt) {
 		if (evt.getSource() == map) {
 			ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+			ToolTipManager.sharedInstance().setInitialDelay(0);
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent evt) {
+		if (evt.getSource() == map) {
+			ToolTipManager.sharedInstance().setDismissDelay(toolTipInitialDelay);
+			ToolTipManager.sharedInstance().setInitialDelay(toolTipDismissDelay);
 		}
 	}
 

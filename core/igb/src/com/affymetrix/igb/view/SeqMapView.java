@@ -12,6 +12,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.text.MessageFormat;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -24,6 +25,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
@@ -57,7 +59,6 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import javax.swing.border.Border;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -2289,7 +2290,7 @@ public class SeqMapView extends JPanel
 			return "";
 		}
 		
-		String string = str.toString();
+		String string = GeneralUtils.URLDecode(str.toString());
 		int strlen = string.length();
 		if (strlen < 30) {
 			return string;

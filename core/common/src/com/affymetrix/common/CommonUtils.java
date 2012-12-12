@@ -61,6 +61,22 @@ public class CommonUtils {
 	}
 	
 	/**
+	 * Get a large(133x133) application icon 
+	 * @return 
+	 */
+	public ImageIcon getApplicationIcon(){
+		return CommonUtils.getInstance().getIcon("images/igb.gif");
+	}
+	
+	/**
+	 * Get a small(64x64) application icon
+	 * @return 
+	 */
+	public ImageIcon getApplicationSmallIcon(){
+		return CommonUtils.getInstance().getIcon("images/igb_small.gif");
+	}
+	
+	/**
 	 * Get the build version from svn repository.
 	 */
 	public boolean getUpdateAvailable(){

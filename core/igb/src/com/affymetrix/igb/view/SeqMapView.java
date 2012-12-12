@@ -978,6 +978,12 @@ public class SeqMapView extends JPanel
 	 */
 	private TierGlyph addAxisTier(int tier_index) {
 		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
+		resultAxisTier.setInfo(new RootSeqSymmetry(){
+			@Override
+			public FileTypeCategory getCategory() {
+				return FileTypeCategory.Axis;
+			}
+		});
 		resultAxisTier.setPacker(null);
 		resultAxisTier.setFixedPixHeight(54);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);

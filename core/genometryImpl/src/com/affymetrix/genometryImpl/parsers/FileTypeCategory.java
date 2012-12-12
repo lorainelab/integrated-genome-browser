@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 public enum FileTypeCategory {
+	Axis(false),
 	Annotation(true),
 	Alignment(true),
 	Graph(false),

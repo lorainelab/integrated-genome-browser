@@ -1,6 +1,5 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.view.StatusBar;
 
 import java.awt.event.ActionListener;
@@ -43,6 +42,8 @@ public abstract class Application {
 
 	abstract public java.awt.Image getIcon();
 
+	abstract public javax.swing.ImageIcon getSmallIcon();
+	
 	abstract public javax.swing.JFrame getFrame();
 
 	abstract public com.affymetrix.igb.view.SeqMapView getMapView();
@@ -127,8 +128,8 @@ public abstract class Application {
 
 		//If no node is provided then show default message
 		if (node == null) {
-			return JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
-					comp, message, "Confirm", JOptionPane.YES_NO_OPTION);
+			params = new Object[]{message};
+			return JOptionPane.YES_OPTION == showConfirmDialog(comp, params);
 		}
 
 		//If all parameters are provided then look up for boolean value from preference.
@@ -143,8 +144,7 @@ public abstract class Application {
 		final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
 		params = new Object[]{message, checkbox};
 
-		int ret = JOptionPane.showConfirmDialog(
-				comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
+		int ret = showConfirmDialog(comp, params);
 
 		if (JOptionPane.YES_OPTION == ret) {
 			if(checkbox.isSelected()){
@@ -154,6 +154,20 @@ public abstract class Application {
 		}
 
 		return false;
+	}
+	
+	private static int showConfirmDialog(final JComponent comp, Object[] params){
+		JOptionPane pane = new JOptionPane(params, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, getSingleton().getSmallIcon());
+		javax.swing.JDialog dialog = pane.createDialog(comp, "Confirm");	
+		dialog.setVisible(true);
+		
+		Object value = pane.getValue();
+		if(value == null){
+			return JOptionPane.NO_OPTION;
+		}
+		return (Integer)value;
+		
+		//return JOptionPane.showConfirmDialog(comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
 	}
 	
 	public static void infoPanel(final String message, final Preferences node,

@@ -57,6 +57,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.plaf.OptionPaneUI;
 
 
 /**
@@ -355,6 +356,11 @@ public final class IGB extends Application
 		tool_bar.saveToolBar();
 	}
 	
+	@Override
+	public ImageIcon getSmallIcon(){
+		return CommonUtils.getInstance().getApplicationSmallIcon();
+	}
+	
 	/**
 	 * Returns the icon stored in the jar file. It is expected to be at
 	 * com.affymetrix.igb.igb.gif.
@@ -363,7 +369,7 @@ public final class IGB extends Application
 	 */
 	@Override
 	public Image getIcon() {
-		ImageIcon imageIcon = CommonUtils.getInstance().getIcon("images/igb.gif");
+		ImageIcon imageIcon = CommonUtils.getInstance().getApplicationIcon();
 		if (imageIcon != null) {
 			return imageIcon.getImage();
 		}

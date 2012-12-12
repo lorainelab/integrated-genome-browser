@@ -148,6 +148,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 				setRowSelection(style);
 			}
+			table.setColumnSelectionInterval(0, 0);
+			table.requestFocus();
 		}
 	}
 

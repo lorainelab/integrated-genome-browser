@@ -170,7 +170,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		try {
 			if (this.errorMessage == null) {
 				this.aseq = seqmapview.getAnnotatedSeq();
-
+				if(aseq == null){
+					return;
+				}
+				
 				final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
 					public void actionDone(GenericAction action) {
 						mapframe = new JFrame();

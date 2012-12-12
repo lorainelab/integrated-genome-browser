@@ -33,6 +33,7 @@ public abstract class Selections {
 	public static final List<GraphState> graphStates = new CopyOnWriteArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new CopyOnWriteArrayList<GraphGlyph>();
 	public static final List<RootSeqSymmetry> rootSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
+	public static final List<ITrackStyleExtended> axisStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
 	
 	private static final SeqMapView smv;
 	private static final EventListenerList listenerList;
@@ -64,6 +65,7 @@ public abstract class Selections {
 		graphGlyphs.clear();
 		allGlyphs.clear();
 		rootSyms.clear();
+		axisStyles.clear();
 		for (StyledGlyph useGlyph : selected) {
 			FileTypeCategory category = useGlyph.getFileTypeCategory();
 			if (useGlyph instanceof GraphGlyph){
@@ -88,11 +90,14 @@ public abstract class Selections {
 						}
 					}
 				}
-			}else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment || category == FileTypeCategory.ProbeSet) {
+			} else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment 
+					|| category == FileTypeCategory.ProbeSet) {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
 				rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
+			} else if (category == FileTypeCategory.Axis){
+				axisStyles.add(useGlyph.getAnnotStyle());
 			}
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })

@@ -97,6 +97,7 @@ public abstract class Selections {
 				allGlyphs.add(useGlyph);
 				rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
 			} else if (category == FileTypeCategory.Axis){
+				allGlyphs.add(useGlyph);
 				axisStyles.add(useGlyph.getAnnotStyle());
 			}
 		}

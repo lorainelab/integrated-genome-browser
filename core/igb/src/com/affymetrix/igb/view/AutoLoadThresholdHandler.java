@@ -104,6 +104,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 		return ThresholdReader.getInstance().isDetail(threshold);
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
 		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
           return;
@@ -114,7 +115,8 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 		}
 		if(pce.getKey().equals(PreferenceUtils.PREFS_THRESHOLD)){
 			threshold = ThresholdReader.getInstance().getCurrentThresholdValue();
-			update(zoomer);
+			//update(zoomer); //No need. It would have been already done.
+			loadData();
 		}
 	}
 }

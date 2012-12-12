@@ -493,8 +493,6 @@ public class SeqMapView extends JPanel
 		refresh_button.setIcon(MenuUtil.getIcon("16x16/actions/refresh.png"));
 		refresh_button.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(refresh_button);
-				
-		AutoLoadThresholdHandler autoload = new AutoLoadThresholdHandler(this);
 	}
 	
 	protected void addLoadResidueButton(String id) {

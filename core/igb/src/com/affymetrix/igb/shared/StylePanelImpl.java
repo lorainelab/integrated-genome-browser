@@ -9,15 +9,17 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.awt.event.ActionEvent;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class StylePanelImpl extends StylePanel implements Selections.RefreshSelectionListener{
 	private static final long serialVersionUID = 1L;
 	protected IGBService igbService;
-	protected List<ITrackStyleExtended> styles;
+	protected final List<ITrackStyleExtended> styles;
 	
 	public StylePanelImpl(IGBService _igbService){
 		super();
 		igbService = _igbService;
+		styles = new CopyOnWriteArrayList<ITrackStyleExtended>();
 		setStyles();
 		resetAll();
 		Selections.addRefreshSelectionListener(this);
@@ -179,6 +181,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 
 	@Override
 	public void selectionRefreshed() {
+		styles.clear();
 		setStyles();
 		resetAll();
 	}

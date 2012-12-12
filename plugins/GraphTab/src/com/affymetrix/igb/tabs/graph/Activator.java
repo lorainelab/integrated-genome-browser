@@ -28,7 +28,7 @@ public class Activator extends WindowActivator implements org.osgi.framework.Bun
 
 			@Override
 			protected void setStyles() {
-				styles = Selections.graphStyles;
+				styles.addAll(Selections.graphStyles);
 			}
 
 			@Override

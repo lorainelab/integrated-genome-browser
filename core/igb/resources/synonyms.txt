@@ -183,6 +183,7 @@ S_tridecemlineatus_Feb_2008	speTri1	Spermophilus_tridecemlineatus.SQUIRREL.refer
 T_guttata_Jul_2008	taeGut1
 T_nigroviridis_Feb_2004	tetNig1
 T_nigroviridis_Mar_2007	tetNig2
+T_parvula_May_2012
 T_rubripes_Aug_2002	fr1
 T_rubripes_Oct_2004	fr2
 T_rubripes_Oct_2011	fr3

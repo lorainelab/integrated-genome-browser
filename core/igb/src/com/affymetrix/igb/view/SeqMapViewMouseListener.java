@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
@@ -22,6 +23,8 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import javax.swing.ToolTipManager;
 
 /**
@@ -40,8 +43,8 @@ import javax.swing.ToolTipManager;
  * Windows users, this is the normal behavior anyway. For Mac and Linux users,
  * it is not standard, but should be fine.
  */
-final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener,
-		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener {
+public final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener,
+		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener, PreferenceChangeListener {
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().
@@ -73,15 +76,19 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	private final int toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
 	private final int toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 	private boolean shouldSubSelect = false;
+	public static String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
+	public static boolean show_tooltip = true;
 	
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
 		this.map = smv.seqmap;
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+		show_tooltip = PreferenceUtils.getTopNode().getBoolean(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP, true);
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent evt) {
-		if (evt.getSource() == map) {
+		if (evt.getSource() == map && show_tooltip) {
 			ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 			ToolTipManager.sharedInstance().setInitialDelay(0);
 		}
@@ -89,7 +96,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 	@Override
 	public void mouseExited(MouseEvent evt) {
-		if (evt.getSource() == map) {
+		if (evt.getSource() == map && show_tooltip) {
 			ToolTipManager.sharedInstance().setDismissDelay(toolTipInitialDelay);
 			ToolTipManager.sharedInstance().setInitialDelay(toolTipDismissDelay);
 		}
@@ -664,5 +671,14 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			}
 		}
 		shouldSubSelect = false;
-	}	
+	}
+
+	public void preferenceChange(PreferenceChangeEvent pce) {
+		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
+          return;
+        }
+		if (pce.getKey().equals(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP)) {
+			show_tooltip = PreferenceUtils.getTopNode().getBoolean(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP, true);
+        }
+	}
 }

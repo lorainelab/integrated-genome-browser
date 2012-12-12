@@ -130,6 +130,7 @@ Takifugu rubripes	Fugu	T_rubripes	fr	Takifugu_rubripes
 Tarsius syrichta	Philippine tarsier	T_syrichta	tarSyr	Tarsius_syrichta
 Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig	Tetraodon_nigroviridis
 Thellungiella halophila	Salt cress	T_halophila
+Thellungiella parvula	Anatolian cress	T_parvula
 Thermococcus kodakaraensis KOD1	Hyperthermophilic Archaeon	T_kodakaraensis_KOD1	T. kodakaraensis_KOD1	T_kodakaraensis_KOD
 Tribolium castaneum	Red flour beetle	T_castaneum
 Triticum aestivum	Common wheat	T_aestivum

@@ -1379,10 +1379,34 @@ public final class GeneralLoadUtils {
 			//TODO: What if there are more than one seq group ?
 			if (groups.size() > 1) {
 				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-						Level.WARNING, "File {0} has more than one group", new Object[]{uri.toString()
-						});
+						Level.WARNING, "File {0} has more than one group. Looking for the closest match to existing", new Object[]{uri.toString()});
+				//First look for the selected group in the groups
+				for(AnnotatedSeqGroup gr : groups){
+					if(gr == group){
+						return gr;
+					}
+				}
+				
+				//If it does not match any exiting group the return the one that matches organism
+				if (group.getOrganism() != null && !group.getOrganism().equals("")) {
+					for (AnnotatedSeqGroup gr : groups) {
+						if (group.getOrganism().equalsIgnoreCase(gr.getOrganism())) {
+							return gr;
+						}
+					}
+				}
+				
+				//If it does not match organism then return the group with most version
+				AnnotatedSeqGroup grp = groups.get(0);
+				for(AnnotatedSeqGroup gr : groups){
+					if(gr.getAllVersions().size() > grp.getAllVersions().size()){
+						grp = gr;
+					}
+				}
+				return grp;
 			}
 
+			//Return the first one
 			return groups.get(0);
 		} catch (Exception ex) {
 			ex.printStackTrace();

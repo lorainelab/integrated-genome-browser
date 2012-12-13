@@ -782,8 +782,10 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			group = gmodel.getSeqGroup(version);
 		}
 		if (group == null) {
-			Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find group {0}.  Adding to default group {1}", new Object[]{version, default_seq_group.getID()});
-			return default_seq_group;
+			//Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find group {0}.  Adding to default group {1}", new Object[]{version, default_seq_group.getID()});
+			//return default_seq_group;
+			Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find group {0}.  Adding it as new group", groupname + ":" + version);
+			return gmodel.addSeqGroup(groupname + ":" + version);
 		}
 		if (group == default_seq_group) {
 			return group;	// nothing to do if the group that's found matches the default group.
@@ -791,7 +793,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 
 		// This is necessary to make sure new groups get added to the DataLoadView.
 		// maybe need a SeqGroupModifiedEvent class instead.
-		Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Switching to group {0}", group.getID());
+		// Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Switching to group {0}", group.getID());
 		
 		return group;
 	}

@@ -1321,7 +1321,8 @@ public final class GeneralLoadUtils {
 	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version) {
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
 		String extension = ParserController.getExtension(unzippedStreamName);
-
+		boolean getNewVersion = false;
+		
 		if (extension.equals(".bam")) {
 			if (!handleBam(uri)) {
 				ErrorHandler.errorPanel("Cannot open file", "Could not find index file", Level.WARNING);
@@ -1329,13 +1330,26 @@ public final class GeneralLoadUtils {
 			}
 		} else if (extension.equals(".useq")) {
 			loadGroup = handleUseq(uri, loadGroup);
-			version = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+			getNewVersion = true;
 		} else if (extension.equals(".bar")) {
 			loadGroup = handleBar(uri, loadGroup);
-			version = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+			getNewVersion = true;
 		} else if (extension.equals(".bp1") || extension.equals(".bp2")) {
 			loadGroup = handleBp(uri, loadGroup);
-			version = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+			getNewVersion = true;
+		}
+		
+		if(getNewVersion){
+			GenericVersion newVersion =  getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+			if(GenometryModel.getGenometryModel().getSelectedSeqGroup() == null 
+					|| version == newVersion
+					|| Application.confirmPanel(	MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
+							version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
+							PreferenceUtils.getTopNode(),
+							PreferenceUtils.CONFIRM_BEFORE_GROUP_CHANGE,
+							PreferenceUtils.default_confirm_before_group_change)){
+				version = newVersion;
+			}
 		}
 
 		return version;

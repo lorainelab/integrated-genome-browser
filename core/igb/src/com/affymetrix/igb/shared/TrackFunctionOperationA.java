@@ -23,6 +23,8 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -61,13 +63,14 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 
 	protected String getMethod(List<? extends GlyphI> vgs) {
 		StringBuilder meth = new StringBuilder();
-		meth.append(getOperator().getDisplay()).append(": ");
+		meth.append(getOperator().getDisplay()).append("- ");
 		boolean started = false;
 		for (GlyphI gl : vgs) {
 			if (started) {
 				meth.append(", ");
 			}
-			meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(((StyledGlyph)gl).getDirection().getDisplay());
+			//meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(((StyledGlyph)gl).getDirection().getDisplay());
+			meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName());
 			started = true;
 		}
 		return meth.toString();
@@ -97,7 +100,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 				meth.append(((UcscBedSym)result_sym).getType());
 			}
 			else {
-				meth.append(operator.getDisplay()).append(": ");
+				meth.append(operator.getDisplay()).append("- ");
 				for (GlyphI gl : vgs) {
 					meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
 				}
@@ -119,12 +122,21 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	}
 	
 	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
-		String method = GeneralUtils.URLEncode(featureName);	
+		String method = featureName.replaceAll("\\s+", "%20");	
 		method = TrackStyle.getUniqueName("file:/"+method);
 		
-		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
-		java.net.URI uri = java.net.URI.create(method);
+		java.net.URI uri;
+		try {
+			uri = java.net.URI.create(method);
+		} catch (java.lang.IllegalArgumentException ex){
+			Logger.getLogger(TrackFunctionOperationA.class.getName()).log(Level.INFO, "Illegal character in string "+method);
+			
+			//method = GeneralUtils.URLEncode(featureName);
+			//method = TrackStyle.getUniqueName("file:/"+method);
+			uri = java.net.URI.create(GeneralUtils.URLEncode(method));
+		}
 		
+		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
 		GenericFeature feature = new GenericFeature(featureName, null, version, new Delegate(uri, featureName, version, operator, dps), null, false);
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree

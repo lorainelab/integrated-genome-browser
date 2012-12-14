@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
@@ -2304,7 +2303,7 @@ public class SeqMapView extends JPanel
 			return "";
 		}
 		
-		String string = GeneralUtils.URLDecode(str.toString());
+		String string = str.toString();
 		int strlen = string.length();
 		if (strlen < 30) {
 			return string;

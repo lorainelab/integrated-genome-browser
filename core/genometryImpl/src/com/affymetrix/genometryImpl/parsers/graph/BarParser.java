@@ -370,6 +370,51 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		return false;
 	}
 
+	public static List<BarSeqHeader> getSeqHeaders(String uri, InputStream istr, 
+			AnnotatedSeqGroup default_seq_group, GenometryModel gmodel) throws IOException {
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		List<BarSeqHeader> headers = new ArrayList<BarSeqHeader>(10);
+
+		try {
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream) istr;
+			} else {
+				bis = new BufferedInputStream(istr);
+			}
+			dis = new DataInputStream(bis);
+
+			BarFileHeader bar_header = parseBarHeader(dis);
+			int total_seqs = bar_header.seq_count;
+			int vals_per_point = bar_header.vals_per_point;
+			
+			for (int k = 0; k < total_seqs; k++) {
+				BarSeqHeader seq_header = parseSeqHeader(uri, dis, gmodel, default_seq_group, bar_header);
+				headers.add(seq_header);
+				skipRest(seq_header, vals_per_point, dis);
+			}
+			
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(dis);
+		}
+
+		return headers;
+	}
+	
+	public static List<AnnotatedSeqGroup> getSeqGroups(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
+			throws IOException {
+
+		List<AnnotatedSeqGroup> groups = new ArrayList<AnnotatedSeqGroup>();
+		for (BarSeqHeader seq_header : getSeqHeaders(uri, istr, default_seq_group, gmodel)) {
+			AnnotatedSeqGroup group = seq_header.aseq.getSeqGroup();
+			if (!groups.contains(group)) {
+				groups.add(group);
+			}
+		}
+		return groups;
+	}
+		
 	/** Parse a file in BAR format. */
 	public static List<GraphSym> parse(String uri, InputStream istr, GenometryModel gmodel,
 			AnnotatedSeqGroup default_seq_group, BioSeq chrFilter, int min, int max, String stream_name,
@@ -439,42 +484,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		}
 
 		return graphs;
-	}
-
-	public static List<AnnotatedSeqGroup> getSeqGroups(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
-			throws IOException {
-
-		BufferedInputStream bis = null;
-		DataInputStream dis = null;
-		List<AnnotatedSeqGroup> groups = new ArrayList<AnnotatedSeqGroup>(4);
-
-		try {
-			if (istr instanceof BufferedInputStream) {
-				bis = (BufferedInputStream) istr;
-			} else {
-				bis = new BufferedInputStream(istr);
-			}
-			dis = new DataInputStream(bis);
-
-			BarFileHeader bar_header = parseBarHeader(dis);
-			int total_seqs = bar_header.seq_count;
-			int vals_per_point = bar_header.vals_per_point;
-			
-			for (int k = 0; k < total_seqs; k++) {
-				BarSeqHeader seq_header = parseSeqHeader(uri, dis, gmodel, default_seq_group, bar_header);
-				AnnotatedSeqGroup group = seq_header.aseq.getSeqGroup();
-				if(!groups.contains(group))
-					groups.add(group);
-				
-				skipRest(seq_header, vals_per_point, dis);
-			}
-			
-		} finally {
-			GeneralUtils.safeClose(bis);
-			GeneralUtils.safeClose(dis);
-		}
-
-		return groups;
 	}
 
 	private static void skipRest(BarSeqHeader seq_header, int vals_per_point, DataInputStream dis) throws IOException {
@@ -940,40 +949,40 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			String file_name) throws IOException {
 		// not processed here
 	}
-}
+	
+	public static final class BarSeqHeader {
 
-final class BarSeqHeader {
+		BioSeq aseq;
+		int data_point_count;
+		Map<String, String> tagvals;
 
-	BioSeq aseq;
-	int data_point_count;
-	Map<String, String> tagvals;
-
-	BarSeqHeader(BioSeq seq, int data_points, Map<String, String> tagvals) {
-		this.aseq = seq;
-		this.data_point_count = data_points;
-		this.tagvals = tagvals;
+		BarSeqHeader(BioSeq seq, int data_points, Map<String, String> tagvals) {
+			this.aseq = seq;
+			this.data_point_count = data_points;
+			this.tagvals = tagvals;
+		}
 	}
-}
 
-final class BarFileHeader {
+	public static final class BarFileHeader {
 
-	float version;
-	int seq_count;
-	int vals_per_point;
-	int val_types[];
-	int bytes_per_point = 0;
-	Map<String, String> tagvals;
+		float version;
+		int seq_count;
+		int vals_per_point;
+		int val_types[];
+		int bytes_per_point = 0;
+		Map<String, String> tagvals;
 
-	BarFileHeader(float version, int seq_count, int[] val_types, Map<String, String> tagvals) {
-		this.version = version;
-		this.seq_count = seq_count;
-		this.val_types = val_types;
-		this.vals_per_point = val_types.length;
-		this.tagvals = tagvals;
+		BarFileHeader(float version, int seq_count, int[] val_types, Map<String, String> tagvals) {
+			this.version = version;
+			this.seq_count = seq_count;
+			this.val_types = val_types;
+			this.vals_per_point = val_types.length;
+			this.tagvals = tagvals;
 
-		for (int i = 0; i < val_types.length; i++) {
-			int valtype = val_types[i];
-			bytes_per_point += BarParser.bytes_per_val[valtype];
+			for (int i = 0; i < val_types.length; i++) {
+				int valtype = val_types[i];
+				bytes_per_point += BarParser.bytes_per_val[valtype];
+			}
 		}
 	}
 }

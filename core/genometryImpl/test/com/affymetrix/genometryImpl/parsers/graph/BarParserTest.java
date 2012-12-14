@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser.BarFileHeader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

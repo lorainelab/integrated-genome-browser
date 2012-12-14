@@ -114,7 +114,7 @@ public interface SeqMapViewI {
 	 */
 	public void updatePanel(boolean preserveViewX, boolean preserveViewY);
 	
-	public List<? extends GlyphI> getFloatingGraphGlyphs();
+	public List<? extends GlyphI> getSelectedFloatingGraphGlyphs();
 
 	public List<SeqSymmetry> getSelectedSyms();
 

@@ -1334,6 +1334,16 @@ public class SeqMapView extends JPanel
 		return graphGlyphs;
 	}
 
+	public List<GraphGlyph> getFloatingGraphGlyphs() {
+		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+		if (pixel_floater_glyph.getChildren() != null) {
+			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
+				graphGlyphs.add((GraphGlyph)floatGlyph);
+			}
+		}
+		return graphGlyphs;
+	}
+	
 	/**
 	 * Determines which SeqSymmetry's are selected by looking at which Glyph's
 	 * are currently selected. The list will not include the selected sequence

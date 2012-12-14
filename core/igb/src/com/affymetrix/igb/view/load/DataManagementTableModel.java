@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -168,7 +169,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				tempVirtualFeatures.remove(vf);
 			}
 		}
-		
+				
 		// Fix for link.psl files
 		List<TierLabelGlyph> tierGlyphs = map.getTierLabels();
 		size = tierGlyphs.size();
@@ -198,6 +199,18 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND) || 
 					tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS )){
 				virtualFeatures.add(tempVirtualFeature);
+			}
+		}
+		
+		List<GraphGlyph> floatingGraphGlyphs = smv.getFloatingGraphGlyphs();
+		size = floatingGraphGlyphs.size();
+		for(int i=0; i<size; i++){
+			ITrackStyleExtended style = floatingGraphGlyphs.get(i).getAnnotStyle();
+
+			vf = style2Feature.get(style);
+			if(vf != null && !virtualFeatures.contains(vf)){
+				virtualFeatures.add(vf);
+				tempVirtualFeatures.remove(vf);
 			}
 		}
 		
@@ -541,6 +554,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 	}
 	
+	@Override
 	public void tableChanged(TableModelEvent e) {
 		if(virtualFeatures == null)
 			return;

@@ -7,12 +7,8 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
-import java.util.List;
 import javax.swing.SwingUtilities;
 import static com.affymetrix.igb.shared.Selections.*;
 
@@ -111,6 +107,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 				GenometryModel m = GenometryModel.getGenometryModel();
 				BioSeq s = m.getSelectedSeq();
 				v.setAnnotatedSeq(s, true, true);
+				v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
 				v.postSelections(); // to disable partner.
 			}
 		});

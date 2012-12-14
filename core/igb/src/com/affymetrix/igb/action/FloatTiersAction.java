@@ -7,12 +7,12 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import static com.affymetrix.igb.shared.Selections.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import javax.swing.SwingUtilities;
-import static com.affymetrix.igb.shared.Selections.*;
 
 public class FloatTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -96,6 +96,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 				GenometryModel m = GenometryModel.getGenometryModel();
 				BioSeq s = m.getSelectedSeq();
 				v.setAnnotatedSeq(s, true, true);
+				v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
 				v.postSelections(); // to disable partner.
 			}
 		});

@@ -102,7 +102,7 @@ public abstract class Selections {
 			}
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
-		List<GlyphI> selectedGraphs = (List)smv.getFloatingGraphGlyphs();
+		List<GlyphI> selectedGraphs = (List)smv.getSelectedFloatingGraphGlyphs();
 		for (GlyphI glyph : selectedGraphs) {
 			if (glyph instanceof GraphGlyph) {
 				GraphGlyph gg = (GraphGlyph) glyph;

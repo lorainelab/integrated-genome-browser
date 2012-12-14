@@ -1322,7 +1322,7 @@ public class SeqMapView extends JPanel
 	}
 
 	@Override
-	public List<GraphGlyph> getFloatingGraphGlyphs() {
+	public List<GraphGlyph> getSelectedFloatingGraphGlyphs() {
 		List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {

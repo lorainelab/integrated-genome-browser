@@ -255,6 +255,7 @@ public final class IGB extends Application
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
 		notifyCounter();
+		ToolTipManager.sharedInstance().setDismissDelay(10000);
 	}
 	
 		private void printDetails(String[] args) {

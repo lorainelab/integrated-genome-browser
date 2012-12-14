@@ -53,7 +53,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			
 		}
 
-		GenericFeature feature = createFeature(getMethod(vgs), getOperator(), dps, vgs.get(0).getAnnotStyle());
+		GenericFeature feature = createFeature(getMethod(vgs, false), getMethod(vgs, true), getOperator(), dps, vgs.get(0).getAnnotStyle());
 		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
 	}
 
@@ -61,7 +61,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		return mOperator;
 	}
 
-	protected String getMethod(List<? extends GlyphI> vgs) {
+	protected String getMethod(List<? extends GlyphI> vgs, boolean append_symbol) {
 		StringBuilder meth = new StringBuilder();
 		meth.append(getOperator().getDisplay()).append("- ");
 		boolean started = false;
@@ -69,8 +69,10 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			if (started) {
 				meth.append(", ");
 			}
-			//meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(((StyledGlyph)gl).getDirection().getDisplay());
 			meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName());
+			if(append_symbol){
+				meth.append(((StyledGlyph)gl).getDirection().getDisplay());
+			}
 			started = true;
 		}
 		return meth.toString();
@@ -121,9 +123,8 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		return vg.getDirection() == TierGlyph.Direction.FORWARD;
 	}
 	
-	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
-		String method = featureName.replaceAll("\\s+", "%20");	
-		method = TrackStyle.getUniqueName("file:/"+method);
+	private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
+		method = TrackStyle.getUniqueName("file:/"+method.replaceAll("\\s+", "_"));
 		
 		java.net.URI uri;
 		try {

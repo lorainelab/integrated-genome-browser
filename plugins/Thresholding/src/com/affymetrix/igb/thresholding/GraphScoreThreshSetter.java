@@ -54,10 +54,10 @@ public final class GraphScoreThreshSetter extends JPanel
 		}
 
 		@Override
-		protected String getMethod(List<? extends GlyphI> tiers) {
+		protected String getMethod(List<? extends GlyphI> tiers, boolean append_symbol) {
 			StringBuilder meth = new StringBuilder();
 			Operator operator = getOperator();
-			meth.append(operator.getDisplay()).append(": ");
+			meth.append(operator.getDisplay()).append("- ");
 			
 			String description =
 			MessageFormat.format(BUNDLE.getString("description"),

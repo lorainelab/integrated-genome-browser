@@ -1,28 +1,18 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.GenometryModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.igb.view.DefaultSequenceViewer;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import java.util.Iterator;
-import java.util.logging.Level;
-
 /**
  *
  * @author auser
@@ -42,6 +32,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends SeqMapViewActionA impl
 	private ViewGenomicSequenceInSeqViewerAction() {
 		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/Sequence_Viewer.png", "22x22/actions/Sequence_Viewer.png", KeyEvent.VK_UNDEFINED, null, true);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+		setEnabled(false);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 //		if (ks != null) {
 //			this.putValue(MNEMONIC_KEY, ks.getKeyCode());
@@ -59,8 +50,10 @@ public class ViewGenomicSequenceInSeqViewerAction extends SeqMapViewActionA impl
 		}
 	}
 	
+	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		if (!evt.getSelectedGraphSyms().isEmpty() && evt.getSelectedGraphSyms().get(0) instanceof GraphSym) {
+		if ((evt.getSelectedGraphSyms().isEmpty() && this.getSeqMapView().getSeqSymmetry() == null) 
+				|| (!evt.getSelectedGraphSyms().isEmpty() && evt.getSelectedGraphSyms().get(0) instanceof GraphSym)) {
 			setEnabled(false);
 		} else {
 			setEnabled(true);

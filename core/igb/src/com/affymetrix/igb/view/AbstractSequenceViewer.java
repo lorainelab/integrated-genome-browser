@@ -184,17 +184,17 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
 				if (!isGenomicRequest) {
 					doBackground(doneback);
-
-				} else {
-					if (residues_sym == null) {
-						final SeqSpan span = seqmapview.getVisibleSpan();
-						residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax(), span.getBioSeq());
-						//doneback.actionDone(null);
-
-						SequenceViewWorker worker = new SequenceViewWorker("start abstract sequence viewer", span, doneback);
-						CThreadHolder.getInstance().execute(this, worker);
-					}
-				}
+				} 
+//				else {
+//					if (residues_sym == null) {
+//						final SeqSpan span = seqmapview.getVisibleSpan();
+//						residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax(), span.getBioSeq());
+//						//doneback.actionDone(null);
+//
+//						SequenceViewWorker worker = new SequenceViewWorker("start abstract sequence viewer", span, doneback);
+//						CThreadHolder.getInstance().execute(this, worker);
+//					}
+//				}
 			}
 		} catch (Exception e) {
 			if (this.errorMessage == null) {

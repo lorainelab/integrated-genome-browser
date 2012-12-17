@@ -7,8 +7,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.UcscGeneSym;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 /**
@@ -575,8 +575,8 @@ public class AnnotatedSeqGroup {
 		String lcSymID = sym.getID().toLowerCase();
 		removeSymmetry(lcSymID, sym);
 		
-		if(sym instanceof UcscGeneSym){
-			lcSymID = ((UcscGeneSym)sym).getGeneName();
+		if(sym instanceof SupportsGeneName){
+			lcSymID = ((SupportsGeneName)sym).getGeneName();
 			if(lcSymID != null){
 				removeSymmetry(lcSymID.toLowerCase(), sym);
 			}

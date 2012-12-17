@@ -252,7 +252,7 @@ public class WiggleParserTest {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 		InputStream istr = new ByteArrayInputStream(outstream.toByteArray());
-		results = BarParser.parse(filename, istr,gmodel,seq_group,null,0,Integer.MAX_VALUE,"chr19",true);
+		results = BarParser.parse(filename, istr,gmodel,seq_group,null,0,Integer.MAX_VALUE,"chr19",true,false);
 
 		GraphSym gr1 = results.get(0);
 		assertEquals(gr0.getGraphSeq().getID(),gr1.getGraphSeq().getID());

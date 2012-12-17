@@ -459,7 +459,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 				if (chrFilter != null && chrFilter != seq) {
 					// Filtering on chromosome.
 					// Skip all points relating to this BarSeqHeader.
-					skipBytes(total_points * vals_per_point, dis);
+					skipBytes(total_points * vals_per_point * 4, dis);
 					continue;
 				}
 				if (vals_per_point == 2) {

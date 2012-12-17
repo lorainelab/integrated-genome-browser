@@ -264,8 +264,8 @@ public final class TierLabelManager implements PropertyHolder {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put("File Name", feature.featureName);
 		props.put("Description", feature.description());
-		if (feature.friendlyURL != null) {
-			props.put("url", feature.friendlyURL);
+		if (feature.getFriendlyURL() != null) {
+			props.put("url", feature.getFriendlyURL());
 		}
 		String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.getName() + ")";
 		props.put("Server", server);

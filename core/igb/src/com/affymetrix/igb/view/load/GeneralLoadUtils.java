@@ -27,19 +27,10 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ParserController;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -47,7 +38,6 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.prefs.KeyStrokeEditPanel;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -211,19 +201,6 @@ public final class GeneralLoadUtils {
 			return versionName2species.get(versionName);
 		}
 	};
-	
-	private static boolean isURLReachable(URI uri) {
-			try {
-				if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
-					return false;
-				}
-			} catch (IOException ex) {
-				Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
-				return false;
-			}
-
-			return true;
-		}
 
 	public static boolean discoverServer(GenericServer gServer) {
 		if (gServer.isPrimary()) {
@@ -241,20 +218,27 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType != null) {
 				
-				// fwang4:qlmirror - Quickload Mirror Server
-				if(!isURLReachable(URI.create(gServer.URL)) && gServer.serverType==ServerTypeI.QuickLoad && gServer.mirrorURL!=null && 
-						isURLReachable(URI.create(gServer.mirrorURL)) && IGB.confirmPanel("Use mirror site for quickload?")) {
-					gServer.serverObj = gServer.mirrorURL;
-					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotInitialized);
-				}
-				///fwang4:qlmirror
-				
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 				URL primaryURL = getServerDirectory(gServer.URL);
+				
 				if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
+					
+					// Try to use mirror site
+					if(gServer.mirrorURL != null && gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is not reachable.\nDo you want to use mirror site?")) {
+//
+						// Change serverObj for Quickload to apply mirror site
+						// Currently only Quickload has mirror
+						if (gServer.serverType == ServerTypeI.QuickLoad) {
+							System.out.println("Using mirror site: " + gServer.mirrorURL);
+							gServer.serverObj = gServer.mirrorURL;
+//							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
+							discoverServer(gServer);
+						} else {
 							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 							gServer.setEnabled(false);
 							return false;
+						}
+					}
 				}
 				if(gServer.serverType == ServerTypeI.QuickLoad){
 					XmlPrefsParser.parse(gServer.URL +  "preferences.xml");
@@ -1042,15 +1026,15 @@ public final class GeneralLoadUtils {
 
 		try {
 			try {
-				istr = LocalUrlCacher.getInputStream(primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+				istr = LocalUrlCacher.getInputStream(primaryServer.getFriendlyURL() + SERVER_MAPPING);
 			} catch (Exception e) {
 				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-						Level.SEVERE, "Couldn''t open ''{0}" + SERVER_MAPPING + "\n:  {1}", new Object[]{primaryServer.friendlyURL.toExternalForm(), e.toString()});
+						Level.SEVERE, "Couldn''t open ''{0}" + SERVER_MAPPING + "\n:  {1}", new Object[]{primaryServer.getFriendlyURL(), e.toString()});
 				istr = null; // dealt with below
 			}
 			if (istr == null) {
 				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-						Level.INFO, "Could not load server mapping contents from\n{0}" + SERVER_MAPPING, primaryServer.friendlyURL.toExternalForm());
+						Level.INFO, "Could not load server mapping contents from\n{0}" + SERVER_MAPPING, primaryServer.getFriendlyURL());
 				return;
 			}
 			ireader = new InputStreamReader(istr);

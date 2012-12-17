@@ -397,9 +397,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 			int x = e.getX();
 			int y = e.getY();
-			URL friendlyURL = getURLAt((JTree) e.getSource(), x, y);
+			String friendlyURL = getURLAt((JTree) e.getSource(), x, y);
 			if (friendlyURL != null) {
-				GeneralUtils.browse(friendlyURL.toString());
+				GeneralUtils.browse(friendlyURL);
 			}
 		}
 
@@ -409,7 +409,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			int y = e.getY();
 			JTree thetree = (JTree) e.getSource();
 
-			URL friendlyURL = getURLAt(thetree, x, y);
+			String friendlyURL = getURLAt(thetree, x, y);
 			if (friendlyURL != null) {
 				thetree.setCursor(handCursor);
 			} else {
@@ -443,7 +443,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 * @param y
 	 * @return URL
 	 */
-	private static URL getURLAt(JTree tree, int x, int y) {
+	private static String getURLAt(JTree tree, int x, int y) {
 
 		TreePath path = tree.getClosestPathForLocation(x, y);
 		if (path == null) {
@@ -487,13 +487,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 * @param y
 	 * @return hyerlink for the feature name
 	 */
-	private static URL featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
-		if (gFeature.friendlyURL != null) {
+	private static String featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
+		if (gFeature.getFriendlyURL() != null) {
 			int iconWidth = 10 + 2 * 4;
 			bounds.x += bounds.width - iconWidth;
 			bounds.width = iconWidth;
 			if (bounds.contains(x, y)) {
-				return gFeature.friendlyURL;
+				return gFeature.getFriendlyURL();
 			}
 		}
 		return null;
@@ -509,11 +509,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 * @param y
 	 * @return hyperlink of the server name
 	 */
-	private static URL serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
+	private static String serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
 		if (!gServer.serverType.hasFriendlyURL()) {
 			return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
 		}
-		if (gServer.friendlyURL != null) {
+		
+		String friendlyURL = gServer.getFriendlyURL();
+		
+		if (friendlyURL != null) {
 			Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
 			bounds.width = (int) linkBound.getWidth();
 			if (gServer.getFriendlyIcon() != null) {
@@ -523,7 +526,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			}
 
 			if (bounds.contains(x, y)) {
-				return gServer.friendlyURL;
+				return friendlyURL;
 			}
 		}
 		return null;
@@ -640,7 +643,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			String featureName = gFeature.featureName;
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
 			featureText = "<html>" + featureText;
-			if (gFeature.friendlyURL != null) {
+			if (gFeature.getFriendlyURL() != null) {
 				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
 				featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
 			}
@@ -668,9 +671,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
 			String serverNameString = "";
-			if (gServer.friendlyURL != null && gServer.serverType.hasFriendlyURL()) {
+			if (gServer.getFriendlyURL() != null && gServer.serverType.hasFriendlyURL()) {
 				// TODO - hack to ignore server hyperlinks for DAS/1.
-				serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
+				serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.serverName + "</b></a>";
 			} else {
 				serverNameString = "<b>" + gServer.serverName + "</b>";
 			}
@@ -729,6 +732,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 								// fwang4:qlmirror - Quickload Mirror Server
 								GenericServer gServer = feature.gVersion.gServer;
 								if (gServer.mirrorURL != null && IGB.confirmPanel("Use mirror site?")) {
+									gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
 									for(GenericFeature gFeature : feature.gVersion.getFeatures()) {
 										if(!gFeature.isVisible() && gFeature.getMethods().isEmpty()) {
 											URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL.toString(), gServer.mirrorURL.toString()));

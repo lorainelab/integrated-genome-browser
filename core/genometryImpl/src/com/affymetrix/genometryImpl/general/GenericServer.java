@@ -65,7 +65,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	/**
 	 * friendly URL that users may look at.
 	 */
-	public final URL friendlyURL;
+	private final String friendlyURL;
 	/**
 	 * friendly icon that users may look at.
 	 */
@@ -142,7 +142,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.enabled = enabled;
 		this.node = node;
 		this.serverObj = serverObj;
-		this.friendlyURL = determineFriendlyURL(URL, serverType);
+		this.friendlyURL = URL;
 //		this.referenceOnly = referenceOnly;
 
 		if (this.node != null) {
@@ -253,7 +253,15 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	public boolean isDefault() {
 		return this.isDefault;
 	}
-
+	
+	public String getFriendlyURL () {
+		return serverType.getFriendlyURL(this);
+	}
+	
+	public boolean useMirrorSite () {
+		return serverType.useMirrorSite(this);
+	}
+	
 	@Override
 	public String toString() {
 		return serverName;

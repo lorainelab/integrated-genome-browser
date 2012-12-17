@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -49,7 +50,7 @@ public final class GenericFeature {
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
 	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
-	public URL friendlyURL = null;			// friendly URL that users may look at.
+	private final String friendlyURL;			// friendly URL that users may look at.
 	private RefreshStatus lastRefresh;
 	public final Object typeObj;    // Das2Type, ...?
 	public final SymLoader symL;
@@ -83,7 +84,9 @@ public final class GenericFeature {
 		if (typeObj instanceof Das2Type) {
 			((Das2Type) typeObj).setFeature(this);
 		}
-		this.setFriendlyURL();
+		
+		this.friendlyURL = this.featureProps==null ? null : this.featureProps.get("url");
+		
 		this.setAutoload(autoload);
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
 		//methods.add(featureName);
@@ -164,17 +167,32 @@ public final class GenericFeature {
 				&& featureProps.get("load_hint").equals(loadStrategy));
 	}
 	
-	private void setFriendlyURL() {
-		if (this.featureProps == null || !this.featureProps.containsKey("url") || this.featureProps.get("url").length() == 0) {
-			return;
+	public String getFriendlyURL () {
+		
+		if(friendlyURL==null) {
+			return null;
 		}
-		try {
-			this.friendlyURL = new URL(this.featureProps.get("url"));
-		} catch (MalformedURLException ex) {
-			Logger.getLogger(GenericFeature.class.getName()).log(Level.SEVERE, null, ex);
+		
+		String friendlyURLString = friendlyURL;
+		
+		// Support relative path in friendly URL
+		if(!(friendlyURLString.toLowerCase().startsWith("http:")
+						|| friendlyURLString.toLowerCase().startsWith("https:")
+						|| friendlyURLString.toLowerCase().startsWith("ftp:")
+						|| friendlyURLString.toLowerCase().startsWith("file:"))) {
+			if(this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+				return (String) this.gVersion.gServer.serverObj + this.gVersion.versionName + friendlyURLString; // For quickload, use serverObj for the available server path
+			} else {
+				return friendlyURLString;
+			}
+		} else {
+			if(this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+				return friendlyURLString.replaceAll(this.gVersion.gServer.URL.toString(), (String)this.gVersion.gServer.serverObj);
+			}
+			return friendlyURLString;
 		}
 	}
-
+	
 	public String description() {
 		if (this.featureProps != null) {
 			String summary = featureProps.get("summary");

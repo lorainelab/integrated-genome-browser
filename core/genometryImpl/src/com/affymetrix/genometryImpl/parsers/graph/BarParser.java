@@ -952,11 +952,11 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	
 	public static final class BarSeqHeader {
 
-		BioSeq aseq;
-		int data_point_count;
-		Map<String, String> tagvals;
+		public final BioSeq aseq;
+		public final int data_point_count;
+		public final Map<String, String> tagvals;
 
-		BarSeqHeader(BioSeq seq, int data_points, Map<String, String> tagvals) {
+		public BarSeqHeader(BioSeq seq, int data_points, Map<String, String> tagvals) {
 			this.aseq = seq;
 			this.data_point_count = data_points;
 			this.tagvals = tagvals;

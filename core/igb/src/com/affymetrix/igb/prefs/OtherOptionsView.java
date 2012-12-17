@@ -70,16 +70,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private void initComponents() {
 
         coordinatePanel = new javax.swing.JPanel();
-        backgroundLabel = new javax.swing.JLabel();
-        foregroundLabel = new javax.swing.JLabel();
         numFormatLabel = new javax.swing.JLabel();
         coordinates_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),
             SeqMapView.PREF_COORDINATE_LABEL_FORMAT,
             label_format_options,
             default_label_format)
         ;
-        bgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, CoordinateStyle.default_coordinate_background, this);
-        fgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, CoordinateStyle.default_coordinate_color, this);
         orfAnalyzerPanel = new javax.swing.JPanel();
         stopCodonLabel = new javax.swing.JLabel();
         dynamicORFLabel = new javax.swing.JLabel();
@@ -102,72 +98,38 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
             PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
         confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
-        keepZoomStripeCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe", PreferenceUtils.getTopNode(),
-            UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view);
         clear_prefsB = new javax.swing.JButton(ClearPreferencesAction.getAction());
-        showZoomStripLabelCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe Label", PreferenceUtils.getTopNode(),
-            UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label);
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
         showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.getTopNode(), PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching());
-        showCollapseOptionCheckBox = PreferenceUtils.createCheckBox("Show Collapse Option", PreferenceUtils.getTopNode(),     PreferenceUtils.SHOW_COLLAPSE_OPTION, TrackStyle.getDrawCollapseState());
         confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm before loading large data set", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar", PreferenceUtils.getTopNode(),
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
-        showIGBTrackMarkCheckBox = PreferenceUtils.createCheckBox("Show IGB Track Mark", PreferenceUtils.getTopNode(), TrackStyle.PREF_SHOW_IGB_TRACK_MARK, TrackStyle.default_show_igb_track_mark);
 
         setPreferredSize(new java.awt.Dimension(545, 540));
 
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
         coordinatePanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
-        backgroundLabel.setText("Background:");
-
-        foregroundLabel.setText("Foreground:");
-
         numFormatLabel.setText("Number format:");
-
-        bgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bgColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        fgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fgColorComboBoxActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout coordinatePanelLayout = new org.jdesktop.layout.GroupLayout(coordinatePanel);
         coordinatePanel.setLayout(coordinatePanelLayout);
         coordinatePanelLayout.setHorizontalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(coordinatePanelLayout.createSequentialGroup()
-                .add(10, 10, 10)
-                .add(backgroundLabel)
-                .add(10, 10, 10)
-                .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(30, 30, 30)
-                .add(foregroundLabel)
-                .add(10, 10, 10)
-                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(30, 30, 30)
+                .addContainerGap()
                 .add(numFormatLabel)
-                .add(10, 10, 10)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(5, 5, 5))
+                .addContainerGap())
         );
         coordinatePanelLayout.setVerticalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(coordinatePanelLayout.createSequentialGroup()
                 .add(coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(backgroundLabel)
-                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(foregroundLabel)
-                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(numFormatLabel)
                     .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(5, 5, 5))
@@ -329,12 +291,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
             }
         });
 
-        showZoomStripLabelCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showZoomStripLabelCheckBoxActionPerformed(evt);
-            }
-        });
-
         edgeMatchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edge Match"));
         edgeMatchPanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
@@ -367,12 +323,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        showCollapseOptionCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showCollapseOptionCheckBoxActionPerformed(evt);
-            }
-        });
-
         if(displayOption.isSelected())
         com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);
         else
@@ -380,12 +330,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         displayOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 displayOptionStateChanged(evt);
-            }
-        });
-
-        showIGBTrackMarkCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showIGBTrackMarkCheckBoxActionPerformed(evt);
             }
         });
 
@@ -400,16 +344,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(confirmBeforeLoadCheckBox)
                                     .add(confirmBeforeDeleteCheckBox)
-                                    .add(askBeforeExitCheckBox)
-                                    .add(displayOption))
-                                .add(30, 30, 30)
+                                    .add(askBeforeExitCheckBox))
+                                .add(55, 55, 55)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(keepZoomStripeCheckBox)
-                                    .add(showZoomStripLabelCheckBox)
-                                    .add(showCollapseOptionCheckBox)
-                                    .add(showIGBTrackMarkCheckBox)))
+                                    .add(confirmBeforeLoadCheckBox)
+                                    .add(displayOption)))
                             .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -430,53 +370,21 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
                 .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(10, 10, 10)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 142, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(askBeforeExitCheckBox)
-                            .add(keepZoomStripeCheckBox))
-                        .add(10, 10, 10)
-                        .add(confirmBeforeDeleteCheckBox))
-                    .add(showZoomStripLabelCheckBox))
-                .add(10, 10, 10)
+                    .add(askBeforeExitCheckBox)
+                    .add(confirmBeforeLoadCheckBox))
+                .add(15, 15, 15)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(confirmBeforeLoadCheckBox)
-                    .add(showCollapseOptionCheckBox))
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(10, 10, 10)
-                        .add(displayOption))
-                    .add(layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(showIGBTrackMarkCheckBox)))
-                .add(25, 25, 25)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, displayOption)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, confirmBeforeDeleteCheckBox))
+                .add(15, 15, 15)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .add(33, 33, 33))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 	boolean refresh = false;
-	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		if(!refresh){
-			CoordinateStyle.coordinate_annot_style.setBackground(bgColorComboBox.getSelectedColor());
-			TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
-		}
-	}//GEN-LAST:event_bgColorComboBoxActionPerformed
-
-	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		if(!refresh){
-			CoordinateStyle.coordinate_annot_style.setForeground(fgColorComboBox.getSelectedColor());
-			TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
-		}
-	}//GEN-LAST:event_fgColorComboBoxActionPerformed
-
-	private void showCollapseOptionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showCollapseOptionCheckBoxActionPerformed
-		DrawCollapseControlAction.getAction().actionPerformed(evt);
-	}//GEN-LAST:event_showCollapseOptionCheckBoxActionPerformed
-
 	private void AColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AColorComboBoxActionPerformed
 		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_AColorComboBoxActionPerformed
@@ -508,10 +416,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		// TODO add your handling code here:
 	}//GEN-LAST:event_DynamicORFColorComboBoxActionPerformed
 
-	private void showZoomStripLabelCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showZoomStripLabelCheckBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_showZoomStripLabelCheckBoxActionPerformed
-
 	private void confirmBeforeDeleteCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmBeforeDeleteCheckBoxActionPerformed
 		// TODO add your handling code here:
 	}//GEN-LAST:event_confirmBeforeDeleteCheckBoxActionPerformed
@@ -528,10 +432,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		ToggleEdgeMatchingAction.getAction().actionPerformed(evt);
 	}//GEN-LAST:event_showEdgeMatchCheckBoxActionPerformed
 
-	private void showIGBTrackMarkCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showIGBTrackMarkCheckBoxActionPerformed
-		ShowIGBTrackMarkAction.getAction().actionPerformed(evt);
-	}//GEN-LAST:event_showIGBTrackMarkCheckBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;
     private com.jidesoft.combobox.ColorComboBox CColorComboBox;
@@ -542,8 +442,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private com.jidesoft.combobox.ColorComboBox TColorComboBox;
     private javax.swing.JLabel aLabel;
     private javax.swing.JCheckBox askBeforeExitCheckBox;
-    private javax.swing.JLabel backgroundLabel;
-    private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private com.jidesoft.combobox.ColorComboBox bgComboBox;
     private javax.swing.JLabel bgLabel;
     private javax.swing.JLabel cLabel;
@@ -557,18 +455,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private com.jidesoft.combobox.ColorComboBox edgeMatchColorComboBox;
     private javax.swing.JLabel edgeMatchLabel;
     private javax.swing.JPanel edgeMatchPanel;
-    private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
-    private javax.swing.JLabel foregroundLabel;
     private javax.swing.JLabel gLabel;
-    private javax.swing.JCheckBox keepZoomStripeCheckBox;
     private javax.swing.JLabel numFormatLabel;
     private javax.swing.JPanel orfAnalyzerPanel;
     private javax.swing.JLabel otherLabel;
     private javax.swing.JPanel residueColorPanel;
-    private javax.swing.JCheckBox showCollapseOptionCheckBox;
     private javax.swing.JCheckBox showEdgeMatchCheckBox;
-    private javax.swing.JCheckBox showIGBTrackMarkCheckBox;
-    private javax.swing.JCheckBox showZoomStripLabelCheckBox;
     private javax.swing.JLabel stopCodonLabel;
     private javax.swing.JLabel tLabel;
     // End of variables declaration//GEN-END:variables
@@ -594,8 +486,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 	public void refresh() {
 		refresh = true;
 		//Update Coordinate Track Colors
-		bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());
-		fgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getForeground());
+		//bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());
+		//fgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getForeground());
 		refresh = false;
 	}
 

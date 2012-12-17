@@ -28,17 +28,13 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="confirmBeforeLoadCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="displayOption" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="showIGBTrackMarkCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <Component id="displayOption" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="orfAnalyzerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
@@ -67,36 +63,19 @@
               <Component id="orfAnalyzerPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="edgeMatchPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <EmptySpace pref="142" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
-                          <Component id="keepZoomStripeCheckBox" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                      <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="showZoomStripLabelCheckBox" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
                   <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
-                  <Component id="showCollapseOptionCheckBox" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                      <Component id="displayOption" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="showIGBTrackMarkCheckBox" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="displayOption" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="confirmBeforeDeleteCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="92" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -118,19 +97,11 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="backgroundLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="bgColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="foregroundLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="fgColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="numFormatLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="coordinates_label_format_CB" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -138,10 +109,6 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="backgroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="foregroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="numFormatLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="coordinates_label_format_CB" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -151,19 +118,6 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="backgroundLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Background:"/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel()"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JLabel" name="foregroundLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Foreground:"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="numFormatLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Number format:"/>
@@ -172,22 +126,6 @@
         <Component class="javax.swing.JComboBox" name="coordinates_label_format_CB">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),&#xa;    SeqMapView.PREF_COORDINATE_LABEL_FORMAT,&#xa;    label_format_options,&#xa;    default_label_format)&#xa;"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bgColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, CoordinateStyle.default_coordinate_background, this)"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fgColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, CoordinateStyle.default_coordinate_color, this)"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -420,11 +358,6 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm before delete&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="keepZoomStripeCheckBox">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Zoom Stripe&quot;, PreferenceUtils.getTopNode(),&#xa;    UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view)"/>
-      </AuxValues>
-    </Component>
     <Component class="javax.swing.JButton" name="clear_prefsB">
       <Properties>
         <Property name="text" type="java.lang.String" value="Reset preference to defaults"/>
@@ -443,14 +376,6 @@
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton(ClearPreferencesAction.getAction())"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="showZoomStripLabelCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showZoomStripLabelCheckBoxActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Zoom Stripe Label&quot;, PreferenceUtils.getTopNode(),&#xa;    UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label)"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="edgeMatchPanel">
@@ -510,14 +435,6 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JCheckBox" name="showCollapseOptionCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showCollapseOptionCheckBoxActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Collapse Option&quot;, PreferenceUtils.getTopNode(),     PreferenceUtils.SHOW_COLLAPSE_OPTION, TrackStyle.getDrawCollapseState())"/>
-      </AuxValues>
-    </Component>
     <Component class="javax.swing.JCheckBox" name="confirmBeforeLoadCheckBox">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm before loading large data set&quot;, PreferenceUtils.getTopNode(),&#xa;    PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load)"/>
@@ -530,14 +447,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Display Errors on Status Bar&quot;, PreferenceUtils.getTopNode(),&#xa;            PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);"/>
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);&#xa;else&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="showIGBTrackMarkCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showIGBTrackMarkCheckBoxActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show IGB Track Mark&quot;, PreferenceUtils.getTopNode(), TrackStyle.PREF_SHOW_IGB_TRACK_MARK, TrackStyle.default_show_igb_track_mark)"/>
       </AuxValues>
     </Component>
   </SubComponents>

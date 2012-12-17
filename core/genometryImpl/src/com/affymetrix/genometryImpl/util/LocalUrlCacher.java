@@ -927,5 +927,18 @@ public final class LocalUrlCacher {
 		
 		return sb.toString();
 	}
+	
+	public static boolean isURLReachable(URI uri) {
+		try {
+			if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
+				return false;
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
+		}
+
+		return true;
+	}
 
 }

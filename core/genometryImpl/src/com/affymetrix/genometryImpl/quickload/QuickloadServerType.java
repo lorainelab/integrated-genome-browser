@@ -34,7 +34,6 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.*;
-import com.affymetrix.igb.general.ServerList;
 
 public class QuickloadServerType implements ServerTypeI {
 
@@ -516,8 +515,6 @@ public class QuickloadServerType implements ServerTypeI {
 	@Override
 	public boolean useMirrorSite(GenericServer gServer) {
 		if (LocalUrlCacher.isURLReachable(URI.create(gServer.mirrorURL))) {
-			gServer.serverObj = gServer.mirrorURL;
-			ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
 			return true;
 		}
 		return false;

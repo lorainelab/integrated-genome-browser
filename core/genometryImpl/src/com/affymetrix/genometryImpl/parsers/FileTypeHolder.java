@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
+import com.affymetrix.genometryImpl.symloader.Bar;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.FastaIdx;
 import com.affymetrix.genometryImpl.symloader.GFF;
@@ -85,7 +86,7 @@ public class FileTypeHolder {
 				}
 			}
 		);
-		addFileTypeHandler("Graph", new String[]{"bar"}, FileTypeCategory.Graph, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
+		addFileTypeHandler("Graph", new String[]{"bar"}, FileTypeCategory.Graph, BarParser.class, Bar.class /* SymLoaderInstNC.class */);
 		addFileTypeHandler(
 			new FileTypeHandler() {
 				String[] extensions = new String[]{"bed"};

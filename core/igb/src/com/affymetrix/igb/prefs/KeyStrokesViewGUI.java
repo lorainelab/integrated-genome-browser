@@ -30,7 +30,7 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
 	private KeyStrokesViewGUI() {
 		ksv = KeyStrokesView.getSingleton();
 		validate();
-		this.setName("Shortcuts");
+		this.setName("Toolbar");
 		this.setToolTipText("Edit Locations");
 		initComponents();
 	}

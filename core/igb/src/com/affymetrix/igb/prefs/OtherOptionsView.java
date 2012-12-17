@@ -69,7 +69,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        codonButtonGroup = new javax.swing.ButtonGroup();
+        trackResizeGroup = new javax.swing.ButtonGroup();
         coordinatePanel = new javax.swing.JPanel();
         numFormatLabel = new javax.swing.JLabel();
         coordinates_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),
@@ -112,6 +113,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         hideButton = new javax.swing.JRadioButton();
         oneLetterButton = new javax.swing.JRadioButton();
         threeLetterButton = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
 
         setPreferredSize(new java.awt.Dimension(545, 540));
 
@@ -172,7 +176,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(bgLabel)
                 .add(10, 10, 10)
                 .add(bgComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -318,7 +322,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(191, 191, 191)
                 .add(showEdgeMatchCheckBox)
-                .addContainerGap(201, Short.MAX_VALUE))
+                .addContainerGap(204, Short.MAX_VALUE))
         );
         edgeMatchPanelLayout.setVerticalGroup(
             edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -340,13 +344,13 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Codon Display"));
 
-        buttonGroup1.add(hideButton);
+        codonButtonGroup.add(hideButton);
         hideButton.setText("Hide");
 
-        buttonGroup1.add(oneLetterButton);
+        codonButtonGroup.add(oneLetterButton);
         oneLetterButton.setText("One Letter");
 
-        buttonGroup1.add(threeLetterButton);
+        codonButtonGroup.add(threeLetterButton);
         threeLetterButton.setText("Three Letter");
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -355,11 +359,11 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(hideButton)
-                .add(110, 110, 110)
+                .add(90, 90, 90)
                 .add(oneLetterButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(56, 56, 56)
                 .add(threeLetterButton)
-                .add(26, 26, 26))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -371,12 +375,42 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(0, 6, Short.MAX_VALUE))
         );
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Resize Behavior"));
+
+        trackResizeGroup.add(jRadioButton1);
+        jRadioButton1.setText("Adjust All Tracks");
+
+        trackResizeGroup.add(jRadioButton2);
+        jRadioButton2.setText("Adjust Adjacent Tracks");
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jRadioButton1)
+                .add(79, 79, 79)
+                .add(jRadioButton2)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jRadioButton1)
+                    .add(jRadioButton2))
+                .add(0, 12, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 510, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(layout.createSequentialGroup()
                         .add(15, 15, 15)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
@@ -387,15 +421,14 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                                 .add(55, 55, 55)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(confirmBeforeLoadCheckBox)
-                                    .add(displayOption)))
-                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .add(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 510, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                    .add(displayOption))
+                                .add(144, 144, 144))
+                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                            .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .add(20, 20, 20))
         );
         layout.setVerticalGroup(
@@ -411,17 +444,19 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 75, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(18, 18, 18)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(askBeforeExitCheckBox)
-                    .add(confirmBeforeLoadCheckBox))
-                .add(15, 15, 15)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, displayOption)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, confirmBeforeDeleteCheckBox))
-                .add(15, 15, 15)
+                    .add(confirmBeforeLoadCheckBox)
+                    .add(askBeforeExitCheckBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(confirmBeforeDeleteCheckBox)
+                    .add(displayOption))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(33, 33, 33))
+                .add(21, 21, 21))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -485,9 +520,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private javax.swing.JCheckBox askBeforeExitCheckBox;
     private com.jidesoft.combobox.ColorComboBox bgComboBox;
     private javax.swing.JLabel bgLabel;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
+    private javax.swing.ButtonGroup codonButtonGroup;
     private javax.swing.JCheckBox confirmBeforeDeleteCheckBox;
     private javax.swing.JCheckBox confirmBeforeLoadCheckBox;
     private javax.swing.JPanel coordinatePanel;
@@ -500,6 +535,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private javax.swing.JLabel gLabel;
     private javax.swing.JRadioButton hideButton;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JLabel numFormatLabel;
     private javax.swing.JRadioButton oneLetterButton;
     private javax.swing.JPanel orfAnalyzerPanel;
@@ -509,6 +547,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private javax.swing.JLabel stopCodonLabel;
     private javax.swing.JLabel tLabel;
     private javax.swing.JRadioButton threeLetterButton;
+    private javax.swing.ButtonGroup trackResizeGroup;
     // End of variables declaration//GEN-END:variables
 
 	@Override

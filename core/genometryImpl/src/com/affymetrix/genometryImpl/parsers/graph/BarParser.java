@@ -777,7 +777,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			}
 		}
 		if (seq == null) {
-			seq = seq_group.addSeq(seqname, 1, uri);
+			seq = seq_group.addSeq(seqname, 1000000000, uri);
 		}
 		return seq;
 	}

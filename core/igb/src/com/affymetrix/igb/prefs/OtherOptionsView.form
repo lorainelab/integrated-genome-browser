@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
+  </NonVisualComponents>
   <Properties>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[545, 540]"/>
@@ -25,7 +29,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -37,10 +41,11 @@
                                   <Component id="displayOption" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="orfAnalyzerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="edgeMatchPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="coordinatePanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="residueColorPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="orfAnalyzerPanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="edgeMatchPanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -63,7 +68,9 @@
               <Component id="orfAnalyzerPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="edgeMatchPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="142" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="75" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
                   <Component id="confirmBeforeLoadCheckBox" min="-2" max="-2" attributes="0"/>
@@ -449,5 +456,67 @@
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);&#xa;else&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);"/>
       </AuxValues>
     </Component>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Codon Display"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="hideButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="110" max="-2" attributes="0"/>
+                  <Component id="oneLetterButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="threeLetterButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="hideButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="oneLetterButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="threeLetterButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JRadioButton" name="hideButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Hide"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="oneLetterButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="One Letter"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="threeLetterButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Three Letter"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
   </SubComponents>
 </Form>

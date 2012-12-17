@@ -489,8 +489,9 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	}//GEN-LAST:event_labelColorComboBoxActionPerformed
 
 	private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
-		((TierPrefsView)tdv).displayNameTextField();
-		// TODO add your handling code here:
+		if(tdv instanceof TierPrefsView){
+			((TierPrefsView)tdv).displayNameTextField();
+		}
 	}//GEN-LAST:event_applyButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

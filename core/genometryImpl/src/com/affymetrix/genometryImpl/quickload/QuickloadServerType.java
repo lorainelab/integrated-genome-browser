@@ -33,15 +33,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
-import com.affymetrix.genometryImpl.util.Constants;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.util.VersionDiscoverer;
+import com.affymetrix.genometryImpl.util.*;
+import com.affymetrix.igb.general.ServerList;
 
 public class QuickloadServerType implements ServerTypeI {
 
@@ -503,5 +496,30 @@ public class QuickloadServerType implements ServerTypeI {
 	@Override
 	public boolean isSaveServersInPrefs() {
 		return true;
+	}
+	
+	@Override
+	public String getFriendlyURL (GenericServer gServer) {
+		if (gServer.serverObj == null) {
+			return null;
+		}
+		String tempURL = (String)gServer.serverObj;
+		if (tempURL.endsWith("/")) {
+			tempURL = tempURL.substring(0, tempURL.length() - 1);
+		}
+		if (gServer.serverType != null) {
+			tempURL = gServer.serverType.adjustURL(tempURL);
+		}
+		return tempURL;
+	}
+	
+	@Override
+	public boolean useMirrorSite(GenericServer gServer) {
+		if (LocalUrlCacher.isURLReachable(URI.create(gServer.mirrorURL))) {
+			gServer.serverObj = gServer.mirrorURL;
+			ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
+			return true;
+		}
+		return false;
 	}
 }

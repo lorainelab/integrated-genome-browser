@@ -242,4 +242,24 @@ public class ThousandGenomesServerType implements ServerTypeI {
 	public boolean isSaveServersInPrefs() {
 		return false;
 	}
+	
+	@Override
+	public String getFriendlyURL (GenericServer gServer) {
+		if (gServer.URL == null) {
+			return null;
+		}
+		String tempURL = gServer.URL;
+		if (tempURL.endsWith("/")) {
+			tempURL = tempURL.substring(0, tempURL.length() - 1);
+		}
+		if (gServer.serverType != null) {
+			tempURL = gServer.serverType.adjustURL(tempURL);
+		}
+		return tempURL;
+	}
+	
+	@Override 
+	public boolean useMirrorSite(GenericServer server) {
+		return false;
+	}
 }

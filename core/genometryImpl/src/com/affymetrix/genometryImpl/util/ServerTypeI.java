@@ -131,4 +131,8 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 */
 	public boolean processServer(GenericServer gServer, String path);
 	public boolean isSaveServersInPrefs();
+	
+	public String getFriendlyURL(GenericServer gServer);
+	
+	public boolean useMirrorSite(GenericServer gServer);
 }

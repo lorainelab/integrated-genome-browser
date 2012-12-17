@@ -405,4 +405,16 @@ public class DasServerType implements ServerTypeI {
 	public boolean isSaveServersInPrefs() {
 		return true;
 	}
+	
+	// No friendly URL for DAS
+	@Override
+	public String getFriendlyURL (GenericServer gServer) {
+		return null;
+	}
+	
+	// No mirror site for DAS
+	@Override
+	public boolean useMirrorSite(GenericServer gServer) {
+		return false;
+	}
 }

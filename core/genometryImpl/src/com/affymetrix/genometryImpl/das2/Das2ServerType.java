@@ -670,4 +670,25 @@ public class Das2ServerType implements ServerTypeI {
 	public boolean isSaveServersInPrefs() {
 		return true;
 	}
+	
+	@Override
+	public String getFriendlyURL (GenericServer gServer) {
+		if (gServer.URL == null) {
+			return null;
+		}
+		String tempURL = gServer.URL;
+		if (tempURL.endsWith("/")) {
+			tempURL = tempURL.substring(0, tempURL.length() - 1);
+		}
+		if (gServer.serverType != null) {
+			tempURL = gServer.serverType.adjustURL(tempURL);
+		}
+		return tempURL;
+	}
+	
+	// No mirror site for DAS2
+	@Override
+	public boolean useMirrorSite(GenericServer gServer) {
+		return false;
+	}
 }

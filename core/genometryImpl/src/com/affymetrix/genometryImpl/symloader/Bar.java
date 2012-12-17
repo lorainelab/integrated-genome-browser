@@ -17,7 +17,8 @@ import java.net.URI;
 public final class Bar extends SymLoader {
 
 	private File f = null;
-
+	private List<BioSeq> seqs;
+	
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -42,15 +43,31 @@ public final class Bar extends SymLoader {
 		}
 		super.init();
 		f = LocalUrlCacher.convertURIToFile(uri);
+
+		DataInputStream dis = null;
+		try {
+			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(f)));
+			seqs = BarParser.getSeqs(uri.toString(), dis, group, GenometryModel.getGenometryModel(), true);
+		}catch (Exception ex){
+			throw ex;
+		} finally {
+			GeneralUtils.safeClose(dis);
+		}
 	}
 
+	@Override
+	public List<BioSeq> getChromosomeList() throws Exception {
+		init();
+		return seqs;
+	}
+	
 	@Override
 	public List<GraphSym> getGenome() throws Exception  {
 		BufferedInputStream bis = null;
 		try {
 			init();
 			bis = new BufferedInputStream(new FileInputStream(f));
-			return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri.toString(), true);
+			return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri.toString(), false, true);
 		} catch (Exception ex){
 			throw ex;
 		} finally {
@@ -64,7 +81,7 @@ public final class Bar extends SymLoader {
 		try {
 			init();
 			bis = new BufferedInputStream(new FileInputStream(f));
-			return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, seq, 0, seq.getMax() + 1, uri.toString(), true);
+			return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, seq, 0, seq.getMax() + 1, uri.toString(), false, true);
 		} catch (Exception ex){
 			throw ex;
 		} finally {
@@ -78,7 +95,7 @@ public final class Bar extends SymLoader {
 		try {
 			init();
 			bis = new BufferedInputStream(new FileInputStream(f));
-			return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), true);
+			return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), false, true);
 		} catch (Exception ex){
 			throw ex;
 		} finally {

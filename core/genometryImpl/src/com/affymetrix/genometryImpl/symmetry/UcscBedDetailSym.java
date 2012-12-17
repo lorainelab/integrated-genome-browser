@@ -7,7 +7,7 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.ByteArrayOutputStream;
 
-public class UcscBedDetailSym extends UcscBedSym {
+public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
 	private final String geneName;
 	private String description;
 
@@ -28,6 +28,7 @@ public class UcscBedDetailSym extends UcscBedSym {
 		this.description = description;
 	}
 
+	@Override
 	public String getGeneName() {
 		return geneName;
 	}

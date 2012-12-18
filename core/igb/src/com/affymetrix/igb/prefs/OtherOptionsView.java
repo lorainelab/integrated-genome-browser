@@ -5,18 +5,14 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
-import com.affymetrix.igb.action.DrawCollapseControlAction;
-import com.affymetrix.igb.action.ShowIGBTrackMarkAction;
 import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
+import com.affymetrix.igb.shared.CodonGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
-import com.affymetrix.igb.tiers.CoordinateStyle;
-import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.UnibrowHairline;
 import java.awt.BorderLayout;
 import java.util.EventObject;
 import java.util.prefs.PreferenceChangeEvent;
@@ -110,9 +106,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar", PreferenceUtils.getTopNode(),
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
         jPanel1 = new javax.swing.JPanel();
-        hideButton = new javax.swing.JRadioButton();
-        oneLetterButton = new javax.swing.JRadioButton();
-        threeLetterButton = new javax.swing.JRadioButton();
+        hideButton = PreferenceUtils.createRadioButton("Hide", "0", PreferenceUtils.getTopNode(),
+            CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
+        oneLetterButton = PreferenceUtils.createRadioButton("One Letter", "1", PreferenceUtils.getTopNode(),
+            CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
+        threeLetterButton = PreferenceUtils.createRadioButton("Three Letter", "3", PreferenceUtils.getTopNode(),
+            CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
         jPanel2 = new javax.swing.JPanel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
@@ -417,8 +416,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                             .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
-                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(confirmBeforeDeleteCheckBox)
@@ -428,7 +427,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                                     .add(confirmBeforeLoadCheckBox)
                                     .add(displayOption)))
                             .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -455,7 +454,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                     .add(displayOption))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

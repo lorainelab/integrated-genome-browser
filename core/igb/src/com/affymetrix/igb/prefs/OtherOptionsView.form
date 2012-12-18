@@ -39,8 +39,8 @@
                           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
                           <Component id="edgeMatchPanel" alignment="0" pref="473" max="32767" attributes="1"/>
-                          <Component id="orfAnalyzerPanel" alignment="0" pref="0" max="32767" attributes="1"/>
-                          <Component id="residueColorPanel" alignment="0" pref="0" max="32767" attributes="1"/>
+                          <Component id="orfAnalyzerPanel" alignment="0" pref="473" max="32767" attributes="1"/>
+                          <Component id="residueColorPanel" alignment="0" pref="473" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -56,7 +56,7 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="57" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -87,7 +87,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="21" max="32767" attributes="0"/>
+              <EmptySpace pref="29" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -504,6 +504,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Hide"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Hide&quot;, &quot;0&quot;, PreferenceUtils.getTopNode(),&#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="oneLetterButton">
           <Properties>
@@ -512,6 +515,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="One Letter"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;One Letter&quot;, &quot;1&quot;, PreferenceUtils.getTopNode(),&#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="threeLetterButton">
           <Properties>
@@ -520,6 +526,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Three Letter"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Three Letter&quot;, &quot;3&quot;, PreferenceUtils.getTopNode(),&#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

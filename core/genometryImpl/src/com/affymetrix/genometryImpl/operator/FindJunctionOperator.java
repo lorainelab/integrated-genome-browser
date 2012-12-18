@@ -56,7 +56,11 @@ public class FindJunctionOperator implements Operator{
         return GenometryConstants.BUNDLE.getString("operator_" + getName());
     }
     
-    @Override
+    /* This is an Operator method which is used to operates on a given list of symmetries and find the junctions between them
+	 * by applying different kinds of filters and writes the resultant symmetries onto a Symmetry Container.
+	 */
+	
+	@Override
     public SeqSymmetry operate(BioSeq bioseq, List<SeqSymmetry> list) {
 		
 		SimpleSymWithProps container = new SimpleSymWithProps();
@@ -78,7 +82,12 @@ public class FindJunctionOperator implements Operator{
         return container;
     }
     
-    public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map){
+    /*
+	 * This is specifically used to apply the filters on the given list of symmetries and updates the resultant hash map
+	 * with the resultant symmetries.
+	 */
+	
+	public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map){
       for(SeqSymmetry sym : list){
             if(noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))){
                 updateIntronHashMap(sym , bioseq, map, threshold, twoTracks);
@@ -127,7 +136,9 @@ public class FindJunctionOperator implements Operator{
         return FileTypeCategory.Annotation;
     }
     
-    //This method splits the given Sym into introns and filters out the qualified Introns
+    /* This method splits the given Sym into introns and filters out the qualified Introns
+	 * and adds the qualified introns into map using addtoMap method
+	 */
     private static void updateIntronHashMap(SeqSymmetry sym , BioSeq bioseq, HashMap<String, SeqSymmetry> map, int threshold, boolean twoTracks){
         List<Integer> childIntronIndices = new ArrayList<Integer>();
         int childCount = sym.getChildCount();
@@ -150,7 +161,10 @@ public class FindJunctionOperator implements Operator{
         }
     }
     
-    private static void addToMap(SeqSpan span , HashMap<String, SeqSymmetry> map, BioSeq bioseq, int threshold, boolean twoTracks){
+    /*
+	 * This builds the JunctionUcscBedSym based on different properties of sym and adds the sym into map.
+	 */
+	private static void addToMap(SeqSpan span , HashMap<String, SeqSymmetry> map, BioSeq bioseq, int threshold, boolean twoTracks){
        
         boolean currentForward = false;
 		String name = "J:" + bioseq.getID() + ":" + span.getMin() + "-" + span.getMax() + ":";
@@ -206,7 +220,9 @@ public class FindJunctionOperator implements Operator{
         }
     }
     
-	//Helper seqsymmetry class
+	/*
+	 * Specific BED Sym used for Junction representation which has some extra parameters than a normal UcscBedSym
+	 */
 	private static class JunctionUcscBedSym extends UcscBedSym {
 
 		int positiveScore, negativeScore;

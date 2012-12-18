@@ -8,8 +8,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
- *
- * @author auser
+ * This is a filter which is used to filter out the symmetries with no children
+ * @author Anuj
  */
 public class NoIntronFilter implements SymmetryFilterI{
 

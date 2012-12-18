@@ -12,7 +12,10 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 /**
  *
- * @author auser
+ * @author Anuj
+ * 
+ * This class is used to filter out the non-unique BAM symmetries
+ * 
  */
 public class UniqueLocationFilter implements SymmetryFilterI{
 

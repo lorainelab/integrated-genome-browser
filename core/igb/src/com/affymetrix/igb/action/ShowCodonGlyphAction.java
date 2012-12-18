@@ -13,24 +13,23 @@ import com.affymetrix.igb.shared.CodonGlyph;
 @SuppressWarnings("serial")
 public class ShowCodonGlyphAction extends SeqMapViewActionA {
 	
-	private static final ShowCodonGlyphAction SHOW_CODON_GLYPH_ACTION_THREE_LETTER = new ShowCodonGlyphAction("3 letter", 3);
-	private static final ShowCodonGlyphAction SHOW_CODON_GLYPH_ACTION_ONE_LETTER = new ShowCodonGlyphAction("1 letter", 1);
-	private static final ShowCodonGlyphAction HIDE_CODON_GLYPH = new ShowCodonGlyphAction("hide", 0);
+//	private static final ShowCodonGlyphAction SHOW_CODON_GLYPH_ACTION_THREE_LETTER = new ShowCodonGlyphAction("3 letter", 3);
+//	private static final ShowCodonGlyphAction SHOW_CODON_GLYPH_ACTION_ONE_LETTER = new ShowCodonGlyphAction("1 letter", 1);
+//	private static final ShowCodonGlyphAction HIDE_CODON_GLYPH = new ShowCodonGlyphAction("hide", 0);
+//	
+//	public static ShowCodonGlyphAction getThreeLetterAction() {
+//		return SHOW_CODON_GLYPH_ACTION_THREE_LETTER;
+//	}
+//
+//	public static ShowCodonGlyphAction getOneLetterAction() {
+//		return SHOW_CODON_GLYPH_ACTION_ONE_LETTER;
+//	}
+//	
+//	public static ShowCodonGlyphAction getHideCodonAction() {
+//		return HIDE_CODON_GLYPH;
+//	}
 	
 	final private int size;
-		
-	public static ShowCodonGlyphAction getThreeLetterAction() {
-		return SHOW_CODON_GLYPH_ACTION_THREE_LETTER;
-	}
-
-	public static ShowCodonGlyphAction getOneLetterAction() {
-		return SHOW_CODON_GLYPH_ACTION_ONE_LETTER;
-	}
-	
-	public static ShowCodonGlyphAction getHideCodonAction() {
-		return HIDE_CODON_GLYPH;
-	}
-	
 	public ShowCodonGlyphAction(String text, int size){
 		super(text, null, null);
 		this.size = size;

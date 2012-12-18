@@ -16,7 +16,7 @@ public class DeselectAllAction extends SeqMapViewActionA {
 	}
 
 	protected DeselectAllAction() {
-		super(IGBConstants.BUNDLE.getString("selectNone"), "16x16/actions/blank_placeholder.png", null);
+		super(IGBConstants.BUNDLE.getString("selectNone"), null, null);
 	}
 
 	@Override

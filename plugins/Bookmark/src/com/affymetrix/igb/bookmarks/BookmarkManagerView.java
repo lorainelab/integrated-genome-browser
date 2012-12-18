@@ -243,7 +243,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	private void exportBookmarks(BookmarkList main_bookmark_list) {
-		if (main_bookmark_list == null) { // Support exporting from any node
+		if (main_bookmark_list == null) { // Support exporting from any node 
 			ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
 			return;
 		}
@@ -510,6 +510,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			this.tree = tree;
 			this.tree.addKeyListener(new KeyListener() {
+				
+				// Set to remember which keys are pressed to handle combination keys pressed for deleting and adding bookmark
+				private final Set<Integer> pressedKeySet = new HashSet<Integer>(); 
 
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -517,16 +520,22 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if ((e.getKeyCode() == KeyEvent.VK_DELETE)) {
-						deleteAction();
+					pressedKeySet.add(e.getKeyCode());
+					
+					if (pressedKeySet.size() ==1 && (e.getKeyCode() == KeyEvent.VK_DELETE)) { // Only if DELETE is pressed
+						deleteAction();	
+						pressedKeySet.remove(e.getKeyCode()); // Force remove because keyReleased() not always be triggered
 					}
-					if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
+					
+					if (pressedKeySet.size() ==1 && (e.getKeyCode() == KeyEvent.VK_ENTER)) { // Only if ENTER is pressed
 						goToAction();
+						pressedKeySet.remove(e.getKeyCode());
 					}
 				}
 
 				@Override
 				public void keyReleased(KeyEvent e) {
+					pressedKeySet.remove(e.getKeyCode());
 				}
 			});
 			this.def_tree_model = (DefaultTreeModel) tree.getModel();

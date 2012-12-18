@@ -170,6 +170,10 @@ public abstract class PreferenceUtils {
 		return getTopNode().getBoolean(param_name, def);
 	}
 
+	public static String getStringParam(String param_name, String def) {
+		return getTopNode().get(param_name, def);
+	}
+	
 	/**
 	 * Saves the current location of a window to the user's preferences.
 	 *

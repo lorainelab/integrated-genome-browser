@@ -12,9 +12,16 @@ import java.util.Map;
 
 public class NotOperator implements Operator{
 
+	private final FileTypeCategory fileTypeCategory;
+	
+	public NotOperator(FileTypeCategory fileTypeCategory) {
+		super();
+		this.fileTypeCategory = fileTypeCategory;
+	}
+	
 	@Override
 	public String getName() {
-		return "not";
+		return fileTypeCategory.toString().toLowerCase() + "_not";
 	}
 
 	@Override
@@ -79,12 +86,12 @@ public class NotOperator implements Operator{
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 1 : 0;
+		return category == this.fileTypeCategory ? 1 : 0;
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 1 : 0;
+		return category == this.fileTypeCategory ? 1 : 0;
 	}
 
 	@Override

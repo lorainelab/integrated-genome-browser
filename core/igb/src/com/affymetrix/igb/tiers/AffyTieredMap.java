@@ -32,8 +32,8 @@ import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.print.PageFormat;
@@ -644,5 +644,21 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 		return null;
+	}
+	
+	public void removeMouseListener(Class<? extends MouseListener> clazz){
+		for(MouseListener ml : mouse_listeners){
+			if(ml.getClass() == clazz){
+				removeMouseListener(ml);
+			}
+		}
+	}
+	
+	public void removeMouseMotionListener(Class<? extends MouseMotionListener> clazz){
+		for(MouseMotionListener ml : mouse_motion_listeners){
+			if(ml.getClass() == clazz){
+				removeMouseMotionListener(ml);
+			}
+		}
 	}
 }

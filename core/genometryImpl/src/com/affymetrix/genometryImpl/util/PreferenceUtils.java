@@ -46,6 +46,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.affymetrix.common.CommonUtils;
+import java.io.OutputStream;
+import javax.swing.JRadioButton;
 
 /**
  * Helps to save and load preferences such as locations of windows.
@@ -512,6 +514,38 @@ public abstract class PreferenceUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a JRadioButton associated with a integer preference.
+	 * Will initialize itself with the value of the given
+	 * preference and will update itself, via a PreferenceChangeListener,
+	 * if the preference value changes.
+	 */
+	public static JRadioButton createRadioButton(String title, final String action_command, 
+			final Preferences node, final String pref_name, final String default_val) {
+		final JRadioButton radio_button = new JRadioButton(title);
+		radio_button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				node.put(pref_name, action_command);
+			}
+		});
+		
+		radio_button.setSelected(node.get(pref_name, default_val).equalsIgnoreCase(action_command) ? true : false);
+		node.addPreferenceChangeListener(new PreferenceChangeListener() {
+
+			@Override
+			public void preferenceChange(PreferenceChangeEvent evt) {
+				if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
+					if(evt.getNewValue().equalsIgnoreCase(action_command)){
+						radio_button.setSelected(true);
+					}
+				}
+			}
+		});
+		return radio_button;
+	}
+	
 	/**
 	 * Creates a JCheckBox associated with a boolean preference.
 	 * Will initialize itself with the value of the given

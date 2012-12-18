@@ -12,10 +12,13 @@ import com.affymetrix.igb.action.SeqMapViewActionA;
 public class SelectAllAction extends SeqMapViewActionA {
 
 	private static final long serialVersionUID = 1L;
-	private static SelectAllAction ACTION = new SelectAllAction(null);
+	private static SelectAllAction ACTION = new SelectAllAction(
+			new FileTypeCategory[]{FileTypeCategory.Alignment, FileTypeCategory.Annotation,
+			FileTypeCategory.Graph, FileTypeCategory.Mismatch, FileTypeCategory.ProbeSet,
+			FileTypeCategory.Sequence});
 	private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION =
 			new HashMap<FileTypeCategory, SelectAllAction>();
-	private FileTypeCategory category;
+	private FileTypeCategory[] categories;
 
 	static {
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -34,15 +37,15 @@ public class SelectAllAction extends SeqMapViewActionA {
 		return selectAllAction;
 	}
 
-	protected SelectAllAction(FileTypeCategory category) {
-		super(category == null ? IGBConstants.BUNDLE.getString("selectAll") : category.toString(), category == null ? "16x16/actions/Select_all.png" : "16x16/actions/blank_placeholder.png", category == null ? "22x22/actions/Select_all.png" : null);
-		this.category = category;
+	protected SelectAllAction(FileTypeCategory... categories) {
+		super(categories.length > 1 ? IGBConstants.BUNDLE.getString("selectAllTracks") : categories[0].toString(), null, null);
+		this.categories = categories;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		execute(category);
+		execute(categories);
 	}
 
 	public void execute(FileTypeCategory... categories) {

@@ -17,8 +17,10 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.util.logging.Level;
 
 /**
- *
- * @author auser
+ * This is an action used to display the genomic read Sequence of a BAM Symmetry 
+ * in Sequence Viewer 
+ * 
+ * @author Anuj
  */
 public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener{
 	private static final long serialVersionUID = 1l;

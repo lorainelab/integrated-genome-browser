@@ -12,7 +12,9 @@ import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 
 /**
  *
- * @author auser
+ * This class is used to display the Read Sequence of a BAM file
+ * 
+ * @author Anuj
  */
 public class ReadSequenceViewer extends AbstractSequenceViewer{
 

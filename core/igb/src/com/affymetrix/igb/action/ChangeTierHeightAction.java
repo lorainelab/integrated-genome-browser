@@ -21,8 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- *
- * @author auser
+ * This action is used to change the fixed height of a Track which is locked.
+ * 
+ * @author Anuj
  */
 public class ChangeTierHeightAction extends SeqMapViewActionA implements ParameteredAction{
 	private static final long serialVersionUID = 1l;

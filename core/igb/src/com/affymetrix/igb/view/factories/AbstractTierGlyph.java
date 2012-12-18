@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
@@ -628,10 +629,18 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		int numberOfSiblings = theSiblings.size();
 		GlyphI child;
 		Rectangle2D.Double coordbox;
+		boolean isForward = true, isDirectedGlyph;
 		for (int i = 0; i < numberOfSiblings; i++) {
 			child =  theSiblings.get(i);
-			coordbox = child.getCoordBox();
+			coordbox = child.getCoordBox();	
+			isDirectedGlyph = child instanceof DirectedGlyph;
+			if(isDirectedGlyph){
+				isForward = ((DirectedGlyph)child).isForward();
+			}
 			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height * theScale);
+			if(isDirectedGlyph){
+				((DirectedGlyph)child).setForward(isForward);
+			}
 			if (0 < child.getChildCount()) {
 				// The above test is needed as of 2011-03-01
 				// because child.getChildren() returns null instead of an empty list.

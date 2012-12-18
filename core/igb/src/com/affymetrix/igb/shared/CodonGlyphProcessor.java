@@ -6,7 +6,9 @@ import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.Application;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -16,12 +18,22 @@ public class CodonGlyphProcessor {
 	
 	PreferenceChangeListener prefs = new PreferenceChangeListener(){
 
+		@Override
 		public void preferenceChange(PreferenceChangeEvent pce) {
 			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
 				return;
 			}
 			if (pce.getKey().equals(CodonGlyph.CODON_GLYPH_CODE_SIZE)) {
+				int prevCodeSize = codeSize;
 				codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
+				if(prevCodeSize != codeSize){
+					ThreadUtils.runOnEventQueue(new Runnable(){
+						@Override
+						public void run() {
+							Application.getSingleton().getMapView().setAnnotatedSeq(Application.getSingleton().getMapView().getAnnotatedSeq(), true, true);
+						}
+					});
+				}
 			}
 		}
 	};

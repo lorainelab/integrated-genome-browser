@@ -572,6 +572,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Adjust All Tracks"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust All Tracks&quot;, AccordionTierResizer.class.getSimpleName(), &#xa;        PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="jRadioButton2">
           <Properties>
@@ -580,6 +583,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Adjust Adjacent Tracks"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust Adjacent Tracks&quot;, TierResizer.class.getSimpleName(), &#xa;        PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

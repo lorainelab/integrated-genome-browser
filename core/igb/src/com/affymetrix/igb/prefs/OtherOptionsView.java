@@ -10,6 +10,8 @@ import com.affymetrix.igb.shared.CodonGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.AccordionTierResizer;
+import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
@@ -113,8 +115,10 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         threeLetterButton = PreferenceUtils.createRadioButton("Three Letter", "3", PreferenceUtils.getTopNode(),
             CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
         jPanel2 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton1 = PreferenceUtils.createRadioButton("Adjust All Tracks", AccordionTierResizer.class.getSimpleName(),
+            PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
+        jRadioButton2 = PreferenceUtils.createRadioButton("Adjust Adjacent Tracks", TierResizer.class.getSimpleName(),
+            PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
 
         setPreferredSize(new java.awt.Dimension(545, 540));
 

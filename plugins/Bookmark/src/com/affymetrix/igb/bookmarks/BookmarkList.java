@@ -206,7 +206,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			bw.write("<H1>Bookmarks</H1>\n");
 
 			bw.write("<DL><p>\n");
-			exportAsHTML_recursive(list, bw, " ");
+			exportAsHTML_recursive(list, bw, " ", true);
 			bw.write("</DL><p>\n");
 			bw.close();
 		} finally {
@@ -225,7 +225,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			fw = new FileWriter(fil);
 			bw = new BufferedWriter(fw);
 			bw.write("Bookmarks\n");
-			exportAsTEXT_recursive(list, bw, "\n");
+			exportAsTEXT_recursive(list, bw, "\n", true);
 			bw.write("\n");
 			bw.close();
 		} finally {
@@ -238,50 +238,82 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 		}
 	}
 	// Used by exportAsNetscapeHTML
-	private static void exportAsTEXT_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
+	private static void exportAsTEXT_recursive(BookmarkList list, Writer bw, String indent, boolean isSelectedNode) throws IOException {
 		// Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
 		@SuppressWarnings("unchecked")
 		Enumeration<BookmarkList> e = list.children();
-		while (e.hasMoreElements()) {
-			BookmarkList btn = e.nextElement();
-			Object o = btn.getUserObject();
-			if (o instanceof String) {
-				bw.write(indent + " " + o + " "+btn.getComment()+"\n");
-				bw.write(indent + "\n");
-				exportAsTEXT_recursive(btn, bw, indent + "\t");
-				bw.write(indent + "\n");
-			} else if (o instanceof Bookmark) {
-				Bookmark bm = (Bookmark) o;
-				bw.write(bm.getName());
-				bw.write(indent);
-				bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
-				bw.write("\n\n");
-			} else if (o instanceof Separator) {
-				bw.write(indent + "\n");
+		Object currentNode = list.getUserObject();
+
+		if (list.getChildCount() == 0 && currentNode instanceof Bookmark) { // Export the selected single bookmark
+			Bookmark bm = (Bookmark) currentNode;
+			bw.write(bm.getName());
+			bw.write(indent);
+			bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
+			bw.write("\n\n");
+		} else if (currentNode instanceof String) { // Export selected folder
+			
+			if (isSelectedNode && !currentNode.toString().equals("Bookmarks")) { // Not for the 'Bookmark'
+				bw.write(indent + " " + currentNode + " " + list.getComment() + "\n");
+			}
+
+			while (e.hasMoreElements()) { // Export the children
+				BookmarkList btn = e.nextElement();
+				Object o = btn.getUserObject();
+				if (o instanceof String) {
+					bw.write(indent + " " + o + " " + btn.getComment() + "\n");
+					bw.write(indent + "\n");
+					exportAsTEXT_recursive(btn, bw, indent + "\t", false);
+					bw.write(indent + "\n");
+				} else if (o instanceof Bookmark) {
+					Bookmark bm = (Bookmark) o;
+					bw.write(bm.getName());
+					bw.write(indent);
+					bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
+					bw.write("\n\n");
+				} else if (o instanceof Separator) {
+					bw.write(indent + "\n");
+				}
 			}
 		}
 	}
 	// Used by exportAsNetscapeHTML
-	private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
+	private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent, boolean isSelectedNode) throws IOException {
 		// Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
 		@SuppressWarnings("unchecked")
 		Enumeration<BookmarkList> e = list.children();
-		while (e.hasMoreElements()) {
-			BookmarkList btn = e.nextElement();
-			Object o = btn.getUserObject();
-			if (o instanceof String) {
-				bw.write(indent + "<DT><H3>" + o + "</H3>"+"<DD>"+btn.getComment()+"</DD>"+"\n");
+		Object currentNode = list.getUserObject();
+		
+		if (list.getChildCount() == 0 && currentNode instanceof Bookmark) { // Export the selected single bookmark
+			Bookmark bm = (Bookmark) currentNode;
+			bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");
+			bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
+			bw.write(bm.getName());
+			bw.write("</A>\n");
+		} else if(currentNode instanceof String) { // Export selected folder
+
+			if (isSelectedNode && !currentNode.toString().equals("Bookmarks")) { // Not for the 'Bookmark'
+				bw.write(indent + "<DT><H3>" + currentNode + "</H3>" + "<DD>" + list.getComment() + "</DD>" + "\n");
 				bw.write(indent + "<DL><p>\n");
-				exportAsHTML_recursive(btn, bw, indent + "  ");
 				bw.write(indent + "</DL><p>\n");
-			} else if (o instanceof Bookmark) {
-				Bookmark bm = (Bookmark) o;
-				bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");
-				bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
-				bw.write(bm.getName());
-				bw.write("</A>\n");
-			} else if (o instanceof Separator) {
-				bw.write(indent + "<HR>\n");
+			}
+
+			while (e.hasMoreElements()) { // Export the children
+				BookmarkList btn = e.nextElement();
+				Object o = btn.getUserObject();
+				if (o instanceof String) {
+					bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + btn.getComment() + "</DD>" + "\n");
+					bw.write(indent + "<DL><p>\n");
+					exportAsHTML_recursive(btn, bw, indent + "  ", false);
+					bw.write(indent + "</DL><p>\n");
+				} else if (o instanceof Bookmark) {
+					Bookmark bm = (Bookmark) o;
+					bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");
+					bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
+					bw.write(bm.getName());
+					bw.write("</A>\n");
+				} else if (o instanceof Separator) {
+					bw.write(indent + "<HR>\n");
+				}
 			}
 		}
 	}

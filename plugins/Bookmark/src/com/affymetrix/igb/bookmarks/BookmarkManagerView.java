@@ -208,6 +208,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	 */
 	private void importBookmarks(BookmarkList bookmark_list) {
 		JFileChooser chooser = getJFileChooser(false);
+		chooser.setDialogTitle("Import");
 		chooser.setCurrentDirectory(getLoadDirectory());
 		int option = chooser.showOpenDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -242,11 +243,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	private void exportBookmarks(BookmarkList main_bookmark_list) {
-		if (main_bookmark_list == null || main_bookmark_list.getChildCount() == 0) {
+		if (main_bookmark_list == null) { // Support exporting from any node
 			ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
 			return;
 		}
 		JFileChooser chooser = getJFileChooser(true);
+		chooser.setDialogTitle("Export");
 		chooser.setCurrentDirectory(getLoadDirectory());
 		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -267,7 +269,13 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
-				BookmarkList bl = (BookmarkList) tree_model.getRoot();
+				BookmarkList bl = null;
+				TreePath path = tree.getSelectionPath();
+				try {
+					bl = (BookmarkList) path.getLastPathComponent(); // Export selected node
+				} catch(NullPointerException ex) {
+					bl = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected
+				}
 				exportBookmarks(bl); // already contains a null check on bookmark list
 			}
 		};

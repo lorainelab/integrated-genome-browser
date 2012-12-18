@@ -13,6 +13,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.text.MessageFormat;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.MouseInputAdapter;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -169,6 +170,10 @@ public class SeqMapView extends JPanel
 	 * Name of a boolean preference for whether to show properties in tooltip.
 	 */
 	public static final String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
+	/**
+	 * Name of a string preference define which resize behavior to use.
+	 */
+	public static final String PREF_TRACK_RESIZING_BEHAVIOR = "Track resizing behavior";
 	public static final Color default_edge_match_color = Color.WHITE;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 	private static final boolean default_x_zoomer_above = true;
@@ -226,12 +231,34 @@ public class SeqMapView extends JPanel
 	// in part because of the need to coordinate with the label glyphs.
 	private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
 
+		@Override
 		public void preferenceChange(PreferenceChangeEvent pce) {
-			if (axis_tier == null) {
+			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
 				return;
 			}
-
-			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+			
+			if (pce.getKey().equals(PREF_TRACK_RESIZING_BEHAVIOR)){
+				String behavior = PreferenceUtils.getStringParam(PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
+				MouseInputAdapter resizer;
+				if(behavior.equals(TierResizer.class.getSimpleName())){
+					resizer = new TierResizer((AffyLabelledTierMap)seqmap);
+				} else {
+					resizer = new AccordionTierResizer((AffyLabelledTierMap)seqmap);
+				}
+				
+				// Remove previous instances of mouse adapters.
+				((AffyLabelledTierMap)seqmap).getLabelMap().removeMouseListener(TierResizer.class);
+				((AffyLabelledTierMap)seqmap).getLabelMap().removeMouseListener(AccordionTierResizer.class);
+				((AffyLabelledTierMap)seqmap).getLabelMap().removeMouseMotionListener(TierResizer.class);
+				((AffyLabelledTierMap)seqmap).getLabelMap().removeMouseMotionListener(AccordionTierResizer.class);
+				
+				((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(resizer);
+				((AffyLabelledTierMap)seqmap).getLabelMap().addMouseMotionListener(resizer);
+				
+				return;
+			}
+			
+			if (axis_tier == null) {
 				return;
 			}
 
@@ -263,7 +290,7 @@ public class SeqMapView extends JPanel
 					SeqMapView.this.add(BorderLayout.EAST, yzoombox);
 				}
 				SeqMapView.this.invalidate();
-			}
+			} 
 		}
 	};
 
@@ -452,6 +479,10 @@ public class SeqMapView extends JPanel
 		this.addPopupListener(new ReadAlignmentView());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
+		
+		String behavior = PreferenceUtils.getStringParam(PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
+		PreferenceUtils.getTopNode().put(PREF_TRACK_RESIZING_BEHAVIOR, behavior);
+		
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 		
 	}

@@ -15,12 +15,13 @@ import java.awt.event.WindowListener;
 
 /**
  *
- * @author anuj
+ * @author Anuj
  */
 public abstract class TrackPreferencesPanel extends IPrefEditorComponent implements SeqMapRefreshed, WindowListener, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
 	/**
-	 * Creates new form TrackPreferencesPanel
+	 * This is the panel which is used for both Preferences-> Tracks tab and Preferences->Track Defaults Tab
+	 * It replaced the use of TierPrefsViewGUI and TrackDefaultViewGUI classes
 	 */
 	public TrackPreferences tdv;
 	public boolean pref;

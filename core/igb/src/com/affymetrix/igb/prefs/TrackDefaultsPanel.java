@@ -5,8 +5,10 @@
 package com.affymetrix.igb.prefs;
 
 /**
- *
- * @author auser
+ * This class is a subclass of TrackPreferences Panel and is used for Tracks->Defaults Tab which makes some of the components 
+ * invisible on Panel which are inappropriate
+ * 
+ * @author Anuj
  */
 public class TrackDefaultsPanel extends TrackPreferencesPanel{
 	private static final long serialVersionUID = 1L;

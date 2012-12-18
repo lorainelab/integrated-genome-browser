@@ -25,8 +25,11 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.text.AbstractDocument;
 
 /**
- *
- * @author auser
+ *	This class holds all the components of Preferences -> Tracks Tab and Preferences -> Tracks Defaults Tab 
+ *	and some of the components are specific to Preferences -> Tracks Tab which gets visible only for 
+ *  that tab.
+ * 
+ * @author Anuj
  */
 public abstract class TrackPreferences implements ListSelectionListener {
 

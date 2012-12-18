@@ -164,7 +164,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 			
 			vf = style2Feature.get(style);
-			if(vf != null){
+			if(vf != null && !virtualFeatures.contains(vf)){
 				virtualFeatures.add(vf);
 				tempVirtualFeatures.remove(vf);
 			}

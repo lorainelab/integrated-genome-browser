@@ -17,10 +17,13 @@ import java.util.List;
 
 /**
  *
- * @author auser
+ * @author Anuj
  */
 public class WriteJunctionsThread{   
-    
+    /* Class used to write the resulting common junctions into an output BED file
+     * as customised by different options with a given threshold values.
+     * It writes a "SIZE" number of junctions at a time.
+     */
     public static final int SIZE = 30000;
     private final BAM bam;
     private final DataOutputStream dos;
@@ -39,6 +42,8 @@ public class WriteJunctionsThread{
         operator.setParameters(paraMeters);
     }
 
+    /* This is used to convert the BAM file junctions into bed using the FindJunction Operator which is embedded in IGB code
+     */
     public void run(BioSeq bioseq) throws IOException {
         List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
         HashMap<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();

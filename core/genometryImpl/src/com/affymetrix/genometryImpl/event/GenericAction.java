@@ -24,7 +24,7 @@ public abstract class GenericAction extends AbstractAction {
 	private final String tooltip;
 	private final String iconPath;
 	private final String largeIconPath;
-	private final int mnemonic;
+	//private final int mnemonic;
 	private final Object extraInfo;
 	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
@@ -54,7 +54,7 @@ public abstract class GenericAction extends AbstractAction {
 		this.tooltip = tooltip;
 		this.iconPath = iconPath;
 		this.largeIconPath = largeIconPath;
-		this.mnemonic = mnemonic;
+//		this.mnemonic = mnemonic;
 		this.extraInfo = extraInfo;
 		this.popup = popup;
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();
@@ -100,9 +100,9 @@ public abstract class GenericAction extends AbstractAction {
 	public final String getIconPath() {
 		return iconPath;
 	}
-	public final int getMnemonic() {
-		return mnemonic;
-	}
+//	public final int getMnemonic() {
+//		return mnemonic;
+//	}
 	public final Object getExtraInfo() {
 		return extraInfo;
 	}

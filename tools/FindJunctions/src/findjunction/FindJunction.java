@@ -24,7 +24,9 @@ import java.net.URISyntaxException;
 public class FindJunction {
 
     /**
-     * @param args the command line arguments
+     * Class used to find the Junctions of a given BAM File using a threshold value of intron length and writes down to an output BED file using the File path
+     * given in command line using various options as given in the code.
+     * 
      */
     private static final int DEFAULT_THRESHOLD = 5; // maybe make all caps
     public static boolean DEBUG = false;
@@ -76,6 +78,9 @@ public class FindJunction {
         fJ.init(input, output, threshold, twoTracks, twoBit, uniqueness);
     }
     
+    /* getArg is the method used to return the appropriate argument from the list of arguments 
+     * using the option variable which is the first argument.
+     */ 
     public static String getArg(String label, String[] args) {
         String to_return = null;
         boolean got_it = false;
@@ -96,7 +101,9 @@ public class FindJunction {
         return to_return;
     }
     
-    //This is the method where the control of the program gets started
+    /* This is the method where the control of the program gets started and all of the variables like input file output file and 2bit files gets assigned
+     * and then calls the method to find the Junctions. 
+     */
     public void init(String input, String output, int threshold, boolean twoTracks, String twoBit, boolean uniqueness) throws URISyntaxException, Exception{
         if(DEBUG)
             System.err.println("Initial Heap Memory: "+Runtime.getRuntime().freeMemory());
@@ -118,6 +125,8 @@ public class FindJunction {
         convertBAMToBed(inputURI , output, threshold, twoTracks, twoBitURI, uniqueness);        
     }
     
+    /* This method is used to convert the given file path from relative to absolute.
+     */
     private URI relativeToAbsolute(String path) throws URISyntaxException{
         if(!(path.startsWith("file:") && !(path.startsWith("http:")) && !(path.startsWith("ftp:")))){
             return getAbsoluteFile(path).toURI();
@@ -125,6 +134,8 @@ public class FindJunction {
         return new URI(path);
     }
     
+    /*Returns the File object at given path
+     */
     private File getAbsoluteFile(String path){
         return new File(path).getAbsoluteFile();
     }

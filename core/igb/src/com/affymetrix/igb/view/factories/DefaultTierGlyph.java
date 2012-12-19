@@ -481,6 +481,7 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 				double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();
 				long depth = (long) Math.floor(height / h);
 				assert -1 < depth && depth < Integer.MAX_VALUE;
+				depth = Math.max(depth, 1);
 				expand_packer.setMaxSlots((int) depth);
 				switch (this.direction) {
 					case FORWARD:

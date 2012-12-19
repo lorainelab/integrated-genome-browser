@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -88,11 +89,13 @@ public final class KeyStrokeEditPanel extends JPanel {
 						// Temorarily remove the focus listener
 						// so that it doesn't try to apply the action
 						// when the confirmation dialog pops up.
+						GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(useCommand);
+						String actionDisplayName = (genericAction == null) ? "???" : genericAction.getDisplay();
 						key_field.removeFocusListener(lois);
 						if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
 								"This shortcut is currently in use; \n"
-								+ "reassigning this will remove the shortcut for "
-								+ useCommand + ".\n"
+								+ "reassigning this will remove the shortcut for '"
+								+ actionDisplayName + "'.\n"
 								+ "Do you want to proceed?")) {
 							key_field.setText(lastTimeFocusGained);
 							lastCommand = null;

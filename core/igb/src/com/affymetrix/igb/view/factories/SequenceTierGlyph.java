@@ -33,6 +33,7 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 	}
 
+	@Override
 	public void setPreferredHeight(double height, ViewI view){
 		height = height - 2 * getSpacing();
 

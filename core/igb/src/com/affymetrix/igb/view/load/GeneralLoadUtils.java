@@ -1309,7 +1309,7 @@ public final class GeneralLoadUtils {
 		
 		if (extension.equals(".bam")) {
 			if (!handleBam(uri)) {
-				ErrorHandler.errorPanel("Cannot open file", "Could not find index file", Level.WARNING);
+				ErrorHandler.errorPanel("Cannot open file", "Failed to authenticate to server", Level.WARNING);
 				version = null;
 			}
 		} else if (extension.equals(".useq")) {

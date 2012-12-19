@@ -144,6 +144,7 @@ public class AltSpliceView extends IGBTabPanel
 			}
 		}
 		resetAll();
+		refreshView();
 	}
 
 	/**
@@ -335,5 +336,6 @@ public class AltSpliceView extends IGBTabPanel
 
 	public void mapRefresh() {
 		resetAll();
+		refreshView();
 	}
 }

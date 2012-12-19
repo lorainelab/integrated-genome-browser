@@ -474,8 +474,7 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 			// Remove the padding at top and bottom.
 			// Shouldn't we get this info from the packer?
 			height = height - 2 * getSpacing();
-			double scale = 1.0;
-
+			
 			if (getPacker() == expand_packer) {
 				// Now figure out how deep to set max depth.
 				// Get current slot height. Should actually get this from the packer.
@@ -500,7 +499,8 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 				int numberOfSlotsInUse = getActualSlots();
 				double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
 				double newSlotHeight = (height - totalInteriorSpacing) / numberOfSlotsInUse;
-
+				double scale;
+				
 				if (useLabel(style)) {
 					// Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
 					newSlotHeight = newSlotHeight / 2;
@@ -522,9 +522,9 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 						scale = newSlotHeight / style.getHeight();
 						style.setHeight(newSlotHeight);
 				}
+				scaleChildHeights(scale, getChildren(), view);
 			}
 
-			scaleChildHeights(scale, getChildren(), view);
 		}
 	}
 	

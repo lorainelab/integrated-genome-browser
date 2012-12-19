@@ -520,8 +520,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					// Temp statement to debug the issue 'DELETE' not working on Macbook Pro with Java 1.7
-					System.out.println("Current keyset size: " + pressedKeySet.size() + " key pressed char: " + e.getKeyChar() + " code: " + e.getKeyCode());
 					pressedKeySet.add(e.getKeyCode());
 					
 					if (pressedKeySet.size() ==1 && (e.getKeyCode() == KeyEvent.VK_DELETE)) { // Only if DELETE is pressed

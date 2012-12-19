@@ -344,6 +344,18 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		temp.setCoords(coordrect.x + coordrect.width - 1, coordrect.y, 1, coordrect.height);
 		int end = SearchUtils.binarySearch(children, temp, new GlyphMinXComparator());
 
+		// A fix for those glyphs being not selected that are overlapped at begning of rubberband.
+		for (int i = start - 1; i >= 0 ; i--) {
+			child = children.get(i);
+			if (child.isVisible()){
+				if(child.hit(coordrect, view)) {
+					pickList.add(child);
+				}else{
+					break;
+				}
+			}
+		}
+
 		// Only check childrens from start to end position
 		for (int i = start; i <= end; i++) {
 			child = children.get(i);

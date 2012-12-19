@@ -385,4 +385,9 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	protected void addZoomOutYButton(String id) {
 		// Do nothing
 	}
+	
+	@Override
+	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
+		// No right click menu in slice view
+	}
 }

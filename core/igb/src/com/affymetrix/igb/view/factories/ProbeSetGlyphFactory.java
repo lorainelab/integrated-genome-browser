@@ -122,7 +122,8 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 		boolean forward = pspan.isForward();
 
 		TierGlyph the_tier = forward ? forward_tier : reverse_tier;
-
+		boolean labelInSouth = !pspan.isForward() && (reverse_tier != forward_tier);
+			
 		int parent_height = GLYPH_HEIGHT; // height of the consensus glyph
 		// if there is a label, this height value will be adjusted below
 		int child_height = GLYPH_HEIGHT; // height of the consensus "exons"
@@ -139,11 +140,11 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 		if (use_label) {
 			EfficientLabelledLineGlyph lglyph = new EfficientLabelledLineGlyph();
 			lglyph.setMoveChildren(false);
-			if (forward) {
+			if (labelInSouth) {
+				lglyph.setLabelLocation(GlyphI.SOUTH);
+			} else {
 				lglyph.setLabelLocation(GlyphI.NORTH);
 				child_y += parent_height;
-			} else {
-				lglyph.setLabelLocation(GlyphI.SOUTH);
 			}
 			String label = (String) ((SymWithProps) consensus_sym).getProperty(label_field);
 			lglyph.setLabel(label);

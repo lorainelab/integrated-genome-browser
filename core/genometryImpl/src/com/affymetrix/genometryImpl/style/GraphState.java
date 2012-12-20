@@ -32,8 +32,9 @@ public class GraphState {
 	public static final double DEFAULT_YHEIGHT = 60;
 	public static final Color DEFAULT_COL = Color.lightGray;
 	public static final boolean DEFAULT_FLOAT = false;
-	public static final boolean DEFAULT_SHOW_LABEL = true;
-	public static final boolean DEFAULT_SHOW_AXIS = false;
+	public static final boolean DEFAULT_SHOW_LABEL = false; // Consisten with prefs resetting
+	public static final boolean DEFAULT_SHOW_AXIS = true;   // That is show label not axis
+	public static final GraphType DEFAULT_GRAPH_STYLE = GraphType.MINMAXAVG;
 	public static final double DEFAULT_MINVIS = Double.NEGATIVE_INFINITY;
 	public static final double DEFAULT_MAXVIS = Double.POSITIVE_INFINITY;
 	public static final double DEFAULT_SCORE_THRESH = 0;
@@ -92,10 +93,6 @@ public class GraphState {
 	private boolean show_bounds = false;
 	private boolean show_label = false;
 	
-	private boolean default_show_threshold = false;
-	private boolean default_show_axis = false;
-	private boolean default_show_label = false;
-
 	private HeatMap heat_map;
 	private final ITrackStyleExtended tier_style;
 	private ITrackStyleExtended combo_tier_style = null;
@@ -131,9 +128,10 @@ public class GraphState {
 	}
 	
 	public void restoreToDefault(){
-		show_threshold = default_show_threshold;
-		show_axis = default_show_axis;
-		show_label = default_show_label;
+		graph_style = DEFAULT_GRAPH_STYLE;
+		show_axis = DEFAULT_SHOW_AXIS;
+		show_label = DEFAULT_SHOW_LABEL;
+		tier_style.setFloatTier(DEFAULT_FLOAT);
 	}
 	
 	/** Copy all the properties, except ID and label, of the given state into this state. */

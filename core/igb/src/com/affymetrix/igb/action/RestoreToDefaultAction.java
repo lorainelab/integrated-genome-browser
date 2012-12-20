@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -36,6 +37,11 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
 				((TrackStyle)style).restoreToDefault();
 			}
 		}
+		
+		for (GraphState graphState: graphStates) {
+			graphState.restoreToDefault();
+		}
+		
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		getSeqMapView().updatePanel();
 		getSeqMapView().getPopup().refreshMap(false, true);

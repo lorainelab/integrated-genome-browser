@@ -98,8 +98,8 @@ public final class XmlPrefsParser {
 	public static void parse(String url) throws IOException {
 		InputStream stream = null;
 		try {
-			// Don't cache.  Don't warn user if the synonyms file doesn't exist.
-			stream = LocalUrlCacher.getInputStream(url, true, null, true);
+			// Don't cache.  Don't warn user if the synonyms file doesn't exist.  Do not allow html for preferences.xml
+			stream = LocalUrlCacher.getInputStream(url, true, null, true, false);
 			if (stream == null) {
 				return;
 			}

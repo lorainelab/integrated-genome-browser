@@ -395,7 +395,7 @@ public final class QuickLoadServerModel {
 
 		try {
 			try {
-				istr = getInputStream(contentsTxt, getCacheAnnots(), false);
+				istr = getInputStream(contentsTxt, getCacheAnnots(), false, false); // Html is not allowed for requesting contents.txt
 			} catch (Exception e) {
 				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 						Level.WARNING, "ERROR: Couldn''t open ''{0}{1}\n:  {2}", new Object[]{getLoadURL(), contentsTxt, e.toString()});
@@ -468,8 +468,12 @@ public final class QuickLoadServerModel {
 	}
 
 	private InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist) throws IOException{
+		return getInputStream(append_url, write_to_cache, fileMayNotExist, true);
+	}
+		
+	private InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist, boolean allowHtml) throws IOException{
 		String load_url = getLoadURL() + append_url;
-		InputStream istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist);
+		InputStream istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
 
 		/** Check to see if trying to load from primary server but primary server is not responding **/
 		if(istr == null && isLoadingFromPrimary() && !fileMayNotExist){
@@ -479,7 +483,7 @@ public final class QuickLoadServerModel {
 			primaryServer.setServerStatus(ServerStatus.NotResponding);
 
 			load_url = getLoadURL() + append_url;
-			istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist);
+			istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
 		}
 
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(

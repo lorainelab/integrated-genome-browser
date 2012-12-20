@@ -11,6 +11,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -230,19 +232,33 @@ public class AddSource extends JFrame {
 	}//GEN-LAST:event_typeComboActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
-		if (isEditPanel) {
-			DataLoadPrefsView.getSingleton().updateDataSource(serverURL,
-					(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
-		} else {
-			if (enableCombo) {
-				DataLoadPrefsView.getSingleton().addDataSource(
-						(ServerTypeI) typeCombo.getSelectedItem(),
-						nameText.getText(), urlText.getText(), -1, false);
-			} else {
-				BundleRepositoryPrefsView.getSingleton().addDataSource(null,
-						nameText.getText(), urlText.getText(), -1, false);
+		
+		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("Adding " + nameText.getText()) {
+			@Override
+			protected Void runInBackground() {
+				if (isEditPanel) {
+					DataLoadPrefsView.getSingleton().updateDataSource(serverURL,
+							(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
+				} else {
+					if (enableCombo) {
+						DataLoadPrefsView.getSingleton().addDataSource(
+								(ServerTypeI) typeCombo.getSelectedItem(),
+								nameText.getText(), urlText.getText(), -1, false);
+					} else {
+						BundleRepositoryPrefsView.getSingleton().addDataSource(null,
+								nameText.getText(), urlText.getText(), -1, false);
+					}
+				}
+				return null;
 			}
-		}
+			
+			@Override
+			protected void finished() {
+				
+			}
+		};
+		CThreadHolder.getInstance().execute(evt, worker);
+		
 		this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed
 

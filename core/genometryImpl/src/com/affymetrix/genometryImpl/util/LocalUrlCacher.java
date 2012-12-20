@@ -207,6 +207,32 @@ public final class LocalUrlCacher {
 					HttpURLConnection hcon = (HttpURLConnection) conn;
 					http_status = hcon.getResponseCode();
 					
+					// Special content type check
+					String responseContentType = hcon.getContentType();
+
+					/**
+					 * Normal IGB Quickload file requests:
+					 * 
+					 * File Requested    Response Content-Type
+					 * --------------    ---------------------
+					 * synonyms.txt      text/plain
+					 * contents.txt      null
+					 * species.txt       text/plain
+					 * preferences.xml   text/html
+					 * 
+					 * For server URL looks like 'http://www.transvar.org?=',
+					 * all the file requests will be considered valid but they are all returned as an HTML page
+					 * 
+					 * So following check handles this issue to get rid of 'Species' list being filled by HTML tags
+					 * 
+					 */
+					
+					if(responseContentType!=null && url.toLowerCase().contains("contents.txt") && responseContentType.toLowerCase().contains("text/html")) {
+						Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,	"Contents retrieving aborted for {0}", url);
+						return null;
+					}
+					// End of special check
+					
 					//Handle one redirect
 					if(http_status == HTTP_TEMP_REDIRECT){
 						conn = handleTemporaryRedirect(conn, url, sessionId, local_timestamp);

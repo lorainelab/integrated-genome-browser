@@ -44,7 +44,7 @@
 
 
 <!-- Any RefSeq mRNA alignment -->
-  <annotation_url annot_type_regex="*.NCBI EST.*" 
+  <annotation_url annot_type_regex=".*NCBI EST.*" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
 	type="default"

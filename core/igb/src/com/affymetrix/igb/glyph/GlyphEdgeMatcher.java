@@ -121,17 +121,18 @@ public final class GlyphEdgeMatcher  {
       double tend = tbox.x + tbox.width;
       if (Math.abs(qstart - tstart) <= fuzness) {
         if (target.getParent() != null) {
-          SolidGlyph mglyph = new FillRectGlyph();
+		  SolidGlyph mglyph;
 		  if (target instanceof PointedGlyph) {
-		    PointedGlyph pg = (PointedGlyph) target;
-			if (!pg.isForward()) {
-			  mglyph = new PointedGlyph();
-			  ((PointedGlyph) mglyph).setForward(pg.isForward());
-			}
+			mglyph = new PointedGlyph();
+		  } else {
+			  mglyph = new FillRectGlyph();
 		  }
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
+		  if(target instanceof PointedGlyph){
+			  ((PointedGlyph) mglyph).setForward(((PointedGlyph) target).isForward());
+		  }
           // Can add mglyph to TierGlyph, or to the target or target.getParent()
           // There are advantages to each.  See note below.
           //map.addItem(target.getParent(), mglyph);
@@ -143,17 +144,18 @@ public final class GlyphEdgeMatcher  {
 
       if (Math.abs(qend - tend) <= fuzness) {
         if (target.getParent() != null) {
-          SolidGlyph mglyph = new FillRectGlyph();
+          SolidGlyph mglyph;
 		  if (target instanceof PointedGlyph) {
-		    PointedGlyph pg = (PointedGlyph) target;
-			if (pg.isForward()) {
-		      mglyph = new PointedGlyph();
-			  ((PointedGlyph) mglyph).setForward(pg.isForward());
-			}
+			mglyph = new PointedGlyph();
+		  } else {
+			  mglyph = new FillRectGlyph();
 		  }
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
+		  if(target instanceof PointedGlyph){
+			  ((PointedGlyph) mglyph).setForward(((PointedGlyph) target).isForward());
+		  }
           //map.addItem(target.getParent(), mglyph);
           map.addItem(getTier(target), mglyph);
           //map.addItem(mglyph); // do not do this

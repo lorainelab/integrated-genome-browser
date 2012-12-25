@@ -290,27 +290,12 @@ public final class NibbleResiduesParser implements Parser {
 		end = Math.max(end, start);
 		end = Math.min(end, start+seq.getResiduesProvider().getLength());
 
-		DataOutputStream dos = null;
 		try
 		{
-			dos = new DataOutputStream(new BufferedOutputStream(outstream));
-			final long saveStart = start;
-			// need to use MutableLong since sequenceLoop must be final to be used in inner class
-			final MutableLong sequenceLoop = new MutableLong();
-			ProgressUpdater progressUpdater = new ProgressUpdater("NibbleResiduesParser ", start, end,
-				new PositionCalculator() {
-					@Override
-					public long getCurrentPosition() {
-						return saveStart + sequenceLoop.longValue();
-					}
-				}
-			);
-			if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-				CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
-			}
+			DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
 			// Only keep BUFSIZE characters in memory at one time
-			for (sequenceLoop.setValue(0);sequenceLoop.longValue()<(end-start) && (!Thread.currentThread().isInterrupted());sequenceLoop.add(BUFSIZE)) {
-				String outString = seq.getResidues((int)sequenceLoop.longValue(), Math.min((int)sequenceLoop.longValue()+BUFSIZE, (end-start)));
+			for (int i=0;i<(end-start) && (!Thread.currentThread().isInterrupted());i+=BUFSIZE) {
+				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
 			}
 			dos.flush();

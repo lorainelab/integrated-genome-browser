@@ -25,8 +25,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
@@ -63,7 +61,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
-import org.apache.commons.lang3.mutable.MutableLong;
 
 /**
  *
@@ -675,28 +672,12 @@ public final class GeneralLoadUtils {
 			@Override
 			protected Void runInBackground() {
 				try {
-					final MutableLong currentPosition = new MutableLong(0);
-					PositionCalculator positionCalculator = new PositionCalculator() {
-						@Override
-						public long getCurrentPosition() {
-							return currentPosition.longValue();
-						}
-					};
 					List<BioSeq> chrList = feature.symL.getChromosomeList();
-					long totalLength = 0;
-					for (BioSeq seq : chrList) {
-						totalLength += seq.getLength();
-					}
-					ProgressUpdater progressUpdater = new ProgressUpdater("Load whole feature " + feature.featureName, 0, totalLength, positionCalculator);
-					if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-						CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
-					}
 					final BioSeq current_seq = gmodel.getSelectedSeq();
 					Thread thread = Thread.currentThread();
 
 					if (current_seq != null) {
 						loadOnSequence(current_seq);
-						currentPosition.setValue(currentPosition.getValue() + current_seq.getLength());
 						publish(current_seq);
 					}
 
@@ -709,9 +690,6 @@ public final class GeneralLoadUtils {
 							break;
 						}
 						loadOnSequence(seq);
-						if (current_seq != null) {
-							currentPosition.setValue(currentPosition.getValue() + current_seq.getLength());
-						}
 					}
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) feature.symL).logException(ex);

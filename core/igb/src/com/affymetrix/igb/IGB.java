@@ -255,10 +255,11 @@ public final class IGB extends Application
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
 		notifyCounter();
+		openQuickStart();
 		ToolTipManager.sharedInstance().setDismissDelay(10000);
 	}
 	
-		private void printDetails(String[] args) {
+	private void printDetails(String[] args) {
 		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
 		System.out.println("UserAgent: " + USER_AGENT);
 		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
@@ -287,6 +288,14 @@ public final class IGB extends Application
 		}
 	}
 
+	private void openQuickStart() {
+		String version = PreferenceUtils.getStringParam(IGBConstants.APP_NAME, null);
+		if(version == null || !version.equals(IGBConstants.APP_VERSION)){
+			PreferenceUtils.getTopNode().put(IGBConstants.APP_NAME, IGBConstants.APP_VERSION);
+			GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
+		}
+	}
+	
 	public void addStopRoutine(IStopRoutine routine) {
 		stopRoutines.add(routine);
 	}

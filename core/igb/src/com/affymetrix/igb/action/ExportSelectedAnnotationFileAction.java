@@ -42,6 +42,8 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 	}
 	public void symSelectionChanged(SymSelectionEvent evt){
 		List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
-		ExportSelectedAnnotationFileAction.getAction().setEnabled((1 == answer.size()) && !(((TierGlyph)answer.get(0)).getSelected().isEmpty()));
+		ExportSelectedAnnotationFileAction.getAction().setEnabled((1 == answer.size()) 
+				&& !(((TierGlyph)answer.get(0)).getSelected().isEmpty())
+				&& isExportable(((TierGlyph)answer.get(0)).getFileTypeCategory()));
 	}
 }

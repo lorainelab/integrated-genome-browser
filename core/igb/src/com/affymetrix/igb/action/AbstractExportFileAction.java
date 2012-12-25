@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ExportFileModel;
@@ -54,7 +55,7 @@ extends GenericAction implements SymSelectionListener {
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
-		setEnabled(1 == answer.size() && answer.get(0).getInfo() != null);
+		setEnabled(1 == answer.size() && answer.get(0).getInfo() != null && isExportable(((TierGlyph)answer.get(0)).getFileTypeCategory()));
 	}
 
 	@Override
@@ -106,6 +107,11 @@ extends GenericAction implements SymSelectionListener {
 		}
 	}
 
+	public boolean isExportable(FileTypeCategory category){
+		Map<UniFileFilter, AnnotationWriter> filter2writers = model.getFilterToWriters(category);
+		return filter2writers != null && !filter2writers.isEmpty();
+	}
+	
 	protected abstract void exportFile(
 			AnnotationWriter annotationWriter,
 			DataOutputStream dos,

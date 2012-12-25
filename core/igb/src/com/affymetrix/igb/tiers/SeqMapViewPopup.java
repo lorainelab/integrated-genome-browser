@@ -405,11 +405,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		set_color_by_score.setEnabled(!coordinates_track_selected && !any_graph);
 		popup.add(set_color_by_score);
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
-		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty());
+		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_selected_annotations.setIcon(null);
 		popup.add(save_selected_annotations);
 		JMenuItem save_track = new JRPMenuItemTLP(ExportFileAction.getAction());
-		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null);
+		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_track.setIcon(null);
 		popup.add(save_track);
 		

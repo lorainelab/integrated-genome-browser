@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
-
-import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -32,9 +31,6 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -43,7 +39,6 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
-import java.util.*;
 
 public class DasServerType implements ServerTypeI {
 	/** boolean to indicate should script continue to run if error occurs **/
@@ -196,18 +191,7 @@ public class DasServerType implements ServerTypeI {
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		DasSource version = (DasSource) gVersion.versionSourceObj;
 		List<Entry<String, String>> types = new ArrayList<Entry<String, String>>(version.getTypes().entrySet());
-		final MutableInt nameLoop = new MutableInt(0);
-		ProgressUpdater progressUpdater = new ProgressUpdater("DAS discover features", 0, types.size(), 
-			new PositionCalculator() {
-				@Override
-				public long getCurrentPosition() {
-					return nameLoop.intValue();
-				}
-			}
-		);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
-		for (; nameLoop.intValue() < types.size(); nameLoop.increment()) {
-			Entry<String,String> type = types.get(nameLoop.intValue());
+		for (Entry<String,String> type : types) {
 			String type_name = type.getKey();
 			if (type_name == null || type_name.length() == 0) {
 				System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);

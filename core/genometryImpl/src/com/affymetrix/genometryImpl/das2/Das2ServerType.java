@@ -37,9 +37,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -49,8 +46,6 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import java.util.*;
-
-import org.apache.commons.lang3.mutable.MutableInt;
 
 public class Das2ServerType implements ServerTypeI {
 	enum FORMAT {
@@ -209,18 +204,7 @@ public class Das2ServerType implements ServerTypeI {
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 		List<Das2Type> types = new ArrayList<Das2Type>(version.getTypes().values());
-		final MutableInt nameLoop = new MutableInt(0);
-		ProgressUpdater progressUpdater = new ProgressUpdater("DAS2 discover features", 0, types.size(), 
-			new PositionCalculator() {
-				@Override
-				public long getCurrentPosition() {
-					return nameLoop.intValue();
-				}
-			}
-		);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
-		for (; nameLoop.intValue() < types.size(); nameLoop.increment()) {
-			Das2Type type = types.get(nameLoop.intValue());
+		for (Das2Type type : types) {	
 			String type_name = type.getName();
 			if (type_name == null || type_name.length() == 0) {
 				System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);

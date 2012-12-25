@@ -4,8 +4,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeekableFTPStream;
@@ -409,13 +407,11 @@ public final class BAM extends XAM {
 		final BioSeq seq;
 		final CloseableIterator<SAMRecord> iter;
 		private SeqSymmetry next = null;
-		final ProgressUpdater progressUpdater;
 		
 		SeqSymmetryIterator(BioSeq seq, CloseableIterator<SAMRecord> iter, long startPosition, long endPosition) {
 			super();
 			this.seq = seq;
 			this.iter = iter;
-			progressUpdater = getProgressUpdater(startPosition, endPosition);
 			next = getNext();
 		}
 
@@ -462,24 +458,5 @@ public final class BAM extends XAM {
 			return null;
 		}
 		
-		public double getProgress() {
-			return progressUpdater.getProgress();
-		}
-
-		private ProgressUpdater getProgressUpdater(final long startPosition, final long endPosition) {
-			return new ProgressUpdater("BAM parse " + uri + " - " + seq, startPosition, endPosition,
-					new PositionCalculator() {
-						@Override
-						public long getCurrentPosition() {
-							long currentPosition = startPosition;
-							try {
-								currentPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
-							} catch (Exception x) {
-								// log error here
-							}
-							return currentPosition;
-						}
-					});
-		}
 	}
 }

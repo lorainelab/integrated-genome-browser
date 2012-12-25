@@ -29,7 +29,6 @@ import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBitNew;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.*;
 
 public class QuickloadServerType implements ServerTypeI {
@@ -250,7 +249,6 @@ public class QuickloadServerType implements ServerTypeI {
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		// Discover feature names from QuickLoad
-		ProgressUpdater progressUpdater = null;
 		try {
 			URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
 			if (DEBUG) {

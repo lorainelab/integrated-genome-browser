@@ -10,7 +10,6 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	private static final boolean DEBUG = false;
 	private final String message;
 	private final int priority;
-	private ProgressUpdater progressUpdater;
 
 	public CThreadWorker(String msg){
 		this(msg, Thread.NORM_PRIORITY);
@@ -34,18 +33,6 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 
 	public int getPriority() {
 		return priority;
-	}
-
-	public ProgressUpdater getProgressUpdater() {
-		return progressUpdater;
-	}
-
-	public void setProgressUpdater(ProgressUpdater progressUpdater) {
-		if (this.progressUpdater != null) { // first ProgressUpdater takes precedence
-			return;
-		}
-		this.progressUpdater = progressUpdater;
-		progressUpdater.start();
 	}
 
 	@Override
@@ -75,11 +62,6 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		}
 		catch (Exception x) {
 			throw (x);
-		}
-		finally {
-			if (progressUpdater != null) {
-				progressUpdater.kill();
-			}
 		}
 		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
 		CThreadHolder.getInstance().notifyEndThread(this);

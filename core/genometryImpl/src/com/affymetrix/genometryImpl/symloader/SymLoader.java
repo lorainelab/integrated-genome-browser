@@ -183,14 +183,6 @@ public abstract class SymLoader {
 		}
 		return results;
 	}
-
-	/**
-	 * called by the SymLoaders when they add a new SeqSymmetry during data load
-	 * used by the progress updater to show the progress of the data load
-	 * @param sym the last SeqSymmetry added during the data load
-	 */
-	protected void notifyAddSymmetry(SeqSymmetry sym) {
-	}
 	
 	public URI getURI() {
 		return this.uri;

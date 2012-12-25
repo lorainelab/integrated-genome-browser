@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 /**
@@ -55,8 +54,6 @@ public class ResidueTrackSymLoader extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("Residue SymLoaderProgressUpdater getRegion for " + uri + " - " + overlapSpan, overlapSpan);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		return getResidueTrack(overlapSpan);
     }
 	

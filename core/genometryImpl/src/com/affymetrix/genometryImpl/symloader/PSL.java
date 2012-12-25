@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import org.broad.tribble.readers.LineReader;
 
@@ -131,17 +130,11 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	@Override
 	public List<UcscPslSym> getRegion(SeqSpan span)  throws Exception  {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("PSL SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception  {
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater("PSL parse lines " + uri);
-		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
-		}
 		BufferedWriter bw = null;
 		BufferedReader br = null;
 		Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
@@ -431,7 +424,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		Thread thread = Thread.currentThread();
 //		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
-				notifyReadLine(line.length());
 //				line_count++;
 				// Ignore psl header lines
 				if(line.trim().length() == 0)
@@ -558,7 +550,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		Thread thread = Thread.currentThread();
 //		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
-				notifyReadLine(line.length());
 //				line_count++;
 				// Ignore psl header lines
 				if(line.trim().length() == 0)

@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
@@ -122,8 +121,6 @@ public class BED extends SymLoader implements LineProcessor {
 	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater("BED parse lines " + uri);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
@@ -200,10 +197,10 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 		};
 
-		parse(it, isSorted, min, max, this);
+		parse(it, isSorted, min, max);
 	}
 
-	private void parse(Iterator<String> it, boolean isSorted, int min, int max, LineTrackerI lineTracker) {
+	private void parse(Iterator<String> it, boolean isSorted, int min, int max) {
 		seq2types.clear();
 		symlist.clear();
 		String line;
@@ -215,9 +212,6 @@ public class BED extends SymLoader implements LineProcessor {
 
 		lastSleepTime = System.nanoTime();
 		while ((line = it.next()) != null && (!thread.isInterrupted())) {
-			if (lineTracker != null) {
-				lineTracker.notifyReadLine(line.length());
-			}
 			if (line.length() == 0) {
 				continue;
 			}
@@ -274,7 +268,7 @@ public class BED extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parse(it, true, 0, Integer.MAX_VALUE, lineTracker);
+		parse(it, true, 0, Integer.MAX_VALUE);
 		return symlist;
 	}
 
@@ -446,7 +440,6 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 		}
 		symlist.add(bedline_sym);
-		notifyAddSymmetry(bedline_sym);
 		if (annotate_seq) {
 			this.annotationParsed(bedline_sym);
 		}
@@ -732,10 +725,6 @@ public class BED extends SymLoader implements LineProcessor {
 
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater("BED parse lines " + uri);
-		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
-		}
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -751,7 +740,6 @@ public class BED extends SymLoader implements LineProcessor {
 			lastSleepTime = System.nanoTime();
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				lineCounter++;
-				notifyReadLine(line.length());
 				if (line.length() == 0) {
 					continue;
 				}

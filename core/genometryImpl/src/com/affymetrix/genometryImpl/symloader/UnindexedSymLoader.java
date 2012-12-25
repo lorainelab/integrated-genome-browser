@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -137,9 +136,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 			
 			LineReader lineReader = getLineReader(br, min, max);
-				
-			parseLinesProgressUpdater = new ParseLinesProgressUpdater("Unindexed process lines " + uri, 0, file.length());
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
+			
 			return lineProcessor.processLines(seq, lineReader, this);
 		} finally {
 			GeneralUtils.safeClose(istr);
@@ -163,9 +160,8 @@ public abstract class UnindexedSymLoader extends SymLoader {
 		return lineProcessor;
 	}
 
+	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater("Unindexed parse lines " + uri);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 

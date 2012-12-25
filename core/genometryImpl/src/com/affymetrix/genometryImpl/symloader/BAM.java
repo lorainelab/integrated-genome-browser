@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
@@ -172,28 +171,8 @@ public final class BAM extends XAM {
 				while (iter.hasNext()) {
 					iter.next();
 				}
-				long endPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
 				iter.close();
 				iter = reader.query(seqs.get(seq), min, max, contained);
-				final long startPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
-				ProgressUpdater progressUpdater = new ProgressUpdater("BAM parse " + uri + " - " + seq + ":" + min + "-" + max, startPosition, endPosition,
-					new PositionCalculator() {
-						@Override
-						public long getCurrentPosition() {
-							long currentPosition = startPosition;
-							try {
-								currentPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
-							}
-							catch (Exception x) {
-								// log error here
-							}
-							return currentPosition;
-						}
-					}
-				);
-				if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-					CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(progressUpdater);
-				}
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
 					lastSleepTime = System.nanoTime();

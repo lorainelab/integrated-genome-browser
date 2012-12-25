@@ -17,9 +17,6 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.*;
 
@@ -40,85 +37,6 @@ public abstract class SymLoader implements LineTrackerI {
 	protected final Map<BioSeq,Boolean> chrSort = new HashMap<BioSeq,Boolean>();
 	protected final AnnotatedSeqGroup group;
 	public final String featureName;
-	protected SymLoaderProgressUpdater symLoaderProgressUpdater;
-	protected ParseLinesProgressUpdater parseLinesProgressUpdater;
-
-	/**
-	 * Implementation of the ProgressUpdater for use in methods that load a data
-	 * source and return a List&lt;SeqSymmetry&gt;, like getRegion()
-	 * The progress calculation takes the SeqSymmetry span min position as the
-	 * position within the passed SeqSpan.
-	 */
-	public class SymLoaderProgressUpdater extends ProgressUpdater {
-		public SymLoaderProgressUpdater(String name, final SeqSpan span) {
-			super(name, span.getMin(), span.getMax(),
-				new PositionCalculator() {
-					@Override
-					public long getCurrentPosition() {
-						if (symLoaderProgressUpdater == null) {
-//							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "symLoaderProgressUpdater == null in SymLoaderProgressUpdater constructor");
-							return span.getMin();
-						}
-						else {
-							SeqSpan testSpan = symLoaderProgressUpdater.getLastSeqSymmetry().getSpan(span.getBioSeq());
-							return testSpan.getMin();
-						}
-					}
-				}
-			);
-		}
-
-		private SeqSymmetry lastSeqSymmetry;
-
-		public SeqSymmetry getLastSeqSymmetry() {
-			return lastSeqSymmetry;
-		}
-
-		public void setLastSeqSymmetry(SeqSymmetry lastSeqSymmetry) {
-			this.lastSeqSymmetry = lastSeqSymmetry;
-		}
-	};
-
-	/**
-	 * Implementation of the ProgressUpdater for use in the parseLines method.
-	 * The progress calculation accumulates the line length (assuming LF, not CRLF)
-	 * and using that position within the entire file length. Note - for compressed
-	 * files the compressed file length is known the uncompressed file length is
-	 * needed, but only approximated.
-	 */
-	protected class ParseLinesProgressUpdater extends ProgressUpdater {
-		public ParseLinesProgressUpdater(String name) {
-			this(name, uri);
-		}
-		public ParseLinesProgressUpdater(String name, URI uri) {
-			this(name, 0, GeneralUtils.getUriLength(uri));
-		}
-		public ParseLinesProgressUpdater(String name, long startPosition, long endPosition) {
-			super(name, startPosition, endPosition,
-				new PositionCalculator() {
-					@Override
-					public long getCurrentPosition() {
-						if (parseLinesProgressUpdater == null) {
-							return 0;
-						}
-						else {
-							return parseLinesProgressUpdater.getFilePosition();
-						}
-					}
-				}
-			);
-		}
-
-		private long filePosition;
-
-		public long getFilePosition() {
-			return filePosition;
-		}
-
-		public void lineRead(int lineLength) {
-			filePosition += (lineLength + 1); // don't know if line ends with LF (+ 1) or CRLF (+ 2)
-		}
-	};
 
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -272,9 +190,6 @@ public abstract class SymLoader implements LineTrackerI {
 	 * @param sym the last SeqSymmetry added during the data load
 	 */
 	protected void notifyAddSymmetry(SeqSymmetry sym) {
-		if (symLoaderProgressUpdater != null) {
-			symLoaderProgressUpdater.setLastSeqSymmetry(sym);
-		}
 	}
 
 	/**
@@ -282,9 +197,6 @@ public abstract class SymLoader implements LineTrackerI {
 	 * Used by the progress updater to show the progress of the parseLines().
 	 */
 	public void notifyReadLine(int lineLength) {
-		if (parseLinesProgressUpdater != null) {
-			parseLinesProgressUpdater.lineRead(lineLength + 1);
-		}
 	}
 	
 	public URI getURI() {
@@ -301,8 +213,6 @@ public abstract class SymLoader implements LineTrackerI {
      * @return List of symmetries satisfying requirements
      */
     public List<? extends SeqSymmetry> getRegion(final SeqSpan overlapSpan) throws Exception {
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SymLoaderProgressUpdater getRegion for " + uri + " - " + overlapSpan, overlapSpan);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
 		return this.getChromosome(overlapSpan.getBioSeq());

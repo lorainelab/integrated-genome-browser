@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -99,8 +98,6 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("GFF3 SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
@@ -155,10 +152,6 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)
 			throws Exception {
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater("GFF3 parse lines " + uri);
-		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(parseLinesProgressUpdater);
-		}
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -174,8 +167,6 @@ public class GFF3 extends SymLoader implements LineProcessor {
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				counter++;
 			
-				notifyReadLine(line.length());
-
 				if (line.length() == 0) {
 					continue;
 				}

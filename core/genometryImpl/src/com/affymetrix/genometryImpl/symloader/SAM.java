@@ -19,9 +19,7 @@ import net.sf.samtools.util.CloseableIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
@@ -148,19 +146,12 @@ public class SAM extends XAM implements LineProcessor{
 	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SAM SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		if (CThreadHolder.getInstance().getCurrentCThreadWorker() != null) {
-			CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
-		}
 		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
 	}
 
 	@Override
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader, LineTrackerI lineTracker) throws Exception {
 		// LineTrackerI ignored, since the SAMTextReader hides the lines
-		SeqSpan span = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SAM SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		CThreadHolder.getInstance().getCurrentCThreadWorker().setProgressUpdater(symLoaderProgressUpdater);
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
 		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
 	}

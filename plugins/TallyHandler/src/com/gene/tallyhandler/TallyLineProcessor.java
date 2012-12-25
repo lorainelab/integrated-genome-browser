@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.LineProcessor;
-import com.affymetrix.genometryImpl.symloader.LineTrackerI;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
@@ -30,7 +29,7 @@ public class TallyLineProcessor implements LineProcessor {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader, LineTrackerI lineTracker) throws Exception {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
 		List<Integer> xList = new ArrayList<Integer>();
 		List<Integer> wList = new ArrayList<Integer>();
 		List<Float> yList = new ArrayList<Float>();

@@ -11,7 +11,7 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author hiralv
  */
-public final class LabelTableCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
+public class LabelTableCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
 
 	private final JLabel label;
 

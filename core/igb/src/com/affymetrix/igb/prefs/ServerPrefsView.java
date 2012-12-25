@@ -177,6 +177,21 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		table.setDefaultRenderer(String.class, renderer);
 		table.setDefaultRenderer(ServerTypeI.class, renderer);
 
+		TableCellRenderer refresh_renderer = new LabelTableCellRenderer(refresh_icon, true) {
+
+			private static final long serialVersionUID = -1l;
+
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value,
+					boolean isSelected, boolean hasFocus, int row, int col) {
+
+				Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+				int modelRow = table.convertRowIndexToModel(row);
+				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceTableModel.SourceColumn.Enabled)));
+				return ret;
+			}
+		};
+			
 		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
 			TableColumn column = e.nextElement();
 			SourceTableModel.SourceColumn current = SourceTableModel.SourceColumn.valueOf((String) column.getHeaderValue());
@@ -184,7 +199,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			switch (current) {
 				case Refresh:
 					column.setMaxWidth(20);
-					column.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
+					column.setCellRenderer(refresh_renderer);
 					column.setCellEditor(new ButtonTableCellEditor(refresh_icon));
 					break;
 				case Name:

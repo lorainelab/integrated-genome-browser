@@ -119,8 +119,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			return true;
 		}
 
-		if (col == tableColumns.indexOf(SourceColumn.Refresh)
-				|| col == tableColumns.indexOf(SourceColumn.Enabled)) {
+		if (col == tableColumns.indexOf(SourceColumn.Enabled)) {
 			return true;
 		}
 

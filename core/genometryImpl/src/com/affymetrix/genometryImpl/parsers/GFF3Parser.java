@@ -14,7 +14,6 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symloader.LineTrackerI;
 import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -127,14 +126,14 @@ public final class GFF3Parser implements Parser {
 			}
 		};
 
-		parse(it, default_source, seq_group, annot_seq, null);
+		parse(it, default_source, seq_group, annot_seq);
 	}
 
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public void parse(Iterator<String> it, String default_source, AnnotatedSeqGroup seq_group, boolean annot_seq, LineTrackerI lineTracker)
+	public void parse(Iterator<String> it, String default_source, AnnotatedSeqGroup seq_group, boolean annot_seq)
 			throws IOException {
 		symlist.clear();
 		
@@ -151,9 +150,6 @@ public final class GFF3Parser implements Parser {
 		
 		Thread thread = Thread.currentThread();
 		while ((line = it.next()) != null && !thread.isInterrupted()) {
-			if (lineTracker != null) {
-				lineTracker.notifyReadLine(line.length());
-			}
 			if ("###".equals(line)) {
 				// This directive signals that we can process all parent-child relationships up to this point.
 				// But there is not much benefit in doing so.

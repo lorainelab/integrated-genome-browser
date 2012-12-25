@@ -242,7 +242,7 @@ public class BED extends SymLoader implements LineProcessor {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override

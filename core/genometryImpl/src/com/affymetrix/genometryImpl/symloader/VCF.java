@@ -32,7 +32,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.LineProcessor;
-import com.affymetrix.genometryImpl.symloader.LineTrackerI;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -154,7 +153,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 	/**
 	 *  Parses VCF format
 	 */
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		SimpleSymWithProps mainSym = new SimpleSymWithProps();
 		mainSym.setProperty("seq", seq);
 		mainSym.setProperty("type", featureName);
@@ -168,9 +167,6 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
 		try {
 			while ((line = lineReader.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
-				if (lineTracker != null) {
-					lineTracker.notifyReadLine(line.length());
-				}
 				if (line.startsWith("#")) {
 					line_count++;
 					continue;

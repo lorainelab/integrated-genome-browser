@@ -137,7 +137,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			
 			LineReader lineReader = getLineReader(br, min, max);
 			
-			return lineProcessor.processLines(seq, lineReader, this);
+			return lineProcessor.processLines(seq, lineReader);
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
@@ -174,9 +174,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			lastSleepTime = System.nanoTime();
-			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				notifyReadLine(line.length());
-				
+			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {				
 				ch = line.charAt(0);
 				if (ch == 't' && line.startsWith("track")) {
 					trackLine = line;

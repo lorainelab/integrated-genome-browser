@@ -119,7 +119,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) throws Exception {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) throws Exception {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override
@@ -145,7 +145,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parser.parse(it, uri.toString(), group, true, lineTracker);
+		parser.parse(it, uri.toString(), group, true);
 		return parser.symlist;
 	}
 

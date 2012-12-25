@@ -22,10 +22,9 @@ public interface LineProcessor {
 	 * into SeqSymmetry
 	 * @param seq the sequence
 	 * @param lineReader the LineReader from QueryReader
-	 * @param lineTracker the LineTrackerI implementation (can be null)
 	 * @return the SeqSymmetry list from the parsing
 	 */
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader, LineTrackerI lineTracker) throws Exception;
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception;
 	/**
 	 * perform any initialization here
 	 * @param uri the uri of the data source

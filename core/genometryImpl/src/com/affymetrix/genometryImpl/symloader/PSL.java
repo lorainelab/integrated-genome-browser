@@ -348,7 +348,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override

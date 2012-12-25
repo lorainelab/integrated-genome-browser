@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.*;
  * @author jnicol
  * Could be improved with iterators.  But for now this should be fine.
  */
-public abstract class SymLoader implements LineTrackerI {
+public abstract class SymLoader {
 	protected long lastSleepTime;
 	public static final String FILE_PREFIX = "file:";
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
@@ -190,13 +190,6 @@ public abstract class SymLoader implements LineTrackerI {
 	 * @param sym the last SeqSymmetry added during the data load
 	 */
 	protected void notifyAddSymmetry(SeqSymmetry sym) {
-	}
-
-	/**
-	 * Called by the SymLoaders when they parse a new line during parseLines().
-	 * Used by the progress updater to show the progress of the parseLines().
-	 */
-	public void notifyReadLine(int lineLength) {
 	}
 	
 	public URI getURI() {

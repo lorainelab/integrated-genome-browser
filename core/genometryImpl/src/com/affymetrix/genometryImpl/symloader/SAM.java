@@ -150,7 +150,7 @@ public class SAM extends XAM implements LineProcessor{
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader, LineTrackerI lineTracker) throws Exception {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
 		// LineTrackerI ignored, since the SAMTextReader hides the lines
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
 		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);

@@ -132,8 +132,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader, LineTrackerI lineTracker) throws Exception {
-		return parse(lineReader, false, false, lineTracker);
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
+		return parse(lineReader, false, false);
 	}
 
 	@Override
@@ -287,7 +287,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 	boolean use_track_lines = true;
 
 	@SuppressWarnings("unused")
-	private List<? extends SeqSymmetry> parse(LineReader lineReader, boolean create_container_annot, boolean annotate_seq, LineTrackerI lineTracker)
+	private List<? extends SeqSymmetry> parse(LineReader lineReader, boolean create_container_annot, boolean annotate_seq)
 			throws IOException {
 		if (DEBUG) {
 			System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
@@ -315,9 +315,6 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 		while ((!thread.isInterrupted()) && ((line = lineReader.readLine()) != null)) {
 			if (line == null) {
 				continue;
-			}
-			if (lineTracker != null) {
-				lineTracker.notifyReadLine(line.length());
 			}
 			if (line.startsWith("##")) {
 				processDirective(line);

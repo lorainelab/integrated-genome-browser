@@ -121,7 +121,6 @@ public abstract class BookmarkController {
 				// sym_col is String rep of RGB integer
 				String sym_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.COL.toString() + i);
 				String sym_bg_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.BG.toString() + i);
-				String view_mode = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.VIEW_MODE.toString() + i);
 				// sym_bg_col will often be null
 
 				//        int graph_min = (graph_visible_min == null) ?
@@ -223,7 +222,7 @@ public abstract class BookmarkController {
 					style.setTrackName(sym_name);
 				}
 
-				applyStyleProperties(style, col, bg_col, ypos, yheight, view_mode);
+				applyStyleProperties(style, col, bg_col, ypos, yheight);
 
 			}
 
@@ -234,7 +233,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-	private static void applyStyleProperties(ITrackStyle tier_style, Color col, Color bg_col, double ypos, double yheight, String view_mode) {
+	private static void applyStyleProperties(ITrackStyle tier_style, Color col, Color bg_col, double ypos, double yheight) {
 		tier_style.setForeground(col);
 		tier_style.setBackground(bg_col);
 		tier_style.setY(ypos);

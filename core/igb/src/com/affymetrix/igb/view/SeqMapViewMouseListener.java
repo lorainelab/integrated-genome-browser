@@ -84,27 +84,24 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		this.map = smv.seqmap;
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 		show_tooltip = PreferenceUtils.getTopNode().getBoolean(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP, true);
-		toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
-		toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent evt) {
 		if (evt.getSource() == map && show_tooltip) {
-			toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
 			toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
-			
 			ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-			ToolTipManager.sharedInstance().setInitialDelay(0);
 		}
+		toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+		ToolTipManager.sharedInstance().setInitialDelay(0);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent evt) {
 		if (evt.getSource() == map && show_tooltip) {
-			ToolTipManager.sharedInstance().setDismissDelay(toolTipInitialDelay);
-			ToolTipManager.sharedInstance().setInitialDelay(toolTipDismissDelay);
+			ToolTipManager.sharedInstance().setDismissDelay(toolTipDismissDelay);
 		}
+		ToolTipManager.sharedInstance().setInitialDelay(toolTipInitialDelay);
 	}
 
 	public void mouseClicked(MouseEvent evt) {

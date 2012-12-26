@@ -25,11 +25,12 @@ import java.util.ResourceBundle;
 public interface IGBConstants {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 
-	public static final String APP_NAME         = CommonUtils.getInstance().getAppName();
-	public static final String APP_NAME_SHORT   = CommonUtils.getInstance().getAppNameShort();
-	public static final String APP_VERSION      = CommonUtils.getInstance().getAppVersion();
-	public static final String APP_VERSION_FULL = CommonUtils.getInstance().getAppVersionFull();
-
+	public static final String APP_NAME				= CommonUtils.getInstance().getAppName();
+	public static final String APP_NAME_SHORT		= CommonUtils.getInstance().getAppNameShort();
+	public static final String APP_VERSION			= CommonUtils.getInstance().getAppVersion();
+	public static final String APP_VERSION_FULL		= CommonUtils.getInstance().getAppVersionFull();
+	public static final String GOOGLE_ANALYTICS_ID	= CommonUtils.getInstance().getGoogleAnalyticsId();
+	
 	public static final String USER_AGENT = MessageFormat.format(
 			BUNDLE.getString("userAgent"),
 			APP_NAME_SHORT,

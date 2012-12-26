@@ -27,7 +27,8 @@ public class CommonUtils {
 	private static final String BUILD_CUSTOMIZATION = BUNDLE.getString("buildCustomization");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
 			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION, BUILD_CUSTOMIZATION);
-
+	private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
+	
 	private CommonUtils() {
 		super();
 	}
@@ -58,6 +59,14 @@ public class CommonUtils {
 	 */
 	public String getAppVersionFull() {
 		return APP_VERSION_FULL;
+	}
+	
+	/*
+	 * get the google analytics id
+	 * @return google analytics id 
+	 */
+	public String getGoogleAnalyticsId() {
+		return GOOGLE_ANALYTICS_ID;
 	}
 	
 	/**

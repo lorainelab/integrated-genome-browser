@@ -7,7 +7,7 @@
 	<!--  classic  the data track files reside in a file system.        -->
 	<property name="das2_mode"    value="classic"/>
 
-	<target name="common-init" depends="init,compiler-def-args,svn-init">
+	<target name="common-init" depends="init,compiler-def-args">
     <tstamp/>
 
 		<!-- directory paths -->
@@ -72,7 +72,7 @@
 
 		<!-- Java VM configuration -->
 		<property name="igb.jvmargs" value="" />
-		<property name="igb.maxmem" value="1024m" />
+		<property name="igb.maxmem" value="4024m" />
 
 
 		<filter token="build.version"  value="${build.version}" />
@@ -160,7 +160,12 @@
 		<!-- compiler defaults passed to javac -->
 		<property name="debug"         value="on" />
 		<property name="deprecation"   value="off"/>
-		<property name="compiler.args" value="-Xlint:all,-serial,-path -Werror"/>
+		<path id="java6.boot.classpath.dir">
+			<fileset dir="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes" includes="*.jar"/>
+		</path>
+		<property name="java6.boot.classpath" value="${toString:java6.boot.classpath.dir}" />
+
+		<property name="compiler.args" value="-Xlint:all,-static,-rawtypes,-serial,-path -Werror"/>
 	</target>
 	
 	<target name="extras-init">
@@ -247,9 +252,10 @@
 	</condition>
   
 	<presetdef name="my.javac">
-		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}" includeantruntime="false">
+		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" 
+			   deprecation="${deprecation}" includeantruntime="false" bootclasspath="${java6.boot.classpath}">
 			<compilerarg compiler="modern" line="${compiler.args}" />
-    		</javac>
+    	</javac>
 	</presetdef>
 
 	<presetdef name="my.javac_checker">

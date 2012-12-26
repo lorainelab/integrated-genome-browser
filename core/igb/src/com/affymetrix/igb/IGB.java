@@ -41,6 +41,8 @@ import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.boxysystems.jgoogleanalytics.FocusPoint;
+import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import java.awt.Color;
 import java.awt.Image;
@@ -57,7 +59,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
-import javax.swing.plaf.OptionPaneUI;
 
 
 /**
@@ -278,7 +279,9 @@ public final class IGB extends Application
 	}
 
 	private void notifyCounter(){
-		LocalUrlCacher.isValidURL(COUNTER_URL);
+		JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
+				IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
+		tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
 	}
 	
 	private void checkInternetConnection() {

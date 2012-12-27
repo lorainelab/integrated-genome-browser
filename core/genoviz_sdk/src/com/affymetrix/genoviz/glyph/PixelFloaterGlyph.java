@@ -46,7 +46,6 @@ public final class PixelFloaterGlyph extends Glyph implements FloaterGlyph  {
    *     transform.
    *  not sure if need to set view's coord box...
    */
-	@Override
   public void drawTraversal(ViewI view) {
     LinearTransform vtrans = view.getTransform();
     Rectangle2D.Double vbox = view.getCoordBox();
@@ -140,5 +139,19 @@ public final class PixelFloaterGlyph extends Glyph implements FloaterGlyph  {
 	} else if (gbox.y > (mapbox.y + mapbox.height - gbox.height)) {
 		gl.setCoords(gbox.x, mapbox.y + mapbox.height - gbox.height, gbox.width, gbox.height);
 	}
+  }
+  
+  @Override
+  public Rectangle2D.Double getFloatCoords(Glyph glyph, ViewI view){
+	Rectangle pixbox = new Rectangle();
+	view.transformToPixels(glyph.getCoordBox(), pixbox);
+	return new Rectangle2D.Double(pixbox.x, pixbox.x, pixbox.width, pixbox.height);
+  }
+
+  @Override
+  public Rectangle2D.Double getUnfloatCoords(Glyph glyph, ViewI view){
+	  Rectangle2D.Double coordbox = new Rectangle2D.Double();
+	  view.transformToCoords(glyph.getPixelBox(), coordbox);
+	  return coordbox;
   }
 }

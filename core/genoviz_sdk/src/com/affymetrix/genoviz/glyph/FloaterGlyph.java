@@ -17,5 +17,5 @@ public interface FloaterGlyph extends GlyphI{
 	 *  inside the map view.
 	 *  If the glyph is not a floating glyph, this will have no effect on it.
 	 */
-	public void checkBounds(GlyphI gl, NeoMap map);
+	public void checkBounds(GlyphI gl, ViewI view);
 }

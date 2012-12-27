@@ -154,7 +154,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		//if (/*gstate.getComboStyle() == null && */ gstate.getTierStyle().getFloatGraph()) {
-		//	GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
+		//	smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap().getView());
 		//	smv.addToPixelFloaterGlyph(graph_glyph);
 		//} else {
 			/*
@@ -198,7 +198,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (graphGlyph != null) {				
 				if (style.getFloatTier()) {
-					smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap());
+					smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap().getView());
 					smv.addToPixelFloaterGlyph(graphGlyph);
 				} else {
 					GraphSym graf = (GraphSym)sym;

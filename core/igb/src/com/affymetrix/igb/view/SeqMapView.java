@@ -570,7 +570,7 @@ public class SeqMapView extends JPanel
 					List<GraphGlyph> graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
 						if(graphs.get(i).getAnnotStyle().getFloatTier()){
-							getFloaterGlyph().checkBounds(graphs.get(i), getSeqMap());
+							getFloaterGlyph().checkBounds(graphs.get(i), getSeqMap().getView());
 						}
 					}
 					getSeqMap().stretchToFit(false, false);
@@ -1236,7 +1236,7 @@ public class SeqMapView extends JPanel
 		// Bring them all into the visual area
 		for (GraphGlyph gl : visibleList) {
 			if(gl.getAnnotStyle().getFloatTier()){
-				getFloaterGlyph().checkBounds(gl, getSeqMap());
+				getFloaterGlyph().checkBounds(gl, getSeqMap().getView());
 			}
 		}
 

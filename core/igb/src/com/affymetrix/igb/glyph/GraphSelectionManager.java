@@ -440,7 +440,9 @@ public final class GraphSelectionManager
 
       GlyphI gl = evt.getGlyph();
       if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
-        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
+		  if(((GraphGlyph)gl).getAnnotStyle().getFloatTier()){
+			gviewer.getPixelFloater().checkBounds(gl, (AffyTieredMap) src);
+		  }
       }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored

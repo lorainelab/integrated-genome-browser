@@ -15,10 +15,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
-import com.affymetrix.genoviz.widget.NeoMap;
 
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -32,25 +29,6 @@ public final class GraphGlyphUtils {
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
 	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
-
-	/**
-	 *  Checks to make sure the the boundaries of a floating glyph are
-	 *  inside the map view.
-	 *  If the glyph is not a floating glyph, this will have no effect on it.
-	 *  Assumes that glyph is a child of a PixelFloaterGlyph, so that
-	 *   the glyph's coord box is also its pixel box.
-	 */
-	public static void checkPixelBounds(GraphGlyph gl, NeoMap map) {
-		if (gl.getGraphState().getTierStyle().getFloatTier()) {
-			Rectangle mapbox = map.getView().getPixelBox();
-			Rectangle2D.Double gbox = gl.getCoordBox();
-			if (gbox.y < mapbox.y) {
-				gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
-			} else if (gbox.y > (mapbox.y + mapbox.height - gbox.height)) {
-				gl.setCoords(gbox.x, mapbox.y + mapbox.height - gbox.height, gbox.width, gbox.height);
-			} 
-		}
-	}
 
 	public static boolean hasFloatingAncestor(GlyphI gl) {
 		if (gl == null) {

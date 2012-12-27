@@ -569,7 +569,9 @@ public class SeqMapView extends JPanel
 				public void run() {
 					List<GraphGlyph> graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
-						GraphGlyphUtils.checkPixelBounds(graphs.get(i), getSeqMap());
+						if(graphs.get(i).getAnnotStyle().getFloatTier()){
+							getPixelFloater().checkBounds(graphs.get(i), getSeqMap());
+						}
 					}
 					getSeqMap().stretchToFit(false, false);
 					getSeqMap().updateWidget();
@@ -1233,7 +1235,9 @@ public class SeqMapView extends JPanel
 
 		// Bring them all into the visual area
 		for (GraphGlyph gl : visibleList) {
-			GraphGlyphUtils.checkPixelBounds(gl, getSeqMap());
+			if(gl.getAnnotStyle().getFloatTier()){
+				getPixelFloater().checkBounds(gl, getSeqMap());
+			}
 		}
 
 		select(glyphsToSyms(visibleList), false, true, true);

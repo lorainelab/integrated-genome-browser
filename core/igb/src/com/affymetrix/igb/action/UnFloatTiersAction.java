@@ -7,10 +7,12 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.event.ActionEvent;
-import javax.swing.SwingUtilities;
 import static com.affymetrix.igb.shared.Selections.*;
+import java.awt.event.ActionEvent;
+import java.awt.geom.Rectangle2D;
+import javax.swing.SwingUtilities;
 
 public class UnFloatTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -18,7 +20,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	private static final UnFloatTiersAction ACTION = new UnFloatTiersAction();
 
 	private UnFloatTiersAction.Enabler enabler = new UnFloatTiersAction.Enabler();
-
+	
 	private class Enabler implements SymSelectionListener {
 
 		/**
@@ -74,22 +76,17 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean something_changed = false;
-		for (GraphState state : graphStates) {
-			ITrackStyleExtended style = state.getTierStyle();
+		for (GraphGlyph glyph : graphGlyphs) {
+			ITrackStyleExtended style = glyph.getAnnotStyle();
 			boolean is_floating = style.getFloatTier();
 			if (is_floating) {
-				//GraphGlyphUtils.attachGraph(gl, gviewer);
 				// figure out correct height
-//				Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
-//				Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
-//				Rectangle2D.Double coordbox = new Rectangle2D.Double();
-//				getSeqMapView().getSeqMap().getView().transformToCoords(pixbox, coordbox);
-				
-				style.setY(style.getY());
-				style.setHeight(style.getHeight());
+				Rectangle2D.Double coordbox = getSeqMapView().getFloaterGlyph().getUnfloatCoords(glyph, getTierMap().getView());
+				style.setY(coordbox.y);
+				style.setHeight(coordbox.height);
 				
 				style.setFloatTier(false);
-				state.setShowLabel(false);
+				glyph.getGraphState().setShowLabel(false);
 				
 				something_changed = true;
 			}

@@ -7,9 +7,9 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import javax.swing.SwingUtilities;
@@ -65,19 +65,17 @@ public class FloatTiersAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean something_changed = false;
-		for (GraphState state : graphStates) {
-				ITrackStyleExtended style = state.getTierStyle();
+		for (GraphGlyph glyph : graphGlyphs) {
+				ITrackStyleExtended style = glyph.getAnnotStyle();
 				boolean is_floating = style.getFloatTier();
 				if (!is_floating) {
 					// figure out correct height
-					Rectangle2D.Double coordbox = new Rectangle2D.Double(0, style.getY(), 0, style.getHeight());
-					Rectangle pixbox = new Rectangle();
-					getSeqMapView().getSeqMap().getView().transformToPixels(coordbox, pixbox);
-					style.setY(pixbox.y);
-					style.setHeight(pixbox.height);
+					Rectangle2D.Double coordbox = getSeqMapView().getFloaterGlyph().getFloatCoords(glyph, getTierMap().getView());
+					style.setY(coordbox.y);
+					style.setHeight(coordbox.height);
 					
 					style.setFloatTier(true);
-					state.setShowLabel(true);
+					glyph.getGraphState().setShowLabel(true);
 					
 					something_changed = true;
 				}

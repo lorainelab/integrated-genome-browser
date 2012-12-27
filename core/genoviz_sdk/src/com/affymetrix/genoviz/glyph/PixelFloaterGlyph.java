@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.widget.NeoMap;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -130,4 +131,14 @@ public final class PixelFloaterGlyph extends Glyph implements FloaterGlyph  {
     trans.setTransform(childtrans);
   }
 
+  @Override
+  public void checkBounds(GlyphI gl, NeoMap map) {
+	Rectangle mapbox = map.getView().getPixelBox();
+	Rectangle2D.Double gbox = gl.getCoordBox();
+	if (gbox.y < mapbox.y) {
+		gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
+	} else if (gbox.y > (mapbox.y + mapbox.height - gbox.height)) {
+		gl.setCoords(gbox.x, mapbox.y + mapbox.height - gbox.height, gbox.width, gbox.height);
+	}
+  }
 }

@@ -33,7 +33,7 @@ import java.awt.geom.Rectangle2D;
  *   PixelFloaterGlyph is always intersected by anything that intersects the 
  *   current view (the View's viewbox).
  */
-public final class PixelFloaterGlyph extends Glyph  {
+public final class PixelFloaterGlyph extends Glyph implements FloaterGlyph  {
   private final LinearTransform childtrans = new LinearTransform();
   private final Rectangle2D.Double view_pix_box = new Rectangle2D.Double();
   private static final boolean OUTLINE_BOUNDS = false;
@@ -45,6 +45,7 @@ public final class PixelFloaterGlyph extends Glyph  {
    *     transform.
    *  not sure if need to set view's coord box...
    */
+	@Override
   public void drawTraversal(ViewI view) {
     LinearTransform vtrans = view.getTransform();
     Rectangle2D.Double vbox = view.getCoordBox();

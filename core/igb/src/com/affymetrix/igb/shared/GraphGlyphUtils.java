@@ -14,7 +14,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
+import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 
 import java.awt.Rectangle;
@@ -56,7 +56,7 @@ public final class GraphGlyphUtils {
 		if (gl == null) {
 			return false;
 		}
-		if (gl instanceof PixelFloaterGlyph) {
+		if (gl instanceof FloaterGlyph) {
 			return true;
 		} else if (gl.getParent() == null) {
 			return false;

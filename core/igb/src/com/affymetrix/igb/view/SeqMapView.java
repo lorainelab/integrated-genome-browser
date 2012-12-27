@@ -35,6 +35,7 @@ import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
@@ -179,7 +180,7 @@ public class SeqMapView extends JPanel
 	private static final boolean default_x_zoomer_above = true;
 	private static final boolean default_y_zoomer_left = true;
 	private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
-	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
+	private final FloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private final AutoScroll autoScroll = new AutoScroll();
 	private final GlyphEdgeMatcher edge_matcher;
 	private JPopupMenu sym_popup = null;
@@ -1087,7 +1088,7 @@ public class SeqMapView extends JPanel
 		int gcount = root_glyph.getChildCount();
 		for (int i = 0; i < gcount; i++) {
 			GlyphI cgl = root_glyph.getChild(i);
-			if (cgl instanceof PixelFloaterGlyph) {
+			if (cgl instanceof FloaterGlyph) {
 				layers.add(cgl);
 			}
 		}
@@ -2149,14 +2150,14 @@ public class SeqMapView extends JPanel
 
 	@Override
 	public final void addToPixelFloaterGlyph(GlyphI glyph) {
-		PixelFloaterGlyph floater = pixel_floater_glyph;
+		FloaterGlyph floater = pixel_floater_glyph;
 		Rectangle2D.Double cbox = getSeqMap().getCoordBounds();
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
 		floater.addChild(glyph);
 	}
 
 	@Override
-	public PixelFloaterGlyph getPixelFloater() {
+	public FloaterGlyph getPixelFloater() {
 		return pixel_floater_glyph;
 	}
 

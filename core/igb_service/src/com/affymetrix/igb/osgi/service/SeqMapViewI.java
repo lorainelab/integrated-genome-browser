@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
+import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 
 /**
@@ -23,7 +23,7 @@ public interface SeqMapViewI {
 
 	public void addToPixelFloaterGlyph(GlyphI glyph);
 
-	public PixelFloaterGlyph getPixelFloater();
+	public FloaterGlyph getPixelFloater();
 
 	public NeoMap getSeqMap();
 

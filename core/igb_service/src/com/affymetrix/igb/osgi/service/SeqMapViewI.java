@@ -23,7 +23,7 @@ public interface SeqMapViewI {
 
 	public void addToPixelFloaterGlyph(GlyphI glyph);
 
-	public FloaterGlyph getPixelFloater();
+	public FloaterGlyph getFloaterGlyph();
 
 	public NeoMap getSeqMap();
 

@@ -441,7 +441,7 @@ public final class GraphSelectionManager
       GlyphI gl = evt.getGlyph();
       if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
 		  if(((GraphGlyph)gl).getAnnotStyle().getFloatTier()){
-			gviewer.getPixelFloater().checkBounds(gl, (AffyTieredMap) src);
+			gviewer.getFloaterGlyph().checkBounds(gl, (AffyTieredMap) src);
 		  }
       }
     }

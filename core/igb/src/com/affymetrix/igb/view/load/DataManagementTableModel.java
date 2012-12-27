@@ -347,9 +347,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				&& !vFeature.isPrimary()) {
 //			return false;
 //		} 
-		else if (smv.getPixelFloater().getChildren() != null
+		else if (smv.getFloaterGlyph().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
-			for (GlyphI i : smv.getPixelFloater().getChildren()) {
+			for (GlyphI i : smv.getFloaterGlyph().getChildren()) {
 				if (((StyledGlyph) i).getAnnotStyle() == style) {
 					return false;
 				}
@@ -497,8 +497,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (CytobandParser.CYTOBAND_TIER_NAME.equals(style.getMethodName())) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
-					} else if (smv.getPixelFloater().getChildren() != null) {
-						for (GlyphI g : smv.getPixelFloater().getChildren()) {
+					} else if (smv.getFloaterGlyph().getChildren() != null) {
+						for (GlyphI g : smv.getFloaterGlyph().getChildren()) {
 							StyledGlyph j = (StyledGlyph) g;
 							if (j.getAnnotStyle() == style) {
 								stylemap.put((TrackStyle) style, (TrackStyle) style);

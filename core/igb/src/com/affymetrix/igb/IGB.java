@@ -282,6 +282,7 @@ public final class IGB extends Application
 		JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
 				IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
 		tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
+		LocalUrlCacher.isValidURL(COUNTER_URL);
 	}
 	
 	private void checkInternetConnection() {

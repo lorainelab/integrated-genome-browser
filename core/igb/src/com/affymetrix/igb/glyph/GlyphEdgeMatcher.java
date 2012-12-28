@@ -9,6 +9,9 @@
  */
 package com.affymetrix.igb.glyph;
 
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
@@ -16,10 +19,6 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CodonGlyph;
-import java.awt.Color;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
-import java.util.List;
 
 public final class GlyphEdgeMatcher {
 
@@ -105,11 +104,14 @@ public final class GlyphEdgeMatcher {
 			}
 		} // Hitable for CodonGlyph is false to popup right click menu
 		else if (query instanceof CodonGlyph || (target.isHitable() && query.isHitable() && target.getParent() != null)) {
-			addEdgeMatch(qbox, tbox, target, map, match_glyphs);
+			addEdgeMatch(map, query, target, match_glyphs);
 		}
 	}
 
-	protected void addEdgeMatch(Double qbox, Double tbox, GlyphI target, NeoMap map, List<GlyphI> match_glyphs) {
+	protected void addEdgeMatch(NeoMap map, GlyphI query, GlyphI target, List<GlyphI> match_glyphs) {
+		Rectangle2D.Double qbox = query.getCoordBox();
+		Rectangle2D.Double tbox = target.getCoordBox();
+
 		// terminal case, neither query nor target have children
 		// see if they intersect, if so, see if edges match
 		// glyph1.start == glyph2.end is _not_considered a match

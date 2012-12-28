@@ -20,8 +20,6 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 	public void drawTraversal(ViewI view) {
 		LinearTransform vtrans = view.getTransform();
 		setChildTransform(view);
-		view.setTransform(childtrans);
-		setCoordBox(view.getCoordBox());
 		super.drawTraversal(view);
 		view.setTransform(vtrans);
 	}
@@ -41,8 +39,6 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view) {
 		LinearTransform vtrans = view.getTransform();
 		setChildTransform(view);
-		view.setTransform(childtrans);
-		setCoordBox(view.getCoordBox());
 		super.pickTraversal(pickRect, pickList, view);
 		view.setTransform(vtrans);
 	}
@@ -57,6 +53,10 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 		}
 
 		childtrans.setTransform(vtrans.getScaleX(), 0, 0, view.getPixelBox().getHeight() / height, vtrans.getTranslateX(), vtrans.getTranslateY());
+		view.setTransform(childtrans);
+		Rectangle2D.Double vbox = view.getCoordBox();
+		Rectangle2D.Double coordbox = new Rectangle2D.Double(vbox.x, vbox.y, vbox.width, height);
+		setCoordBox(coordbox);
 	}
 		  
 	@Override

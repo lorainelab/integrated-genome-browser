@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.shared.CodonGlyph;
 
 public final class GlyphEdgeMatcher {
 
@@ -102,16 +103,12 @@ public final class GlyphEdgeMatcher {
 				matchEdges(map, query, tchild, match_glyphs);
 			}
 		} 
-		else {
+		else if(query instanceof CodonGlyph || ((target.isHitable() && query.isHitable() && target.getParent() != null))) {
 			addEdgeMatch(map, query, target, match_glyphs);
 		}
 	}
 
 	protected void addEdgeMatch(NeoMap map, GlyphI query, GlyphI target, List<GlyphI> match_glyphs) {
-		if (target.isHitable() && query.isHitable() && target.getParent() != null) {
-			return;
-		}
-		
 		Rectangle2D.Double qbox = query.getCoordBox();
 		Rectangle2D.Double tbox = target.getCoordBox();
 

@@ -127,11 +127,13 @@ public final class GlyphEdgeMatcher {
 					PointedGlyph pg = (PointedGlyph) target;
 					if (!pg.isForward()) {
 						mglyph = new PointedGlyph();
-						((PointedGlyph) mglyph).setForward(pg.isForward());
 					}
 				}
 				mglyph.setHitable(false);
 				mglyph.setCoords(tstart, tbox.y - 1, 1, tbox.height + 2);
+				if(target instanceof PointedGlyph && mglyph instanceof PointedGlyph){
+					((PointedGlyph) mglyph).setForward(((PointedGlyph)target).isForward());
+				}
 				mglyph.setColor(col);
 				// Can add mglyph to TierGlyph, or to the target or target.getParent()
 				// There are advantages to each.  See note below.

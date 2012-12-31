@@ -114,6 +114,9 @@ public final class OrfAnalyzer extends JComponent
 			JRPTextField tf = AltSpliceView.getSingleton().getBufferSizeTF();
 			show_orfs = ((JCheckBox) src).isSelected();
 			if (show_orfs) {
+				if(tf.getText() == null || tf.getText().length() == 0){
+					return;
+				}
 				previousBefferSize = Integer.parseInt(tf.getText());
 				AltSpliceView.getSingleton().setSliceBuffer(0);
 			} else {

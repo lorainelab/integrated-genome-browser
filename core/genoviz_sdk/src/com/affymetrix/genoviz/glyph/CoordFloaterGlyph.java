@@ -15,7 +15,9 @@ import java.util.List;
 public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 
 	private final LinearTransform childtrans = new LinearTransform();
-
+	Rectangle pixelRect = new Rectangle();
+	Rectangle2D.Double internalPickRect = new Rectangle2D.Double();
+	
 	@Override
 	public void drawTraversal(ViewI view) {
 		LinearTransform vtrans = view.getTransform();
@@ -34,12 +36,13 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 		return true;
 	}
 	
-	Rectangle scratchRect = new Rectangle();
 	@Override
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view) {
 		LinearTransform vtrans = view.getTransform();
+		view.transformToPixels(pickRect, pixelRect);
 		setChildTransform(view);
-		super.pickTraversal(pickRect, pickList, view);
+		view.transformToCoords(pixelRect, internalPickRect);
+		super.pickTraversal(internalPickRect, pickList, view);
 		view.setTransform(vtrans);
 	}
 

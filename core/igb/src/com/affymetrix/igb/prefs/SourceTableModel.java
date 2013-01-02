@@ -123,6 +123,10 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			return true;
 		}
 
+		if (servers.get(row).isEnabled() && col == tableColumns.indexOf(SourceColumn.Refresh)) {
+			return true;
+		}
+		
 		return false;
 	}
 

@@ -165,7 +165,12 @@ public final class OrfAnalyzer extends JComponent
 		}
 		
 		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);
-		SimpleTrackStyle forSts = new SimpleTrackStyle("Stop Codon", false);
+		SimpleTrackStyle forSts = new SimpleTrackStyle("Stop Codon", false){
+			@Override
+			public boolean drawCollapseControl(){
+				return false;
+			}
+		};
 		forSts.setBackground(bgcol);
 		forSts.setLabelBackground(bgcol);
 		//forSts.setLabelForeground(bgcol);
@@ -179,7 +184,12 @@ public final class OrfAnalyzer extends JComponent
 		AffyTieredMap map = smv.getSeqMap();
 		map.addTier(fortier, true);  // put forward tier above axis
 
-		SimpleTrackStyle revSts = new SimpleTrackStyle("Stop Codon", false);
+		SimpleTrackStyle revSts = new SimpleTrackStyle("Stop Codon", false){
+			@Override
+			public boolean drawCollapseControl(){
+				return false;
+			}
+		};
 		revSts.setBackground(bgcol);
 		revSts.setLabelBackground(bgcol);
 		//revSts.setLabelForeground(bgcol);

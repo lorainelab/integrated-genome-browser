@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 import java.awt.Color;
 
-public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
+public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
 	
 	/** for height on the reverse strand. To help with track resizing. */
 	private double reverseHeight;

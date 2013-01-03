@@ -316,6 +316,7 @@ public class QuickloadServerType implements ServerTypeI {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
 		}
+		quickloadServer.loadGenomeNames();
 		List<String> genomeList = quickloadServer.getGenomeNames();
 		if (genomeList == null || genomeList.isEmpty()) {
 			System.out.println("WARNING: No species found in server: " + gServer);

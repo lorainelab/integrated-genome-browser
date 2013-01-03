@@ -79,8 +79,6 @@ public final class QuickLoadServerModel {
 		primaryServer = priServer;
 
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE, "( {0}, {1} )", new Object[] { root_url, primary_url });
-		
-		loadGenomeNames();
 	}
 
 	/**
@@ -134,9 +132,6 @@ public final class QuickLoadServerModel {
 	}
 
 	public List<String> getGenomeNames() {
-		if(genome_names == null || genome_names.isEmpty()) {
-			loadGenomeNames(); // Try to refresh the genome list
-		}
 		return genome_names;
 	}
 
@@ -390,7 +385,7 @@ public final class QuickLoadServerModel {
 	 * loads data sets from contents.txt into the data structure genome_names.
 	 * 
 	 */
-	private synchronized void loadGenomeNames() {
+	synchronized void loadGenomeNames() {
 		String contentsTxt = Constants.contentsTxt;
 		InputStream istr = null;
 		InputStreamReader ireader = null;

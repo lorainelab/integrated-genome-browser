@@ -21,6 +21,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.awt.*;
 
 /** A JFileChooser that has a checkbox for whether you want to merge annotations.
  *  Note that an alternative way of adding a checkbox to a JFileChooser
@@ -84,15 +85,20 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		speciesCB.addActionListener(speciesAction);
 		versionCB.addActionListener(versionAction);
 		
-		box = new Box(BoxLayout.X_AXIS);
+		box = new Box(BoxLayout.Y_AXIS);
 		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
-		box.add(Box.createHorizontalStrut(5));
-		box.add(setInfoLabel(speciesCB, "Choose species or click in menu and enter custom species"));
-	
-		box.add(Box.createHorizontalStrut(5));
-		box.add(setInfoLabel(versionCB, "Choose genome or click in menu and enter custom genome"));
+		Box labelBox = new Box(FlowLayout.LEFT);
+		labelBox.add(new JLabel("Choose species and genome from menus below or click on menu and type in custom values"));
 		
+		Box buttonBox = new Box(BoxLayout.X_AXIS);
+		buttonBox.add(Box.createHorizontalStrut(5));
+		buttonBox.add(setInfoLabel(speciesCB, "Choose species or click in menu and enter custom species"));
+		buttonBox.add(Box.createHorizontalStrut(5));
+		buttonBox.add(setInfoLabel(versionCB, "Choose genome or click in menu and enter custom genome"));
+		
+		box.add(labelBox);
+		box.add(buttonBox);
 	}
 
 	private JPanel setInfoLabel(JComponent component, String tooltip){
@@ -122,6 +128,7 @@ public final class MergeOptionChooser extends JRPFileChooser {
 
 		refreshSpeciesList();
 		dialog.getContentPane().add(box, BorderLayout.SOUTH);
+		dialog.pack();
 		return dialog;
 	}
 

@@ -764,7 +764,7 @@ public final class GeneralLoadUtils {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					if(ex instanceof FileNotFoundException){
-						ErrorHandler.errorPanel(feature.featureName + " not Found", ex.getMessage(), Level.SEVERE);
+						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
 					}
 				}
 				return Collections.<SeqSymmetry>emptyList();

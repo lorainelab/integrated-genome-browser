@@ -249,6 +249,9 @@ public class AltSpliceView extends IGBTabPanel
 		Object src = evt.getSource();
 		if (src == slice_by_selectionCB) {
 			setSliceBySelection(evt.getStateChange() == ItemEvent.SELECTED);
+			if(slice_by_selection_on){
+				this.sliceAndDice(last_selected_syms);
+			}
 		}
 	}
 

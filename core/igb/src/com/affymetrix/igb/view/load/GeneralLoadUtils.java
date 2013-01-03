@@ -227,7 +227,7 @@ public final class GeneralLoadUtils {
 						// Change serverObj for Quickload to apply mirror site
 						// Currently only Quickload has mirror
 						if (gServer.serverType == ServerTypeI.QuickLoad) {
-							System.out.println("Using mirror site: " + gServer.mirrorURL);
+							Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Using mirror site: {0}", gServer.mirrorURL);
 							gServer.serverObj = gServer.mirrorURL;
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
 							discoverServer(gServer);
@@ -236,10 +236,14 @@ public final class GeneralLoadUtils {
 							gServer.setEnabled(false);
 							return false;
 						}
+					} else { // Disable server if no mirror or not used
+						ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+						gServer.setEnabled(false);
+						return false;
 					}
 				}
 				if(gServer.serverType == ServerTypeI.QuickLoad){
-					XmlPrefsParser.parse(gServer.URL +  "preferences.xml");
+					XmlPrefsParser.parse(gServer.serverObj.toString() +  "preferences.xml"); // Use server object for Quickload
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);

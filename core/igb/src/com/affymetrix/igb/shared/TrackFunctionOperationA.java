@@ -2,6 +2,8 @@ package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -23,8 +25,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -124,13 +124,18 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	}
 	
 	private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
-		method = TrackStyle.getUniqueName("file:/"+method.replaceAll("\\s+", "_"));
+		method = TrackStyle.getUniqueName("file:/"+removeIllegalCharacters(method));
 		
 		java.net.URI uri;
 		try {
 			uri = java.net.URI.create(method);
 		} catch (java.lang.IllegalArgumentException ex){
-			Logger.getLogger(TrackFunctionOperationA.class.getName()).log(Level.INFO, "Illegal character in string "+method);
+			if(ex.getCause() instanceof java.net.URISyntaxException){
+				java.net.URISyntaxException uriex = (java.net.URISyntaxException)ex.getCause();
+				Logger.getLogger(TrackFunctionOperationA.class.getName()).log(Level.INFO, "{0}.\nCharacter {1}", new Object[]{uriex.getMessage(), method.charAt(uriex.getIndex())});
+			}else{
+				Logger.getLogger(TrackFunctionOperationA.class.getName()).log(Level.INFO, "Illegal character in string {0}", method);
+			}
 			
 			//method = GeneralUtils.URLEncode(featureName);
 			//method = TrackStyle.getUniqueName("file:/"+method);
@@ -154,5 +159,13 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		style.setTrackName(featureName);
 		
 		return feature;
+	}
+	
+	private static String removeIllegalCharacters(String string){
+		string = string.replaceAll("\\s+", "_");
+		string = string.replaceAll("\u221E", "infinite");
+		string = string.replaceAll("\\[", "(");
+		string = string.replaceAll("\\]", ")");
+		return string;
 	}
 }

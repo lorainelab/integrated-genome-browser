@@ -88,10 +88,10 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
 		box.add(Box.createHorizontalStrut(5));
-		box.add(setInfoLabel(speciesCB, "Choose or enter species"));
+		box.add(setInfoLabel(speciesCB, "Choose species or click in menu and enter custom species"));
 	
 		box.add(Box.createHorizontalStrut(5));
-		box.add(setInfoLabel(versionCB, "Choose or enter version"));
+		box.add(setInfoLabel(versionCB, "Choose genome or click in menu and enter custom genome"));
 		
 	}
 

@@ -32,8 +32,8 @@ public abstract class OpenURIAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 
 	public static int unknown_group_count = 1;
-	public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("unknownSpecies");
-	public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("unknownGenome");
+	public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("customSpecies");
+	public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("customGenome");
 	protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected final IGBService igbService;
 	protected MergeOptionChooser chooser = null;

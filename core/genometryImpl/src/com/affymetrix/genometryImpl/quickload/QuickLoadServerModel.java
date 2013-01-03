@@ -134,6 +134,9 @@ public final class QuickLoadServerModel {
 	}
 
 	public List<String> getGenomeNames() {
+		if(genome_names == null || genome_names.isEmpty()) {
+			loadGenomeNames(); // Try to refresh the genome list
+		}
 		return genome_names;
 	}
 

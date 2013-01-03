@@ -40,6 +40,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -732,6 +733,9 @@ public final class GeneralLoadUtils {
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
+					if(ex instanceof FileNotFoundException){
+						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+					}
 				}
 			}
 		};
@@ -755,6 +759,9 @@ public final class GeneralLoadUtils {
 					return loadFeaturesForSym(feature, optimized_sym);
 				} catch (Exception ex) {
 					ex.printStackTrace();
+					if(ex instanceof FileNotFoundException){
+						ErrorHandler.errorPanel(feature.featureName + " not Found", ex.getMessage(), Level.SEVERE);
+					}
 				}
 				return Collections.<SeqSymmetry>emptyList();
 			}

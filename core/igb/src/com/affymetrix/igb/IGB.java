@@ -9,7 +9,27 @@
  */
 package com.affymetrix.igb;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Authenticator;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.*;
+
+import com.jidesoft.plaf.LookAndFeelFactory;
+import com.boxysystems.jgoogleanalytics.FocusPoint;
+import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.affymetrix.common.CommonUtils;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -17,11 +37,11 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.*;
+
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import static com.affymetrix.igb.IGBConstants.*;
 
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -41,24 +61,8 @@ import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
-import com.boxysystems.jgoogleanalytics.FocusPoint;
-import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
-import com.jidesoft.plaf.LookAndFeelFactory;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
-import java.util.Map.Entry;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.*;
+import static com.affymetrix.igb.IGBConstants.*;
+import java.awt.event.KeyEvent;
 
 
 /**
@@ -352,8 +356,6 @@ public final class IGB extends Application
 		if (tool_bar == null) {
 			tool_bar = new IGBToolBar();
 		}		
-		addAction(genericAction);
-
 		tool_bar.addToolbarAction(genericAction, index);
 	}
 	
@@ -531,6 +533,22 @@ public final class IGB extends Application
 			KeyStroke ks = (KeyStroke) o;
 			InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
 			ActionMap am = panel.getActionMap();
+			
+			Object existingObject = im.get(ks);
+			if(existingObject != null){
+				im.remove(ks);
+				Action existingAction = am.get(existingObject);
+				if(existingAction != null){
+					Logger.getLogger(IGB.class.getName()).log(
+							Level.SEVERE, "Trying to add set keystroke for action {0}."
+							+ " But action {1} exists with same keystroke \"{2}\"."
+							+ "\nUsing keystroke with latest action.", 
+							new Object[]{theAction.getId(), existingAction.getClass(), ks});
+					existingAction.putValue(Action.ACCELERATOR_KEY, KeyEvent.VK_UNDEFINED);
+					am.remove(existingObject);
+				}
+			}
+			
 //			GenericActionHolder h = GenericActionHolder.getInstance();
 			String actionIdentifier = theAction.getId();
 			im.put(ks, actionIdentifier);

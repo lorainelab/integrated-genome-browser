@@ -1,14 +1,21 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
-import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
-import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
-import com.affymetrix.igb.view.factories.GraphGlyphFactory;
-import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
-import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import javax.swing.*;
+
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
+
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
@@ -19,10 +26,12 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
+
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -33,18 +42,14 @@ import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.factories.GraphGlyphFactory;
+import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
+import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
+import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
+import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-import javax.swing.*;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * OSGi Activator for igb bundle
@@ -171,11 +176,12 @@ public class Activator implements BundleActivator {
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 		
-		addGenericActionListener();
 		// To avoid race condition on startup
 		initMapViewGlyphFactorys();
 		
         igb.init(args);
+		
+		addGenericActionListener();
 		registerServices(windowServiceReference, igb);
 		addStopRotineListener(igb);
 		
@@ -389,26 +395,27 @@ public class Activator implements BundleActivator {
 			new GenericActionListener() {
 				@Override
 				public void onCreateGenericAction(GenericAction genericAction) {
-					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
+					if (genericAction.getId() != null) {//genericAction.getValue(javax.swing.Action.NAME)
+						Preferences p = PreferenceUtils.getKeystrokesNode();
+						if (null != p) {
+							String ak = p.get(genericAction.getId(), "");
+							if (null != ak & 0 < ak.length()) {
+								KeyStroke ks = KeyStroke.getKeyStroke(ak);
+								genericAction.putValue(Action.ACCELERATOR_KEY, ks);
+							}
+						} 
+						
+						((IGB)Application.getSingleton()).addAction(genericAction);
+						
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
 //							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
-							Preferences p = PreferenceUtils.getKeystrokesNode();
-							if (null != p) {
-								String ak = p.get(genericAction.getId(), "");
-								if (null != ak & 0 < ak.length()) {
-									KeyStroke ks = KeyStroke.getKeyStroke(ak);
-									genericAction.putValue(Action.ACCELERATOR_KEY, ks);
-								}
-							}
 							int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId()+".index", -1);
 							if(index == -1){
 								((IGB)Application.getSingleton()).addToolbarAction(genericAction);
 							}else{
 								((IGB)Application.getSingleton()).addToolbarAction(genericAction, index);
 							}
-						}else{
-							((IGB)Application.getSingleton()).addAction(genericAction);
 						}
 					}
 				}

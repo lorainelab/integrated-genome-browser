@@ -12,7 +12,6 @@
                         <map>
                             <entry key="com.affymetrix.igb.action.ScrollDownAction" value="alt DOWN"/>
                             <entry key="com.affymetrix.igb.action.PreferencesAction" value="alt P"/>
-                            <entry key="com.affymetrix.igb.action.ToggleHairlineLabelAction" value="ctrl L"/>
                             <entry key="com.affymetrix.igb.action.LoadFileAction" value="ctrl O"/>
                             <entry key="com.affymetrix.igb.action.ScrollLeftAction" value="alt LEFT"/>
                             <entry key="com.affymetrix.igb.action.ScrollRightAction" value="alt RIGHT"/>
@@ -28,7 +27,6 @@
                             <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift DOWN"/>
                             <entry key="com.affymetrix.igb.action.CopyResiduesAction" value="ctrl C"/>
 							<entry key="com.affymetrix.igb.action.SelectAllInSeqViewerAction" value="ctrl A"/>
-                            <entry key="com.affymetrix.igb.action.ToggleEdgeMatchingAction" value="ctrl M"/>
                             <entry key="com.affymetrix.igb.external.UCSCViewAction" value="ctrl U"/>
                             <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>
                             <entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction" value="ctrl shift B"/>

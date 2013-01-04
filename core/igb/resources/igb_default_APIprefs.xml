@@ -29,9 +29,9 @@
 							<entry key="com.affymetrix.igb.shared.SelectAllAction" value="ctrl A"/>
 							<entry key="com.affymetrix.igb.external.UCSCViewAction" value="ctrl U"/>
 							<entry key="com.affymetrix.igb.action.ShowConsoleAction" value="ctrl shift C"/>
-                            <entry key="com.affymetrix.igb.action.ZoomInYAction" value="ctrl shift UP"/>
+                            <entry key="com.affymetrix.igb.action.ZoomInYAction" value="ctrl shift DOWN"/>
                             <entry key="com.affymetrix.igb.action.ZoomOutXAction" value="ctrl shift LEFT"/>
-                            <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift DOWN"/>
+                            <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift UP"/>
                             <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>
                         </map>
                     </node>

@@ -14,7 +14,7 @@
 							<entry key="com.affymetrix.igb.action.CopyResiduesAction" value="ctrl C"/>
 							<entry key="com.affymetrix.igb.action.DocumentationAction" value="F1"/>
 							<entry key="com.affymetrix.igb.action.ExitAction" value="ctrl Q"/>
-							<entry key="com.affymetrix.igb.action.RefreshDataAction" value="ctrl R"/>
+							<entry key="com.affymetrix.igb.action.RefreshDataAction" value="F5"/>
 							<entry key="com.affymetrix.igb.action.NextSearchSpanAction" value="ctrl X"/>
 							<entry key="com.affymetrix.igb.action.LoadFileAction" value="ctrl O"/>
 							<entry key="com.affymetrix.igb.action.LoadURLAction" value="shift ctrl O"/>

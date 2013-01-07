@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *  A glyph that is drawn as a solid, outlined rectangle.
  */
 public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph  {
-  private Color bgcolor = Color.white;
+  //private Color bgcolor = Color.white;
   
 	@Override
   public void draw(ViewI view) {
@@ -38,19 +38,19 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
     Graphics g = view.getGraphics();
     g.setColor(getColor());
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-    if (pixelbox.width > 3 && pixelbox.height > 3) {
-      g.setColor(bgcolor);
-      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-    }
+//    if (pixelbox.width > 3 && pixelbox.height > 3) {
+//      g.setColor(bgcolor);
+//      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+//    }
   }
   
 	
-  /** Sets the outline color; the fill color is automatically calculated as  
-   *  a darker shade. 
-   */
-	@Override
-  public void setColor(Color c) {
-	super.setColor(c);
-	bgcolor = c.darker();
-  }
+//  /** Sets the outline color; the fill color is automatically calculated as  
+//   *  a darker shade. 
+//   */
+//	@Override
+//  public void setColor(Color c) {
+//	super.setColor(c);
+//	bgcolor = c.darker();
+//  }
 }

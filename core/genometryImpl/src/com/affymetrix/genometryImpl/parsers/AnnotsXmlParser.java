@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.jdom.input.SAXBuilder;
 import org.jdom.*;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 /**
  * This class is specifically for parsing the annots.xml file used by IGB and
@@ -26,20 +26,16 @@ public abstract class AnnotsXmlParser {
 	/**
 	 * @param istr - stream of annots file
 	 */
-	public static final void parseAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) {
-		try {
-			SAXBuilder docBuilder = new SAXBuilder();
-			Document doc = docBuilder.build(istr);
-			root = doc.getRootElement();
-			List children = root.getChildren();
+	public static final void parseAnnotsXml (InputStream istr, List<AnnotMapElt> annotList) throws JDOMException, IOException {
+		SAXBuilder docBuilder = new SAXBuilder();
+		Document doc = docBuilder.build(istr);
+		root = doc.getRootElement();
+		List children = root.getChildren();
 
-			if (root.getChild(folder) != null) {
-				iterateAllNodesNew(children, annotList);
-			} else {
-				iterateAllNodesOld(children, annotList);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (root.getChild(folder) != null) {
+			iterateAllNodesNew(children, annotList);
+		} else {
+			iterateAllNodesOld(children, annotList);
 		}
 	}
 

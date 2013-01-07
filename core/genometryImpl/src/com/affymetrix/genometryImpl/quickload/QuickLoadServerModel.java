@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.jdom.JDOMException;
 
 import org.xml.sax.SAXParseException;
 
@@ -221,8 +222,13 @@ public final class QuickLoadServerModel {
 			boolean annots_found = false;;
 			try {
 				annots_found = processAnnotsXml(istr, annotList);
-			}
-			catch (SAXParseException x) {
+			} catch (SAXParseException x) {
+				String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}. Please contact the server administrators or the IGB development team to let us know about the problem.";
+				String errorText = MessageFormat.format(errorMessage, root_url, genome_name);
+				String title = "Invalid annots.xml file";
+				ErrorHandler.errorPanelWithReportBug(title, errorText, Level.SEVERE);
+				return false;
+			} catch(JDOMException x) {
 				String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}. Please contact the server administrators or the IGB development team to let us know about the problem.";
 				String errorText = MessageFormat.format(errorMessage, root_url, genome_name);
 				String title = "Invalid annots.xml file";
@@ -269,7 +275,7 @@ public final class QuickLoadServerModel {
 	 * Process the annots.xml file (if it exists).
 	 * This has friendly type names.
 	 */
-	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) throws SAXParseException {
+	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) throws SAXParseException, JDOMException, IOException {
 			if (istr == null) {
 				// Search failed.  That's fine, since there's a backup test for annots.txt.
 				return false;

@@ -92,9 +92,9 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		labelBox.add(new JLabel("Choose species and genome from menus below or click on menu and type in custom values"));
 		
 		Box buttonBox = new Box(BoxLayout.X_AXIS);
-		buttonBox.add(Box.createHorizontalStrut(5));
+//		buttonBox.add(Box.createHorizontalStrut(5));
 		buttonBox.add(setInfoLabel(speciesCB, "Choose species or click in menu and enter custom species"));
-		buttonBox.add(Box.createHorizontalStrut(5));
+		buttonBox.add(Box.createHorizontalStrut(3));
 		buttonBox.add(setInfoLabel(versionCB, "Choose genome or click in menu and enter custom genome"));
 		
 		box.add(labelBox);

@@ -34,6 +34,7 @@ extends AbstractExportFileAction {
 				"16x16/actions/save.png",
 				"22x22/actions/save.png",
 				KeyEvent.VK_UNDEFINED, null, true);
+		putValue(SHORT_DESCRIPTION, BUNDLE.getString("saveTrackActionTooltip"));
 		this.ordinal = -9007100;
 	}
 

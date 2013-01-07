@@ -731,7 +731,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 								
 								// fwang4:qlmirror - Quickload Mirror Server
 								GenericServer gServer = feature.gVersion.gServer;
-								if (gServer.mirrorURL != null && IGB.confirmPanel("Use mirror site?")) {
+								if (gServer.mirrorURL != null && IGB.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
 									gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
 									for(GenericFeature gFeature : feature.gVersion.getFeatures()) {
 										if(!gFeature.isVisible() && gFeature.getMethods().isEmpty()) {

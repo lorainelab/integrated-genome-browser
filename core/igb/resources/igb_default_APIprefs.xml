@@ -45,6 +45,8 @@
 							<entry key="com.affymetrix.igb.action.ScrollLeftAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.ScrollRightAction" value="true"/>
 							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction" value="true" />
+							<entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ZoomingRepackAction" value="true"/>
 							
 							<!-- Toolbar Action Indices -->
 							<entry key="com.affymetrix.igb.action.LoadFileAction.index" value="0"/>
@@ -56,6 +58,8 @@
 							<entry key="com.affymetrix.igb.action.ScrollLeftAction.index" value="6"/>
 							<entry key="com.affymetrix.igb.action.ScrollRightAction.index" value="7"/>
 							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction.index" value="8" />
+							<entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.index" value="9"/>
+							<entry key="com.affymetrix.igb.action.ZoomingRepackAction.index" value="10"/>
 
                         </map>
                     </node>

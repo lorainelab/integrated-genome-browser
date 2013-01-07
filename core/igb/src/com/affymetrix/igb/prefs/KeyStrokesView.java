@@ -73,16 +73,17 @@ public final class KeyStrokesView implements ListSelectionListener,
 		table.getColumnModel().getColumn(IconColumn).setPreferredWidth(25);
 		table.getColumnModel().getColumn(IconColumn).setMinWidth(25);
 		table.getColumnModel().getColumn(IconColumn).setMaxWidth(25);
-
-		table.getColumnModel().getColumn(ActionColumn).setPreferredWidth(150);
-		table.getColumnModel().getColumn(ActionColumn).setMinWidth(100);
 		
-		table.getColumnModel().getColumn(KeyStrokeColumn).setPreferredWidth(150);
-		table.getColumnModel().getColumn(KeyStrokeColumn).setMinWidth(100);
-
 		table.getColumnModel().getColumn(ToolbarColumn).setPreferredWidth(70);
 		table.getColumnModel().getColumn(ToolbarColumn).setMinWidth(70);
 		table.getColumnModel().getColumn(ToolbarColumn).setMaxWidth(70);
+		
+		table.getColumnModel().getColumn(ActionColumn).setPreferredWidth(150);
+		table.getColumnModel().getColumn(ActionColumn).setMinWidth(150);
+		
+		table.getColumnModel().getColumn(KeyStrokeColumn).setPreferredWidth(100);
+		table.getColumnModel().getColumn(KeyStrokeColumn).setMinWidth(100);
+		table.getColumnModel().getColumn(KeyStrokeColumn).setMaxWidth(100);
 
 		edit_panel = new KeyStrokeEditPanel();
 		edit_panel.setEnabled(false);

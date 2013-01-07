@@ -58,13 +58,13 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 		childtrans.setTransform(vtrans.getScaleX(), 0, 0, view.getPixelBox().getHeight() / height, vtrans.getTranslateX(), vtrans.getTranslateY());
 		view.setTransform(childtrans);
 		Rectangle2D.Double vbox = view.getCoordBox();
-		Rectangle2D.Double coordbox = new Rectangle2D.Double(vbox.x, vbox.y, vbox.width, height);
+		Rectangle2D.Double coordbox = new Rectangle2D.Double(vbox.x, 0, vbox.width, height);
 		setCoordBox(coordbox);
 	}
 		  
 	@Override
 	public void checkBounds(GlyphI gl, ViewI view) {
-		Rectangle2D.Double mapbox = view.getCoordBox();
+		Rectangle2D.Double mapbox = getCoordBox();
 		Rectangle2D.Double gbox = gl.getCoordBox();
 		if (gbox.y < mapbox.y) {
 			gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);

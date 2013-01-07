@@ -208,7 +208,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 			return new DeletionGlyph();
 		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
 				(direction_type == TrackConstants.DIRECTION_TYPE.ARROW || direction_type == TrackConstants.DIRECTION_TYPE.BOTH))
-			return new OutlinedPointedGlyph();
+			return new PointedGlyph();
 			
 		return new EfficientOutlinedRectGlyph();
 	}

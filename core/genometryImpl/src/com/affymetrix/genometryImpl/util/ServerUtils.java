@@ -43,6 +43,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.jdom.JDOMException;
 
 /**
  * Utils for DAS/2 and other servers.
@@ -233,6 +234,8 @@ public abstract class ServerUtils {
 				}
 				AnnotsXmlParser.parseAnnotsXml(istr, annotList);
 			} catch (FileNotFoundException ex) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
+			} catch(JDOMException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				GeneralUtils.safeClose(istr);

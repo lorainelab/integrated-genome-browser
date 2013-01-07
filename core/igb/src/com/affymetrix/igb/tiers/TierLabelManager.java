@@ -118,6 +118,7 @@ public final class TierLabelManager implements PropertyHolder {
 				List<GlyphI> selected = nevt.getItems();
 				labelmap.select(selected);
 				
+				doGraphSelections(preserve_selections);
 				// make sure selections becomes visible
 				if (EventUtils.isOurPopupTrigger(evt)) {
 					doPopup(evt);
@@ -132,7 +133,6 @@ public final class TierLabelManager implements PropertyHolder {
 						transformTier(gl);
 					}			
 				}
-				doGraphSelections(preserve_selections);
 				tiermap.updateWidget();
 			}
 		}

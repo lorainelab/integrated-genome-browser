@@ -1,9 +1,9 @@
 package com.affymetrix.igb.search;
 
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -66,12 +66,12 @@ public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 	@SuppressWarnings("unchecked")
 	public Object getValueAt(int row, int col) {
 		GlyphI glyph = tableRows.get(row);
-		Map<Object, Object> map = (Map<Object, Object>) glyph.getInfo();
-
+		SymWithProps info = (SymWithProps) glyph.getInfo();
+		
 		switch (col) {
 		
 			case PATTERN_COLUMN:
-				Object pattern = map.get("pattern");
+				Object pattern = info.getProperty("pattern");
 				if (pattern != null) {
 					return pattern.toString();
 				}
@@ -87,7 +87,7 @@ public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 				return (int)(glyph.getCoordBox().x  + glyph.getCoordBox().width);
 
 			case STRAND_COLUMN:
-				Object direction = map.get("direction");
+				Object direction = info.getProperty("direction");
 				if (direction != null) {
 					if (direction.toString().equalsIgnoreCase("forward")) {
 						return "+";
@@ -101,7 +101,7 @@ public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 				return seq;
 				
 			case MATCH_COLUMN:
-				Object match = map.get("match");
+				Object match = info.getProperty("match");
 				if (match != null) {
 					return match.toString();
 				}

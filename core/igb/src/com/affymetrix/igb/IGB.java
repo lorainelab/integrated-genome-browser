@@ -36,6 +36,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.util.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -420,11 +421,11 @@ public final class IGB extends Application
 			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
 			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;
-			Map<String, String> props = new HashMap<String, String>();
-			props.put("direction", forward ? "forward" : "reverse");
-			props.put("match", matcher.group(0));
-			props.put("pattern", regex.pattern());
-
+			SingletonSymWithProps info = new SingletonSymWithProps(start, end, map_view.getAnnotatedSeq());
+			info.setProperty("direction", forward ? "forward" : "reverse");
+			info.setProperty("match", matcher.group(0));
+			info.setProperty("pattern", regex.pattern());
+			
 			GlyphI gl = new FillRectGlyph() {
 
 				@Override
@@ -437,7 +438,7 @@ public final class IGB extends Application
 				}
 			;
 			};
-			gl.setInfo(props);
+			gl.setInfo(info);
 			gl.setColor(hitColor);
 			double pos = forward ? 27 : 32;
 			gl.setCoords(start, pos, end - start, 10);

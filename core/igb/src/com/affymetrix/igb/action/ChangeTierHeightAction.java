@@ -93,6 +93,6 @@ public class ChangeTierHeightAction extends SeqMapViewActionA implements Paramet
 
 	@Override
 	public boolean isEnabled() {
-		return Selections.allGlyphs.size() > 0;
+		return Selections.isAnyLocked();
 	}
 }

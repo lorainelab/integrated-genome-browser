@@ -1854,10 +1854,15 @@ public class SeqMapView extends JPanel
 						// Add one ">" symbol for each level of getParent()
 						sym_used_for_title = null; // may be re-set in the recursive call
 						id = "> " + getSelectionTitle(Arrays.asList(pglyph));
-					} else {
-						id = "Unknown Selection";
-						sym_used_for_title = null;
-					}
+					} 
+				}
+				if (id == null && sym instanceof SymWithProps) {
+					id = (String) ((SymWithProps) sym).getProperty("match");
+					sym_used_for_title = sym;
+				}
+				if (id == null ){
+					id = "Unknown Selection";
+					sym_used_for_title = null;
 				}
 			} else {
 				sym_used_for_title = null;

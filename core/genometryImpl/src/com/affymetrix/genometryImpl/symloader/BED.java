@@ -206,7 +206,7 @@ public class BED extends SymLoader implements LineProcessor {
 		String line;
 		String type = default_type;
 		String bedType = null;
-		boolean use_item_rgb = false;
+		boolean use_item_rgb = true;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
 

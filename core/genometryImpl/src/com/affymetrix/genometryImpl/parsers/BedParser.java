@@ -148,7 +148,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		String line;
 		String type = default_type;
 		String bedType = null;
-		boolean use_item_rgb = false;
+		boolean use_item_rgb = true;
 
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));

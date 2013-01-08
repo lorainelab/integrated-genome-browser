@@ -55,6 +55,7 @@ public class AffyTieredMap extends NeoMap {
    	private static final long serialVersionUID = 1L;
 
 	private final List<TierGlyph> tiers = new ArrayList<TierGlyph>();
+	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 
 	// the total pixel height of visible fixed pixel tiers
 	//    (recalculated with every packTiers() call)
@@ -268,8 +269,26 @@ public class AffyTieredMap extends NeoMap {
 	public void clearWidget() {
 		super.clearWidget();
 		tiers.clear();
+		clearEdgeMatches();
 	}
 
+	@Override
+	public void clearSelected() {
+		super.clearSelected();
+		clearEdgeMatches();
+	}
+	
+	public void clearEdgeMatches(){
+		removeItem(match_glyphs);
+		match_glyphs.clear();
+	}
+	
+	public void addEdgeMatches(List<GlyphI> glyphs){
+		if(glyphs != null){
+			match_glyphs.addAll(glyphs);
+		}
+	}
+	
 	/**
 	 * Makes sure the tiers always stretch the full length of the map.
 	 */

@@ -19,7 +19,7 @@ public class PreferencesHelpAction extends HelpActionA {
 	}
 
 	private PreferencesHelpAction() {
-		super(BUNDLE.getString("PreferencesHelp"), null, "16x16/apps/help-browser.png","22x22/apps/help-browser.png", KeyEvent.VK_G, null, true);
+		super(BUNDLE.getString("PreferencesHelp"), null, null, null, /*"16x16/apps/help-browser.png","22x22/apps/help-browser.png",*/ KeyEvent.VK_G, null, true);
 		putValue(ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
 	}
 

@@ -285,7 +285,7 @@ public class IGBToolBar extends JToolBar {
 			rules_text.setEditable(false);
 			messageFrame.add(rules_text);
 			if(no_selection_text.equals(tf.getText())){
-				messageFrame.setTitle("Selection Rules in IGB");
+				messageFrame.setTitle("How to Select and De-select Data in IGB");
 				rules_text.append(getRules());
 			}else{
 				messageFrame.setTitle(selection_info);

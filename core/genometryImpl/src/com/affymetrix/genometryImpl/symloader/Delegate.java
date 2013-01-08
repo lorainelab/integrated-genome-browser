@@ -124,7 +124,7 @@ public class Delegate extends QuickLoadSymLoader {
 	
 	@Override
 	public List<? extends SeqSymmetry> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
-			throws OutOfMemoryError, IOException {
+			throws OutOfMemoryError, Exception {
 		boolean notUpdatable = false;
 
 		if (dps == null || dps.isEmpty()) {

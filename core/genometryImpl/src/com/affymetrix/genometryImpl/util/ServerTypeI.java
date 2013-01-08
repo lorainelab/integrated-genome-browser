@@ -100,7 +100,7 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 * @return List<? extends SeqSymmetry> list of data that were loaded.
 	 * @throws IOException
 	 */
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) throws IOException;
+	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception;
 	/**
 	 * if user authorization is optional for this ServerType
 	 * @return if user authorization is optional for this ServerType

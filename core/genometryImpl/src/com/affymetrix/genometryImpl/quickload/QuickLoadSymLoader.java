@@ -84,7 +84,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	}
 
 	public List<? extends SeqSymmetry> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
-			throws OutOfMemoryError, IOException {
+			throws OutOfMemoryError, Exception {
 		try {
 			if (this.symL != null && this.symL.isResidueLoader()) {
 				loadResiduesThread(feature, overlapSpan);
@@ -94,8 +94,8 @@ public class QuickLoadSymLoader extends SymLoader {
 			}
 		} catch (Exception ex) {
 			logException(ex);
-		}
-		return Collections.<SeqSymmetry>emptyList();
+			throw ex;
+		} 
 	}
 
 	protected List<? extends SeqSymmetry> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)

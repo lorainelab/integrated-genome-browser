@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CodonGlyph;
+import java.util.ArrayList;
 
 public final class GlyphEdgeMatcher {
 
@@ -61,10 +62,12 @@ public final class GlyphEdgeMatcher {
 	 *
 	 * Glyphs added for matches are collected and returned in match_glyphs.
 	 */
-	public void matchEdges(NeoMap map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
+	public List<GlyphI> matchEdges(NeoMap map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs) {
+		List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 		for (GlyphI query : query_glyphs) {
 			matchEdges(map, query, target_glyphs, match_glyphs);
 		}
+		return match_glyphs;
 	}
 
 	private void matchEdges(NeoMap map, GlyphI query, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {

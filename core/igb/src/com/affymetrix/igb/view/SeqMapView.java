@@ -201,7 +201,6 @@ public class SeqMapView extends JPanel
 	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private SeqSpan clampedRegion = null; //Span representing clamped region
-	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 	protected TierLabelManager tier_manager;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
@@ -653,7 +652,6 @@ public class SeqMapView extends JPanel
 		this.viewseq = null;
 		clearSelection();
 		TrackView.getInstance().clear();
-		match_glyphs.clear();
 		seqmap.setMapRange(default_range[0], default_range[1]);
 		seqmap.setMapOffset(default_offset[0], default_offset[1]);
 		seqmap.stretchToFit(true, true);
@@ -749,7 +747,6 @@ public class SeqMapView extends JPanel
 
 		boolean same_seq = (seq == this.aseq);
 
-		match_glyphs.clear();
 		List<SeqSymmetry> old_selections = Collections.<SeqSymmetry>emptyList();
 		double old_zoom_spot_x = seqmap.getZoomCoord(AffyTieredMap.X);
 		double old_zoom_spot_y = seqmap.getZoomCoord(AffyTieredMap.Y);
@@ -1552,9 +1549,7 @@ public class SeqMapView extends JPanel
 	 */
 	public final void doEdgeMatching(List<GlyphI> query_glyphs, boolean update_map) {
 		// Clear previous edges
-		if (match_glyphs != null && match_glyphs.size() > 0) {
-			seqmap.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
-		}
+		seqmap.clearEdgeMatches();
 
 		int qcount = query_glyphs.size();
 		int match_query_count = query_glyphs.size();
@@ -1563,7 +1558,6 @@ public class SeqMapView extends JPanel
 		}
 
 		if (match_query_count <= max_for_matching) {
-			match_glyphs.clear();
 			ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
 			target_glyphs.add(seqmap.getScene().getGlyph());
 			double fuzz = getEdgeMatcher().getFuzziness();
@@ -1574,7 +1568,7 @@ public class SeqMapView extends JPanel
 				Color edge_match_fuzzy_color = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
 				getEdgeMatcher().setColor(edge_match_fuzzy_color);
 			}
-			getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs, match_glyphs);
+			seqmap.addEdgeMatches(getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs));
 			setStatus(null);
 		} else {
 			setStatus("Skipping edge matching; too many items selected.");

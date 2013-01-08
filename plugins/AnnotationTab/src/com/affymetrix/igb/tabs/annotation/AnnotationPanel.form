@@ -278,6 +278,9 @@
         <Component class="javax.swing.JButton" name="stackDepthAllButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Optimize"/>
+            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="&quot;Optimize stack height for selected annotation tracks so that all annotations are shown&quot;" type="code"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthAllButtonActionPerformed"/>

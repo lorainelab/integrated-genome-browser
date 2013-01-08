@@ -182,6 +182,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         stackDepthAllButton.setText("Optimize");
+        stackDepthAllButton.setToolTipText("Optimize stack height for selected annotation tracks so that all annotations are shown");
         stackDepthAllButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthAllButtonActionPerformed(evt);

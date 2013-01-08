@@ -4,11 +4,11 @@
 
 <!-- servers enabled by default -->
 <!-- server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" order="0" / -->
-<server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="0" default="true"/>
-<server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="1" default="true"/>
-<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="2" default="true"/>
-<server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="3" enabled="false" default="true"/>
-<server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="4" default="true"/>
+<server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="0" default="true"/>
+<server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="1" default="true"/>
+<server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="2" default="true"/>
+<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="3" default="true"/>
+<server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="4" enabled="false" default="true"/>
 <server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="5" enabled="false" default="true"/>
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="6" default="true"/>
 <server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="7" default="true"/>

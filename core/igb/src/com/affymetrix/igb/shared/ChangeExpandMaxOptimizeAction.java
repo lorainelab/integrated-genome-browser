@@ -61,7 +61,7 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 		}
 		repack(true, false);
 		getSeqMapView().seqMapRefresh();
-		getSeqMapView().getSeqMap().updateWidget();
+		getSeqMapView().redoEdgeMatching();
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 	

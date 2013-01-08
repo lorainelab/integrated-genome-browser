@@ -1595,7 +1595,7 @@ public class SeqMapView extends JPanel
 			doEdgeMatching(seqmap.getSelected(), true);
 		} else {
 			doEdgeMatching(new ArrayList<GlyphI>(0), true);
-		}
+	}
 	}
 
 	public final void adjustEdgeMatching(int bases) {
@@ -1604,7 +1604,13 @@ public class SeqMapView extends JPanel
 			doEdgeMatching(seqmap.getSelected(), true);
 		}
 	}
-
+	
+	public final void redoEdgeMatching() {
+		if (show_edge_matches) {
+			doEdgeMatching(seqmap.getSelected(), true);
+		}
+	}
+	
 	/**
 	 * return a SeqSpan representing the visible bounds of the view seq
 	 */

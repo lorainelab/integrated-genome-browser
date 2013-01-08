@@ -71,5 +71,6 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 		}
 		// Now repack with the newly appointed maxima.
 		repack(true, false);
+		getSeqMapView().redoEdgeMatching();
 	}
 }

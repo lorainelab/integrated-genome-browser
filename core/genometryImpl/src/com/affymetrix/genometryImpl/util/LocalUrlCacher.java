@@ -677,30 +677,25 @@ public final class LocalUrlCacher {
 	 * Get stream associated with this uri.  Don't unzip here.
 	 * @param uri
 	 */
-	public static BufferedInputStream convertURIToBufferedUnzippedStream(URI uri) {
+	public static BufferedInputStream convertURIToBufferedUnzippedStream(URI uri) throws Exception{
 		String scheme = uri.getScheme().toLowerCase();
 		InputStream is = null;
-		try {
-			if (scheme.length() == 0 || scheme.equals("file")) {
-				is = new FileInputStream(new File(uri));
-			} else if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
-				is = LocalUrlCacher.getInputStream(uri.toString());
-			} else {
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
-						"URL scheme: {0} not recognized", scheme);
-				return null;
-			}
-
-			StringBuffer stripped_name = new StringBuffer();
-			InputStream str = GeneralUtils.unzipStream(is, uri.toString(), stripped_name);
-			if (str instanceof BufferedInputStream) {
-				return (BufferedInputStream) str;
-			}
-			return new BufferedInputStream(str);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (scheme.length() == 0 || scheme.equals("file")) {
+			is = new FileInputStream(new File(uri));
+		} else if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
+			is = LocalUrlCacher.getInputStream(uri.toString());
+		} else {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
+					"URL scheme: {0} not recognized", scheme);
+			return null;
 		}
-		return null;
+
+		StringBuffer stripped_name = new StringBuffer();
+		InputStream str = GeneralUtils.unzipStream(is, uri.toString(), stripped_name);
+		if (str instanceof BufferedInputStream) {
+			return (BufferedInputStream) str;
+		}
+		return new BufferedInputStream(str);
 	}
 
 	/**

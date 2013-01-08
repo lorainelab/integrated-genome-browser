@@ -762,7 +762,6 @@ public final class GeneralLoadUtils {
 				try {
 					return loadFeaturesForSym(feature, optimized_sym);
 				} catch (Exception ex) {
-					ex.printStackTrace();
 					if(ex instanceof FileNotFoundException){
 						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
 					}
@@ -807,7 +806,7 @@ public final class GeneralLoadUtils {
 	}
 
 	//TO DO: Make this private again.
-	public static List<SeqSymmetry> loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
+	public static List<SeqSymmetry> loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception{
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		List<SeqSymmetry> loaded = new ArrayList<SeqSymmetry>();

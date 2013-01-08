@@ -95,7 +95,7 @@ public class LocalFilesServerType implements ServerTypeI {
 
 	@Override
 	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature)
-			throws IOException {
+			throws Exception {
 		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
 	}
 

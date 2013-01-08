@@ -246,7 +246,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				}
 			}
 
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			Logger.getLogger(GFF3.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(br);

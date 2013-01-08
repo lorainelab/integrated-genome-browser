@@ -90,6 +90,7 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
+				boolean isPopupTrigger = EventUtils.isOurPopupTrigger(evt);
 				List<GlyphI> selected_glyphs = nevt.getItems();
 				GlyphI topgl = null;
 				if (!selected_glyphs.isEmpty()) {
@@ -107,7 +108,7 @@ public final class TierLabelManager implements PropertyHolder {
 				boolean preserve_selections = false;
 				if (nevt.isAltDown() || nevt.isShiftDown()) {
 					preserve_selections = true;
-				} else if (topgl != null && EventUtils.isOurPopupTrigger(nevt)) {
+				} else if (topgl != null && isPopupTrigger) {
 					if (labelmap.getSelected().contains(topgl)) {
 						preserve_selections = true;
 					}
@@ -118,14 +119,17 @@ public final class TierLabelManager implements PropertyHolder {
 				List<GlyphI> selected = nevt.getItems();
 				labelmap.select(selected);
 				
+				if(!isPopupTrigger){
+					tiermap.clearSelected();
+				}
+				
 				doGraphSelections(preserve_selections);
 				// make sure selections becomes visible
-				if (EventUtils.isOurPopupTrigger(evt)) {
+				if (isPopupTrigger) {
 					doPopup(evt);
 				} else if (selected.size() > 0) {
 					// take glyph at end of selected, just in case there is more
-					//    than .
-					tiermap.clearSelected();
+					//    than .	
 					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
 					labelmap.toFront(gl);
 					dragLabel(gl, nevt);					
@@ -351,7 +355,7 @@ public final class TierLabelManager implements PropertyHolder {
 		graph_symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
 
 		if(!preserve_selection){
-			graph_symmetries.clear();
+			graph_symmetries.clear();			
 		}
 		
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {

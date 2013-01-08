@@ -341,12 +341,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		stopSlicingThread();
 		super.clear();
 	}
-	
-	@Override
-	public boolean autoChangeView(){
-		return false;
-	}
-	
+		
 	@Override
 	protected Adjustable getXZoomer(String id){
 		return new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL);

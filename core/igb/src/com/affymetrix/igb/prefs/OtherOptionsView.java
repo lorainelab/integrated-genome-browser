@@ -50,7 +50,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
-			PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 		} else {
 			smv = null;
 		}
@@ -554,19 +553,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
-		if (!pce.getNode().equals(PreferenceUtils.getTopNode()) || smv == null) {
-			return;
-		}
-
-		if (pce.getKey().equals(SeqMapView.PREF_AUTO_CHANGE_VIEW)) {
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				@Override
-				public void run() {
-					smv.updatePanel();
-				}
-			});
-		}
+		
 	}
 
 	@Override

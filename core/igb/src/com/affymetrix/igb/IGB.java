@@ -227,7 +227,7 @@ public final class IGB extends Application
 		mbar = new JMenuBar();
 		frm.setJMenuBar(mbar);
 		MainMenuUtil.getInstance().loadMenu(mbar, "IGB");
-
+		
 		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
 				new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
 		PreferenceUtils.setWindowSize(frm, frame_bounds);
@@ -326,7 +326,7 @@ public final class IGB extends Application
 			tool_bar = new IGBToolBar();
 		}
 		windowService.setToolBar(tool_bar);
-		windowService.setViewMenu(getMenu("tabs"));
+		windowService.setTabsMenu(mbar);
 		windowService.setMenuCreator(
 				new IMenuCreator() {
 

@@ -19,6 +19,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -174,8 +175,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	@Override
-	public void setViewMenu(JMenu tabs_menu) {
-		this.tabs_menu = (JRPMenu)tabs_menu;
+	public void setTabsMenu(JMenuBar mbar) {
+		this.tabs_menu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"));;
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
 				JRPMenuItem change_tab_state_item = new JRPMenuItem(

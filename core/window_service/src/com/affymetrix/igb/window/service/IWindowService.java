@@ -4,9 +4,9 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.JMenuBar;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
@@ -43,7 +43,7 @@ public interface IWindowService {
 	 * pass in the view menu
 	 * @param view_menu the view menu
 	 */
-	public void setViewMenu(JMenu view_menu);
+	public void setTabsMenu(JMenuBar mbar);
 	/**
 	 * pass in the status bar of the application, this is where
 	 * message and some icons are displayed

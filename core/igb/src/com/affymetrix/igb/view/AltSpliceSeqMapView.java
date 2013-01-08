@@ -93,6 +93,12 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 				public String getMethodName() {
 					return style.getMethodName();
 				}
+				
+				@Override
+				public boolean drawCollapseControl() {
+					return false;
+				}
+				
 			};
 			style_copy.copyPropertiesFrom(style);
 			style_copy.setMaxDepth(0);

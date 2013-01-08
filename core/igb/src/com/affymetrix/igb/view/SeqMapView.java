@@ -1859,7 +1859,7 @@ public class SeqMapView extends JPanel
 					if (pglyph != null && !(pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
 						// Add one ">" symbol for each level of getParent()
 						sym_used_for_title = null; // may be re-set in the recursive call
-						id = "> " + getSelectionTitle(Arrays.asList(pglyph));
+						id = getSelectionTitle(Arrays.asList(pglyph));
 					} 
 				}
 				if (id == null && sym instanceof SymWithProps) {

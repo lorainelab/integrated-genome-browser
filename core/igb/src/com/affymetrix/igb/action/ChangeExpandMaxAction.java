@@ -25,6 +25,7 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
 	private ChangeExpandMaxAction() {
 		super(BUNDLE.getString("changeExpandMaxAction"), "16x16/actions/max_stack_depth.png",
 				"22x22/actions/max_stack_depth.png");
+		putValue(SHORT_DESCRIPTION, BUNDLE.getString("changeExpandMaxActionToolTip"));
 	}
 
 	@Override

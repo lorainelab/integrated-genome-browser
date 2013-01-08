@@ -83,7 +83,6 @@ public class SeqMapView extends JPanel
 		}
 	}
 		
-	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
 	private final static String SEQ_MODE = "SEQ_MODE";
 	public static final boolean default_auto_change_view = false;
 	private static final boolean DEBUG_TIERS = false;
@@ -2170,11 +2169,6 @@ public class SeqMapView extends JPanel
 		return pixel_floater_glyph;
 	}
 
-	@Override
-	public boolean autoChangeView() {
-		return PreferenceUtils.getBooleanParam(PREF_AUTO_CHANGE_VIEW, default_auto_change_view);
-	}
-
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup current_group = null;
 		AnnotatedSeqGroup new_group = evt.getSelectedGroup();
@@ -2379,22 +2373,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 		return ag;
-	}
-
-	@Override
-	public int getAverageSlots() {
-		int slot = 1;
-		int noOfTiers = 1;
-		for (TierGlyph tier : seqmap.getTiers()) {
-			if (!tier.isVisible()) {
-				continue;
-			}
-
-			slot += tier.getActualSlots();
-			noOfTiers += 1;
-		}
-
-		return slot / noOfTiers;
 	}
 
 	@Override

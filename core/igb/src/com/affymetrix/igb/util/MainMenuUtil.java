@@ -144,10 +144,6 @@ public class MainMenuUtil {
 //		codonDisplayMenuItemGroup.add(hideLetterMenuItem);
 //		view_menu.add(codon_display_menu);
 	}
-
-	private void tabsMenu(JMenuBar menuBar, String id) {
-		JRPMenu tabs_menu = MenuUtil.getRPMenu(menuBar, id + "_main_tabsMenu", BUNDLE.getString("tabsMenu"));
-	}
 	
 	private void toolMenu(JMenuBar menuBar, String id) {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
@@ -180,7 +176,6 @@ public class MainMenuUtil {
 		fileMenu(menuBar, id);
 		editMenu(menuBar, id);
 		viewMenu(menuBar, id);
-		tabsMenu(menuBar, id);
 		toolMenu(menuBar, id);
 		helpMenu(menuBar, id);
 	}

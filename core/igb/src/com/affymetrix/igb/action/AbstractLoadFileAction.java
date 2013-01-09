@@ -54,13 +54,13 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 
 		final File[] fils = fileChooser.getSelectedFiles();
 
-		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String) fileChooser.versionCB.getSelectedItem());
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String) fileChooser.getSelectedVersion());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 
 		for (File file : fils) {
 			URI uri = file.toURI();
-			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.speciesCB.getSelectedItem());
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies());
 		}
 	}
 		

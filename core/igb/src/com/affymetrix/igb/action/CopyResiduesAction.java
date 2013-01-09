@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -10,6 +11,8 @@ import java.util.logging.Level;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -32,6 +35,14 @@ public class CopyResiduesAction extends GenericAction {
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		GenometryModel.getGenometryModel().addSymSelectionListener(
+			new SymSelectionListener(){
+				public void symSelectionChanged(SymSelectionEvent evt){
+					boolean enabled = (IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1);
+					ACTION.setEnabled(enabled);
+					ACTION_SHORT.setEnabled(enabled);
+				}
+			});
 		//GenericActionHolder.getInstance().addGenericAction(ACTION_SHORT);
 	}
 	public static CopyResiduesAction getAction() {
@@ -44,6 +55,7 @@ public class CopyResiduesAction extends GenericAction {
 	
 	protected CopyResiduesAction(String text) {
 		super(text, null, "16x16/actions/copy_sequence.png", "22x22/actions/copy_sequence.png", KeyEvent.VK_C);
+		setEnabled(enabled);
 	}
 	
 	@Override
@@ -116,10 +128,5 @@ public class CopyResiduesAction extends GenericAction {
 			//   have to put in at least one character -- just putting in a space for now
 			clipboard.setContents(new StringSelection(" "), null);
 		}
-	}
-	
-	@Override
-	public boolean isEnabled(){
-		return ((IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1));
 	}
 }

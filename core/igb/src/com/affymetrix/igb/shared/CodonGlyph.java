@@ -18,7 +18,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class CodonGlyph extends AbstractAlignedTextGlyph {
 	private static final double STAGGER_COLOR_PCT = 0.8;
 	private int offset;
-	private CodonGlyph drawCodonGlyph;
 //	private static SeqSpan waitingSpan = null;
 //	private static boolean loading = false;
 	
@@ -26,36 +25,29 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	public static final int default_codon_glyph_code_size = 1;
 	
 	private int codeSize;
-
+	private boolean tried = false;
+	
 	public CodonGlyph(int codeSize) {
 		super();
 		this.codeSize = codeSize;
 	}
 
 	@Override
-	public void drawTraversal(ViewI view)  {
+	public void drawTraversal(ViewI view) {
 		try {
-			if (drawCodonGlyph != null) {
-				drawCodonGlyph.drawTraversal(view);
-			} else {
-				setCoordBox(getParent().getCoordBox());
-				if (chariter == null) {
-					String residues = getResidue(view);
-					if (residues != null) {
-						setResidues(residues);
-					}
+			if (chariter == null && !tried) {
+				String residues = getResidue(view);
+				if (residues != null) {
+					setResidues(residues);
 				}
-				if (chariter != null) {
-					super.drawTraversal(view);
-				}
+				tried = true;
+			}
+			if (chariter != null) {
+				super.drawTraversal(view);
 			}
 		} catch (Exception ex) {
 			System.out.println("Exception in CodonGlyph :" + ex);
 		}
-	}
-
-	public void setDrawCodonGlyph(CodonGlyph drawCodonGlyph) {
-		this.drawCodonGlyph = drawCodonGlyph;
 	}
 
 	private String repeatString(char c, int count) {
@@ -67,16 +59,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	@Override
 	protected boolean getShowMask() {
 		return false;
-	}
-
-	@Override
-	public void draw(ViewI view) {
-		if (drawCodonGlyph != null) {
-			drawCodonGlyph.drawTraversal(view);
-		}
-		else {
-			super.draw(view);
-		}
 	}
 
 	@Override
@@ -184,9 +166,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		String errorMessage = null;
 		SymSpanWithCds parentSym = (SymSpanWithCds)getParent().getParent().getInfo();
 //		SeqSpan exonSpan = ((SeqSymmetry)getParent().getInfo()).getSpan(GenometryModel.getGenometryModel().getSelectedSeq());
-		if (codeSize == 0 || drawCodonGlyph != null) {
-			return null;
-		}
 		ResidueRange residueRange = getResidueRange();
 		String residue = residueRange.getResidue();
 		if (residue.indexOf("-") > -1) { // load residues
@@ -256,6 +235,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			}
 		}
 		offset = residueRange.getStartPos();
+//		return aminoAcidsSB.substring(Math.min(residueRange.getStartPos(), residueRange.getEndPos()), Math.max(residueRange.getStartPos(), residueRange.getEndPos()));
 		return aminoAcidsSB.substring(residueRange.getStartPos(), residueRange.getEndPos());
 	}
 	

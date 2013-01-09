@@ -13,7 +13,6 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 public class CodonGlyphProcessor {
-	private CodonGlyph saveCodonGlyph;
 	private int codeSize;
 	
 	PreferenceChangeListener prefs = new PreferenceChangeListener(){
@@ -51,20 +50,13 @@ public class CodonGlyphProcessor {
 	 */
 	public void processGlyph(GlyphI glyph, BioSeq seq) {
 		if (glyph.getParent() != null && !(glyph.getParent().getInfo() instanceof BAMSym) 
-				&& glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
-			CodonGlyph codonGlyph = new CodonGlyph(codeSize);
-			codonGlyph.setHitable(false);
-			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
-				if (saveCodonGlyph != null) {
-					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);
-					codonGlyph.setCoordBox(glyph.getCoordBox());
-				}
-				saveCodonGlyph = null;
+				&& glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {	
+			if (!hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
+				CodonGlyph codonGlyph = new CodonGlyph(codeSize);
+				codonGlyph.setHitable(false);
+				codonGlyph.setCoordBox(glyph.getCoordBox());
+				glyph.addChild(codonGlyph);
 			}
-			else {
-				saveCodonGlyph = codonGlyph;
-			}
-			glyph.addChild(codonGlyph);
 		}
 	}
 	

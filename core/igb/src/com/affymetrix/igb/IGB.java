@@ -43,6 +43,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -254,6 +255,12 @@ public final class IGB extends Application
 			}
 		});
 
+		ScriptManager.getInstance().setInputHandler(new ScriptManager.InputHandler() {
+			public InputStream getInputStream(String fileName) throws IOException {
+				return LocalUrlCacher.getInputStream(fileName);
+			}
+		});
+				
 		WebLink.autoLoad();
 
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());

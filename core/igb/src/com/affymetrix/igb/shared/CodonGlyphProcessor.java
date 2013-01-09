@@ -63,18 +63,18 @@ public class CodonGlyphProcessor {
 	private static boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym, BioSeq seq) {
 		SeqSpan cdsSpan = parentSym.getCdsSpan();
 		if (cdsSpan != null) {
-		if (parentSym.isForward() && exonSym.getSpan(seq) != null &&
-			(cdsSpan.getStart() > exonSym.getSpan(seq).getStart() ||
-			 cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
+			if (parentSym.isForward() && exonSym.getSpan(seq) != null
+					&& (cdsSpan.getStart() > exonSym.getSpan(seq).getStart()
+					|| cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
 				return true;
-		}
-		if (!parentSym.isForward() && exonSym.getSpan(seq) != null &&
-			(cdsSpan.getStart() < exonSym.getSpan(seq).getStart() ||
-			 cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
+			}
+			if (!parentSym.isForward() && exonSym.getSpan(seq) != null
+					&& (cdsSpan.getStart() < exonSym.getSpan(seq).getStart()
+					|| cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
 				return true;
 			}
 		}
-		return false;
+		return parentSym.isCdsStartStopSame();
 	}
 
 }

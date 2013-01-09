@@ -4,6 +4,7 @@ import java.awt.AWTEvent;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,12 +16,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.script.ScriptException;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import javax.script.ScriptException;
 
 public class ScriptManager {
 	public final static String SCRIPTING = "scripting";
@@ -28,6 +29,12 @@ public class ScriptManager {
 	private List<Operation> operations = new ArrayList<Operation>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
 	private boolean mouseDown;
+	private InputHandler inputHandler;
+	
+	public static interface InputHandler {
+		public InputStream getInputStream(String fileName) throws IOException;
+	}
+	
 	public static ScriptManager getInstance() {
 		return instance;
 	}
@@ -52,6 +59,10 @@ public class ScriptManager {
 		return mouseDown;
 	}
 
+	public void setInputHandler(InputHandler inputHandler){
+		this.inputHandler = inputHandler;
+	}
+	
 	public void addWidget(JRPWidget widget) {
 		if (widgets.get(widget.getId()) != null) {
 //			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
@@ -145,7 +156,24 @@ public class ScriptManager {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "script engine is null for file " + fileName);
 				return;
 			}
-			InputStream is = new FileInputStream(fileName);
+			InputStream is;
+			try {
+				if (inputHandler == null) {
+					is = new FileInputStream(fileName);
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Input handler not set. Using FileInputStream.");
+				} else {
+					is = inputHandler.getInputStream(fileName);
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error getting input stream for script file "+fileName, ex);
+				return;
+			}
+			
+			if(is == null){
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Input stream null for script file "+fileName);
+				return;
+			}
+			 
 			Reader reader = new InputStreamReader(is);
 			engine.eval(reader);
 		}

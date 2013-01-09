@@ -27,9 +27,9 @@ import javax.swing.table.TableCellEditor;
 public final class TrackDefaultView extends TrackPreferences implements ListSelectionListener {
 
 	private static final String FILE_TYPE = "File Type";
-	private static final String FOREGROUND = "Foreground";
-	private static final String BACKGROUND = "Background";
-	private static final String TRACK_NAME_SIZE = "Track Name Size";
+	private static final String FOREGROUND = "FG";
+	private static final String BACKGROUND = "BG";
+	private static final String TRACK_NAME_SIZE = "Size";
 	private final static String[] col_headings = {
 		FILE_TYPE,
 		BACKGROUND, FOREGROUND,

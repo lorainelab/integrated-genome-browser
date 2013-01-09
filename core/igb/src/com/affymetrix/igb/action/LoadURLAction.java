@@ -94,11 +94,11 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 			return;
 		}
 		
-		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)chooser.versionCB.getSelectedItem());
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)chooser.getSelectedVersion());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 	
-		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
+		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.getSelectedSpecies());
 		
 	}
 

@@ -33,9 +33,10 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	private static final long serialVersionUID = 1L;
 
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
+	private final JRPComboBox speciesCB;
+	private final JRPComboBox versionCB;
 	public final Box box;
-	public final JRPComboBox speciesCB;
-	public final JRPComboBox versionCB;
+	
 	private class SpeciesAction extends GenericAction {
 		public SpeciesAction() {
 			super(null, null, null);
@@ -132,6 +133,14 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		return dialog;
 	}
 
+	public Object getSelectedSpecies(){
+		return speciesCB.getSelectedItem();
+	}
+	
+	public Object getSelectedVersion(){
+		return versionCB.getSelectedItem();
+	}
+	
 	public void refreshSpeciesList(){
 		speciesCB.removeAllItems();
 		speciesCB.addItem(OpenURIAction.UNKNOWN_SPECIES_PREFIX + " " + OpenURIAction.unknown_group_count);

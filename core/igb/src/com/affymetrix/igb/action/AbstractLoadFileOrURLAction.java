@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.OpenURIAction;
 
@@ -27,9 +28,10 @@ public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();
 		for (String name : nameToExtensionMap.keySet()) {
 			chooser.addChoosableFileFilter(new UniFileFilter(
-					nameToExtensionMap.get(name).toArray(new String[]{}),
-					name + " Files"));
+					nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files"));
 		}
+		chooser.addChoosableFileFilter(new UniFileFilter(
+				ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
 	}
 
 	@Override

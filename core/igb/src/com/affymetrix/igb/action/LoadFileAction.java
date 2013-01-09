@@ -27,12 +27,8 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-
 import com.affymetrix.igb.view.load.GeneralLoadView;
-
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -90,19 +86,9 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	};
 	
 	private void openURIOrRunScript(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, String path, String name){
-		
 		if (openURI(uri, loadGroup, speciesName)) {
 			return;
-		}
-		
-		if(ScriptManager.getInstance().isScript(path)){
-			int result = JOptionPane.showConfirmDialog(gviewerFrame, "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
-			if(result == JOptionPane.YES_OPTION){
-				RunScriptAction.getAction().runScript(path);
-			}
-			return;
-		}
-		
+		}	
 		ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + name, Level.WARNING);
 	}
 	
@@ -142,7 +128,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 				"22x22/actions/document-open.png",
 				KeyEvent.VK_O, null, true);
 		this.ordinal = -9009000;
-		this.gviewerFrame.setTransferHandler(fdh);
+		this.igbService.getFrame().setTransferHandler(fdh);
 	}
 
 	@Override

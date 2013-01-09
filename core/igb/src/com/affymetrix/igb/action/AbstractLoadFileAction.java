@@ -22,13 +22,10 @@ import com.affymetrix.igb.util.MergeOptionChooser;
 public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction {
 
 	private static final long serialVersionUID = 1L;
-	
 	private final FileTracker load_dir_tracker;
-	protected final JFrame gviewerFrame;
-
+	
 	protected AbstractLoadFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
-		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	}
 
@@ -44,7 +41,7 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 		fileChooser.setCurrentDirectory(currDir);
 		fileChooser.rescanCurrentDirectory();
 
-		int option = fileChooser.showOpenDialog(gviewerFrame);
+		int option = fileChooser.showOpenDialog(igbService.getFrame());
 
 		if (option != JFileChooser.APPROVE_OPTION) {
 			return;

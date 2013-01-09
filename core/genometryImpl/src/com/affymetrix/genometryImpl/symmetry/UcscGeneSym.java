@@ -81,13 +81,18 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithC
 		this.cdsMax = cdsMax;
 		this.emins = emins;
 		this.emaxs = emaxs;
-			}
+	}
 
 	@Override
 	public String getGeneName() { return geneName; }
 	public String getName() { return name; }
 	public String getType() { return type; }
 
+	@Override
+	public boolean isCdsStartStopSame(){
+		return cdsMin == cdsMax;
+	}
+	
 	public boolean hasCdsSpan() {
 		return (cdsMin >= 0 && cdsMax >= 0);
 	}

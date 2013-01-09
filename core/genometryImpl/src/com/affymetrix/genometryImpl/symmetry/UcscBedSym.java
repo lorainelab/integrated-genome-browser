@@ -82,7 +82,7 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 	String type;
 	Map<String,Object> props;
 	boolean hasCdsSpan = false;
-
+	
 	/**
 	 *  Constructs a SeqSymmetry optimized for BED-file format.
 	 *  This object is optimized for the case where all optional columns in the
@@ -105,7 +105,7 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 		this.cdsMin = cdsMin;
 		this.cdsMax = cdsMax;
 		hasCdsSpan = ((cdsMin != Integer.MIN_VALUE) && (cdsMax != Integer.MIN_VALUE) && (cdsMin != cdsMax));
-
+		
 		this.blockMins = blockMins;
 		this.blockMaxs = blockMaxs;
 	}
@@ -113,6 +113,11 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 	public String getName() { return name; }
 	public String getType() { return type; }
 
+	@Override
+	public boolean isCdsStartStopSame(){
+		return cdsMin == cdsMax;
+	}
+	
 	/**
 	 *  Returns true if the cds was specified in the constructor with valid values.
 	 *  If cdsMin = cdsMax = Integer.MIN_VALUE, or if cdsMin = cdsMax, then there is no CDS.

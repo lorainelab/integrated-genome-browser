@@ -36,7 +36,7 @@ implements ParameteredAction {
 		}
 		repack(true, false);
 		this.getSeqMapView().seqMapRefresh();
-		this.getSeqMapView().getSeqMap().updateWidget();
+		this.getSeqMapView().redoEdgeMatching();
 	}
 
 	@Override

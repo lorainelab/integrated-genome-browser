@@ -275,11 +275,16 @@ public class FasterExpandPacker extends ExpandPacker {
 		int prev_slot_index = 0;
 
 		Rectangle2D intersection;
+		GlyphI child;
 		for (int i = 0; i < child_count; i++) {
-//			GlyphI child = parent.getChild(i);
+			child = parent.getChild(i);
+			//If info is null then it is edge match glyph
+			if(child.getInfo() == null){
+				continue;
+			}
 //			child.setVisibility(true);
 //			child.setOverlapped(false);
-			cbox = parent.getChild(i).getCoordBox();
+			cbox = child.getCoordBox();
 			intersection = cbox.createIntersection(inView);
 			if (intersection.getWidth() <= 0) {
 				continue;

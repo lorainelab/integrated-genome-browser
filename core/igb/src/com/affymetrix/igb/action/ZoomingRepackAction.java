@@ -90,7 +90,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 		// Now repack with the newly appointed maxima.
 		boolean fullRepack = true, stretchMap = true, fireTierPositionChanged = false;
 		gviewer.getSeqMap().repackTheTiers(fullRepack, stretchMap, fireTierPositionChanged);
-		gviewer.getSeqMap().updateWidget();
+		gviewer.redoEdgeMatching();
 		// Full update doesn't seem to happen.
 		// Or, rather, it happens when the user clicks on the map.
 	}

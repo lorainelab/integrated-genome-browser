@@ -1,24 +1,23 @@
 package com.affymetrix.igb.action;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.net.URI;
+import java.net.URL;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.util.logging.Level;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.IGB;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.net.URI;
-import java.net.URL;
-import javax.swing.Box;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import java.util.logging.Level;
-
 /**
  *
  * @author jnicol
@@ -62,11 +61,10 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 			pane.setInitialSelectionValue(clipBoardContent);
 		}
 		chooser = getFileChooser(getID());
-		Box mergeOptionBox = chooser.box;
-		chooser.refreshSpeciesList();
+		chooser.optionChooser.refreshSpeciesList();
 		dialog = pane.createDialog(gviewerFrame, BUNDLE.getString("openURL"));
 		dialog.setModal(true);
-		dialog.getContentPane().add(mergeOptionBox, BorderLayout.SOUTH);
+		dialog.getContentPane().add(chooser.optionChooser, BorderLayout.SOUTH);
 		dialog.pack();
 		dialog.setLocationRelativeTo(gviewerFrame);
 		dialog.setVisible(true);

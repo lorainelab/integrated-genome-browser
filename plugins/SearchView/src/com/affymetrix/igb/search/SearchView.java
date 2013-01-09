@@ -641,9 +641,11 @@ public final class SearchView extends IGBTabPanel implements
 	public void searchResults(String searchText, List<SeqSymmetry> symList) {
 		searchTF.setText(searchText);
 		
+		clearResults();
 		// Hard code the search mode to 'Keyword'
 		// As currently this only happens when searching from the IGB main panel search box which is a keyword search
 		searchCB.setSelectedItem("Keyword");
+		searchModeAction.actionPerformed(null);
 		
 		setModel(new SymSearchResultsTableModel(symList));
 		select();

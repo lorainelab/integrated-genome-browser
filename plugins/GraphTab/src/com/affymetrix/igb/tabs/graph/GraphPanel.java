@@ -136,7 +136,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         graphPanelLayout.setHorizontalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jSeparator1)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(graphPanelLayout.createSequentialGroup()
                     .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(0, 0, 0)

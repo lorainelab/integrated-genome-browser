@@ -13,7 +13,6 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 public class CodonGlyphProcessor {
-	private CodonGlyph saveCodonGlyph;
 	private int codeSize;
 	
 	PreferenceChangeListener prefs = new PreferenceChangeListener(){
@@ -51,38 +50,31 @@ public class CodonGlyphProcessor {
 	 */
 	public void processGlyph(GlyphI glyph, BioSeq seq) {
 		if (glyph.getParent() != null && !(glyph.getParent().getInfo() instanceof BAMSym) 
-				&& glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {
-			CodonGlyph codonGlyph = new CodonGlyph(codeSize);
-			codonGlyph.setHitable(false);
-			if (hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
-				if (saveCodonGlyph != null) {
-					codonGlyph.setDrawCodonGlyph(saveCodonGlyph);
-					codonGlyph.setCoordBox(glyph.getCoordBox());
-				}
-				saveCodonGlyph = null;
+				&& glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {	
+			if (!hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
+				CodonGlyph codonGlyph = new CodonGlyph(codeSize);
+				codonGlyph.setHitable(false);
+				codonGlyph.setCoordBox(glyph.getCoordBox());
+				glyph.addChild(codonGlyph);
 			}
-			else {
-				saveCodonGlyph = codonGlyph;
-			}
-			glyph.addChild(codonGlyph);
 		}
 	}
 	
 	private static boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym, BioSeq seq) {
 		SeqSpan cdsSpan = parentSym.getCdsSpan();
 		if (cdsSpan != null) {
-		if (parentSym.isForward() && exonSym.getSpan(seq) != null &&
-			(cdsSpan.getStart() > exonSym.getSpan(seq).getStart() ||
-			 cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
+			if (parentSym.isForward() && exonSym.getSpan(seq) != null
+					&& (cdsSpan.getStart() > exonSym.getSpan(seq).getStart()
+					|| cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
 				return true;
-		}
-		if (!parentSym.isForward() && exonSym.getSpan(seq) != null &&
-			(cdsSpan.getStart() < exonSym.getSpan(seq).getStart() ||
-			 cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
+			}
+			if (!parentSym.isForward() && exonSym.getSpan(seq) != null
+					&& (cdsSpan.getStart() < exonSym.getSpan(seq).getStart()
+					|| cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
 				return true;
 			}
 		}
-		return false;
+		return parentSym.isCdsStartStopSame();
 	}
 
 }

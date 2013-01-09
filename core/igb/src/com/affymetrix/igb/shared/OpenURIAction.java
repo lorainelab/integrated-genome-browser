@@ -12,19 +12,23 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.osgi.service.IGBService;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.net.URI;
+import javax.swing.JOptionPane;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.igb.util.MergeOptionChooser;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.action.RunScriptAction;
+import com.affymetrix.igb.util.MergeOptionChooser;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public abstract class OpenURIAction extends GenericAction {
@@ -45,6 +49,15 @@ public abstract class OpenURIAction extends GenericAction {
 	
 	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
 		final AnnotatedSeqGroup loadGroup, final String speciesName) {
+		
+		if(ScriptManager.getInstance().isScript(uri.getPath())){
+			int result = JOptionPane.showConfirmDialog(igbService.getFrame(), "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
+			if(result == JOptionPane.YES_OPTION){
+				RunScriptAction.getAction().runScript(uri.getPath());
+			}
+			return;
+		}
+		
 		igbService.openURI(uri, fileName, loadGroup, speciesName, loadSequenceAsTrack());
 		
 		if (!mergeSelected) {

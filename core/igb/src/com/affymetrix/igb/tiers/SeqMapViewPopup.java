@@ -311,7 +311,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		optimize_stack_height.setText("Optimize Stack Height");
 		popup.add(optimize_stack_height);
 		JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
-		change_expand_max.setEnabled(any_are_expanded);
 		change_expand_max.setText("Set Stack Height...");
 		change_expand_max.setIcon(null);
 		popup.add(change_expand_max);

@@ -279,7 +279,18 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
 		GlyphI topgl = null;
 		if (!nevt.getItems().isEmpty()) {
-			topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+			//Pick first drawable glyph from last
+			for(int i = hcount - 1; i >= 0; i--){
+				if(!nevt.getItems().get(i).getSkipDraw() && !nevt.getItems().get(i).getParent().getSkipDraw()){
+					topgl = nevt.getItems().get(i);
+					break;
+				}
+			}
+			
+			//For backward compatibility
+			if(topgl == null){
+				topgl = nevt.getItems().get(hcount - 1);
+			}
 			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
 		}
 

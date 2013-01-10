@@ -70,6 +70,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         });
 
         floatCheckBox.setText("Float");
+        floatCheckBox.setToolTipText("Floats the graph on the surface of main view");
         floatCheckBox.setIconTextGap(2);
         floatCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         floatCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
@@ -80,6 +81,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         });
 
         YAxisCheckBox.setText("Y-axis");
+        YAxisCheckBox.setToolTipText("Show Y-axis");
         YAxisCheckBox.setIconTextGap(2);
         YAxisCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         YAxisCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
@@ -124,6 +126,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         });
 
         labelCheckBox.setText("Label");
+        labelCheckBox.setToolTipText("Show label within the track");
         labelCheckBox.setIconTextGap(2);
         labelCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,26 +139,25 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         graphPanelLayout.setHorizontalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jSeparator1)
-            .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(graphPanelLayout.createSequentialGroup()
-                    .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(0, 0, 0)
-                    .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(graphPanelLayout.createSequentialGroup()
-                    .add(labelCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(10, 10, 10)
-                    .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(10, 10, 10)
-                    .add(floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(graphPanelLayout.createSequentialGroup()
-                    .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(50, 50, 50)
-                    .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+            .add(graphPanelLayout.createSequentialGroup()
+                .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(graphPanelLayout.createSequentialGroup()
+                .add(labelCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(10, 10, 10)
+                .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(10, 10, 10)
+                .add(floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(graphPanelLayout.createSequentialGroup()
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(50, 50, 50)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
         graphPanelLayout.setVerticalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

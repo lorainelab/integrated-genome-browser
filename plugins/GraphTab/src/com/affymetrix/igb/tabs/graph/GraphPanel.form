@@ -46,30 +46,28 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
-              <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="graphStyleHeatMapRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
+              </Group>
+              <Component id="graphStyleMinMaxAvgRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="labelCheckBox" min="-2" pref="63" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="YAxisCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="floatCheckBox" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="graphStyleStairStepRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="graphStyleLineRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="graphStyleMinMaxAvgRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="labelCheckBox" min="-2" pref="63" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                      <Component id="YAxisCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                      <Component id="floatCheckBox" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="graphStyleStairStepRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="graphStyleLineRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="graphStyleBarRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="graphStyleDotRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="graphStyleBarRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="graphStyleDotRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -152,6 +150,7 @@
         <Component class="javax.swing.JCheckBox" name="floatCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Float"/>
+            <Property name="toolTipText" type="java.lang.String" value="Floats the graph on the surface of main view"/>
             <Property name="iconTextGap" type="int" value="2"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[0, 0, 0, 0]"/>
@@ -167,6 +166,7 @@
         <Component class="javax.swing.JCheckBox" name="YAxisCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Y-axis"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show Y-axis"/>
             <Property name="iconTextGap" type="int" value="2"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[0, 0, 0, 0]"/>
@@ -238,6 +238,7 @@
         <Component class="javax.swing.JCheckBox" name="labelCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Label"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show label within the track"/>
             <Property name="iconTextGap" type="int" value="2"/>
           </Properties>
           <Events>

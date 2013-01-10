@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.*;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
@@ -8,6 +7,9 @@ import java.util.BitSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -122,7 +124,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		else if (!parentSym.isForward() && exonSpan.getStart() < exonSpan.getEnd()) {
 			exonSpan = new SimpleSeqSpan(exonSpan.getEnd(), exonSpan.getStart(), seq);
 		}
-		StringBuffer codesSB = new StringBuffer("");
+		StringBuilder codesSB = new StringBuilder("");
 		SeqSpan cdsSpan = parentSym.getCdsSpan();
 		int startPos = 0;
 		int endPos = 0;
@@ -158,6 +160,9 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 					endPos = codesSB.length();
 				}
 			}
+		}
+		if(codesSB.length()%3 > 0){
+			codesSB.append(repeatString('*', 3 - codesSB.length()%3));
 		}
 		return new ResidueRange(startPos, endPos, codesSB.toString());
 	}
@@ -207,13 +212,13 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			}
 			return errorMessage;
 		}
-		StringBuffer aminoAcidsSB = new StringBuffer("");
-		String nextCodon = null;
+		StringBuilder aminoAcidsSB = new StringBuilder("");
+		String nextCodon;
 		for (int pos = 0; pos < residue.length(); pos += 3) {
 			nextCodon = residue.substring(pos, pos + 3).toUpperCase();
 			AminoAcid aminoAcid = AminoAcid.CODON_TO_AMINO_ACID.get(nextCodon);
 			if (aminoAcid == null) { // should never happen
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "invalid sequence " + nextCodon + " for " + parentSym.toString() + ":" + parentSym.getID());
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "invalid sequence {0} for {1}:{2}", new Object[]{nextCodon, parentSym.toString(), parentSym.getID()});
 				return null;
 			}
 			String aaCode = "";

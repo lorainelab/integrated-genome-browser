@@ -30,7 +30,7 @@ public enum AminoAcid {
 
 	public static final String START_CODON = "ATG"; //AminoAcid.Methionine - not true for all species
 	public static final String[] STOP_CODONS = new String[]{"TAA", "TAG", "TGA"};
-	public static HashMap<String, AminoAcid> CODON_TO_AMINO_ACID = new HashMap<String, AminoAcid>();
+	public static final HashMap<String, AminoAcid> CODON_TO_AMINO_ACID = new HashMap<String, AminoAcid>();
 	static {
 		CODON_TO_AMINO_ACID.put("AAA", AminoAcid.Lysine);
 		CODON_TO_AMINO_ACID.put("AAC", AminoAcid.Asparagine);
@@ -96,6 +96,36 @@ public enum AminoAcid {
 		CODON_TO_AMINO_ACID.put("TTC", AminoAcid.Phenylalanine);
 		CODON_TO_AMINO_ACID.put("TTG", AminoAcid.Leucine);
 		CODON_TO_AMINO_ACID.put("TTT", AminoAcid.Phenylalanine);
+		
+		//SPECIAL CASES WHERE TRANSLATION WAS FORCED.
+		
+		// Using permutation and combination. 
+		// No of possibilites for first place
+		CODON_TO_AMINO_ACID.put("A**", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("T**", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("G**", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("C**", AminoAcid.STOP);
+		
+		// No of possibilies for first and second place
+		CODON_TO_AMINO_ACID.put("AA*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("AT*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("AG*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("AC*", AminoAcid.STOP);
+		
+		CODON_TO_AMINO_ACID.put("TA*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("TT*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("TG*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("TC*", AminoAcid.STOP);
+		
+		CODON_TO_AMINO_ACID.put("GA*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("GT*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("GG*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("GC*", AminoAcid.STOP);
+		
+		CODON_TO_AMINO_ACID.put("CA*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("CT*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("CG*", AminoAcid.STOP);
+		CODON_TO_AMINO_ACID.put("CC*", AminoAcid.STOP);
 	}
 
 	private static final Map<Character, AminoAcid> code1aminoAcid = new HashMap<Character, AminoAcid>();

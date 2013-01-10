@@ -132,6 +132,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Set label for models within the track"/>
+          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFieldComboBoxActionPerformed"/>
           </Events>
@@ -139,6 +142,7 @@
         <Component class="javax.swing.JCheckBox" name="strands2TracksCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="+/-"/>
+            <Property name="toolTipText" type="java.lang.String" value="Allows plus and minus strands to be combined"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strands2TracksCheckBoxActionPerformed"/>
@@ -147,6 +151,7 @@
         <Component class="javax.swing.JCheckBox" name="strandsArrowCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Arrow"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show strand using arrow"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsArrowCheckBoxActionPerformed"/>
@@ -155,6 +160,7 @@
         <Component class="javax.swing.JCheckBox" name="strandsColorCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Color by Strand:"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show strand by using color"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsColorCheckBoxActionPerformed"/>
@@ -270,6 +276,7 @@
         <Component class="javax.swing.JButton" name="stackDepthGoButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Apply"/>
+            <Property name="toolTipText" type="java.lang.String" value="Set stack height for selected tracks"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthGoButtonActionPerformed"/>
@@ -278,9 +285,7 @@
         <Component class="javax.swing.JButton" name="stackDepthAllButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Optimize"/>
-            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="&quot;Optimize stack height for selected annotation tracks so that all annotations are shown&quot;" type="code"/>
-            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Optimize stack height for selected annotation tracks so that all annotations are shown"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthAllButtonActionPerformed"/>
@@ -342,6 +347,7 @@
         <Component class="javax.swing.JCheckBox" name="lockTierHeightCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Lock Track Height (Pixels)"/>
+            <Property name="toolTipText" type="java.lang.String" value="Prevents selected track from changing height"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lockTierHeightCheckBoxActionPerformed"/>
@@ -367,6 +373,7 @@
         <Component class="javax.swing.JButton" name="pxGoButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Apply"/>
+            <Property name="toolTipText" type="java.lang.String" value="Sets height for the locked tracks"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pxGoButtonActionPerformed"/>

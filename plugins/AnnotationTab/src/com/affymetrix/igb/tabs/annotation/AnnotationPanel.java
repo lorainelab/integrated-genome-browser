@@ -53,6 +53,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 
         labelFieldLabel.setText("Label Field:");
 
+        labelFieldComboBox.setToolTipText("Set label for models within the track");
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 labelFieldComboBoxActionPerformed(evt);
@@ -60,6 +61,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strands2TracksCheckBox.setText("+/-");
+        strands2TracksCheckBox.setToolTipText("Allows plus and minus strands to be combined");
         strands2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 strands2TracksCheckBoxActionPerformed(evt);
@@ -67,6 +69,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strandsArrowCheckBox.setText("Arrow");
+        strandsArrowCheckBox.setToolTipText("Show strand using arrow");
         strandsArrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 strandsArrowCheckBoxActionPerformed(evt);
@@ -74,6 +77,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strandsColorCheckBox.setText("Color by Strand:");
+        strandsColorCheckBox.setToolTipText("Show strand by using color");
         strandsColorCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 strandsColorCheckBoxActionPerformed(evt);
@@ -175,6 +179,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         stackDepthGoButton.setText("Apply");
+        stackDepthGoButton.setToolTipText("Set stack height for selected tracks");
         stackDepthGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthGoButtonActionPerformed(evt);
@@ -216,6 +221,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         trackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Height"));
 
         lockTierHeightCheckBox.setText("Lock Track Height (Pixels)");
+        lockTierHeightCheckBox.setToolTipText("Prevents selected track from changing height");
         lockTierHeightCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lockTierHeightCheckBoxActionPerformed(evt);
@@ -232,6 +238,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         pxGoButton.setText("Apply");
+        pxGoButton.setToolTipText("Sets height for the locked tracks");
         pxGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pxGoButtonActionPerformed(evt);

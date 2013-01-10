@@ -140,6 +140,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Value"/>
+            <Property name="toolTipText" type="java.lang.String" value="Value is absolute Y-axis value"/>
             <Property name="iconTextGap" type="int" value="2"/>
           </Properties>
           <Events>
@@ -155,6 +156,7 @@
               <ComponentRef name="VisibleRangeButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Percentile"/>
+            <Property name="toolTipText" type="java.lang.String" value="Sets Y-axis to show percentile of data"/>
             <Property name="iconTextGap" type="int" value="2"/>
           </Properties>
           <Events>
@@ -165,6 +167,9 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSlider" name="rangeSlider">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Set left knob to minimum and right know to maxium."/>
+          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="vis_bounds_setter.ValueSlider"/>
           </AuxValues>
@@ -177,6 +182,7 @@
         <Component class="javax.swing.JTextField" name="minText">
           <Properties>
             <Property name="columns" type="int" value="5"/>
+            <Property name="toolTipText" type="java.lang.String" value="Minimum value"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="minTextActionPerformed"/>
@@ -188,6 +194,7 @@
         <Component class="javax.swing.JTextField" name="maxText">
           <Properties>
             <Property name="columns" type="int" value="5"/>
+            <Property name="toolTipText" type="java.lang.String" value="Maximum value"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxTextActionPerformed"/>
@@ -210,6 +217,7 @@
             <TitledBorder title="Height"/>
           </Border>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Changes the height for selected graph"/>
       </Properties>
 
       <Layout>

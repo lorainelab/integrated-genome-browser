@@ -344,8 +344,21 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 			}
 		}
 
+		boolean toggle_event = isToggleSelectionEvent(evt);
+//		for(GlyphI glyph : hits){
+//			glyph = map.zoomCorrectedGlyphChoice(glyph, zoom_point);
+//			
+//			if(glyph == null){
+//				continue;
+//			}
+//			if (toggle_event && glyph.isSelected()) {
+//				map.deselect(glyph);
+//			} else if (glyph != smv.getAxisGlyph() && glyph != smv.getSequnceGlyph()) {
+//				map.select(glyph);
+//			}
+//		}
+		
 		if (topgl != null) {
-			boolean toggle_event = isToggleSelectionEvent(evt);
 			//      if (toggle_event && map.getSelected().contains(topgl)) {
 			if (toggle_event && topgl.isSelected()) {
 				map.deselect(topgl);

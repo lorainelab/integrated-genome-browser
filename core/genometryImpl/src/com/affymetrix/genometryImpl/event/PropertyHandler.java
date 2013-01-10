@@ -11,6 +11,7 @@ public interface PropertyHandler {
 	// The general order these fields should show up in.
 	public static String[] prop_order = new String[]{
 		"gene name",
+		"description",
 		"name",
 		"id",
 		"chromosome",
@@ -31,7 +32,6 @@ public interface PropertyHandler {
 		"seq id",
 		"cds min",
 		"cds max",
-		"description",
 		"loadmode",
 		"feature url"
 	};

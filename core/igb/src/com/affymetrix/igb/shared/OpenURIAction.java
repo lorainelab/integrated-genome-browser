@@ -50,10 +50,10 @@ public abstract class OpenURIAction extends GenericAction {
 	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
 		final AnnotatedSeqGroup loadGroup, final String speciesName) {
 		
-		if(ScriptManager.getInstance().isScript(uri.getPath())){
+		if(ScriptManager.getInstance().isScript(uri.toString())){
 			int result = JOptionPane.showConfirmDialog(igbService.getFrame(), "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
 			if(result == JOptionPane.YES_OPTION){
-				RunScriptAction.getAction().runScript(uri.getPath());
+				RunScriptAction.getAction().runScript(uri.toString());
 			}
 			return;
 		}

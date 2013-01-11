@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -39,20 +38,6 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 	protected boolean toggle_by_height = true;
 	protected String label;
 	protected int label_loc = NORTH;
-	protected int direction = NeoConstants.NONE;
-	
-	public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10.0f, new float[]{1, 2, 5, 3}, 0);
-	public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10, new float[]{1, 10}, 1);
-	public static final BasicStroke dashStroke2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10, new float[]{1, 10}, 2);
-	public static final BasicStroke dashStrokeNeg0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10.0f, new float[]{1, 3, 5, 2}, 11);
-	public static final BasicStroke dashStrokeNeg1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10, new float[]{1, 10}, 10);
-	public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10, new float[]{1, 10}, 9);
 
 	static {
 		setBaseFont(new Font("Monospaced", Font.PLAIN, 1));
@@ -221,45 +206,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 		return isVisible() && coord_hitbox.intersects(this.getCoordBox());
 	}
 	
-	/**
-	 * Draws a line with little arrows to indicate the direction.
-	 *
-	 * @param direction should be {@link NeoConstants#RIGHT},
-	 *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
-	 */
-	void drawDirectedLine(Graphics g, final int x, final int y, final int width, final int direction) {
-		switch (direction) {
-			case NeoConstants.RIGHT:
-				Graphics2D g2R = (Graphics2D) g;
-				Stroke old_strokeR = g2R.getStroke();
-				g2R.setStroke(dashStroke0);
-				g2R.drawLine(x, y, x + width, y);
-				g2R.setStroke(dashStroke1);
-				g2R.drawLine(x, y + 1, x + width, y + 1);
-				g2R.drawLine(x, y - 1, x + width, y - 1);
-				g2R.setStroke(dashStroke2);
-				g2R.drawLine(x, y + 2, x + width, y + 2);
-				g2R.drawLine(x, y - 2, x + width, y - 2);
-				g2R.setStroke(old_strokeR);
-				break;
-			case NeoConstants.LEFT:
-				Graphics2D g2L = (Graphics2D) g;
-				Stroke old_strokeL = g2L.getStroke();
-				g2L.setStroke(dashStrokeNeg0);
-				g2L.drawLine(x, y, x + width, y);
-				g2L.setStroke(dashStrokeNeg1);
-				g2L.drawLine(x, y + 1, x + width, y + 1);
-				g2L.drawLine(x, y - 1, x + width, y - 1);
-				g2L.setStroke(dashStrokeNeg2);
-				g2L.drawLine(x, y + 2, x + width, y + 2);
-				g2L.drawLine(x, y - 2, x + width, y - 2);
-				g2L.setStroke(old_strokeL);
-				break;
-			default:
-				g.fillRect(x, y, width, 1);
-		}
-	}
-
+	
 	public void setLabelLocation(int loc) {
 		label_loc = loc;
 	}
@@ -284,7 +231,5 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 		return label;
 	}
 	
-	public void setDirection(int dir){
-		direction = dir;
-	}
+
 }

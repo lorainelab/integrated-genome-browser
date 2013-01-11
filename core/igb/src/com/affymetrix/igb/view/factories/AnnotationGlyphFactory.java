@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -146,10 +147,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			boolean labelInSouth = !pspan.isForward() && (reverse_tier != forward_tier);
 			
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
-
+			DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
+			
 			the_tier.addChild(determinePGlyph(gviewer,
 					parent_and_child, insym, the_style,
-					labelInSouth, pspan, sym, annotseq, coordseq, child_height));
+					labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type));
 		} catch (InstantiationException ie) {
 			System.err.println("AnnotationGlyphFactory.addToTier: " + ie);
 		}
@@ -161,18 +163,18 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private GlyphI determinePGlyph(SeqMapViewExtendedI gviewer,
 			boolean parent_and_child, SeqSymmetry insym,
 			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan,
-			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height)
+			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph;
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(gviewer, insym, sym, pspan, the_style, annotseq, pglyph, coordseq, child_height);
 			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, child_height /*the_style.getHeight() */);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type);
 			GlyphI alignResidueGlyph = getAlignedResiduesGlyph(insym, annotseq, true);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -185,9 +187,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private static GlyphI determineGlyph(
 			Class<?> glyphClass, Class<?> labelledGlyphClass,
 			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
-			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer, int child_height)
+			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer, int child_height, DIRECTION_TYPE direction_type)
 			throws IllegalAccessException, InstantiationException {
-		GlyphI pglyph;
+		EfficientSolidGlyph pglyph;
 		// Note: Setting parent height (pheight) larger than the child height (cheight)
 		// allows the user to select both the parent and the child as separate entities
 		// in order to look at the properties associated with them.  Otherwise, the method
@@ -213,12 +215,15 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			pheight = 2 * pheight;
 			pglyph = lglyph;
 		} else {
-			pglyph = (GlyphI) glyphClass.newInstance();
+			pglyph = (EfficientSolidGlyph) glyphClass.newInstance();
 		}
 		pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
 		boolean use_score_colors = the_style.getColorByScore();
 		boolean use_item_rgb = the_style.getColorByRGB();
-		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), DIRECTION_TYPE.valueFor(the_style.getDirectionType()), use_score_colors, use_item_rgb));
+		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), direction_type, use_score_colors, use_item_rgb));
+		if(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH){
+			pglyph.setDirection(pspan.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
+		}
 		gviewer.setDataModelFromOriginalSym(pglyph, sym);
 		return pglyph;
 	}

@@ -17,13 +17,10 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.NeoConstants;
 
-import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.util.List;
 import java.awt.geom.Rectangle2D;
 
@@ -33,21 +30,6 @@ import java.awt.geom.Rectangle2D;
 public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 
   private boolean move_children = true;
-  private static final int arrowDirection = NeoConstants.NONE;
-
-  public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 2,  5,3 }, 0);
-  public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 1);
-  public static final BasicStroke dashStroke2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 2);
-  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 3,  5,2 }, 11);
-  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 10);
-  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 9);
-
 
   @Override
   public void draw(ViewI view) {
@@ -84,10 +66,10 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
       else {
         // draw the line
         if (label_loc == NORTH) { // label occupies upper half, so center line in lower half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, direction);
         }
         else if (label_loc == SOUTH)  {  // label occupies lower half, so center line in upper half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, direction);
         }
       }
 
@@ -151,49 +133,10 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
                 pixelbox.width,Math.max(1, pixelbox.height / 2));
       } else {
         // if there are children, draw a line.
-        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
+        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, direction);
       }
     }
 	
-  }
-
-  
-  /**
-   *  Draws a line with little arrows to indicate the direction.
-   *  @param direction should be {@link NeoConstants#RIGHT},
-   *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
-   */
-  void drawDirectedLine(Graphics g, final int x, final int y, final int width, final int direction) {
-    switch (direction) {
-      case NeoConstants.RIGHT:
-        Graphics2D g2R = (Graphics2D) g;
-        Stroke old_strokeR = g2R.getStroke();
-        g2R.setStroke(dashStroke0);
-        g2R.drawLine(x, y, x + width, y);
-        g2R.setStroke(dashStroke1);
-        g2R.drawLine(x, y+1, x + width, y+1);
-        g2R.drawLine(x, y-1, x + width, y-1);
-        g2R.setStroke(dashStroke2);
-        g2R.drawLine(x, y+2, x + width, y+2);
-        g2R.drawLine(x, y-2, x + width, y-2);
-        g2R.setStroke(old_strokeR);
-        break;
-      case NeoConstants.LEFT:
-        Graphics2D g2L = (Graphics2D) g;
-        Stroke old_strokeL = g2L.getStroke();
-        g2L.setStroke(dashStrokeNeg0);
-        g2L.drawLine(x, y, x + width, y);
-        g2L.setStroke(dashStrokeNeg1);
-        g2L.drawLine(x, y+1, x + width, y+1);
-        g2L.drawLine(x, y-1, x + width, y-1);
-        g2L.setStroke(dashStrokeNeg2);
-        g2L.drawLine(x, y+2, x + width, y+2);
-        g2L.drawLine(x, y-2, x + width, y-2);
-        g2L.setStroke(old_strokeL);
-        break;
-      default:
-        g.fillRect(x, y, width, 1);
-    }
   }
 
   /**

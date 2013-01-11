@@ -205,7 +205,8 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
 		return isVisible() && coord_hitbox.intersects(this.getCoordBox());
 	}
-
+	
+	
 	public void setLabelLocation(int loc) {
 		label_loc = loc;
 	}
@@ -229,4 +230,6 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 	public String getLabel() {
 		return label;
 	}
+	
+
 }

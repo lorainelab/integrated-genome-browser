@@ -144,6 +144,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		int min_xmax_slot_index = 0;	//index of slot with max of prev_min_xmax
 		int prev_slot_index = 0;
 		boolean skipDraw = false;
+		int row_number = 0;
 		
 		List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
 		for (int i = 0; i < child_count; i++) {
@@ -179,6 +180,7 @@ public class FasterExpandPacker extends ExpandPacker {
 						min_xmax_slot_index = 0;
 						prev_min_xmax = slot_maxes.get(0);
 						skipDraw = false;
+						row_number = 0;
 					} else if (child_max < prev_min_xmax) {
 						prev_min_xmax = child_max;
 						min_xmax_slot_index = slot_index;
@@ -191,7 +193,8 @@ public class FasterExpandPacker extends ExpandPacker {
 				//   in which case layer at top/bottom depending on movetype
 				double new_ycoord = determineYCoord(this.getMoveType(),slot_maxes.size(), slot_height, spacing);
 				child.moveAbsolute(child_min, new_ycoord);
-
+				child.setRowNumber(row_number++);
+				
 				if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
 					int slot_index = slot_maxes.size() - 1;
 					prev_slot_index = slot_index;

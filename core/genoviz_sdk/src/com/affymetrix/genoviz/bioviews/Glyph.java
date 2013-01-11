@@ -60,6 +60,7 @@ public abstract class Glyph implements GlyphI  {
 	private boolean selectable = true;
 	private boolean overlapped = false;
 	private boolean skipDraw = false;
+	private int rowNumber = 0;
 
 	public Glyph()
 	{
@@ -590,6 +591,14 @@ public abstract class Glyph implements GlyphI  {
 	
 	public void setSkipDraw(boolean skip){
 		this.skipDraw = skip;
+	}
+	
+	public int getRowNumber(){
+		return rowNumber;
+	}
+	
+	public void setRowNumber(int n){
+		this.rowNumber = n;
 	}
 	
 	public void setFont(Font f) {

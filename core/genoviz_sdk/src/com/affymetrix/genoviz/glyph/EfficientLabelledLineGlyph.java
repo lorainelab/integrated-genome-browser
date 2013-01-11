@@ -30,7 +30,6 @@ import java.awt.geom.Rectangle2D;
 public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 
   private boolean move_children = true;
-  private static final int arrowDirection = NeoConstants.NONE;
 
   @Override
   public void draw(ViewI view) {
@@ -67,10 +66,10 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
       else {
         // draw the line
         if (label_loc == NORTH) { // label occupies upper half, so center line in lower half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, direction);
         }
         else if (label_loc == SOUTH)  {  // label occupies lower half, so center line in upper half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, direction);
         }
       }
 
@@ -134,7 +133,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
                 pixelbox.width,Math.max(1, pixelbox.height / 2));
       } else {
         // if there are children, draw a line.
-        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
+        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, direction);
       }
     }
 	

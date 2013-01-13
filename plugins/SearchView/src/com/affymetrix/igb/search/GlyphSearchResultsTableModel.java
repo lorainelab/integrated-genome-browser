@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 
 public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 	private static final long serialVersionUID = 1L;
-	private final int[] colWidth = {20,8,10,10,5,10,65};
+	private final int[] colWidth = {20,8,10,10,10,15,50};
 	private final int[] colAlign = {SwingConstants.LEFT,SwingConstants.CENTER,SwingConstants.RIGHT,SwingConstants.RIGHT,SwingConstants.CENTER,SwingConstants.CENTER,SwingConstants.LEFT};
 	
 	private final List<GlyphI> tableRows = new ArrayList<GlyphI>(0);

@@ -276,22 +276,29 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
 		List<GlyphI> hits = nevt.getItems();
 		int hcount = hits.size();
+		boolean isSlopRowSelection = false;
 
 		GlyphI topgl = null;
 		if (!nevt.getItems().isEmpty()) {
-			//Pick first drawable glyph from last
-			for(int i = hcount - 1; i >= 0; i--){
-				if(!nevt.getItems().get(i).getSkipDraw() && !nevt.getItems().get(i).getParent().getSkipDraw()){
-					topgl = nevt.getItems().get(i);
-					break;
-				}
-			}
-			
-			//For backward compatibility
-			if(topgl == null){
-				topgl = nevt.getItems().get(hcount - 1);
-			}
+//			//Pick first drawable glyph from last
+//			for(int i = hcount - 1; i >= 0; i--){
+//				if(!nevt.getItems().get(i).getSkipDraw() && !nevt.getItems().get(i).getParent().getSkipDraw()){
+//					topgl = nevt.getItems().get(i);
+//					break;
+//				}
+//			}
+//			
+//			//For backward compatibility
+//			if(topgl == null){
+//				topgl = nevt.getItems().get(hcount - 1);
+//			}
+//			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
+			topgl = nevt.getItems().get(hcount - 1);
 			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
+			if(topgl.isOverlapped()){
+				isSlopRowSelection = true;
+				topgl = null;
+			}
 		}
 
 		// If drag began in the axis tier, then do NOT do normal selection stuff,
@@ -334,42 +341,44 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 			combo_style = ((GraphGlyph) topgl).getGraphState().getComboStyle();
 		}
 
-		if (preserve_selections) {
-			for (int i = 0; i < hcount; i++) {
-				Object obj = hits.get(i);
-				if (obj instanceof GraphGlyph) {
-					graphs.add((GraphGlyph) obj);
+		if (!isSlopRowSelection) {
+			if (preserve_selections) {
+				for (int i = 0; i < hcount; i++) {
+					Object obj = hits.get(i);
+					if (obj instanceof GraphGlyph) {
+						graphs.add((GraphGlyph) obj);
+					}
 				}
-			}
-		} else if (combo_style != null) {
-			for (int i = 0; i < hcount; i++) {
-				Object obj = hits.get(i);
-				if (obj instanceof GraphGlyph
-						&& ((GraphGlyph) obj).getGraphState().getComboStyle() == combo_style) {
-					graphs.add((GraphGlyph) obj);
+			} else if (combo_style != null) {
+				for (int i = 0; i < hcount; i++) {
+					Object obj = hits.get(i);
+					if (obj instanceof GraphGlyph
+							&& ((GraphGlyph) obj).getGraphState().getComboStyle() == combo_style) {
+						graphs.add((GraphGlyph) obj);
+					}
 				}
-			}
-		} else {
-			if (topgl != null && topgl instanceof GraphGlyph) {
-				graphs.add((GraphGlyph) topgl);
+			} else {
+				if (topgl != null && topgl instanceof GraphGlyph) {
+					graphs.add((GraphGlyph) topgl);
+				}
 			}
 		}
 
 		boolean toggle_event = isToggleSelectionEvent(evt);
-//		for(GlyphI glyph : hits){
-//			glyph = map.zoomCorrectedGlyphChoice(glyph, zoom_point);
-//			
-//			if(glyph == null){
-//				continue;
-//			}
-//			if (toggle_event && glyph.isSelected()) {
-//				map.deselect(glyph);
-//			} else if (glyph != smv.getAxisGlyph() && glyph != smv.getSequnceGlyph()) {
-//				map.select(glyph);
-//			}
-//		}
-		
-		if (topgl != null) {
+		if(isSlopRowSelection){
+			for (GlyphI glyph : hits) {
+				glyph = map.zoomCorrectedGlyphChoice(glyph, zoom_point);
+
+				if (glyph == null) {
+					continue;
+				}
+				if (toggle_event && glyph.isSelected()) {
+					map.deselect(glyph);
+				} else if (glyph != smv.getAxisGlyph() && glyph != smv.getSequnceGlyph()) {
+					map.select(glyph);
+				}
+			}
+		} else if (topgl != null) {
 			//      if (toggle_event && map.getSelected().contains(topgl)) {
 			if (toggle_event && topgl.isSelected()) {
 				map.deselect(topgl);

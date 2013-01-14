@@ -24,7 +24,7 @@ public class ZoomOutXAction extends SeqMapViewActionA {
 	}
 
 	public ZoomOutXAction() {
-		super("Zoom out horizontally",
+		super("Zoom Out Horizontally",
 				"16x16/actions/list-remove.png", null
 				);
 		this.ordinal = -4004020;

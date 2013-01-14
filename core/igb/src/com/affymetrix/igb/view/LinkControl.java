@@ -98,7 +98,7 @@ final class LinkControl implements ContextualPopupListener {
 				url = entry.getKey();
 				name = entry.getValue();
 				if (name == null || name.equals(url)) {
-					name = "Get more info";
+					name = "Get More Info";
 				}
 
 				mi = makeMenuItem(name, url);
@@ -113,7 +113,7 @@ final class LinkControl implements ContextualPopupListener {
 				popup.add(mi);
 			}
 		} else {
-			name = "Get more info";
+			name = "Get More Info";
 			JMenu linkMenu = new JMenu(name);
 			linkMenu.getPopupMenu().setBorder(popup.getBorder());
 			//linkMenu.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));

@@ -87,7 +87,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="29" max="32767" attributes="0"/>
+              <EmptySpace pref="21" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -359,7 +359,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="askBeforeExitCheckBoxActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Ask before exit&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Ask Before Exit&quot;, PreferenceUtils.getTopNode(),&#xa;    PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="confirmBeforeDeleteCheckBox">
@@ -367,12 +367,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="confirmBeforeDeleteCheckBoxActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm before delete&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm Before Delete&quot;, PreferenceUtils.getTopNode(),&#xa;    PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="clear_prefsB">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Reset preference to defaults"/>
+        <Property name="text" type="java.lang.String" value="Reset Preference to Defaults"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[32767, 32767]"/>
         </Property>
@@ -449,7 +449,7 @@
     </Container>
     <Component class="javax.swing.JCheckBox" name="confirmBeforeLoadCheckBox">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm before loading large data set&quot;, PreferenceUtils.getTopNode(),&#xa;    PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm Before Loading Large Data Set&quot;, PreferenceUtils.getTopNode(),&#xa;    PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="displayOption">

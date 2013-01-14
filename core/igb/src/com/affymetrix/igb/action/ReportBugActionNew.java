@@ -26,7 +26,7 @@ public class ReportBugActionNew extends GenericAction {
 	}
 
 	private ReportBugActionNew() {
-		super("Report a bug", null,
+		super("Report a Bug", null,
 				"16x16/actions/report_bug.png",
 				"22x22/actions/report_bug.png",
 				KeyEvent.VK_R, null, true);

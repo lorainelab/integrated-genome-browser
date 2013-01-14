@@ -24,7 +24,7 @@ public class ZoomInXAction extends SeqMapViewActionA {
 	}
 
 	public ZoomInXAction() {
-		super("Zoom in horizontally",
+		super("Zoom In Horizontally",
 				"16x16/actions/list-add.png", null
 				);
 		this.ordinal = -4004010;

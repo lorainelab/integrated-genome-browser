@@ -31,7 +31,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		igbService.getSeqMap().addMouseMotionListener(tievListener);
 		GenometryModel.getGenometryModel().addSeqSelectionListener(tievListener);
 		JMenu transcriptIsoformMenu = new JMenu("Transcript Isoform");
-		final JMenuItem selectRefTiersMenuItem = new JMenuItem("select reference tiers");
+		final JMenuItem selectRefTiersMenuItem = new JMenuItem("Select reference tiers");
 		selectRefTiersMenuItem.addActionListener(
 	    	new ActionListener() {
 				@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -42,7 +42,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 			}
 	    );
 	    transcriptIsoformMenu.add(selectRefTiersMenuItem);
-		final JCheckBoxMenuItem unfoundMenuItem = new JCheckBoxMenuItem("show unfound");
+		final JCheckBoxMenuItem unfoundMenuItem = new JCheckBoxMenuItem("Show unfound");
 	    unfoundMenuItem.addActionListener(
 	    	new ActionListener() {
 				@Override
@@ -55,7 +55,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	    unfoundMenuItem.setSelected(true);
 	    final JMenu densityMenu = new JMenu("show density");
 		ButtonGroup group = new ButtonGroup();
-		JRadioButtonMenuItem thicknessMenuItem = new JRadioButtonMenuItem("thickness");
+		JRadioButtonMenuItem thicknessMenuItem = new JRadioButtonMenuItem("Thickness");
 		thicknessMenuItem.addActionListener(
 	    	new ActionListener() {
 				@Override
@@ -67,7 +67,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	    densityMenu.add(thicknessMenuItem);
 	    group.add(thicknessMenuItem);
 	    thicknessMenuItem.setSelected(true);
-	   	JRadioButtonMenuItem transparencyMenuItem = new JRadioButtonMenuItem("transparency");
+	   	JRadioButtonMenuItem transparencyMenuItem = new JRadioButtonMenuItem("Transparency");
 	   	transparencyMenuItem.addActionListener(
 	    	new ActionListener() {
 				@Override
@@ -79,7 +79,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	    densityMenu.add(transparencyMenuItem);
 	    group.add(transparencyMenuItem);
 	    transparencyMenuItem.setSelected(false);
-	    JRadioButtonMenuItem brightnessMenuItem = new JRadioButtonMenuItem("brightness");
+	    JRadioButtonMenuItem brightnessMenuItem = new JRadioButtonMenuItem("Brightness");
 	    brightnessMenuItem.addActionListener(
 	    	new ActionListener() {
 				@Override

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TableView
 Bundle-SymbolicName: com.affymetrix.igb.tableview.TableView
-Bundle-Version: @appVersion@
+Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.tableview.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://transvar.org/TableView.html

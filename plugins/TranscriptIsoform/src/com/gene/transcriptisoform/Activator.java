@@ -53,7 +53,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	    );
 	    transcriptIsoformMenu.add(unfoundMenuItem);
 	    unfoundMenuItem.setSelected(true);
-	    final JMenu densityMenu = new JMenu("show density");
+	    final JMenu densityMenu = new JMenu("Show density");
 		ButtonGroup group = new ButtonGroup();
 		JRadioButtonMenuItem thicknessMenuItem = new JRadioButtonMenuItem("Thickness");
 		thicknessMenuItem.addActionListener(

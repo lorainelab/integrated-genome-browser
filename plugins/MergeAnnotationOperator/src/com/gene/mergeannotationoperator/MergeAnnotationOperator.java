@@ -14,6 +14,10 @@ import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 public class MergeAnnotationOperator extends AbstractAnnotationOperator implements Operator {
 
+	MergeAnnotationOperator(FileTypeCategory category){
+		super(category);
+	}
+	
 	@Override
 	public String getName() {
 		return "merge_annotation";

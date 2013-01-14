@@ -93,16 +93,16 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         GColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this);
         CColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this);
         OtherColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this);
-        askBeforeExitCheckBox = PreferenceUtils.createCheckBox("Ask before exit", PreferenceUtils.getTopNode(),
+        askBeforeExitCheckBox = PreferenceUtils.createCheckBox("Ask Before Exit", PreferenceUtils.getTopNode(),
             PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
-        confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+        confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm Before Delete", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
         clear_prefsB = new javax.swing.JButton(ClearPreferencesAction.getAction());
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
         showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.getTopNode(), PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching());
-        confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm before loading large data set", PreferenceUtils.getTopNode(),
+        confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm Before Loading Large Data Set", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar", PreferenceUtils.getTopNode(),
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
@@ -292,7 +292,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
             }
         });
 
-        clear_prefsB.setText("Reset preference to defaults");
+        clear_prefsB.setText("Reset Preference to Defaults");
         clear_prefsB.setMaximumSize(new java.awt.Dimension(32767, 32767));
         clear_prefsB.setMinimumSize(new java.awt.Dimension(0, 0));
         clear_prefsB.setPreferredSize(new java.awt.Dimension(210, 29));
@@ -457,7 +457,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                     .add(displayOption))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

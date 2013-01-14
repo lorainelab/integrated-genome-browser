@@ -54,7 +54,7 @@ import javax.swing.*;
 public class AffyTieredMap extends NeoMap {
    	private static final long serialVersionUID = 1L;
 
-	private final List<TierGlyph> tiers = new ArrayList<TierGlyph>();
+	private final List<TierGlyph> tiers = new CopyOnWriteArrayList<TierGlyph>();
 	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 
 	// the total pixel height of visible fixed pixel tiers

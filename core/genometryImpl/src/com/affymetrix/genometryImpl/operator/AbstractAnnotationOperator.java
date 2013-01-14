@@ -9,15 +9,24 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public abstract class AbstractAnnotationOperator implements Operator {
+	final FileTypeCategory category;
+	
+	protected AbstractAnnotationOperator(){
+		this.category = FileTypeCategory.Annotation;
+	}
+	
+	protected AbstractAnnotationOperator(FileTypeCategory category){
+		this.category = category;
+	}
 	
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 2 : 0;
+		return category == this.category ? 2 : 0;
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 2 : 0;
+		return category == this.category ? 2 : 0;
 	}
 
 	@Override
@@ -37,7 +46,7 @@ public abstract class AbstractAnnotationOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return FileTypeCategory.Annotation;
+		return this.category;
 	}
 
 	protected static List<SeqSymmetry> findChildSyms(SeqSymmetry sym) {

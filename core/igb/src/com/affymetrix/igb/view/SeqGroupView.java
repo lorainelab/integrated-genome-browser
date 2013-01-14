@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.view;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -65,7 +61,6 @@ import java.awt.Component;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -112,11 +107,13 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			private static final long serialVersionUID = 1L;
 			//Implement table header tool tips.
 
+			@Override
 			protected JTableHeader createDefaultTableHeader() {
 				return new JTableHeader(columnModel) {
 
 					private static final long serialVersionUID = 1L;
 
+					@Override
 					public String getToolTipText(MouseEvent e) {
 						java.awt.Point p = e.getPoint();
 						int index = columnModel.getColumnIndexAtX(p.x);
@@ -684,14 +681,14 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		List<String> speciesList_ = new ArrayList<String>();
-		speciesList_.addAll(GeneralLoadUtils.getSpecies2Generic().keySet());
-		Collections.sort(speciesList_);
-		final List<String> speciesList = new CopyOnWriteArrayList<String>(speciesList_);
-
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
+				List<String> speciesList_ = new ArrayList<String>();
+				speciesList_.addAll(GeneralLoadUtils.getSpecies2Generic().keySet());
+				Collections.sort(speciesList_);
+				final List<String> speciesList = new CopyOnWriteArrayList<String>(speciesList_);
+		
 				speciesCB.removeItemListener(SeqGroupView.this);
 				String oldSpecies = (String) speciesCB.getSelectedItem();
 

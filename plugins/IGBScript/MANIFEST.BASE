@@ -5,7 +5,7 @@ Bundle-SymbolicName: IGBScript
 Bundle-Version: @appVersion@
 Bundle-Activator: com.gene.igbscript.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Scripting
+Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/Scripting+and+the+IGB+command+language
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: implementation of java ScriptEngine to run IGB scripts
 Bundle-Vendor: Genentech

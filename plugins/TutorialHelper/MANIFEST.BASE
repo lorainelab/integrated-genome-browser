@@ -9,6 +9,7 @@ Bundle-Activator: com.gene.tutorialhelper.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.affymetrix.common;version="6.7.0",
+ com.affymetrix.igb.osgi.service,
  com.affymetrix.genoviz.swing.recordplayback,
  javax.swing,
  org.osgi.framework

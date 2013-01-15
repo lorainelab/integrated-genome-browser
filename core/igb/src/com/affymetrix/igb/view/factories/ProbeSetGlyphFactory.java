@@ -180,8 +180,8 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 			}
 		}
 		
-		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, 
-				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal());
+//		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, 
+//				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal());
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view

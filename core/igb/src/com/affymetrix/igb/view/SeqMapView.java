@@ -1033,7 +1033,7 @@ public class SeqMapView extends JPanel
 		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, tier_index, this);
 		if (cytoband_glyph != null) {
 			resultAxisTier.addChild(cytoband_glyph);
-			resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
+			//resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
 		}
 
 		resultAxisTier.addChild(axis);

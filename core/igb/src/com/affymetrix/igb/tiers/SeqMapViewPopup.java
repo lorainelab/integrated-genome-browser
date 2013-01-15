@@ -243,7 +243,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		boolean any_are_color_off = false; // whether any allow setColorByScore()
 		boolean any_are_separate_tiers = false;
 		boolean any_are_single_tier = false;
-		boolean any_view_mode = false;
 		boolean coordinates_track_selected = false;
 		boolean containHiddenTiers = false;
 		boolean any_lockable = false;
@@ -264,8 +263,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			} else {
 				any_graph = true;
 			}
-			any_view_mode = any_view_mode || (!astyle.isGraphTier());
-
+		
 			if (astyle.getExpandable()) {
 				any_are_collapsed = any_are_collapsed || astyle.getCollapsed();
 				any_are_expanded = any_are_expanded || !astyle.getCollapsed();
@@ -337,19 +335,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(showMenu);
 		showMenu.getPopupMenu().setBorder(finalBorder);
 		JMenuItem collapse = new JCheckBoxMenuItem();
-		if((any_are_expanded && any_are_collapsed) || coordinates_track_selected){
+		if((!any_are_expanded && !any_are_collapsed) || (any_are_expanded && any_are_collapsed) || coordinates_track_selected){
 			collapse.setEnabled(false);
-		}
-		else if(any_are_expanded){
-			collapse.setEnabled(true);
+		} else if(any_are_expanded){
 			collapse.setAction(CollapseAction.getAction());
 			collapse.setSelected(false);
-		}
-		else if(any_are_collapsed){
-			collapse.setEnabled(true);
+		} else if(any_are_collapsed){
 			collapse.setAction(ExpandAction.getAction());
 			collapse.setSelected(true);
-		}
+		} 
 		collapse.setText("Collapse");
 		collapse.setIcon(null);
 		popup.add(collapse);

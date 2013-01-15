@@ -1,6 +1,9 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -97,6 +100,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
 			// apply any stylesheet stuff...
 			style = new TrackStyle(unique_name, track_name, file_type, persistent, template, props);
+			FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
+			if(fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph ||
+					fth.getFileTypeCategory() == FileTypeCategory.Mismatch)){
+				style.setExpandable(false);
+				style.setGraphTier(true);
+			}
 			static_map.put(unique_name.toLowerCase(), style);
 		}
 

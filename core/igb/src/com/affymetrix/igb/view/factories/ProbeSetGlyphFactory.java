@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.igb.glyph.ArrowHeadGlyph;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants;
 
@@ -486,7 +485,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 			}
 
 			try {
-				if (style.getTrackName() != null || style.getTrackName().length() == 0 || style.getTrackName().contains(NETAFFX_CONSENSUS)) {
+				if (style.getTrackName() == null && style.getTrackName().contains(NETAFFX_CONSENSUS)) {
 					style.setTrackName(human_name);
 				}
 				label_field = style.getLabelField();

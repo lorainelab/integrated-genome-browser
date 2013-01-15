@@ -25,7 +25,7 @@ public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
 	
 	@Override
 	protected void addSupportedFiles() {
-		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
 		for (String name : nameToExtensionMap.keySet()) {
 			chooser.addChoosableFileFilter(new UniFileFilter(
 					nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files"));

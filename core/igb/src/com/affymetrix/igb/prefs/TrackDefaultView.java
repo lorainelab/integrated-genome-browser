@@ -76,7 +76,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	private void initializeFileTypes() {
 		list.clear();
-		temp = FileTypeHolder.getInstance().getNameToExtensionMap().values().toArray();
+		temp = FileTypeHolder.getInstance().getNameToExtensionMap(null).values().toArray();
 		for (int i = 0; i < temp.length; i++) {
 			StringTokenizer tokens = new StringTokenizer(temp[i].toString(), ",");
 			while (tokens.hasMoreElements()) {

@@ -491,9 +491,12 @@ public class FileTypeHolder {
 	 * get a Map linking file type names to the list of extensions
 	 * @return the Map of file type names to their list of extensions
 	 */
-	public Map<String, List<String>> getNameToExtensionMap() {
+	public Map<String, List<String>> getNameToExtensionMap(FileTypeCategory category) {
 		Map<String, List<String>> nameToExtensionMap = new TreeMap<String, List<String>>();
 		for (FileTypeHandler fileTypeHandler : new HashSet<FileTypeHandler>(fileTypeHandlerMap.values())) {
+			if(category != null && fileTypeHandler.getFileTypeCategory() != category){
+				continue;
+			}
 			String name = fileTypeHandler.getName();
 			List<String> extensions = nameToExtensionMap.get(name);
 			if (extensions == null) {
@@ -507,25 +510,6 @@ public class FileTypeHolder {
 		return nameToExtensionMap;
 	}
 	
-	public boolean isSequence(String extension){
-		for (FileTypeHandler fileTypeHandler : new HashSet<FileTypeHandler>(fileTypeHandlerMap.values())) {
-			for (String ext : fileTypeHandler.getExtensions()) {
-				if(ext.equalsIgnoreCase(extension)){
-					return fileTypeHandler.getFileTypeCategory() == FileTypeCategory.Sequence;
-				}
-			}
-		}
-		return false;
-	}
-	
-	public Map<String, String[]> getSequenceToExtensionMap() {
-		Map<String, String[]> map = new TreeMap<String, String[]>();
-		map.put("Fasta", new String[]{"fa","fas","fasta"});
-		map.put(".2bit", new String[]{"2bit"});
-		map.put("Binary", new String[]{"bnib"});
-		return map;
-	}
-
 	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx", "vcf"}));
 	public List<String> getTabixFileTypes() {
 		return TABIX_FILE_TYPES;

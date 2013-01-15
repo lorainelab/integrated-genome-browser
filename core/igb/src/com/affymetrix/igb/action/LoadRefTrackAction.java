@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.List;
 
 /**
  *
@@ -35,10 +37,10 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 
 	@Override
 	protected void addSupportedFiles() {
-		Map<String, String[]> nameToExtensionMap = FileTypeHolder.getInstance().getSequenceToExtensionMap();
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(FileTypeCategory.Sequence);
 		for (String name : nameToExtensionMap.keySet()) {
 			chooser.addChoosableFileFilter(new UniFileFilter(
-					nameToExtensionMap.get(name),
+					nameToExtensionMap.get(name).toArray(new String[]{}),
 					name + " Files"));
 		}
 	}

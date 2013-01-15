@@ -16,10 +16,14 @@ import com.affymetrix.genometryImpl.symmetry.*;
  * @author lfrohman
  */
 public class UnionOperator extends AbstractAnnotationOperator implements Operator {
+	
+	public UnionOperator(FileTypeCategory fileTypeCategory) {
+		super(fileTypeCategory);
+	}
 
 	@Override
 	public String getName() {
-		return "union";
+		return category.toString().toLowerCase() + "_union";
 	}
 
 	@Override
@@ -44,7 +48,7 @@ public class UnionOperator extends AbstractAnnotationOperator implements Operato
 	
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? Integer.MAX_VALUE : 0;
+		return category == category ? Integer.MAX_VALUE : 0;
 	}
 		
 	private static SymWithProps projectLandscape(GraphSym landscape) {
@@ -92,5 +96,5 @@ public class UnionOperator extends AbstractAnnotationOperator implements Operato
 		return psym;
 	}
 	
-
+	
 }

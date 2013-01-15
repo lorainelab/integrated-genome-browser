@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 
@@ -12,6 +13,10 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
  * @author lfrohman
  */
 public abstract class ExclusiveOperator extends XorOperator implements Operator {
+	
+	public ExclusiveOperator(FileTypeCategory fileTypeCategory) {
+		super(fileTypeCategory);
+	}
 	
 	protected SeqSymmetry operate(BioSeq aseq, SeqSymmetry symsA, SeqSymmetry symB){
 		return exclusive(aseq, findChildSyms(symsA), findChildSyms(symB));

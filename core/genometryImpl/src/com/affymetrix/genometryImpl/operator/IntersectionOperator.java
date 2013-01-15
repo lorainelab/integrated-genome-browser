@@ -6,6 +6,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -16,9 +17,13 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 
 public class IntersectionOperator extends AbstractAnnotationOperator implements Operator {
 
+	public IntersectionOperator(FileTypeCategory fileTypeCategory) {
+		super(fileTypeCategory);
+	}
+	
 	@Override
 	public String getName() {
-		return "intersection";
+		return category.toString().toLowerCase() + "_intersection";
 	}
 
 	@Override

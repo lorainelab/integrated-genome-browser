@@ -4,6 +4,7 @@ package com.affymetrix.genometryImpl.operator;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.*;
 import java.util.ArrayList;
@@ -15,9 +16,13 @@ import java.util.List;
  */
 public class XorOperator extends AbstractAnnotationOperator implements Operator {
 
+	public XorOperator(FileTypeCategory fileTypeCategory) {
+		super(fileTypeCategory);
+	}
+	
 	@Override
 	public String getName() {
-		return "xor";
+		return category.toString().toLowerCase() + "_xor";
 	}
 
 	@Override

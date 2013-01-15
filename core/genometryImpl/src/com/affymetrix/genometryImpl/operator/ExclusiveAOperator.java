@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -10,10 +11,14 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * @author lfrohman
  */
 public class ExclusiveAOperator extends ExclusiveOperator implements Operator {
+	
+	public ExclusiveAOperator(FileTypeCategory fileTypeCategory) {
+		super(fileTypeCategory);
+	}
 
 	@Override
 	public String getName() {
-		return "a_not_b";
+		return category.toString().toLowerCase() + "_a_not_b";
 	}
 
 	@Override

@@ -42,7 +42,8 @@ public interface PropertyHandler {
 		"end",
 		"length",
 		"strand",
-		"residues"
+		"residues",
+		"feature type"
 	};
 		
 	public static String[] graph_tooltip_order = new String[]{

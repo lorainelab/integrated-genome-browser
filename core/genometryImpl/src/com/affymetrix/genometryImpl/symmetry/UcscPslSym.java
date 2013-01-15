@@ -56,6 +56,7 @@ public class UcscPslSym
 	protected int[] qmins;
 	protected int[] tmins;
 	private Map<String,Object> props;
+	private boolean isProbe;
 
 	public UcscPslSym(String type,
 			int matches,
@@ -76,12 +77,13 @@ public class UcscPslSym
 			int blockcount,  // now ignored, uses blockSizes.length
 			int[] blockSizes,
 			int[] qmins,
-			int[] tmins
+			int[] tmins,
+			boolean isProbe
 			) {
 		this(type, matches, mismatches, repmatches, ncount, 
 				qNumInsert, qBaseInsert, tNumInsert, tBaseInsert,
 				same_orientation, queryseq, qmin, qmax,
-				targetseq, tmin, tmax, null, blockcount, blockSizes, qmins, tmins);
+				targetseq, tmin, tmax, null, blockcount, blockSizes, qmins, tmins, isProbe);
 	}
 	/**
 	 *  @param blockcount  ignored, uses blockSizes.length
@@ -106,7 +108,8 @@ public class UcscPslSym
 			int blockcount,  // now ignored, uses blockSizes.length
 			int[] blockSizes,
 			int[] qmins,
-			int[] tmins
+			int[] tmins,
+			boolean isProbe
 			) {
 
 		this.type = type;
@@ -129,7 +132,8 @@ public class UcscPslSym
 		this.blockSizes = blockSizes;
 		this.qmins = qmins;
 		this.tmins = tmins;
-
+		this.isProbe = isProbe;
+		
 		// calculating whether any of the query coords overlap (assumes query coords are sorted in ascending order)
 		// (should probably also do this for target coords???)
 		int count = qmins.length-1;
@@ -224,12 +228,23 @@ public class UcscPslSym
 
 	public SeqSymmetry getChild(int i) {
 		if (same_orientation) {
-			return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
+			if(isProbe){
+				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
+						tmins[i], tmins[i]+blockSizes[i], targetseq, isProbe);
+			}else{
+				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
 						tmins[i], tmins[i]+blockSizes[i], targetseq, getChildResidue(i));
+			}
+			
 		}
 		else {
-			return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq, 
-					tmins[i]+blockSizes[i], tmins[i], targetseq, getChildResidue(i));
+			if(isProbe){
+				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq, 
+						tmins[i]+blockSizes[i], tmins[i], targetseq, isProbe);
+			}else{
+				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq, 
+						tmins[i]+blockSizes[i], tmins[i], targetseq, getChildResidue(i));
+			}
 		}
 	}
 

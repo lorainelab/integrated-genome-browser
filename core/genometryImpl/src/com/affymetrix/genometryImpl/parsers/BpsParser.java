@@ -108,7 +108,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 					new UcscPslSym(annot_type, matches, mismatches, repmatches, ncount,
 							qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, qforward,
 							queryseq, qmin, qmax, targetseq, tmin, tmax,
-							blockcount, blockSizes, qmins, tmins);
+							blockcount, blockSizes, qmins, tmins, false);
 				results.add(sym);
 
 

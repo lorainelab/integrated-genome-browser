@@ -103,8 +103,8 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewGenomicSequenceInSeqViewer", ViewGenomicSequenceInSeqViewerAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewAlignmentSequenceInSeqViewer", ViewReadSequenceInSeqViewerAction.getAction()));
 		ViewReadSequenceInSeqViewerAction.getAction().setEnabled(false);
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
-		NextSearchSpanAction.getAction().setEnabled(false);
+//		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
+//		NextSearchSpanAction.getAction().setEnabled(false);
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
 		view_menu.addSeparator();

@@ -501,14 +501,14 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			spanPointer = 0;
 			if (foundSpans.size() > 1) {
 				Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
-				NextSearchSpanAction.getAction().setEnabled(true);
+//				NextSearchSpanAction.getAction().setEnabled(true);
 			}
 			else {
-				NextSearchSpanAction.getAction().setEnabled(false);
+//				NextSearchSpanAction.getAction().setEnabled(false);
 			}
 		}
 		else {
-			NextSearchSpanAction.getAction().setEnabled(false);
+//			NextSearchSpanAction.getAction().setEnabled(false);
 			Application.getSingleton().setStatus("unable to match entry");
 		}
 	}
@@ -525,14 +525,14 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		foundSpans = saveFoundSpans;
 		spanPointer = saveSpanPointer;
 		Application.getSingleton().setStatus("zoom to span " + (spanPointer + 1) + " of " + foundSpans.size());
-		NextSearchSpanAction.getAction().setEnabled(spanPointer + 1 < foundSpans.size());
+//		NextSearchSpanAction.getAction().setEnabled(spanPointer + 1 < foundSpans.size());
 		return true;
 	}
 
 	private void resetSearch() {
 		foundSpans = null;
 		spanPointer = -1;
-		NextSearchSpanAction.getAction().setEnabled(false);
+//		NextSearchSpanAction.getAction().setEnabled(false);
 	}
 
 	private void zoomToSeqAndSpan(SeqMapView gview, SeqSpan span) throws NumberFormatException {

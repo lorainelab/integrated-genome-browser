@@ -9,15 +9,15 @@ import com.affymetrix.igb.IGBConstants;
 
 public class NextSearchSpanAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
-	private static final NextSearchSpanAction ACTION = new NextSearchSpanAction();
-
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static NextSearchSpanAction getAction() {
-		return ACTION;
-	}
+//	private static final NextSearchSpanAction ACTION = new NextSearchSpanAction();
+//
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
+//	
+//	public static NextSearchSpanAction getAction() {
+//		return ACTION;
+//	}
 
 	private NextSearchSpanAction() {
 		super(IGBConstants.BUNDLE.getString("nextSearchSpan"), "16x16/actions/go-last.png","22x22/actions/go-last.png");

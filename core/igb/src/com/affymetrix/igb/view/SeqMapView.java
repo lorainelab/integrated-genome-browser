@@ -1846,22 +1846,26 @@ public class SeqMapView extends JPanel
 					}
 					sym_used_for_title = null;
 				}
-				if (id == null) {
-					// If ID of item is null, check recursively for parent ID, or parent of that...
-					GlyphI pglyph = topgl.getParent();
-					if (pglyph != null && !(pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-						// Add one ">" symbol for each level of getParent()
-						sym_used_for_title = null; // may be re-set in the recursive call
-						id = getSelectionTitle(Arrays.asList(pglyph));
-					} 
-				}
+//				if (id == null) {
+//					// If ID of item is null, check recursively for parent ID, or parent of that...
+//					GlyphI pglyph = topgl.getParent();
+//					if (pglyph != null && !(pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
+//						// Add one ">" symbol for each level of getParent()
+//						sym_used_for_title = null; // may be re-set in the recursive call
+//						id = getSelectionTitle(Arrays.asList(pglyph));
+//					} 
+//				}
 				if (id == null && sym instanceof SymWithProps) {
 					id = (String) ((SymWithProps) sym).getProperty("match");
 					sym_used_for_title = sym;
 				}
+				if (id == null && sym instanceof SymWithProps) {
+					id = (String) ((SymWithProps) sym).getProperty("feature type");
+					sym_used_for_title = sym;
+				}
 				if (id == null ){
 					id = "Unknown Selection";
-					sym_used_for_title = null;
+					sym_used_for_title = sym;
 				}
 			} else {
 				sym_used_for_title = null;

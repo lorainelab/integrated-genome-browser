@@ -125,6 +125,10 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 
 	public Object getProperty(String key) {
 
+		if(isProbe && "feature type".equalsIgnoreCase(key) ){
+			return "probe";
+		}
+		
 		if ("residues".equalsIgnoreCase(key)) {
 			return residues;
 		}

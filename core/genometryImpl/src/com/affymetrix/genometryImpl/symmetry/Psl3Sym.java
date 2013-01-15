@@ -56,20 +56,19 @@ public final class Psl3Sym extends UcscPslSym {
 			int[] blockSizes,
 			int[] qmins,
 			int[] tmins,
-			int[] omins
-				) {
-					super(type, matches, mismatches, repmatches, ncount, qNumInsert, qBaseInsert,
-							tNumInsert, tBaseInsert, same_target_orientation, queryseq, qmin, qmax,
-							targetseq, tmin, tmax,
-							blockcount, blockSizes, qmins, tmins);
-					this.otherseq = otherseq;
-					this.omin = omin;
-					this.omax = omax;
-					this.same_other_orientation = same_other_orientation;
-					this.omins = omins;
+			int[] omins,
+			boolean isProbe) {
+				super(type, matches, mismatches, repmatches, ncount, qNumInsert, qBaseInsert,
+						tNumInsert, tBaseInsert, same_target_orientation, queryseq, qmin, qmax,
+						targetseq, tmin, tmax, blockcount, blockSizes, qmins, tmins, isProbe);
+				this.otherseq = otherseq;
+				this.omin = omin;
+				this.omax = omax;
+				this.same_other_orientation = same_other_orientation;
+				this.omins = omins;
 
-					//  need to do a check here for whether other coords overlap..
-				}
+				//  need to do a check here for whether other coords overlap..
+	}
 
 	/** Always returns 3. */
 	public int getSpanCount() { return 3; }

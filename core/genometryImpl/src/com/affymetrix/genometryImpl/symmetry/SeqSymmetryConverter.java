@@ -105,7 +105,7 @@ public final class SeqSymmetryConverter {
 				-1, -1, -1, -1, forward,
 				queryseq, qspan.getMin(), qspan.getMax(),
 				targetseq, tspan.getMin(), tspan.getMax(),
-				child_count, blockSizes, qmins, tmins);
+				child_count, blockSizes, qmins, tmins, false);
 		return pslsym;
 	}
 
@@ -143,7 +143,7 @@ public final class SeqSymmetryConverter {
 				-1, -1, -1, -1, forward,
 				queryseq, qspan.getMin(), qspan.getMax(),
 				targetseq, tspan.getMin(), tspan.getMax(),
-				child_count, blockSizes, qmins, tmins);
+				child_count, blockSizes, qmins, tmins, false);
 		return pslsym;
 	}
 

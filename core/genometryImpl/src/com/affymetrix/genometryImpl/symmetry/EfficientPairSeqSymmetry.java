@@ -13,8 +13,17 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 	private final int startA, startB, endA, endB;
 	private final BioSeq seqA, seqB;
 	private final String residues;
+	private final boolean isProbe;
 
 	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB, String residues) {
+		this(startA, endA, seqA, startB, endB, seqB, residues, false);
+	}
+
+	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB, boolean isProbe) {
+		this(startA, endA, seqA, startB, endB, seqB, null, isProbe);
+	}
+	
+	private EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB, String residues, boolean isProbe) {
 		this.startA = startA;
 		this.startB = startB;
 		this.endA = endA;
@@ -22,8 +31,9 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 		this.seqA = seqA;
 		this.seqB = seqB;
 		this.residues = residues;
+		this.isProbe = isProbe;
 	}
-
+	
 	public SeqSpan getSpan(BioSeq seq) {
 		if (seqA == seq) {
 			return new SimpleSeqSpan(startA, endA, seqA);
@@ -105,7 +115,11 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 
 	public Map<String, Object> cloneProperties() {
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put("residues", residues);
+		if(isProbe){
+			props.put("feature type", "probe");
+		}else if (residues != null) {
+			props.put("residues", residues);
+		}
 		return props;
 	}
 

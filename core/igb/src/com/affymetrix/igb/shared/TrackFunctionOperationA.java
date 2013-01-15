@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.Delegate;
@@ -156,6 +157,12 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			style.copyPropertiesFrom(preferredStyle);
 			style.setSeparate(false);
 		}
+		if(operator.getOutputCategory() == FileTypeCategory.Graph ||
+				operator.getOutputCategory() == FileTypeCategory.Mismatch){
+			style.setExpandable(false);
+			style.setGraphTier(true);
+		}
+	
 		style.setTrackName(featureName);
 		
 		return feature;

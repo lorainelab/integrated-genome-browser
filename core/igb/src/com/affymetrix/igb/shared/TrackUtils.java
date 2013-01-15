@@ -61,6 +61,7 @@ public class TrackUtils {
 		}
 		style.setTrackName(human_name);
 		style.setGraphTier(sym instanceof GraphSym);
+		style.setExpandable(sym instanceof GraphSym);
 		return style;
 	}
 

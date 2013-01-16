@@ -15,7 +15,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ToggleConstantToolTipAction extends GenericAction {
 	private static final long serialVersionUID = 1;
-	private static final ToggleConstantToolTipAction ACTION = new ToggleConstantToolTipAction();
+//	private static final ToggleConstantToolTipAction ACTION = new ToggleConstantToolTipAction();
 
 	private ToggleConstantToolTipAction() {
 		super(BUNDLE.getString("toggleConstantPropertiesTooltip"), null,
@@ -30,19 +30,19 @@ public class ToggleConstantToolTipAction extends GenericAction {
 		SeqMapViewMouseListener.show_tooltip = (Boolean)(this.getValue(SELECTED_KEY));
 	}
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-
-	public static ToggleConstantToolTipAction getAction() {
-		return ACTION;
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
+//
+//	public static ToggleConstantToolTipAction getAction() {
+//		return ACTION;
+//	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		SeqMapViewMouseListener.show_tooltip = (Boolean)(this.getValue(SELECTED_KEY));
-		ACTION.putValue(AbstractAction.SELECTED_KEY, SeqMapViewMouseListener.show_tooltip);
+		putValue(AbstractAction.SELECTED_KEY, SeqMapViewMouseListener.show_tooltip);
 		PreferenceUtils.getTopNode().putBoolean(
 				SeqMapViewMouseListener.PREF_SHOW_TOOLTIP, (Boolean)getValue(SELECTED_KEY));
 

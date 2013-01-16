@@ -31,9 +31,9 @@ public class ToggleToolTipAction extends GenericAction {
 		this.putValue(SELECTED_KEY, show_prop_tooltip);
 	}
 	
-//	static{
-//		GenericActionHolder.getInstance().addGenericAction(ACTION);
-//	}
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	
 	public static ToggleToolTipAction getAction() {
 		return ACTION;

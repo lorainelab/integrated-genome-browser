@@ -172,7 +172,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 	}
 
 	public void mouseMoved(MouseEvent evt) {
-		if (!(evt instanceof NeoMouseEvent) || !smv.shouldShowPropTooltip()) {
+		if (!(evt instanceof NeoMouseEvent) || !smv.getShowPropertiesTooltip()) {
 			return;
 		}
 

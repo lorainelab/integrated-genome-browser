@@ -2561,11 +2561,6 @@ public class SeqMapView extends JPanel
 	}
 	
 	@Override
-	public void setTierStyles() {
-		seqmap.setTierStyles();
-	}
-
-	@Override
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
 	}

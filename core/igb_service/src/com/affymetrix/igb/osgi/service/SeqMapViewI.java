@@ -100,7 +100,6 @@ public interface SeqMapViewI {
 	public void removePopupListener(ContextualPopupListener listener);
 	public void selectAllGraphs();
 	public void select(List<SeqSymmetry> sym_list, boolean call_listener);
-	public void setTierStyles();
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically);
 	public void setZoomSpotX(double x);
 	public void setZoomSpotY(double y);

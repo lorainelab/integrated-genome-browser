@@ -98,8 +98,7 @@ public class SeqMapView extends JPanel
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
-	private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, 
-				IGB.getSingleton().getMapView().getShowPropertiesTooltip());
+	private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, true);
 	private MapMode mapMode;
 	private JRPToggleButton select_mode_button;
 	private JRPToggleButton scroll_mode_button;

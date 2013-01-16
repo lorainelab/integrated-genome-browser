@@ -53,14 +53,12 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
     // We use fillRect instead of drawLine, because it may be faster.
     g.setColor(getBackgroundColor());
     if (show_label) {
-      if (getChildCount() <= 0) {
+      if (getChildCount() <= 0 || pixelbox.height < 12) {
         //        fillDraw(view);
         if (label_loc == NORTH) {
-          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
-                     pixelbox.width,Math.max(1, pixelbox.height / 2));
+          g.fillRect(pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, 1);
         } else {
-          g.fillRect(pixelbox.x, pixelbox.y,
-                     pixelbox.width,Math.max(1, pixelbox.height / 2));
+          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, 1);
         }
       }
       else {
@@ -127,10 +125,10 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
       }
     }
     else { // show_label = false, so center line within entire pixelbox
-      if (getChildCount() <= 0) {
+      if (getChildCount() <= 0 || pixelbox.height < 12) {
         // if no children, draw a box
         g.fillRect(pixelbox.x, pixelbox.y + (pixelbox.height / 2),
-                pixelbox.width,Math.max(1, pixelbox.height / 2));
+                pixelbox.width, 1);
       } else {
         // if there are children, draw a line.
         drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, direction);

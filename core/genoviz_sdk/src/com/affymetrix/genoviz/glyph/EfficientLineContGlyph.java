@@ -122,7 +122,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
     pixelbox = fixAWTBigRectBug(view, pixelbox);
 
-	if (getChildCount() <= 0) {
+	if (getChildCount() <= 0 || pixelbox.height < 12) {
 	  // We use fillRect instead of drawLine, because it may be faster.
 	  g.fillRect(pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, 1);
 	} else {

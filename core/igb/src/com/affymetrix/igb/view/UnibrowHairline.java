@@ -36,7 +36,7 @@ public final class UnibrowHairline {
   // a NeoRangeListener on it, but that seems overly complex for this case.
   //private VisibleRange visible_range;
 
-  private static Shadow hairline;
+  private Shadow hairline;
   private NeoMap map;
   //private MouseListener mouse_listener;
 
@@ -49,8 +49,6 @@ public final class UnibrowHairline {
 
   // the current location of the hairline
   private double focus = 1;
-
-  private static boolean keep_hairline_in_view = true;
 
   PreferenceChangeListener pcl;
 
@@ -73,7 +71,7 @@ public final class UnibrowHairline {
 
     pre_draw_listener = new NeoViewBoxListener() {
       public void viewBoxChanged( NeoViewBoxChangeEvent e ) {
-        if (keep_hairline_in_view == true) {
+        if (hairline.getShowHairLine()) {
           double start = e.getCoordBox().x;
           double end = e.getCoordBox().width + start;
           if (focus < start) {setSpot(start);}
@@ -116,7 +114,6 @@ public final class UnibrowHairline {
    *  If b is null, the current value of the flag is not changed.
    */
   public void setKeepHairlineInView(boolean b) {
-    keep_hairline_in_view = b;
 	hairline.setShowHairline(b);
 	map.updateWidget();
   }

@@ -97,6 +97,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		trackDefaultTextField = new JTextField();
 		trackDefaultTextField.setEnabled(false);
 		table = new StyledJTable();
+		table.setCellSelectionEnabled(false);
 		TableCellEditor editor = table.getDefaultEditor(String.class);
 		((DefaultCellEditor) editor).setClickCountToStart(2);
 		table.setDefaultEditor(String.class, editor);

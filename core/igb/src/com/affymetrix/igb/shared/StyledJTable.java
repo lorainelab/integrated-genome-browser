@@ -19,6 +19,8 @@ import javax.swing.table.*;
 public class StyledJTable extends JideTable {
 
 	private static final long serialVersionUID = 1L;
+	private Color selectionBackground, selectionForeground;
+	
 	// The list will save all the unchangeable column num
 	public ArrayList<Integer> list = new ArrayList<Integer>();
 
@@ -66,7 +68,16 @@ public class StyledJTable extends JideTable {
 
 		// Java Default Table Configuration methods
 		setCellSelectionEnabled(true);
-		setSelectionForeground(Color.BLUE);
+		UIDefaults defaults = javax.swing.UIManager.getDefaults();
+		selectionForeground = defaults.getColor("Table.selectionForeground");
+		selectionBackground = defaults.getColor("Table.selectionBackground");
+		if(selectionForeground == null){
+			selectionForeground = Color.WHITE;
+		}
+		if(selectionBackground == null){
+			selectionBackground = Color.BLUE;
+		}
+		setSelectionForeground(selectionBackground);
 		setIntercellSpacing(new Dimension(1, 1));
 		setShowGrid(true);
 		setGridColor(new Color(11184810));
@@ -119,8 +130,14 @@ public class StyledJTable extends JideTable {
 			} else {
 				component.setBackground(new Color(235, 235, 235));
 			}
+			if(isCellSelected(r, c)){
+				component.setBackground(selectionBackground);
+				component.setForeground(selectionForeground);
+			}else{
+				component.setForeground(Color.BLACK);
+			}
 		}
-
+	
 		return component;
 	}
 

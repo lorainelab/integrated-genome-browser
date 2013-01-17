@@ -111,33 +111,33 @@ public class StyledJTable extends JideTable {
 	@Override
 	public Component prepareRenderer(TableCellRenderer tcr, int r, int c) {
 		Component component = super.prepareRenderer(tcr, r, c);
-		if(component!=null)
-			return setComponentBackground(component, r, c);
-		else 
-			return null;
-	}
-
-	@Override
-	public Component prepareEditor(TableCellEditor tce, int r, int c) {
-		Component component = super.prepareEditor(tce, r, c);
-		return setComponentBackground(component, r, c);
-	}
-
-	public Component setComponentBackground(Component component, int r, int c) {
-		if (!list.contains(c)) {
-			if (isCellEditable(r, c)) {
-				component.setBackground(Color.WHITE);
-			} else {
-				component.setBackground(new Color(235, 235, 235));
-			}
+		if(component != null){
+			setComponentBackground(component, r, c);
 			if(isCellSelected(r, c)){
 				component.setBackground(selectionBackground);
 				component.setForeground(selectionForeground);
 			}else{
 				component.setForeground(Color.BLACK);
 			}
+			return component;
+		} 
+		
+		return null;
+	}
+
+	@Override
+	public Component prepareEditor(TableCellEditor tce, int r, int c) {
+		return setComponentBackground(super.prepareEditor(tce, r, c), r, c);
+	}
+
+	private Component setComponentBackground(Component component, int r, int c) {
+		if (!list.contains(c)) {
+			if (isCellEditable(r, c)) {
+				component.setBackground(Color.WHITE);
+			} else {
+				component.setBackground(new Color(235, 235, 235));
+			}
 		}
-	
 		return component;
 	}
 

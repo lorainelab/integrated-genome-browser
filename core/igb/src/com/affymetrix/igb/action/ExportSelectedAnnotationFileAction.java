@@ -20,7 +20,7 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 	private static final ExportSelectedAnnotationFileAction ACTION = new ExportSelectedAnnotationFileAction();
 	
 	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
 		ACTION.setEnabled(false);
 		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
 	}
@@ -41,6 +41,8 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 	protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
 		annotationWriter.writeAnnotations(atier.getSelected(), aseq, "", dos);
 	}
+	
+	@Override
 	public void symSelectionChanged(SymSelectionEvent evt){
 		List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
 		ExportSelectedAnnotationFileAction.getAction().setEnabled((1 == answer.size()) 

@@ -113,7 +113,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 	
 	public static void removeInstance(String unique_name) {
-		static_map.remove(unique_name.toLowerCase());
+		TrackStyle style = static_map.get(unique_name.toLowerCase());
+		if (style != null) {
+			//Set style to visible. This is to resolve if track was hidden and deleted
+			style.setShow(true);
+			static_map.remove(unique_name.toLowerCase());
+		}
 	}
 	
 	public void restoreToDefault() {

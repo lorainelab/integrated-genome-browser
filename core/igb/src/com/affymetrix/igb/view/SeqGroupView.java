@@ -125,7 +125,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		};
 		seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		seqtable.setCellSelectionEnabled(false);
+		seqtable.setRowSelectionAllowed(true);
+		
 		SeqGroupTableModel model = new SeqGroupTableModel(null);
 		seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
 

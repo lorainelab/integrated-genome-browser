@@ -19,7 +19,8 @@ import javax.swing.table.*;
 public class StyledJTable extends JideTable {
 
 	private static final long serialVersionUID = 1L;
-	private Color selectionBackground, selectionForeground;
+	private Color selectionBackgroundColor, selectionForegroundColor,
+			notEditableColor;
 	
 	// The list will save all the unchangeable column num
 	public ArrayList<Integer> list = new ArrayList<Integer>();
@@ -69,15 +70,16 @@ public class StyledJTable extends JideTable {
 		// Java Default Table Configuration methods
 		setCellSelectionEnabled(true);
 		UIDefaults defaults = javax.swing.UIManager.getDefaults();
-		selectionForeground = defaults.getColor("Table.selectionForeground");
-		selectionBackground = defaults.getColor("Table.selectionBackground");
-		if(selectionForeground == null){
-			selectionForeground = Color.WHITE;
+		selectionForegroundColor = defaults.getColor("Table.selectionForeground");
+		selectionBackgroundColor = defaults.getColor("Table.selectionBackground");
+		notEditableColor = new Color(235, 235, 235);
+		if(selectionForegroundColor == null){
+			selectionForegroundColor = Color.WHITE;
 		}
 		if(selectionBackground == null){
-			selectionBackground = Color.BLUE;
+			selectionBackgroundColor = Color.BLUE;
 		}
-		setSelectionForeground(selectionBackground);
+		setSelectionForeground(selectionBackgroundColor);
 		setIntercellSpacing(new Dimension(1, 1));
 		setShowGrid(true);
 		setGridColor(new Color(11184810));
@@ -113,16 +115,17 @@ public class StyledJTable extends JideTable {
 		Component component = super.prepareRenderer(tcr, r, c);
 		if(component != null){
 			setComponentBackground(component, r, c);
-			if(isCellSelected(r, c)){
-				component.setBackground(selectionBackground);
-				component.setForeground(selectionForeground);
-			}else{
-				component.setForeground(Color.BLACK);
+			if (!list.contains(c)) {
+				if (isCellSelected(r, c)) {
+					component.setBackground(selectionBackgroundColor);
+					component.setForeground(selectionForegroundColor);
+				} else {
+					component.setForeground(Color.BLACK);
+				}
 			}
-			return component;
 		} 
 		
-		return null;
+		return component;
 	}
 
 	@Override
@@ -132,11 +135,7 @@ public class StyledJTable extends JideTable {
 
 	private Component setComponentBackground(Component component, int r, int c) {
 		if (!list.contains(c)) {
-			if (isCellEditable(r, c)) {
-				component.setBackground(Color.WHITE);
-			} else {
-				component.setBackground(new Color(235, 235, 235));
-			}
+			component.setBackground(isCellEditable(r, c) ? Color.WHITE : notEditableColor);
 		}
 		return component;
 	}

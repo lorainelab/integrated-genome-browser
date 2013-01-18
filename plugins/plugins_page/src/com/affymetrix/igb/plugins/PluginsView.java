@@ -143,6 +143,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
 			}
 		};
+		bundleTable.setCellSelectionEnabled(false);
 //		bundleTable.setAutoCreateRowSorter(true);
 //		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
 		bundleTable.addMouseListener(

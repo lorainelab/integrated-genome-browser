@@ -67,6 +67,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		lsm = table.getSelectionModel();
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+		table.setCellSelectionEnabled(false);
 		table.setModel(model);
 		table.setRowHeight(20);
 

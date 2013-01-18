@@ -29,6 +29,7 @@ public class EfficientSolidGlyph extends Glyph {
 
 	public boolean is_Compulsary = false;
 	protected int direction = NeoConstants.NONE;
+	static final protected int minHeight = 24;
 	public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
 			BasicStroke.JOIN_MITER, 10.0f, new float[]{1, 2, 5, 3}, 0);
 	public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,

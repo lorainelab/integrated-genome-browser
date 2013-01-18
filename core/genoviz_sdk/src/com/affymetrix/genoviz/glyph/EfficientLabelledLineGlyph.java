@@ -53,7 +53,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
     // We use fillRect instead of drawLine, because it may be faster.
     g.setColor(getBackgroundColor());
     if (show_label) {
-      if (getChildCount() <= 0 || pixelbox.height < 12) {
+      if (getChildCount() <= 0 || pixelbox.height < minHeight) {
         //        fillDraw(view);
         if (label_loc == NORTH) {
           g.fillRect(pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, 1);

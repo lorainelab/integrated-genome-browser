@@ -96,6 +96,7 @@ public final class GeneralLoadView {
 		tableModel = new DataManagementTableModel(this);
 		tableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
 		table = new JTableX("GeneralLoadView_DataManagementTable", tableModel);
+		table.setCellSelectionEnabled(false);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
 		initDataManagementTable();
 		refreshDataAction = gviewer.getRefreshDataAction();

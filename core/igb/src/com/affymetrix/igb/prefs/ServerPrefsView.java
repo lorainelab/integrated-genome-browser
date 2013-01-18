@@ -218,7 +218,9 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		}
 
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		table.setCellSelectionEnabled(false);
+		table.setRowSelectionAllowed(true);
+		
 		return table;
 	}
 

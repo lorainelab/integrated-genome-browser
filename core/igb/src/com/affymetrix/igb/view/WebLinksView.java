@@ -79,7 +79,7 @@ public final class WebLinksView implements ListSelectionListener {
 
 		serverTable = new StyledJTable();
 		localTable = new StyledJTable();
-
+	
 		serverModel = new WebLinksTableModel();
 		localModel = new WebLinksTableModel();
 
@@ -113,7 +113,10 @@ public final class WebLinksView implements ListSelectionListener {
 			table.setModel(serverModel);
 			serverModel.setLinks(WebLink.getServerWebList());
 		}
-
+		
+		table.setCellSelectionEnabled(false);
+		table.setRowSelectionAllowed(true);
+		
 		table.getColumnModel().getColumn(COL_NAME).setPreferredWidth(120);
 		table.getColumnModel().getColumn(COL_NAME).setMaxWidth(400);
 		table.getColumnModel().getColumn(COL_REGEX).setPreferredWidth(130);

@@ -564,7 +564,11 @@ public final class BioSeq implements SearchableCharIterator {
 	 * @param residues          the character array to be filled with residues
 	 */
 	private void getResiduesFromComposition(SeqSpan this_residue_span, SeqSymmetry sym, char[] residues) {
-		int symCount = sym.getChildCount();
+		if(sym == null){
+			//This should not happen. But for now return.
+			return;
+		}
+		final int symCount = sym.getChildCount();
 		if (symCount == 0) {
 			SeqSpan this_comp_span = sym.getSpan(this);
 			if (this_comp_span == null || !SeqUtils.overlap(this_comp_span, this_residue_span)) {
@@ -586,8 +590,7 @@ public final class BioSeq implements SearchableCharIterator {
 			}
 			if (spanResidues != null) {
 				int offset = ispan.getMin() - this_residue_span.getMin();
-				System.arraycopy(
-						spanResidues.toCharArray(), 0, residues, offset, spanResidues.length());
+				System.arraycopy(spanResidues.toCharArray(), 0, residues, offset, spanResidues.length());
 			}
 		} else {
 			// recurse to children

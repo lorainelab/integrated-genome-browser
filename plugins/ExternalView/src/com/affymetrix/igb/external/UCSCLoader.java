@@ -1,5 +1,8 @@
 package com.affymetrix.igb.external;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
@@ -31,16 +34,37 @@ public class UCSCLoader extends BrowserLoader {
 	}
 
 	public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies) {
-		String url = getUrlForView(loc, pixWidth);
-		url = getImageUrl(url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder(fileNameBaseUrl, fileNamePattern));
-		if (url.startsWith("http")) {
+		String base_url = getUrlForView(loc, pixWidth);
+		String file_name_url = getImageUrl(base_url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder(fileNameBaseUrl, fileNamePattern));
+		if (file_name_url.startsWith("http")) {
+			BufferedImage finalImage = null;
+			BufferedImage fileImage = null;
 			try {
-				return new ImageError(ImageIO.read(new URL(url)),"");
+				fileImage = ImageIO.read(new URL(file_name_url));
+				finalImage = fileImage;
 			} catch (IOException e) {
-				Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + url, e);
+				Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + file_name_url, e);
 			}
+			String side_name_url = getImageUrl(base_url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder(sideNameBaseUrl, sideNamePattern));
+			if(fileImage != null && side_name_url.startsWith("http")){
+				BufferedImage sideImage = null;
+				try {
+					sideImage = ImageIO.read(new URL(side_name_url));
+				} catch (IOException e) {
+					Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + side_name_url, e);
+				}
+				if(sideImage != null){
+					BufferedImage tempImage = new BufferedImage(fileImage.getWidth(),  fileImage.getHeight(), fileImage.getType());
+					Graphics graphics = tempImage.getGraphics();
+					graphics.drawImage(sideImage, 0, 0, sideImage.getWidth(), sideImage.getHeight(), null);
+					graphics.drawImage(fileImage, 0, 0, fileImage.getWidth(), fileImage.getHeight(), null);
+					finalImage = tempImage;
+				}
+			}
+			return new ImageError(finalImage,"");
 		}
-		return new ImageError(createErrorImage(url, pixWidth),"Error");
+		
+		return new ImageError(createErrorImage(file_name_url, pixWidth),"Error");
 	}
 
 	class UCSCURLFinder implements URLFinder {

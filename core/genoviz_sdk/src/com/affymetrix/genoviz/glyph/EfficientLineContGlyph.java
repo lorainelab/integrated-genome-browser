@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -122,11 +123,12 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
     pixelbox = fixAWTBigRectBug(view, pixelbox);
 
-	if (getChildCount() <= 0 || pixelbox.height < minHeight) {
+	if (getChildCount() <= 0) {
 	  // We use fillRect instead of drawLine, because it may be faster.
-	  g.fillRect(pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, 1);
+	   g.fillRect(pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, 1);
 	} else {
-	  drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, direction);
+	  drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2,
+			  pixelbox.width, pixelbox.height < minHeight? NeoConstants.NONE : direction);
 	}
 
     super.draw(view);

@@ -232,7 +232,7 @@
                 <Component class="javax.swing.JButton" name="removeBookmarkActionButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;16x16/actions/delete.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;16x16/actions/delete_bookmark.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="&quot;Remove a bookmark&quot;" type="code"/>

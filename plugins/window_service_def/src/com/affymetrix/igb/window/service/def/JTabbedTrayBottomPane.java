@@ -19,7 +19,7 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
 	private static final Icon UP_ICON = MenuUtil.getIcon("16x16/actions/up.png");
 	private static final Icon DOWN_ICON = MenuUtil.getIcon("16x16/actions/down.png");
-	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.45;
+	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.39;
 
 	public JTabbedTrayBottomPane(JComponent _baseComponent) {
 		super("Main_bottomPane", TabState.COMPONENT_STATE_BOTTOM_TAB, _baseComponent, JTabbedPane.TOP,  JSplitPane.VERTICAL_SPLIT, 1.0 - BOTTOM_DIVIDER_PROPORTIONAL_LOCATION);

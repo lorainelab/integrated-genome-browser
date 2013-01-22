@@ -119,12 +119,16 @@ public final class SearchView extends IGBTabPanel implements
 			if (errorMessage == null) {
 				enableComp(false);
 				clearTable();
-				CThreadWorker<SearchResultsTableModel, Void> worker = new CThreadWorker<SearchResultsTableModel, Void>(" ") {
+				CThreadWorker<SearchResultsTableModel, Void> worker = new CThreadWorker<SearchResultsTableModel, Void>("Searching...") {
 
 					@Override
 					protected SearchResultsTableModel runInBackground() {
 						if (selectedSearchMode instanceof SearchModeResidue) {
 							List<GlyphI> glyphs = ((SearchModeResidue)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							if(isCancelled()){
+								setStatus("Search cancelled");
+								return null;
+							}
 							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
 						}
 						else {
@@ -135,21 +139,30 @@ public final class SearchView extends IGBTabPanel implements
 								}
 							}
 							List<SeqSymmetry> syms = ((ISearchModeSym)selectedSearchMode).search(search_term, chrfilter, SearchView.this, optionCheckBox.isSelected());
+							if(isCancelled()){
+								setStatus("Search cancelled");
+								return null;
+							}
 							return new SymSearchResultsTableModel(syms);
 						}
 					}
 
 					@Override
 					protected void finished() {
-						if (selectedSearchMode instanceof SearchModeResidue) {
-							((SearchModeResidue)selectedSearchMode).finished(chrfilter);
-						}
 						enableComp(true);
 						initOptionCheckBox();
 						try {
-							SearchResultsTableModel model = get();
-							if (model != null) {
-								setModel(model);
+							if(!isCancelled()){
+								if (selectedSearchMode instanceof SearchModeResidue) {
+									((SearchModeResidue)selectedSearchMode).finished(chrfilter);
+								}
+								SearchResultsTableModel model = get();
+								if (model != null) {
+									setModel(model);
+								}
+							}else{
+								clearResults();
+								setStatus("Search cancelled");
 							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -158,7 +171,7 @@ public final class SearchView extends IGBTabPanel implements
 						}
 					}
 				};
-				CThreadHolder.getInstance().addListener(cancel);
+//				CThreadHolder.getInstance().addListener(cancel);
 				CThreadHolder.getInstance().execute(this, worker);
 			}
 			else {
@@ -209,7 +222,7 @@ public final class SearchView extends IGBTabPanel implements
 	private final JRPCheckBox optionCheckBox = new JRPCheckBox("SearchView_optionCheckBox", "");
 	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("16x16/actions/search.png"));
 	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("16x16/actions/delete.png"));
-	private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("16x16/actions/stop.png"));
+	//private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("16x16/actions/stop.png"));
 	private JRPTable table = new JRPTable("SearchView_table");
 	private JLabel status_bar = new JLabel(BUNDLE.getString("noResults"));
 	private TableRowSorter<SearchResultsTableModel> sorter;
@@ -305,7 +318,7 @@ public final class SearchView extends IGBTabPanel implements
 		Box bottom_row = Box.createHorizontalBox();
 		this.add(bottom_row, BorderLayout.SOUTH);
 
-		bottom_row.add(cancel);
+//		bottom_row.add(cancel);
 		bottom_row.add(status_bar);
 		validate();
 
@@ -432,7 +445,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchButton.setEnabled(true);
 
 		clearButton.setToolTipText("Clear");
-		cancel.setEnabled(false);
+//		cancel.setEnabled(false);
 	}
 
 	private void initTable() {

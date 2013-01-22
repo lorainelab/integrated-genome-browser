@@ -53,21 +53,25 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
     // We use fillRect instead of drawLine, because it may be faster.
     g.setColor(getBackgroundColor());
     if (show_label) {
-      if (getChildCount() <= 0 || pixelbox.height < minHeight) {
+      if (getChildCount() <= 0) {
         //        fillDraw(view);
-        if (label_loc == NORTH) {
-          g.fillRect(pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, 1);
+       if (label_loc == NORTH) {
+          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
+                     pixelbox.width,Math.max(1, pixelbox.height / 2));
         } else {
-          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, 1);
+          g.fillRect(pixelbox.x, pixelbox.y,
+                     pixelbox.width,Math.max(1, pixelbox.height / 2));
         }
       }
       else {
         // draw the line
         if (label_loc == NORTH) { // label occupies upper half, so center line in lower half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, direction);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), 
+				  pixelbox.width, pixelbox.height < minHeight? NeoConstants.NONE : direction);
         }
         else if (label_loc == SOUTH)  {  // label occupies lower half, so center line in upper half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, direction);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), 
+				  pixelbox.width, pixelbox.height < minHeight? NeoConstants.NONE : direction);
         }
       }
 
@@ -125,13 +129,14 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
       }
     }
     else { // show_label = false, so center line within entire pixelbox
-      if (getChildCount() <= 0 || pixelbox.height < 12) {
+      if (getChildCount() <= 0) {
         // if no children, draw a box
         g.fillRect(pixelbox.x, pixelbox.y + (pixelbox.height / 2),
-                pixelbox.width, 1);
+                pixelbox.width, Math.max(1, pixelbox.height / 2));
       } else {
         // if there are children, draw a line.
-        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, direction);
+        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, 
+				pixelbox.width, pixelbox.height < minHeight? NeoConstants.NONE : direction);
       }
     }
 	

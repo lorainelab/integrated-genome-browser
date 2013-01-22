@@ -56,6 +56,7 @@ public class ExportDialog implements ExportConstants {
 	private static JFrame static_frame = null;
 	private static final String TITLE = "Export Image";
 	private AffyTieredMap seqMap;
+	private AffyTieredMap svseqMap;
 	private Component wholeFrame;
 	private Component mainView;
 	private Component mainViewWithLabels;
@@ -197,9 +198,9 @@ public class ExportDialog implements ExportConstants {
 
 			initImageInfo();
 
-			mvRadioButton.setEnabled(seqMap.getTiers().size() != 0);
-			mvlRadioButton.setEnabled(seqMap.getTiers().size() != 0);
-			svRadioButton.setEnabled(seqMap.getSelected().size() != 0);
+			mvRadioButton.setEnabled(!seqMap.getTiers().isEmpty());
+			mvlRadioButton.setEnabled(!seqMap.getTiers().isEmpty());
+			svRadioButton.setEnabled(!svseqMap.getTiers().isEmpty());
 		}
 
 		buttonsPanel.setVisible(!isSequenceViewer);
@@ -224,6 +225,7 @@ public class ExportDialog implements ExportConstants {
 			AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 			slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 			slicedView.addComponentListener(resizelistener);
+			svseqMap = slice_view.getSplicedView().getSeqMap();
 			((NeoMap) slice_view.getSplicedView().getSeqMap()).addRangeListener(rangeListener);
 		}
 	}

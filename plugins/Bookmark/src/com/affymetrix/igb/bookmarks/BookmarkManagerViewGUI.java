@@ -162,7 +162,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        removeBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/delete.png"));
+        removeBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/delete_bookmark.png"));
         removeBookmarkActionButton.setToolTipText("Remove a bookmark");
         removeBookmarkActionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         removeBookmarkActionButton.addActionListener(new java.awt.event.ActionListener() {

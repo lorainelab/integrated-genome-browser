@@ -893,7 +893,9 @@ public class SeqMapView extends JPanel
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
 		
-		autoScroll.configure(seqmap, 0, seq.getLength());
+		if(seq.getLength() > 0) {
+			autoScroll.configure(seqmap, 0, seq.getLength());
+		}
 		//GeneralLoadView.getLoadView().getTableModel().fireTableDataChanged(); //for updating cell renderers/editors
 	}
 	

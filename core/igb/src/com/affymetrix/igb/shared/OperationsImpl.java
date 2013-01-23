@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.*;
 
@@ -35,6 +34,9 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 	
 	private final Map<String, Operator> name2transformation;
 	private final Map<String, Operator> name2operation;
+	
+	private String preserved_transformationCB_selection = null;
+	private String preserved_operationCB_selection = null;
 	
 
 	public OperationsImpl(IGBService igbS) {
@@ -111,12 +113,14 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
 	protected void transformationGoBActionPerformedA(java.awt.event.ActionEvent evt){
 		String selection = (String) getTransformationCB().getSelectedItem();
+		preserved_transformationCB_selection = selection; // store selection
 		Operator operator = name2transformation.get(selection);
 		(new TrackTransformAction(operator)).actionPerformed(evt);
 	}
 
 	protected void operationGoBActionPerformedA(java.awt.event.ActionEvent evt){
 		String selection = (String) getOperationCB().getSelectedItem();
+		preserved_operationCB_selection = selection; // store selection
 		Operator operator = name2operation.get(selection);
 		(new TrackOperationAction(operator)).actionPerformed(evt);
 	}
@@ -171,6 +175,12 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		
 		getTransformationParamLabel().setEnabled(enableTransformation);
 		getTransformationCB().setEnabled(enableTransformation);
+		
+		// restore selection
+		if(enableTransformation && preserved_transformationCB_selection!=null) {
+			getTransformationCB().setSelectedItem(preserved_transformationCB_selection);
+		}
+		
 		if (!enableTransformation) {
 			getTransformationCB().removeAllItems();
 		}
@@ -180,6 +190,12 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		
 		getOperationParamLabel().setEnabled(enableOperation);
 		getOperationCB().setEnabled(enableOperation);
+		
+		// restore selection
+		if(enableOperation && preserved_operationCB_selection!=null) {
+			getOperationCB().setSelectedItem(preserved_operationCB_selection);
+		}
+		
 		if (!enableOperation) {
 			getOperationCB().removeAllItems();
 		}

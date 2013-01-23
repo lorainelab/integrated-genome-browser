@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.*;
 
 /**
  *  A parser for UCSC's BED format.
@@ -480,9 +481,23 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			}
 			out.write('\t');
 			if ((propsym != null) && (propsym.getProperty("score") != null)) {
-				out.write(propsym.getProperty("score").toString().getBytes());
+				
+				Float score = (Float)propsym.getProperty("score");
+				if(score == Math.round(score)) {
+					out.write(Integer.toString(score.intValue()).getBytes());
+				} else {
+					out.write(score.toString().getBytes());
+				}
+				
 			} else if (sym instanceof Scored) {
-				out.write(Float.toString(((Scored) sym).getScore()).getBytes());
+				
+				Float score = ((Scored) sym).getScore();
+				if(score == Math.round(score)) {
+					out.write(Integer.toString(score.intValue()).getBytes());
+				} else {
+					out.write(Float.toString(score).getBytes());
+				}
+				
 			} else {
 				out.write('0');
 			}

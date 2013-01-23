@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleScoredSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
 import java.io.BufferedOutputStream;
@@ -87,9 +88,23 @@ public class BedDetailWriter extends BedParser implements AnnotationWriter{
 			}
 			out.write('\t');
 			if ((propsym != null) && (propsym.getProperty("score") != null)) {
-				out.write(propsym.getProperty("score").toString().getBytes());
+
+				Float score = (Float)propsym.getProperty("score");
+				if(score == Math.round(score)) {
+					out.write(Integer.toString(score.intValue()).getBytes());
+				} else {
+					out.write(score.toString().getBytes());
+				}
+				
 			} else if (sym instanceof Scored) {
-				out.write(Float.toString(((Scored) sym).getScore()).getBytes());
+				
+				Float score = ((Scored) sym).getScore();
+				if(score == Math.round(score)) {
+					out.write(Integer.toString(score.intValue()).getBytes());
+				} else {
+					out.write(Float.toString(score).getBytes());
+				}
+				
 			} else {
 				out.write('0');
 			}

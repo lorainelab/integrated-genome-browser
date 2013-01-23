@@ -109,14 +109,28 @@ public abstract class SeqUtils {
 			if (span != null) {
 				leafs.add(span);
 			}
-		}
-		else  {
+		} else  {
 			for (int i=0; i<childCount; i++) {
 				collectLeafSpans(sym.getChild(i), seq, leafs);
 			}
 		}
 	}
 
+	public static void collectSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs, int desired_leaf_depth){
+		int depth = SeqUtils.getDepthFor(sym);
+		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
+			int childCount = sym.getChildCount();
+			for (int i = 0; i < childCount; i++) {
+				collectSpans(sym.getChild(i), seq, leafs, desired_leaf_depth);
+			}
+		} else {  // depth == desired_leaf_depth
+			SeqSpan span = sym.getSpan(seq);
+			if (span != null) {
+				leafs.add(span);
+			}
+		}
+	}
+	
 	/**
 	 * Get symmetries that are leaves of the given symmetry.
 	 * @param sym

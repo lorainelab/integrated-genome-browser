@@ -168,6 +168,18 @@ public final class SeqSymSummarizer {
 		}
 	}
 
+	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int desired_leaf_depth)  {
+		int symcount = syms.size();
+		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+		for (SeqSymmetry sym : syms) {
+			SeqUtils.collectSpans(sym, seq, leaf_spans, desired_leaf_depth);
+		}
+		if (leaf_spans.isEmpty()) {
+			return null;
+		} else {
+			return getSpanSummary(leaf_spans, binary_depth, id);
+		}
+	}
 
 	/**
 	 *  GetSpanSummary.
@@ -385,6 +397,17 @@ public final class SeqSymSummarizer {
 		}
 	}
 
+	public static SeqSymmetry getUnion(List<SeqSymmetry> syms, BioSeq seq, int depth)  {
+		//    MutableSeqSymmetry psym = new SimpleSymWithProps();
+		// first get the landscape as a GraphSym
+		GraphSym landscape = getSymmetrySummary(syms, seq, true, "", depth);
+		// now just flatten it
+		if (landscape != null) {
+			return projectLandscape(landscape);
+		} else {
+			return null;
+		}
+	}
 
 
 	/**

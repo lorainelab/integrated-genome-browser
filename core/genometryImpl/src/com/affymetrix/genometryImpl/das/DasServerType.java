@@ -265,6 +265,8 @@ public class DasServerType implements ServerTypeI {
 	 */
 	@Override
 	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
+		feature.addLoadingSpanRequest(span);	// this span is requested to be loaded.
+		
 		String segment = getSegment(span, feature);
 
 		QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
@@ -292,6 +294,12 @@ public class DasServerType implements ServerTypeI {
 			for (DASSymmetry sym : dassyms) {
 				feature.addMethod(sym.getType());
 			}
+		}
+		
+		if (Thread.currentThread().isInterrupted()) {
+			feature.removeCurrentRequest(span);
+		} else {
+			feature.addLoadedSpanRequest(span);
 		}
 		
 		return dassyms;

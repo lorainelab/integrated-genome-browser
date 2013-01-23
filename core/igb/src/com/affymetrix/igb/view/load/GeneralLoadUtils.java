@@ -818,9 +818,6 @@ public final class GeneralLoadUtils {
 		Thread thread = Thread.currentThread();
 		
 		for (SeqSpan optimized_span : optimized_spans) {
-
-			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
-
 			List<? extends SeqSymmetry> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
 			// If thread was interruped then it might return null. 
@@ -830,11 +827,8 @@ public final class GeneralLoadUtils {
 			}
 			
 			if (thread.isInterrupted()) {
-				feature.removeCurrentRequest(optimized_span);
 				break;
 			}
-			
-			feature.addLoadedSpanRequest(optimized_span);
 		}
 
 		return loaded;

@@ -482,20 +482,20 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			out.write('\t');
 			if ((propsym != null) && (propsym.getProperty("score") != null)) {
 				
-				// Use integer for summary
-				if(sym instanceof SimpleScoredSymWithProps) {
-					out.write(Integer.toString(((Float)propsym.getProperty("score")).intValue()).getBytes());
-				}else {
-					out.write(propsym.getProperty("score").toString().getBytes());
+				Float score = (Float)propsym.getProperty("score");
+				if(score == Math.round(score)) {
+					out.write(Integer.toString(score.intValue()).getBytes());
+				} else {
+					out.write(score.toString().getBytes());
 				}
 				
 			} else if (sym instanceof Scored) {
 				
-				// Use integer for summary
-				if(sym instanceof SimpleScoredSymWithProps) {
-					out.write(Integer.toString(((Float)((Scored) sym).getScore()).intValue()).getBytes());
+				Float score = ((Scored) sym).getScore();
+				if(score == Math.round(score)) {
+					out.write(Integer.toString(score.intValue()).getBytes());
 				} else {
-					out.write(Float.toString(((Scored) sym).getScore()).getBytes());
+					out.write(Float.toString(score).getBytes());
 				}
 				
 			} else {

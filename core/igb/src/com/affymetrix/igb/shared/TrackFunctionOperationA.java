@@ -164,6 +164,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		}
 	
 		style.setTrackName(featureName);
+		style.setLabelField(null);
 		
 		return feature;
 	}

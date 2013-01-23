@@ -281,7 +281,8 @@ public class Das2ServerType implements ServerTypeI {
 
 
     private List<? extends SeqSymmetry>  loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
-
+		feature.addLoadingSpanRequest(span);	// this span is requested to be loaded.
+		
         String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
 
 		String format = FormatPriorities.getFormat(type);
@@ -299,6 +300,12 @@ public class Das2ServerType implements ServerTypeI {
 			return LoadFeaturesFromQuery(feature, span, feature_query, format, type.getURI(), type.getName());
 		} catch (Exception ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			if (Thread.currentThread().isInterrupted()) {
+				feature.removeCurrentRequest(span);
+			} else {
+				feature.addLoadedSpanRequest(span);
+			}
 		}
 		
 		return Collections.<SeqSymmetry>emptyList();

@@ -128,7 +128,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
-		JMenu operationsMenu = null;
+		JMenu operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
+		if (IGBConstants.GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
+			return operationsMenu; 
+		}
 		TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
 		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 		for (Operator operator : operators) {
@@ -136,9 +139,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				String title = operator.getDisplay();
 				JMenuItem operatorMI = new JMenuItem(title);
 				operatorMI.addActionListener(new TrackOperationAction(operator));
-				if (operationsMenu == null) {
-					operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
-				}
 				operationsMenu.add(operatorMI);
 			}
 		}
@@ -384,10 +384,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//remove_data_from_tracks.setEnabled(num_selections > 0 && !coordinates_track_selected);
 		//popup.add(remove_data_from_tracks); // Remove data from selected tracks.
 		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
-		if (operationsMenu != null) {
-			popup.add(operationsMenu);
-			operationsMenu.getPopupMenu().setBorder(finalBorder);
-		}
+		popup.add(operationsMenu);
+		operationsMenu.getPopupMenu().setBorder(finalBorder);
+		operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
 		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
 		color_by_score.setSelected(!any_are_color_off && num_selections > 0 && !coordinates_track_selected);
 		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);

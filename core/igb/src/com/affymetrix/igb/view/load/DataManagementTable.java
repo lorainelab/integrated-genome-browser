@@ -220,7 +220,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //			if (!vFeature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
-			boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && vFeature.getLoadStrategy() != LoadStrategy.GENOME);
+			boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD 
+					&& vFeature.getLoadStrategy() != LoadStrategy.GENOME 
+					&& !IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID()));
 			return new LabelTableCellRenderer(DataManagementTable.refresh_icon, enabled);
 		} else if (column == DataManagementTableModel.LOAD_STRATEGY_COLUMN) {
 //			if (!vFeature.isPrimary()) {

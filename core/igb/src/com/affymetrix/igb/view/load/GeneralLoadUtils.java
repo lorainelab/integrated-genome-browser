@@ -810,7 +810,7 @@ public final class GeneralLoadUtils {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		List<SeqSymmetry> loaded = new ArrayList<SeqSymmetry>();
-		convertSymToSpanList(optimized_sym, spans);
+		SeqUtils.convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
 		if (feature.gVersion.gServer.serverType == null) {
 			return Collections.<SeqSymmetry>emptyList();
@@ -870,25 +870,6 @@ public final class GeneralLoadUtils {
 			}
 		}
 		//LoadModeTable.updateVirtualFeatureList();
-	}
-
-	/**
-	 * Walk the SeqSymmetry, converting all of its children into spans.
-	 *
-	 * @param sym the SeqSymmetry to walk.
-	 */
-	private static void convertSymToSpanList(SeqSymmetry sym, List<SeqSpan> spans) {
-		int childCount = sym.getChildCount();
-		if (childCount > 0) {
-			for (int i = 0; i < childCount; i++) {
-				convertSymToSpanList(sym.getChild(i), spans);
-			}
-		} else {
-			int spanCount = sym.getSpanCount();
-			for (int i = 0; i < spanCount; i++) {
-				spans.add(sym.getSpan(i));
-			}
-		}
 	}
 
 	/**

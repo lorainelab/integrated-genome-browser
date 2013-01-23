@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -359,7 +360,12 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			return false;
 		}
 
-		if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
+		if (col == REFRESH_FEATURE_COLUMN){
+			if (IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID())) {
+				return false; 
+			}
+			return true;
+		} if (col == DELETE_FEATURE_COLUMN 
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == SEPARATE_COLUMN) {

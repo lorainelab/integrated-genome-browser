@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.osgi.service.IGBService;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.*;
@@ -89,9 +90,10 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
 	@Override
 	public void selectionRefreshed() {
-		resetAll(true);
+		resetAll(igbService.getSeqMapView().getAnnotatedSeq() != null 
+			&& !IGBConstants.GENOME_SEQ_ID.equals(igbService.getSeqMapView().getAnnotatedSeq().getID()));
 	}
-			
+		
 	private void resetAll(boolean enable) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		loadOperators(enable);

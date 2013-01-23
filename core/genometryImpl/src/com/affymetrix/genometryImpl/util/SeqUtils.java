@@ -282,6 +282,25 @@ public abstract class SeqUtils {
 		spanMerger(spans, resultSym);
 	}
 
+	public static MutableSeqSymmetry intersection(List<SeqSymmetry> syms, BioSeq seq) {
+		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
+		if (syms.size() == 1){	
+			for(int i=0; i<syms.get(0).getChildCount(); i++){
+				resultSym.addChild(syms.get(0).getChild(i));
+			}
+			for(int i=0; i<syms.get(0).getSpanCount(); i++){
+				resultSym.addSpan(syms.get(0).getSpan(i));
+			}
+		}else{
+			MutableSeqSymmetry tempSym = intersection(syms.get(0), syms.get(1), seq);
+			for(int i=0; i<syms.size(); i++){
+				intersection(syms.get(i), tempSym, resultSym, seq);
+			}
+		}
+		
+		return resultSym;
+	}
+	
 	/**
 	 *  "Logical" AND of SeqSymmetries (relative to a particular BioSeq).
 	 */
@@ -1316,4 +1335,22 @@ public static boolean areResiduesComplete(String residues) {
 		return "sym.getID() is not implemented.";
 	}
 
+	/**
+	 * Walk the SeqSymmetry, converting all of its children into spans.
+	 *
+	 * @param sym the SeqSymmetry to walk.
+	 */
+	public static void convertSymToSpanList(SeqSymmetry sym, List<SeqSpan> spans) {
+		int childCount = sym.getChildCount();
+		if (childCount > 0) {
+			for (int i = 0; i < childCount; i++) {
+				convertSymToSpanList(sym.getChild(i), spans);
+			}
+		} else {
+			int spanCount = sym.getSpanCount();
+			for (int i = 0; i < spanCount; i++) {
+				spans.add(sym.getSpan(i));
+			}
+		}
+	}
 }

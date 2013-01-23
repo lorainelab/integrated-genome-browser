@@ -10,12 +10,15 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -131,6 +134,7 @@ public class Delegate extends QuickLoadSymLoader {
 			return Collections.<SeqSymmetry>emptyList();
 		}
 
+		List<SeqSymmetry> requests = new ArrayList<SeqSymmetry>();
 		for (DelegateParent dp : dps) {
 			if (!dp.feature.isVisible()) {
 				notUpdatable = true;
@@ -138,14 +142,15 @@ public class Delegate extends QuickLoadSymLoader {
 				break;
 			}
 
-			while (!dp.feature.isLoaded(overlapSpan)) {
+			while (dp.feature.isLoading(overlapSpan) && !dp.feature.isLoaded(overlapSpan)) {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException ex) {
-					Logger.getLogger(Delegate.class.getName()).log(Level.SEVERE, null, ex);
+					Logger.getLogger(Delegate.class.getName()).log(Level.WARNING, "Thread interruped cancelling loading");
 					return Collections.<SeqSymmetry>emptyList();
 				}
 			}
+			requests.add(dp.feature.getRequestSym());
 		}
 
 		if (notUpdatable) {
@@ -158,8 +163,24 @@ public class Delegate extends QuickLoadSymLoader {
 			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
 			return Collections.<SeqSymmetry>emptyList();
 		}
-
-		return super.loadFeatures(overlapSpan, feature);
+		
+		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
+		query_sym.addSpan(overlapSpan);
+		requests.add(query_sym);
+		
+		List<SeqSymmetry> loaded = new ArrayList<SeqSymmetry>();
+		List<SeqSpan> operlapSpans = new ArrayList<SeqSpan>();
+		SeqUtils.convertSymToSpanList(SeqUtils.intersection(requests, overlapSpan.getBioSeq()), operlapSpans);
+		
+		for(SeqSpan span : operlapSpans){
+			loaded.addAll(super.loadFeatures(span, feature));
+			
+			if(Thread.currentThread().isInterrupted()){
+				break;
+			}
+		}
+		
+		return loaded;
 	}
 	
 	@Override

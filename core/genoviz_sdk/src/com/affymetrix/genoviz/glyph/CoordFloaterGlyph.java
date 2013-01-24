@@ -61,7 +61,19 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 		Rectangle2D.Double coordbox = new Rectangle2D.Double(vbox.x, 0, vbox.width, height);
 		setCoordBox(coordbox);
 	}
-		  
+	
+	@Override
+	public void removeAllChildren(){
+		super.removeAllChildren();
+		setCoords(0, 0, 0, 0);
+	}
+	
+	@Override
+	public void addChild(GlyphI child){
+		super.addChild(child);
+		setCoords(getCoordBox().x, 0, getCoordBox().width, getCoordBox().height + child.getCoordBox().height);
+	}
+	
 	@Override
 	public void checkBounds(GlyphI gl, ViewI view) {
 		Rectangle2D.Double mapbox = getCoordBox();

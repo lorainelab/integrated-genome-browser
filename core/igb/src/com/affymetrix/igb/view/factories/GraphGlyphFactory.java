@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +18,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.graphTypes.*;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import java.util.HashMap;
 
 public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
@@ -198,8 +197,9 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (graphGlyph != null) {				
 				if (style.getFloatTier()) {
+					smv.getFloaterGlyph().addChild(graphGlyph);
 					smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap().getView());
-					smv.addToPixelFloaterGlyph(graphGlyph);
+//					smv.addToPixelFloaterGlyph(graphGlyph);
 				} else {
 					GraphSym graf = (GraphSym)sym;
 					if (graf.getGraphState().getComboStyle() != null/* && !(result.getPacker() instanceof GraphFasterExpandPacker)*/) {

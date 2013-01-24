@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public abstract class AbstractAnnotationOperator implements Operator {
-	final FileTypeCategory category;
+	final protected FileTypeCategory category;
 	
 	protected AbstractAnnotationOperator(){
 		this.category = FileTypeCategory.Annotation;

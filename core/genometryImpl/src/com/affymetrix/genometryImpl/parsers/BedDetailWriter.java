@@ -84,6 +84,8 @@ public class BedDetailWriter extends BedParser implements AnnotationWriter{
 					out.write(((String) propsym.getProperty("name")).getBytes());
 				} else if (propsym.getProperty("id") != null) {
 					out.write(((String) propsym.getProperty("id")).getBytes());
+				} else {
+					out.write((seq.getID() + ":" + Integer.toString(min) + "-" + Integer.toString(max) + ":" + (span.isForward()?"+":"-")).getBytes());
 				}
 			}
 			out.write('\t');

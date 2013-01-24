@@ -477,6 +477,8 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 					out.write(((String) propsym.getProperty("name")).getBytes());
 				} else if (propsym.getProperty("id") != null) {
 					out.write(((String) propsym.getProperty("id")).getBytes());
+				} else {
+					out.write((seq.getID() + ":" + Integer.toString(min) + "-" + Integer.toString(max) + ":" + (span.isForward()?"+":"-")).getBytes());
 				}
 			}
 			out.write('\t');
@@ -526,6 +528,8 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds max") != null)) {
 			out.write(propsym.getProperty("cds max").toString().getBytes());
+		} else if(sym instanceof SimpleScoredSymWithProps) { // Summary feature doesn't have a translation
+			out.write(Integer.toString(min).getBytes());
 		} else {
 			out.write(Integer.toString(max).getBytes());
 		}

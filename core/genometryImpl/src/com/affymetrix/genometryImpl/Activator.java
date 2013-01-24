@@ -79,28 +79,33 @@ public class Activator implements BundleActivator {
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ComplementSequenceOperator(), null);
-		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyAlignmentOperator(), null);
-		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyAnnotationOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyGraphOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyMismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopySequenceOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DepthOperator(FileTypeCategory.Alignment), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DepthOperator(FileTypeCategory.Annotation), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DepthOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SummaryOperator(FileTypeCategory.Annotation), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SummaryOperator(FileTypeCategory.Alignment), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SummaryOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.NotOperator(FileTypeCategory.Annotation), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.NotOperator(FileTypeCategory.Alignment), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.NotOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ParentNotOperator(FileTypeCategory.Annotation), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ParentNotOperator(FileTypeCategory.Alignment), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ParentNotOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DiffOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveAOperator(FileTypeCategory.Annotation), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveAOperator(FileTypeCategory.Alignment), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveAOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveBOperator(FileTypeCategory.Annotation), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveBOperator(FileTypeCategory.Alignment), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveBOperator(FileTypeCategory.ProbeSet), null);
 		//bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FilterOperator(FileTypeCategory.Annotation, new SymmetryFilterProps()), null);
 		//bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.IdentityTransform(), null); //Same as copy graph operator
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.IntersectionOperator(FileTypeCategory.Annotation), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.IntersectionOperator(FileTypeCategory.Alignment), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.IntersectionOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.InverseTransformer(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.InverseLogTransform(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.InverseLogTransform(Math.E), null);
@@ -121,8 +126,10 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SumOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.UnionOperator(FileTypeCategory.Alignment), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.UnionOperator(FileTypeCategory.Annotation), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.UnionOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.XorOperator(FileTypeCategory.Alignment), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.XorOperator(FileTypeCategory.Annotation), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.XorOperator(FileTypeCategory.ProbeSet), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.GraphMultiplexer(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FindJunctionOperator(), null);
 	}

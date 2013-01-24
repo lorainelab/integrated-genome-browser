@@ -10,11 +10,16 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
-public class CopyAnnotationOperator implements Operator, ICopy{
+public class CopyXOperator implements Operator, ICopy{
 
+	private final FileTypeCategory fileTypeCategory;
+	public CopyXOperator(FileTypeCategory category){
+		this.fileTypeCategory = category;
+	}
+			
 	@Override
 	public String getName() {
-		return "copyannotation";
+		return fileTypeCategory.toString().toLowerCase() + "_copy";
 	}
 
 	@Override
@@ -45,12 +50,12 @@ public class CopyAnnotationOperator implements Operator, ICopy{
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 1 : 0;
+		return category == this.fileTypeCategory ? 1 : 0;
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 1 : 0;
+		return category == this.fileTypeCategory ? 1 : 0;
 	}
 
 	@Override
@@ -70,6 +75,6 @@ public class CopyAnnotationOperator implements Operator, ICopy{
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return FileTypeCategory.Annotation;
+		return this.fileTypeCategory;
 	}
 }

@@ -520,43 +520,61 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	}
 
 	@Override
-	public void installBundle(Bundle bundle) {
-		Resource resource = ((ResourceWrapper)bundle).getResource();
-		Resolver resolver = repoAdmin.resolver();
-		resolver.add(resource);
-		if (resolver.resolve())
-		{
-		    resolver.deploy(true);
-		    igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
-		}
-		else
-		{
-			String msg = MessageFormat.format(PluginsView.BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
-			StringBuffer sb = new StringBuffer(msg);
-		    sb.append(" -> ");
-			boolean started = false;
-			for (Requirement req : resolver.getUnsatisfiedRequirements()) {
-				if (started) {
-				    sb.append(", ");
+	public void installBundle(final Bundle bundle) {
+		CThreadWorker woker = new CThreadWorker("Installing "+bundle.getSymbolicName()) {
+			@Override
+			protected Object runInBackground() {
+				Resource resource = ((ResourceWrapper) bundle).getResource();
+				Resolver resolver = repoAdmin.resolver();
+				resolver.add(resource);
+				if (resolver.resolve()) {
+					resolver.deploy(true);
+					igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
+				} else {
+					String msg = MessageFormat.format(PluginsView.BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
+					StringBuffer sb = new StringBuffer(msg);
+					sb.append(" -> ");
+					boolean started = false;
+					for (Requirement req : resolver.getUnsatisfiedRequirements()) {
+						if (started) {
+							sb.append(", ");
+						}
+						started = true;
+						sb.append(req.getComment());
+					}
+					igbService.setStatus(msg);
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, sb.toString());
 				}
-				started = true;
-			    sb.append(req.getComment());
+				return null;
 			}
-		    igbService.setStatus(msg);
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, sb.toString());
-		}
+
+			@Override
+			protected void finished() {
+			}
+		};
+		CThreadHolder.getInstance().execute(bundle, woker);
 	}
 
 	@Override
-	public void uninstallBundle(Bundle bundle) {
-		try {
-			bundle.uninstall();
-		    igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleUninstalled"), bundle.getSymbolicName(), bundle.getVersion()));
-		}
-		catch (BundleException bex) {
-			String msg = PluginsView.BUNDLE.getString("bundleUninstallError");
-			displayError(msg);
-		}
+	public void uninstallBundle(final Bundle bundle) {
+		CThreadWorker woker = new CThreadWorker("Uninstalling " + bundle.getSymbolicName()) {
+			@Override
+			protected Object runInBackground() {
+				try {
+					bundle.uninstall();
+					igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleUninstalled"), bundle.getSymbolicName(), bundle.getVersion()));
+				} catch (BundleException bex) {
+					String msg = PluginsView.BUNDLE.getString("bundleUninstallError");
+					displayError(msg);
+				}
+				return null;
+			}
+
+			@Override
+			protected void finished() {
+			}
+		};
+		CThreadHolder.getInstance().execute(bundle, woker);
 	}
 
 	/**

@@ -1374,4 +1374,12 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 	public void setDirection(Direction direction){
 		this.direction = direction;
 	}
+	
+	@Override
+	public boolean withinView(ViewI view){
+		if(!getAnnotStyle().getFloatTier()){
+			return super.withinView(view);
+		}
+		return this.getPositiveCoordBox().intersects(this.getParent().getCoordBox());
+	}
 }

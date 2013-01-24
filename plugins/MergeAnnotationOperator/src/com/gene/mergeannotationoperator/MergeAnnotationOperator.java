@@ -20,7 +20,7 @@ public class MergeAnnotationOperator extends AbstractAnnotationOperator implemen
 	
 	@Override
 	public String getName() {
-		return "merge_annotation";
+		return category.toString().toLowerCase() + "_merge";
 	}
 
 	@Override
@@ -29,13 +29,8 @@ public class MergeAnnotationOperator extends AbstractAnnotationOperator implemen
 	}
 
 	@Override
-	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? Integer.MAX_VALUE : 0;
-	}
-
-	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? Integer.MAX_VALUE : 0;
+		return category == this.category ? Integer.MAX_VALUE : 0;
 	}
 
 	@Override

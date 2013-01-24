@@ -14,7 +14,8 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
 			bundleContext.registerService(Operator.class, new OverlapAnnotationOperator(FileTypeCategory.Alignment), null),
-			bundleContext.registerService(Operator.class, new OverlapAnnotationOperator(FileTypeCategory.Annotation), null)
+			bundleContext.registerService(Operator.class, new OverlapAnnotationOperator(FileTypeCategory.Annotation), null),
+			bundleContext.registerService(Operator.class, new OverlapAnnotationOperator(FileTypeCategory.ProbeSet), null)
 		};
     }
 }

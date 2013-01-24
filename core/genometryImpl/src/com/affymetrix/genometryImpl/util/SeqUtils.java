@@ -159,6 +159,17 @@ public abstract class SeqUtils {
 		}
 	}
 
+	private static void collectLeafSyms(SeqSymmetry sym, Collection<SeqSymmetry> leafs, int desired_leaf_depth) {
+		int depth = SeqUtils.getDepthFor(sym);
+		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
+			int childCount = sym.getChildCount();
+			for (int i=0; i<childCount; i++) {
+				collectLeafSyms(sym.getChild(i), leafs, desired_leaf_depth);
+			}
+		} else {
+			leafs.add(sym);
+		}
+	}
 
 	public static SeqSymmetry getIntronSym(SeqSymmetry sym, BioSeq seq){
 		SeqSpan span = sym.getSpan(seq);
@@ -268,6 +279,22 @@ public abstract class SeqUtils {
 		spanMerger(spans, resultSym);
 	}
 
+	/**
+	 *  "Logical" OR of list of SeqSymmetries (relative to a particular BioSeq).
+	 */
+	public static void union(List<SeqSymmetry> syms, MutableSeqSymmetry resultSym, BioSeq seq, int desired_leaf_depth) {
+		resultSym.clear();
+		List<SeqSymmetry> leaves = new ArrayList<SeqSymmetry>();
+		for (SeqSymmetry sym : syms) {
+			SeqUtils.collectLeafSyms(sym, leaves, desired_leaf_depth);
+		}
+		int leafCount = leaves.size();
+		List<SeqSpan> spans = new ArrayList<SeqSpan>(leafCount);
+		for (SeqSymmetry sym : leaves) {
+			spans.add(sym.getSpan(seq));
+		}
+		spanMerger(spans, resultSym);
+	}
 
 
 	/**

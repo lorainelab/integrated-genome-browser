@@ -19,7 +19,7 @@ public class OverlapAnnotationOperator extends AbstractAnnotationOperator implem
 	
 	@Override
 	public String getName() {
-		return "subset_by_overlaps";
+		return this.category.toString().toLowerCase() +"_subset_by_overlaps";
 	}
 
 	@Override

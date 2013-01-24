@@ -15,7 +15,13 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		return new ServiceRegistration[] {
 			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.Annotation), null),
 			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.Alignment), null),
-			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.ProbeSet), null)
+			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.ProbeSet), null),
+			bundleContext.registerService(Operator.class, new ParentIntersectionOperator(FileTypeCategory.Annotation), null),
+			bundleContext.registerService(Operator.class, new ParentIntersectionOperator(FileTypeCategory.Alignment), null),
+			bundleContext.registerService(Operator.class, new ParentIntersectionOperator(FileTypeCategory.ProbeSet), null),
+			bundleContext.registerService(Operator.class, new ParentUnionOperator(FileTypeCategory.Annotation), null),
+			bundleContext.registerService(Operator.class, new ParentUnionOperator(FileTypeCategory.Alignment), null),
+			bundleContext.registerService(Operator.class, new ParentUnionOperator(FileTypeCategory.ProbeSet), null)
 		};
     }
 

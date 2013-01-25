@@ -13,6 +13,9 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	@Override
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
+			bundleContext.registerService(Operator.class, new ParentDepthOperator(FileTypeCategory.Annotation), null),
+			bundleContext.registerService(Operator.class, new ParentDepthOperator(FileTypeCategory.Alignment), null),
+			bundleContext.registerService(Operator.class, new ParentDepthOperator(FileTypeCategory.ProbeSet), null),
 			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.Annotation), null),
 			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.Alignment), null),
 			bundleContext.registerService(Operator.class, new ParentNotOperator(FileTypeCategory.ProbeSet), null),

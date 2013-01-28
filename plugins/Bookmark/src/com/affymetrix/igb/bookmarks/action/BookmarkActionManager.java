@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import javax.swing.JSeparator;
 import javax.swing.event.MenuListener;
 
-public final class BookmarkActionManager implements ActionListener, MenuListener {
+public final class BookmarkActionManager implements ActionListener {
 
 	private final static boolean DEBUG = false;
 	private final JRPMenu bookmark_menu;
@@ -47,7 +47,33 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 	private static BookmarkActionManager instance;
 	private static final Logger ourLogger
 		  = Logger.getLogger("com.affymetrix.igb.bookmarks");
+	MenuListener menuListener = new MenuListener() {
+		/**
+		 * Does nothing.
+		 */
+		@Override
+		public void menuCanceled(javax.swing.event.MenuEvent e) {
+		}
 
+		/**
+		 * Does nothing.
+		 */
+		@Override
+		public void menuDeselected(javax.swing.event.MenuEvent e) {
+		}
+
+		/**
+		 * Every time the menu is selected (thus opened) re-build the bookmark
+		 * menu items. Thus if the bookmarks have been changed by the bookmark
+		 * manager, we will adapt to that now. Slow? Yes. Too slow? Not really.
+		 */
+		@Override
+		public void menuSelected(javax.swing.event.MenuEvent e) {
+			if (e.getSource() == bookmark_menu) {
+				rebuildMenus();
+			}
+		}
+	};
 	public static void init(IGBService _igbService, JRPMenu bm_menu) {
 		instance = new BookmarkActionManager(_igbService, bm_menu);
 	}
@@ -70,6 +96,7 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 
 		addDefaultBookmarks();
 		buildMenus(main_bm_menu, main_bookmark_list);
+		bookmark_menu.addMenuListener(menuListener);
 	}
 
 	public void setBmv(BookmarkManagerViewGUI bmvGUI) {
@@ -276,32 +303,6 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		component_hash.put(s, jsep);
 		parent_menu.add(jsep);
 		return jsep;
-	}
-
-	/**
-	 * Does nothing.
-	 */
-	@Override
-	public void menuCanceled(javax.swing.event.MenuEvent e) {
-	}
-
-	/**
-	 * Does nothing.
-	 */
-	@Override
-	public void menuDeselected(javax.swing.event.MenuEvent e) {
-	}
-
-	/**
-	 * Every time the menu is selected (thus opened) re-build the bookmark menu
-	 * items. Thus if the bookmarks have been changed by the bookmark manager,
-	 * we will adapt to that now. Slow? Yes. Too slow? Not really.
-	 */
-	@Override
-	public void menuSelected(javax.swing.event.MenuEvent e) {
-		if (e.getSource() == bookmark_menu) {
-			rebuildMenus();
-		}
 	}
 
 	public void rebuildMenus() {

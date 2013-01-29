@@ -28,7 +28,7 @@ public class BookmarkEditor {
 	private static JDialog dialog;
 	public static final boolean defaultUseDefaultName = true;
 	public static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
-
+	
 	/**
 	 * Initialize all the components in the panel by passed bookmark.
 	 *
@@ -60,6 +60,11 @@ public class BookmarkEditor {
 			scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE,
 					JOptionPane.CANCEL_OPTION, null, null);
+			op.addPropertyChangeListener("value", new java.beans.PropertyChangeListener() {
+				public void propertyChange(java.beans.PropertyChangeEvent evt) {
+					addBookmark();
+				}
+			});
 		}
 	}
 
@@ -74,8 +79,9 @@ public class BookmarkEditor {
 					positionOnlyB, positionDataB});
 		dialog = op.createDialog("Enter Bookmark Information...");
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-		dialog.setAlwaysOnTop(true);
 		dialog.setResizable(true);
+		dialog.setAlwaysOnTop(false);
+		dialog.setModal(false);
 		dialog.setVisible(true);
 		dialog.pack();
 	}
@@ -93,10 +99,12 @@ public class BookmarkEditor {
 	 */
 	public static void run() {
 		initDialog();
-
+	}
+	
+	private static void addBookmark() {
 		int result = JOptionPane.CANCEL_OPTION;
 
-		if (op.getValue() != null) {
+		if (op.getValue() != null && op.getValue() instanceof Integer) {
 			result = (Integer) op.getValue();
 		}
 
@@ -124,6 +132,5 @@ public class BookmarkEditor {
 			bookmark.setComment(comment);
 			AddBookmarkAction.addBookmark(bookmark);
 		}
-
 	}
 }

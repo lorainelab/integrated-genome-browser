@@ -311,16 +311,18 @@ public abstract class SeqUtils {
 
 	public static MutableSeqSymmetry intersection(List<SeqSymmetry> syms, BioSeq seq) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
-		if (syms.size() == 1){	
+		if(syms.isEmpty()){
+			//Do Nothing.
+		} else if (syms.size() == 1){	
 			for(int i=0; i<syms.get(0).getChildCount(); i++){
 				resultSym.addChild(syms.get(0).getChild(i));
 			}
 			for(int i=0; i<syms.get(0).getSpanCount(); i++){
 				resultSym.addSpan(syms.get(0).getSpan(i));
 			}
-		}else{
+		} else {
 			MutableSeqSymmetry tempSym = intersection(syms.get(0), syms.get(1), seq);
-			for(int i=0; i<syms.size(); i++){
+			for(int i=2; i<syms.size(); i++){
 				intersection(syms.get(i), tempSym, resultSym, seq);
 			}
 		}

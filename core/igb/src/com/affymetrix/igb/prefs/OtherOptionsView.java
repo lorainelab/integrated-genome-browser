@@ -335,7 +335,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         );
 
         if(displayOption.isSelected())
-        com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);
+        com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
         else
         com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
         displayOption.addItemListener(new java.awt.event.ItemListener() {
@@ -457,7 +457,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                     .add(displayOption))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -484,7 +484,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 
 	private void displayOptionStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_displayOptionStateChanged
 		if(displayOption.isSelected())
-			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.status_bar);
+			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
 		else
 			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
 	}//GEN-LAST:event_displayOptionStateChanged

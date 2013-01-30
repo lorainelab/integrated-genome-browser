@@ -1,10 +1,13 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.view.StatusBar;
 
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -30,10 +33,11 @@ public abstract class Application {
 	Timer timer = new Timer(delay*1000, update_status_bar);
 	
 	static Application singleton = null;
-	public final static StatusBar status_bar = new StatusBar();
+	public final StatusBar status_bar;
 	
 	public Application() {
 		singleton = this;
+		status_bar = new StatusBar();
 	}
 
 	public static Application getSingleton() {
@@ -100,6 +104,10 @@ public abstract class Application {
 	}
 
 	public abstract void setSelField(Map<String, Object> properties, String s);
+	
+	public void showError(String title, String message, List<GenericAction> actions, Level level) {
+		status_bar.showError(title, message, actions, level);
+	}
 	
 	/**
 	 * Shows a panel asking for the user to confirm something.

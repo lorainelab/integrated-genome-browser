@@ -33,6 +33,7 @@ public abstract class OptionChooser extends javax.swing.JPanel {
         speciesInfo = new javax.swing.JLabel();
         versionInfo = new javax.swing.JLabel();
         info = new javax.swing.JLabel();
+        loadAsSeqCB = new javax.swing.JCheckBox();
 
         speciesCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -56,6 +57,14 @@ public abstract class OptionChooser extends javax.swing.JPanel {
 
         info.setText("Choose species and genome from menus below or click on menu and type in custom values");
 
+        loadAsSeqCB.setText("Open as reference sequence");
+        loadAsSeqCB.setEnabled(false);
+        loadAsSeqCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadAsSeqCBActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -70,12 +79,18 @@ public abstract class OptionChooser extends javax.swing.JPanel {
                 .add(0, 0, 0)
                 .add(versionInfo))
             .add(layout.createSequentialGroup()
-                .add(10, 10, 10)
-                .add(info))
+                .add(3, 3, 3)
+                .add(loadAsSeqCB))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(8, 8, 8)
+                .add(info)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .add(loadAsSeqCB)
+                .add(5, 5, 5)
                 .add(info)
                 .add(5, 5, 5)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -95,14 +110,23 @@ public abstract class OptionChooser extends javax.swing.JPanel {
         versionCBActionPerformedA(evt);
     }//GEN-LAST:event_versionCBActionPerformed
 
+	private void loadAsSeqCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadAsSeqCBActionPerformed
+		loadAsSeqCBActionPerformedA(evt);
+	}//GEN-LAST:event_loadAsSeqCBActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel info;
+    private javax.swing.JCheckBox loadAsSeqCB;
     private javax.swing.JComboBox speciesCB;
     private javax.swing.JLabel speciesInfo;
     private javax.swing.JComboBox versionCB;
     private javax.swing.JLabel versionInfo;
     // End of variables declaration//GEN-END:variables
 
+	public javax.swing.JCheckBox getLoadAsSeqCB() {
+		return loadAsSeqCB;
+	}
+	
 	public javax.swing.JComboBox getSpeciesCB() {
 		return speciesCB;
 	}
@@ -114,4 +138,6 @@ public abstract class OptionChooser extends javax.swing.JPanel {
 	protected abstract void speciesCBActionPerformedA(java.awt.event.ActionEvent evt);
 
 	protected abstract void versionCBActionPerformedA(java.awt.event.ActionEvent evt);
+	
+	protected abstract void loadAsSeqCBActionPerformedA(java.awt.event.ActionEvent evt);
 }

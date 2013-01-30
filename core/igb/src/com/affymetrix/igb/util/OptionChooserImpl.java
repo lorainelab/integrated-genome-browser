@@ -34,6 +34,11 @@ public class OptionChooserImpl extends OptionChooser{
 			getVersionCB().setEditable(false);
 		}
 	}
+	
+	@Override
+	protected void loadAsSeqCBActionPerformedA(java.awt.event.ActionEvent evt) {
+		// Do nothing
+	}
 
 	public void refreshSpeciesList(){
 		getSpeciesCB().removeAllItems();

@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.StatusAlert;
 
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -42,6 +43,7 @@ import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.util.UpdateStatusAlert;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
@@ -104,7 +106,7 @@ public class Activator implements BundleActivator {
 				PreferenceUtils.printAllPreferences();
     		}
 			if (CommonUtils.getInstance().getArg("-updateAvailable", args) != null) {
-				CommonUtils.getInstance().setUpdateAvailable(true);
+				bundleContext.registerService(StatusAlert.class, new UpdateStatusAlert(), null);
     		}
 			String offline = CommonUtils.getInstance().getArg("-offline", args);
 			if (offline != null) {
@@ -195,6 +197,7 @@ public class Activator implements BundleActivator {
 		addPrefEditorComponentListener();
 		initSeqMapViewActions();
 		addShortcuts();
+		addStatusAlertListener();
 	}
 
 	private void addShortcuts() {
@@ -533,6 +536,22 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(ScriptProcessor scriptProcessor) {	
 					ScriptProcessorHolder.getInstance().removeScriptProcessor(scriptProcessor);
+				}
+			}
+		);
+	}
+	
+	private void addStatusAlertListener(){
+		ExtensionPointHandler<StatusAlert> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, StatusAlert.class);
+		popupExtensionPoint.addListener(
+			new ExtensionPointListener<StatusAlert>() {
+				@Override
+				public void addService(StatusAlert alert) {
+					Application.getSingleton().addStatusAlert(alert);
+				}
+				@Override
+				public void removeService(StatusAlert alert) {	
+					Application.getSingleton().removeStatusAlert(alert);
 				}
 			}
 		);

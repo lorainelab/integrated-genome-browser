@@ -59,7 +59,7 @@ public class MainMenuUtil {
 		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_loadFile", LoadFileAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_loadURL", LoadURLAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_loadRefTrack", LoadRefTrackAction.getAction()));
+		//MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_loadRefTrack", LoadRefTrackAction.getAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_print", PrintAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_printFrame", PrintFrameAction.getAction()));

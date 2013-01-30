@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -213,4 +214,6 @@ public interface IGBService {
 	public Component determineSlicedComponent();
 	public void setComponent(Component c);
 	public void exportScreenshot(File f, String ext, boolean isScript) throws IOException;
+	public void addStatusAlert(StatusAlert alert);
+	public void removeStatusAlert(StatusAlert alert);
 }

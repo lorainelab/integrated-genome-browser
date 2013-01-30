@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -526,5 +527,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void exportScreenshot (File f, String ext, boolean isScript) throws IOException {
 		ExportDialog.exportScreenshot(f, ext, isScript);
+	}
+	
+	public void addStatusAlert(StatusAlert alert){
+		Application.getSingleton().addStatusAlert(alert);
+	}
+	
+	public void removeStatusAlert(StatusAlert alert){
+		Application.getSingleton().removeStatusAlert(alert);
 	}
 }

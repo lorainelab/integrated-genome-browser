@@ -1,8 +1,6 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.view.StatusBar;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,11 +12,23 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.igb.view.StatusBar;
+
 public abstract class Application {
 
 	public final static boolean DEBUG_EVENTS = false;
 	private static final int delay = 2; //delay in seconds
 	
+	private final LinkedList<StatusAlert> statusAlertList = new LinkedList<StatusAlert>(); // list of status alert messages.
+	private ActionListener status_alert_listener = new ActionListener(){
+		public void actionPerformed(ActionEvent e) {
+			if(e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))){
+				removeStatusAlert((StatusAlert) e.getSource());
+			}
+		}
+	};
 	private final LinkedList<String> progressStringList = new LinkedList<String>(); // list of progress bar messages.
 	ActionListener update_status_bar = new ActionListener() {
 
@@ -37,7 +47,7 @@ public abstract class Application {
 	
 	public Application() {
 		singleton = this;
-		status_bar = new StatusBar();
+		status_bar = new StatusBar(status_alert_listener);
 	}
 
 	public static Application getSingleton() {
@@ -73,7 +83,7 @@ public abstract class Application {
 			}
 		}
 	}
-
+	
 	/**
 	 * Set the status text, and show a little progress bar
 	 * so that the application doesn't look locked up.
@@ -103,6 +113,29 @@ public abstract class Application {
 		}
 	}
 
+	public final void addStatusAlert(final StatusAlert s) {
+		synchronized (statusAlertList) {
+			statusAlertList.addFirst(s);
+		}
+		setStatusAlert(s);
+	}
+
+	public final void removeStatusAlert(final StatusAlert s) {
+		synchronized (statusAlertList) {
+			statusAlertList.remove(s);
+		}
+		
+		if (statusAlertList.isEmpty()) {
+			setStatusAlert(null);
+		} else {
+			setStatusAlert(statusAlertList.pop());
+		}
+	}
+	
+	private synchronized void setStatusAlert(StatusAlert s) {
+		status_bar.setStatusAlert(s);
+	}
+	
 	public abstract void setSelField(Map<String, Object> properties, String s);
 	
 	public void showError(String title, String message, List<GenericAction> actions, Level level) {

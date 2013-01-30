@@ -1,36 +1,35 @@
 package com.affymetrix.igb.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
 import com.jidesoft.status.MemoryStatusBarItem;
 import com.affymetrix.common.CommonUtils;
+
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.util.DisplaysError;
+import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.action.ThreadHandlerAction;
-import java.awt.Color;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Level;
 
 public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
 	
 //	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
-	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop_hex.gif");
 	private static final ImageIcon warningIcon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 	private static final ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.gif");
@@ -39,18 +38,16 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private final JLabel status_ta, messageIcon;
 	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel;
-	private final JButton updateAvailable;
+	private final JButton statusAlertButton;
 	private final JPanel progressPanel;
 	private final JProgressBar progressBar;
 //	private final JPanel selectionPanel;
 //	private final JLabel selLabel;
 //	private final JTextField selField;
-	
-		
-	public StatusBar() {
+	private StatusAlert alert;
+			
+	public StatusBar(final ActionListener statusListener) {
 		String tt_status = "Shows Selected Item, or other Message";
-		final String updateMessage = "You might not be on latest revision.";
-		final String update = "Update";
 //		selLabel = new JLabel(" Selection Info: ");
 //		selField = new JTextField(20);
 //		selField.setEditable(false);
@@ -62,9 +59,8 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		progressBar = new JProgressBar();
 		memory_item = new MemoryStatusBarItem();
 		memory_item.setShowMaxMemory(true);
-		updateAvailable = new JButton(alertIcon);
-		updateAvailable.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
-		updateAvailable.setVisible(CommonUtils.getInstance().getUpdateAvailable());
+		statusAlertButton = new JButton();
+		statusAlertButton.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel = new JRPButton("StatusBar_mainCancel", CancelAllAction.getAction());
 		messageIcon = new JLabel();
 		messageIcon.setVisible(false);
@@ -83,6 +79,13 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 			}
 		);
 		
+		statusAlertButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int ret = alert.actionPerformed();
+				statusListener.actionPerformed(new ActionEvent(alert, e.getID(), ""+ret));
+			}
+		});
+			
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 //		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
@@ -102,13 +105,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		layout.setAutoCreateContainerGaps(false);
 		layout.setAutoCreateGaps(true);
 		layout.setHonorsVisibility(false);
-
-		updateAvailable.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, updateMessage, update, JOptionPane.INFORMATION_MESSAGE);
-				updateAvailable.setVisible(false);
-			}
-		});
 				
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
@@ -119,7 +115,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item, 1, 200, 200)
-				.addComponent(updateAvailable));
+				.addComponent(statusAlertButton));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
@@ -129,7 +125,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item)
-				.addComponent(updateAvailable));
+				.addComponent(statusAlertButton));
 		
 	}
 
@@ -151,6 +147,17 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 			s = "";
 		}
 //		selField.setText(s);
+	}
+	
+	public final void setStatusAlert(StatusAlert alert){
+		this.alert = alert;
+		if(alert != null){
+			statusAlertButton.setIcon(alert.getIcon());
+			statusAlertButton.setToolTipText(alert.getToolTip());
+			statusAlertButton.setVisible(true);
+		}else{
+			statusAlertButton.setVisible(false);
+		}
 	}
 	
 	public void displayProgress(boolean b) {

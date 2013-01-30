@@ -22,6 +22,9 @@ import javax.swing.JOptionPane;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
@@ -30,6 +33,11 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JFileChooser;
 
 public abstract class OpenURIAction extends GenericAction {
 
@@ -41,6 +49,7 @@ public abstract class OpenURIAction extends GenericAction {
 	protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected final IGBService igbService;
 	protected MergeOptionChooser chooser = null;
+	protected Set<String> seq_ref_endings = new HashSet<String>();
 	
 	public OpenURIAction(IGBService _igbService, String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup){
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
@@ -69,6 +78,37 @@ public abstract class OpenURIAction extends GenericAction {
 	protected MergeOptionChooser getFileChooser(String id) {
 		chooser = new MergeOptionChooser(id);
 		chooser.setMultiSelectionEnabled(true);
+	
+		// Build the set for sequence file
+		seq_ref_endings = new HashSet<String>();
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(FileTypeCategory.Sequence);
+		for (String name : nameToExtensionMap.keySet()) {
+			seq_ref_endings.addAll(nameToExtensionMap.get(name));
+		}
+		
+		chooser.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
+					File[] files = chooser.getSelectedFiles();
+					if(files.length == 1) {
+						File file = files[0];
+						if(file!=null) {
+							String fileExtension = SymLoader.getExtension(file.getName());
+							boolean enableLoadAsSeqCB = seq_ref_endings.contains(fileExtension);
+							chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
+							
+							if(!enableLoadAsSeqCB) {
+								chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
+							}
+						}
+					} else if(files.length > 1) {
+						chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
+						chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
+					}
+					
+				}
+			}
+		});
 		
 		addSupportedFiles();
 		

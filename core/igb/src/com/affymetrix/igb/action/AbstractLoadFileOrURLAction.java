@@ -41,7 +41,7 @@ public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
 	
 	@Override
 	protected boolean loadSequenceAsTrack() {
-		return true;
+		return !chooser.optionChooser.getLoadAsSeqCB().isSelected();
 	}
 	
 	protected abstract String getID();

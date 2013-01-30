@@ -12,12 +12,16 @@ import java.util.logging.Level;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.IGB;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 /**
  *
  * @author jnicol
@@ -36,6 +40,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 
 	private final JFrame gviewerFrame;
 	private JDialog dialog = null;
+	private JTextField urlTextField = new JTextField();
 
 	private LoadURLAction() {
 		super(BUNDLE.getString("openURL"), null,
@@ -51,17 +56,36 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 		super.actionPerformed(e);
 		loadURL();
 	}
-
+	
 	private void loadURL() {
 		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, 
 				JOptionPane.OK_CANCEL_OPTION);
-		pane.setWantsInput(true);
-		String clipBoardContent = GeneralUtils.getClipboard();
-		if(LocalUrlCacher.isURL(clipBoardContent)){
-			pane.setInitialSelectionValue(clipBoardContent);
-		}
 		chooser = getFileChooser(getID());
 		chooser.optionChooser.refreshSpeciesList();
+		String clipBoardContent = GeneralUtils.getClipboard();
+		if(LocalUrlCacher.isURL(clipBoardContent)){
+			urlTextField.setText(clipBoardContent);
+			checkLoadSeqCB(false, clipBoardContent);
+		}
+		
+        urlTextField.getDocument().addDocumentListener(new DocumentListener(){
+            public void changedUpdate(DocumentEvent de) {
+				checkLoadSeqCB(true, urlTextField.getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+				checkLoadSeqCB(true, urlTextField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+				checkLoadSeqCB(true, urlTextField.getText());
+            }
+        });
+		
+		pane.setMessage(new Object[]{"Enter URL", urlTextField});
+		
 		dialog = pane.createDialog(gviewerFrame, BUNDLE.getString("openURL"));
 		dialog.setModal(true);
 		dialog.getContentPane().add(chooser.optionChooser, BorderLayout.SOUTH);
@@ -69,10 +93,17 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 		dialog.setLocationRelativeTo(gviewerFrame);
 		dialog.setVisible(true);
 		
-		String urlStr = (String)pane.getInputValue();
-		if(urlStr == null || JOptionPane.UNINITIALIZED_VALUE.equals(urlStr)){
+		String urlStr = urlTextField.getText();
+		
+		int result = JOptionPane.CANCEL_OPTION;
+		if (pane.getValue() != null && pane.getValue() instanceof Integer) {
+			result = (Integer) pane.getValue();
+		}
+		
+		if(urlStr == null && urlStr.length() > 0 || result!=JOptionPane.OK_OPTION){
 			return;
 		}
+		
 		urlStr = urlStr.trim();
 		URL url;
 		URI uri;
@@ -116,5 +147,19 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	protected String getID() {
 		return "loadURL";
 	}
-
+	
+	private void checkLoadSeqCB(boolean checkURL, String fileName) {
+		if(checkURL && LocalUrlCacher.isURL(fileName)) {
+			checkLoadSeqCB(fileName);
+		} else {
+			checkLoadSeqCB(fileName);
+		}
+	}
+	
+	private void checkLoadSeqCB(String fileName) {
+		String fileExtension = SymLoader.getExtension(fileName);
+		boolean enableLoadAsSeqCB = seq_ref_endings.contains(fileExtension);
+		chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
+		if(!enableLoadAsSeqCB) chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
+	}
 }

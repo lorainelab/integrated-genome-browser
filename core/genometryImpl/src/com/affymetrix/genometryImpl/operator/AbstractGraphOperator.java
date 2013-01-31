@@ -70,9 +70,13 @@ public abstract class AbstractGraphOperator implements Operator {
 		// and applying the operation on all the graphs
 		boolean lastWidth0 = false;
 		int spanEndX = 0;
-		// This condition should be used avoid adding Integer max value at the end.
-//		while(true) {
-		while (spanBeginX < Integer.MAX_VALUE) {
+		boolean no_more_coords;
+		// For a graph with width. When program finds a point with same ending as current spanBeginX. Set this variable.
+		// When this variable is set, a new spanBeginX should be found otherwise spanEndX is used.
+		boolean set_spanBeginX;
+		while (true) {
+			no_more_coords = true;
+			set_spanBeginX = true;
 			// find the next x value, the minimum of all x, x + w that is greater than the current x
 			spanEndX = Integer.MAX_VALUE;
 			for (int i = 0; i < symList.size(); i++) {
@@ -80,24 +84,30 @@ public abstract class AbstractGraphOperator implements Operator {
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
 					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
-					if (startX == endX && startX < spanEndX) { // widthless (width == 0) coordinate
+					if (startX == endX && startX <= spanEndX) { // widthless (width == 0) coordinate
 						spanEndX = startX;
-					} else if (startX > spanBeginX && startX < spanEndX) {
+						set_spanBeginX = false;
+					} else if (startX > spanBeginX && startX <= spanEndX) {
 						spanEndX = startX;
-					} else if (endX > spanBeginX && endX < spanEndX) {
+						set_spanBeginX = false;
+					} else if (endX > spanBeginX && endX <= spanEndX) {
 						spanEndX = endX;
-					}
+						set_spanBeginX = false;
+					} 
+					//If program not enter this condition then there are not more x coords.
+					no_more_coords = false;
 				}
 			}
+			
+			// No more x coords present i.e. index[x] == xCoords.get(y).size()
+			if(no_more_coords){
+				break;
+			}
+			
 			if (lastWidth0) {
 				spanBeginX = spanEndX;
 			}
-			
-			// This condition should be used avoid adding Integer max value at the end.
-//			if(spanBeginX >= Integer.MAX_VALUE){
-//				break;
-//			}
-			
+						
 			// now that we have currentX and nextX (the start and end of the span)
 			// we get each y coord as an operand
 			List<Float> operands = new ArrayList<Float>();
@@ -132,7 +142,17 @@ public abstract class AbstractGraphOperator implements Operator {
 			}
 			// we are done for this span, move the end of span to the beginning
 			lastWidth0 = spanEndX == spanBeginX;
-			spanBeginX = spanEndX;
+			if (set_spanBeginX) {
+				spanBeginX = Integer.MAX_VALUE;
+				for (int i = 0; i < symList.size(); i++) {
+					int graphIndex = index[i];
+					if (graphIndex < xCoords.get(i).size()) {
+						spanBeginX = Math.min(spanBeginX, xCoords.get(i).get(graphIndex));
+					}
+				}
+			}else{
+				spanBeginX = spanEndX;
+			}
 		}
 		// get the display name for the result graph
 		String symbol = getSymbol();

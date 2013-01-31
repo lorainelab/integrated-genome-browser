@@ -70,6 +70,8 @@ public abstract class AbstractGraphOperator implements Operator {
 		// and applying the operation on all the graphs
 		boolean lastWidth0 = false;
 		int spanEndX = 0;
+		// This condition should be used avoid adding Integer max value at the end.
+//		while(true) {
 		while (spanBeginX < Integer.MAX_VALUE) {
 			// find the next x value, the minimum of all x, x + w that is greater than the current x
 			spanEndX = Integer.MAX_VALUE;
@@ -90,6 +92,12 @@ public abstract class AbstractGraphOperator implements Operator {
 			if (lastWidth0) {
 				spanBeginX = spanEndX;
 			}
+			
+			// This condition should be used avoid adding Integer max value at the end.
+//			if(spanBeginX >= Integer.MAX_VALUE){
+//				break;
+//			}
+			
 			// now that we have currentX and nextX (the start and end of the span)
 			// we get each y coord as an operand
 			List<Float> operands = new ArrayList<Float>();

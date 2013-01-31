@@ -192,30 +192,19 @@ public class Delegate extends QuickLoadSymLoader {
 		if (results.get(0) instanceof GraphSym) {
 			GraphSym graphSym = (GraphSym)results.get(0);
 			if (results.size() == 1 && graphSym.isSpecialGraph()) {
-				BioSeq seq = graphSym.getGraphSeq();
-				
-				// Remove previous graph
-				SeqSymmetry previousGraph = seq.getAnnotation(uri.toString());
-				if(previousGraph != null){
-					seq.removeAnnotation(previousGraph);
-				}
-				
-				// Add full length span
-				graphSym.removeSpan(graphSym.getSpan(seq));
-				graphSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-				
-				seq.addAnnotation(graphSym);
-				feature.addMethod(uri.toString());
-				graphSym.getGraphName(); //Temp fix to setGraphTier true in TrackStyle
+				addWholeGraph(graphSym, feature);
 			}
 			else {
 				// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
 				for(SeqSymmetry feat : results) {
 					//grafs.add((GraphSym)feat);
 					if (feat instanceof GraphSym) {
-						GraphSymUtils.addChildGraph((GraphSym) feat, uri.toString(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
-						feature.addMethod(uri.toString());
+						addWholeGraph((GraphSym)feat, feature);
 					}
+//					if (feat instanceof GraphSym) {
+//						GraphSymUtils.addChildGraph((GraphSym) feat, uri.toString(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+//						feature.addMethod(uri.toString());
+//					}
 				}
 			}
 			
@@ -236,6 +225,24 @@ public class Delegate extends QuickLoadSymLoader {
 		
 		feature.addMethod(uri.toString());
 		return results;
+	}
+
+	private void addWholeGraph(GraphSym graphSym, GenericFeature feature) {
+		BioSeq seq = graphSym.getGraphSeq();
+		
+		// Remove previous graph
+		SeqSymmetry previousGraph = seq.getAnnotation(uri.toString());
+		if(previousGraph != null){
+			seq.removeAnnotation(previousGraph);
+		}
+		
+		// Add full length span
+		graphSym.removeSpan(graphSym.getSpan(seq));
+		graphSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+		
+		seq.addAnnotation(graphSym);
+		feature.addMethod(uri.toString());
+		graphSym.getGraphName(); //Temp fix to setGraphTier true in TrackStyle
 	}
 	
 	public static class DelegateParent{

@@ -321,10 +321,15 @@ public abstract class SeqUtils {
 				resultSym.addSpan(syms.get(0).getSpan(i));
 			}
 		} else {
-			MutableSeqSymmetry tempSym = intersection(syms.get(0), syms.get(1), seq);
-			for(int i=2; i<syms.size(); i++){
-				intersection(syms.get(i), tempSym, resultSym, seq);
+			List<SeqSymmetry> intersections = new ArrayList<SeqSymmetry>();
+			int size = syms.size() - (syms.size()%2);
+			for(int i=0; i<size; i+=2){
+				intersections.add(intersection(syms.get(i), syms.get(i+1), seq));
 			}
+			if(syms.size()%2 == 1){
+				intersections.add(syms.get(syms.size()-1));
+			}
+			return intersection(intersections, seq);
 		}
 		
 		return resultSym;

@@ -276,11 +276,15 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 					if (!(child instanceof TransientGlyph) || drawTransients()) {
 						if (child.isOverlapped() && this.tierType == TierType.ANNOTATION) {
 							if (child.getRowNumber() < max_depth + MAX_CHILD_IN_SLOP_ROW) {
-								Graphics2D g = view.getGraphics();
-								Composite dac = g.getComposite();
-								g.setComposite(ac);
-								child.drawTraversal(view);
-								g.setComposite(dac);
+								if (!style.getCollapsed()) {
+									Graphics2D g = view.getGraphics();
+									Composite dac = g.getComposite();
+									g.setComposite(ac);
+									child.drawTraversal(view);
+									g.setComposite(dac);
+								} else {
+									child.drawTraversal(view);
+								}
 							}
 						} else {
 							child.drawTraversal(view);

@@ -51,7 +51,9 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 					timer.schedule(new TimerTask() {
 						@Override
 						public void run() {
-							showSurvey(survey);
+							if(!showSurvey(survey)){
+								igbService.addStatusAlert(new SurveyStatusAlert(survey));
+							}
 						}
 					}, 10000);
 					

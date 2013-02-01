@@ -7,14 +7,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import static com.affymetrix.igb.survey.ShowSurvey.*;
 
 /**
  *
@@ -23,7 +25,7 @@ import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 public class Activator extends ServiceRegistrar implements BundleActivator {
 
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(final IGBService igbService) throws Exception {
 		ResourceBundle BUNDLE = ResourceBundle.getBundle("survey");
 		
 		InputStream inputStream = null;
@@ -44,7 +46,15 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 				if (today.compareTo(survey.getStart()) >= 0 && 
 					today.compareTo(survey.getEnd()) < 0  && 
 					!PreferenceUtils.getBooleanParam(survey.getId(), false)) {
-					ShowSurvey.show(survey);
+					
+					Timer timer = new Timer();
+					timer.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							showSurvey(survey);
+						}
+					}, 10000);
+					
 					break;
 				}
 			}

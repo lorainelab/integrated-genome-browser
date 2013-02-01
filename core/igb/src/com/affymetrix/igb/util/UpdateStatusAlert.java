@@ -10,24 +10,20 @@ import javax.swing.JOptionPane;
  * @author hiralv
  */
 public class UpdateStatusAlert implements StatusAlert{
-	private static final String UPDATEMESSAGE = "You might not be on latest revision.";
-	private static final String UPDATEAVAILABLE = "Update avilable";
-	private final Icon icon;
-	
-	public UpdateStatusAlert(){
-		icon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
-	}
+	private static final String TOOLTIP = "You might not be on latest revision.";
+	private static final String DISPLAYMESSAGE = "Update avilable";
+	private static final String ICONPATH = "16x16/actions/warning.png";
 	
 	public Icon getIcon() {
-		return icon;
+		return CommonUtils.getInstance().getIcon(ICONPATH);
 	}
 
 	public String getDisplayMessage() {
-		return UPDATEAVAILABLE;
+		return DISPLAYMESSAGE;
 	}
 
 	public String getToolTip() {
-		return UPDATEMESSAGE;
+		return TOOLTIP;
 	}
 
 	public int actionPerformed() {

@@ -10,8 +10,8 @@ import javax.swing.JOptionPane;
  * @author hiralv
  */
 public class UpdateStatusAlert implements StatusAlert{
-	private static final String TOOLTIP = "You might not be on latest revision.";
-	private static final String DISPLAYMESSAGE = "Update avilable";
+	private static final String UPDATEMESSAGE = "You might not be on latest revision.";
+	private static final String UPDATEAVAILABLE = "Update avilable";
 	private static final String ICONPATH = "16x16/actions/warning.png";
 	
 	public Icon getIcon() {
@@ -19,11 +19,11 @@ public class UpdateStatusAlert implements StatusAlert{
 	}
 
 	public String getDisplayMessage() {
-		return DISPLAYMESSAGE;
+		return UPDATEAVAILABLE;
 	}
 
 	public String getToolTip() {
-		return TOOLTIP;
+		return UPDATEMESSAGE;
 	}
 
 	public int actionPerformed() {

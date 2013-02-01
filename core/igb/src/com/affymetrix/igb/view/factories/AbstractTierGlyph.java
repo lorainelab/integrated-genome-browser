@@ -26,6 +26,8 @@ import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
+import com.affymetrix.igb.shared.GraphCollapsedPacker;
+import com.affymetrix.igb.shared.GraphFasterExpandPacker;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -74,6 +76,8 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	private double spacer = 2;
 	protected FasterExpandPacker expand_packer = new FasterExpandPacker();
 	protected CollapsePacker collapse_packer = new CollapsePacker();
+	protected GraphFasterExpandPacker graph_expand_packer = new GraphFasterExpandPacker();
+	protected GraphCollapsedPacker graph_collapse_packer = new GraphCollapsedPacker();
 	protected TierType tierType;
 		
 	public AbstractTierGlyph(ITrackStyleExtended style){
@@ -196,10 +200,20 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 
 		//If any visibilty bug occurs, fix here. -HV 22/03/2012
 		setVisibility(style.getShow());
-		if (style.getCollapsed() || this.tierType == TierType.SEQUENCE) {
+		if(this.tierType == TierType.GRAPH || this.style.isGraphTier()){
+			if (style.getCollapsed()) {
+				setPacker(graph_collapse_packer);
+			} else {
+				setPacker(graph_expand_packer);
+			}
+		} else if (this.tierType == TierType.SEQUENCE) {
 			setPacker(collapse_packer);
 		} else {
-			setPacker(expand_packer);
+			if (style.getCollapsed()) {
+				setPacker(collapse_packer);
+			} else {
+				setPacker(expand_packer);
+			}
 		}
 		setMaxExpandDepth(style.getMaxDepth());
 	}

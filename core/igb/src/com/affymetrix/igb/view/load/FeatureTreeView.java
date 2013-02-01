@@ -90,7 +90,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	private final JTree tree;
 	private final JRPButton serverPrefsB;
 	public static final String path_separator = "/";
-
+	private static ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
+	
 	public FeatureTreeView() {
 		this.setLayout(new BorderLayout());
 
@@ -281,7 +282,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 * @param featureName
 	 */
 	private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
-		if (!featureName.contains(path_separator)) {
+		if (!featureName.contains(path_separator) || feature.gVersion.gServer.serverType == ServerTypeI.LocalFiles) {
 			//This code adds a leaf
 			TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
@@ -641,10 +642,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			FeatureCheckBox leafCheckBox = getLeafCheckBox(gFeature);
 			String featureName = gFeature.featureName;
-			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
+			String featureText = gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles ? 
+					featureName.substring(featureName.lastIndexOf(path_separator) + 1) : featureName;
 			featureText = "<html>" + featureText;
 			if (gFeature.getFriendlyURL() != null) {
-				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
 				featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
 			}
 

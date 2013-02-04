@@ -46,7 +46,21 @@ public class LoadSessionAction extends GenericAction {
 				File f = chooser.getSelectedFile();
 				PreferenceUtils.importPreferences(f);
 				igbService.loadState();
-				String url = URLDecoder.decode(PreferenceUtils.getSessionPrefsNode().get("bookmark", ""), Bookmark.ENC);
+				String bk_url = PreferenceUtils.getSessionPrefsNode().get("bookmark", "");
+				if(bk_url.length() <= 0){
+					StringBuilder buffer = new StringBuilder();
+					int j=0;
+					while(true){
+						String sb_bk_url = PreferenceUtils.getSessionPrefsNode().get("bookmark"+j++, "");
+						if(sb_bk_url.length() <= 0){
+							bk_url = buffer.toString();
+							break;
+						} 
+						buffer.append(sb_bk_url);
+					}
+				}
+				
+				String url = URLDecoder.decode(bk_url, Bookmark.ENC);
 				if (url != null && url.trim().length() > 0) {
 					BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
 				}

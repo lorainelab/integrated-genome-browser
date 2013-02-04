@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URLEncoder;
+import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
 
@@ -48,10 +49,18 @@ public class SaveSessionAction extends GenericAction {
 				File f = chooser.getSelectedFile();
 				igbService.saveState();
 				Bookmark bookmark = BookmarkController.getCurrentBookmark(true,
-						igbService.getSeqMapView().getVisibleSpan());
+						igbService.getSeqMapView().getVisibleSpan()); 
 				if (bookmark != null) {
-					PreferenceUtils.getSessionPrefsNode().put("bookmark",
-							URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC));
+					String bk = URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC);
+					if(bk.length() < Preferences.MAX_VALUE_LENGTH){
+						PreferenceUtils.getSessionPrefsNode().put("bookmark", bk);
+					} else {
+						int j=0;
+						for(int i=0; i < bk.length(); i+=Preferences.MAX_VALUE_LENGTH){
+							String sb_bk = bk.substring(i, Math.min(bk.length(), i + Preferences.MAX_VALUE_LENGTH));
+							PreferenceUtils.getSessionPrefsNode().put("bookmark"+j++, sb_bk);
+						}
+					}
 				}
 				PreferenceUtils.exportPreferences(PreferenceUtils.getTopNode(), f);
 				PreferenceUtils.getSessionPrefsNode().removeNode();

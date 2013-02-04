@@ -219,6 +219,11 @@ public final class BookmarkUnibrowControlServlet {
 				}
 
 				if (loaddata) {
+					// TODO: Investigate edge case at max
+					if(seq.getMin() == start && seq.getMax() == end){
+						end = end - 1;
+					}
+					
 					GenericFeature[] gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
 
 					if (has_properties) {

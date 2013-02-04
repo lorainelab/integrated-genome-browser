@@ -15,16 +15,16 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel{
 	public TrackDefaultsPanel(){
 		super("Track Defaults",TrackDefaultView.getSingleton());	
 	}
+	
 	@Override
-	protected void enableSpecificComponents()
-	{
-		autoRefreshCheckBox.setVisible(false);
-		refreshButton.setVisible(false);
+	protected void enableSpecificComponents() {
 	}
+	
 	@Override
 	protected void deleteAndRestoreButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		((TrackDefaultView)tdv).deleteTrackDefaultButton();
 	}
+	
 	@Override
 	protected void selectAndAddButtonActionPerformed(java.awt.event.ActionEvent evt) {  
 		((TrackDefaultView)tdv).addTrackDefaultButton();

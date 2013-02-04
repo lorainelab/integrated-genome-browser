@@ -79,12 +79,9 @@ public final class KeyStrokesView implements ListSelectionListener,
 		table.getColumnModel().getColumn(ToolbarColumn).setMinWidth(70);
 		table.getColumnModel().getColumn(ToolbarColumn).setMaxWidth(70);
 		
-		table.getColumnModel().getColumn(ActionColumn).setPreferredWidth(150);
-		table.getColumnModel().getColumn(ActionColumn).setMinWidth(150);
+		table.getColumnModel().getColumn(ActionColumn).setPreferredWidth(215);
 		
-		table.getColumnModel().getColumn(KeyStrokeColumn).setPreferredWidth(100);
-		table.getColumnModel().getColumn(KeyStrokeColumn).setMinWidth(100);
-		table.getColumnModel().getColumn(KeyStrokeColumn).setMaxWidth(100);
+		table.getColumnModel().getColumn(KeyStrokeColumn).setPreferredWidth(35);
 
 		edit_panel = new KeyStrokeEditPanel();
 		edit_panel.setEnabled(false);
@@ -223,7 +220,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, logMsg);
 				}
 				rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
-				rows[i][KeyStrokeColumn] = keystroke_node.get(key, "");
+				rows[i][KeyStrokeColumn] = keystroke_node.get(key, "").toUpperCase();
 				rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
 				if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
 					rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;

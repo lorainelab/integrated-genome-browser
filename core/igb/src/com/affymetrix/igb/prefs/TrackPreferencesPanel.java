@@ -74,6 +74,8 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         negativeColorComboBox = tdv.negativeColorComboBox;
         show2TracksCheckBox = tdv.show2TracksCheckBox;
         jPanel1 = new javax.swing.JPanel();
+        refreshButton = tdv.refreshButton;
+        autoRefreshCheckBox = tdv.autoRefreshCheckBox;
         propertiesPanel = new javax.swing.JPanel();
         trackTypeNameLabel = new javax.swing.JLabel();
         trackNameTypeTextField = tracknametype;
@@ -232,15 +234,41 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        refreshButton = new javax.swing.JButton();
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonPressed(evt);
+            }
+        });
+
+        autoRefreshCheckBox.setVisible(false);
+        autoRefreshCheckBox.setText("Auto Refresh");
+        autoRefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoRefreshCheckBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 113, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(0, 0, Short.MAX_VALUE)
+                .add(autoRefreshCheckBox))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(refreshButton)
+                .add(10, 10, 10))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 60, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(autoRefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
+                .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(8, 8, 8))
         );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
@@ -312,12 +340,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
-                .add(trackTypeNameLabel)
-                .add(5, 5, 5)
-                .add(trackNameTypeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 211, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, Short.MAX_VALUE)
-                .add(applyButton))
-            .add(propertiesPanelLayout.createSequentialGroup()
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(64, 64, 64)
@@ -328,21 +350,28 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                         .add(101, 101, 101)
                         .add(nameSizeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 82, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(14, 14, 14)
-                        .add(fgColorLabel)
-                        .add(0, 0, 0)
-                        .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(30, 30, 30)
-                        .add(bgColorLabel)
-                        .add(0, 0, 0)
-                        .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(30, 30, 30)
-                        .add(labelColorLabel)
-                        .add(0, 0, 0)
-                        .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 82, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(trackTypeNameLabel)
+                .add(5, 5, 5)
+                .add(trackNameTypeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 211, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, Short.MAX_VALUE)
+                .add(applyButton))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(14, 14, 14)
+                .add(fgColorLabel)
+                .add(0, 0, 0)
+                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(30, 30, 30)
+                .add(bgColorLabel)
+                .add(0, 0, 0)
+                .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(30, 30, 30)
+                .add(labelColorLabel)
+                .add(0, 0, 0)
+                .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(24, 24, 24))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -395,7 +424,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                     .add(layout.createSequentialGroup()
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .add(11, 11, 11))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -448,6 +477,14 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 		tdv.show2TracksCheckBox();
 	}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
 
+	private void autoRefreshCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoRefreshCheckBoxActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_autoRefreshCheckBoxActionPerformed
+
+	private void refreshButtonPressed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonPressed
+		((TierPrefsView)(tdv)).refreshSeqMapViewAndSlicedView();
+	}//GEN-LAST:event_refreshButtonPressed
+
 	private void labelColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelColorComboBoxActionPerformed
 		tdv.labelColorComboBox();
 	}//GEN-LAST:event_labelColorComboBoxActionPerformed
@@ -462,6 +499,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
     private javax.swing.JLabel FieldLabel;
     private javax.swing.JButton applyButton;
     private javax.swing.JCheckBox arrowCheckBox;
+    protected javax.swing.JCheckBox autoRefreshCheckBox;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel bgColorLabel;
     private javax.swing.JCheckBox colorCheckBox;
@@ -485,6 +523,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
     private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
     private com.jidesoft.combobox.ColorComboBox positiveColorComboBox;
     private javax.swing.JPanel propertiesPanel;
+    protected javax.swing.JButton refreshButton;
     private javax.swing.JButton selectAndAddButton;
     private javax.swing.JCheckBox show2TracksCheckBox;
     private javax.swing.JPanel showStrandPanel;

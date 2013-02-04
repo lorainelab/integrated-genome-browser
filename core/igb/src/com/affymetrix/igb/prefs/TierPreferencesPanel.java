@@ -17,13 +17,15 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 		this.setToolTipText("Set Track Properties");
 		validate();
 	}
-	
 	@Override
-	protected void enableSpecificComponents() {
+	protected void enableSpecificComponents()
+	{
+		autoRefreshCheckBox.setVisible(true);
+		refreshButton.setVisible(true);
 	}
-	
 	@Override
-	public void refresh() {
+	public void refresh()
+	{
 		((TierPrefsView)tdv).refreshList();
 	}
 	
@@ -45,7 +47,6 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 		//</editor-fold>
 		((TierPrefsView)tdv).restoreToDefault();
 	}
-	
 	@Override
 	protected void selectAndAddButtonActionPerformed(java.awt.event.ActionEvent evt) {  
 		((TierPrefsView)tdv).selectAll();

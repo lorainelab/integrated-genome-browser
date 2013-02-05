@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
+import com.affymetrix.genoviz.util.AbbreviationsFormat;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
 import java.awt.Color;
@@ -39,6 +40,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 	private static Font default_font = NeoConstants.default_plain_font;
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
+	private static final AbbreviationsFormat abbver_format = new AbbreviationsFormat();
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
 	 */
@@ -784,7 +786,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			// Always draw the lowest tick value, and indicate the others only
 			// if there is enough room between them that the text won't overlap
 			if (Double.isNaN(last_pixel) || Math.abs(mark_ypix - last_pixel) > font_height) {
-				AttributedString minString = new AttributedString(nformat.format(tick_coords[i]));
+				AttributedString minString = new AttributedString(abbver_format.format(tick_coords[i]));
 				minString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
 				minString.addAttribute(TextAttribute.FOREGROUND, lighter);
 				minString.addAttribute(TextAttribute.FONT, axis_font);

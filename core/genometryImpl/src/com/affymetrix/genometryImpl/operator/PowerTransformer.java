@@ -1,9 +1,8 @@
 package com.affymetrix.genometryImpl.operator;
 
 import java.text.DecimalFormat;
-
-import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
-import com.affymetrix.genometryImpl.operator.Operator;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class PowerTransformer extends AbstractFloatTransformer implements Operator {
 	private static final DecimalFormat DF = new DecimalFormat("#,##0.##");
@@ -30,10 +29,12 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 			return "Sqrt";
 		}
 		else {
-			return "Power" + DF.format(exponent);
+			return parameterized ? "Power" : "Power" + DF.format(exponent);
 		}
 	}
+	@Override
 	public String getParamPrompt() { return paramPrompt; }
+	
 	public String getName() {
 		return name;
 	}
@@ -43,6 +44,26 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 	public float transform(float x) {
 		return (float)Math.pow(x, exponent);
 	}
+	
+	@Override
+	public Map<String, Class<?>> getParameters() {
+		if (getParamPrompt() == null) {
+			return null;
+		}
+		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		parameters.put(getParamPrompt(), String.class);
+		return parameters;
+	}
+	
+	@Override
+	public boolean setParameters(Map<String, Object> parms) {
+		if (getParamPrompt() != null && parms.size() == 1 && parms.get(getParamPrompt()) instanceof String) {
+			setParameter((String)parms.get(getParamPrompt()));
+			return true;
+		}
+		return false;
+	}
+		
 	public boolean setParameter(String s) {
 		if (parameterized) {
 			if ("sqrt".equals(s.trim().toLowerCase())) {

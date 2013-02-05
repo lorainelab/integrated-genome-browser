@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -113,18 +114,29 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		});
 	}
 
-	protected void transformationGoBActionPerformedA(java.awt.event.ActionEvent evt){
+	protected void transformationGoBActionPerformedA(ActionEvent evt){
 		String selection = (String) getTransformationCB().getSelectedItem();
 		preserved_transformationCB_selection = selection; // store selection
-		Operator operator = name2transformation.get(selection);
+		Operator operator = setParameters(name2transformation.get(selection), getTransformationParam());
 		(new TrackTransformAction(operator)).actionPerformed(evt);
 	}
 
-	protected void operationGoBActionPerformedA(java.awt.event.ActionEvent evt){
+	protected void operationGoBActionPerformedA(ActionEvent evt){
 		String selection = (String) getOperationCB().getSelectedItem();
 		preserved_operationCB_selection = selection; // store selection
-		Operator operator = name2operation.get(selection);
+		Operator operator = setParameters(name2operation.get(selection), getOperationParam());
 		(new TrackOperationAction(operator)).actionPerformed(evt);
+	}
+	
+	private static Operator setParameters(Operator operator, JTextField paramField){
+		if(paramField.isEnabled() && paramField.getText() != null
+				&& paramField.getText().length() > 0){
+			Map<String, Class<?>> params = operator.getParameters();
+			Map<String, Object> setparams = new HashMap<String, Object>();
+			setparams.put(params.keySet().iterator().next(), paramField.getText());
+			operator.setParameters(setparams);
+		}
+		return operator;
 	}
 	
 	private void loadOperators(boolean enable) {

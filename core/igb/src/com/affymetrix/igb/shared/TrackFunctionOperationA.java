@@ -171,6 +171,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	
 	private static String removeIllegalCharacters(String string){
 		string = string.replaceAll("\\s+", "_");
+		string = string.replaceAll("\\|", "_");
 		string = string.replaceAll("\u221E", "infinite");
 		string = string.replaceAll("\\[", "(");
 		string = string.replaceAll("\\]", ")");

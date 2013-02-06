@@ -399,7 +399,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			int x = e.getX();
 			int y = e.getY();
 			String friendlyURL = getURLAt((JTree) e.getSource(), x, y);
-			if (friendlyURL != null) {
+			if (friendlyURL != null && friendlyURL.length()>0) {
 				GeneralUtils.browse(friendlyURL);
 			}
 		}
@@ -411,7 +411,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			JTree thetree = (JTree) e.getSource();
 
 			String friendlyURL = getURLAt(thetree, x, y);
-			if (friendlyURL != null) {
+			if (friendlyURL != null && friendlyURL.length()>0) {
 				thetree.setCursor(handCursor);
 			} else {
 				if (thetree.getCursor() != defaultCursor) {
@@ -672,7 +672,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
 			String serverNameString = "";
-			if (gServer.getFriendlyURL() != null && gServer.serverType.hasFriendlyURL()) {
+			if (gServer.getFriendlyURL() != null && gServer.getFriendlyURL().length() > 0 && gServer.serverType.hasFriendlyURL()) {
 				// TODO - hack to ignore server hyperlinks for DAS/1.
 				serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.serverName + "</b></a>";
 			} else {

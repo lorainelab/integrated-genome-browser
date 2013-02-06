@@ -1141,6 +1141,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			setLabelField(as.getLabelField());
 			setSeparate(as.getSeparate());
 			setSummaryThreshold(as.getSummaryThreshold());
+			setReverseMaxDepth(as.getReverseMaxDepth());
 		}
 		if (g instanceof TrackStyle) {
 			TrackStyle as = (TrackStyle) g;

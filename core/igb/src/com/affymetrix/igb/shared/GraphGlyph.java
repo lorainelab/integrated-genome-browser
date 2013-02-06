@@ -40,7 +40,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 	private static Font default_font = NeoConstants.default_plain_font;
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
-	private static final AbbreviationsFormat abbver_format = new AbbreviationsFormat();
+	private static final AbbreviationsFormat abbver_format = new AbbreviationsFormat(true);
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
 	 */
@@ -604,10 +604,11 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		double bottom_ycoord_inset = getLowerYCoordInset(view);
 
 		double num = getVisibleMaxY() - getVisibleMinY();
-		if (num <= 0) {
-			num = 0.1;
+		//Remove infinite and NaN condition check if error arises for drawing
+		if (num <= 0 || Double.isInfinite(num) || Double.isNaN(num)) {
+			num = 0.0001;
 		} // if scale is 0 or negative, set to a small default instead
-
+		
 		double yscale = (getCoordBox().height - top_ycoord_inset - bottom_ycoord_inset) / num;
 		double yoffset = getCoordBox().y + getCoordBox().height - bottom_ycoord_inset;
 		lt.setTransform(lt.getScaleX(),0,0,yscale,lt.getTranslateX(),yoffset);
@@ -1177,7 +1178,9 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			//    a better way to think of this is:
 			//        plot_top_ypixel = pixel position of graph.getVisibleMaxY()
 			//        plot_bottom_ypixel = pixel position of graph.getVisibleMinY();
-			coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+			double y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+			//Remove infinite and NaN condition check if error arises for drawing
+			coord.y = Double.isInfinite(y) || Double.isNaN(y) ? getCoordBox().y : y;
 			Point scratch_point = new Point(0, 0);
 			view.transformToPixels(coord, scratch_point);
 			int plot_top_ypixel = scratch_point.y;
@@ -1188,7 +1191,9 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			// replaces pbox_yheight
 
 			float yzero = determineYZero();
-			coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
+			y = offset - ((yzero - getVisibleMinY()) * yscale);
+			//Remove infinite and NaN condition check if error arises for drawing
+			coord.y = Double.isInfinite(y) || Double.isNaN(y) ? getCoordBox().y + getCoordBox().height : y;
 			view.transformToPixels(coord, zero_point);
 			DrawPoints(offset, yscale, view, g, plot_bottom_ypixel, plot_top_ypixel, yzero, coords_per_pixel);
 		}

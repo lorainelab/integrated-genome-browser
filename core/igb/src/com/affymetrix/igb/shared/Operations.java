@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -45,6 +46,7 @@ public abstract class Operations extends javax.swing.JPanel {
         });
 
         transformationParam.setEditable(false);
+        ((javax.swing.text.AbstractDocument)transformationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 
         transformationParamLabel.setText(null);
         transformationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
@@ -85,6 +87,7 @@ public abstract class Operations extends javax.swing.JPanel {
         );
 
         operationParam.setEditable(false);
+        ((javax.swing.text.AbstractDocument)operationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 
         operationGoB.setText("Apply");
         operationGoB.addActionListener(new java.awt.event.ActionListener() {

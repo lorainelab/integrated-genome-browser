@@ -103,7 +103,7 @@
         <Component class="javax.swing.JTextField" name="transformationParam">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPTextField(&quot;TrackOperationsTab_transformParam&quot;)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="transformationParam.setEditable(false);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="transformationParam.setEditable(false);&#xa;((javax.swing.text.AbstractDocument)transformationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="transformationCB">
@@ -190,7 +190,7 @@
         <Component class="javax.swing.JTextField" name="operationParam">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPTextField(&quot;TrackOperationsTab_operationParam&quot;)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="operationParam.setEditable(false);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="operationParam.setEditable(false);&#xa;((javax.swing.text.AbstractDocument)operationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="operationGoB">

@@ -84,7 +84,7 @@ public class AxisGlyph extends Glyph {
 	// This DecimalFormat is used with the COMMA format.
 	// It simply instructs java to insert commas between every three characters.
 	DecimalFormat comma_format = new DecimalFormat("#,###.###");
-	AbbreviationsFormat abbver_format = new AbbreviationsFormat();
+//	AbbreviationsFormat abbver_format = new AbbreviationsFormat();
 
 	// A couple constants used only in the draw method.
 	protected int subtick_size = 1;
@@ -923,7 +923,24 @@ public class AxisGlyph extends Glyph {
 		else {
 			int_label = (int)Math.round(double_label);
 			if (ABBREV == this.labelFormat) {
-				return abbver_format.format(int_label);
+//				return abbver_format.format(int_label);
+				if (0 == int_label % 1000 && 0 != int_label) {
+					int_label /= 1000;
+					if (0 == int_label % 1000) {
+						int_label /= 1000;
+						if ( 0 == int_label % 1000) {
+							int_label /= 1000;
+							if ( 0 == int_label % 1000) {
+								return comma_format.format(int_label) + "T";
+							}
+							return comma_format.format(int_label) + "G";
+						}
+						return comma_format.format(int_label) + "M";
+					}
+					return comma_format.format(int_label) + "k";
+				}
+				return comma_format.format(int_label);
+	
 			} else if (COMMA == this.labelFormat) {
 				return comma_format.format(int_label);
 			}

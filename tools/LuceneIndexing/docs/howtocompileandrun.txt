@@ -1,0 +1,14 @@
+Create IGB_WORKSPACE environment variable. It shoudl point IGB project, eg.
+
+ export IGB_WORKSPACE=$HOME/src/genoviz-code 
+
+Where genoviz-code is the checked out genoviz project
+
+Go to tools/LuceneIndexing
+Run ant
+
+To create full-dist/LuceneIndexing.zip
+
+Unpack LuceneIndexing.zip
+Enter LuceneIndexing
+Follow the directions (from there) to index files.

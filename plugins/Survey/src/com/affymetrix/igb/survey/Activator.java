@@ -13,6 +13,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
@@ -30,7 +31,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		
 		InputStream inputStream = null;
 		//inputStream = Activator.class.getResourceAsStream("/surveys.xml");
-		//inputStream = LocalUrlCacher.getInputStream(BUNDLE.getString("surveys"));
+		inputStream = LocalUrlCacher.getInputStream(BUNDLE.getString("surveys"));
 		if (inputStream != null) {
 			List<Survey> surveys = SurveyParser.parse(inputStream);
 			GeneralUtils.safeClose(inputStream);

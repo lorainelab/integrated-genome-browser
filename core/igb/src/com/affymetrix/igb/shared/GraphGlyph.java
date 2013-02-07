@@ -610,7 +610,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		
 		// This should never happen
 		if (Double.isInfinite(num)){
-			num = num == Double.MAX_VALUE ? Float.MAX_VALUE : Float.MIN_NORMAL;
+			num = num == Double.MAX_VALUE ? Float.MAX_VALUE : Float.MIN_VALUE;
 		}
 		
 		double yscale = (getCoordBox().height - top_ycoord_inset - bottom_ycoord_inset) / num;

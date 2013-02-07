@@ -125,6 +125,9 @@ public abstract class AbstractGraphOperator implements Operator {
 			}
 			// now we have the operands, actually perform the operation
 			float currentY = operate(operands);
+			if(Float.isInfinite(currentY)){
+				currentY = currentY == Float.POSITIVE_INFINITY ? Float.MAX_VALUE : Float.MIN_VALUE;
+			}
 			// add the span and result - x, y, w - to the result graph
 			xList.add(spanBeginX);
 			wList.add(spanEndX - spanBeginX);

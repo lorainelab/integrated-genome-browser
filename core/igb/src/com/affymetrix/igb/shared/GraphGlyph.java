@@ -604,10 +604,14 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		double bottom_ycoord_inset = getLowerYCoordInset(view);
 
 		double num = getVisibleMaxY() - getVisibleMinY();
-		//Remove infinite and NaN condition check if error arises for drawing
-		if (num <= 0 || Double.isInfinite(num) || Double.isNaN(num)) {
+		if (num <= 0 || Double.isNaN(num)) {
 			num = 0.1;
 		} // if scale is 0 or negative, set to a small default instead
+		
+		// This should never happen
+		if (Double.isInfinite(num)){
+			num = num == Double.MAX_VALUE ? Float.MAX_VALUE : Float.MIN_VALUE;
+		}
 		
 		double yscale = (getCoordBox().height - top_ycoord_inset - bottom_ycoord_inset) / num;
 		double yoffset = getCoordBox().y + getCoordBox().height - bottom_ycoord_inset;

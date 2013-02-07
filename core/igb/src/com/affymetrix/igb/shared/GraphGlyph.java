@@ -606,7 +606,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		double num = getVisibleMaxY() - getVisibleMinY();
 		//Remove infinite and NaN condition check if error arises for drawing
 		if (num <= 0 || Double.isInfinite(num) || Double.isNaN(num)) {
-			num = 0.0001;
+			num = 0.1;
 		} // if scale is 0 or negative, set to a small default instead
 		
 		double yscale = (getCoordBox().height - top_ycoord_inset - bottom_ycoord_inset) / num;

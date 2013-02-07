@@ -34,7 +34,7 @@ public abstract class NumericFilter extends DocumentFilter {
 	public static class FloatNumericFilter extends NumericFilter{
 		@Override
 		protected String getRegex() {
-			return "[^0-9\\.]";
+			return "[^0-9\\.\\-]";
 		}
 	}
 }

@@ -12,7 +12,8 @@ import java.awt.Point;
 import java.util.Arrays;
 
 public class FillBarGraphType extends GraphGlyph.GraphStyle {
-
+	private int[] pixel_avg_cache;
+	
 	public FillBarGraphType(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}

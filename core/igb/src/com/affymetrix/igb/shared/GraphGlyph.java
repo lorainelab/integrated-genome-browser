@@ -1059,8 +1059,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		protected final Point curr_point = new Point(0, 0);
 		protected final Point prev_point = new Point(0, 0);
 		protected final Point2D.Double coord = new Point2D.Double(0, 0);
-		protected int[] pixel_avg_cache;
-
+		
 		/**
 		 * Get GraphType
 		 *

@@ -12,6 +12,7 @@ import java.awt.Point;
 import java.util.Arrays;
 
 public class MinMaxAvgGraphType extends GraphGlyph.GraphStyle {
+	private int[] pixel_avg_cache;
 	private final GraphGlyph.GraphStyle tempBarGraphStyle;
 
 	public MinMaxAvgGraphType(GraphGlyph graphGlyph){

@@ -1271,7 +1271,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			if (!graphSym.hasWidth()) {
 				Rectangle coord_width = new Rectangle();
 				view.transformToPixels(new Rectangle2D.Double(0,0,1,1), coord_width);
-				curr_x_plus_width.x = coord_width.width;
+				curr_x_plus_width.x = Math.max(1, coord_width.width);
 			}
 			for (int i = draw_beg_index; i <= draw_end_index; i++) {
 				// flipping about yaxis... should probably make this optional

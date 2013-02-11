@@ -124,7 +124,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	@SuppressWarnings("unchecked")
 	public void addTrackDefaultButton() {
 		initializeFileTypes();
-		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
+		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Select file type:", AddButtonTitle,
 				JOptionPane.PLAIN_MESSAGE, null, trackDefaults, trackDefaults[0]);
 
 		if (selectedTrackDefaultType == null) {

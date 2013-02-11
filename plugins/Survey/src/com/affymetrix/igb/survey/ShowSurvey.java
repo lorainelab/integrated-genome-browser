@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  * @author hiralv
  */
 public class ShowSurvey {
-	private final static String[] options = new String[]{"Yes", "No", "Later"};
+	private final static String[] options = new String[]{"Go to survey", "No thanks", "Maybe later"};
 	
 	public static boolean showSurvey(final Survey survey) {
 		JOptionPane op = new JOptionPane(survey.getDescription(),

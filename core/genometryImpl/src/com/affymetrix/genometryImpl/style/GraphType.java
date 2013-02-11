@@ -7,7 +7,7 @@ import java.util.Map;
 /**Contributed by Ido Tamir.*/
 public enum GraphType {
 	LINE_GRAPH("Line"),
-	BAR_GRAPH("Bar"),
+	EMPTY_BAR_GRAPH("Bar"),
 	DOT_GRAPH("Dot"),
 	MINMAXAVG("Min_Max_Avg"),
 	STAIRSTEP_GRAPH("Stairstep"),

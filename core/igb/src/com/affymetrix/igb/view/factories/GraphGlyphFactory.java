@@ -27,7 +27,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 	public final static Map<GraphType, Class<? extends GraphGlyph.GraphStyle>> type2Style;
 	static{
 		type2Style = new HashMap<GraphType, Class<? extends GraphGlyph.GraphStyle>>();
-		type2Style.put(GraphType.BAR_GRAPH, BarGraphType.class);
+		type2Style.put(GraphType.EMPTY_BAR_GRAPH, EmptyBarGraphType.class);
 		type2Style.put(GraphType.DOT_GRAPH, DotGraphType.class);
 		type2Style.put(GraphType.FILL_BAR_GRAPH, FillBarGraphType.class);
 		type2Style.put(GraphType.HEAT_MAP, HeatMapGraphType.class);

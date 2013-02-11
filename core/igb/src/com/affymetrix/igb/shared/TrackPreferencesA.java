@@ -253,7 +253,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 			selectedMode = GraphType.LINE_GRAPH;
 		}
 		if (getGraphStyleBarRadioButton().isSelected()) {
-			selectedMode = GraphType.BAR_GRAPH;
+			selectedMode = GraphType.EMPTY_BAR_GRAPH;
 		}
 		if (getGraphStyleStairStepRadioButton().isSelected()) {
 			selectedMode = GraphType.STAIRSTEP_GRAPH;
@@ -463,7 +463,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
 				case LINE_GRAPH:
 					getGraphStyleLineRadioButton().setSelected(true);
 					break;
-				case BAR_GRAPH:
+				case EMPTY_BAR_GRAPH:
 					getGraphStyleBarRadioButton().setSelected(true);
 					break;
 				case STAIRSTEP_GRAPH:

@@ -8,9 +8,9 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class BarGraphType extends GraphGlyph.GraphStyle {
+public class EmptyBarGraphType extends GraphGlyph.GraphStyle {
 	
-	public BarGraphType(GraphGlyph graphGlyph){
+	public EmptyBarGraphType(GraphGlyph graphGlyph){
 		graphGlyph.super();
 	}
 		
@@ -36,6 +36,6 @@ public class BarGraphType extends GraphGlyph.GraphStyle {
 
 	@Override
 	public GraphType getGraphStyle() {
-		return GraphType.BAR_GRAPH;
+		return GraphType.EMPTY_BAR_GRAPH;
 	}
 }

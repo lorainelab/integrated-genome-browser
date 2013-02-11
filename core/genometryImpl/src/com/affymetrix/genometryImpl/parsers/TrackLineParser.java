@@ -270,7 +270,7 @@ public final class TrackLineParser {
 			gstate.setGraphStyle(GraphType.DOT_GRAPH);
 		}
 		else if ("bar".equalsIgnoreCase(graph_type)) {
-			gstate.setGraphStyle(GraphType.BAR_GRAPH);
+			gstate.setGraphStyle(GraphType.EMPTY_BAR_GRAPH);
 		}
 	}
 }

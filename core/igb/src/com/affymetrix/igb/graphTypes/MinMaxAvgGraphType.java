@@ -17,7 +17,7 @@ public class MinMaxAvgGraphType extends GraphGlyph.GraphStyle {
 
 	public MinMaxAvgGraphType(GraphGlyph graphGlyph){
 		graphGlyph.super();
-		tempBarGraphStyle = new BarGraphType(graphGlyph);
+		tempBarGraphStyle = new EmptyBarGraphType(graphGlyph);
 	}
 
 	@Override

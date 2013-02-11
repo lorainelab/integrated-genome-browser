@@ -82,7 +82,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 			selectedMode = GraphType.LINE_GRAPH;
 		}
 		if (getGraphStyleBarRadioButton().isSelected()) {
-			selectedMode = GraphType.BAR_GRAPH;
+			selectedMode = GraphType.EMPTY_BAR_GRAPH;
 		}
 		if (getGraphStyleStairStepRadioButton().isSelected()) {
 			selectedMode = GraphType.STAIRSTEP_GRAPH;
@@ -233,7 +233,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 				case LINE_GRAPH:
 					getGraphStyleLineRadioButton().setSelected(true);
 					break;
-				case BAR_GRAPH:
+				case EMPTY_BAR_GRAPH:
 					getGraphStyleBarRadioButton().setSelected(true);
 					break;
 				case STAIRSTEP_GRAPH:

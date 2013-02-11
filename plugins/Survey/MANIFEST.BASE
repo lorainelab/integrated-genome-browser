@@ -8,6 +8,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/
 Import-Package: com.affymetrix.common;version="[7.0.0,@appVersion@]",
  com.affymetrix.genometryImpl.util,
+ com.affymetrix.genometryImpl.event,
+ com.affymetrix.genoviz.swing,
+ com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.igb.osgi.service,
  javax.swing,
  javax.xml.parsers,

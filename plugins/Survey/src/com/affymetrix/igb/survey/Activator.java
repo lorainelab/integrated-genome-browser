@@ -9,11 +9,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
+import com.affymetrix.genoviz.swing.AMenuItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 import static com.affymetrix.igb.survey.ShowSurvey.*;
@@ -27,6 +34,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	@Override
 	protected ServiceRegistration<?>[] registerService(final IGBService igbService) throws Exception {
 		ResourceBundle BUNDLE = ResourceBundle.getBundle("survey");
+		JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "Surveys");
 		
 		InputStream inputStream = null;
 		//inputStream = Activator.class.getResourceAsStream("/surveys.xml");
@@ -44,7 +52,22 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 			Date today = Calendar.getInstance().getTime();
 			for (final Survey survey : surveys) {
 				if (today.compareTo(survey.getStart()) >= 0 && 
-					today.compareTo(survey.getEnd()) < 0  && 
+					today.compareTo(survey.getEnd()) < 0) {
+					JMenuItem item = new JMenuItem(
+						new GenericAction(survey.getName(), null, null) {
+							@Override
+							public void actionPerformed(ActionEvent e){
+								super.actionPerformed(e);
+								GeneralUtils.browse(survey.getLink());
+							}
+						}
+					);
+					surveysMenu.add(item);
+				}
+			}
+			for (final Survey survey : surveys) {
+				if (today.compareTo(survey.getStart()) >= 0 && 
+					today.compareTo(survey.getEnd()) < 0 &&
 					!PreferenceUtils.getBooleanParam(survey.getId(), false)) {
 					
 					Timer timer = new Timer();
@@ -59,6 +82,11 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 				}
 			}
 		}
+		
+		if (surveysMenu.getItemCount() > 0){
+			return new ServiceRegistration<?>[] { bundleContext.registerService(AMenuItem.class, new AMenuItem(surveysMenu, "help"), null) };
+		}
+		
 		return null;
 	}
 }

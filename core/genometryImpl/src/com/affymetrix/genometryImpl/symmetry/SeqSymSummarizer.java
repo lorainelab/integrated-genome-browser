@@ -87,7 +87,7 @@ public final class SeqSymSummarizer {
 		MisMatchGraphSym summary;
 		IntArrayList _x = new IntArrayList(range);
 		FloatArrayList _y = new FloatArrayList(range);
-		IntArrayList _w = new IntArrayList(range);
+//		IntArrayList _w = new IntArrayList(range);
 		IntArrayList _yA = new IntArrayList(range);
 		IntArrayList _yT = new IntArrayList(range);
 		IntArrayList _yG = new IntArrayList(range);
@@ -98,7 +98,7 @@ public final class SeqSymSummarizer {
 			if (yR[0][i] > 0 || yR[1][i] > 0 || yR[2][i] > 0 || yR[3][i] > 0 || yR[4][i] > 0) {
 				_x.add(start + i);
 				_y.add(y[i]);
-				_w.add(1);
+//				_w.add(1);
 
 				_yA.add(yR[0][i]);
 				_yT.add(yR[1][i]);
@@ -109,7 +109,7 @@ public final class SeqSymSummarizer {
 		}
 		_x.trimToSize();
 		_y.trimToSize();
-		_w.trimToSize();
+//		_w.trimToSize();
 		_yA.trimToSize();
 		_yT.trimToSize();
 		_yG.trimToSize();
@@ -117,11 +117,11 @@ public final class SeqSymSummarizer {
 		_yN.trimToSize();
 
 		summary = pileup ?
-				new MisMatchPileupGraphSym(_x.elements(), _w.elements(), _y.elements(), 
+				new MisMatchPileupGraphSym(_x.elements(), null/*_w.elements()*/, _y.elements(), 
 				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
 				id, seq)
 				:
-				new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), 
+				new MisMatchGraphSym(_x.elements(), null/*_w.elements()*/, _y.elements(), 
 				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
 				id, seq);
 		return summary;

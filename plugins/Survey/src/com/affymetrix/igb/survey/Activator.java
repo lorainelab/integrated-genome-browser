@@ -35,7 +35,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	@Override
 	protected ServiceRegistration<?>[] registerService(final IGBService igbService) throws Exception {
 		ResourceBundle BUNDLE = ResourceBundle.getBundle("survey");
-		JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "Surveys");
+		JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "News and Surveys");
 		
 		InputStream inputStream = null;
 		//inputStream = Activator.class.getResourceAsStream("/surveys.xml");

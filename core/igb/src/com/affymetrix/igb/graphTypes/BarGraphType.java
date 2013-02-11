@@ -27,7 +27,7 @@ public class BarGraphType extends GraphGlyph.GraphStyle {
 		int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
 		yheight_pixel = Math.max(1, yheight_pixel);
 		if (!graphSym.hasWidth()) {
-			g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
+			g.drawRect(curr_point.x, ymin_pixel, curr_x_plus_width.x, yheight_pixel);
 		} else {
 			final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
 			g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);

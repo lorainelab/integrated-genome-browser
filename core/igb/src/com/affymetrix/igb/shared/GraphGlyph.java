@@ -1268,6 +1268,11 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 
 		protected void bigDrawLoop(int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
 				Graphics g, Point max_x_plus_width, GraphSym graphSym) {
+			if (!graphSym.hasWidth()) {
+				Rectangle coord_width = new Rectangle();
+				view.transformToPixels(new Rectangle2D.Double(0,0,1,1), coord_width);
+				curr_x_plus_width.x = coord_width.width;
+			}
 			for (int i = draw_beg_index; i <= draw_end_index; i++) {
 				// flipping about yaxis... should probably make this optional
 				// also offsetting to place within glyph bounds

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.graphTypes;
 
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 
@@ -12,11 +13,17 @@ public class MismatchGraphType extends FillBarGraphType {
 	
 	public MismatchGraphType(GraphGlyph graphGlyph){
 		super(graphGlyph);
+		graphGlyph.getGraphState().lockGraphStyle();
 	}
 	
 	@Override
 	public String getName() {
-		return "fillbargraph";
+		return "mismatchgraph";
+	}
+	
+	@Override
+	public GraphType getGraphStyle() {
+		return null;
 	}
 	
 	@Override

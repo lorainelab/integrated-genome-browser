@@ -66,7 +66,10 @@ public class LineGraphType extends GraphGlyph.GraphStyle {
 
 	@Override
 	protected void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel,int width, int i) {
-		super.drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, g, ysum, points_in_pixel, width, i);
+		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
+		int len = Math.max(1, yend - ystart);
+		GraphGlyph.drawRectOrLine(g, prev_point.x, ystart, 1, len);
 		if (i > 0) {
 			int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
 			int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);

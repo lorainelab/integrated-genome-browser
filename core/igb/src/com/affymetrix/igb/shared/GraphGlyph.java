@@ -1052,7 +1052,6 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		private static final int xpix_offset = 0;
 		
 		protected static final double transition_scale = 500;
-		protected static final double mismatch_transition_scale = 30;
 		
 		private final Timer tim = new Timer();
 		protected final Point zero_point = new Point(0, 0);
@@ -1258,9 +1257,15 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 
 		protected void drawSingleRect(
 				int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int width, int i) {
-			int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
-			int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-			drawRectOrLine(g, prev_point.x, ystart, 1, yend - ystart);
+//			int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+//			int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
+//			int len = Math.max(1, yend - ystart);
+//			drawRectOrLine(g, prev_point.x, ystart, 1, len);
+			
+			ymin_pixel = Math.min(ymin_pixel, zero_point.y);
+			int yheight_pixel = Math.abs(ymin_pixel - zero_point.y);
+			yheight_pixel = Math.max(1, yheight_pixel);
+			drawRectOrLine(g, prev_point.x, ymin_pixel, 1, yheight_pixel);
 		}
 
 		protected void colorChange(Graphics g) {

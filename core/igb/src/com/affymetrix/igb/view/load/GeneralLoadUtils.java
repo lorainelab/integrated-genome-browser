@@ -677,6 +677,8 @@ public final class GeneralLoadUtils {
 			@Override
 			protected Void runInBackground() {
 				try {
+					List<BioSeq> groupChrList = new ArrayList<BioSeq>(gmodel.getSelectedSeqGroup().getSeqList().size());
+					groupChrList.addAll(gmodel.getSelectedSeqGroup().getSeqList());
 					List<BioSeq> chrList = feature.symL.getChromosomeList();
 					final BioSeq current_seq = gmodel.getSelectedSeq();
 					Thread thread = Thread.currentThread();
@@ -694,8 +696,17 @@ public final class GeneralLoadUtils {
 						if (thread.isInterrupted()) {
 							break;
 						}
+						// Remove it from group list
+						groupChrList.remove(seq);
+						
 						loadOnSequence(seq);
 					}
+					
+					// Iterate through all remaining list and mark them loaded
+					for (BioSeq seq : groupChrList) {
+						feature.addLoadedSpanRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
+					}
+					
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) feature.symL).logException(ex);
 				}

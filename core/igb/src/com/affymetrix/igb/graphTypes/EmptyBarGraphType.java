@@ -8,10 +8,10 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class EmptyBarGraphType extends GraphGlyph.GraphStyle {
+public class EmptyBarGraphType extends BarGraphType {
 	
 	public EmptyBarGraphType(GraphGlyph graphGlyph){
-		graphGlyph.super();
+		super(graphGlyph);
 	}
 		
 	@Override
@@ -33,7 +33,7 @@ public class EmptyBarGraphType extends GraphGlyph.GraphStyle {
 			g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 		}
 	}
-
+	
 	@Override
 	public GraphType getGraphStyle() {
 		return GraphType.EMPTY_BAR_GRAPH;

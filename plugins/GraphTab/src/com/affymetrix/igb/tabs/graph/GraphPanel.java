@@ -38,6 +38,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         graphStyleHeatMapComboBox = new javax.swing.JComboBox();
         jSeparator1 = new javax.swing.JSeparator();
         labelCheckBox = new javax.swing.JCheckBox();
+        graphStyleFilledBarRadioButton = new javax.swing.JRadioButton();
 
         graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
         graphPanel.setPreferredSize(new java.awt.Dimension(155, 180));
@@ -134,6 +135,14 @@ public abstract class GraphPanel extends javax.swing.JPanel {
             }
         });
 
+        buttonGroup1.add(graphStyleFilledBarRadioButton);
+        graphStyleFilledBarRadioButton.setText("Filled Bar");
+        graphStyleFilledBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphStyleFilledBarRadioButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
         graphPanel.setLayout(graphPanelLayout);
         graphPanelLayout.setHorizontalGroup(
@@ -143,7 +152,10 @@ public abstract class GraphPanel extends javax.swing.JPanel {
                 .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(graphPanelLayout.createSequentialGroup()
+                .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(6, 6, 6)
+                .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(graphPanelLayout.createSequentialGroup()
                 .add(labelCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
@@ -154,10 +166,10 @@ public abstract class GraphPanel extends javax.swing.JPanel {
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(50, 50, 50)
+                .add(47, 47, 47)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(graphStyleFilledBarRadioButton)
+                    .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
         graphPanelLayout.setVerticalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -172,24 +184,26 @@ public abstract class GraphPanel extends javax.swing.JPanel {
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(5, 5, 5)
+                .add(2, 2, 2)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleFilledBarRadioButton))
+                .add(2, 2, 2)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(5, 5, 5)
-                .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(5, 5, 5)
+                .add(2, 2, 2)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(5, 5, 5))
+                .add(3, 3, 3))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 224, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -257,6 +271,12 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_labelCheckBoxActionPerformed
 
+    private void graphStyleFilledBarRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleFilledBarRadioButtonActionPerformed
+       if (is_listening) {
+            buttonGroup1ActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleFilledBarRadioButtonActionPerformed
+
 	public javax.swing.JCheckBox getFloatCheckBox() {
 		return floatCheckBox;
 	}
@@ -277,6 +297,10 @@ public abstract class GraphPanel extends javax.swing.JPanel {
 		return graphStyleBarRadioButton;
 	}
 
+	public javax.swing.JRadioButton getGraphStyleFilledBarRadioButton() {
+		return graphStyleFilledBarRadioButton;
+	}
+	
 	public javax.swing.JRadioButton getGraphStyleDotRadioButton() {
 		return graphStyleDotRadioButton;
 	}
@@ -338,6 +362,7 @@ public abstract class GraphPanel extends javax.swing.JPanel {
     private javax.swing.JPanel graphPanel;
     private javax.swing.JRadioButton graphStyleBarRadioButton;
     private javax.swing.JRadioButton graphStyleDotRadioButton;
+    private javax.swing.JRadioButton graphStyleFilledBarRadioButton;
     private javax.swing.JComboBox graphStyleHeatMapComboBox;
     private javax.swing.JRadioButton graphStyleHeatMapRadioButton;
     private javax.swing.JRadioButton graphStyleLineRadioButton;

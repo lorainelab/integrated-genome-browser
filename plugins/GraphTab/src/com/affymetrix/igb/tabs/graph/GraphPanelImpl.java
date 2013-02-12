@@ -84,6 +84,9 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 		if (getGraphStyleBarRadioButton().isSelected()) {
 			selectedMode = GraphType.EMPTY_BAR_GRAPH;
 		}
+		if (getGraphStyleFilledBarRadioButton().isSelected()){
+			selectedMode = GraphType.FILL_BAR_GRAPH;
+		}
 		if (getGraphStyleStairStepRadioButton().isSelected()) {
 			selectedMode = GraphType.STAIRSTEP_GRAPH;
 		}
@@ -192,6 +195,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 	protected void buttonGroup1Reset() {
 		getGraphStyleLineRadioButton().setEnabled(isAllGraph());
 		getGraphStyleBarRadioButton().setEnabled(isAllGraph());
+		getGraphStyleFilledBarRadioButton().setEnabled(isAllGraph());
 		getGraphStyleStairStepRadioButton().setEnabled(isAllGraph());
 		getGraphStyleDotRadioButton().setEnabled(isAllGraph());
 		getGraphStyleMinMaxAvgRadioButton().setEnabled(isAllGraph());
@@ -214,6 +218,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 				if (isAllGraphStyleLocked()) {
 					getGraphStyleLineRadioButton().setEnabled(false);
 					getGraphStyleBarRadioButton().setEnabled(false);
+					getGraphStyleFilledBarRadioButton().setEnabled(false);
 					getGraphStyleStairStepRadioButton().setEnabled(false);
 					getGraphStyleDotRadioButton().setEnabled(false);
 					getGraphStyleMinMaxAvgRadioButton().setEnabled(false);

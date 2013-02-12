@@ -20,7 +20,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="graphPanel" alignment="0" min="-2" pref="224" max="-2" attributes="1"/>
+          <Component id="graphPanel" alignment="0" pref="232" max="32767" attributes="1"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -51,7 +51,11 @@
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Component id="graphStyleHeatMapComboBox" min="-2" pref="106" max="-2" attributes="0"/>
               </Group>
-              <Component id="graphStyleMinMaxAvgRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="graphStyleMinMaxAvgRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Component id="graphStyleDotRadioButton" min="-2" max="-2" attributes="0"/>
+              </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="labelCheckBox" min="-2" pref="63" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
@@ -64,10 +68,10 @@
                       <Component id="graphStyleStairStepRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleLineRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="graphStyleBarRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="graphStyleDotRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="graphStyleFilledBarRadioButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="graphStyleBarRadioButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -87,19 +91,22 @@
                       <Component id="graphStyleLineRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="graphStyleBarRadioButton" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="graphStyleStairStepRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                      <Component id="graphStyleFilledBarRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="graphStyleMinMaxAvgRadioButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="graphStyleDotRadioButton" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="graphStyleMinMaxAvgRadioButton" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="graphStyleHeatMapRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="graphStyleHeatMapComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -243,6 +250,17 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelCheckBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="graphStyleFilledBarRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Filled Bar"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="graphStyleFilledBarRadioButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

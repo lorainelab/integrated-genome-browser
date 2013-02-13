@@ -30,7 +30,7 @@ public class Activator implements BundleActivator {
 		windowServiceDefaultImpl.addTab(panel);
 		tabPanels.remove(panel.getName());
 		if (tabPanels.isEmpty()) {
-			windowServiceDefaultImpl.startup();
+			windowServiceDefaultImpl.showTabs();
 		}
 	}
 

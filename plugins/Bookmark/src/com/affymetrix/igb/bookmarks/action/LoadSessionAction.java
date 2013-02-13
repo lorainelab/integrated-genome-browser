@@ -43,28 +43,7 @@ public class LoadSessionAction extends GenericAction {
 		int option = chooser.showOpenDialog(igbService.getFrame().getContentPane());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			try {
-				File f = chooser.getSelectedFile();
-				PreferenceUtils.importPreferences(f);
-				igbService.loadState();
-				String bk_url = PreferenceUtils.getSessionPrefsNode().get("bookmark", "");
-				if(bk_url.length() <= 0){
-					StringBuilder buffer = new StringBuilder();
-					int j=0;
-					while(true){
-						String sb_bk_url = PreferenceUtils.getSessionPrefsNode().get("bookmark"+j++, "");
-						if(sb_bk_url.length() <= 0){
-							bk_url = buffer.toString();
-							break;
-						} 
-						buffer.append(sb_bk_url);
-					}
-				}
-				
-				String url = URLDecoder.decode(bk_url, Bookmark.ENC);
-				if (url != null && url.trim().length() > 0) {
-					BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
-				}
-				PreferenceUtils.getSessionPrefsNode().removeNode();
+				loadSession(chooser.getSelectedFile());
 			} catch (InvalidPreferencesFormatException ipfe) {
 				ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
 						+ "\n\nYou can only load a session from a file that was created with save session.");
@@ -72,5 +51,29 @@ public class LoadSessionAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
 			}
 		}
+	}
+	
+	public void loadSession(File f) throws Exception {
+		PreferenceUtils.importPreferences(f);
+		igbService.loadState();
+		String bk_url = PreferenceUtils.getSessionPrefsNode().get("bookmark", "");
+		if (bk_url.length() <= 0) {
+			StringBuilder buffer = new StringBuilder();
+			int j = 0;
+			while (true) {
+				String sb_bk_url = PreferenceUtils.getSessionPrefsNode().get("bookmark" + j++, "");
+				if (sb_bk_url.length() <= 0) {
+					bk_url = buffer.toString();
+					break;
+				}
+				buffer.append(sb_bk_url);
+			}
+		}
+
+		String url = URLDecoder.decode(bk_url, Bookmark.ENC);
+		if (url != null && url.trim().length() > 0) {
+			BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
+		}
+		PreferenceUtils.getSessionPrefsNode().removeNode();
 	}
 }

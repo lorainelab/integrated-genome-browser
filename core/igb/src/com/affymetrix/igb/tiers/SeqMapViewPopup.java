@@ -380,9 +380,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//JMenuItem show_all = new JRPMenuItemTLP(ShowAllAction.getAction());
 		//show_all.setEnabled(containHiddenTiers);
 		//popup.add(show_all);
-		//JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
-		//remove_data_from_tracks.setEnabled(num_selections > 0 && !coordinates_track_selected);
-		//popup.add(remove_data_from_tracks); // Remove data from selected tracks.
+		
 		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
 		popup.add(operationsMenu);
 		operationsMenu.getPopupMenu().setBorder(finalBorder);
@@ -396,6 +394,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		set_color_by_score.setIcon(null);
 		set_color_by_score.setEnabled(!coordinates_track_selected && !any_graph);
 		popup.add(set_color_by_score);
+		
+		popup.add(new JSeparator());
+		
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
 		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_selected_annotations.setIcon(null);
@@ -404,6 +405,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_track.setIcon(null);
 		popup.add(save_track);
+		
+		popup.add(new JSeparator());
+		
+		JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
+		remove_data_from_tracks.setText("Clear Data");
+		remove_data_from_tracks.setEnabled(Selections.annotStyles.size() > 0 || Selections.graphStyles.size() > 0);
+		remove_data_from_tracks.setIcon(null);
+		popup.add(remove_data_from_tracks); // Remove data from selected tracks.
+		
+		JMenuItem delete_track = new JRPMenuItemTLP(CloseTracksAction.getAction());
+		delete_track.setText("Delete Track");
+//		delete_track.setEnabled(num_selections > 0 && !coordinates_track_selected);
+		delete_track.setEnabled(Selections.annotStyles.size() > 0 || Selections.graphStyles.size() > 0);
+		delete_track.setIcon(null);
+		popup.add(delete_track);
 		
 	//	if (tierGlyph != null) {
 	//		// Check whether this selection is a graph or an annotation

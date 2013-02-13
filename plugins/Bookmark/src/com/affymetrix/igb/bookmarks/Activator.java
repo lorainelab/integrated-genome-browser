@@ -2,6 +2,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -10,8 +11,9 @@ import com.affymetrix.igb.bookmarks.action.LoadSessionAction;
 import com.affymetrix.igb.bookmarks.action.SaveSessionAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.window.service.WindowActivator;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
@@ -73,12 +75,14 @@ public class Activator extends WindowActivator implements BundleActivator {
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		BookmarkActionManager.init(igbService, bookmark_menu);
 		final BookmarkActionManager bmark_action = BookmarkActionManager.getInstance();
-		bundleContext.registerService(IStopRoutine.class.getName(), 
-			new IStopRoutine() {
+		bundleContext.registerService(IWindowRoutine.class.getName(), 
+			new IWindowRoutine() {
 				@Override
 				public void stop() {
 					bmark_action.autoSaveBookmarks();
 				}
+				@Override
+				public void start() { /* Do Nothing */ }
 			},
 			null
 		);

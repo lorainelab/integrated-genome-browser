@@ -36,7 +36,7 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.PrefsLoader;
@@ -451,13 +451,15 @@ public class Activator implements BundleActivator {
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
-		bundleContext.registerService(IStopRoutine.class, 
-			new IStopRoutine() {
+		bundleContext.registerService(IWindowRoutine.class, 
+			new IWindowRoutine() {
 				@Override
 				public void stop() {
 					WebLink.autoSave();
 					((IGB)Application.getSingleton()).saveToolBar();
 				}
+				@Override
+				public void start() { /* Do Nothing */ }
 			},
 			null
 		);

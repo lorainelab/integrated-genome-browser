@@ -17,7 +17,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {
@@ -93,15 +93,15 @@ public class Activator implements BundleActivator {
 //			},
 //			null
 //		);
-		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
+		ExtensionPointHandler<IWindowRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IWindowRoutine.class);
 		stopRoutineExtensionPoint.addListener(
-			new ExtensionPointListener<IStopRoutine>() {
+			new ExtensionPointListener<IWindowRoutine>() {
 				@Override
-				public void addService(IStopRoutine routine) {
+				public void addService(IWindowRoutine routine) {
 					windowServiceDefaultImpl.addStopRoutine(routine);
 				}
 				@Override
-				public void removeService(IStopRoutine routine) {	
+				public void removeService(IWindowRoutine routine) {	
 					windowServiceDefaultImpl.removeStopRoutine(routine);
 				}
 			}

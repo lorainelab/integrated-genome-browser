@@ -35,7 +35,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
-import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
@@ -91,7 +91,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Map<JMenu, Integer> tabMenuPositions;
-	private HashSet<IStopRoutine> stopRoutines;
+	private HashSet<IWindowRoutine> stopRoutines;
 	private Container cpane;
 	private JPanel innerPanel; 
 	private boolean tabSeparatorSet = false;
@@ -105,7 +105,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
 		tabMenus = new HashMap<IGBTabPanel, JMenu>();
 		tabMenuPositions = new HashMap<JMenu, Integer>();
-		stopRoutines = new HashSet<IStopRoutine>();
+		stopRoutines = new HashSet<IWindowRoutine>();
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void shutdown() {
 		saveWindowLocations();
-		for (IStopRoutine stopRoutine : stopRoutines) {
+		for (IWindowRoutine stopRoutine : stopRoutines) {
 			stopRoutine.stop();
 		}
 	}
@@ -443,11 +443,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 	}
 	
-	void addStopRoutine(IStopRoutine routine){
+	void addStopRoutine(IWindowRoutine routine){
 		stopRoutines.add(routine);
 	}
 	
-	void removeStopRoutine(IStopRoutine routine){
+	void removeStopRoutine(IWindowRoutine routine){
 		stopRoutines.remove(routine);
 	}
 }

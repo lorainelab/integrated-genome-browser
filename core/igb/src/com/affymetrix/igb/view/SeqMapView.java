@@ -1031,13 +1031,7 @@ public class SeqMapView extends JPanel
 		axis.setForegroundColor(axis_fg);
 		resultAxisTier.setForegroundColor(axis_fg);
 		setAxisFormatFromPrefs(axis);
-
-		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, tier_index, this);
-		if (cytoband_glyph != null) {
-			resultAxisTier.addChild(cytoband_glyph);
-			//resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
-		}
-
+		addCytobandGlyph(resultAxisTier, tier_index);
 		resultAxisTier.addChild(axis);
 
 		// it is important to set the colors before adding the tier
@@ -1054,6 +1048,14 @@ public class SeqMapView extends JPanel
 		resultAxisTier.setCoords(0, 0, seqmap.getScene().getCoordBox().getWidth(), 54);
 		
 		return resultAxisTier;
+	}
+	
+	protected void addCytobandGlyph(TransformTierGlyph resultAxisTier, int tier_index) {
+		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, tier_index, this);
+		if (cytoband_glyph != null) {
+			resultAxisTier.addChild(cytoband_glyph);
+			//resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
+		}
 	}
 
 	private void shrinkWrap() {

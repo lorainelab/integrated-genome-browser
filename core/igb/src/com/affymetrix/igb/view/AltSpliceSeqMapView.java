@@ -27,6 +27,7 @@ import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;
@@ -390,5 +391,10 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	@Override
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		// No right click menu in slice view
+	}
+	
+	@Override
+	protected void addCytobandGlyph(TransformTierGlyph resultAxisTier, int tier_index) {
+		// No cytobands for slice view
 	}
 }

@@ -30,7 +30,7 @@ public class Activator implements BundleActivator {
 		windowServiceDefaultImpl.addTab(panel);
 		tabPanels.remove(panel.getName());
 		if (tabPanels.isEmpty()) {
-			windowServiceDefaultImpl.showTabs();
+			windowServiceDefaultImpl.startup();
 		}
 	}
 
@@ -40,6 +40,22 @@ public class Activator implements BundleActivator {
     	if (CommonUtils.getInstance().isExit(bundleContext)) {
     		return;
     	}
+		// Adding it first should be ok for now. But what if service was added 
+		// after start routine was already called? 
+		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
+		ExtensionPointHandler<IWindowRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IWindowRoutine.class);
+		stopRoutineExtensionPoint.addListener(
+			new ExtensionPointListener<IWindowRoutine>() {
+				@Override
+				public void addService(IWindowRoutine routine) {
+					windowServiceDefaultImpl.addStopRoutine(routine);
+				}
+				@Override
+				public void removeService(IWindowRoutine routine) {	
+					windowServiceDefaultImpl.removeStopRoutine(routine);
+				}
+			}
+		);
 		final List<String> tabPanels = new ArrayList<String>();
 		Enumeration<String> bundleKeys = WindowServiceDefaultImpl.BUNDLE.getKeys();
 		while (bundleKeys.hasMoreElements()) {
@@ -55,7 +71,6 @@ public class Activator implements BundleActivator {
 				}
 			}
 		}
-		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, null);
 		@SuppressWarnings("unchecked")
 		ServiceReference<IGBTabPanel>[] serviceReferences = (ServiceReference<IGBTabPanel>[])bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
@@ -93,19 +108,6 @@ public class Activator implements BundleActivator {
 //			},
 //			null
 //		);
-		ExtensionPointHandler<IWindowRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IWindowRoutine.class);
-		stopRoutineExtensionPoint.addListener(
-			new ExtensionPointListener<IWindowRoutine>() {
-				@Override
-				public void addService(IWindowRoutine routine) {
-					windowServiceDefaultImpl.addStopRoutine(routine);
-				}
-				@Override
-				public void removeService(IWindowRoutine routine) {	
-					windowServiceDefaultImpl.removeStopRoutine(routine);
-				}
-			}
-		);
 	}
 
 	@Override

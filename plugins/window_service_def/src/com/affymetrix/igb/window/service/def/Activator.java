@@ -14,6 +14,8 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -82,14 +84,27 @@ public class Activator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, WindowServiceDefaultImpl.BUNDLE.getString("loadError"), x.getMessage());
 		}
-		bundleContext.registerService(IStopRoutine.class, 
-			new IStopRoutine() {
+//		bundleContext.registerService(IStopRoutine.class, 
+//			new IStopRoutine() {
+//				@Override
+//				public void stop() {
+//					windowServiceDefaultImpl.shutdown();
+//				}
+//			},
+//			null
+//		);
+		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
+		stopRoutineExtensionPoint.addListener(
+			new ExtensionPointListener<IStopRoutine>() {
 				@Override
-				public void stop() {
-					windowServiceDefaultImpl.shutdown();
+				public void addService(IStopRoutine routine) {
+					windowServiceDefaultImpl.addStopRoutine(routine);
 				}
-			},
-			null
+				@Override
+				public void removeService(IStopRoutine routine) {	
+					windowServiceDefaultImpl.removeStopRoutine(routine);
+				}
+			}
 		);
 	}
 

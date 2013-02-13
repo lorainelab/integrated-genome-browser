@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
-import com.boxysystems.jgoogleanalytics.FocusPoint;
-import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.affymetrix.common.CommonUtils;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -47,7 +45,6 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -86,13 +83,11 @@ public final class IGB extends Application
 	private BioSeq prev_selected_seq = null;
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
 	private IWindowService windowService;
-	private HashSet<IStopRoutine> stopRoutines;
 	private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
 	private static final Logger ourLogger = Logger.getLogger(IGB.class.getPackage().getName());
 
 	public IGB() {
 		super();
-		stopRoutines = new HashSet<IStopRoutine>();
 	}
 
 	@Override
@@ -311,15 +306,9 @@ public final class IGB extends Application
 			GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
 		}
 	}
-	
-	public void addStopRoutine(IStopRoutine routine) {
-		stopRoutines.add(routine);
-	}
 
 	public void defaultCloseOperations() {
-		for (IStopRoutine stopRoutine : stopRoutines) {
-			stopRoutine.stop();
-		}
+		windowService.shutdown();
 	}
 
 	public IGBTabPanel[] setWindowService(final IWindowService windowService) {

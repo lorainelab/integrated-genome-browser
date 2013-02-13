@@ -35,6 +35,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
@@ -90,6 +91,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Map<JMenu, Integer> tabMenuPositions;
+	private HashSet<IStopRoutine> stopRoutines;
 	private Container cpane;
 	private JPanel innerPanel; 
 	private boolean tabSeparatorSet = false;
@@ -103,6 +105,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
 		tabMenus = new HashMap<IGBTabPanel, JMenu>();
 		tabMenuPositions = new HashMap<JMenu, Integer>();
+		stopRoutines = new HashSet<IStopRoutine>();
 	}
 
 	@Override
@@ -365,6 +368,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void shutdown() {
 		saveWindowLocations();
+		for (IStopRoutine stopRoutine : stopRoutines) {
+			stopRoutine.stop();
+		}
 	}
 
 	@Override
@@ -435,5 +441,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 				((JTabbedTrayPane)tabHolder).selectTab(panel);
 			}
 		}
+	}
+	
+	void addStopRoutine(IStopRoutine routine){
+		stopRoutines.add(routine);
+	}
+	
+	void removeStopRoutine(IStopRoutine routine){
+		stopRoutines.remove(routine);
 	}
 }

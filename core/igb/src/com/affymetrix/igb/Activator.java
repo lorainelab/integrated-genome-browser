@@ -185,7 +185,6 @@ public class Activator implements BundleActivator {
 		
 		addGenericActionListener();
 		registerServices(windowServiceReference, igb);
-		addStopRotineListener(igb);
 		
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
@@ -424,20 +423,6 @@ public class Activator implements BundleActivator {
 				}
 				@Override
 				public void notifyGenericAction(GenericAction genericAction) {}
-			}
-		);
-	}
-
-	private void addStopRotineListener(final IGB igb) {
-		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
-		stopRoutineExtensionPoint.addListener(
-			new ExtensionPointListener<IStopRoutine>() {
-				@Override
-				public void addService(IStopRoutine routine) {
-					igb.addStopRoutine(routine);
-				}
-				@Override
-				public void removeService(IStopRoutine routine) {	/*cannot remove*/ }
 			}
 		);
 	}

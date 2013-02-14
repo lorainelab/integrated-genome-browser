@@ -103,7 +103,7 @@ extends GenericAction implements SymSelectionListener {
 			}
 		} else {
 			ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
-					+ rootSym.getCategory().name(), Level.WARNING);
+					+ rootSym.getCategory().toString(), Level.WARNING);
 		}
 	}
 

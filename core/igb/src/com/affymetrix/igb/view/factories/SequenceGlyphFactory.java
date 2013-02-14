@@ -50,8 +50,4 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 		return "sequence";
 	}
 
-	@Override
-	public boolean isCategorySupported(FileTypeCategory category) {
-		return category == FileTypeCategory.Sequence;
-	}
 }

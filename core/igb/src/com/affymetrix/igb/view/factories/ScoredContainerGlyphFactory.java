@@ -191,11 +191,6 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 		return "scored";
 	}
 
-	@Override
-	public boolean isCategorySupported(FileTypeCategory category) {
-		return category == FileTypeCategory.ScoredContainer;
-	}
-
 	public boolean isFileSupported(String fileFormat) {
 		if(fileFormat == null)
 			return false;

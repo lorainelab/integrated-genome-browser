@@ -496,11 +496,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	@Override
-	public boolean isCategorySupported(FileTypeCategory checkCategory) {
-		return (checkCategory == FileTypeCategory.Annotation || checkCategory == FileTypeCategory.Alignment);
-	}
-
-	@Override
 	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
 		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();

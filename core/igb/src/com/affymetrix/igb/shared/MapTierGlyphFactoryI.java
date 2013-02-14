@@ -13,11 +13,8 @@
 
 package com.affymetrix.igb.shared;
 
-import java.util.Map;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 /**
@@ -32,7 +29,7 @@ public interface MapTierGlyphFactoryI  {
 	 * initialize the factory
 	 * @param options - any options appropriate to the factory
 	 */
-	public void init(Map<String, Object> options);
+	public void init(java.util.Map<String, Object> options);
 	/**
 	 * create a ViewModeGlyph for the SeqSymmetry
 	 * @param sym - The SeqSymmetry (object model) for the TierGlyph
@@ -57,17 +54,4 @@ public interface MapTierGlyphFactoryI  {
 	 * @return supports two track
 	 */
 	public boolean supportsTwoTrack();
-	/**
-	 * specifies if this view mode glyph supports the specified category
-	 * @param category - the FileTypeCategory to test
-	 * @return if the category is supported
-	 */
-	public boolean isCategorySupported(FileTypeCategory category);
-	/**
-	 * specifies if the uri can be autoloaded vs. waiting for the Load Data
-	 *   button to be pressed
-	 * @param uri - the uri to test
-	 * @return if the uri can be autoloaded
-	 */
-	public boolean canAutoLoad(String uri);
 }

@@ -460,11 +460,6 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 		probe_part_glyph.setColor(c);
 		return probe_part_glyph;
 	}
-
-	@Override
-	public boolean isCategorySupported(FileTypeCategory category) {
-		return category == FileTypeCategory.ProbeSet;
-	}
 	
 	@Override
 	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {

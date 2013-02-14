@@ -184,14 +184,6 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	@Override
-	public boolean isCategorySupported(FileTypeCategory category) {
-		if (category == FileTypeCategory.Graph){
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
 		if (sym instanceof GraphSym) {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);

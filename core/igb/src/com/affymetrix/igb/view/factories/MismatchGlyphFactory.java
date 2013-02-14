@@ -24,11 +24,4 @@ public class MismatchGlyphFactory extends GraphGlyphFactory {
 		graphGlyph.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupType(graphGlyph) : new MismatchGraphType(graphGlyph));
 	}
 	
-	@Override
-	public boolean isCategorySupported(FileTypeCategory category) {
-		if (category == FileTypeCategory.Mismatch){
-			return true;
-		}
-		return false;
-	}
 }

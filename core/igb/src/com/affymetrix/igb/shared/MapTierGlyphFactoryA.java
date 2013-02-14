@@ -36,11 +36,6 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 	}
 
 	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
-	}
-
-	@Override
 	public String toString() {
 		return getDisplayName();
 	}

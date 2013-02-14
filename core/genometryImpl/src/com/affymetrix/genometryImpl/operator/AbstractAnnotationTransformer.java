@@ -1,6 +1,7 @@
 
 package com.affymetrix.genometryImpl.operator;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 /**
@@ -8,10 +9,15 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
  * @author hiralv
  */
 public abstract class AbstractAnnotationTransformer implements Operator {
-	private final FileTypeCategory fileTypeCategory;
+	protected final FileTypeCategory fileTypeCategory;
 
 	public AbstractAnnotationTransformer(FileTypeCategory fileTypeCategory) {
 		this.fileTypeCategory = fileTypeCategory;
+	}
+	
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 	
 	@Override

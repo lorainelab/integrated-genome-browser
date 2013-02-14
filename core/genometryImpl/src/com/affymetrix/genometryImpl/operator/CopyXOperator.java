@@ -2,29 +2,21 @@ package com.affymetrix.genometryImpl.operator;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
-public class CopyXOperator implements Operator, ICopy{
+public class CopyXOperator extends AbstractAnnotationTransformer implements Operator, ICopy{
 
-	private final FileTypeCategory fileTypeCategory;
 	public CopyXOperator(FileTypeCategory category){
-		this.fileTypeCategory = category;
+		super(category);
 	}
 			
 	@Override
 	public String getName() {
 		return fileTypeCategory.toString().toLowerCase() + "_copy";
-	}
-
-	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override
@@ -46,31 +38,6 @@ public class CopyXOperator implements Operator, ICopy{
 		// copy properties
 		result.setProperties(new HashMap<String,Object>(t.getProperties()));
 		return result;
-	}
-
-	@Override
-	public int getOperandCountMin(FileTypeCategory category) {
-		return category == this.fileTypeCategory ? 1 : 0;
-	}
-
-	@Override
-	public int getOperandCountMax(FileTypeCategory category) {
-		return category == this.fileTypeCategory ? 1 : 0;
-	}
-
-	@Override
-	public Map<String, Class<?>> getParameters() {
-		return null;
-	}
-
-	@Override
-	public boolean setParameters(Map<String, Object> obj) {
-		return false;
-	}
-
-	@Override
-	public boolean supportsTwoTrack() {
-		return false;
 	}
 
 	@Override

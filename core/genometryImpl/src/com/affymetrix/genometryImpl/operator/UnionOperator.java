@@ -27,11 +27,6 @@ public class UnionOperator extends AbstractAnnotationOperator implements Operato
 	}
 
 	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
-
-	@Override
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		List<SeqSymmetry> allSyms = new ArrayList<SeqSymmetry>();
 		for (SeqSymmetry syms : symList) {

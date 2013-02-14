@@ -27,11 +27,6 @@ public class IntersectionOperator extends AbstractAnnotationOperator implements 
 	}
 
 	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
-
-	@Override
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		SeqSymmetry unionA = SeqSymSummarizer.getUnion(findChildSyms(symList.get(0)), aseq);
 		SeqSymmetry unionB = SeqSymSummarizer.getUnion(findChildSyms(symList.get(1)), aseq);

@@ -24,12 +24,7 @@ public class XorOperator extends AbstractAnnotationOperator implements Operator 
 	public String getName() {
 		return category.toString().toLowerCase() + "_xor";
 	}
-
-	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
-
+ 
 	@Override
 	public SeqSymmetry operate(BioSeq aseq, java.util.List<SeqSymmetry> symList) {
 		return getXor(aseq, findChildSyms(symList.get(0)), findChildSyms(symList.get(1)));

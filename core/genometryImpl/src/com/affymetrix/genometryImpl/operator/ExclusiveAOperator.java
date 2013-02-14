@@ -22,11 +22,6 @@ public class ExclusiveAOperator extends ExclusiveOperator implements Operator {
 	}
 
 	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
-
-	@Override
 	public SeqSymmetry operate(BioSeq seq, java.util.List<SeqSymmetry> symList) {
 		return operate(seq, symList.get(0), symList.get(1));
 	}

@@ -52,7 +52,7 @@ public abstract class AbstractAnnotationOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return this.category;
+		return FileTypeCategory.Annotation;
 	}
 
 	protected static List<SeqSymmetry> findChildSyms(SeqSymmetry sym) {

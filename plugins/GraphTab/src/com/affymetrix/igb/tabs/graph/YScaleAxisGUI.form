@@ -77,28 +77,27 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="minValLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="minText" min="-2" pref="58" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                          <Component id="maxValLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="maxText" min="-2" pref="58" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="setByLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                              <Component id="by_valRB_val" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                              <Component id="by_percentileRB_val" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="rangeSlider" alignment="0" min="-2" pref="210" max="-2" attributes="1"/>
-                      </Group>
-                  </Group>
+                  <Component id="minValLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="minText" min="-2" pref="58" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Component id="maxValLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                  <Component id="maxText" min="-2" pref="84" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="setByLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="by_valRB_val" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="by_percentileRB_val" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="rangeSlider" alignment="0" min="-2" pref="210" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -112,15 +111,11 @@
                   </Group>
                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="rangeSlider" min="-2" pref="17" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="maxText" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="maxValLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="minText" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="minValLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="minText" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="minValLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxValLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxText" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
@@ -193,7 +188,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="maxText">
           <Properties>
-            <Property name="columns" type="int" value="5"/>
+            <Property name="columns" type="int" value="8"/>
             <Property name="toolTipText" type="java.lang.String" value="Maximum value"/>
           </Properties>
           <Events>

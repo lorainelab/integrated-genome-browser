@@ -100,7 +100,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
             }
         });
 
-        maxText.setColumns(5);
+        maxText.setColumns(8);
         maxText.setToolTipText("Maximum value");
         maxText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -115,24 +115,24 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         RangePanelLayout.setHorizontalGroup(
             RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(RangePanelLayout.createSequentialGroup()
-                .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, RangePanelLayout.createSequentialGroup()
-                        .add(minValLabel)
-                        .add(0, 0, 0)
-                        .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(38, 38, 38)
-                        .add(maxValLabel)
-                        .add(0, 0, 0)
-                        .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(RangePanelLayout.createSequentialGroup()
-                            .add(setByLabel)
-                            .add(5, 5, 5)
-                            .add(by_valRB_val)
-                            .add(5, 5, 5)
-                            .add(by_percentileRB_val))
-                        .add(rangeSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .add(0, 0, 0))
+                .add(minValLabel)
+                .add(0, 0, 0)
+                .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
+                .add(maxValLabel)
+                .add(0, 0, 0)
+                .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .add(RangePanelLayout.createSequentialGroup()
+                .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(RangePanelLayout.createSequentialGroup()
+                        .add(setByLabel)
+                        .add(5, 5, 5)
+                        .add(by_valRB_val)
+                        .add(5, 5, 5)
+                        .add(by_percentileRB_val))
+                    .add(rangeSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(0, 0, Short.MAX_VALUE))
         );
         RangePanelLayout.setVerticalGroup(
             RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -143,13 +143,11 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
                     .add(by_percentileRB_val))
                 .add(15, 15, 15)
                 .add(rangeSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(maxValLabel))
-                    .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(minValLabel)))
+                .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(minValLabel)
+                    .add(maxValLabel)
+                    .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 0, 0))
         );
 

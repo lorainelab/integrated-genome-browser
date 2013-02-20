@@ -364,11 +364,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void addSearchListener(SearchListener listener) {
 		((SeqMapView)getSeqMapView()).getMapRangeBox().addSearchListener(listener);
+		Application.getSingleton().getIGBToolBar().addSearchListener(listener);
 	}
 
 	@Override
 	public void removeSearchListener(SearchListener listener) {
 		((SeqMapView)getSeqMapView()).getMapRangeBox().removeSearchListener(listener);
+		Application.getSingleton().getIGBToolBar().removeSearchListener(listener);
 	}
 
 	@Override

@@ -1,18 +1,21 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.event.ContinuousAction;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -20,13 +23,13 @@ import com.affymetrix.igb.shared.TrackListProvider;
 import java.awt.*;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -49,7 +52,9 @@ public class IGBToolBar extends JToolBar {
 	private static final String no_selection_text = "Click the map below to select annotations";
 	private static final String selection_info = "Selection Info";
 	private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
+	private static final SeqMapView smv = (SeqMapView) IGBServiceImpl.getInstance().getSeqMapView();
 	
+	public final IGBToolBarMapRangeBox mapRangeBox = new IGBToolBarMapRangeBox(smv);
 	private final JPanel toolbar_items_panel;
 	private final JTextField tf;
 	private final Font selection_font;
@@ -69,10 +74,11 @@ public class IGBToolBar extends JToolBar {
 			}
 		});
 		
-		tf = new JTextField(25);
+		tf = mapRangeBox.range_box;
+		tf.setColumns(25);
 		tf.setBackground(Color.WHITE);
 		tf.setComponentPopupMenu(CCPUtils.getCCPPopup());
-		selection_font = tf.getFont();
+		selection_font = new JTextField().getFont();
 		no_selection_font = selection_font.deriveFont(Font.ITALIC);
 		setLayout(new BorderLayout());
 		
@@ -119,7 +125,7 @@ public class IGBToolBar extends JToolBar {
 			tf.setForeground(Color.LIGHT_GRAY);
 			tf.setFont(no_selection_font);
 			tf.setText(no_selection_text);
-			tf.setEnabled(false);
+			tf.setEnabled(true);
 		} else {
 			tf.setForeground(Color.BLACK);
 			tf.setFont(selection_font);
@@ -206,6 +212,18 @@ public class IGBToolBar extends JToolBar {
 			ordinal = ((JRPButtonTLP)c).getIndex();
 		}
 		return ordinal;
+	}
+	
+	public IGBToolBarMapRangeBox getIGBToolBarMapRangeBox() {
+		return mapRangeBox;
+	}
+	
+	public void addSearchListener(SearchListener search_listener) {
+		mapRangeBox.addSearchListener(search_listener);
+	}
+	
+	public void removeSearchListener(SearchListener search_listener) {
+		mapRangeBox.removeSearchListener(search_listener);
 	}
 
 	private RefreshSelectionListener refreshSelectionListener = new RefreshSelectionListener(){
@@ -312,5 +330,98 @@ public class IGBToolBar extends JToolBar {
 					+ "5. Control-SHIFT click to remove an item from the currently selected items.\n"
 					+ "6. Click-drag the axis to zoom in on a region.\n";
 		}
+	}
+	
+	private class IGBToolBarMapRangeBox extends MapRangeBox {
+
+		public IGBToolBarMapRangeBox(SeqMapView smv) {
+			super(smv);
+			range_box.addFocusListener(tool_bar_focus_listener);
+			range_box.addMouseListener(tool_bar_mouse_listener);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			setRange(range_box.getText());
+		}
+		
+		@Override
+		public void setRange(String search_text) {
+			List<SeqSpan> mergedSpans = getSpanList(gview, search_text);
+			if (mergedSpans != null && mergedSpans.size() > 0) {
+				foundSpans = mergedSpans;
+				spanPointer = 0;
+				if (foundSpans.size() > 1) {
+					range_box.setText(foundSpans.size() + " spans found");
+				} else {
+				}
+			} else {
+				range_box.setText("Nothing found");
+			}
+		}
+		
+		@Override
+		public void addSearchListener(SearchListener listener) {
+			search_listeners.add(listener);
+		}
+
+		@Override
+		public void removeSearchListener(SearchListener listener) {
+			search_listeners.remove(listener);
+		}
+
+		@Override
+		public void viewBoxChanged(NeoViewBoxChangeEvent e) {
+			// Do nothing when span changes
+		}
+		
+		@Override
+		public void groupSelectionChanged(GroupSelectionEvent evt) {
+			super.groupSelectionChanged(evt);
+			if(GenometryModel.getGenometryModel().getSelectedSeqGroup()!=null) {
+				range_box.setEditable(true);
+			} else {
+				range_box.setEditable(false);
+				setSelectionText(null, null);
+			}
+		}
+
+		FocusListener tool_bar_focus_listener = new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if(range_box.getText().equals(no_selection_text)) {
+					range_box.setText("");
+					range_box.setForeground(Color.BLACK);
+					range_box.setFont(selection_font);
+				} else {
+					range_box.setSelectionStart(0);
+					range_box.setSelectionEnd(range_box.getText().length());
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {}
+		};
+		
+		MouseListener tool_bar_mouse_listener = new MouseListener() {
+
+			public void mouseClicked(MouseEvent me) {
+				// Always clean or select the text box when clicking after group selected (not in the start view)
+				tool_bar_focus_listener.focusGained(null);
+			}
+
+			public void mousePressed(MouseEvent me) {
+			}
+
+			public void mouseReleased(MouseEvent me) {
+			}
+
+			public void mouseEntered(MouseEvent me) {
+			}
+
+			public void mouseExited(MouseEvent me) {
+			}
+			
+		};
 	}
 }

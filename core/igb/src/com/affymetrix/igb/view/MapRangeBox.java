@@ -64,15 +64,15 @@ import java.util.regex.Pattern;
  * 
  * @version $Id: MapRangeBox.java 10972 2012-04-05 17:00:51Z lfrohman $
  */
-public final class MapRangeBox implements ActionListener, NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
+public class MapRangeBox implements ActionListener, NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
 	public static final int NO_ZOOM_SPOT = -1;
 
 	private final NeoMap map;
-	private final SeqMapView gview;
+	protected final SeqMapView gview;
 	public final JRPTextField range_box;
-	private List<SeqSpan> foundSpans;
-	private int spanPointer;
-	private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
+	protected List<SeqSpan> foundSpans;
+	protected int spanPointer;
+	protected final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
 	private static String[] regexChars = new String[]{"|"};
 	
 	// Use the ENGLISH locale here because we want the user to be able to
@@ -430,7 +430,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		return spans;
 	}
 
-	private List<SeqSpan> getSpanList(SeqMapView gview, String search_text) {
+	protected List<SeqSpan> getSpanList(SeqMapView gview, String search_text) {
 		for (EmptySearch emptySearch : BASE_SEARCH_MODES) {
 			if (emptySearch.testInput(search_text)) {
 				List<SeqSpan> rawSpans = emptySearch.findSpans(search_text, gview.getVisibleSpan());

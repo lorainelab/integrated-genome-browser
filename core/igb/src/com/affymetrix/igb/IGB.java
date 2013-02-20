@@ -94,6 +94,11 @@ public final class IGB extends Application
 	public SeqMapView getMapView() {
 		return map_view;
 	}
+	
+	@Override
+	public IGBToolBar getIGBToolBar() {
+		return tool_bar;
+	}
 
 	@Override
 	public JFrame getFrame() {

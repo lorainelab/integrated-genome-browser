@@ -61,6 +61,8 @@ public abstract class Application {
 	abstract public javax.swing.JFrame getFrame();
 
 	abstract public com.affymetrix.igb.view.SeqMapView getMapView();
+	
+	abstract public com.affymetrix.igb.view.IGBToolBar getIGBToolBar();
 			
 	public final void addNotLockedUpMsg(final String s) {
 		synchronized (progressStringList) {

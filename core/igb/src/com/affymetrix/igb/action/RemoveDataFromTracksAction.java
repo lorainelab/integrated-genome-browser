@@ -3,18 +3,19 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.shared.StyledGlyph;
 
 public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -42,6 +43,21 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 
 		if (IGB.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getID()), PreferenceUtils.getTopNode(),
 				PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
+			
+			// First split the graph.
+			for (StyledGlyph vg : allGlyphs) {
+				//If graphs is joined then apply color to combo style too.
+				// TODO: Use code from split graph
+				if (vg instanceof GraphGlyph) {
+					ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
+					if (style != null) {
+						GraphState gstate = ((GraphGlyph) vg).getGraphState();
+						gstate.setComboStyle(null, 0);
+						gstate.getTierStyle().setJoin(false);
+					}
+				}
+			}
+			
 			for (ITrackStyleExtended style : allStyles) {
 				String method = style.getMethodName();
 				if (method != null) {

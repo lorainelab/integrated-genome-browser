@@ -175,13 +175,21 @@ public final class GenericFeature {
 		
 		String friendlyURLString = friendlyURL;
 		
-		// Support relative path in friendly URL
+		// Support relative path in friendly URL for Quickload
 		if(!(friendlyURLString.toLowerCase().startsWith("http:")
 						|| friendlyURLString.toLowerCase().startsWith("https:")
 						|| friendlyURLString.toLowerCase().startsWith("ftp:")
 						|| friendlyURLString.toLowerCase().startsWith("file:"))) {
 			if(this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-				return (String) this.gVersion.gServer.serverObj + this.gVersion.versionName + friendlyURLString; // For quickload, use serverObj for the available server path
+				// For quickload, use serverObj for the available server path
+				// and the relative URL starts from server root directory
+				if(friendlyURLString.startsWith("./")) {
+					friendlyURLString = friendlyURLString.substring(2);
+				} else if(friendlyURLString.startsWith("/")) {
+					friendlyURLString = friendlyURLString.substring(1);
+				}
+				
+				return (String) this.gVersion.gServer.serverObj + friendlyURLString;
 			} else {
 				return friendlyURLString;
 			}

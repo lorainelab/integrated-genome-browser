@@ -49,8 +49,8 @@ public class SplitGraphsAction extends GenericAction {
 			public void run() {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
+//				igbService.getSeqMapView().repackTheTiers(true, true);
 				igbService.getSeqMapView().updatePanel(true, true);
-				igbService.getSeqMapView().repackTheTiers(true, true);
 			}
 		});
 	}

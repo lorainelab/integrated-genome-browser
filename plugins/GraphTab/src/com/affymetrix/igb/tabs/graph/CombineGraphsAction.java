@@ -28,8 +28,13 @@ public class CombineGraphsAction extends GenericAction {
 		super("Join", null, null);
 		this.igbService = igbService;
 	}
+	
+	public CombineGraphsAction(IGBService igbService, String title) {
+		super(title, null, null);
+		this.igbService = igbService;
+	}
 
-	private final IGBService igbService;
+	protected final IGBService igbService;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -77,7 +82,7 @@ public class CombineGraphsAction extends GenericAction {
 		updateDisplay();
 	}
 	
-	private void updateDisplay() {
+	protected void updateDisplay() {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 	
 			public void run() {
@@ -89,7 +94,7 @@ public class CombineGraphsAction extends GenericAction {
 		});
 	}
 	
-	private static ITrackStyleExtended createComboStyle(IGBService igbService, Map<Color, Integer> colorMap) {
+	protected ITrackStyleExtended createComboStyle(IGBService igbService, Map<Color, Integer> colorMap) {
 		ITrackStyleExtended combo_style = new SimpleTrackStyle("Joined Graphs", true);
 		combo_style.setTrackName("Joined Graphs");
 		combo_style.setExpandable(true);

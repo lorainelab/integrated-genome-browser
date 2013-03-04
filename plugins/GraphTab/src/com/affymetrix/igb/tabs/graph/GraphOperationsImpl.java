@@ -11,7 +11,7 @@ import static com.affymetrix.igb.shared.Selections.*;
 public class GraphOperationsImpl extends OperationsImpl{
 	
 	boolean is_listening = true; // used to turn on and off listening to GUI events
-	private javax.swing.JButton combineB, splitB;
+	private javax.swing.JButton combineB, overlapB, splitB;
 	
 	GraphOperationsImpl(IGBService igbS){
 		super(igbS);
@@ -20,6 +20,7 @@ public class GraphOperationsImpl extends OperationsImpl{
 	@Override
 	protected void initComponents(IGBService igbS){
 		combineB = new javax.swing.JButton(new CombineGraphsAction(igbS));
+		overlapB = new javax.swing.JButton(new OverlapGraphsAction(igbS));
 		splitB = new javax.swing.JButton(new SplitGraphsAction(igbS));
 		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getBtPanel());
@@ -28,10 +29,12 @@ public class GraphOperationsImpl extends OperationsImpl{
 				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 				.addComponent(combineB)
+				.addComponent(overlapB)
 				.addComponent(splitB))));
 		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addComponent(combineB)
+				.addComponent(overlapB)
 				.addComponent(splitB)));
 		
 		getSingleTrackLabel().setText("Single-Graph:");
@@ -44,6 +47,7 @@ public class GraphOperationsImpl extends OperationsImpl{
 		is_listening = false;
 		
 		combineB.setEnabled(enable && graphGlyphs.size() > 1 && !isAnyJoined());
+		overlapB.setEnabled(enable && graphGlyphs.size() > 1 && !isAnyJoined());
 		splitB.setEnabled(enable && isAnyJoined());
 		
 		is_listening = true;

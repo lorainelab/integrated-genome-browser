@@ -416,8 +416,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		
 		JMenuItem delete_track = new JRPMenuItemTLP(CloseTracksAction.getAction());
 		delete_track.setText("Delete Track");
-//		delete_track.setEnabled(num_selections > 0 && !coordinates_track_selected);
-		delete_track.setEnabled(Selections.annotStyles.size() > 0 || Selections.graphStyles.size() > 0);
+		delete_track.setEnabled(num_selections > 0 && !coordinates_track_selected);
 		delete_track.setIcon(null);
 		popup.add(delete_track);
 		

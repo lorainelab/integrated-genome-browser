@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
@@ -87,6 +88,9 @@ public abstract class Selections {
 							graphGlyphs.add(gg);
 							allGlyphs.add(gg);
 							rootSyms.add((RootSeqSymmetry)gg.getInfo());
+						} else if(useGlyph.getChildCount()==1 && g instanceof SolidGlyph) { // This happens for graph when the data is cleared
+							allStyles.add(useGlyph.getAnnotStyle());
+							allGlyphs.add(useGlyph);
 						}
 					}
 				}
@@ -99,6 +103,9 @@ public abstract class Selections {
 			} else if (category == FileTypeCategory.Axis){
 				allGlyphs.add(useGlyph);
 				axisStyles.add(useGlyph.getAnnotStyle());
+			} else if(category == null) { // This happens when feature checked but data is not loaded
+				allStyles.add(useGlyph.getAnnotStyle());
+				allGlyphs.add(useGlyph);
 			}
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })

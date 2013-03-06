@@ -16,7 +16,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.Rectangle;
 
 /**
@@ -121,9 +120,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
-        CustomTitleBorder customTitleBorder = new CustomTitleBorder("Available Data -", "Configure");
-        customTitleBorder.setTitleFont(new Font("Lucida Grande", Font.PLAIN, 13));
-        jPanel1.setBorder(customTitleBorder);
+        jPanel1.setBorder(new CustomTitleBorder("Available Data -", "Configure"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

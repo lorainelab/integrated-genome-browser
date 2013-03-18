@@ -60,6 +60,10 @@ public final class WebLinksView implements ListSelectionListener {
 	public JTextField nameTextField;
 	public JTextField urlTextField;
 	public JTextField regexTextField;
+	public JTextField startWithTextField;
+	public JTextField endWithTextField;
+	public JTextField containsTextField;
+	public JCheckBox ignoreCaseCheckBox;
 	public JRadioButton nameRadioButton;
 	public JRadioButton idRadioButton;
 	private final ButtonGroup button_group = new ButtonGroup();
@@ -89,6 +93,10 @@ public final class WebLinksView implements ListSelectionListener {
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
 		regexTextField = new JTextField();
+		startWithTextField = new JTextField();
+		endWithTextField = new JTextField();
+		containsTextField = new JTextField();
+		ignoreCaseCheckBox = new JCheckBox();
 		nameRadioButton = new JRadioButton();
 		idRadioButton = new JRadioButton();
 		button_group.add(nameRadioButton);
@@ -241,11 +249,61 @@ public final class WebLinksView implements ListSelectionListener {
 					Pattern.compile(regex);
 					regexTextField.setForeground(Color.BLACK);
 					localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+					ignoreCaseCheckBox.setSelected((".*".equals(regex) || regex.startsWith("(?i)")));
 				}catch (PatternSyntaxException e){
 					regexTextField.setForeground(Color.RED);
 				}	
 			}
 		}
+	}
+	
+	public void composeRegex() {
+		if (localTable.getSelectedRow() != -1) {
+			String startWith = startWithTextField.getText();
+			String endWith = endWithTextField.getText();
+			String contains = containsTextField.getText();
+			
+			String regex = ".*";
+			
+			if(!startWith.trim().isEmpty() && endWith.trim().isEmpty() && contains.trim().isEmpty()) {
+				regex = "^" + startWith + ".*";
+			} else if(startWith.trim().isEmpty() && !endWith.trim().isEmpty() && contains.trim().isEmpty()) {
+				regex = ".*" + endWith + "$";
+			} else if(startWith.trim().isEmpty() && endWith.trim().isEmpty() && !contains.trim().isEmpty()) {
+				regex = ".*" + contains + ".*";
+			} else if(!startWith.trim().isEmpty() && !endWith.trim().isEmpty() && contains.trim().isEmpty()) {
+				regex = "^" + startWith + ".*" + endWith + "$";
+			} else if(!startWith.trim().isEmpty() && endWith.trim().isEmpty() && !contains.trim().isEmpty()) {
+				regex = "^" + startWith + ".*" + contains + ".*";
+			} else if(startWith.trim().isEmpty() && !endWith.trim().isEmpty() && !contains.trim().isEmpty()) {
+				regex = ".*" + contains + ".*" + endWith + "$";
+			} else if(!startWith.trim().isEmpty() && !endWith.trim().isEmpty() && !contains.trim().isEmpty()) {
+				regex = "^" + startWith + ".*" + contains + ".*" + endWith + "$";
+			} else {
+				localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+				regexTextField.setText(regex);
+				return;
+			}
+			
+			regex = (ignoreCaseCheckBox.isSelected()) ? "(?i)" + regex : regex;
+			localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+			regexTextField.setText(regex);
+		}
+	}
+	
+	public void ignoreCaseCheckBoxStateChanged() {
+		String regex = regexTextField.getText();
+		
+		if(!regex.equals(".*")) {
+			if(ignoreCaseCheckBox.isSelected()) {
+				regex = "(?i)" + regex;
+			} else if(regex.startsWith("(?i)")) {
+				regex = regex.substring(4);
+			}
+		}
+		
+		regexTextField.setText(regex);
+		localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
 	}
 
 	public void idRadioButton() {
@@ -324,6 +382,10 @@ public final class WebLinksView implements ListSelectionListener {
 		nameTextField.setText("");
 		urlTextField.setText("");
 		regexTextField.setText("");
+		startWithTextField.setText("");
+		endWithTextField.setText("");
+		containsTextField.setText("");
+		ignoreCaseCheckBox.setSelected(true);
 	}
 
 	/**
@@ -347,6 +409,11 @@ public final class WebLinksView implements ListSelectionListener {
 			nameTextField.setText(link.getName());
 			urlTextField.setText(link.getUrl());
 			regexTextField.setText(link.getRegex());
+			
+			startWithTextField.setText("");
+			endWithTextField.setText("");
+			containsTextField.setText("");
+			ignoreCaseCheckBox.setSelected((".*".equals(link.getRegex()) || (link.getRegex()).startsWith("(?i)")));
 			
 			if(link.getPattern() == null && !".*".equals(link.getRegex()) && !"(?i).*".equals(link.getRegex())){
 				regexTextField.setForeground(Color.red);
@@ -378,6 +445,10 @@ public final class WebLinksView implements ListSelectionListener {
 		regexTextField.setEnabled(b);
 		nameRadioButton.setEnabled(b);
 		idRadioButton.setEnabled(b);
+		startWithTextField.setEnabled(b);
+		endWithTextField.setEnabled(b);
+		containsTextField.setEnabled(b);
+		ignoreCaseCheckBox.setEnabled(b);
 	}
 
 	class WebLinksTableModel extends AbstractTableModel {

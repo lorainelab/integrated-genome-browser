@@ -67,11 +67,20 @@ public class WebLinksViewGUI extends JPanel {
         urlLabel = new javax.swing.JLabel();
         nameRadioButton = wlv.nameRadioButton;
         idRadioButton = wlv.idRadioButton;
-        regexTextField = wlv.regexTextField;
         urlTextField = wlv.urlTextField;
-        matchTip = new javax.swing.JLabel();
-        regexLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        startWithTextField = wlv.startWithTextField;
+        jLabel5 = new javax.swing.JLabel();
+        endWithTextField = wlv.endWithTextField;
+        jLabel6 = new javax.swing.JLabel();
+        containsTextField = wlv.containsTextField;
+        ignoreCaseCheckBox = wlv.ignoreCaseCheckBox;
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        regexTextField = wlv.regexTextField;
         regularExpressionTip = new javax.swing.JLabel();
         defaultPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -124,7 +133,7 @@ public class WebLinksViewGUI extends JPanel {
             }
         });
 
-        urlLabel.setText("URL:");
+        urlLabel.setText("URL Pattern:");
 
         nameRadioButton.setText("Track Name");
         nameRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -140,36 +149,100 @@ public class WebLinksViewGUI extends JPanel {
             }
         });
 
-        regexTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                regexTextFieldKeyReleased(evt);
-            }
-        });
-
         urlTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 urlTextFieldKeyReleased(evt);
             }
         });
 
-        matchTip.setToolTipText("Choose for Regular Expression Matches");
-        matchTip.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
-        matchTip.setText(" ");
-        matchTip.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                matchTipMouseReleased(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                matchTipMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                matchTipMouseEntered(evt);
+        jLabel1.setText("Regular Expression Matches:");
+
+        jTabbedPane1.setToolTipText("");
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(575, 50));
+
+        jLabel4.setText("Start With");
+
+        startWithTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                startWithTextFieldKeyReleased(evt);
             }
         });
 
-        regexLabel.setText("Regular Expression:");
+        jLabel5.setText("End With");
 
-        jLabel1.setText("Regular Expression Matches:");
+        endWithTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                endWithTextFieldKeyReleased(evt);
+            }
+        });
+
+        jLabel6.setText("Contains");
+
+        containsTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                containsTextFieldKeyReleased(evt);
+            }
+        });
+
+        ignoreCaseCheckBox.setSelected(true);
+        ignoreCaseCheckBox.setText("Ignore Case");
+        ignoreCaseCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ignoreCaseCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(5, 5, 5)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(jLabel4)
+                        .add(18, 18, 18)
+                        .add(startWithTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(jLabel5)
+                        .add(18, 18, 18)
+                        .add(endWithTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(jLabel6)
+                        .add(24, 24, 24)
+                        .add(containsTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(ignoreCaseCheckBox)))
+                .addContainerGap(69, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(jLabel5)
+                        .add(endWithTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(jLabel4)
+                        .add(startWithTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel6)
+                    .add(containsTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(ignoreCaseCheckBox))
+                .add(42, 42, 42))
+        );
+
+        jTabbedPane1.addTab("Build Web Link", null, jPanel1, "Build web link regular expression");
+
+        jLabel2.setText("Regular Expression");
+
+        regexTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                regexTextFieldKeyReleased(evt);
+            }
+        });
 
         regularExpressionTip.setToolTipText("Click to the instruction page.");
         regularExpressionTip.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
@@ -186,67 +259,89 @@ public class WebLinksViewGUI extends JPanel {
             }
         });
 
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(5, 5, 5)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 498, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(regularExpressionTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jLabel2))
+                .addContainerGap(48, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jLabel2)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(regularExpressionTip))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Advanced", null, jPanel2, "Expert user to enter regular expression");
+
         org.jdesktop.layout.GroupLayout builderPanelLayout = new org.jdesktop.layout.GroupLayout(builderPanel);
         builderPanel.setLayout(builderPanelLayout);
         builderPanelLayout.setHorizontalGroup(
             builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(builderPanelLayout.createSequentialGroup()
+                .add(5, 5, 5)
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(urlLabel)
+                    .add(nameLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(builderPanelLayout.createSequentialGroup()
+                        .add(urlTextField)
+                        .add(80, 80, 80))
+                    .add(builderPanelLayout.createSequentialGroup()
+                        .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 177, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+            .add(builderPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .add(jLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(nameRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(idRadioButton)
-                .add(5, 5, 5)
-                .add(matchTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(161, Short.MAX_VALUE))
-            .add(builderPanelLayout.createSequentialGroup()
-                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(nameLabel)
-                    .add(urlLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
-                    .add(builderPanelLayout.createSequentialGroup()
-                        .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(regexLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(regexTextField)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(regularExpressionTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(6, 6, 6))))
+                .add(0, 0, Short.MAX_VALUE))
+            .add(jTabbedPane1)
         );
         builderPanelLayout.setVerticalGroup(
             builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(builderPanelLayout.createSequentialGroup()
-                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(regularExpressionTip)
-                    .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(regexLabel)
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(nameLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(urlLabel)
                     .add(urlTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(0, 0, 0)
-                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                .add(5, 5, 5)
+                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 114, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
                     .add(nameRadioButton)
-                    .add(idRadioButton)
-                    .add(matchTip)))
+                    .add(idRadioButton)))
         );
 
         org.jdesktop.layout.GroupLayout localPanelLayout = new org.jdesktop.layout.GroupLayout(localPanel);
         localPanel.setLayout(localPanelLayout);
         localPanelLayout.setHorizontalGroup(
             localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, localPanelLayout.createSequentialGroup()
                 .add(createButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(deleteButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 232, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(importButton)
                 .add(0, 0, 0)
                 .add(exportButton))
@@ -255,14 +350,16 @@ public class WebLinksViewGUI extends JPanel {
         localPanelLayout.setVerticalGroup(
             localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(localPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 180, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 116, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(exportButton)
                     .add(importButton)
                     .add(createButton)
                     .add(deleteButton))
-                .add(builderPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(10, 10, 10)
+                .add(builderPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         defaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Server Provided Web Link"));
@@ -278,11 +375,11 @@ public class WebLinksViewGUI extends JPanel {
         defaultPanel.setLayout(defaultPanelLayout);
         defaultPanelLayout.setHorizontalGroup(
             defaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
+            .add(jScrollPane2)
         );
         defaultPanelLayout.setVerticalGroup(
             defaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -297,7 +394,8 @@ public class WebLinksViewGUI extends JPanel {
             .add(layout.createSequentialGroup()
                 .add(defaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(18, 18, 18)
-                .add(localPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(localPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -343,10 +441,6 @@ public class WebLinksViewGUI extends JPanel {
 		wlv.nameTextFieldKeyReleased();
 	}//GEN-LAST:event_nameTextFieldKeyReleased
 
-	private void regexTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_regexTextFieldKeyReleased
-		wlv.regexTextFieldKeyReleased();
-	}//GEN-LAST:event_regexTextFieldKeyReleased
-
 	private void urlTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_urlTextFieldKeyReleased
 		wlv.urlTextField();
 	}//GEN-LAST:event_urlTextFieldKeyReleased
@@ -363,39 +457,56 @@ public class WebLinksViewGUI extends JPanel {
 		setCursor(WebLinksView.defaultCursor);
 	}//GEN-LAST:event_regularExpressionTipMouseExited
 
-	private void matchTipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_matchTipMouseEntered
-		setCursor(WebLinksView.handCursor);
-	}//GEN-LAST:event_matchTipMouseEntered
+	private void ignoreCaseCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreCaseCheckBoxActionPerformed
+		wlv.ignoreCaseCheckBoxStateChanged();
+	}//GEN-LAST:event_ignoreCaseCheckBoxActionPerformed
 
-	private void matchTipMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_matchTipMouseExited
-		setCursor(WebLinksView.defaultCursor);
-	}//GEN-LAST:event_matchTipMouseExited
+    private void regexTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_regexTextFieldKeyReleased
+		wlv.regexTextFieldKeyReleased();
+    }//GEN-LAST:event_regexTextFieldKeyReleased
 
-	private void matchTipMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_matchTipMouseReleased
-		wlv.regexTipMouseReleased();
-	}//GEN-LAST:event_matchTipMouseReleased
+	private void startWithTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_startWithTextFieldKeyReleased
+		wlv.composeRegex();
+	}//GEN-LAST:event_startWithTextFieldKeyReleased
+
+	private void endWithTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_endWithTextFieldKeyReleased
+		wlv.composeRegex();
+	}//GEN-LAST:event_endWithTextFieldKeyReleased
+
+	private void containsTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_containsTextFieldKeyReleased
+		wlv.composeRegex();
+	}//GEN-LAST:event_containsTextFieldKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel builderPanel;
+    private javax.swing.JTextField containsTextField;
     private javax.swing.JButton createButton;
     private javax.swing.JPanel defaultPanel;
     private javax.swing.JTable defaultTable;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JTextField endWithTextField;
     private javax.swing.JButton exportButton;
     private javax.swing.JRadioButton idRadioButton;
+    private javax.swing.JCheckBox ignoreCaseCheckBox;
     private javax.swing.JButton importButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel localPanel;
     private javax.swing.JTable localTable;
-    private javax.swing.JLabel matchTip;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JRadioButton nameRadioButton;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JLabel regexLabel;
     private javax.swing.JTextField regexTextField;
     private javax.swing.JLabel regularExpressionTip;
+    private javax.swing.JTextField startWithTextField;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables

@@ -61,6 +61,7 @@ public abstract class Glyph implements GlyphI  {
 	private boolean overlapped = false;
 	private boolean skipDraw = false;
 	private int rowNumber = 0;
+	private boolean hitable = false;
 
 	public Glyph()
 	{
@@ -324,8 +325,12 @@ public abstract class Glyph implements GlyphI  {
 	/** Default implementation of method from GlyphI, always returns false
 	 *  unless overridden in sub-class.
 	 */
-	public boolean isHitable() { return false; }
+	public boolean isHitable() { return hitable; }
 
+	public void setHitable(boolean hitable) {
+		this.hitable = hitable;
+	}
+	
 	public boolean intersects(Rectangle rect)  {
 		return visible && rect.intersects(pixelbox);
 	}

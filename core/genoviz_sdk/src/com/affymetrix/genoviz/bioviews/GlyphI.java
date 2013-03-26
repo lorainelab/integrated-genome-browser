@@ -219,6 +219,13 @@ public interface GlyphI extends NeoConstants  {
 	 */
 	public boolean isHitable();
 
+	/*
+	 * Sets whether glyph is hitable or not
+	 * 
+	 * @param hitable
+	 */
+	public void setHitable(boolean hitable);
+	
 	/**
 	 * Sets whether or not the glyph is selected.
 	 * <p>

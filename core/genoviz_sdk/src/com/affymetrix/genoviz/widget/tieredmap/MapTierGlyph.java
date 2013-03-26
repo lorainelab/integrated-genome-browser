@@ -111,7 +111,6 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	protected Color label_color = Color.black;
 	protected String label = null;
 	protected boolean showLabel = true;
-	protected boolean hitable = false;
 	protected boolean hideable = true;
 	protected List<String> moreStrings;
 	protected int label_spacing = -1;
@@ -386,7 +385,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	public boolean hit (Rectangle pixel_hitbox, ViewI view) {
 		calcPixels(view);
 
-		if (!isVisible() || !this.hitable)
+		if (!isVisible() || !isHitable())
 			return false;
 
 		return pixel_hitbox.intersects (this.getPixelBox());
@@ -495,18 +494,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	public Color getLabelColor() {
 		return label_color;
 	}
-
-	/** Set whether or not the tier should be hit by the mouse. */
-	public void setHitable(boolean h) {
-		hitable = h;
-	}
-
-	/** Get whether or not the tier should be hit by the mouse. */
-	@Override
-	public boolean isHitable() {
-		return hitable;
-	}
-
+	
 	/**
 	 * Set whether or not the tier wants to allow itself to be hidden.
 	 * The state of this flag has no effect

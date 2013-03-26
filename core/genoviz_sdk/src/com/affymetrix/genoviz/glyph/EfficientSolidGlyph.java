@@ -43,6 +43,10 @@ public class EfficientSolidGlyph extends Glyph {
 	public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
 			BasicStroke.JOIN_MITER, 10, new float[]{1, 10}, 9);
 
+	public EfficientSolidGlyph(){
+		this.setHitable(true);
+	}
+	
 	/**
 	 * Draws a line with little arrows to indicate the direction.
 	 *
@@ -85,17 +89,10 @@ public class EfficientSolidGlyph extends Glyph {
 	public void setDirection(int dir){
 		direction = dir;
 	}
-	/**
-	 * @return true. These glyphs are always hitable.
-	 */
-	@Override
-	public boolean isHitable() {
-		return true;
-	}
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible() && coord_hitbox.intersects(this.getCoordBox());
+		return isHitable() && isVisible() && coord_hitbox.intersects(this.getCoordBox());
 	}
 
 	/**

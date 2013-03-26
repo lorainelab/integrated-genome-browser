@@ -25,14 +25,14 @@ class ColoredResiduesGlyph extends SequenceGlyph {
     private boolean residuesSet = false;
     private int residue_length = 0;
     private static final Font mono_default_font = NeoConstants.default_bold_font;
-    // default to true for backward compatability
-    protected boolean hitable = true;
 	private final boolean drawRect;
 
     public ColoredResiduesGlyph(boolean drawRect) {
         super();
         setResidueFont(mono_default_font);
 		this.drawRect = drawRect;
+		// default to true for backward compatability
+		setHitable(true);
     }
 
     @Override
@@ -154,11 +154,6 @@ class ColoredResiduesGlyph extends SequenceGlyph {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isHitable() {
-        return hitable;
     }
 
     @Override

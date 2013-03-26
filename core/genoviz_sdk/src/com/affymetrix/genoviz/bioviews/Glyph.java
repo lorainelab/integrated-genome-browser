@@ -325,9 +325,9 @@ public abstract class Glyph implements GlyphI  {
 	/** Default implementation of method from GlyphI, always returns false
 	 *  unless overridden in sub-class.
 	 */
-	public boolean isHitable() { return hitable; }
+	public final boolean isHitable() { return hitable; }
 
-	public void setHitable(boolean hitable) {
+	public final void setHitable(boolean hitable) {
 		this.hitable = hitable;
 	}
 	

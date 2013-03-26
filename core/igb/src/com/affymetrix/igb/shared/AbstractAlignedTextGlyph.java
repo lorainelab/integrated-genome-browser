@@ -31,10 +31,8 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	private final BitSet residueMask = new BitSet();
 	private static final Font mono_default_font = NeoConstants.default_bold_font;
 		
-	// default to true for backward compatability
-	private boolean hitable = true;
 	//public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
-
+	
 	public void setParentSeqStart(int beg) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
@@ -54,6 +52,8 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	public AbstractAlignedTextGlyph() {
 		super();
 		setResidueFont(mono_default_font);
+		// default to true for backward compatability
+		setHitable(true);
 	}
 
 	@Override
@@ -207,16 +207,6 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
 			}
 		}
-	}
-
-
-	public void setHitable(boolean h) {
-		this.hitable = h;
-	}
-
-	@Override
-	public boolean isHitable() {
-		return hitable;
 	}
 
 	@Override

@@ -242,13 +242,8 @@ public final class OrfAnalyzer extends JComponent
 				fw.setMinThreshold(current_orf_thresh);
 				orf_holders.add(fw);
 			} else {
-				orf_glyph = new FillRectGlyph() {
-
-					@Override
-					public boolean isHitable() {
-						return false;
-					}
-				};
+				orf_glyph = new FillRectGlyph();
+				orf_glyph.setHitable(false);
 				orf_glyph.setColor(tier.getBackgroundColor());
 			}
 			// Make orf_glyph as long as vseq; otherwise, two or more could pack into one line.

@@ -553,7 +553,6 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
 	public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect){	
 		List<GlyphI> glyphs = new ArrayList<GlyphI>();
-		GlyphI child, temp = new Glyph(){};
 		
 		for (TierGlyph tg : map.getTiers()) {
 			// Do not perform selection on axis tier childrens

@@ -308,6 +308,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 					pglyph.addChild(alignResidueGlyph);
 				}
 				
+				// Special case: When there is only one child, then make it not hitable.
+				if(childCount == 1){
+					cglyph.setHitable(false);
+				}
+				
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}

@@ -563,6 +563,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
+		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS);
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {

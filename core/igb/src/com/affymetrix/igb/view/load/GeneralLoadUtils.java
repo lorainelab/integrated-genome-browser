@@ -643,7 +643,9 @@ public final class GeneralLoadUtils {
 
 		optimized_sym = feature.optimizeRequest(span);
 
-		if (feature.getLoadStrategy() != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerTypeI.DAS2) {
+		if (feature.getLoadStrategy() != LoadStrategy.GENOME 
+				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS2 
+				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
 			if (checkBamAndSamLoading(feature, optimized_sym)) {

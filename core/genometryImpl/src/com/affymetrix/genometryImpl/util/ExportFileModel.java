@@ -1,11 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
-import com.affymetrix.genometryImpl.parsers.BedDetailWriter;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.symloader.BedGraph;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -37,7 +32,11 @@ public class ExportFileModel {
 		annotationList.add(BedDetailWriter.class);
 		annotationWriters.put(FileTypeCategory.Annotation, annotationList);
 		
-		annotationWriters.put(FileTypeCategory.Alignment, annotationList);
+		List<Class<? extends AnnotationWriter>> alignmentList = new ArrayList<Class<? extends AnnotationWriter>>();
+		alignmentList.add(BedParser.class);
+		alignmentList.add(BedDetailWriter.class);
+//		alignmentList.add(SAMWriter.class); // Disable SAMWriter as it is not completed
+		annotationWriters.put(FileTypeCategory.Alignment, alignmentList);
 				
 		List<Class<? extends AnnotationWriter>> graphList = new ArrayList<Class<? extends AnnotationWriter>>();
 		graphList.add(BedGraph.class);

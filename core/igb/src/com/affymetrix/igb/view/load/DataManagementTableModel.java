@@ -216,6 +216,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 		}
 		
+		//Temporary fix to show joined graph features when sequence is changed.
+		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
+			vf = style2Feature.get(tempVirtualFeature.getStyle());
+			if(vf != null && vf.getStyle().getJoin() && !virtualFeatures.contains(vf)){
+				virtualFeatures.add(vf);
+			}
+		}
+		
 		List<GraphGlyph> floatingGraphGlyphs = smv.getFloatingGraphGlyphs();
 		size = floatingGraphGlyphs.size();
 		for(int i=0; i<size; i++){

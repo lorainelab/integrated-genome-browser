@@ -164,6 +164,19 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				continue;
 			}
 			
+			// Fix for joined graph
+			if (style.isGraphTier() && tg.getChildCount() > 1) {
+				for (int j = 0; j < tg.getChildCount(); j++) {
+					GlyphI g = tg.getChild(j);
+					vf = style2Feature.get(((GraphGlyph) g).getAnnotStyle());
+					if (vf != null && !virtualFeatures.contains(vf)) {
+						virtualFeatures.add(vf);
+						tempVirtualFeatures.remove(vf);
+					}
+				}
+				continue;
+			}
+			
 			vf = style2Feature.get(style);
 			if(vf != null && !virtualFeatures.contains(vf)){
 				virtualFeatures.add(vf);

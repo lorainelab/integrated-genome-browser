@@ -51,9 +51,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 				if (vg instanceof GraphGlyph) {
 					ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
 					if (style != null) {
-						GraphState gstate = ((GraphGlyph) vg).getGraphState();
-						gstate.setComboStyle(null, 0);
-						gstate.getTierStyle().setJoin(false);
+						GraphGlyph.split((GraphGlyph)vg);
 					}
 				}
 			}

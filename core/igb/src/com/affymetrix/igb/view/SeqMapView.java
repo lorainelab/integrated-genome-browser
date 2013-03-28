@@ -1627,7 +1627,7 @@ public class SeqMapView extends JPanel
 	public final void setShrinkWrap(boolean b) {
 		shrinkWrapMapBounds = b;
 		setAnnotatedSeq(aseq);
-		ShrinkWrapAction.getAction().putValue(Action.SELECTED_KEY, b);
+//		ShrinkWrapAction.getAction().putValue(Action.SELECTED_KEY, b);
 	}
 
 	public final boolean getShrinkWrap() {

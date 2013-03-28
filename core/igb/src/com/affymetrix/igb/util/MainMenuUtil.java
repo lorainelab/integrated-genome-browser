@@ -109,7 +109,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_clampView", ClampViewAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_shrinkWrap", ShrinkWrapAction.getAction()));
+//		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_shrinkWrap", ShrinkWrapAction.getAction()));
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_clearVisualTools", ClearVisualTools.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_showVisualTools", ShowAllVisualToolsAction.getAction()));

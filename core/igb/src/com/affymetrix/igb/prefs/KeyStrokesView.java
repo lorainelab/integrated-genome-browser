@@ -186,7 +186,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		smallTimeActions.add(ShowPlusStrandAction.getAction());
 		smallTimeActions.add(ShowMinusStrandAction.getAction());
 		smallTimeActions.add(ClampViewAction.getAction());
-		smallTimeActions.add(ShrinkWrapAction.getAction());
+//		smallTimeActions.add(ShrinkWrapAction.getAction());
 		smallTimeActions.add(ToggleHairlineAction.getAction());
 		smallTimeActions.add(ToggleHairlineLabelAction.getAction());
 		smallTimeActions.add(ToggleToolTipAction.getAction());

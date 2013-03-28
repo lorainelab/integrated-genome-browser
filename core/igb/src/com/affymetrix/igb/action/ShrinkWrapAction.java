@@ -16,20 +16,20 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ShrinkWrapAction extends GenericAction {
 	private static final long serialVersionUID = 1;
-	private static final ShrinkWrapAction ACTION = new ShrinkWrapAction();
+//	private static final ShrinkWrapAction ACTION = new ShrinkWrapAction();
 
 	private ShrinkWrapAction() {
 		super(BUNDLE.getString("toggleShrinkWrapping"), null, "16x16/actions/blank_placeholder.png", null, KeyEvent.VK_S);
 		this.putValue(SELECTED_KEY, IGB.getSingleton().getMapView().getShrinkWrap());
 	}
 	
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static ShrinkWrapAction getAction() {
-		return ACTION;
-	}
+//	static{
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//	}
+//	
+//	public static ShrinkWrapAction getAction() {
+//		return ACTION;
+//	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

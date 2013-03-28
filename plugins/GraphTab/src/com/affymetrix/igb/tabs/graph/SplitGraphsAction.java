@@ -1,7 +1,5 @@
 package com.affymetrix.igb.tabs.graph;
 
-import java.awt.event.ActionEvent;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -25,20 +23,19 @@ public class SplitGraphsAction extends GenericAction {
 	private final IGBService igbService;
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
 		
 		for (GraphGlyph gg : graphGlyphs) {
-			GraphSym gsym = (GraphSym) gg.getInfo();
-			GraphState gstate = gsym.getGraphState();
-			gstate.setComboStyle(null, 0);
-			gstate.getTierStyle().setJoin(false);
-//			igbService.selectTrack(child, true);
-
-			// For simplicity, set the floating state of all new tiers to false.
-			// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
-			gstate.getTierStyle().setFloatTier(false); // for simplicity
-
+			if(gg.getParent().getChildCount() == 2){
+				for(int i=0; i<gg.getParent().getChildCount(); i++){
+					if(gg.getParent().getChild(i) instanceof GraphGlyph){
+						split((GraphGlyph)gg.getParent().getChild(i));
+					}
+				}
+			}else{
+				split(gg);
+			}
 		}
 		//igbService.getSeqMapView().postSelections();
 		updateDisplay();
@@ -53,5 +50,17 @@ public class SplitGraphsAction extends GenericAction {
 				igbService.getSeqMapView().updatePanel(true, true);
 			}
 		});
+	}
+
+	private void split(GraphGlyph gg) {
+		GraphSym gsym = (GraphSym) gg.getInfo();
+		GraphState gstate = gsym.getGraphState();
+		gstate.setComboStyle(null, 0);
+		gstate.getTierStyle().setJoin(false);
+//			igbService.selectTrack(child, true);
+
+		// For simplicity, set the floating state of all new tiers to false.
+		// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
+		gstate.getTierStyle().setFloatTier(false); // for simplicity
 	}
 }

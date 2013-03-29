@@ -109,8 +109,7 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	public boolean isAuthOptional();
 	/**
 	 * get Residues from the sepcified server
-	 * @param server the server
-	 * @param versions list of versions
+	 * @param version the version
 	 * @param genomeVersionName name of the version
 	 * @param aseq the BioSeq (chromosome)
 	 * @param min minimum location on bioseq
@@ -118,7 +117,7 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 * @param span the span to get the residues
 	 * @return true if residues loaded, false otherwise
 	 */
-	public boolean getResidues(GenericServer server, List<GenericVersion> versions, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span);
+	public boolean getResidues(GenericVersion version, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span);
 	// the following method is required by the CacheScript class
 	// this method does not need to be implemented unless there are
 	// servers of this server type that will be cached.

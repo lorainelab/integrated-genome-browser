@@ -107,30 +107,22 @@ public class LocalFilesServerType implements ServerTypeI {
 	}
 
 	@Override
-	public boolean getResidues(GenericServer server,
-			List<GenericVersion> versions, String genomeVersionName,
+	public boolean getResidues(GenericVersion version, String genomeVersionName,
 			BioSeq aseq, int min, int max, SeqSpan span) {
-		for (GenericVersion version : versions) {
-			if (!server.equals(version.gServer)) {
+		for (GenericFeature feature : version.getFeatures()) {
+			if (feature.symL == null || !feature.symL.isResidueLoader()) {
 				continue;
 			}
-			
-			for(GenericFeature feature : version.getFeatures()){
-				if(feature.symL == null || !feature.symL.isResidueLoader()){
-					continue;
+			try {
+				String residues = feature.symL.getRegionResidues(span);
+				if (residues != null) {
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					return true;
 				}
-				try {
-					String residues = feature.symL.getRegionResidues(span);
-					if (residues != null) {
-						BioSeq.addResiduesToComposition(aseq, residues, span);
-						return true;
-					}
-				} catch (Exception ex) {
-					Logger.getLogger(LocalFilesServerType.class.getName()).log(Level.SEVERE, null, ex);
-				}
+			} catch (Exception ex) {
+				Logger.getLogger(LocalFilesServerType.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		
 		return false;
 	}
 

@@ -901,17 +901,17 @@ public final class GeneralLoadUtils {
 		List<GenericVersion> versions = new ArrayList<GenericVersion>(versionsWithChrom);
 		String seq_name = aseq.getID();
 		boolean residuesLoaded = false;
-		for (GenericServer server : ServerList.getServerInstance().getAllServers()) {
-			if (!server.isEnabled()) {
+		for (GenericVersion version : versions) {
+			if (!version.gServer.isEnabled()) {
 				continue;
 			}
 			if(Thread.currentThread().isInterrupted()){
 				return false;
 			}
-			String serverDescription = server.serverName + " " + server.serverType;
+			String serverDescription = version.gServer.serverName + " " + version.gServer.serverType;
 //			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
 //			Application.getSingleton().addNotLockedUpMsg(msg);
-			if (server.serverType != null && server.serverType.getResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
+			if (version.gServer.serverType != null && version.gServer.serverType.getResidues(version, genomeVersionName, aseq, min, max, span)) {
 				residuesLoaded = true;
 			}
 //			Application.getSingleton().removeNotLockedUpMsg(msg);

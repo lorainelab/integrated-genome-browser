@@ -460,20 +460,14 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 
 	@Override
-	public boolean getResidues(GenericServer server,
-			List<GenericVersion> versions, String genomeVersionName,
+	public boolean getResidues(GenericVersion version, String genomeVersionName,
 			BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-		for (GenericVersion version : versions) {
-			if (!server.equals(version.gServer)) {
-				continue;
-			}
-			String residues = GetQuickLoadResidues(server, version, seq_group, seq_name, server.URL, span, aseq);
-			if (residues != null) {
-				BioSeq.addResiduesToComposition(aseq, residues, span);
-				return true;
-			}
+		String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, version.gServer.URL, span, aseq);
+		if (residues != null) {
+			BioSeq.addResiduesToComposition(aseq, residues, span);
+			return true;
 		}
 		return false;
 	}

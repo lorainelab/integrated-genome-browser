@@ -168,8 +168,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 	}
 
 	@Override
-	public boolean getResidues(GenericServer server,
-			List<GenericVersion> versions, String genomeVersionName,
+	public boolean getResidues(GenericVersion versions, String genomeVersionName,
 			BioSeq aseq, int min, int max, SeqSpan span) {
 		return false;
 	}

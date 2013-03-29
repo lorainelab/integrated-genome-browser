@@ -614,46 +614,40 @@ public class Das2ServerType implements ServerTypeI {
 	}
 
 	@Override
-	public boolean getResidues(GenericServer server,
-			List<GenericVersion> versions, String genomeVersionName,
+	public boolean getResidues(GenericVersion version, String genomeVersionName,
 			BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
-		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
-		for (GenericVersion version : versions) {
-			if (!server.equals(version.gServer)) {
-				continue;
-			}
-			Das2VersionedSource das2version = (Das2VersionedSource) version.versionSourceObj;
-			Set<String> format = das2version.getResidueFormat(seq_name);
-			FORMAT[] formats = null;
+		boolean partial_load = (min > 0 || max < (aseq.getLength() - 1));	// Are we only asking for part of the sequence?
+		Das2VersionedSource das2version = (Das2VersionedSource) version.versionSourceObj;
+		Set<String> format = das2version.getResidueFormat(seq_name);
+		FORMAT[] formats = null;
 
-			if (format != null && !format.isEmpty()) {
-				//Try to check if format data is available from Das2
-				if (format.contains("bnib")) {
-					formats = new FORMAT[]{FORMAT.BNIB};
-				} else if (format.contains("raw")) {
-					formats = new FORMAT[]{FORMAT.RAW};
-				} else if (format.contains("fasta") || format.contains("fa")) {
-					formats = new FORMAT[]{FORMAT.FASTA};
-				}
-			}
-			if (formats == null) {
-				// If no format information is available then try all formats.
-				// Try to load in raw format from DAS2 server.
-				// Then try to load in fasta format from DAS2 server.
-				formats = partial_load ? new FORMAT[]{FORMAT.RAW, FORMAT.FASTA} : new FORMAT[]{FORMAT.BNIB, FORMAT.RAW, FORMAT.FASTA};
-			}
-			for (FORMAT formatLoop : formats) {
-				if(Thread.currentThread().isInterrupted()){
-					return false;
-				}
-				
-				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, formatLoop);
-				if (loadDAS2Residues(aseq, uri, span, partial_load)) {
-					return true;
-				}
+		if (format != null && !format.isEmpty()) {
+			//Try to check if format data is available from Das2
+			if (format.contains("bnib")) {
+				formats = new FORMAT[]{FORMAT.BNIB};
+			} else if (format.contains("raw")) {
+				formats = new FORMAT[]{FORMAT.RAW};
+			} else if (format.contains("fasta") || format.contains("fa")) {
+				formats = new FORMAT[]{FORMAT.FASTA};
 			}
 		}
+		if (formats == null) {
+			// If no format information is available then try all formats.
+			// Try to load in raw format from DAS2 server.
+			// Then try to load in fasta format from DAS2 server.
+			formats = partial_load ? new FORMAT[]{FORMAT.RAW, FORMAT.FASTA} : new FORMAT[]{FORMAT.BNIB, FORMAT.RAW, FORMAT.FASTA};
+		}
+		for (FORMAT formatLoop : formats) {
+			if (Thread.currentThread().isInterrupted()) {
+				return false;
+			}
+			String uri = generateDas2URI(version.gServer.URL, genomeVersionName, seq_name, min, max, formatLoop);
+			if (loadDAS2Residues(aseq, uri, span, partial_load)) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 

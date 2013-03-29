@@ -3,6 +3,8 @@ package com.affymetrix.genometryImpl.util;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -108,6 +110,27 @@ public class LocalFilesServerType implements ServerTypeI {
 	public boolean getResidues(GenericServer server,
 			List<GenericVersion> versions, String genomeVersionName,
 			BioSeq aseq, int min, int max, SeqSpan span) {
+		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
+			
+			for(GenericFeature feature : version.getFeatures()){
+				if(feature.symL == null || !feature.symL.isResidueLoader()){
+					continue;
+				}
+				try {
+					String residues = feature.symL.getRegionResidues(span);
+					if (residues != null) {
+						BioSeq.addResiduesToComposition(aseq, residues, span);
+						return true;
+					}
+				} catch (Exception ex) {
+					Logger.getLogger(LocalFilesServerType.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		}
+		
 		return false;
 	}
 

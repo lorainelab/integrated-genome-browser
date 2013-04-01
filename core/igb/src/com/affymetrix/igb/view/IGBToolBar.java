@@ -274,6 +274,7 @@ public class IGBToolBar extends JToolBar {
 			rules_text.setBorder(new EmptyBorder(10,10,10,10));
 			rules_text.setEditable(false);
 			rules_text.setLineWrap(true);
+			rules_text.setColumns(40);
 			JScrollPane scroll_pane = new JScrollPane(rules_text);
 			messageFrame.add(scroll_pane);
 			if(no_selection_text.equals(tf.getText())){

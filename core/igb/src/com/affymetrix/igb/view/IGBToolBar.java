@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -29,16 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -283,7 +273,9 @@ public class IGBToolBar extends JToolBar {
 			JTextArea rules_text = new JTextArea();
 			rules_text.setBorder(new EmptyBorder(10,10,10,10));
 			rules_text.setEditable(false);
-			messageFrame.add(rules_text);
+			rules_text.setLineWrap(true);
+			JScrollPane scroll_pane = new JScrollPane(rules_text);
+			messageFrame.add(scroll_pane);
 			if(no_selection_text.equals(tf.getText())){
 				messageFrame.setTitle("How to Select and De-select Data in IGB");
 				rules_text.append(getRules());
@@ -291,8 +283,15 @@ public class IGBToolBar extends JToolBar {
 				messageFrame.setTitle(selection_info);
 				if(properties != null && !properties.isEmpty()){
 					List<String> keys = GeneralUtils.asSortedList(properties.keySet(), comparator);
+					int maxLength = 0;
 					for(String key : keys){
 						rules_text.append(key + " : " + properties.get(key) + "\n");
+						if(properties.get(key).toString().length() > maxLength) {
+							maxLength = properties.get(key).toString().length();
+						}
+					}
+					if(maxLength > 200) {
+						rules_text.setColumns(60);
 					}
 				}else{
 					rules_text.append(tf.getText());

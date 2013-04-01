@@ -383,11 +383,7 @@ public final class SearchView extends IGBTabPanel implements
 				}
 
 				sequenceCB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
-				if (selectedSearchMode instanceof SearchModeResidue && gmodel.getSelectedSeq()!=null) {
-					sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getID());
-				}else{
-					sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
-				}
+				setSequenceCBValue();
 			}
 		});
 	}
@@ -608,6 +604,8 @@ public final class SearchView extends IGBTabPanel implements
 			this.initSequenceCB();
 			initOptionCheckBox();
 		}
+		
+		setSequenceCBValue();
 	}
 
 	/** Set the text in the status bar in a thread-safe way. */
@@ -662,5 +660,14 @@ public final class SearchView extends IGBTabPanel implements
 		
 		setModel(new SymSearchResultsTableModel(symList));
 		select();
+	}
+	
+	// Set sequence checkbox value as current selected chromosome for residue search mode
+	private void setSequenceCBValue() {
+		if (selectedSearchMode instanceof SearchModeResidue && gmodel.getSelectedSeq() != null) {
+			sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getID());
+		} else {
+			sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
+		}
 	}
 }

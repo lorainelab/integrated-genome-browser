@@ -1,20 +1,18 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.igb.IGB;
@@ -67,7 +65,6 @@ public class CopyResiduesAction extends GenericAction {
 	private void copySelectedResidues(boolean allResidues){
 		boolean success = false;
 		SeqSymmetry residues_sym = null;
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		String from = "";
 
 		if (IGB.getSingleton().getMapView().getSeqSymmetry() != null) {
@@ -106,11 +103,8 @@ public class CopyResiduesAction extends GenericAction {
 					 * its _own_ internal char array that starts with the 0th
 					 * character...
 					 */
-					StringBuffer hackbuf = new StringBuffer(residues);
-					String hackstr = new String(hackbuf);
-					StringSelection data = new StringSelection(hackstr);
-					clipboard.setContents(data, null);
-					String message = "Copied " + hackstr.length() + " residues" + from + " to clipboard";
+					GeneralUtils.copyToClipboard(residues);
+					String message = "Copied " + residues.length() + " residues" + from + " to clipboard";
 					IGBServiceImpl.getInstance().setStatus(message);
 					success = true;
 				} else {
@@ -126,7 +120,7 @@ public class CopyResiduesAction extends GenericAction {
 			// GAH 12-16-2003
 			// for some reason, can't null out clipboard with [null] or [new StringSelection("")],
 			//   have to put in at least one character -- just putting in a space for now
-			clipboard.setContents(new StringSelection(" "), null);
+			GeneralUtils.copyToClipboard(" ");
 		}
 	}
 }

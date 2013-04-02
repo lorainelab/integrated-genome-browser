@@ -43,8 +43,10 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.awt.Toolkit;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
@@ -589,5 +591,12 @@ public final class GeneralUtils {
 		}
 		return "";
 	}
-		
+	
+	public static void copyToClipboard(String content) {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringBuffer hackbuf = new StringBuffer(content);
+		String hackstr = new String(hackbuf);
+		StringSelection data = new StringSelection(hackstr);
+		clipboard.setContents(data, null);
+	}
 }

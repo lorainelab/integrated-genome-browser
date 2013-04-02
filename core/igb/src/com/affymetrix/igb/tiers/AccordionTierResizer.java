@@ -37,6 +37,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	private double ourFloor, ourCeiling;
 	private List<TierLabelGlyph> resizeRegion;
 	private int atBorder; // points to the tier immediately below the mouse pointer.
+	private boolean wasResizeable = false;
 	
 	/**
 	 * Construct a resizer for the given tiered map.
@@ -58,9 +59,15 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		// Seems both cursors are the same, but you never know...
 		if (atResizeTop(nevt)) {
 			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+			wasResizeable = true;
 		}
 		else if (atResizeBottom(nevt)) {
 			m.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+			wasResizeable = true;
+		}
+		else if (wasResizeable) {
+			m.setCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+			wasResizeable = false;
 		}
 		// Otherwise, leave it alone. Other listeners can (and will) handle it.
 	}

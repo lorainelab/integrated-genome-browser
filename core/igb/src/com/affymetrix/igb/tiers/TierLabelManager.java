@@ -66,19 +66,19 @@ public final class TierLabelManager implements PropertyHolder {
 
 		TierLabelGlyph dragging_label = null;
 		
-		@Override
-		public void mouseMoved(MouseEvent evt) {
-			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
-				setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			}
-			else {
-				restoreCursor();
-			}
-		}
-		@Override
-		public void mouseExited(MouseEvent evt) {
-			restoreCursor();
-		}
+//		@Override
+//		public void mouseMoved(MouseEvent evt) {
+//			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
+//				setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//			}
+//			else {
+//				restoreCursor();
+//			}
+//		}
+//		@Override
+//		public void mouseExited(MouseEvent evt) {
+//			restoreCursor();
+//		}
 		
 		@Override
 		public void mousePressed(MouseEvent evt) {

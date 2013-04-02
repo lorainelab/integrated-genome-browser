@@ -33,6 +33,7 @@ public class TierResizer extends MouseInputAdapter {
 	private List<TierLabelGlyph> fixedInterior;
 	private TierLabelGlyph lowerGl;
 	private TierLabelGlyph upperGl;
+	private boolean wasResizeable = false;
 	
 	static {
 		ourCursors[0] = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
@@ -59,9 +60,14 @@ public class TierResizer extends MouseInputAdapter {
 		// Seems both cursors are the same, but you never know...
 		if (atResizeTop(nevt)) {
 			m.setCursor(ourCursors[0]);
+			wasResizeable = true;
 		}
 		else if (atResizeBottom(nevt)) {
 			m.setCursor(ourCursors[1]);
+			wasResizeable = true;
+		} else if (wasResizeable){
+			m.setCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+			wasResizeable = false;
 		}
 		// Otherwise, leave it alone. Other listeners can (and will) handle it.
 	}

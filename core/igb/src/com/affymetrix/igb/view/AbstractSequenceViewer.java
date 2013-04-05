@@ -77,6 +77,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private int cdsMin = -1;
 	private String title = null;
 	private boolean showcDNASwitch = false;
+	private String[] buttonText = new String[]{"Show cDNA", "Show Genomic"};
+	private String[] multipleSelection = new String[]{"Concatenate", "Show Genomic"};
 	private boolean colorSwitch = false;
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
@@ -156,8 +158,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 					residues_sym = new SimpleMutableSeqSymmetry();
 					SeqUtils.union(syms, (MutableSeqSymmetry)residues_sym, seqmapview.getAnnotatedSeq());
 					this.isGenomicRequest = false;
+					buttonText = multipleSelection;
+					showcDNAButton.setText(buttonText[0]);
 					//this.errorMessage = "Multiple selections, please select only one feature at a time";
-				}
+				}	
 			}
 		} else {
 			residues_sym = seqmapview.getSeqSymmetry();
@@ -989,12 +993,12 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		Object evtSource = e.getSource();
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
-			if (text.equals("Show cDNA")) {
+			if (text.equals(buttonText[0])) {
 				showcDNASwitch = true;	
-				showcDNAButton.setText("Show genomic");
+				showcDNAButton.setText(buttonText[1]);
 			} else {
 				showcDNASwitch = false;
-				showcDNAButton.setText("Show cDNA");
+				showcDNAButton.setText(buttonText[0]);
 			}
 			seqview.clearWidget();
 			addFormattedResidues();

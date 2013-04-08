@@ -30,7 +30,7 @@
 			<xs:attribute name="load_hint">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:pattern value="((W|w)hole (S|s))equence)"/>
+						<xs:pattern value="((W|w)hole (S|s)equence)"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>

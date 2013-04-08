@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -155,8 +156,20 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 				this.isGenomicRequest = false;
 			} else {
 				if (syms.size() > 1 || seqmapview.getSeqSymmetry() != null) {
+					MutableSeqSymmetry temp = new SimpleMutableSeqSymmetry();
+					SeqUtils.union(syms, temp, seqmapview.getAnnotatedSeq());
+					
+					// Make all reverse children forward
 					residues_sym = new SimpleMutableSeqSymmetry();
-					SeqUtils.union(syms, (MutableSeqSymmetry)residues_sym, seqmapview.getAnnotatedSeq());
+					SeqSymmetry child;
+					SeqSpan childSpan;
+					for(int i=0 ; i < temp.getChildCount(); i++){
+						child = temp.getChild(i);
+						childSpan = child.getSpan(seqmapview.getAnnotatedSeq());
+						((MutableSeqSymmetry)residues_sym).addChild(new MutableSingletonSeqSymmetry(childSpan.getMin(), childSpan.getMax(), childSpan.getBioSeq()));
+					}
+					((MutableSeqSymmetry)residues_sym).addSpan(temp.getSpan(seqmapview.getAnnotatedSeq()));
+					
 					this.isGenomicRequest = false;
 					buttonText = multipleSelection;
 					showcDNAButton.setText(buttonText[0]);

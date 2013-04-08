@@ -29,7 +29,7 @@ public class CopyBookmarkToClipboardAction extends AddBookmarkAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		Bookmark bookmark = getCurrentPosition();
+		Bookmark bookmark = getCurrentPosition(true);
 		if (bookmark != null) {
 			StringSelection data = new StringSelection(bookmark.getURL().toString());
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

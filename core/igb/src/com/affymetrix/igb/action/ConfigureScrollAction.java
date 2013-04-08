@@ -181,7 +181,7 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 		
 		private void update(DocumentEvent e) {
 			// Stop before try/catch block
-			if (optionPane.getOptions()[0].equals(stopOption)) {
+			if (autoScroll.isScrolling()) {
 				stop();
 
 				// Regain the focus

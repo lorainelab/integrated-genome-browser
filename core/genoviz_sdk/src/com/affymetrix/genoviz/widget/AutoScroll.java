@@ -83,6 +83,13 @@ public class AutoScroll {
 		}
 	}
 	
+	public boolean isScrolling() {
+		if(swing_timer != null){
+			return swing_timer.isRunning();
+		}
+		return false;
+	}
+	
 	public int get_bases_per_pix() {
 		return bases_per_pix;
 	}

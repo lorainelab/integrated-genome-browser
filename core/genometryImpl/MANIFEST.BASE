@@ -42,7 +42,10 @@ Import-Package: affymetrix.calvin.data,
  org.jdom.input,
  org.broad.tribble.readers,
  org.broad.tribble.source.tabix,
- org.broad.tribble.util
+ org.broad.tribble.util,
+ javax.xml.transform,
+ javax.xml.transform.stream,
+ javax.xml.validation
 Export-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.comparator,
  com.affymetrix.genometryImpl.das,

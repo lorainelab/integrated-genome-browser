@@ -2,13 +2,21 @@ package com.affymetrix.genometryImpl.parsers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.jdom.input.SAXBuilder;
 import org.jdom.*;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -26,17 +34,31 @@ public abstract class AnnotsXmlParser {
 	/**
 	 * @param istr - stream of annots file
 	 */
-	public static final void parseAnnotsXml (InputStream istr, List<AnnotMapElt> annotList) throws JDOMException, IOException {
-		SAXBuilder docBuilder = new SAXBuilder();
-		Document doc = docBuilder.build(istr);
-		root = doc.getRootElement();
-		List children = root.getChildren();
+	public static final void parseAnnotsXml (InputStream istr, InputStream validationIstr, List<AnnotMapElt> annotList) throws JDOMException, IOException, SAXException {
+		if(validateAnnotsXML(validationIstr)) {
+			SAXBuilder docBuilder = new SAXBuilder();
+			Document doc = docBuilder.build(istr);
+			root = doc.getRootElement();
+			List children = root.getChildren();
 
-		if (root.getChild(folder) != null) {
-			iterateAllNodesNew(children, annotList);
-		} else {
-			iterateAllNodesOld(children, annotList);
+			if (root.getChild(folder) != null) {
+				iterateAllNodesNew(children, annotList);
+			} else {
+				iterateAllNodesOld(children, annotList);
+			}
 		}
+	}
+	
+	private static boolean validateAnnotsXML(InputStream istr) throws SAXException, MalformedURLException, IOException {
+		SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+		URL schemaURL = AnnotsXmlParser.class.getClassLoader().getResource("annots.xsd");
+		Schema schema = factory.newSchema(schemaURL);
+		
+		Validator validator = schema.newValidator();
+		Source source = new StreamSource(istr);
+		validator.validate(source);
+		
+		return true;
 	}
 
 	static void iterateAllNodesNew(List list, List<AnnotMapElt> annotList) {

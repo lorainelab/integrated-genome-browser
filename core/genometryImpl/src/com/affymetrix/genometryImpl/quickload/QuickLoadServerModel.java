@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.jdom.JDOMException;
+import org.xml.sax.SAXException;
 
 import org.xml.sax.SAXParseException;
 
@@ -215,16 +216,18 @@ public final class QuickLoadServerModel {
 		genome2annotsMap.put(genome_name, annotList);
 
 		InputStream istr = null;
+		InputStream validationIstr = null;
 		String filename = null;
 		try{
 			filename = getPath(genome_name, Constants.annotsXml);
 			istr = getInputStream(filename, false, true);
+			validationIstr = getInputStream(filename, false, true);
 			boolean annots_found = false;;
 			try {
-				annots_found = processAnnotsXml(istr, annotList);
+				annots_found = processAnnotsXml(istr, validationIstr, annotList);
 			} catch (SAXParseException x) {
-				String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}. Please contact the server administrators or the IGB development team to let us know about the problem.";
-				String errorText = MessageFormat.format(errorMessage, root_url, genome_name);
+				String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}: {2}. Please contact the server administrators or the IGB development team to let us know about the problem.";
+				String errorText = MessageFormat.format(errorMessage, root_url, genome_name, x.getMessage());
 				String title = "Invalid annots.xml file";
 				ErrorHandler.errorPanelWithReportBug(title, errorText, Level.SEVERE);
 				return false;
@@ -275,13 +278,13 @@ public final class QuickLoadServerModel {
 	 * Process the annots.xml file (if it exists).
 	 * This has friendly type names.
 	 */
-	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) throws SAXParseException, JDOMException, IOException {
+	private static boolean processAnnotsXml(InputStream istr, InputStream validationIstr, List<AnnotMapElt> annotList) throws SAXParseException, JDOMException, IOException, SAXException {
 			if (istr == null) {
 				// Search failed.  That's fine, since there's a backup test for annots.txt.
 				return false;
 			}
 
-			AnnotsXmlParser.parseAnnotsXml(istr, annotList);
+			AnnotsXmlParser.parseAnnotsXml(istr, validationIstr, annotList);
 			return true;
 	}
 

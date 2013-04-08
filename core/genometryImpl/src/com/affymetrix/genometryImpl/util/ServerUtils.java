@@ -44,6 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.jdom.JDOMException;
+import org.xml.sax.SAXException;
 
 /**
  * Utils for DAS/2 and other servers.
@@ -224,18 +225,22 @@ public abstract class ServerUtils {
 		File annot = new File(current_file, annots_filename);
 		if (annot.exists()) {
 			FileInputStream istr = null;
+			FileInputStream validationIstr = null;
 			try {
 				istr = new FileInputStream(annot);
+				validationIstr = new FileInputStream(annot);
 
 				List<AnnotMapElt> annotList = annots_map.get(genome);
 				if (annotList == null) {
 					annotList = new ArrayList<AnnotMapElt>();
 					annots_map.put(genome, annotList);
 				}
-				AnnotsXmlParser.parseAnnotsXml(istr, annotList);
+				AnnotsXmlParser.parseAnnotsXml(istr, validationIstr, annotList);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} catch(JDOMException ex) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
+			} catch(SAXException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				GeneralUtils.safeClose(istr);

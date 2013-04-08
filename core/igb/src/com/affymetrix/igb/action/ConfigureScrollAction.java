@@ -146,7 +146,8 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 					} else if (ae.getSource() == stopOption) {
 						stop();
 					} else if (ae.getSource() == closeOption) {
-						close();
+						stop();
+						dispose();
 					}
 				}
 			};
@@ -172,13 +173,7 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 			optionPane.setOptions(startOptions);
 			optionPane.setInitialValue(startOptions[0]);
 		}
-		
-		private void close(){
-			StopAutoScrollAction.getAction().actionPerformed(null); // Stop auto scroll when closing config dialog
-			optionPane.setOptions(startOptions);
-			dispose();
-		}
-		
+				
 		private void update(DocumentEvent e) {
 			// Stop before try/catch block
 			if (autoScroll.isScrolling()) {

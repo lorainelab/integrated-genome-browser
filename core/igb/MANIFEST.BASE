@@ -109,5 +109,5 @@ Import-Package: affymetrix.calvin.data,
  org.hamcrest,
  org.hamcrest.core,
  sun.reflect;resolution:=optional,
- com.boxysystems.jgoogleanalytics
+ com.sun.awt
  

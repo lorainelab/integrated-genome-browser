@@ -2,7 +2,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.sun.awt.AWTUtilities;
+//import com.sun.awt.AWTUtilities;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -56,7 +56,7 @@ public class PopupInfo extends JWindow {
 			setButtonAction(stickAction);
 			setVisible(false);
 			preferredLocationSet = false;
-			AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
+//			AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
 		}
 	};
 	
@@ -79,9 +79,9 @@ public class PopupInfo extends JWindow {
 			newWindow.pack();
 			newWindow.setLocation(getLocationOnScreen());
 			newWindow.setVisible(true);
-			AWTUtilities.setWindowOpacity(newWindow, 1.0f);
+//			AWTUtilities.setWindowOpacity(newWindow, 1.0f);
 			
-			timer.stop();
+//			timer.stop();
 			setVisible(false);
 		}
 	};
@@ -104,9 +104,9 @@ public class PopupInfo extends JWindow {
 	public void setToolTip(Point point, String[][] properties){
 		if(isVisible() && !preferredLocationSet){
 			setVisible(false);
-			AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
+//			AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
 		}
-		timer.stop();
+//		timer.stop();
 		
 		// If the main window is not in focus then return else the tooltip window 
 		// would grab the focus.
@@ -121,8 +121,8 @@ public class PopupInfo extends JWindow {
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));
 				setVisible(true);
-				timer.setInitialDelay(1000);
-				timer.start();
+//				timer.setInitialDelay(1000);
+//				timer.start();
 			}
 		}else{
 			//title.setText(null);
@@ -209,7 +209,7 @@ public class PopupInfo extends JWindow {
 		//setAlwaysOnTop(true);
 		setBackground(backgroundColor);
 		setForeground(backgroundColor);
-		AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
+//		AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
 		
 		title.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
@@ -260,22 +260,22 @@ public class PopupInfo extends JWindow {
 		setLayout(new BorderLayout(0,0));
 		add(component_box);
 		
-		if(!isPinned){
-			Toolkit.getDefaultToolkit().addAWTEventListener(opacityController, AWTEvent.MOUSE_EVENT_MASK);
-		}
+//		if(!isPinned){
+//			Toolkit.getDefaultToolkit().addAWTEventListener(opacityController, AWTEvent.MOUSE_EVENT_MASK);
+//		}
 	}
 	
-	Timer timer = new Timer(100, new ActionListener(){
-
-		public void actionPerformed(ActionEvent e) {
-			float opacity = AWTUtilities.getWindowOpacity(PopupInfo.this);
-			if(opacity + 0.05f >= 1.0f){
-				timer.stop();
-				return;
-			}
-			AWTUtilities.setWindowOpacity(PopupInfo.this, opacity + 0.05f);
-		}
-	});
+//	Timer timer = new Timer(100, new ActionListener(){
+//
+//		public void actionPerformed(ActionEvent e) {
+//			float opacity = AWTUtilities.getWindowOpacity(PopupInfo.this);
+//			if(opacity + 0.05f >= 1.0f){
+//				timer.stop();
+//				return;
+//			}
+//			AWTUtilities.setWindowOpacity(PopupInfo.this, opacity + 0.05f);
+//		}
+//	});
 	
 	AWTEventListener opacityController = new AWTEventListener(){
 		public void eventDispatched(AWTEvent event) {
@@ -289,9 +289,9 @@ public class PopupInfo extends JWindow {
 			Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), PopupInfo.this);
 			if (!PopupInfo.this.isPinned && !PopupInfo.this.preferredLocationSet) {
 				if (PopupInfo.this.contains(p)) {
-					AWTUtilities.setWindowOpacity(PopupInfo.this, 1.0f);
+//					AWTUtilities.setWindowOpacity(PopupInfo.this, 1.0f);
 				} else {
-					AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
+//					AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
 				}
 			}
 		}
@@ -304,7 +304,7 @@ public class PopupInfo extends JWindow {
 		public void mousePressed(MouseEvent evt) {
 			x_offset = (int) (evt.getLocationOnScreen().getX() - PopupInfo.this.getLocationOnScreen().getX());
 			y_offset = (int) (evt.getLocationOnScreen().getY() - PopupInfo.this.getLocationOnScreen().getY());
-			AWTUtilities.setWindowOpacity(PopupInfo.this, 1.0f);
+//			AWTUtilities.setWindowOpacity(PopupInfo.this, 1.0f);
 		}
 
 		@Override

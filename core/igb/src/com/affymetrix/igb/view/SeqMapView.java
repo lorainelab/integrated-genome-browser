@@ -224,6 +224,7 @@ public class SeqMapView extends JPanel
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private final PopupInfo popupInfo;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -331,7 +332,9 @@ public class SeqMapView extends JPanel
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
 
 		mouse_listener = new SeqMapViewMouseListener(this);
-	
+
+		popupInfo = new PopupInfo(Application.getSingleton().getFrame());
+		
 		seqmap.getNeoCanvas().setDoubleBuffered(false);
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
@@ -2275,8 +2278,8 @@ public class SeqMapView extends JPanel
 				|| toolTipSym != sym){
 			toolTipSym = sym;
 			String toolTip = null;
+			String[][] properties = null;
 			if(toolTipSym != null && propertyHandler != null){
-				String[][] properties;
 				if(toolTipSym instanceof GraphSym){
 					properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, this);
 				} else {
@@ -2284,7 +2287,9 @@ public class SeqMapView extends JPanel
 				}
 				toolTip = convertPropsToString(properties);
 			}
-			seqmap.getNeoCanvas().setToolTipText(toolTip);
+			//seqmap.getNeoCanvas().setToolTipText(toolTip);
+			Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
+			popupInfo.setToolTip(point, properties);
 		}
 	}
 	

@@ -153,6 +153,7 @@ public class PopupInfo extends JWindow {
 	private static String convertPropsToString(String[][] properties) {
 		StringBuilder props = new StringBuilder();
 		props.append("<html>");
+		props.append("<font face='sanserif' size='2'>");
 		for (int i = 0; i < properties.length; i++) {
 			props.append("<b>");
 			props.append(properties[i][0]);
@@ -160,6 +161,7 @@ public class PopupInfo extends JWindow {
 			props.append(getSortString(properties[i][1]));
 			props.append("<br>");
 		}
+		props.append("</font>");
 		props.append("</html>");
 
 		return props.toString();

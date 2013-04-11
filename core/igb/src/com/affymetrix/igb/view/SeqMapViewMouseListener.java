@@ -73,8 +73,8 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 	private int no_of_prop_being_displayed = 0;
 	int select_start, select_end;
 	private GlyphI sub_sel_glyph;
-	private int toolTipInitialDelay;
-	private int toolTipDismissDelay;
+//	private int toolTipInitialDelay;
+//	private int toolTipDismissDelay;
 	private boolean shouldSubSelect = false;
 	public static String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
 	public static boolean show_tooltip = true;
@@ -88,20 +88,20 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
 	@Override
 	public void mouseEntered(MouseEvent evt) {
-		if (evt.getSource() == map && show_tooltip) {
-			toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
-			ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-		}
-		toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
-		ToolTipManager.sharedInstance().setInitialDelay(0);
+//		if (evt.getSource() == map && show_tooltip) {
+//			toolTipDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+//			ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+//		}
+//		toolTipInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+//		ToolTipManager.sharedInstance().setInitialDelay(0);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent evt) {
-		if (evt.getSource() == map && show_tooltip) {
-			ToolTipManager.sharedInstance().setDismissDelay(toolTipDismissDelay);
-		}
-		ToolTipManager.sharedInstance().setInitialDelay(toolTipInitialDelay);
+//		if (evt.getSource() == map && show_tooltip) {
+//			ToolTipManager.sharedInstance().setDismissDelay(toolTipDismissDelay);
+//		}
+//		ToolTipManager.sharedInstance().setInitialDelay(toolTipInitialDelay);
 	}
 
 	public void mouseClicked(MouseEvent evt) {

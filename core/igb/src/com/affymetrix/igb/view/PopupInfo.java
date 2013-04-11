@@ -52,7 +52,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
-	private AbstractAction unStickAction = new AbstractAction("x",CommonUtils.getInstance().getIcon("16x16/actions/red_close.png")){
+	private AbstractAction unStickAction = new AbstractAction("*",CommonUtils.getInstance().getIcon("16x16/actions/yellow_pin.png")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			setButtonAction(stickAction);
@@ -62,7 +62,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
-	private AbstractAction closeAction = new AbstractAction("x",CommonUtils.getInstance().getIcon("16x16/actions/red_close.png")){
+	private AbstractAction closeAction = new AbstractAction("x",CommonUtils.getInstance().getIcon("16x16/actions/cross.png")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			setVisible(false);
@@ -70,7 +70,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
-	private AbstractAction stickAction = new AbstractAction("*",CommonUtils.getInstance().getIcon("16x16/actions/red_pin.png")) {
+	private AbstractAction stickAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/stock_pin.png")) {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);

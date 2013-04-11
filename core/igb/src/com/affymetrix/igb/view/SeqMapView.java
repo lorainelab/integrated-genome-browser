@@ -1527,8 +1527,9 @@ public class SeqMapView extends JPanel
 
 	public final void toggleClamp() {
 		clamp(clampedRegion == null);
-		seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
-		seqmap.updateWidget();
+		seqmap.repackTheTiers(true, false);
+		//seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
+		//seqmap.updateWidget();
 	}
 
 	public void clamp(boolean clamp) {

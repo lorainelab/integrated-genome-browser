@@ -332,6 +332,7 @@ public class FileTypeHolder {
 				}
 			}
 		);
+		addDummyHandler("PairedRead", new String[]{"bampair"}, FileTypeCategory.PairedRead);
 	}
 
 	private void addDummyHandler(final String name, final String[] extensions, final FileTypeCategory category) {

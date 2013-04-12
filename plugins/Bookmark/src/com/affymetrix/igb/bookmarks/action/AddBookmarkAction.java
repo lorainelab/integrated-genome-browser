@@ -28,13 +28,17 @@ public abstract class AddBookmarkAction extends GenericAction {
 	}
 
 	protected Bookmark getCurrentPosition() {
+		return getCurrentPosition(false);
+	}
+	
+	protected Bookmark getCurrentPosition(boolean include_sym_and_props) {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
 			return null;
 		}
 		Bookmark bookmark = null;
 		try {
-			bookmark = BookmarkController.getCurrentBookmark(false, BookmarkActionManager.getInstance().getVisibleSpan());
+			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, BookmarkActionManager.getInstance().getVisibleSpan());
 		} catch (MalformedURLException m) {
 			ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
 		}
@@ -43,7 +47,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 		}
 		return bookmark;
 	}
-
+	
 	/**
 	 * Generate a bookmark editor panel for adding a new bookmark.
 	 */

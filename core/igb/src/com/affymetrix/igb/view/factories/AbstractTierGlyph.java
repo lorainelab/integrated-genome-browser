@@ -17,7 +17,6 @@ import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -41,6 +40,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -350,13 +350,29 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			return pickList;
 		}
 		
+		Comparator<GlyphI> x_comparator = new Comparator<GlyphI>() {
+			public int compare(GlyphI g1, GlyphI g2) {
+				int startComp = Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
+				int widthComp = Double.compare(g1.getCoordBox().x + g1.getCoordBox().width, g2.getCoordBox().x);
+				return Math.max(startComp, widthComp);
+			}
+		};
+		
+		Comparator<GlyphI> w_comparator = new Comparator<GlyphI>() {
+			public int compare(GlyphI g1, GlyphI g2) {
+				int startComp = Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
+				int widthComp = Double.compare(g1.getCoordBox().x + g1.getCoordBox().width, g2.getCoordBox().x);
+				return Math.min(startComp, widthComp);
+			}
+		};
+		
 		// Determine the start position
 		temp.setCoords(coordrect.x, coordrect.y, 1, coordrect.height);
-		int start = SearchUtils.binarySearch(children, temp, new GlyphMinXComparator());
+		int start = SearchUtils.binarySearch(children, temp, x_comparator);
 
 		// Determine the end position
 		temp.setCoords(coordrect.x + coordrect.width - 1, coordrect.y, 1, coordrect.height);
-		int end = SearchUtils.binarySearch(children, temp, new GlyphMinXComparator());
+		int end = SearchUtils.binarySearch(children, temp, w_comparator);
 
 		// A fix for those glyphs being not selected that are overlapped at begning of rubberband.
 		for (int i = start - 1; i >= 0 ; i--) {

@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -35,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -284,6 +284,10 @@ public class IGBToolBar extends JToolBar {
 			rules_text.setBorder(new EmptyBorder(10,10,10,10));
 			rules_text.setEditable(false);
 			messageFrame.add(rules_text);
+			rules_text.setLineWrap(true);
+			rules_text.setColumns(40);
+			JScrollPane scroll_pane = new JScrollPane(rules_text);
+			messageFrame.add(scroll_pane);
 			if(no_selection_text.equals(tf.getText())){
 				messageFrame.setTitle("How to Select and De-select Data in IGB");
 				rules_text.append(getRules());

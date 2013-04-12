@@ -47,6 +47,7 @@ import com.affymetrix.igb.util.UpdateStatusAlert;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
+import com.affymetrix.igb.view.factories.PairedReadGlyphFactory;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
@@ -381,6 +382,10 @@ public class Activator implements BundleActivator {
 		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
 		bundleContext.registerService(MapTierGlyphFactoryI.class, mismatchGlyphFactory, null);
 
+		// Add PairedRead factory
+		PairedReadGlyphFactory pairedreadGlyphFactory = new PairedReadGlyphFactory();
+		bundleContext.registerService(MapTierGlyphFactoryI.class, pairedreadGlyphFactory, null);
+
 		// Set Default factory
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, annotationGlyphFactory);
@@ -389,6 +394,7 @@ public class Activator implements BundleActivator {
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.PairedRead, pairedreadGlyphFactory);
 	}
 
 	private void addGenericActionListener() {

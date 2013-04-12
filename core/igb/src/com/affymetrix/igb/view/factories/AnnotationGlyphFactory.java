@@ -52,9 +52,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private static Class<?> default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 //	private static final int DEFAULT_THICK_HEIGHT = 25;
 //	private static final int DEFAULT_THIN_HEIGHT = 15;
-	private Class<?> parent_glyph_class;
-	private Class<?> child_glyph_class;
-	private final Class<?> parent_labelled_glyph_class;
+	protected Class<?> parent_glyph_class;
+	protected Class<?> child_glyph_class;
+	protected final Class<?> parent_labelled_glyph_class;
 	private CodonGlyphProcessor codon_glyph_processor;
 	
 	public AnnotationGlyphFactory() {
@@ -120,7 +120,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	 *   (using the child glyph style).  If this is set to true, then
 	 *    the symmetry must have a depth of at least 2.
 	 */
-	private void addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry insym,
+	protected void addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry insym,
 			TierGlyph forward_tier,
 			TierGlyph reverse_tier,
 			boolean parent_and_child) {
@@ -149,9 +149,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 			DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
 			
-			the_tier.addChild(determinePGlyph(gviewer,
-					parent_and_child, insym, the_style,
-					labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type));
+			addTopChild(the_tier, gviewer, parent_and_child, insym, the_style, labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
 		} catch (InstantiationException ie) {
 			System.err.println("AnnotationGlyphFactory.addToTier: " + ie);
 		}
@@ -160,7 +158,18 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		}
 	}
 
-	private GlyphI determinePGlyph(SeqMapViewExtendedI gviewer,
+	
+	protected void addTopChild(GlyphI the_tier, SeqMapViewExtendedI gviewer, 
+			boolean parent_and_child, SeqSymmetry insym, ITrackStyleExtended the_style, 
+			boolean labelInSouth, SeqSpan pspan, SeqSymmetry sym, BioSeq annotseq, 
+			BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type) 
+			throws IllegalAccessException, InstantiationException {
+		
+		the_tier.addChild(determinePGlyph(gviewer, parent_and_child, insym, the_style,
+				labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type));
+	}
+	
+	protected GlyphI determinePGlyph(SeqMapViewExtendedI gviewer,
 			boolean parent_and_child, SeqSymmetry insym,
 			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan,
 			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type)
@@ -184,7 +193,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		return pglyph;
 	}
 
-	private static GlyphI determineGlyph(
+	protected static GlyphI determineGlyph(
 			Class<?> glyphClass, Class<?> labelledGlyphClass,
 			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer, int child_height, DIRECTION_TYPE direction_type)

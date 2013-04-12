@@ -6,7 +6,11 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -38,21 +42,45 @@ public class FindMateOperator extends AbstractAnnotationTransformer {
 	}
 
 	/**
-	 * This is a dummy method to emulate find mate.
+	 * Finds the mate
 	 * @param t
 	 * @param aseq
 	 * @return 
 	 */
 	private SeqSymmetry findMate(TypeContainerAnnot t, BioSeq aseq) {
-		TypeContainerAnnot result = new TypeContainerAnnot(t.getType()+"bampair","bampair");
-		for (int i = 0; i < t.getChildCount() - 1; i+=2) {
-			SeqSymmetry child1 = t.getChild(i);
-			SeqSymmetry child2 = t.getChild(i+1);
-			SeqSymmetry union = SeqUtils.union(child1, child2, aseq);
-			SimpleSymWithProps container = new SimpleSymWithProps();
-			container.addChild(child1);
-			container.addChild(child2);
-			container.addSpan(union.getSpan(aseq));
+		Map<String, List<SeqSymmetry>> map = new HashMap<String, List<SeqSymmetry>>(1000);
+		TypeContainerAnnot result = new TypeContainerAnnot(t.getType()+"bampair", "bampair");
+		SeqSymmetry child;
+		for (int i = 0; i < t.getChildCount(); i++) {
+			child = t.getChild(i);
+			List<SeqSymmetry> pairs = null;
+			if((pairs = map.get(child.getID())) == null){
+				pairs = new ArrayList<SeqSymmetry>(2);
+				map.put(child.getID(), pairs);
+			}
+			pairs.add(child);
+		}
+		
+		List<SeqSymmetry> pairs;
+		SeqSymmetry child1, child2;
+		SimpleSymWithProps container;
+		for(Entry<String, List<SeqSymmetry>> entry : map.entrySet()){
+			pairs = entry.getValue();
+			container = new SimpleSymWithProps();
+			if(pairs.size() >= 2){
+				//TODO: Handle multiple parters here
+				//TODO: Check reverse case here
+				child1 = pairs.get(0);
+				child2 = pairs.get(1);
+				SeqSymmetry union = SeqUtils.union(child1, child2, aseq);
+				container.addChild(child1);
+				container.addChild(child2);
+				container.addSpan(union.getSpan(aseq));
+			} else if (pairs.size() == 1) {
+				child1 = pairs.get(0);
+				container.addChild(child1);
+				container.addSpan(child1.getSpan(aseq));
+			}
 			
 			result.addChild(container);
 		}
@@ -60,6 +88,8 @@ public class FindMateOperator extends AbstractAnnotationTransformer {
 		for (int i = 0; i < t.getSpanCount(); i++) {
 			result.addSpan(t.getSpan(i));
 		}
+	
+		map.clear();
 		return result;
 	}
 }

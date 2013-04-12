@@ -1,12 +1,16 @@
 package com.affymetrix.igb.view;
 
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Level;
 import java.awt.Dimension;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
@@ -20,11 +24,6 @@ import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.action.ThreadHandlerAction;
-import java.awt.Color;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Level;
 
 public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
@@ -115,7 +114,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 				.addComponent(progressBar)
 				.addComponent(messageIcon)
 				.addComponent(status_ta)
-				.addGap(1, 250, Short.MAX_VALUE)
+//				.addGap(1, 250, Short.MAX_VALUE)
 //				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item, 1, 200, 200)
@@ -142,7 +141,18 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		if (s == null) {
 			s = "";
 		}
-
+		
+		// Adjust the message to fit with status bar
+		int availablePixelSpace = memory_item.getBounds().x - status_ta.getBounds().x;
+		
+		FontMetrics fm = status_ta.getFontMetrics(status_ta.getFont());
+		int stringPixelWidth = fm.stringWidth(s);
+		
+		if( availablePixelSpace > 0 && s.length() > 0 && availablePixelSpace < stringPixelWidth) {
+			s = s.substring(0, s.length() * availablePixelSpace / stringPixelWidth) + "...";
+		}
+		// End of adjust
+				
 		status_ta.setText(s);
 	}
 

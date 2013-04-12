@@ -39,6 +39,7 @@ public class SplitGraphsAction extends GenericAction {
 			// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
 			gstate.getTierStyle().setFloatTier(false); // for simplicity
 
+			GraphGlyph.split(gg);
 		}
 		//igbService.getSeqMapView().postSelections();
 		updateDisplay();

@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -181,6 +182,9 @@ public class TrackView {
 				if(sym instanceof GraphSym){
 					GlyphI glyph = map.getItem(sym);
 					if(glyph != null){
+						if(glyph instanceof GraphGlyph){
+							GraphGlyph.split((GraphGlyph)glyph);
+						}
 						map.removeItem(glyph);
 					}
 				}

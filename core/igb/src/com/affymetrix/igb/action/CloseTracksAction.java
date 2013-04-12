@@ -5,7 +5,8 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.StyledGlyph;
@@ -39,26 +40,33 @@ extends SeqMapViewActionA implements SymSelectionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
+		String message = "Really remove entire data sets?";
 		
-		// First split the graph.
-		for (StyledGlyph vg : allGlyphs) {
-			//If graphs is joined then apply color to combo style too.
-			// TODO: Use code from split graph
-			if (vg instanceof GraphGlyph) {
-				ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
-				if (style != null) {
-					GraphState gstate = ((GraphGlyph) vg).getGraphState();
-					gstate.setComboStyle(null, 0);
-					gstate.getTierStyle().setJoin(false);
-				}
-			}
+		if(allGlyphs.size() == 1) {
+			message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().featureName + " data set?";
 		}
 		
-		for (StyledGlyph vg : allGlyphs) {
-			GenericFeature gFeature = vg.getAnnotStyle().getFeature();
-			if (gFeature != null) {
-				GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+		if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+				PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+
+			super.actionPerformed(e);
+			// First split the graph.
+			for (StyledGlyph vg : allGlyphs) {
+				//If graphs is joined then apply color to combo style too.
+				// TODO: Use code from split graph
+				if (vg instanceof GraphGlyph) {
+					ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
+					if (style != null) {
+						GraphGlyph.split((GraphGlyph)vg);
+					}
+				}
+			}
+
+			for (StyledGlyph vg : allGlyphs) {
+				GenericFeature gFeature = vg.getAnnotStyle().getFeature();
+				if (gFeature != null) {
+					GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+				}
 			}
 		}
 	}

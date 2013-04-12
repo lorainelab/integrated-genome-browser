@@ -163,6 +163,20 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			if(style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE){
 				continue;
 			}
+		
+			// Fix for joined graphs disappears from DMT when click on joined track label or remove feature
+			if (style.isGraphTier() && tg.getChildCount() > 0) {
+				for (int j = 0; j < tg.getChildCount(); j++) {
+					GlyphI g = tg.getChild(j);
+					if(!(g instanceof GraphGlyph)) continue;
+					vf = style2Feature.get(((GraphGlyph) g).getAnnotStyle());
+					if (vf != null && !virtualFeatures.contains(vf)) {
+						virtualFeatures.add(vf);
+						tempVirtualFeatures.remove(vf);
+					}
+				}
+				continue;
+			}
 			
 			vf = style2Feature.get(style);
 			if(vf != null && !virtualFeatures.contains(vf)){

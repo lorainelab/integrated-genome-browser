@@ -55,11 +55,13 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 public class FileTypeHolder {
 	private static final FileTypeHolder instance = new FileTypeHolder();
 	private final Map<String, FileTypeHandler> fileTypeHandlerMap;
+	private final Map<String, FileTypeHandler> dummyHandlerMap;
 	public static FileTypeHolder getInstance() {
 		return instance;
 	}
 	private FileTypeHolder() {
 		fileTypeHandlerMap = new HashMap<String, FileTypeHandler>();
+		dummyHandlerMap = new HashMap<String, FileTypeHandler>();
 		// load all built in FileTypeHandlers
 		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, FileTypeCategory.Annotation, AffyCnChpParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("BAM", new String[]{"bam"}, FileTypeCategory.Alignment, null, BAM.class);
@@ -332,6 +334,42 @@ public class FileTypeHolder {
 		);
 	}
 
+	private void addDummyHandler(final String name, final String[] extensions, final FileTypeCategory category) {
+		addFileTypeHandler(
+			new FileTypeHandler() {
+				@Override
+				public Parser getParser() {
+					return null;
+				}
+				@Override
+				public String getName() {
+					return name;
+				}
+
+				@Override
+				public String[] getExtensions() {
+					return extensions;
+				}
+
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName,
+						AnnotatedSeqGroup group) {
+					return null;
+				}
+
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return null;
+				}
+
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return category;
+				}
+			}
+		);
+	}
+	
 	private void addFileTypeHandler(final String name, final String[] extensions, final FileTypeCategory category, final Class<? extends Parser> parserClass, final Class<? extends SymLoader> symLoaderClass) {
 		addFileTypeHandler(
 			new FileTypeHandler() {
@@ -393,20 +431,28 @@ public class FileTypeHolder {
 		);
 	}
 
+	public void addDummyHandler(FileTypeHandler fileTypeHandler) {
+		addHandler(fileTypeHandler, dummyHandlerMap);
+	}
+	
 	/**
 	 * add a new FileTypeHandler for a list of extensions
 	 * @param fileTypeHandler the FileTypeHandler
 	 */
 	public void addFileTypeHandler(FileTypeHandler fileTypeHandler) {
-		String[] extensions = fileTypeHandler.getExtensions();
-		for (String extension : extensions) {
-			if (fileTypeHandlerMap.get(extension) != null) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
-			}
-			fileTypeHandlerMap.put(extension, fileTypeHandler);
-		}
+		addHandler(fileTypeHandler, fileTypeHandlerMap);
 	}
 
+	private static void addHandler(FileTypeHandler fileTypeHandler, Map<String, FileTypeHandler> map) {
+		String[] extensions = fileTypeHandler.getExtensions();
+		for (String extension : extensions) {
+			if (map.get(extension) != null) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+			}
+			map.put(extension, fileTypeHandler);
+		}
+	}
+	
 	/**
 	 * remove an existing FileTypeHandler for a given list of extensions
 	 * @param fileTypeHandler the FileTypeHandler
@@ -433,7 +479,12 @@ public class FileTypeHolder {
 		if (extension.startsWith("x-das-feature")) {
 			return fileTypeHandlerMap.get("das2xml");
 		}
-		return fileTypeHandlerMap.get(extension);
+		FileTypeHandler handler = fileTypeHandlerMap.get(extension);
+		// If handler is not found then look up in dummy handlers
+		if(handler == null){
+			handler = dummyHandlerMap.get(extension);
+		}
+		return handler;
 	}
 
 	public String getExtensionForURI(String uri) {

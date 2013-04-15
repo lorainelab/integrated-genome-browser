@@ -95,18 +95,20 @@ public abstract class Selections {
 					}
 				}
 			} else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment 
-					|| category == FileTypeCategory.ProbeSet) {
+					|| category == FileTypeCategory.ProbeSet || category == FileTypeCategory.PairedRead) {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
-				rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
+				if(category != FileTypeCategory.PairedRead){
+					rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
+				}
 			} else if (category == FileTypeCategory.Axis){
 				allGlyphs.add(useGlyph);
 				axisStyles.add(useGlyph.getAnnotStyle());
 			} else if(category == null) { // This happens when feature checked but data is not loaded
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
-			}
+			} 
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })
 		List<GlyphI> selectedGraphs = (List)smv.getSelectedFloatingGraphGlyphs();

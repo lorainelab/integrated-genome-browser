@@ -218,6 +218,7 @@ public class PopupInfo extends JWindow {
 	private void init(){
 		
 		//setAlwaysOnTop(true);
+		setFocusableWindowState(false);
 		setBackground(backgroundColor);
 		setForeground(backgroundColor);
 		Opacity.INSTANCE.set(PopupInfo.this, 0.5f);

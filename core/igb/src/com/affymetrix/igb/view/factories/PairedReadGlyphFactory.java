@@ -2,8 +2,10 @@ package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -55,33 +57,74 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 			
 			super.addTopChild(pglyph, gviewer, true, insym, the_style, labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
 		}
-		SeqSymmetry intersection = SeqUtils.intersection(children, annotseq);
-		if(intersection != null && intersection.getSpan(annotseq) != null){
+		
+		PairRelationSeqSymmetry pairRelation = PairRelationSeqSymmetry.findRelation(children, annotseq);
+		if(pairRelation != null){
 			FillRectGlyph middle = new FillRectGlyph();
-			SeqSpan span = gviewer.getViewSeqSpan(intersection);
-			if(span != null){
-				middle.setCoords(span.getStart(), 0, span.getLength(), child_height);
-			}
-			middle.setColor(the_style.getForeground().darker());
+			SeqSpan span = gviewer.getViewSeqSpan(pairRelation);
+			middle.setCoords(span.getStart(), 0, span.getLength(), child_height);
 			middle.setHitable(false);
 			middle.setSelectable(false);
 			pglyph.addChild(middle);
-		}else{
-			SeqSymmetry intron = SeqUtils.getIntronSym(psym, annotseq);
-			if (intron != null) {
-				FillRectGlyph middle = new FillRectGlyph();
-				SeqSpan span = gviewer.getViewSeqSpan(intron);
-				if (span != null) {
-					middle.setCoords(span.getStart(), 0, span.getLength(), child_height);
-				}
-				middle.setColor(the_style.getForeground().brighter());
-				middle.setHitable(false);
-				middle.setSelectable(false);
-				pglyph.addChild(middle);
-				Scene.toBack(middle);
+			if(pairRelation.getRelation() == PairRelationSeqSymmetry.INTERSECTION){
+				middle.setColor(Color.BLACK);
+			} else if (pairRelation.getRelation() == PairRelationSeqSymmetry.UNION){
+				middle.setColor(Color.WHITE);
+			} else {
+				middle.setColor(the_style.getForeground());
 			}
 		}
+		
 		the_tier.addChild(pglyph);
 	}
 	
+	private static class PairRelationSeqSymmetry extends SimpleSeqSymmetry {
+		static final int INTERSECTION = 0;
+		static final int NONE = 1;
+		static final int UNION = 2;
+		
+		private final int relation;
+		
+		PairRelationSeqSymmetry(int relation, SeqSpan span){
+			super();
+			this.relation = relation;
+			spans = new ArrayList<SeqSpan>(1);
+			spans.add(span);
+		}
+		
+		int getRelation(){
+			return relation;
+		}
+		
+		static PairRelationSeqSymmetry findRelation(List<SeqSymmetry> children, BioSeq aseq){
+			int relation = NONE;
+			SeqSpan span = null;
+			PairRelationSeqSymmetry pairRelation = null;
+			
+			if(children.isEmpty()){
+				
+			} else if (children.size() == 1) {
+				span = children.get(0).getSpan(aseq);
+			} else if (children.size() >= 2) {
+				SeqSpan child1 = children.get(0).getSpan(aseq);
+				SeqSpan child2 = children.get(1).getSpan(aseq);
+				
+				if(child1 != null && child2 != null){
+					if(child2.getMin() < child1.getMax()){
+						relation = INTERSECTION;
+						span = new SimpleSeqSpan(child2.getMin(), child1.getMax(), aseq);
+					}else{
+						relation = UNION;
+						span = new SimpleSeqSpan(child1.getMax(), child2.getMin(), aseq);
+					}
+				}
+			
+			}
+			
+			if(span != null){
+				pairRelation = new PairRelationSeqSymmetry(relation, span);
+			}
+			return pairRelation;
+		}
+	}
 }

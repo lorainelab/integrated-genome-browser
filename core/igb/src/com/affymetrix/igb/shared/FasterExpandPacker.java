@@ -169,6 +169,7 @@ public class FasterExpandPacker extends ExpandPacker {
 					min_xmax_slot_index = slot_index;
 					prev_min_xmax = slot_max;
 				}
+				row_number++;
 				if (slot_max < child_min) {
 					double new_ycoord = determineYCoord(this.getMoveType(),slot_index, slot_height, spacing);
 					child.moveAbsolute(child_min, new_ycoord);
@@ -181,6 +182,7 @@ public class FasterExpandPacker extends ExpandPacker {
 						prev_min_xmax = slot_maxes.get(0);
 						skipDraw = false;
 						row_number = 0;
+						child.setRowNumber(row_number++);
 					} else if (child_max < prev_min_xmax) {
 						prev_min_xmax = child_max;
 						min_xmax_slot_index = slot_index;
@@ -228,7 +230,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		 */
 		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
 		//    (y+height) of bottom-most (ymax) child is at
-
+	
 		for (GlyphI child : children) {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
@@ -238,7 +240,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		setActualSlots(slot_maxes.size());
 		
 		packParent(parent);
-
+		
 		return null;
 	}
 	

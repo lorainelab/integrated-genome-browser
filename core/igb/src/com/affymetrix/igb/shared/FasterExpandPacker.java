@@ -124,8 +124,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		// resetting height of parent to just spacers
 		parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
 		
-		int child_count = parent.getChildCount();
-		if (child_count == 0) {
+		if (parent.getChildCount() == 0) {
 			return null;
 		}
 
@@ -136,17 +135,19 @@ public class FasterExpandPacker extends ExpandPacker {
 		 *  (prev_slot_index)
 		 */
 
-		Rectangle2D.Double cbox;
-		double ymin = Double.POSITIVE_INFINITY;
+		List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
 		DoubleArrayList slot_maxes = new DoubleArrayList(1000);
 		double slot_height = getMaxChildHeight(parent) + 2 * spacing;
+		double ymin = Double.POSITIVE_INFINITY;
+		
+		int child_count = children.size();
+		Rectangle2D.Double cbox;
 		double prev_min_xmax = Double.POSITIVE_INFINITY;
 		int min_xmax_slot_index = 0;	//index of slot with max of prev_min_xmax
 		int prev_slot_index = 0;
 		boolean skipDraw = false;
 		int row_number = 0;
 		
-		List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
 		for (int i = 0; i < child_count; i++) {
 			GlyphI child = children.get(i);
 			child.setVisibility(true);
@@ -218,7 +219,6 @@ public class FasterExpandPacker extends ExpandPacker {
 			}
 			ymin = Math.min(cbox.y, ymin);
 		}
-
 		/*
 		 *  now that child packing is done, need to ensure
 		 *  that parent is expanded/shrunk vertically to just fit its

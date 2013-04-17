@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
@@ -26,7 +27,7 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements Prefere
 
 	private ShowIGBTrackMarkAction() {
 		super(BUNDLE.getString("showIGBTrackMark"), "16x16/actions/blank_placeholder.png", null);
-		this.putValue(SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
+		this.putValue(SELECTED_KEY, IGBStateProvider.getShowIGBTrackMarkState());
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, PreferenceUtils.default_show_igb_track));
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
@@ -36,8 +37,8 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements Prefere
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean b = (Boolean)getValue(SELECTED_KEY);
-		TrackStyle.setShowIGBTrackMark(b);
-		ACTION.putValue(AbstractAction.SELECTED_KEY, TrackStyle.getShowIGBTrackMarkState());
+		IGBStateProvider.setShowIGBTrackMark(b);
+		ACTION.putValue(AbstractAction.SELECTED_KEY, IGBStateProvider.getShowIGBTrackMarkState());
 		PreferenceUtils.getTopNode().putBoolean(
 				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, (Boolean)getValue(SELECTED_KEY));
 		for (TierLabelGlyph glyph : getTierManager().getAllTierLabels()) {
@@ -54,7 +55,7 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements Prefere
 		if (pce.getKey().equals(PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION)) {
 			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_IGB_TRACKMARK_OPTION, PreferenceUtils.default_show_igb_track));
-			TrackStyle.setShowIGBTrackMark((Boolean)(this.getValue(SELECTED_KEY)));
+			IGBStateProvider.setShowIGBTrackMark((Boolean)(this.getValue(SELECTED_KEY)));
 			for (TierLabelGlyph glyph : getTierManager().getAllTierLabels()) {
 				glyph.setShowIGBTrack((Boolean)(this.getValue(SELECTED_KEY)));
 			}

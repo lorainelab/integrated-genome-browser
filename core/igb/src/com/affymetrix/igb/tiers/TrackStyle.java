@@ -29,8 +29,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
-	public static boolean showLockIcon = true;
-	private static boolean draw_collapse_icon = getDrawCollapseState();
 	// whether to create and use a java Preferences node object for this instance
 	private boolean is_persistent = true;
 	private boolean show = default_show;
@@ -828,17 +826,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.feature;
 	}
 
-	public static void setShowLockIcon(boolean b){
-		showLockIcon = b;
-		if (tiers_root_node != null) {
-			tiers_root_node.putBoolean(PREF_SHOW_LOCKED_TRACK_ICON, b);
-		}
-	}
-	
-	public static boolean getShowLockIcon(){
-		return tiers_root_node.getBoolean(PREF_SHOW_LOCKED_TRACK_ICON, default_show_locked_track_icon);
-	}
-	
 	public void setDirectionType(DIRECTION_TYPE type) {
 		this.direction_type = type;
 		if (getNode() != null) {
@@ -1019,29 +1006,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return custom_heatmap;
 	}
 
-	public static void setDrawCollapseControl(boolean b) {
-		draw_collapse_icon = b;
-		if (tiers_root_node != null) {
-			tiers_root_node.putBoolean(PREF_DRAW_COLLAPSE_ICON, b);
-		}
-	}
-
-	public static boolean getDrawCollapseState() {
-		return tiers_root_node.getBoolean(PREF_DRAW_COLLAPSE_ICON, default_draw_collapse_icon);
-	}
-
-	public static void setShowIGBTrackMark(boolean b) {
-		if (tiers_root_node != null) {
-			tiers_root_node.putBoolean(PREF_SHOW_IGB_TRACK_MARK, b);
-		}
-	}
-
-	public static boolean getShowIGBTrackMarkState() {
-		return tiers_root_node.getBoolean(PREF_SHOW_IGB_TRACK_MARK, default_show_igb_track_mark);
-	}
-
 	public boolean drawCollapseControl() {
-		return (draw_collapse_icon && getExpandable());
+		return (IGBStateProvider.getDrawCollapseState() && getExpandable());
 	}
 
 	public void copyPropertiesFrom(ITrackStyle g) {

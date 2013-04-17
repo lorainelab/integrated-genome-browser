@@ -8,6 +8,7 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 /**
  *
  * @author hiralv
@@ -26,14 +27,14 @@ public class ShowLockedTrackIconAction extends GenericAction {
 
 	private ShowLockedTrackIconAction() {
 		super(BUNDLE.getString("showLockedTrackIcon"), "16x16/actions/blank_placeholder.png", null);
-		this.putValue(SELECTED_KEY, TrackStyle.getShowLockIcon());
+		this.putValue(SELECTED_KEY, IGBStateProvider.getShowLockIcon());
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean b = (Boolean)getValue(SELECTED_KEY);
-		TrackStyle.setShowLockIcon(b);
+		IGBStateProvider.setShowLockIcon(b);
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().repackTheTiers(true, true);
 	}
 

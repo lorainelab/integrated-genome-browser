@@ -9,6 +9,7 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.AbstractAction;
@@ -30,7 +31,7 @@ public class DrawCollapseControlAction extends GenericAction implements Preferen
 
 	private DrawCollapseControlAction() {
 		super(BUNDLE.getString("drawCollapseControl"), "16x16/actions/blank_placeholder.png", null);
-		this.putValue(SELECTED_KEY, TrackStyle.getDrawCollapseState());
+		this.putValue(SELECTED_KEY, IGBStateProvider.getDrawCollapseState());
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_COLLAPSE_OPTION, PreferenceUtils.default_show_collapse_option));
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
@@ -40,9 +41,9 @@ public class DrawCollapseControlAction extends GenericAction implements Preferen
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean b = (Boolean)getValue(SELECTED_KEY);
-		TrackStyle.setDrawCollapseControl(b);
+		IGBStateProvider.setDrawCollapseControl(b);
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
-		ACTION.putValue(AbstractAction.SELECTED_KEY, TrackStyle.getDrawCollapseState());
+		ACTION.putValue(AbstractAction.SELECTED_KEY, IGBStateProvider.getDrawCollapseState());
 		PreferenceUtils.getTopNode().putBoolean(
 				PreferenceUtils.SHOW_COLLAPSE_OPTION, (Boolean)getValue(SELECTED_KEY));
 	}
@@ -59,7 +60,7 @@ public class DrawCollapseControlAction extends GenericAction implements Preferen
 		if (pce.getKey().equals(PreferenceUtils.SHOW_COLLAPSE_OPTION)) {
 			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				PreferenceUtils.SHOW_COLLAPSE_OPTION, PreferenceUtils.default_show_collapse_option));
-			TrackStyle.setDrawCollapseControl((Boolean)(this.getValue(SELECTED_KEY)));
+			IGBStateProvider.setDrawCollapseControl((Boolean)(this.getValue(SELECTED_KEY)));
 			((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
         }
 	}

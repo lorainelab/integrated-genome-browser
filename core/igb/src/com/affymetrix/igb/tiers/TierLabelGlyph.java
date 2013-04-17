@@ -60,7 +60,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		reference_tier = tier;
 		setInfo(reference_tier);
 		setPosition(position);
-		setShowIGBTrack(TrackStyle.getShowIGBTrackMarkState());
+		setShowIGBTrack(IGBStateProvider.getShowIGBTrackMarkState());
 	}
 
 	public void setShowIGBTrack(boolean b) {
@@ -195,7 +195,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 		
-		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed() && TrackStyle.getShowLockIcon()){
+		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed() && IGBStateProvider.getShowLockIcon()){
 			drawLock(g, pixelbox.x, pixelbox.y, fgcolor, bgcolor);
 		}
 		super.draw(view);

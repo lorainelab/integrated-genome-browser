@@ -78,11 +78,15 @@ public final class GlyphEdgeMatcher {
 
 	private void matchEdges(NeoMap map, GlyphI query, GlyphI target, List<GlyphI> match_glyphs) {
 		// Simply skip all TransientGlyph, such as the hairline shadow
+//		if ((target instanceof TransientGlyph) || (query instanceof TransientGlyph)
+//				|| target.getSkipDraw() || query.getSkipDraw()) {
+//			return;
+//		}
 		if ((target instanceof TransientGlyph) || (query instanceof TransientGlyph)
-				|| target.getSkipDraw() || query.getSkipDraw()) {
+				|| target.isOverlapped()|| query.isOverlapped()) {
 			return;
 		}
-
+				
 		// pre-emptively eliminate non 1D overlappers...
 		Rectangle2D.Double qbox = query.getCoordBox();
 		Rectangle2D.Double tbox = target.getCoordBox();

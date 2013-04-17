@@ -145,14 +145,14 @@ public class FasterExpandPacker extends ExpandPacker {
 		double prev_min_xmax = Double.POSITIVE_INFINITY;
 		int min_xmax_slot_index = 0;	//index of slot with max of prev_min_xmax
 		int prev_slot_index = 0;
-		boolean skipDraw = false;
+//		boolean skipDraw = false;
 		int row_number = 0;
 		
 		for (int i = 0; i < child_count; i++) {
 			GlyphI child = children.get(i);
 			child.setVisibility(true);
 			child.setOverlapped(false);
-			child.setSkipDraw(false);
+//			child.setSkipDraw(false);
 			cbox = child.getCoordBox();
 			double child_min = cbox.x;
 			double child_max = child_min + cbox.width;
@@ -181,7 +181,7 @@ public class FasterExpandPacker extends ExpandPacker {
 						prev_slot_index = 0;
 						min_xmax_slot_index = 0;
 						prev_min_xmax = slot_maxes.get(0);
-						skipDraw = false;
+//						skipDraw = false;
 						row_number = 0;
 						child.setRowNumber(row_number++);
 					} else if (child_max < prev_min_xmax) {
@@ -203,10 +203,8 @@ public class FasterExpandPacker extends ExpandPacker {
 					prev_slot_index = slot_index;
  
 					child.setOverlapped(true);
-					child.setSkipDraw(skipDraw);
-					
-					skipDraw = true;
-					//chr1 : 16,091,572 - 16,339,646
+//					child.setSkipDraw(skipDraw);
+//					skipDraw = true;
 				} else {
 					slot_maxes.add(child_max);
 					int slot_index = slot_maxes.size() - 1;

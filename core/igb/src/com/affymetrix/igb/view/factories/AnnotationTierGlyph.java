@@ -38,6 +38,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 
 	private boolean sorted = true;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
+	private static final int MAX_CHILD_IN_SLOP_ROW = 10;
 
 	/**
 	 * A property for the IAnnotStyle.getTransientPropertyMap().
@@ -204,6 +205,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 	@Override
 	public void drawChildren(ViewI view) {
 		try {
+			int max_depth = getStyleDepth();
 			if (getChildren() != null) {
 				GlyphI child;
 				int numChildren = getChildren().size();
@@ -212,7 +214,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 					// TransientGlyphs are usually NOT drawn in standard drawTraversal
 					if (!(child instanceof TransientGlyph) || drawTransients()) {
 						if (child.isOverlapped()) {
-							if (!child.getSkipDraw()) {
+							if (child.getRowNumber() < max_depth + MAX_CHILD_IN_SLOP_ROW) {
 								Graphics2D g = view.getGraphics();
 								Composite dac = g.getComposite();
 								g.setComposite(ac);

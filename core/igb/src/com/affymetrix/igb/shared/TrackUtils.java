@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 
@@ -43,12 +44,12 @@ public class TrackUtils {
 	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
-		String unique_name = TrackStyle.getUniqueName(human_name);
+		String unique_name = IGBStateProvider.getUniqueName(human_name);
 		sym.setProperty("method", unique_name);
 		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
-		TrackStyle style = TrackStyle.getInstance(unique_name, human_name, Delegate.EXT, null);
+		TrackStyle style = IGBStateProvider.getInstance(unique_name, human_name, Delegate.EXT, null);
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands

@@ -8,6 +8,7 @@ import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -35,7 +36,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		BACKGROUND, FOREGROUND,
 		TRACK_NAME_SIZE,};
 	public static final int COL_TRACK_DEFAULT = 0;
-	private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance();
+	private static TrackStyle default_annot_style = IGBStateProvider.getDefaultInstance();
 	private Object[] temp;
 	private String[] trackDefaults;
 	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};

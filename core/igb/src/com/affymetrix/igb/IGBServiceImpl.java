@@ -194,12 +194,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public Color getDefaultBackgroundColor() {
-		return TrackStyle.getDefaultInstance().getBackground();
+		return IGBStateProvider.getDefaultInstance().getBackground();
 	}
 
 	@Override
 	public Color getDefaultForegroundColor() {
-		return TrackStyle.getDefaultInstance().getForeground();
+		return IGBStateProvider.getDefaultInstance().getForeground();
 	}
 
 	@Override

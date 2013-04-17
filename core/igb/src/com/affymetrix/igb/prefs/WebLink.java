@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.*;
 import java.net.URLEncoder;
@@ -156,7 +157,7 @@ public final class WebLink {
 		List<WebLink> results = new ArrayList<WebLink>();
 
 		// If the method name has already been used, then the annotStyle must have already been created
-		TrackStyle style = TrackStyle.getInstance(method);
+		TrackStyle style = IGBStateProvider.getInstance(method);
 		String style_url = style.getUrl();
 		if (style_url != null && style_url.length() > 0) {
 			WebLink link = new WebLink("Track Line URL", null, style_url, RegexType.TYPE);

@@ -1,9 +1,6 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -65,8 +62,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private String original_track_name;
 	final private String method_name;
 	private Preferences node;
-	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
-	private static TrackStyle default_instance = null;
 	private boolean is_graph = false;
 	private float track_name_size = default_track_name_size;
 	private Map<String, Object> transient_properties;
@@ -80,49 +75,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
-
-	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
-		return getInstance(unique_name, track_name, file_type, true, true, props);
-	}
-	
-	public static TrackStyle getInstance(String unique_name) {
-		return getInstance(unique_name, null, null, true, false, null);
-	}
-
-	private static TrackStyle getInstance(String unique_name, String track_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {
-		TrackStyle style = static_map.get(unique_name.toLowerCase());
-		if (style == null) {
-			if (DEBUG) {
-				System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
-			}
-			// apply any default stylesheet stuff
-			TrackStyle template = getDefaultInstance();
-			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
-			// apply any stylesheet stuff...
-			style = new TrackStyle(unique_name, track_name, file_type, persistent, template, props);
-			FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
-			if(fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph ||
-					fth.getFileTypeCategory() == FileTypeCategory.Mismatch)){
-				style.setExpandable(false);
-				style.setGraphTier(true);
-			}
-			static_map.put(unique_name.toLowerCase(), style);
-		}
-
-		return style;
-	}
-	
-	public static void removeInstance(String unique_name) {
-		TrackStyle style = static_map.get(unique_name.toLowerCase());
-		if (style != null) {
-			//Set style to visible. This is to resolve if track was hidden and deleted
-			style.setShow(true);
-			static_map.remove(unique_name.toLowerCase());
-		}
-	}
 	
 	public void restoreToDefault() {
-		TrackStyle template = getDefaultInstance();
+		TrackStyle template = IGBStateProvider.getDefaultInstance();
 
 		if (template != null) {
 			// calling initFromTemplate should take care of A) and B)
@@ -160,26 +115,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
-	/**
-	 * Returns all (persistent and temporary) instances of AnnotStyle.
-	 */
-	public static List<TrackStyle> getAllLoadedInstances() {
-		return new ArrayList<TrackStyle>(static_map.values());
-	}
-
-	/**
-	 * If there is no AnnotStyle with the given name, just returns the given
-	 * name; else modifies the name such that there are no instances that are
-	 * currently using it.
-	 */
-	public static String getUniqueName(String name) {
-		String result = name.toLowerCase();
-		while (static_map.get(result) != null) {
-			result = name.toLowerCase() + "." + System.currentTimeMillis();
-		}
-		return result;
-	}
-	
 	protected TrackStyle() {
 		method_name = null;
 	}
@@ -203,7 +138,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Not sure yet where stylesheets from DAS/2 servers fits in yet -- between
 	 * B/C or between C/D ?
 	 */
-	private TrackStyle(String unique_ame, String track_name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
+	TrackStyle(String unique_ame, String track_name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
 		this.method_name = unique_ame;
 		this.track_name = track_name; // this is the default human name, and is not lower case
 		this.original_track_name = track_name;
@@ -571,19 +506,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * instance is used as a template in creating new instances. (Although not
 	 * ALL properties of the default instance are used in this way.)
 	 */
-
-	public static TrackStyle getDefaultInstance() {
-		if (default_instance == null) {
-			// Use a temporary variable here to avoid possible synchronization problems.
-			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, NAME_OF_DEFAULT_INSTANCE, null, true, null, null);
-			instance.setTrackName("");
-			instance.setShow(true);
-			default_instance = instance;
-			// Note that name will become lower-case
-			static_map.put(default_instance.unique_name, default_instance);
-		}
-		return default_instance;
-	}
 	
 	@Override
 	public String getUniqueName() {

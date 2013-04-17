@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -91,7 +92,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			if (rootSym != null) {
 				seqSymList.add(rootSym);
 				if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && ((SimpleSymWithProps)rootSym).getProperty("method") != null) {
-					preferredStyle = TrackStyle.getInstance(((SimpleSymWithProps)rootSym).getProperty("method").toString());
+					preferredStyle = IGBStateProvider.getInstance(((SimpleSymWithProps)rootSym).getProperty("method").toString());
 				}
 			}
 		}
@@ -125,7 +126,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	}
 	
 	private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
-		method = TrackStyle.getUniqueName("file:/"+removeIllegalCharacters(method));
+		method = IGBStateProvider.getUniqueName("file:/"+removeIllegalCharacters(method));
 		
 		java.net.URI uri;
 		try {

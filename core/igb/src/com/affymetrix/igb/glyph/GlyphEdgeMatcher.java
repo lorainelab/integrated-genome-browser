@@ -110,7 +110,8 @@ public final class GlyphEdgeMatcher {
 				matchEdges(map, query, tchild, match_glyphs);
 			}
 		} 
-		else if(query instanceof CodonGlyph || ((target.isHitable() && query.isHitable() && target.getParent() != null))) {
+//		else if(query instanceof CodonGlyph || ((target.isHitable() && query.isHitable() && target.getParent() != null))) {
+		else if(query instanceof CodonGlyph || ((target.isSelectable() && query.isSelectable() && target.getParent() != null))) {
 			addEdgeMatch(map, query, target, match_glyphs);
 		}
 	}

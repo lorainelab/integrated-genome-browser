@@ -65,7 +65,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
-	private int colorIntervals = 255;
 	public boolean customise = false;
 	private int summaryThreshold;
 	private boolean separable = true;
@@ -494,14 +493,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// Returns the preferences node, or null if this is a non-persistent instance.
 	private Preferences getNode() {
 		return this.node;
-	}
-
-	public int getColorIntervals() {
-		return colorIntervals;
-	}
-
-	public void setColorIntervals(int intervals) {
-		colorIntervals = intervals;
 	}
 
 	/*

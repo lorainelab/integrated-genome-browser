@@ -223,8 +223,8 @@ public class BED extends SymLoader implements LineProcessor {
 				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
-				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
-				style.setColorByRGB(true);
+				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
+				style.setColorByRGB(use_item_rgb);
 				bedType = track_line_parser.getCurrentTrackHash().get("type");
 				bedDetail = "bedDetail".equals(bedType);
 				continue;

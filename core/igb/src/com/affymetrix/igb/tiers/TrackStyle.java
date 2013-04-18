@@ -496,9 +496,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		colorIntervals = intervals;
 	}
 
-	public void setCustomHeatMap(HeatMap map) {
-		custom_heatmap = map;
-	}
 	/*
 	 * Gets an instance that can be used for holding default values. The default
 	 * instance is used as a template in creating new instances. (Although not

@@ -40,17 +40,14 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 		String minText = "";
 		String maxText = "";
 		String intervalsText = "";
-		int interval;
 		if(theTiers.size() == 1){
 			TierLabelGlyph tlg = theTiers.get(0);
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			style = (TrackStyle)tg.getAnnotStyle();
 			min = style.getMinScoreColor();
 			max = style.getMaxScoreColor();
-			interval = style.getColorIntervals();
 			minText+= min;
 			maxText+=max;
-			intervalsText+=interval; 
 		}
 		editor = new ColorByScoreEditor(minText, maxText, intervalsText);
 		int isOK = JOptionPane.showConfirmDialog(null, editor, "Set Color By Score", JOptionPane.OK_CANCEL_OPTION);

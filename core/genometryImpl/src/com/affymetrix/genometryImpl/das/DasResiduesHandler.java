@@ -90,7 +90,7 @@ public class DasResiduesHandler extends DefaultHandler{
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		tempVal.append(ch);
+		tempVal.append(new String(ch, start, length));
 		
 		if(Thread.currentThread().isInterrupted()){
 			tempVal = null;

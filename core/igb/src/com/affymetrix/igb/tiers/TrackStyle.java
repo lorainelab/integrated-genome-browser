@@ -369,6 +369,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setDirectionType(prev_direction_type);
 			}
 		}
+		String color_by_rgb_string = (String) props.getProperty(PROP_COLOR_BY_RGB);
+		if (color_by_rgb_string != null){
+			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
+				this.setColorByRGB(true);
+			} else if (color_by_rgb_string.equalsIgnoreCase(TRUE)){
+				this.setColorByRGB(false);
+			}
+		}
 		
 		if (DEBUG) {
 			System.out.println("    +++++++  done initializing from PropertyMap");

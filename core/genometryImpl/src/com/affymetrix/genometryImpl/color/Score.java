@@ -2,7 +2,7 @@ package com.affymetrix.genometryImpl.color;
 
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import java.awt.Color;
 
 /**
@@ -13,22 +13,33 @@ public class Score implements ColorProvider {
 	
 	private float min_score_color = 1.0f;
 	private float max_score_color = 1000f;
-	private final HeatMap custom_heatmap;
+	private HeatMap custom_heatmap;
+	private final ITrackStyle style;
 	
-	public Score(Color foreGround, Color backGround){
-		Color bottom_color = HeatMap.interpolateColor(foreGround, backGround, 0.20f);
-		custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, foreGround);
+	public Score(ITrackStyle style){
+		this.style = style;
+		this.custom_heatmap = generateNewHeatmap(style);
 	}
 	
 	@Override
-	public Color getColor(SymWithProps sym){
-		if(sym instanceof Scored) {
-			float score = ((Scored) sym).getScore();
+	public Color getColor(Object obj){
+		if(obj instanceof Scored) {
+			float score = ((Scored) obj).getScore();
 			if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
 				return getScoreColor(score);
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void update(){
+		custom_heatmap = generateNewHeatmap(style);
+	}
+	
+	private static HeatMap generateNewHeatmap(ITrackStyle style){
+		Color bottom_color = HeatMap.interpolateColor(style.getForeground(), style.getBackground(), 0.20f);
+		return HeatMap.makeLinearHeatmap("Custom", bottom_color, style.getForeground());
 	}
 	
 	public void setMinScoreColor(float min_score_color) {

@@ -18,7 +18,15 @@ public class RGB implements ColorProvider {
 	}
 	
 	@Override
-	public Color getColor(SymWithProps sym){
-		return (Color) sym.getProperty(TrackLineParser.ITEM_RGB);
+	public Color getColor(Object obj){
+		if(obj instanceof SymWithProps){
+			return (Color) ((SymWithProps)obj).getProperty(TrackLineParser.ITEM_RGB);
+		}
+		return null;
+	}
+	
+	@Override
+	public void update(){
+		//Do Nothing
 	}
 }

@@ -691,4 +691,54 @@ public abstract class PreferenceUtils {
 	public static void setPrefsMode(String mode) {
 		prefs_mode = mode;
 	}
+	
+	public static boolean save(Preferences node, String key, Object value){
+		boolean saved = false;
+		if(node != null){
+			if(value instanceof Boolean){
+				node.putBoolean(key, (Boolean)value);
+				saved = true;
+			} else if (value instanceof Double) {
+				node.putDouble(key, (Double)value);
+				saved = true;
+			} else if (value instanceof Float) {
+				node.putFloat(key, (Float) value);
+				saved = true;
+			} else if (value instanceof Long) {
+				node.putFloat(key, (Long) value);
+				saved = true;
+			} else if (value instanceof Integer) {
+				node.putInt(key, (Integer)value);
+				saved = true;
+			} else if (value instanceof String) {
+				node.put(key, (String)value);
+				saved = true;
+			} else if (value instanceof Color) {
+				putColor(node, key, (Color)value);
+				saved = true;
+			} 
+		}
+		return saved;
+	}
+	
+	public static Object load(Preferences node, String key, Object def){
+		if(node != null){
+			if(def instanceof Boolean){
+				return node.getBoolean(key, (Boolean)def);
+			} else if (def instanceof Double) {
+				return node.getDouble(key, (Double)def);
+			} else if (def instanceof Float) {
+				return node.getFloat(key, (Float)def);
+			} else if (def instanceof Long) {
+				return node.getLong(key, (Long)def);
+			} else if (def instanceof Integer) {
+				return node.getInt(key, (Integer)def);
+			} else if (def instanceof String) {
+				return node.get(key, (String)def);
+			} else if (def instanceof Color) {
+				return PreferenceUtils.getColor(node, key, (Color)def);
+			}
+		}
+		return null;
+	}
 }

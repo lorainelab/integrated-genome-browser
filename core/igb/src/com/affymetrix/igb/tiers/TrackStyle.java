@@ -289,17 +289,23 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		col = props.getColor(PROP_START_COLOR);
+		if(col == null){
+			col = props.getColor(PROP_POSITIVE_STRAND);
+		}
 		if (col != null) {
 			this.setForwardColor(col);
 		}
 
 		col = props.getColor(PROP_END_COLOR);
+		if(col == null){
+			col = props.getColor(PROP_NEGATIVE_STRAND);
+		}
 		if (col != null) {
 			this.setReverseColor(col);
 		}
 
 		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
-		if (gdepth_string != null) {
+		if (gdepth_string != null && !"".equals(gdepth_string)) {
 			int prev_glyph_depth = glyph_depth;
 			try {
 				this.setGlyphDepth(Integer.parseInt(gdepth_string));
@@ -309,12 +315,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
-		if (labfield != null) {
+		if (labfield != null && !"".equals(labfield)) {
 			this.setLabelField(labfield);
 		}
 
 		String mdepth_string = (String) props.getProperty(PROP_MAX_DEPTH);
-		if (mdepth_string != null) {
+		if (mdepth_string != null && !"".equals(mdepth_string)) {
 			int prev_max_depth = max_depth;
 			try {
 				this.setMaxDepth(Integer.parseInt(mdepth_string));
@@ -324,7 +330,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		String sepstring = (String) props.getProperty(PROP_SEPARATE);
-		if (sepstring != null) {
+		if (sepstring != null && !"".equals(sepstring)) {
 			if (sepstring.equalsIgnoreCase(FALSE)) {
 				this.setSeparate(false);
 			} else if (sepstring.equalsIgnoreCase(TRUE)) {
@@ -333,16 +339,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		String showstring = (String) props.getProperty(PROP_SHOW);
-		if (showstring != null) {
+		if (showstring != null && !"".equals(showstring)) {
 			if (showstring.equalsIgnoreCase(FALSE)) {
 				show = false;
 			} else if (showstring.equalsIgnoreCase(TRUE)) {
 				show = true;
 			}
 		}
-
 		String collapstring = (String) props.getProperty(PROP_COLLAPSED);
-		if (collapstring != null) {
+		if (collapstring != null && !"".equals(collapstring)) {
 			if (collapstring.equalsIgnoreCase(FALSE)) {
 				this.setCollapsed(false);
 			} else if (collapstring.equalsIgnoreCase(TRUE)) {
@@ -350,7 +355,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 		String fontstring = (String) props.getProperty(PROP_FONT_SIZE);
-		if (fontstring != null) {
+		if (fontstring != null && !"".equals(fontstring)) {
 			float prev_font_size = track_name_size;
 			try {
 				this.setTrackNameSize(Float.parseFloat(fontstring));
@@ -359,7 +364,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 		String directionstring = (String) props.getProperty(PROP_DIRECTION_TYPE);
-		if (directionstring != null) {
+		if (directionstring != null && !"".equals(directionstring)) {
 			DIRECTION_TYPE prev_direction_type = direction_type;
 			try {
 				this.setDirectionType(DIRECTION_TYPE.valueFor(directionstring));
@@ -368,11 +373,28 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 		String color_by_rgb_string = (String) props.getProperty(PROP_COLOR_BY_RGB);
-		if (color_by_rgb_string != null){
+		if (color_by_rgb_string != null && !"".equals(color_by_rgb_string)){
 			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
 				this.setColorByRGB(true);
 			} else if (color_by_rgb_string.equalsIgnoreCase(TRUE)){
 				this.setColorByRGB(false);
+			}
+		}
+		String nameSizeString = (String) props.getProperty(PROP_NAME_SIZE);
+		if (nameSizeString != null && !"".equals(nameSizeString)) {
+			float prev_font_size = track_name_size;
+			try {
+				this.setTrackNameSize(Float.parseFloat(nameSizeString));
+			} catch (Exception ex) {
+				this.setTrackNameSize(prev_font_size);
+			}
+		}
+		String show2tracksString = (String) props.getProperty(PROP_SHOW_2TRACK);
+		if (show2tracksString != null && !"".equals(show2tracksString)) {
+			if (show2tracksString.equalsIgnoreCase(FALSE)) {
+				this.setSeparate(false);
+			} else if (show2tracksString.equalsIgnoreCase(TRUE)) {
+				this.setSeparate(true);
 			}
 		}
 		

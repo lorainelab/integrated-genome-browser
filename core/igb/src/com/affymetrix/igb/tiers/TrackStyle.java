@@ -1,5 +1,12 @@
 package com.affymetrix.igb.tiers;
 
+import java.awt.Color;
+import java.io.File;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -7,14 +14,12 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.stylesheet.*;
+import com.affymetrix.igb.stylesheet.AssociationElement;
+import com.affymetrix.igb.stylesheet.PropertyConstants;
+import com.affymetrix.igb.stylesheet.PropertyMap;
+import com.affymetrix.igb.stylesheet.Stylesheet;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.Color;
-import java.io.File;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 
 /**
  * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start
@@ -215,7 +220,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				is_persistent = false;
 			}
 			if (node != null) {
-				initFromNode(node);
+				initFromNode();
 			}
 		} else {
 			node = null;
@@ -226,7 +231,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// generally call initFromTemplate before this.
 	// Make sure to set human_name to some default before calling this.
 	// Properties set this way do NOT get put in persistent storage.
-	private void initFromNode(Preferences node) {
+	private void initFromNode() {
 		if (DEBUG) {
 			System.out.println("    ----------- called AnnotStyle.initFromNode() for: " + unique_name);
 		}
@@ -269,42 +274,42 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// these copied values -- if values were persisted, then if PropertyMap changed between sessions,
 	//      older values would override newer values since persisted nodes take precedence
 	//    (only want to persists when user sets preferences in GUI)
-	private void initFromPropertyMap(PropertyMap props) {
+	private void initFromPropertyMap(Map<String, ?> props) {
 
 		if (DEBUG) {
 			System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name);
 			System.out.println("             props: " + props);
 		}
 
-		Color col = props.getColor(PROP_COLOR);
+		Color col = getColor(props, PROP_COLOR);
 		if (col == null) {
-			col = props.getColor(PROP_FOREGROUND);
+			col = getColor(props, PROP_FOREGROUND);
 		}
 		if (col != null) {
 			this.setForeground(col);
 		}
-		col = props.getColor(PROP_BACKGROUND);
+		col = getColor(props, PROP_BACKGROUND);
 		if (col != null) {
 			this.setBackground(col);
 		}
 
-		col = props.getColor(PROP_START_COLOR);
+		col = getColor(props, PROP_START_COLOR);
 		if(col == null){
-			col = props.getColor(PROP_POSITIVE_STRAND);
+			col = getColor(props, PROP_POSITIVE_STRAND);
 		}
 		if (col != null) {
 			this.setForwardColor(col);
 		}
 
-		col = props.getColor(PROP_END_COLOR);
+		col = getColor(props, PROP_END_COLOR);
 		if(col == null){
-			col = props.getColor(PROP_NEGATIVE_STRAND);
+			col = getColor(props, PROP_NEGATIVE_STRAND);
 		}
 		if (col != null) {
 			this.setReverseColor(col);
 		}
 
-		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
+		String gdepth_string = (String) props.get(PROP_GLYPH_DEPTH);
 		if (gdepth_string != null && !"".equals(gdepth_string)) {
 			int prev_glyph_depth = glyph_depth;
 			try {
@@ -314,12 +319,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 
-		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
+		String labfield = (String) props.get(PROP_LABEL_FIELD);
 		if (labfield != null && !"".equals(labfield)) {
 			this.setLabelField(labfield);
 		}
 
-		String mdepth_string = (String) props.getProperty(PROP_MAX_DEPTH);
+		String mdepth_string = (String) props.get(PROP_MAX_DEPTH);
 		if (mdepth_string != null && !"".equals(mdepth_string)) {
 			int prev_max_depth = max_depth;
 			try {
@@ -329,7 +334,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 
-		String sepstring = (String) props.getProperty(PROP_SEPARATE);
+		String sepstring = (String) props.get(PROP_SEPARATE);
 		if (sepstring != null && !"".equals(sepstring)) {
 			if (sepstring.equalsIgnoreCase(FALSE)) {
 				this.setSeparate(false);
@@ -338,7 +343,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 
-		String showstring = (String) props.getProperty(PROP_SHOW);
+		String showstring = (String) props.get(PROP_SHOW);
 		if (showstring != null && !"".equals(showstring)) {
 			if (showstring.equalsIgnoreCase(FALSE)) {
 				show = false;
@@ -346,7 +351,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				show = true;
 			}
 		}
-		String collapstring = (String) props.getProperty(PROP_COLLAPSED);
+		String collapstring = (String) props.get(PROP_COLLAPSED);
 		if (collapstring != null && !"".equals(collapstring)) {
 			if (collapstring.equalsIgnoreCase(FALSE)) {
 				this.setCollapsed(false);
@@ -354,7 +359,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setCollapsed(true);
 			}
 		}
-		String fontstring = (String) props.getProperty(PROP_FONT_SIZE);
+		String fontstring = (String) props.get(PROP_FONT_SIZE);
 		if (fontstring != null && !"".equals(fontstring)) {
 			float prev_font_size = track_name_size;
 			try {
@@ -363,7 +368,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setTrackNameSize(prev_font_size);
 			}
 		}
-		String directionstring = (String) props.getProperty(PROP_DIRECTION_TYPE);
+		String directionstring = (String) props.get(PROP_DIRECTION_TYPE);
 		if (directionstring != null && !"".equals(directionstring)) {
 			DIRECTION_TYPE prev_direction_type = direction_type;
 			try {
@@ -372,7 +377,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setDirectionType(prev_direction_type);
 			}
 		}
-		String color_by_rgb_string = (String) props.getProperty(PROP_COLOR_BY_RGB);
+		String color_by_rgb_string = (String) props.get(PROP_COLOR_BY_RGB);
 		if (color_by_rgb_string != null && !"".equals(color_by_rgb_string)){
 			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
 				this.setColorByRGB(true);
@@ -380,7 +385,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setColorByRGB(false);
 			}
 		}
-		String nameSizeString = (String) props.getProperty(PROP_NAME_SIZE);
+		String nameSizeString = (String) props.get(PROP_NAME_SIZE);
 		if (nameSizeString != null && !"".equals(nameSizeString)) {
 			float prev_font_size = track_name_size;
 			try {
@@ -389,7 +394,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setTrackNameSize(prev_font_size);
 			}
 		}
-		String show2tracksString = (String) props.getProperty(PROP_SHOW_2TRACK);
+		String show2tracksString = (String) props.get(PROP_SHOW_2TRACK);
 		if (show2tracksString != null && !"".equals(show2tracksString)) {
 			if (show2tracksString.equalsIgnoreCase(FALSE)) {
 				this.setSeparate(false);
@@ -404,91 +409,26 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		// height???
 	}
 
-	private void initFromPropertyMap(Map<String, String> props) {
-		String fgString = props.get("foreground");
-		if (fgString != null && !"".equals(fgString)) {
-			this.setForeground(Color.decode("0x" + fgString));
-		}
-
-		String bgString = props.get("background");
-		if (bgString != null && !"".equals(bgString)) {
-			this.setBackground(Color.decode("0x" + bgString));
-		}
-
-		String startColorString = props.get("positive_strand_color");
-		if (startColorString != null && !"".equals(startColorString)) {
-			this.setForwardColor(Color.decode("0x" + startColorString));
-		}
-
-		String endColorString = props.get("negative_strand_color");
-		if (endColorString != null && !"".equals(endColorString)) {
-			this.setReverseColor(Color.decode("0x" + endColorString));
-		}
-
-		String labfield = props.get("label_field");
-		if (labfield != null && !"".equals(labfield) && label_field != null) {
-			this.setLabelField(labfield);
-		}
-
-		String mDepthString = props.get("max_depth");
-		if (mDepthString != null && !"".equals(mDepthString)) {
-			int prev_max_depth = max_depth;
+	private static Color getColor(Map<String, ? extends Object> props, String key) {
+		Color c = null;
+		Object o = props.get(key);
+		if ("".equals(o)) {
+			// setting the value of color to "" means that you want to ignore the
+			// color settings in any inherited context and revert to the default.
+			return null;
+		} else if (o instanceof Color) {
+			c = (Color) o;
+		} else if (o instanceof String) {
 			try {
-				this.setMaxDepth(Integer.parseInt(mDepthString));
-			} catch (Exception ex) {
-				this.setMaxDepth(prev_max_depth);
+				c = Color.decode("0x" + o);
+			} catch (Exception e) {
+				c = null;
+
 			}
 		}
-
-		String nameSizeString = props.get("name_size");
-		if (nameSizeString != null && !"".equals(nameSizeString)) {
-			float prev_font_size = track_name_size;
-			try {
-				this.setTrackNameSize(Float.parseFloat(nameSizeString));
-			} catch (Exception ex) {
-				this.setTrackNameSize(prev_font_size);
-			}
-		}
-
-		String connectedString = props.get("connected");
-		if (connectedString != null && !"".equals(connectedString)) {
-			if (connectedString.equalsIgnoreCase(FALSE)) {
-				this.setGlyphDepth(1);
-			} else if (connectedString.equalsIgnoreCase(TRUE)) {
-				this.setGlyphDepth(2);
-			}
-		}
-
-		String collapsedString = props.get("collapsed");
-		if (collapsedString != null && !"".equals(collapsedString)) {
-			if (collapsedString.equalsIgnoreCase(FALSE)) {
-				this.setCollapsed(false);
-			} else if (collapsedString.equalsIgnoreCase(TRUE)) {
-				this.setCollapsed(true);
-			}
-		}
-
-		String show2tracksString = props.get("show2tracks");
-		if (show2tracksString != null && !"".equals(show2tracksString)) {
-			if (show2tracksString.equalsIgnoreCase(FALSE)) {
-				this.setSeparate(false);
-			} else if (show2tracksString.equalsIgnoreCase(TRUE)) {
-				this.setSeparate(true);
-			}
-		}
-
-		String directionstring = props.get("direction_type");
-		if (directionstring != null) {
-			DIRECTION_TYPE prev_direction_type = direction_type;
-			try {
-				this.setDirectionType(DIRECTION_TYPE.valueFor(directionstring));
-			} catch (Exception ex) {
-				this.setDirectionType(prev_direction_type);
-			}
-		}
-
+		return c;
 	}
-
+	
 	// Copies properties from the template into this object, but does NOT persist
 	// these copied values.
 	// human_name and factory_instance are not modified

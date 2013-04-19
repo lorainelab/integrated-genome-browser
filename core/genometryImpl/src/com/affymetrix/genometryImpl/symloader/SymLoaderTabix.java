@@ -80,6 +80,7 @@ public class SymLoaderTabix extends SymLoader {
 			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE,
 						"Could not initialize tabix line reader for {0}.",
 						new Object[]{featureName});
+			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE, "Error initializing tabix ", x);
 			return;
 		}
 		

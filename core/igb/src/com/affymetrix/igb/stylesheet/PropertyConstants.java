@@ -9,6 +9,10 @@ public interface PropertyConstants {
 	static final String PROP_COLOR = "color";
 	static final String PROP_FOREGROUND = "foreground";
 	static final String PROP_BACKGROUND = "background";
+	static final String PROP_POSITIVE_STRAND = "positive_strand_color";
+	static final String PROP_NEGATIVE_STRAND = "negative_strand_color";
+	static final String PROP_NAME_SIZE = "name_size";
+	static final String PROP_SHOW_2TRACK = "show2track";
 	static final String PROP_CONNECTED = "connected";
 	static final String PROP_GLYPH_DEPTH = "glyph_depth";
 	static final String PROP_LABEL_FIELD = "label_field";

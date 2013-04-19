@@ -230,20 +230,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (DEBUG) {
 			System.out.println("    ----------- called AnnotStyle.initFromNode() for: " + unique_name);
 		}
-		track_name = node.get(PREF_TRACK_NAME, this.track_name);
-		show2tracks = node.getBoolean(PREF_SHOW2TRACKS, this.getSeparate());
-		glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
-		connected = node.getBoolean(PREF_CONNECTED, this.getConnected());
-		collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
-		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
-		foreground = PreferenceUtils.getColor(node, PREF_FOREGROUND, this.getForeground());
-		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
-		start_color = PreferenceUtils.getColor(node, PREF_START_COLOR, this.getForwardColor());
-		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getReverseColor());
-
-		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
-		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
-		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
+		track_name		= (String)	load(PREF_TRACK_NAME, this.track_name);
+		show2tracks		= (Boolean) load(PREF_SHOW2TRACKS, this.getSeparate());
+		glyph_depth		= (Integer) load(PREF_GLYPH_DEPTH, this.getGlyphDepth());
+		connected		= (Boolean)	load(PREF_CONNECTED, this.getConnected());
+		collapsed		= (Boolean)	load(PREF_COLLAPSED, this.getCollapsed());
+		max_depth		= (Integer)	load(PREF_MAX_DEPTH, this.getMaxDepth());
+		foreground		= (Color)	load(PREF_FOREGROUND, this.getForeground());
+		background		= (Color)	load(PREF_BACKGROUND, this.getBackground());
+		start_color		= (Color)	load(PREF_START_COLOR, this.getForwardColor());
+		end_color		= (Color)	load(PREF_END_COLOR, this.getReverseColor());
+		label_field		= (String)	load(PREF_LABEL_FIELD, this.getLabelField());
+		track_name_size = (Float) load(PREF_TRACK_SIZE, this.getTrackNameSize());
+		direction_type	= DIRECTION_TYPE.valueFor((Integer)load(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
 
 	public PropertyMap getProperties() {
@@ -527,12 +526,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setTrackName(String track_name) {
 		this.track_name = track_name;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setTrackName(): " + track_name);
-			}
-			getNode().put(PREF_TRACK_NAME, track_name);
-		}
+		save(PREF_TRACK_NAME, track_name);
 	}
 
 	/**
@@ -567,12 +561,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			return;
 		}
 		this.show2tracks = b;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setSeparate(): " + track_name + ", " + b);
-			}
-			getNode().putBoolean(PREF_SHOW2TRACKS, b);
-		}
+		save(PREF_SHOW2TRACKS, b);
 	}
 
 	public final boolean getCustomizable() {
@@ -590,12 +579,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setCollapsed(boolean b) {
 		this.collapsed = b;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setCollapsed(): " + track_name + ", " + b);
-			}
-			getNode().putBoolean(PREF_COLLAPSED, b);
-		}
+		save(PREF_COLLAPSED, b);
 	}
 
 	/**
@@ -620,12 +604,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		this.setForwardMaxDepth(max);
 		this.setReverseMaxDepth(max);
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setMaxDepth(): " + track_name + ", " + max);
-			}
-			getNode().putInt(PREF_MAX_DEPTH, max);
-		}
+		save(PREF_MAX_DEPTH, max);
 	}
 
 	/**
@@ -643,12 +622,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			// get rid of old heatmap, force it to be re-created when needed
 		}
 		this.foreground = c;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setColor(): " + track_name + ", " + c);
-			}
-			PreferenceUtils.putColor(getNode(), PREF_FOREGROUND, c);
-		}
+		save(PREF_FOREGROUND, c);
+		
 		// When a user sets foreground color turn off color by RGB
 		setColorByRGB(false);
 	}
@@ -668,12 +643,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			// get rid of old heatmap, force it to be re-created when needed
 		}
 		this.background = c;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
-			}
-			PreferenceUtils.putColor(getNode(), PREF_BACKGROUND, c);
-		}
+		save(PREF_BACKGROUND, c);
 	}
 
 	/**
@@ -687,12 +657,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setForwardColor(Color c) {
 		this.start_color = c;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
-			}
-			PreferenceUtils.putColor(getNode(), PREF_START_COLOR, c);
-		}
+		save(PREF_START_COLOR, c);
 		// When a user sets forward color turn off color by RGB
 		setColorByRGB(false);
 	}
@@ -708,12 +673,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setReverseColor(Color c) {
 		this.end_color = c;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
-			}
-			PreferenceUtils.putColor(getNode(), PREF_END_COLOR, c);
-		}
+		save(PREF_END_COLOR, c);
 		// When a user sets reverse color turn off color by RGB
 		setColorByRGB(false);
 	}
@@ -733,12 +693,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			l = "";
 		}
 		label_field = l;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setLabelField(): " + track_name + ", " + l);
-			}
-			getNode().put(PREF_LABEL_FIELD, l);
-		}
+		save(PREF_LABEL_FIELD, l);
 	}
 
 	public boolean getConnected() {
@@ -747,12 +702,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public void setConnected(boolean b) {
 		connected = b;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setConnected(): " + track_name + ", " + b);
-			}
-			getNode().putBoolean(PREF_CONNECTED, b);
-		}
+		save(PREF_CONNECTED, b);
 	}
 
 	@Override
@@ -764,12 +714,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public void setGlyphDepth(int i) {
 		if (glyph_depth != i) {
 			glyph_depth = i;
-			if (getNode() != null) {
-				if (DEBUG_NODE_PUTS) {
-					System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + track_name + ", " + i);
-				}
-				getNode().putInt(PREF_GLYPH_DEPTH, i);
-			}
+			save(PREF_GLYPH_DEPTH, i);
 		}
 
 		if (glyph_depth == 1) {
@@ -787,12 +732,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setHeight(double h) {
 		height = h;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setHeight(): " + track_name + ", " + h);
-			}
-			getNode().putDouble(PREF_HEIGHT, h);
-		}
+		save(PREF_HEIGHT, h);
 		this.reverseHeight = this.height;
 	}
 
@@ -804,12 +744,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setTrackNameSize(float font_size) {
 		this.track_name_size = font_size;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setFontSize(): " + track_name + ", " + font_size);
-			}
-			getNode().putFloat(PREF_TRACK_SIZE, font_size);
-		}
+		save(PREF_TRACK_SIZE, font_size);
 	}
 
 	@Override
@@ -824,12 +759,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public void setDirectionType(DIRECTION_TYPE type) {
 		this.direction_type = type;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + track_name + ", " + direction_type);
-			}
-			getNode().putInt(PREF_DIRECTION_TYPE, type.ordinal());
-		}
+		save(PREF_DIRECTION_TYPE, type.ordinal());
 	}
 
 	@Override
@@ -1219,5 +1149,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setJoin(boolean b){
 		join = b;
+	}
+	
+	private boolean save(String key, Object value){
+		return PreferenceUtils.save(getNode(), key, value);
+	}
+	
+	private Object load(String key, Object def){
+		return PreferenceUtils.load(getNode(), key, def);
 	}
 }

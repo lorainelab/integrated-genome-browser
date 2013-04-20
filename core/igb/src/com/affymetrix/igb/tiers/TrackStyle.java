@@ -1,5 +1,7 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.RGB;
 import java.awt.Color;
 import java.io.File;
 import java.util.*;
@@ -53,13 +55,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double y = default_y;
 	private Color start_color = default_start;
 	private Color end_color = default_end;
-	private float min_score_color = default_min_score_color;
-	private float max_score_color = default_max_score_color;
-	private boolean color_by_score = default_color_by_score;
-	private boolean color_by_rgb = default_color_by_rgb;
 	private String url = null;
 	private String file_type = null;
-	private HeatMap custom_heatmap = null;
 	private String unique_name;
 	private String track_name;
 	private String original_track_name;
@@ -77,6 +74,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
+	ColorProvider color_provider = null;
 	
 	public void restoreToDefault() {
 		TrackStyle template = IGBStateProvider.getDefaultInstance();
@@ -380,10 +378,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		String color_by_rgb_string = (String) props.get(PROP_COLOR_BY_RGB);
 		if (color_by_rgb_string != null && !"".equals(color_by_rgb_string)){
 			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
-				this.setColorByRGB(true);
-			} else if (color_by_rgb_string.equalsIgnoreCase(TRUE)){
-				this.setColorByRGB(false);
-			}
+				this.color_provider = RGB.getInstance();
+			} 
 		}
 		String nameSizeString = (String) props.get(PROP_NAME_SIZE);
 		if (nameSizeString != null && !"".equals(nameSizeString)) {
@@ -447,8 +443,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 //		this.setViewMode(template.getViewMode());
 		this.setDirectionType(template.getDirectionName());
 		this.setLabelForeground(null);
-		this.setColorByScore(template.getColorByScore());
-		this.setColorByRGB(template.getColorByRGB());
 	}
 
 	// Returns the preferences node, or null if this is a non-persistent instance.
@@ -580,14 +574,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setForeground(Color c) {
 		if (c != this.foreground) {
-			custom_heatmap = null;
-			// get rid of old heatmap, force it to be re-created when needed
+			if(color_provider != null){
+				color_provider.update();
+			}
 		}
 		this.foreground = c;
 		save(PREF_FOREGROUND, c);
-		
-		// When a user sets foreground color turn off color by RGB
-		setColorByRGB(false);
 	}
 
 	/**
@@ -601,8 +593,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setBackground(Color c) {
 		if (c != this.background) {
-			custom_heatmap = null;
-			// get rid of old heatmap, force it to be re-created when needed
+			if(color_provider != null){
+				color_provider.update();
+			}
 		}
 		this.background = c;
 		save(PREF_BACKGROUND, c);
@@ -620,8 +613,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public void setForwardColor(Color c) {
 		this.start_color = c;
 		save(PREF_START_COLOR, c);
-		// When a user sets forward color turn off color by RGB
-		setColorByRGB(false);
 	}
 
 	/**
@@ -636,8 +627,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public void setReverseColor(Color c) {
 		this.end_color = c;
 		save(PREF_END_COLOR, c);
-		// When a user sets reverse color turn off color by RGB
-		setColorByRGB(false);
 	}
 
 	/**
@@ -813,87 +802,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return transient_properties;
 	}
 
-	/**
-	 * Indicates whether the scores of the annotations should be marked by
-	 * colors.
-	 */
 	@Override
-	public void setColorByScore(boolean b) {
-		color_by_score = b;
-	}
-
-	/**
-	 * Indicates whether the scores of the annotations should be marked by
-	 * colors.
-	 */
-	@Override
-	public boolean getColorByScore() {
-		return color_by_score;
-	}
-
-	@Override
-	public void setColorByRGB(boolean b){
-		color_by_rgb = b;
+	public void setColorProvider(ColorProvider cp){
+		this.color_provider = cp;
 	}
 	
 	@Override
-	public boolean getColorByRGB(){
-		return color_by_rgb;
+	public ColorProvider getColorProvider(){
+		return color_provider;
 	}
 	
-	public void setMinScoreColor(float min_score_color) {
-		this.min_score_color = min_score_color;
-	}
-
-	public float getMinScoreColor() {
-		return min_score_color;
-	}
-
-	public void setMaxScoreColor(float max_score_color) {
-		this.max_score_color = max_score_color;
-	}
-
-	public float getMaxScoreColor() {
-		return max_score_color;
-	}
-
-	/**
-	 * Returns a color that can be used to indicate a score between 1 and 1000.
-	 * This will return a color even if getColorByScore() is false.
-	 */
-	@Override
-	public Color getScoreColor(float score) {
-		final float min = getMinScoreColor();
-		final float max = getMaxScoreColor();
-
-		if (score < min) {
-			score = min;
-		} else if (score >= max) {
-			score = max;
-		}
-
-		final float range = max - min;
-		int index = (int) (((score - min) / range) * 255);
-
-		return getCustomHeatMap().getColors()[index];
-	}
-
-	/**
-	 * Returns a HeatMap that interpolates between colors based on getColor()
-	 * and getBackgroundColor(). The color at the low end of the HeatMap will be
-	 * slightly different from the background color so that it can be
-	 * distinguished from it. This will return a HeatMap even if
-	 * getColorByScore() is false.
-	 */
-	private HeatMap getCustomHeatMap() {
-		if (custom_heatmap == null) {
-			// Bottom color is not quite same as background, so it remains visible
-			Color bottom_color = HeatMap.interpolateColor(getBackground(), getForeground(), 0.20f);
-			custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getForeground());
-		}
-		return custom_heatmap;
-	}
-
 	public boolean drawCollapseControl() {
 		return (IGBStateProvider.getDrawCollapseState() && getExpandable());
 	}
@@ -912,7 +830,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		if (g instanceof ITrackStyleExtended) {
 			ITrackStyleExtended as = (ITrackStyleExtended) g;
-			setColorByScore(as.getColorByScore());
 			setGlyphDepth(as.getGlyphDepth());
 			setLabelField(as.getLabelField());
 			setSeparate(as.getSeparate());

@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -231,10 +232,8 @@ public final class TrackLineParser {
 				annot_style.setUrl(url);
 			}
 			if ("1".equals(track_hash.get(USE_SCORE))) {
-				annot_style.setColorByScore(true);
-			} else if (track_hash.get(USE_SCORE) != null) {
-				annot_style.setColorByScore(false);
-			}
+				annot_style.setColorProvider(new Score(style));
+			} 
 		}
 
 		// Probably shouldn't copy ALL keys to the extended values

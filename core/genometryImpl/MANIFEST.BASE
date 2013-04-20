@@ -47,6 +47,7 @@ Import-Package: affymetrix.calvin.data,
  javax.xml.transform.stream,
  javax.xml.validation
 Export-Package: com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.color,
  com.affymetrix.genometryImpl.comparator,
  com.affymetrix.genometryImpl.das,
  com.affymetrix.genometryImpl.das2,

@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -227,9 +227,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			pglyph = (EfficientSolidGlyph) glyphClass.newInstance();
 		}
 		pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-		boolean use_score_colors = the_style.getColorByScore();
-		boolean use_item_rgb = the_style.getColorByRGB();
-		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), direction_type, use_score_colors, use_item_rgb));
+		ColorProvider cp = the_style.getColorProvider();
+		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), direction_type, cp));
 		if(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH){
 			pglyph.setDirection(pspan.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
 		}
@@ -279,8 +278,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 
-		boolean use_score_colors = the_style.getColorByScore();
-		boolean use_item_rgb = the_style.getColorByRGB();
+		ColorProvider cp = the_style.getColorProvider();
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
@@ -295,7 +293,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
-				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type, use_score_colors, use_item_rgb);
+				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type, cp);
 				boolean cds = (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan));
 				double cheight = thin_height;
 				if(cds){
@@ -358,8 +356,17 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 		
 	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, 
-			boolean isForward, DIRECTION_TYPE direction_type, boolean use_score_colors, boolean use_item_rgb) {
-		if (!(use_score_colors || use_item_rgb)) {
+			boolean isForward, DIRECTION_TYPE direction_type, ColorProvider cp) {
+		Color color = null;
+		if(cp != null){
+			SeqSymmetry sym = insym;
+			if (insym instanceof DerivedSeqSymmetry) {
+				sym = getMostOriginalSymmetry(insym);
+			}
+			color = cp.getColor(sym);
+		}
+		
+		if (color == null) {
 			if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
 				if(isForward){
 					return style.getForwardColor();
@@ -369,25 +376,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			return style.getForeground();
 		}
 
-		SeqSymmetry sym = insym;
-		if (insym instanceof DerivedSeqSymmetry) {
-			sym = getMostOriginalSymmetry(insym);
-		}
-
-		if (use_item_rgb && sym instanceof SymWithProps) {
-			Color cc = (Color) ((SymWithProps) sym).getProperty(TrackLineParser.ITEM_RGB);
-			if (cc != null) {
-				return cc;
-			}
-		}
-		if (use_score_colors && sym instanceof Scored) {
-			float score = ((Scored) sym).getScore();
-			if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
-				return style.getScoreColor(score);
-			}
-		}
-
-		return style.getForeground();
+		return color;
 	}
 
 	private GlyphI handleCDSSpan(SeqMapViewExtendedI gviewer,

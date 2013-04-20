@@ -55,7 +55,7 @@ public abstract class SetDirectionStyleActionA extends SeqMapViewActionA {
 			
 			// Turn off color by RGB when direction type is either both or color
 			if(directionType == TrackConstants.DIRECTION_TYPE.BOTH || directionType == TrackConstants.DIRECTION_TYPE.COLOR){
-				style.setColorByRGB(false);
+				style.setColorProvider(null);
 			}
 		}
 	}

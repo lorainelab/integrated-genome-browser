@@ -1,12 +1,14 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import java.util.List;
-
 import javax.swing.JOptionPane;
 
+import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.Score;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.ColorByScoreEditor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -44,8 +46,14 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 			TierLabelGlyph tlg = theTiers.get(0);
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			style = (TrackStyle)tg.getAnnotStyle();
-			min = style.getMinScoreColor();
-			max = style.getMaxScoreColor();
+			ColorProvider cp = style.getColorProvider();
+			if(cp instanceof Score){
+				min = ((Score)cp).getMinScoreColor();
+				max = ((Score)cp).getMaxScoreColor();
+			}else{
+				min = Score.DEFAULT_MIN_SCORE;
+				max = Score.DEFAULT_MAX_SCORE;
+			}
 			minText+= min;
 			maxText+=max;
 		}
@@ -60,8 +68,11 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 				for(TierLabelGlyph label : theTiers){
 					TierGlyph tg = (TierGlyph)label.getInfo();
 					style = (TrackStyle)tg.getAnnotStyle();
-					style.setMinScoreColor(updatedMinRange);
-					style.setMaxScoreColor(updatedMaxRange);
+					ColorProvider cp = style.getColorProvider();
+					if(cp instanceof Score){
+						((Score)cp).setMinScoreColor(updatedMinRange);
+						((Score)cp).setMaxScoreColor(updatedMaxRange);
+					}
 				//	style.setColorIntervals(updatedIntervals);
 				}
 		}

@@ -12,6 +12,7 @@
  */
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 
@@ -19,14 +20,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public static final int NO_THRESHOLD = -1;
 	void setUrl(String url);
 	String getUrl();
-
-	void setColorByScore(boolean b);
-	boolean getColorByScore();
-
-	Color getScoreColor(float f);
-	
-	void setColorByRGB(boolean b);
-	boolean getColorByRGB();
 	
 	/** Controls a parameter of the GenericAnnotGlyphFactory. */
 	void setGlyphDepth(int i);
@@ -89,4 +82,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public void setLabelBackground(Color c);
 	public int getSummaryThreshold();
 	public void setSummaryThreshold(int level);
+	public void setColorProvider(ColorProvider cp);
+	public ColorProvider getColorProvider();
 }

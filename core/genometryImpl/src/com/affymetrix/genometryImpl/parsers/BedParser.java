@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
@@ -163,7 +164,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
-				style.setColorByRGB(use_item_rgb);
+				style.setColorProvider(use_item_rgb? RGB.getInstance() : null);
 				bedType = track_line_parser.getCurrentTrackHash().get("type");
 				continue;
 			}

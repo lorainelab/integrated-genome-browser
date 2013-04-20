@@ -13,8 +13,8 @@
 
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 import java.awt.Color;
 
@@ -83,18 +83,6 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 	@Override
 	public String getUrl() { return url; }
 
-	boolean colorByScore = false;
-	@Override
-	public void setColorByScore(boolean b) {this.colorByScore = b;}
-	@Override
-	public boolean getColorByScore() { return this.colorByScore;}
-
-	/**
-	 * @return the foreground color.
-	 */
-	@Override
-	public Color getScoreColor(float f) { return getForeground(); }
-
 	int depth=2;
 	@Override
 	public void setGlyphDepth(int i) {this.depth = i;}
@@ -125,7 +113,7 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 			if (g instanceof ITrackStyleExtended) {
 				ITrackStyleExtended as = (ITrackStyleExtended) g;
 				setUrl(as.getUrl());
-				setColorByScore(as.getColorByScore());
+				setColorProvider(as.getColorProvider());
 				setGlyphDepth(as.getGlyphDepth());
 				setSeparate(as.getSeparate());
 				setLabelField(as.getLabelField());
@@ -242,14 +230,14 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 		join = b;
 	}
 
-	boolean colorByRGB = true;
+	ColorProvider color_provider;
 	@Override
-	public void setColorByRGB(boolean b) {
-		colorByRGB = b;
+	public void setColorProvider(ColorProvider cp){
+		this.color_provider = cp;
 	}
-
+	
 	@Override
-	public boolean getColorByRGB() {
-		return colorByRGB;
+	public ColorProvider getColorProvider(){
+		return color_provider;
 	}
 }

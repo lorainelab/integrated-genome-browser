@@ -10,9 +10,11 @@ import java.awt.Color;
  * @author hiralv
  */
 public class Score implements ColorProvider {
+	public static float DEFAULT_MIN_SCORE = 1.0f;
+	public static float DEFAULT_MAX_SCORE = 1000.0f;
 	
-	private float min_score_color = 1.0f;
-	private float max_score_color = 1000f;
+	private float min_score_color = DEFAULT_MIN_SCORE;
+	private float max_score_color = DEFAULT_MAX_SCORE;
 	private HeatMap custom_heatmap;
 	private final ITrackStyle style;
 	
@@ -37,6 +39,13 @@ public class Score implements ColorProvider {
 		custom_heatmap = generateNewHeatmap(style);
 	}
 	
+	/**
+	 * Returns a HeatMap that interpolates between colors based on getColor()
+	 * and getBackgroundColor(). The color at the low end of the HeatMap will be
+	 * slightly different from the background color so that it can be
+	 * distinguished from it. This will return a HeatMap even if
+	 * getColorByScore() is false.
+	 */
 	private static HeatMap generateNewHeatmap(ITrackStyle style){
 		Color bottom_color = HeatMap.interpolateColor(style.getForeground(), style.getBackground(), 0.20f);
 		return HeatMap.makeLinearHeatmap("Custom", bottom_color, style.getForeground());

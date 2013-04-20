@@ -10,6 +10,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
@@ -239,8 +240,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		int num_selections = labels.size();
 		boolean any_are_collapsed = false;
 		boolean any_are_expanded = false;
-		boolean any_are_color_on = false; // whether any allow setColorByScore()
-		boolean any_are_color_off = false; // whether any allow setColorByScore()
+		boolean any_are_color_by_score = false; // whether any allow setColorByScore()
 		boolean any_are_separate_tiers = false;
 		boolean any_are_single_tier = false;
 		boolean coordinates_track_selected = false;
@@ -253,8 +253,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
 			ITrackStyleExtended astyle = glyph.getAnnotStyle();
-			any_are_color_on = any_are_color_on || astyle.getColorByScore();
-			any_are_color_off = any_are_color_off || (!astyle.getColorByScore());
+			any_are_color_by_score = any_are_color_by_score || (astyle.getColorProvider() != null && astyle.getColorProvider() instanceof Score);
 			if (!astyle.isGraphTier()) {
 				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
 				any_are_single_tier = 
@@ -386,7 +385,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		operationsMenu.getPopupMenu().setBorder(finalBorder);
 		operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
 		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
-		color_by_score.setSelected(!any_are_color_off && num_selections > 0 && !coordinates_track_selected);
+		color_by_score.setSelected(any_are_color_by_score && num_selections > 0 && !coordinates_track_selected);
 		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);
 		color_by_score.setIcon(null);
 		popup.add(color_by_score);
@@ -396,7 +395,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(set_color_by_score);
 		
 		popup.add(new JSeparator());
-		
+				
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
 		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_selected_annotations.setIcon(null);

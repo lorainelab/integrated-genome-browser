@@ -1,5 +1,7 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -26,9 +28,15 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private void setColorByScore(TierLabelGlyph tlg) {
-			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-			style.setColorByScore(!style.getColorByScore());
-			this.putValue(SELECTED_KEY,style.getColorByScore());
+		ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
+		ColorProvider cp = style.getColorProvider();
+		if(cp instanceof Score){
+			cp = null;
+		}else{
+			cp = new Score(style);
+		}
+		style.setColorProvider(cp);
+		this.putValue(SELECTED_KEY, cp != null);
 		refreshMap(false, false);
 	}
 

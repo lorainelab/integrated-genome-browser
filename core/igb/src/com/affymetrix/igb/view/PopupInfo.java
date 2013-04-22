@@ -44,11 +44,25 @@ public class PopupInfo extends JWindow {
 	private final boolean isPinned;
 	private boolean preferredLocationSet;
 	private Point lastPoint;
+	private String[][] properties;
 	
 	private AbstractAction copyAction = new AbstractAction("c",CommonUtils.getInstance().getIcon("/toolbarButtonGraphics/general/Copy16.gif")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
-			GeneralUtils.copyToClipboard(tooltip.getText());
+			StringBuilder props = new StringBuilder();
+			if (properties != null && properties.length > 1) {
+				for (int i = 0; i < properties.length; i++) {
+					props.append(properties[i][0]);
+					props.append(" : ");
+
+					if (i != properties.length - 1) {
+						props.append(properties[i][1] + "\n");
+					} else {
+						props.append(properties[i][1]);
+					}
+				}
+			}
+			GeneralUtils.copyToClipboard(props.toString());
 		}
 	};
 	
@@ -120,7 +134,7 @@ public class PopupInfo extends JWindow {
 		if(!getOwner().isActive() /*|| !getOwner().isFocused()*/){
 			return;
 		}
-			
+		this.properties	= properties;
 		if(properties != null && properties.length > 1){
 			//title.setText(getFormattedTitle(properties));
 			tooltip.setText(convertPropsToString(properties));
@@ -152,18 +166,16 @@ public class PopupInfo extends JWindow {
 	 */
 	private static String convertPropsToString(String[][] properties) {
 		StringBuilder props = new StringBuilder();
-		props.append("<html>");
-		props.append("<font face='sanserif' size='2'>");
 		for (int i = 0; i < properties.length; i++) {
-			props.append("<b>");
 			props.append(properties[i][0]);
-			props.append(" : </b>");
-			props.append(getSortString(properties[i][1]));
-			props.append("<br>");
+			props.append(" : ");
+			
+			if(i != properties.length - 1) {
+				props.append(getSortString(properties[i][1]) + "\n");
+			} else  {
+				props.append(getSortString(properties[i][1]));
+			}
 		}
-		props.append("</font>");
-		props.append("</html>");
-
 		return props.toString();
 	}
 	
@@ -226,7 +238,6 @@ public class PopupInfo extends JWindow {
 		title.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		tooltip.setBackground(backgroundColor);
-		tooltip.setContentType("text/html");
 		tooltip.setEditable(false);
 		tooltip.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK),
@@ -235,12 +246,12 @@ public class PopupInfo extends JWindow {
 		button.setMargin(new Insets(0,0,0,0));
 		button.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		
-//		JButton copyButton = new JButton(copyAction);
-//		if(copyButton.getIcon() != null){
-//			copyButton.setText(null);
-//		}
-//		copyButton.setMargin(new Insets(0,0,0,0));
-//		copyButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		JButton copyButton = new JButton(copyAction);
+		if(copyButton.getIcon() != null){
+			copyButton.setText(null);
+		}
+		copyButton.setMargin(new Insets(0,0,0,0));
+		copyButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		//Box button_box = new Box(BoxLayout.X_AXIS);
 		JPanel button_box = new JPanel();
@@ -253,8 +264,8 @@ public class PopupInfo extends JWindow {
 		Component glue = Box.createHorizontalGlue();
 		glue.setBackground(backgroundColor);
 		glue.setForeground(backgroundColor);
+		button_box.add(copyButton);
 		button_box.add(glue);
-//		button_box.add(copyButton);
 		button_box.add(button);
 		button_box.addMouseListener(move);
 		button_box.addMouseMotionListener(move);

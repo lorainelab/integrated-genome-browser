@@ -297,6 +297,8 @@ public final class GeneralUtils {
 			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
+		} catch(IllegalArgumentException ex) {
+			ErrorHandler.errorPanel("Invalid address or path for information page:\n\n" + s);
 		}
 	}
 

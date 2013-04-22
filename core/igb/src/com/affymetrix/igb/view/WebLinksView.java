@@ -526,36 +526,11 @@ public final class WebLinksView {
 				setEnabled(false);
 				clear();
 			} else if (selectedRows.length == 1) {
-				WebLink link = ((WebLinksTableModel)table.getModel()).getLinks().get(selectedRows[0]);
-
-				nameTextField.setText(link.getName());
-				urlTextField.setText(link.getUrl());
-				regexTextField.setText(link.getRegex());
-
-				startWithTextField.setText("");
-				endWithTextField.setText("");
-				containsTextField.setText("");
-				ignoreCaseCheckBox.setSelected((".*".equals(link.getRegex()) || (link.getRegex()).startsWith("(?i)")));
-
-				if (link.getPattern() == null && !".*".equals(link.getRegex()) && !"(?i).*".equals(link.getRegex())) {
-					regexTextField.setForeground(Color.red);
-				} else {
-					regexTextField.setForeground(Color.BLACK);
-				}
-
-				if (link.getRegexType() == RegexType.TYPE) {
-					nameRadioButton.setSelected(true);
-				} else if (link.getRegexType() == RegexType.ID) {
-					idRadioButton.setSelected(true);
-				}
-
-				if (!link.getType().equals(WebLink.LOCAL)) {
-					nameTextField.setText(link.getName()
-							+ "   (" + link.getType() + " web link - uneditable)");
-					setEnabled(false);
-				}
+				showWebLinksDetail(table);
 			} else {
+				// Clear fields for multiple selection
 				setEnabled(false);
+				clear();
 			}
 			
 			initializationDetector = false;
@@ -576,7 +551,46 @@ public final class WebLinksView {
 		
 		@Override
 		public void valueChanged(ListSelectionEvent lse) {
+			selectedRows = table.getSelectedRows();
+
+			if(selectedRows.length == 1) {
+				showWebLinksDetail(table);
+			} else {
+				// Clear fields for multiple selection
+				clear();
+			}
+			
+			// Always disable Web Links Builder for system Weblinks table
 			setEnabled(false);
+		}
+	}
+	
+	
+	// Filling up the necessary fields when table row selected
+	private void showWebLinksDetail(JTable table) {
+		WebLink link = ((WebLinksTableModel) table.getModel()).getLinks().get(selectedRows[0]);
+
+		nameTextField.setText(link.getName());
+		urlTextField.setText(link.getUrl());
+		regexTextField.setText(link.getRegex());
+
+		// Clear builder fields since reverse engineering for regex is hard
+		startWithTextField.setText("");
+		endWithTextField.setText("");
+		containsTextField.setText("");
+		
+		ignoreCaseCheckBox.setSelected((".*".equals(link.getRegex()) || (link.getRegex()).startsWith("(?i)")));
+
+		if (link.getPattern() == null && !".*".equals(link.getRegex()) && !"(?i).*".equals(link.getRegex())) {
+			regexTextField.setForeground(Color.red);
+		} else {
+			regexTextField.setForeground(Color.BLACK);
+		}
+
+		if (link.getRegexType() == RegexType.TYPE) {
+			nameRadioButton.setSelected(true);
+		} else if (link.getRegexType() == RegexType.ID) {
+			idRadioButton.setSelected(true);
 		}
 	}
 }

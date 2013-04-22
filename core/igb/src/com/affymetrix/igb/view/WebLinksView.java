@@ -32,14 +32,13 @@ import javax.swing.table.AbstractTableModel;
  *
  * modified by nick
  */
-public final class WebLinksView implements ListSelectionListener {
+public final class WebLinksView {
 
 	private static WebLinksView singleton;
 	public StyledJTable serverTable;
 	public StyledJTable localTable;
 	public WebLinksTableModel serverModel;
 	public WebLinksTableModel localModel;
-	public ListSelectionModel lsm;
 	private static JFileChooser static_chooser = null;
 	public static final String NAME = "Name";
 	public static final String URL = "URL Pattern";
@@ -66,6 +65,7 @@ public final class WebLinksView implements ListSelectionListener {
 	public JCheckBox ignoreCaseCheckBox;
 	public JRadioButton nameRadioButton;
 	public JRadioButton idRadioButton;
+	public JButton deleteButton;
 	private final ButtonGroup button_group = new ButtonGroup();
 	public int previousSelectedRow;
 	public final static Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -80,15 +80,18 @@ public final class WebLinksView implements ListSelectionListener {
 
 	private WebLinksView() {
 		super();
-
-		serverTable = new StyledJTable();
-		localTable = new StyledJTable();
 	
 		serverModel = new WebLinksTableModel();
 		localModel = new WebLinksTableModel();
+		
+		serverTable = new StyledJTable(serverModel);
+		localTable = new StyledJTable(localModel);
+		
+		ListSelectionListener serverListener = new ServerListSelectionListener(serverTable);
+		ListSelectionListener localListener = new LocalListSelectionListener(localTable);
 
-		initTable(serverTable);
-		initTable(localTable);
+		initTable(serverTable, WebLink.getServerWebList(), serverListener);
+		initTable(localTable, WebLink.getLocalWebList(), localListener);
 
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
@@ -99,6 +102,7 @@ public final class WebLinksView implements ListSelectionListener {
 		ignoreCaseCheckBox = new JCheckBox();
 		nameRadioButton = new JRadioButton();
 		idRadioButton = new JRadioButton();
+		deleteButton = new JButton();
 		button_group.add(nameRadioButton);
 		button_group.add(idRadioButton);
 
@@ -109,18 +113,12 @@ public final class WebLinksView implements ListSelectionListener {
 		}
 	}
 
-	private void initTable(JTable table) {
-		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(this);
+	private void initTable(JTable table, List<WebLink> weblinks, ListSelectionListener listener) {
+		ListSelectionModel lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(listener);
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		if (table.equals(localTable)) {
-			table.setModel(localModel);
-			localModel.setLinks(WebLink.getLocalWebList());
-		} else {
-			table.setModel(serverModel);
-			serverModel.setLinks(WebLink.getServerWebList());
-		}
+		((WebLinksTableModel)table.getModel()).setLinks(weblinks);
 		
 		table.setCellSelectionEnabled(false);
 		table.setRowSelectionAllowed(true);
@@ -136,13 +134,13 @@ public final class WebLinksView implements ListSelectionListener {
 	/*
 	 * Only allow to delete local web links
 	 */
-	public void delete() throws HeadlessException {
-		if (localTable.getSelectedRow() != -1) {
-			selectedRows = localTable.getSelectedRows();
+	public void delete(JTable table) throws HeadlessException {
+		if (table.getSelectedRow() != -1) {
+			int[] selectedTableRows = table.getSelectedRows();
 			if (confirmDelete()) {
 				List<WebLink> links = new ArrayList<WebLink>();
-				for (int i : selectedRows) {
-					links.add(localModel.webLinks.get(i));
+				for (int i : selectedTableRows) {
+					links.add(((WebLinksTableModel)table.getModel()).webLinks.get(i));
 				}
 
 				for (WebLink l : links) {
@@ -388,57 +386,6 @@ public final class WebLinksView implements ListSelectionListener {
 		ignoreCaseCheckBox.setSelected(true);
 	}
 
-	/**
-	 * Called when the user selects a row of the table.
-	 *
-	 * @param evt
-	 */
-	public void valueChanged(ListSelectionEvent evt) {
-		setEnabled(true);
-
-		selectedRows = localTable.getSelectedRows();
-
-		initializationDetector = true;
-
-		if (localTable.getSelectedRowCount() == 0) {
-			setEnabled(false);
-			clear();
-		} else if (selectedRows.length == 1) {
-			WebLink link = localModel.getLinks().get(selectedRows[0]);
-
-			nameTextField.setText(link.getName());
-			urlTextField.setText(link.getUrl());
-			regexTextField.setText(link.getRegex());
-			
-			startWithTextField.setText("");
-			endWithTextField.setText("");
-			containsTextField.setText("");
-			ignoreCaseCheckBox.setSelected((".*".equals(link.getRegex()) || (link.getRegex()).startsWith("(?i)")));
-			
-			if(link.getPattern() == null && !".*".equals(link.getRegex()) && !"(?i).*".equals(link.getRegex())){
-				regexTextField.setForeground(Color.red);
-			}else{
-				regexTextField.setForeground(Color.BLACK);
-			}
-			
-			if (link.getRegexType() == RegexType.TYPE) {
-				nameRadioButton.setSelected(true);
-			} else if (link.getRegexType() == RegexType.ID) {
-				idRadioButton.setSelected(true);
-			}
-
-			if (!link.getType().equals(WebLink.LOCAL)) {
-				nameTextField.setText(link.getName()
-						+ "   (" + link.getType() + " web link - uneditable)");
-				setEnabled(false);
-			}
-		} else {
-			setEnabled(false);
-		}
-
-		initializationDetector = false;
-	}
-
 	private void setEnabled(boolean b) {
 		nameTextField.setEnabled(b);
 		urlTextField.setEnabled(b);
@@ -449,6 +396,7 @@ public final class WebLinksView implements ListSelectionListener {
 		endWithTextField.setEnabled(b);
 		containsTextField.setEnabled(b);
 		ignoreCaseCheckBox.setEnabled(b);
+		deleteButton.setEnabled(b);
 	}
 
 	class WebLinksTableModel extends AbstractTableModel {
@@ -553,4 +501,82 @@ public final class WebLinksView implements ListSelectionListener {
 			return col_headings.length;
 		}
 	};
+	
+	class LocalListSelectionListener implements ListSelectionListener {
+		
+		private JTable table;
+		
+		public LocalListSelectionListener(JTable table) {
+			this.table = table;
+		}
+
+		public JTable getTable() {
+			return this.table;
+		}
+		
+		@Override
+		public void valueChanged(ListSelectionEvent lse) {
+			setEnabled(true);
+			
+			selectedRows = table.getSelectedRows();
+
+			initializationDetector = true;
+
+			if (table.getSelectedRowCount() == 0) {
+				setEnabled(false);
+				clear();
+			} else if (selectedRows.length == 1) {
+				WebLink link = ((WebLinksTableModel)table.getModel()).getLinks().get(selectedRows[0]);
+
+				nameTextField.setText(link.getName());
+				urlTextField.setText(link.getUrl());
+				regexTextField.setText(link.getRegex());
+
+				startWithTextField.setText("");
+				endWithTextField.setText("");
+				containsTextField.setText("");
+				ignoreCaseCheckBox.setSelected((".*".equals(link.getRegex()) || (link.getRegex()).startsWith("(?i)")));
+
+				if (link.getPattern() == null && !".*".equals(link.getRegex()) && !"(?i).*".equals(link.getRegex())) {
+					regexTextField.setForeground(Color.red);
+				} else {
+					regexTextField.setForeground(Color.BLACK);
+				}
+
+				if (link.getRegexType() == RegexType.TYPE) {
+					nameRadioButton.setSelected(true);
+				} else if (link.getRegexType() == RegexType.ID) {
+					idRadioButton.setSelected(true);
+				}
+
+				if (!link.getType().equals(WebLink.LOCAL)) {
+					nameTextField.setText(link.getName()
+							+ "   (" + link.getType() + " web link - uneditable)");
+					setEnabled(false);
+				}
+			} else {
+				setEnabled(false);
+			}
+			
+			initializationDetector = false;
+		}
+	}
+	
+	class ServerListSelectionListener implements ListSelectionListener {
+
+		private JTable table;
+		
+		public ServerListSelectionListener(JTable table) {
+			this.table = table;
+		}
+		
+		public JTable getTable() {
+			return this.table;
+		}
+		
+		@Override
+		public void valueChanged(ListSelectionEvent lse) {
+			setEnabled(false);
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
@@ -7,9 +8,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.IOException;
@@ -20,8 +19,8 @@ import java.io.IOException;
  */
 public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 
-	public QuickLoadSymLoaderChp(URI uri, String featureName, GenericVersion version, SymLoader symL) {
-		super(uri, featureName, version, symL);
+	public QuickLoadSymLoaderChp(URI uri, String featureName, AnnotatedSeqGroup group) {
+		super(uri, featureName, group);
 		if (!extension.endsWith("chp")) {
 			throw new IllegalStateException("wrong QuickLoad for chp file");
 		}

@@ -1258,8 +1258,8 @@ public final class GeneralLoadUtils {
 			}
 			String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
 			QuickLoadSymLoader quickLoad = SymLoader.getExtension(uri).endsWith("chp")
-					? new QuickLoadSymLoaderChp(uri, friendlyName, version, symL)
-					: new QuickLoadSymLoader(uri, friendlyName, version, symL);
+					? new QuickLoadSymLoaderChp(uri, friendlyName, version.group)
+					: new QuickLoadSymLoader(uri, friendlyName, version.group);
 			gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload);
 
 			version.addFeature(gFeature);
@@ -1447,9 +1447,9 @@ public final class GeneralLoadUtils {
 					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 					if (aseq != null) {
 						gviewer.setAnnotatedSeq(aseq, true, true);
-					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && quickLoad.getVersion().group != null) {
+					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && quickLoad.getAnnotatedSeqGroup() != null) {
 						// This can happen when loading a brand-new genome
-						GenometryModel.getGenometryModel().setSelectedSeq(quickLoad.getVersion().group.getSeq(0));
+						GenometryModel.getGenometryModel().setSelectedSeq(quickLoad.getAnnotatedSeqGroup().getSeq(0));
 					}
 
 					SeqGroupView.getInstance().refreshTable();

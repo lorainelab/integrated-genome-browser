@@ -27,7 +27,7 @@
 			<classpath location="${env.IGB_WORKSPACE}/plugins/SearchModeSymmetryFilter/build" />
 			<classpath location="${env.IGB_WORKSPACE}/ext/colt.jar" />
 			<classpath location="${env.IGB_WORKSPACE}/ext/felix.jar" />
-			<classpath location="${env.IGB_WORKSPACE}/ext/tribble-0.1.jar" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/tribble.jar" />
 			<classpath location="${env.IGB_WORKSPACE}/ext/BigWig.jar" />
 			<classpath location="${env.IGB_WORKSPACE}/ext/sam.jar" />
 			<classpath location="${env.IGB_WORKSPACE}/ext/commons-lang3-3.1.jar" />

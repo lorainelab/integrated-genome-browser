@@ -32,9 +32,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
 
-import org.broad.tribble.util.SeekableStream;
-import org.broad.tribble.util.SeekableStreamFactory;
-
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -42,14 +39,13 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.awt.Toolkit;
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
+import net.sf.samtools.seekablestream.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStreamFactory;
 
 public final class GeneralUtils {
 	public static final String UTF8 = "UTF-8";

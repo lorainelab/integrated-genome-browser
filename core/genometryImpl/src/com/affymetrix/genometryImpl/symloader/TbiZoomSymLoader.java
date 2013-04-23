@@ -14,11 +14,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.broad.tribble.source.tabix.TabixReader;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+
+import org.broad.tribble.readers.TabixReader;
 
 public class TbiZoomSymLoader extends IndexZoomSymLoader {
 	private TabixReader tabixReader;

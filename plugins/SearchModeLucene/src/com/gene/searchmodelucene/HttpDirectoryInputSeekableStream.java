@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.lucene.store.BufferedIndexInput;
-import org.broad.tribble.util.SeekableHTTPStream;
-import org.broad.tribble.util.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableHTTPStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 public class HttpDirectoryInputSeekableStream extends BufferedIndexInput {
 	private SeekableStream stream;

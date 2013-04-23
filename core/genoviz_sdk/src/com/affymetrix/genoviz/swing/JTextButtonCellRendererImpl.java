@@ -30,10 +30,12 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final JTextArea tfa = new JTextArea();
+		final JScrollPane scrollPane = new JScrollPane(tfa);
 		final JButton copy = new JButton("Copy");
 		final JButton copyClose = new JButton("Copy And Close");
 		final JButton ok = new JButton("Close");
 		tfa.setEditable(false);
+		tfa.setLineWrap(true);
 		final JDialog dialog = new JDialog(frame, "Value") {
 
 			@Override
@@ -65,17 +67,23 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 				dialog.dispose();
 			}
 		});
-
-		tfa.setColumns(12);
-		tfa.setRows(6);
+		
 		tfa.setText(temp);
-
+		
+		if(temp.length() > 200) {
+			tfa.setColumns(60);
+		} else {
+			tfa.setColumns(12);
+		}	
+		
+		tfa.setRows(6);
+		
 		Box box = Box.createHorizontalBox();
 		box.add(Box.createGlue());
 		box.add(copy);
 		box.add(copyClose);
 		box.add(ok);
-		dialog.getContentPane().add(tfa, "Center");
+		dialog.getContentPane().add(scrollPane, "Center");
 		dialog.getContentPane().add(box, "South");
 
 		//dialog.setUndecorated(true);

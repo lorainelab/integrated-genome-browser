@@ -64,9 +64,6 @@ public class AxisGlyph extends Glyph {
 
 	private List<int[]> selected_regions;
 
-	// default to true for backward compatability
-	protected boolean hitable = true;
-
 	/**
 	 *  This method reverses the numbering of the axisglyph, although the
 	 *  coordinate space of the underlying NeoMap remains the same.  This
@@ -93,7 +90,7 @@ public class AxisGlyph extends Glyph {
 	private final Rectangle select_pix = new Rectangle();
 	private final Rectangle2D.Double scratchcoords = new Rectangle2D.Double();
 	private final Rectangle scratchpixels = new Rectangle();
-
+	
 	/**
 	 * Sets the font in which labels will be rendered.
 	 *
@@ -326,6 +323,8 @@ public class AxisGlyph extends Glyph {
 		}
 		internalSetFont(new Font("Helvetica", Font.BOLD, 12));
 		setSelectable(false);
+		// default to true for backward compatability
+		this.setHitable(true);
 	}
 
 	/**
@@ -999,13 +998,6 @@ public class AxisGlyph extends Glyph {
 
 		return result;
 	}
-
-	public void setHitable(boolean h) {
-		this.hitable = h;
-	}
-
-	@Override
-	public boolean isHitable() { return hitable; }
 
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {

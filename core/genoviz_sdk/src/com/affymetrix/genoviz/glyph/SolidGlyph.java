@@ -27,34 +27,17 @@ import java.awt.geom.Rectangle2D;
  */
 public class SolidGlyph extends Glyph {
 
-	private boolean hitable = true;
-
-	/**
-	 * @return whether or not this glyph is hitable
-	 * @see #setHitable
-	 */
-	public boolean isHitable() {
-		return hitable;
-	}
-
-	/**
-	 * Sets if the glyph is hitable.
-	 * Most glyphs will probably be hitable,
-	 * and the default value is true.
-	 * Making a glyph not hitable keeps it from being selectable, and from being
-	 * in the NeoMouseEvent.getItems() vector.
-	 */
-	public void setHitable(boolean hitable) {
-		this.hitable = hitable;
+	public SolidGlyph(){
+		this.setHitable(true);
 	}
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return hitable && isVisible() && pixel_hitbox.intersects(getPixelBox());
+		return isHitable() && isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return hitable && isVisible() && coord_hitbox.intersects(getPositiveCoordBox());
+		return isHitable() && isVisible() && coord_hitbox.intersects(getPositiveCoordBox());
 	}
 
 }

@@ -84,14 +84,13 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 		
-	// default to true for backward compatability
-	private boolean hitable = true;
-
 	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
 
 	public CharSeqGlyph() {
 		super();
 		setResidueFont(mono_default_font);
+		// default to true for backward compatability
+		setHitable(true);
 	}
 
 	@Override
@@ -210,15 +209,6 @@ public final class CharSeqGlyph extends SequenceGlyph
 	}
 
 	
-	public void setHitable(boolean h) {
-		this.hitable = h;
-	}
-
-	@Override
-	public boolean isHitable() {
-		return hitable;
-	}
-
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view) {
 		if (isVisible() && isHitable()) {

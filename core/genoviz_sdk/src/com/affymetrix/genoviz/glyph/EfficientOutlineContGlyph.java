@@ -105,7 +105,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
 
 	@Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible() && coord_hitbox.intersects(this.getCoordBox());
+    return isHitable() && isVisible() && coord_hitbox.intersects(this.getCoordBox());
   }
 
   /** Sets the fill color. Use null if you do not want the rectangle filled. 

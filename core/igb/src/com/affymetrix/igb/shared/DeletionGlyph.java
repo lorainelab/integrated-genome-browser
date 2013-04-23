@@ -42,13 +42,6 @@ public final class DeletionGlyph extends SolidGlyph {
     super.draw(view);
   }
 
-  /** Overridden to always return false. */
-  @Override
-    public boolean isHitable() {
-    return false;
-  }
-
-
   /**
    * Static method to use DeletionGlyphs to indicate cases where a parent sym/annotation's children
    *      are outside the bounds of the current view, but due to transformations

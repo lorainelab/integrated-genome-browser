@@ -41,7 +41,13 @@ public class TallyHandler implements FileTypeHandler {
 		}
 		if (SymLoaderTabix.isTabix(uriString)) {
 			TallyLineProcessor tlp = new TallyLineProcessor(featureName);
-			symLoader = new SymLoaderTabix(uri, featureName, group, tlp);
+			try{
+				symLoader = new SymLoaderTabix(uri, featureName, group, tlp);
+			}catch (Exception ex){
+				Logger.getLogger(TallyHandler.class.getName()).log(Level.SEVERE,
+								"Could not initialize tabix line reader for {0}.",
+								new Object[]{featureName});
+			}
 		}
 		else {
 			Logger.getLogger(this.getClass().getName()).log(

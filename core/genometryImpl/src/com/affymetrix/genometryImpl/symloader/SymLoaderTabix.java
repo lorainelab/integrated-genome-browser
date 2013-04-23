@@ -34,7 +34,7 @@ import org.broad.tribble.util.BlockCompressedInputStream;
  */
 public class SymLoaderTabix extends SymLoader {
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
-	private TabixLineReader tabixLineReader;
+	private final TabixLineReader tabixLineReader;
 	private final LineProcessor lineProcessor;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -45,9 +45,18 @@ public class SymLoaderTabix extends SymLoader {
 		strategyList.add(LoadStrategy.GENOME);
 	}
 	
-	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor){
+	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor) throws Exception {
 		super(uri, featureName, group);
+		String uriString = uri.toString();
+		if (uriString.startsWith(FILE_PREFIX)) {
+			uriString = uri.getPath();
+		}
 		this.lineProcessor = lineProcessor;
+		this.tabixLineReader = new TabixLineReader(uriString);
+		
+		if (tabixLineReader == null) {
+			throw new IllegalStateException("tabix file does not exist or was not read");
+		}
 	}
 
 	@Override
@@ -55,36 +64,10 @@ public class SymLoaderTabix extends SymLoader {
 		return strategyList;
 	}
 
-	/**
-	 * @return if this SymLoader is valid, there is a readable
-	 * tabix file for the data source
-	 */
-	public boolean isValid() {
-		return tabixLineReader != null;
-	}
-
 	@Override
 	public void init() throws Exception  {
 		if (this.isInitialized){
 			return;
-		}
-		try {
-			String uriString = uri.toString();
-			if (uriString.startsWith(FILE_PREFIX)) {
-				uriString = uri.getPath();
-			}
-			this.tabixLineReader = new TabixLineReader(uriString);
-		}
-		catch (Exception x) {
-			this.tabixLineReader = null;
-			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE,
-						"Could not initialize tabix line reader for {0}.",
-						new Object[]{featureName});
-			return;
-		}
-		
-		if (!isValid()) {
-			throw new IllegalStateException("tabix file does not exist or was not read");
 		}
 		
 		lineProcessor.init(uri);
@@ -229,11 +212,15 @@ public class SymLoaderTabix extends SymLoader {
 					uriString = sym.uri.getPath();
 				}
 				if (isTabix(uriString) && sym instanceof LineProcessor) {
-					return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor)sym);
+					return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor) sym);
 				}
 			}
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception x) {
+			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE,
+								"Could not initialize tabix line reader for {0}.",
+								new Object[]{sym.featureName});
 		}
 		return sym;
 	}

@@ -13,15 +13,16 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMSequenceDictionary;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.StubBAMFileIndex;
-import net.sf.samtools.util.SeekableFileStream;
-import net.sf.samtools.util.SeekableHTTPStream;
-import net.sf.samtools.util.SeekableStream;
+
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symloader.IndexZoomSymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+import net.sf.samtools.seekablestream.SeekableFileStream;
+import net.sf.samtools.seekablestream.SeekableHTTPStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 public class BaiZoomSymLoader extends IndexZoomSymLoader {
 

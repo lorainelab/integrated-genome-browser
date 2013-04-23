@@ -24,7 +24,7 @@
 
 package com.affymetrix.genometryImpl.util;
 
-import net.sf.samtools.util.*;
+import net.sf.samtools.seekablestream.SeekableStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 

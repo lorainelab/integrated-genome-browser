@@ -6,10 +6,10 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.samtools.seekablestream.SeekableFileStream;
+import net.sf.samtools.seekablestream.SeekableHTTPStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
-import net.sf.samtools.util.SeekableStream;
-import net.sf.samtools.util.SeekableFileStream;
-import net.sf.samtools.util.SeekableHTTPStream;
 
 public final class LocalUrlCacher {
 

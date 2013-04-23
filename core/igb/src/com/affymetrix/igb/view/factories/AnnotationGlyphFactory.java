@@ -318,7 +318,10 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				}
 				codon_glyph_processor.processGlyph(cglyph, annotseq);
 				if(!cds){
-					handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, /*the_style.getHeight()*/ child_height, thin_height);
+					GlyphI cds_glyph = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height);
+					if(cds_glyph != null){
+						pglyph.addChild(cds_glyph);
+					}
 				}
 			}
 		}
@@ -377,14 +380,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		return style.getForeground();
 	}
 
-	private double handleCDSSpan(SeqMapViewExtendedI gviewer,
+	private GlyphI handleCDSSpan(SeqMapViewExtendedI gviewer,
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
 			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
-			Color child_color, GlyphI pglyph, double thick_height, double thin_height)
+			Color child_color, double thick_height)
 			throws IllegalAccessException, InstantiationException {
-		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)) {
-			return thick_height;
-		}
 		if (SeqUtils.overlap(cdsSpan, cspan)) {
 			SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
 			if (!same_seq) {
@@ -400,12 +400,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				}
 				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
 				cds_glyph.setColor(child_color); // CDS same color as exon
-				pglyph.addChild(cds_glyph);
 				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
 				codon_glyph_processor.processGlyph(cds_glyph, annotseq);
+				return cds_glyph;
 			}
 		}
-		return thin_height;
+		return null;
 	}
 
 	private void handleInsertionGlyphs(SeqMapViewExtendedI gviewer, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, double height)

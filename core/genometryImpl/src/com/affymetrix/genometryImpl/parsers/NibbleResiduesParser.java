@@ -15,7 +15,6 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 
 
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
@@ -29,9 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.mutable.MutableLong;
-
-import net.sf.samtools.util.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 public final class NibbleResiduesParser implements Parser {
 	private static int BUFSIZE = 65536;	// buffer for outputting

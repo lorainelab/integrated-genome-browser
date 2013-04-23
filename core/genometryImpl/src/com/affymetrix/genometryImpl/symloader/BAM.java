@@ -30,9 +30,9 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFormatException;
+import net.sf.samtools.seekablestream.SeekableBufferedStream;
+import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.util.CloseableIterator;
-import net.sf.samtools.util.SeekableBufferedStream;
-import net.sf.samtools.util.SeekableHTTPStream;
 
 /**
  * @author jnicol

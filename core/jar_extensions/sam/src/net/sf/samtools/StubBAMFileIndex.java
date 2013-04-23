@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.samtools.util.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 public class StubBAMFileIndex extends AbstractBAMFileIndex_ {
 	public StubBAMFileIndex(final SeekableStream ss, URI uri, SAMSequenceDictionary dictionary) {

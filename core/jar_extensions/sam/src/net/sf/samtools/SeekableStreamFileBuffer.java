@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 
 import net.sf.samtools.AbstractBAMFileIndex_.IndexFileBuffer;
+import net.sf.samtools.seekablestream.SeekableStream;
 import net.sf.samtools.util.RuntimeIOException;
-import net.sf.samtools.util.SeekableStream;
 
 public class SeekableStreamFileBuffer extends IndexFileBuffer {
     private static final int PAGE_SIZE = 4 * 1024;

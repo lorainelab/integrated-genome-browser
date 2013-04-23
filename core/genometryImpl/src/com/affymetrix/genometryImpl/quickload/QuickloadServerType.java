@@ -185,9 +185,7 @@ public class QuickloadServerType implements ServerTypeI {
 
 	private QuickLoadSymLoader getQuickLoad(GenericVersion version, String featureName) {
 		URI uri = determineURI(version, featureName);
-		String extension = SymLoader.getExtension(uri);
-		SymLoader symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
-		QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version, symL);
+		QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version.group);
 		for (QuickLoadSymLoaderHook quickLoadSymLoaderHook : quickLoadSymLoaderHooks) {
 			quickLoadSymLoader = quickLoadSymLoaderHook.processQuickLoadSymLoader(quickLoadSymLoader);
 		}

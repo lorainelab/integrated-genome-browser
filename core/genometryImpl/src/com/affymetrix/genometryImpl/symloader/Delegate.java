@@ -1,10 +1,10 @@
 
 package com.affymetrix.genometryImpl.symloader;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
@@ -16,10 +16,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,9 +42,9 @@ public class Delegate extends QuickLoadSymLoader {
 	private List<DelegateParent> dps;
 	private final List<LoadUtils.LoadStrategy> strategyList;
 	
-	public Delegate(URI uri, String featureName, GenericVersion version,
+	public Delegate(URI uri, String featureName, AnnotatedSeqGroup group,
 			Operator operator, List<DelegateParent> dps) {
-		super(uri, featureName, version, null);
+		super(uri, featureName, group);
 		this.operator = operator;
 		this.dps = dps;
 		strategyList = new ArrayList<LoadUtils.LoadStrategy>();
@@ -57,6 +55,12 @@ public class Delegate extends QuickLoadSymLoader {
 			this.extension = "";
 			strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
 		}
+	}
+	
+	@Override
+	protected void init() {
+		this.symL = null;
+		this.isInitialized = true;
 	}
 	
 	/**
@@ -74,7 +78,7 @@ public class Delegate extends QuickLoadSymLoader {
 	 */
 	@Override
 	public List<BioSeq> getChromosomeList() throws Exception {
-		return version.group.getSeqList();
+		return this.getAnnotatedSeqGroup().getSeqList();
 	}
 	
 	

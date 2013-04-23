@@ -144,7 +144,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		}
 		
 		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
-		GenericFeature feature = new GenericFeature(featureName, null, version, new Delegate(uri, featureName, version, operator, dps), null, false);
+		GenericFeature feature = new GenericFeature(featureName, null, version, new Delegate(uri, featureName, version.group, operator, dps), null, false);
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree
 		

@@ -12,7 +12,7 @@ public class ChpQuickLoadSymLoaderHook implements QuickLoadSymLoaderHook {
 	@Override
 	public QuickLoadSymLoader processQuickLoadSymLoader(QuickLoadSymLoader quickLoadSymLoader) {
 		if (quickLoadSymLoader.getSymLoader().extension.endsWith("chp")) {
-			return new QuickLoadSymLoaderChp(quickLoadSymLoader.uri, quickLoadSymLoader.featureName, quickLoadSymLoader.getVersion(), quickLoadSymLoader.getSymLoader());
+			return new QuickLoadSymLoaderChp(quickLoadSymLoader.uri, quickLoadSymLoader.featureName, quickLoadSymLoader.getAnnotatedSeqGroup());
 		}
 		return quickLoadSymLoader;
 	}

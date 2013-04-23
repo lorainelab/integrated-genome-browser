@@ -11,11 +11,11 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -35,19 +35,20 @@ import com.affymetrix.genometryImpl.util.ParserController;
  */
 public class QuickLoadSymLoader extends SymLoader {
 
-	protected final GenericVersion version;
-	protected final SymLoader symL;	// parser factory
+	protected SymLoader symL;	// parser factory
 	protected GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	public QuickLoadSymLoader(URI uri, String featureName, GenericVersion version, SymLoader symL) {
-		super(uri, featureName, null);
-		this.version = version;
-		this.symL = symL;
-		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
+	public QuickLoadSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+		super(uri, featureName, group);
 	}
 
 	@Override
 	protected void init() {
+		if(this.isInitialized){
+			return;
+		}
+		this.symL = ServerUtils.determineLoader(extension, uri, featureName, group);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
 		this.isInitialized = true;
 	}
 
@@ -56,6 +57,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	 */
 	@Override
 	public List<LoadStrategy> getLoadChoices() {
+		init();
 		// If we're using a symloader, return its load choices.
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
@@ -66,6 +68,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	
 	@Override
 	public boolean isResidueLoader(){
+		init();
 		if(symL != null)
 			return symL.isResidueLoader();
 		
@@ -86,6 +89,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	public List<? extends SeqSymmetry> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, Exception {
 		try {
+			init();
 			feature.addLoadingSpanRequest(overlapSpan);	// this span is requested to be loaded.
 			
 			if (this.symL != null && this.symL.isResidueLoader()) {
@@ -227,7 +231,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	 */
 	@Override
 	public List<BioSeq> getChromosomeList() throws Exception  {
-
+		init();
 		if (this.symL != null) {
 			return this.symL.getChromosomeList();
 		}
@@ -239,6 +243,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	 */
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
+		init();
 		try {
 			BufferedInputStream bis = null;
 			try {
@@ -259,6 +264,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
+		init();
 		if (this.symL != null) {
 			return this.symL.getRegion(span);
 		}
@@ -267,6 +273,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
 	@Override
 	public String getRegionResidues(SeqSpan span)throws Exception  {
+		init();
 		if (this.symL != null && this.symL.isResidueLoader()) {
 			return this.symL.getRegionResidues(span);
 		}
@@ -276,13 +283,10 @@ public class QuickLoadSymLoader extends SymLoader {
 	}
 
 	public SymLoader getSymLoader() {
+		init();
 		return symL;
 	}
 	
-	public GenericVersion getVersion() {
-		return version;
-	}
-
 	public void logException(Exception ex){
 		String loggerName = QuickLoadSymLoader.class.getName();
 		Level level = Level.SEVERE;

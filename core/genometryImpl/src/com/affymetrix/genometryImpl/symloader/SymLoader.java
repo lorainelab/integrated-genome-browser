@@ -93,6 +93,11 @@ public abstract class SymLoader {
 			chrSort.put(file.getKey(), SortTabFile.sort(file.getValue()));
 		}
 	}
+	
+	public AnnotatedSeqGroup getAnnotatedSeqGroup(){
+		return group;
+	}
+	
 	/**
 	 * @return possible strategies to load this URI.
 	 */

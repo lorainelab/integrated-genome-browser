@@ -1,14 +1,18 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -19,15 +23,11 @@ import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-
-import org.broad.tribble.readers.LineReader;
 import net.sf.samtools.util.BlockCompressedInputStream;
 import org.broad.tribble.TribbleException;
+import org.broad.tribble.readers.LineReader;
+import org.broad.tribble.readers.TabixIteratorLineReader;
 import org.broad.tribble.readers.TabixReader;
 
 /**
@@ -138,7 +138,7 @@ public class SymLoaderTabix extends SymLoader {
 	private long[] getStartEnd(LineReader lineReader) {
 		long[] startEnd = new long[2];
 		try {
-			Field field = lineReader.getClass().getDeclaredField("it");
+			Field field = lineReader.getClass().getDeclaredField("iterator");
 			field.setAccessible(true);
 			Object it = field.get(lineReader);
 			// Probably no data in the region
@@ -229,6 +229,9 @@ public class SymLoaderTabix extends SymLoader {
 	}
 	
 	
+	/**
+	* @author Jim Robinson
+	*/
 	public final class TabixLineReader implements LineReader {
 		// the reader
 
@@ -301,7 +304,7 @@ public class SymLoaderTabix extends SymLoader {
 				return null;
 			}
 
-			return new TabixIteratorToLineReader(reader.query(reader.mChr2tid.get(chr), start - 1, end));
+			return new TabixIteratorLineReader(reader.query(reader.mChr2tid.get(chr), start - 1, end));
 		}
 
 		/**
@@ -327,27 +330,6 @@ public class SymLoaderTabix extends SymLoader {
 		public List<String> getContigNames() {
 			return new ArrayList<String>(reader.mChr2tid.keySet());
 		}
-
-		class TabixIteratorToLineReader implements LineReader {
-
-			private final TabixReader.Iterator it;
-
-			public TabixIteratorToLineReader(TabixReader.Iterator it) {
-				this.it = it;
-			}
-
-			public String readLine() throws IOException {
-				if (it == null) {
-					return null;
-				}
-				return it.next();
-			}
-
-			public void close() {
-				// nada
-			}
-		}
 	}
-
 }
 

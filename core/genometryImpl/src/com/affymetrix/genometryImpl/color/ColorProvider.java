@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.color;
 
 import java.awt.Color;
+import java.util.Map;
 
 /**
  * A helper interface to be used when color is to extracted for each object.
@@ -16,4 +17,9 @@ public interface ColorProvider {
 	public Color getColor(Object obj);
 	
 	public void update();
+	
+	public Map<String, Class<?>> getParameters();
+
+	public void setParameters( Map<String, Object> params);
+	
 }

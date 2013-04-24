@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.color;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.awt.Color;
+import java.util.Map;
 
 /**
  *
@@ -29,4 +30,15 @@ public class RGB implements ColorProvider {
 	public void update(){
 		//Do Nothing
 	}
+	
+	@Override
+	public Map<String, Class<?>> getParameters(){
+		return null;
+	}
+
+	@Override
+	public void setParameters( Map<String, Object> params){
+		
+	}
+
 }

@@ -4,14 +4,26 @@ import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
  * @author hiralv
  */
 public class Score implements ColorProvider {
+	
+	public static String MIN_SCORE = "min";
+	public static String MAX_SCORE = "max";
 	public static float DEFAULT_MIN_SCORE = 1.0f;
 	public static float DEFAULT_MAX_SCORE = 1000.0f;
+	
+	private static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
+	static {
+		PARAMETERS.put(MIN_SCORE, Float.class);
+		PARAMETERS.put(MAX_SCORE, Float.class);
+	}
 	
 	private float min_score_color = DEFAULT_MIN_SCORE;
 	private float max_score_color = DEFAULT_MAX_SCORE;
@@ -82,4 +94,21 @@ public class Score implements ColorProvider {
 
 		return custom_heatmap.getColors()[index];
 	}
+	
+	@Override
+	public Map<String, Class<?>> getParameters(){
+		return PARAMETERS;
+	}
+
+	@Override
+	public void setParameters(Map<String, Object> params){
+		for(Entry<String, Object> param : params.entrySet()){
+			if(MIN_SCORE.equals(param.getKey())){
+				min_score_color = (Float)param.getValue();
+			} else if (MAX_SCORE.equals(param.getKey())){
+				max_score_color = (Float)param.getValue();
+			}
+		}
+	}
+
 }

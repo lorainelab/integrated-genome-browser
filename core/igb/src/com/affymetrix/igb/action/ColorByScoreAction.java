@@ -33,7 +33,8 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 		if(cp instanceof Score){
 			cp = null;
 		}else{
-			cp = new Score(style);
+			cp = new Score();
+			((Score)cp).setTrackStyle(style);
 		}
 		style.setColorProvider(cp);
 		this.putValue(SELECTED_KEY, cp != null);

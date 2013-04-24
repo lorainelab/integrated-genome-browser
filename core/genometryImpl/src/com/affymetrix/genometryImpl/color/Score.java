@@ -16,6 +16,7 @@ public class Score extends ColorProvider {
 	
 	public static String MIN_SCORE = "min";
 	public static String MAX_SCORE = "max";
+	public static String STYLE = "style";
 	public static float DEFAULT_MIN_SCORE = 1.0f;
 	public static float DEFAULT_MAX_SCORE = 1000.0f;
 	
@@ -23,6 +24,7 @@ public class Score extends ColorProvider {
 	static {
 		PARAMETERS.put(MIN_SCORE, Float.class);
 		PARAMETERS.put(MAX_SCORE, Float.class);
+		PARAMETERS.put(STYLE, ITrackStyle.class);
 	}
 	
 	private float min_score_color = DEFAULT_MIN_SCORE;
@@ -30,15 +32,6 @@ public class Score extends ColorProvider {
 	private HeatMap custom_heatmap;
 	private ITrackStyle style;
 
-	public Score(){
-		this.style = style;
-	}
-	
-	public Score(ITrackStyle style){
-		this.style = style;
-		this.custom_heatmap = generateNewHeatmap(style);
-	}
-	
 	@Override
 	public Color getColor(Object obj){
 		if(obj instanceof Scored) {
@@ -65,6 +58,15 @@ public class Score extends ColorProvider {
 	private static HeatMap generateNewHeatmap(ITrackStyle style){
 		Color bottom_color = HeatMap.interpolateColor(style.getForeground(), style.getBackground(), 0.20f);
 		return HeatMap.makeLinearHeatmap("Custom", bottom_color, style.getForeground());
+	}
+	
+	public void setTrackStyle(ITrackStyle style){
+		this.style = style;
+		update();
+	}
+	
+	public ITrackStyle getTrackStyle(){
+		return style;
 	}
 	
 	public void setMinScoreColor(float min_score_color) {
@@ -118,6 +120,10 @@ public class Score extends ColorProvider {
 			return true;
 		} else if (MAX_SCORE.equals(key) && value instanceof Number){
 			max_score_color = (Float)value;
+			return true;
+		} else if (STYLE.equals(key) && value instanceof ITrackStyle){
+			style = (ITrackStyle)value;
+			update();
 			return true;
 		}
 		return false;

@@ -1,0 +1,3 @@
+To build executable file FindJunction_exe.jar, run 
+
+$ ant release

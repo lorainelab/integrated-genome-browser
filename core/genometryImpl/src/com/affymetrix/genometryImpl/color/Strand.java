@@ -59,14 +59,22 @@ public class Strand implements ColorProvider {
 	}
 
 	@Override
-	public void setParameters( Map<String, Object> params){
+	public void setParameters(Map<String, Object> params){
 		for(Entry<String, Object> param : params.entrySet()){
-			if(FORWARD_COLOR.equals(param.getKey())){
-				forwardColor = (Color)param.getValue();
-			} else if (REVERSE_COLOR.equals(param.getKey())){
-				reverseColor = (Color)param.getValue();
-			}
+			setParameter(param.getKey(), param.getValue());
 		}
+	}
+
+	@Override
+	public boolean setParameter(String key, Object value) {
+		if (FORWARD_COLOR.equals(key) && value instanceof Color) {
+			forwardColor = (Color) value;
+			return true;
+		} else if (REVERSE_COLOR.equals(key) && value instanceof Color) {
+			reverseColor = (Color) value;
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -103,12 +103,19 @@ public class Score implements ColorProvider {
 	@Override
 	public void setParameters(Map<String, Object> params){
 		for(Entry<String, Object> param : params.entrySet()){
-			if(MIN_SCORE.equals(param.getKey())){
-				min_score_color = (Float)param.getValue();
-			} else if (MAX_SCORE.equals(param.getKey())){
-				max_score_color = (Float)param.getValue();
-			}
+			setParameter(param.getKey(), param.getValue());
 		}
 	}
 
+	@Override
+	public boolean setParameter(String key, Object value){
+		if(MIN_SCORE.equals(key) && value instanceof Number){
+			min_score_color = (Float)value;
+			return true;
+		} else if (MAX_SCORE.equals(key) && value instanceof Number){
+			max_score_color = (Float)value;
+			return true;
+		}
+		return false;
+	}
 }

@@ -22,4 +22,6 @@ public interface ColorProvider {
 
 	public void setParameters( Map<String, Object> params);
 	
+	public boolean setParameter(String key, Object value);
+	
 }

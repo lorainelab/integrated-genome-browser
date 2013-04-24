@@ -38,7 +38,10 @@ public class RGB implements ColorProvider {
 
 	@Override
 	public void setParameters( Map<String, Object> params){
-		
 	}
 
+	@Override
+	public boolean setParameter(String key, Object value){
+		return false;
+	}
 }

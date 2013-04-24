@@ -12,7 +12,7 @@ import java.util.Map.Entry;
  *
  * @author hiralv
  */
-public class Score implements ColorProvider {
+public class Score extends ColorProvider {
 	
 	public static String MIN_SCORE = "min";
 	public static String MAX_SCORE = "max";
@@ -28,7 +28,11 @@ public class Score implements ColorProvider {
 	private float min_score_color = DEFAULT_MIN_SCORE;
 	private float max_score_color = DEFAULT_MAX_SCORE;
 	private HeatMap custom_heatmap;
-	private final ITrackStyle style;
+	private ITrackStyle style;
+
+	public Score(){
+		this.style = style;
+	}
 	
 	public Score(ITrackStyle style){
 		this.style = style;

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.color;
 
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map.Entry;
  *
  * @author hiralv
  */
-public class Strand implements ColorProvider {
+public class Strand extends ColorProvider {
 	private static String FORWARD_COLOR = "+";
 	private static String REVERSE_COLOR = "-";
 	private static Color DEFAULT_FORWARD_COLOR = new Color(204, 255, 255);
@@ -23,7 +24,7 @@ public class Strand implements ColorProvider {
 	
 	private Color forwardColor = DEFAULT_FORWARD_COLOR;
 	private Color reverseColor = DEFAULT_REVERSE_COLOR;
-	
+		
 	@Override
 	public Color getColor(Object obj) {
 		if(obj == Boolean.TRUE){
@@ -47,12 +48,7 @@ public class Strand implements ColorProvider {
 	public Color getReverseColor(){
 		return reverseColor;
 	}
-	
-	@Override
-	public void update() {
-		//Do Nothing
-	}
-	
+		
 	@Override
 	public Map<String, Class<?>> getParameters(){
 		return PARAMETERS;

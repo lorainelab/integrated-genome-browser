@@ -1,27 +1,36 @@
 package com.affymetrix.genometryImpl.color;
 
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import java.awt.Color;
 import java.util.Map;
 
 /**
- * A helper interface to be used when color is to extracted for each object.
+ * A helper class to be used when color is to extracted for each object.
  * @author hiralv
  */
-public interface ColorProvider {
+public abstract class ColorProvider {
 	
 	/**
 	 * Get color for the given object
 	 * @param obj
 	 * @return 
 	 */
-	public Color getColor(Object obj);
+	public abstract Color getColor(Object obj);
 	
-	public void update();
+	public void update() {
+		//Do Nothing
+	}
 	
-	public Map<String, Class<?>> getParameters();
+	public Map<String, Class<?>> getParameters(){
+		return null;
+	}
 
-	public void setParameters( Map<String, Object> params);
+	public void setParameters( Map<String, Object> params){
+		//Do Nothing
+	}
 	
-	public boolean setParameter(String key, Object value);
+	public boolean setParameter(String key, Object value) {
+		return false;
+	}
 	
 }

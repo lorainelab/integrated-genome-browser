@@ -32,5 +32,9 @@ public abstract class ColorProvider {
 	public boolean setParameter(String key, Object value) {
 		return false;
 	}
+
+	public Object getParameterValue(String key) {
+		return null;
+	}
 	
 }

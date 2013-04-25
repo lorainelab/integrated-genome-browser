@@ -129,6 +129,7 @@ public class ColorByAction extends SeqMapViewActionA {
 
 					if (Number.class.isAssignableFrom(clazz)) {
 						JTextField tf = new JTextField(6);
+						tf.setText(String.valueOf(cp.getParameterValue(label)));
 						tf.setMaximumSize(new java.awt.Dimension(60, 20));
 						tf.setPreferredSize(new java.awt.Dimension(60, 20));
 						tf.setMaximumSize(new java.awt.Dimension(60, 20));
@@ -136,6 +137,7 @@ public class ColorByAction extends SeqMapViewActionA {
 
 					} else if (Color.class.isAssignableFrom(clazz)) {
 						ColorComboBox colorComboBox = new ColorComboBox();
+						colorComboBox.setSelectedColor((Color)cp.getParameterValue(label));
 						colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
 						colorComboBox.setButtonVisible(false);
 						colorComboBox.setColorValueVisible(false);

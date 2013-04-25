@@ -14,13 +14,13 @@ import java.util.Map.Entry;
  */
 public class Score extends ColorProvider {
 	
-	public static String MIN_SCORE = "min";
-	public static String MAX_SCORE = "max";
-	public static String STYLE = "style";
+	private final static String MIN_SCORE = "min";
+	private final static String MAX_SCORE = "max";
+	private final static String STYLE = "style";
 	public static float DEFAULT_MIN_SCORE = 1.0f;
 	public static float DEFAULT_MAX_SCORE = 1000.0f;
 	
-	private static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
+	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
 	static {
 		PARAMETERS.put(MIN_SCORE, Float.class);
 		PARAMETERS.put(MAX_SCORE, Float.class);
@@ -127,5 +127,17 @@ public class Score extends ColorProvider {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public Object getParameterValue(String key) {
+		if(MIN_SCORE.equals(key)){
+			return min_score_color;
+		} else if (MAX_SCORE.equals(key)){
+			return max_score_color;
+		} else if (STYLE.equals(key)){
+			return style;
+		}
+		return null;
 	}
 }

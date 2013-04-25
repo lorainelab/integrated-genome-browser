@@ -70,8 +70,6 @@ public class ColorByAction extends SeqMapViewActionA {
 	
 	class AutoScrollConfigDialog extends JDialog {
 
-		private JOptionPane optionPane;
-		private JComboBox comboBox;
 		private JPanel paramsPanel;
 		private Map<String, Class<? extends ColorProvider>> options;
 		
@@ -87,14 +85,13 @@ public class ColorByAction extends SeqMapViewActionA {
 			options.put("Strand", Strand.class);
 			
 			init(seqMapView);
-			addListeners();
 		}
 
 		private void init(final SeqMapView seqMapView) throws SecurityException {
 			JPanel pan = new JPanel();
 			pan.setLayout(new BorderLayout());
 	
-			optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+			JOptionPane optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
 			optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 			
 			setTitle("Color By");
@@ -105,7 +102,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			setAlwaysOnTop(false);
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			
-			comboBox = new JComboBox(options.keySet().toArray());
+			JComboBox comboBox = new JComboBox(options.keySet().toArray());
 			JPanel optionsBox = new JPanel();
 			optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
 			optionsBox.add(new JLabel("Color By :  "));
@@ -116,7 +113,8 @@ public class ColorByAction extends SeqMapViewActionA {
 			
 			pan.add(optionsBox, BorderLayout.CENTER);
 			pan.add(paramsPanel, BorderLayout.PAGE_END);
-			initParamPanel();
+			initParamPanel(comboBox.getSelectedItem().toString());
+			addListeners(comboBox, optionPane);
 			pack();
 		}
 
@@ -157,9 +155,9 @@ public class ColorByAction extends SeqMapViewActionA {
 			}
 		}
 		
-		private void initParamPanel() {
+		private void initParamPanel(String selectedItem) {
 			try {
-				ColorProvider cp = options.get(comboBox.getSelectedItem().toString()).getConstructor().newInstance();
+				ColorProvider cp = options.get(selectedItem).getConstructor().newInstance();
 				addOptions(cp, paramsPanel);
 
 				ThreadUtils.runOnEventQueue(new Runnable() {
@@ -171,11 +169,11 @@ public class ColorByAction extends SeqMapViewActionA {
 			}
 		}
 		
-		private void addListeners() {
+		private void addListeners(final JComboBox comboBox, final JOptionPane optionPane) {
 			comboBox.addItemListener(new ItemListener() {
 				
 				public void itemStateChanged(ItemEvent e) {
-					initParamPanel();
+					initParamPanel(e.getItem().toString());
 				}
 			});
 

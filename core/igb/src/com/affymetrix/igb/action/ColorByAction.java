@@ -23,7 +23,11 @@ import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.NumericFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -108,26 +112,44 @@ public class ColorByAction extends SeqMapViewActionA {
 			pack();
 		}
 
-		private void addOptions(ColorProvider cp, JPanel pan) {
+		private void addOptions(final ColorProvider cp, final JPanel pan) {
 			pan.removeAll();
 			pan.add(new JLabel("                "));
 			if (cp != null && cp.getParameters() != null) {
 				for (Entry<String, Class<?>> entry : cp.getParameters().entrySet()) {
-					String label = entry.getKey();
+					final String label = entry.getKey();
 					Class<?> clazz = entry.getValue();
 					JComponent component = null;
 
 					if (Number.class.isAssignableFrom(clazz)) {
-						JTextField tf = new JTextField(6);
+						final JTextField tf = new JTextField(6);
+						((AbstractDocument)tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 						tf.setText(String.valueOf(cp.getParameterValue(label)));
+						tf.getDocument().addDocumentListener(new DocumentListener(){
+							
+							public void insertUpdate(DocumentEvent e) { setParameter(); }
+
+							public void removeUpdate(DocumentEvent e) { setParameter(); }
+
+							public void changedUpdate(DocumentEvent e) { setParameter(); }
+							
+							private void setParameter(){
+								cp.setParameter(label, tf.getText());
+							}
+						});
+						
 						tf.setMaximumSize(new java.awt.Dimension(60, 20));
 						tf.setPreferredSize(new java.awt.Dimension(60, 20));
 						tf.setMaximumSize(new java.awt.Dimension(60, 20));
 						component = tf;
-
 					} else if (Color.class.isAssignableFrom(clazz)) {
-						ColorComboBox colorComboBox = new ColorComboBox();
+						final ColorComboBox colorComboBox = new ColorComboBox();
 						colorComboBox.setSelectedColor((Color)cp.getParameterValue(label));
+						colorComboBox.addItemListener(new ItemListener() {
+							public void itemStateChanged(ItemEvent e) {
+								cp.setParameter(label, e.getItem());
+							}
+						});
 						colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
 						colorComboBox.setButtonVisible(false);
 						colorComboBox.setColorValueVisible(false);

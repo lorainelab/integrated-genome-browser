@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.color;
 
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import java.awt.Color;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -9,6 +9,25 @@ import java.util.Map;
  * @author hiralv
  */
 public abstract class ColorProvider {
+	public final static Map<String, Class<? extends ColorProvider>> OPTIONS;
+	static {
+		OPTIONS = new LinkedHashMap<String, Class<? extends ColorProvider>>();
+		OPTIONS.put("None", null);
+		OPTIONS.put("RGB", RGB.class);
+		OPTIONS.put("Score", Score.class);
+		OPTIONS.put("Strand", Strand.class);
+	}
+	
+	public static ColorProvider getCPInstance(Class<? extends ColorProvider> clazz) {
+		try {
+			if(clazz != null){
+				return clazz.getConstructor().newInstance();
+			}
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 	
 	/**
 	 * Get color for the given object

@@ -23,10 +23,7 @@ import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
 
 /**
  *
@@ -48,49 +45,54 @@ public class ColorByAction extends SeqMapViewActionA {
 		super(BUNDLE.getString(transKey) , "16x16/actions/blank_placeholder.png", null);
 	}
 	
-	private void setColorBy(TierLabelGlyph tlg, ColorProvider cp) {
-		ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-		
-		refreshMap(false, false);
-	}
-
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		AutoScrollConfigDialog autoScrollConfigDialog = new AutoScrollConfigDialog(getSeqMapView());
-		autoScrollConfigDialog.setVisible(true);
-		//setColorBy(getTierManager().getSelectedTierLabels().get(0), RGB.getInstance());
+		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
+		ColorProvider cp = style.getColorProvider();
+		
+		ColorByDialog colorByDialog = new ColorByDialog();
+		colorByDialog.setLocationRelativeTo(getSeqMapView());
+		colorByDialog.setInitialValue(cp);
+		cp = colorByDialog.showDialog();
+		
+		style.setColorProvider(cp);
+		refreshMap(false, false);
 		//TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 	
-	class AutoScrollConfigDialog extends JDialog {
+	private class ColorByDialog extends JDialog {
 
+		private ColorProvider initialValue, selectedCP;
+		private JOptionPane optionPane;
+		private JComboBox comboBox;
 		private JPanel paramsPanel;
 		
 		/**
 		 * Creates the reusable dialog.
 		 */
-		public AutoScrollConfigDialog (final SeqMapView seqMapView) {
+		public ColorByDialog () {
 			super((Frame)null, true);
-			init(seqMapView);
+			init();
 		}
 
-		private void init(final SeqMapView seqMapView) throws SecurityException {
+		private void init() throws SecurityException {
 			JPanel pan = new JPanel();
 			pan.setLayout(new BorderLayout());
 	
-			JOptionPane optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+			optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
 			optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 			
 			setTitle("Color By");
 			setResizable(true);
-			setLocationRelativeTo(seqMapView);
 			setContentPane(optionPane);
 			//setModal(false);
 			setAlwaysOnTop(false);
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			
-			JComboBox comboBox = new JComboBox(ColorProvider.OPTIONS.keySet().toArray());
+			comboBox = new JComboBox(ColorProvider.OPTIONS.keySet().toArray());
+			comboBox.setSelectedItem(ColorProvider.getCPName(null));
+			
 			JPanel optionsBox = new JPanel();
 			optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
 			optionsBox.add(new JLabel("Color By :  "));
@@ -101,9 +103,8 @@ public class ColorByAction extends SeqMapViewActionA {
 			
 			pan.add(optionsBox, BorderLayout.CENTER);
 			pan.add(paramsPanel, BorderLayout.PAGE_END);
-			ColorProvider cp = ColorProvider.getCPInstance(ColorProvider.OPTIONS.get(comboBox.getSelectedItem().toString()));
-			initParamPanel(cp);
-			addListeners(comboBox, optionPane);
+		
+			addListeners();
 			pack();
 		}
 
@@ -155,11 +156,12 @@ public class ColorByAction extends SeqMapViewActionA {
 			});
 		}
 		
-		private void addListeners(final JComboBox comboBox, final JOptionPane optionPane) {
+		private void addListeners() {
 			comboBox.addItemListener(new ItemListener() {
 				
 				public void itemStateChanged(ItemEvent e) {
 					ColorProvider cp = ColorProvider.getCPInstance(ColorProvider.OPTIONS.get(e.getItem().toString()));
+					selectedCP = cp;
 					initParamPanel(cp);
 				}
 			});
@@ -170,6 +172,7 @@ public class ColorByAction extends SeqMapViewActionA {
 					if(value != null){
 						if(value.equals(JOptionPane.CANCEL_OPTION)){
 							optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+							selectedCP = initialValue;
 							dispose();
 						}else if (value.equals(JOptionPane.OK_OPTION)){
 							optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
@@ -179,6 +182,17 @@ public class ColorByAction extends SeqMapViewActionA {
 				}
 			});
 		}
+
+		public void setInitialValue(ColorProvider cp){
+			initialValue = cp;
+			selectedCP = cp;
+			comboBox.setSelectedItem(ColorProvider.getCPName(cp == null ? null : cp.getClass()));
+			initParamPanel(cp);
+		}
 		
+		public ColorProvider showDialog() {
+			setVisible(true);
+			return selectedCP;
+		}
 	}
 }

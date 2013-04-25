@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.color;
 import java.awt.Color;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A helper class to be used when color is to extracted for each object.
@@ -29,6 +30,15 @@ public abstract class ColorProvider {
 		return null;
 	}
 	
+	public static String getCPName(Class<? extends ColorProvider> clazz) {
+		for (Entry<String, Class<? extends ColorProvider>> entry : OPTIONS.entrySet()) {
+			if (entry.getValue() == clazz) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Get color for the given object
 	 * @param obj

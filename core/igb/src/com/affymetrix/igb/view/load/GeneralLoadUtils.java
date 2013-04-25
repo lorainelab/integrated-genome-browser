@@ -761,6 +761,8 @@ public final class GeneralLoadUtils {
 			protected List<SeqSymmetry> runInBackground() {
 				try {
 					return loadFeaturesForSym(feature, optimized_sym);
+				} catch(RuntimeException re) {
+					re.printStackTrace();
 				} catch (Exception ex) {
 					if(ex instanceof FileNotFoundException){
 						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);

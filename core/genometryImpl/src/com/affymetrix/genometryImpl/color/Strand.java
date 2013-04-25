@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.color;
 
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +16,8 @@ public class Strand extends ColorProvider {
 	private final static String REVERSE_COLOR = "-";
 	private final static Color DEFAULT_FORWARD_COLOR = new Color(204, 255, 255);
 	private final static Color DEFAULT_REVERSE_COLOR = new Color(51, 255, 255);		
-			
+	private static GenometryModel model = GenometryModel.getGenometryModel();
+	
 	private static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
 	static {
 		PARAMETERS.put(FORWARD_COLOR, Color.class);
@@ -26,7 +29,7 @@ public class Strand extends ColorProvider {
 		
 	@Override
 	public Color getColor(Object obj) {
-		if(obj == Boolean.TRUE){
+		if(((SeqSymmetry)obj).getSpan(model.getSelectedSeq()).isForward()){
 			return forwardColor;
 		}
 		return reverseColor;

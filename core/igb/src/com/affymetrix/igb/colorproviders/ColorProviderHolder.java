@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.colorproviders;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.color.RGB;
@@ -24,6 +24,7 @@ public class ColorProviderHolder {
 		OPTIONS.put("RGB", RGB.class);
 		OPTIONS.put("Score", Score.class);
 		OPTIONS.put("Strand", Strand.class);
+		OPTIONS.put("Property", ColorByProperty.class);
 	}
 	
 	public static ColorProvider getCPInstance(Class<? extends ColorProvider> clazz) {

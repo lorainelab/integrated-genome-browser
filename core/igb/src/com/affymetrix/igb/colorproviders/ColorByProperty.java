@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.colorproviders;
 
 import java.awt.Color;
 import java.util.HashMap;

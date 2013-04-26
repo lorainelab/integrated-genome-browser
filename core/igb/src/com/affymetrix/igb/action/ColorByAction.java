@@ -27,7 +27,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.igb.view.ColorProviderHolder;
+import com.affymetrix.igb.colorproviders.ColorProviderHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -122,9 +122,14 @@ public class ColorByAction extends SeqMapViewActionA {
 					Class<?> clazz = entry.getValue();
 					JComponent component = null;
 
-					if (Number.class.isAssignableFrom(clazz)) {
-						final JTextField tf = new JTextField(6);
-						((AbstractDocument)tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+					if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
+						final JTextField tf;
+						if(Number.class.isAssignableFrom(clazz)){
+							tf = new JTextField(6);
+							((AbstractDocument)tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+						}else{
+							tf = new JTextField(10);
+						}
 						tf.setText(String.valueOf(cp.getParameterValue(label)));
 						tf.getDocument().addDocumentListener(new DocumentListener(){
 							

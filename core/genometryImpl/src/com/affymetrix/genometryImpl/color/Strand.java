@@ -28,8 +28,8 @@ public class Strand extends ColorProvider {
 	private Color reverseColor = DEFAULT_REVERSE_COLOR;
 		
 	@Override
-	public Color getColor(Object obj) {
-		if(((SeqSymmetry)obj).getSpan(model.getSelectedSeq()).isForward()){
+	public Color getColor(SeqSymmetry sym) {
+		if(sym.getSpan(model.getSelectedSeq()).isForward()){
 			return forwardColor;
 		}
 		return reverseColor;

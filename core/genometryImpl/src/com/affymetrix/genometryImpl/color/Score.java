@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.color;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,9 +34,9 @@ public class Score extends ColorProvider {
 	private ITrackStyle style;
 
 	@Override
-	public Color getColor(Object obj){
-		if(obj instanceof Scored) {
-			float score = ((Scored) obj).getScore();
+	public Color getColor(SeqSymmetry sym){
+		if(sym instanceof Scored) {
+			float score = ((Scored) sym).getScore();
 			if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
 				return getScoreColor(score);
 			}

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.color;
 
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,10 +42,10 @@ public abstract class ColorProvider {
 
 	/**
 	 * Get color for the given object
-	 * @param obj
+	 * @param sym
 	 * @return 
 	 */
-	public abstract Color getColor(Object obj);
+	public abstract Color getColor(SeqSymmetry sym);
 	
 	public void update() {
 		//Do Nothing

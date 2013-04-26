@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -45,7 +44,8 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 			boolean labelInSouth, SeqSpan pspan, SeqSymmetry psym, BioSeq annotseq, 
 			BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type) 
 			throws IllegalAccessException, InstantiationException {
-		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, pinsym, labelInSouth, pspan, psym, gviewer, child_height, direction_type);
+		Color color = getSymColor(pinsym, the_style, pspan.isForward(), direction_type, the_style.getColorProvider());
+		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, pinsym, labelInSouth, pspan, psym, gviewer, child_height, direction_type, color);
 		
 		List<SeqSymmetry> children = new ArrayList<SeqSymmetry>();
 		int childCount = pinsym.getChildCount();

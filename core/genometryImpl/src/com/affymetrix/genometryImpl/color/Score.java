@@ -108,13 +108,6 @@ public class Score extends ColorProvider {
 	}
 
 	@Override
-	public void setParameters(Map<String, Object> params){
-		for(Entry<String, Object> param : params.entrySet()){
-			setParameter(param.getKey(), param.getValue());
-		}
-	}
-
-	@Override
 	public boolean setParameter(String key, Object value){
 		if(MIN_SCORE.equals(key) && value instanceof Number){
 			min_score_color = (Float)value;

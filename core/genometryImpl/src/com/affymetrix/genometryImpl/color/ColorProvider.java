@@ -25,8 +25,10 @@ public abstract class ColorProvider {
 		return null;
 	}
 
-	public void setParameters( Map<String, Object> params){
-		//Do Nothing
+	public final void setParameters(Map<String, Object> params){
+		for(Map.Entry<String, Object> param : params.entrySet()){
+			setParameter(param.getKey(), param.getValue());
+		}
 	}
 	
 	public boolean setParameter(String key, Object value) {

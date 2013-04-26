@@ -57,13 +57,6 @@ public class Strand extends ColorProvider {
 	}
 
 	@Override
-	public void setParameters(Map<String, Object> params){
-		for(Entry<String, Object> param : params.entrySet()){
-			setParameter(param.getKey(), param.getValue());
-		}
-	}
-
-	@Override
 	public boolean setParameter(String key, Object value) {
 		if (FORWARD_COLOR.equals(key) && value instanceof Color) {
 			forwardColor = (Color) value;

@@ -24,7 +24,8 @@ public class ColorProviderHolder {
 		OPTIONS.put("RGB", RGB.class);
 		OPTIONS.put("Score", Score.class);
 		OPTIONS.put("Strand", Strand.class);
-		OPTIONS.put("Property", ColorByProperty.class);
+		OPTIONS.put("Length", Length.class);
+		OPTIONS.put("Property", Property.class);
 	}
 	
 	public static ColorProvider getCPInstance(Class<? extends ColorProvider> clazz) {

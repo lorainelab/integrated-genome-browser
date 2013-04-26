@@ -14,14 +14,14 @@ import com.affymetrix.genoviz.color.ColorScheme;
  *
  * @author hiralv
  */
-public class ColorByProperty extends ColorProvider{
+public class Property extends ColorProvider{
 	private final static String PROPERTY = "property";
 	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
 	static {
 		PARAMETERS.put(PROPERTY, String.class);
 	}
 	
-	private String property = null;
+	protected String property = null;
 	ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
 	
 	@Override

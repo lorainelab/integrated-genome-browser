@@ -17,6 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 import com.jidesoft.combobox.ColorComboBox;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
@@ -24,10 +27,8 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
+import com.affymetrix.igb.view.ColorProviderHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
 
 /**
  *
@@ -94,8 +95,8 @@ public class ColorByAction extends SeqMapViewActionA {
 			setAlwaysOnTop(false);
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			
-			comboBox = new JComboBox(ColorProvider.OPTIONS.keySet().toArray());
-			comboBox.setSelectedItem(ColorProvider.getCPName(null));
+			comboBox = new JComboBox(ColorProviderHolder.OPTIONS.keySet().toArray());
+			comboBox.setSelectedItem(ColorProviderHolder.getCPName(null));
 			
 			JPanel optionsBox = new JPanel();
 			optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
@@ -182,7 +183,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			comboBox.addItemListener(new ItemListener() {
 				
 				public void itemStateChanged(ItemEvent e) {
-					ColorProvider cp = ColorProvider.getCPInstance(ColorProvider.OPTIONS.get(e.getItem().toString()));
+					ColorProvider cp = ColorProviderHolder.getCPInstance(ColorProviderHolder.OPTIONS.get(e.getItem().toString()));
 					selectedCP = cp;
 					initParamPanel(cp);
 				}
@@ -208,7 +209,7 @@ public class ColorByAction extends SeqMapViewActionA {
 		public void setInitialValue(ColorProvider cp){
 			initialValue = cp;
 			selectedCP = cp;
-			comboBox.setSelectedItem(ColorProvider.getCPName(cp == null ? null : cp.getClass()));
+			comboBox.setSelectedItem(ColorProviderHolder.getCPName(cp == null ? null : cp.getClass()));
 			initParamPanel(cp);
 		}
 		

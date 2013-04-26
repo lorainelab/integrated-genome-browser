@@ -75,7 +75,23 @@ public class HeatMap {
 		public HeatMap getHeatMap() { return heatmap; }
 
 		@Override
-		public String toString() { return heatmap.getName(); }
+		public String toString() {
+//			StringBuilder sb = new StringBuilder("<html>");
+//			//sb.append("<span style=\"background-color: ").append(Color.WHITE).append("\"> &nbsp; ");
+//			int interval = heatmap.colors.length/20;
+//			for(int i =0; i<heatmap.colors.length; i+=interval) {
+//				Color c = heatmap.getColor(i);
+//				String color = String.format("#%02x%02x%02x", c.getRed(), c.getBlue(), c.getGreen());
+//				// http://www.unicode.org/charts/PDF/U2580.pdf
+//				// http://en.wikipedia.org/wiki/Box-drawing_character
+//				// Look for "Block Elements" in the above page.
+//				sb.append("<span style=\"color: ").append(color).append("\">&#x2588;</span>");
+//			}
+//			sb.append(" &nbsp;</span>");
+//			//sb.append(" ").append(this.name()); // uncomment this to include names.
+//			return sb.toString();
+			return heatmap.getName();
+		}
 	}
 
 	public static final String PREF_HEATMAP_NAME = "Default Heatmap";

@@ -27,8 +27,10 @@ public class ColorByProperty extends ColorProvider{
 	@Override
 	public Color getColor(SeqSymmetry sym){
 		if(sym instanceof SymWithProps){
-			String value = ((SymWithProps)sym).getProperty(property).toString();
-			return cp.getColor(value);
+			Object value = ((SymWithProps)sym).getProperty(property);
+			if(value != null){
+				return cp.getColor(value.toString());
+			}
 		}
 		return null;
 	}

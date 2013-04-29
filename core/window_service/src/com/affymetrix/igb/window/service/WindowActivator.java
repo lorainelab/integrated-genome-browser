@@ -1,7 +1,6 @@
 package com.affymetrix.igb.window.service;
 
 import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -22,14 +21,6 @@ public abstract class WindowActivator extends ServiceRegistrar implements Bundle
 		};
 	}
 	
-	/**
-	 * standard getter
-	 * @return the bundle context
-	 */
-	protected BundleContext getContext() {
-		return bundleContext;
-	}
-
 	/**
 	 * get the tab panel for the bundle
 	 * @param igbService the IGBService implementation

@@ -8,13 +8,20 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- *
- * @author hiralv
+ * This is the main Activator for all bundles.
+ * Those bundles have an Activator that extends this class
+ * and they only need to implement the registerService() method
  */
 public abstract class ServiceRegistrar implements BundleActivator {
 	protected BundleContext bundleContext;
 	protected ServiceRegistration<?> registrations[];
 	
+	protected abstract ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception;
+	
+	/**
+	 * once the IGBService is available, we can register service with OSGi
+	 * @param igbServiceReference the ServiceReference for the IGBService
+	 */
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
@@ -28,7 +35,26 @@ public abstract class ServiceRegistrar implements BundleActivator {
         }
 	}
 
-	protected abstract ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception;
+	/**
+	 * waits (if necessary) for the igbService, and then calls createPage 
+	 * @throws Exception
+	 */
+	private void registerService() throws Exception {
+		ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
+
+		if (igbServiceReference != null) {
+			registerService(igbServiceReference);
+		} else {
+			ServiceTracker<IGBService, Object> serviceTracker = new ServiceTracker<IGBService, Object>(bundleContext, IGBService.class.getName(), null) {
+				@Override
+				public Object addingService(ServiceReference<IGBService> igbServiceReference) {
+					registerService(igbServiceReference);
+					return super.addingService(igbServiceReference);
+				}
+			};
+			serviceTracker.open();
+		}
+	}
 	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
@@ -36,24 +62,8 @@ public abstract class ServiceRegistrar implements BundleActivator {
 		if (CommonUtils.getInstance().isExit(bundleContext)) {
     		return;
     	}
-		
-    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
-        if (igbServiceReference != null)
-        {
-        	registerService(igbServiceReference);
-        }
-        else
-        {
-        	ServiceTracker<IGBService, Object> serviceTracker = new ServiceTracker<IGBService, Object>(bundleContext, IGBService.class.getName(), null) {
-				@Override
-        	    public Object addingService(ServiceReference<IGBService> igbServiceReference) {
-        	    	registerService(igbServiceReference);
-        	        return super.addingService(igbServiceReference);
-        	    }
-        	};
-        	serviceTracker.open();
-        }
+    	registerService();
     }
 
 	@Override

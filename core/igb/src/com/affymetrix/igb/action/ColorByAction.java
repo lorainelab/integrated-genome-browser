@@ -68,7 +68,7 @@ public class ColorByAction extends SeqMapViewActionA {
 	
 	private class ColorByDialog extends JDialog {
 
-		private ColorProvider initialValue, selectedCP;
+		private ColorProvider returnValue, selectedCP;
 		private JOptionPane optionPane;
 		private JComboBox comboBox;
 		private JPanel paramsPanel;
@@ -216,10 +216,10 @@ public class ColorByAction extends SeqMapViewActionA {
 					if(value != null){
 						if(value.equals(JOptionPane.CANCEL_OPTION)){
 							optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-							selectedCP = initialValue;
 							dispose();
 						}else if (value.equals(JOptionPane.OK_OPTION)){
 							optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+							returnValue = selectedCP;
 							dispose();
 						}
 					}
@@ -228,15 +228,14 @@ public class ColorByAction extends SeqMapViewActionA {
 		}
 
 		public void setInitialValue(ColorProvider cp){
-			initialValue = cp;
-			selectedCP = cp;
+			returnValue = cp;
 			comboBox.setSelectedItem(ColorProviderHolder.getCPName(cp == null ? null : cp.getClass()));
 			initParamPanel(cp);
 		}
 		
 		public ColorProvider showDialog() {
 			setVisible(true);
-			return selectedCP;
+			return returnValue;
 		}
 	}
 }

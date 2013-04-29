@@ -2,7 +2,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
@@ -30,11 +30,18 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception{
 		SaveSessionAction.createAction(igbService);
 		LoadSessionAction.createAction(igbService);
-
+		
+		// assuming last file menu item is Exit, leave it there
+		JRPMenu file_menu = igbService.getMenu("file");
+		final int index = file_menu.getItemCount() - 1;
+		file_menu.insertSeparator(index);
+	
 		return new ServiceRegistration[] {
 			bundleContext.registerService(IGBTabPanel.class, getPage(igbService), null),
 			bundleContext.registerService(GenericAction.class, SaveSessionAction.getAction(), null),
-			bundleContext.registerService(GenericAction.class, LoadSessionAction.getAction(), null)
+			bundleContext.registerService(GenericAction.class, LoadSessionAction.getAction(), null),
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_saveSession", SaveSessionAction.getAction()), "file", index), null),
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_loadSession", LoadSessionAction.getAction()), "file", index), null),
 		};
 	}
 	
@@ -62,13 +69,6 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 			SimpleBookmarkServer.setServerPort(portString);
 		}
 		SimpleBookmarkServer.init(igbService);
-
-		// assuming last file menu item is Exit, leave it there
-		JRPMenu file_menu = igbService.getMenu("file");
-		int index = file_menu.getItemCount() - 1;
-		file_menu.insertSeparator(index);
-		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_saveSession", SaveSessionAction.getAction()), index);
-		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_loadSession", LoadSessionAction.getAction()), index);
 
 		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));

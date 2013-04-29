@@ -104,7 +104,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			optionsBox.add(comboBox);
 			
 			paramsPanel = new JPanel();
-			paramsPanel.setLayout(new BoxLayout(paramsPanel, BoxLayout.LINE_AXIS));
+			paramsPanel.setLayout(new BoxLayout(paramsPanel, BoxLayout.PAGE_AXIS));
 			
 			pan.add(optionsBox, BorderLayout.CENTER);
 			pan.add(paramsPanel, BorderLayout.PAGE_END);
@@ -113,9 +113,12 @@ public class ColorByAction extends SeqMapViewActionA {
 			pack();
 		}
 
-		private void addOptions(final ColorProvider cp, final JPanel pan) {
-			pan.removeAll();
-			pan.add(new JLabel("                "));
+		private void addOptions(final ColorProvider cp, final JPanel paramsPanel) {
+			JPanel panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+			panel.add(new JLabel("                "));
+			
+			paramsPanel.removeAll();
 			if (cp != null && cp.getParameters() != null) {
 				for (Entry<String, Class<?>> entry : cp.getParameters().entrySet()) {
 					final String label = entry.getKey();
@@ -167,11 +170,24 @@ public class ColorByAction extends SeqMapViewActionA {
 					}
 					
 					if (component != null) {
-						pan.add(new JLabel(label));
-						pan.add(component);
-						pan.add(Box.createHorizontalStrut(30));
+						panel.add(new JLabel(label));
+						panel.add(component);
+						panel.add(Box.createHorizontalStrut(30));
+					}
+					
+					if(panel.getComponentCount() > 4){
+						paramsPanel.add(Box.createVerticalStrut(10));
+						paramsPanel.add(panel);
+						panel = new JPanel();
+						panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+						panel.add(new JLabel("                "));
 					}
 				}
+			}
+			
+			if(panel.getComponentCount() > 0){
+				paramsPanel.add(Box.createVerticalStrut(10));
+				paramsPanel.add(panel);
 			}
 		}
 		

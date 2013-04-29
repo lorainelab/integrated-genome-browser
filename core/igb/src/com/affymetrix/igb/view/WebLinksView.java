@@ -54,7 +54,6 @@ public final class WebLinksView {
 	public static final int COL_REGEX = 1;
 	public static final int COL_URL = 2;
 	public static final int COL_TYPE = 3;
-	public int[] selectedRows;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public JTextField nameTextField;
 	public JTextField urlTextField;
@@ -137,7 +136,7 @@ public final class WebLinksView {
 	public void delete(JTable table) throws HeadlessException {
 		if (table.getSelectedRow() != -1) {
 			int[] selectedTableRows = table.getSelectedRows();
-			if (confirmDelete()) {
+			if (confirmDelete(table.getSelectedRowCount())) {
 				List<WebLink> links = new ArrayList<WebLink>();
 				for (int i : selectedTableRows) {
 					links.add(((WebLinksTableModel)table.getModel()).webLinks.get(i));
@@ -156,8 +155,8 @@ public final class WebLinksView {
 	/*
 	 * A confirmation window for delete operation
 	 */
-	public boolean confirmDelete() {
-		String message = "Delete these " + selectedRows.length
+	public boolean confirmDelete(int numberOfRows) {
+		String message = "Delete these " + numberOfRows
 				+ " selected link(s)?\n";
 
 		return Application.confirmPanel(WebLinksViewGUI.getSingleton(),
@@ -221,7 +220,7 @@ public final class WebLinksView {
 		if (localTable.getSelectedRow() != -1) {
 			String name = nameTextField.getText();
 			if (!isEmpty(name)) {
-				localModel.setValueAt(name, selectedRows[0], COL_NAME);
+				localModel.setValueAt(name, localTable.getSelectedRows()[0], COL_NAME);
 			}
 		}
 	}
@@ -230,7 +229,7 @@ public final class WebLinksView {
 		if (localTable.getSelectedRow() != -1) {
 			String url = urlTextField.getText();
 			if (!isEmpty(url)) {
-				localModel.setValueAt(url, selectedRows[0], COL_URL);
+				localModel.setValueAt(url, localTable.getSelectedRows()[0], COL_URL);
 			}
 		}
 	}
@@ -246,7 +245,7 @@ public final class WebLinksView {
 				try {
 					Pattern.compile(regex);
 					regexTextField.setForeground(Color.BLACK);
-					localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+					localModel.setValueAt(regex, localTable.getSelectedRows()[0], COL_REGEX);
 					ignoreCaseCheckBox.setSelected((".*".equals(regex) || regex.startsWith("(?i)")));
 				}catch (PatternSyntaxException e){
 					regexTextField.setForeground(Color.RED);
@@ -278,13 +277,13 @@ public final class WebLinksView {
 			} else if(!startWith.trim().isEmpty() && !endWith.trim().isEmpty() && !contains.trim().isEmpty()) {
 				regex = "^" + startWith + ".*" + contains + ".*" + endWith + "$";
 			} else {
-				localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+				localModel.setValueAt(regex, localTable.getSelectedRows()[0], COL_REGEX);
 				regexTextField.setText(regex);
 				return;
 			}
 			
 			regex = (ignoreCaseCheckBox.isSelected()) ? "(?i)" + regex : regex;
-			localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+			localModel.setValueAt(regex, localTable.getSelectedRows()[0], COL_REGEX);
 			regexTextField.setText(regex);
 		}
 	}
@@ -301,15 +300,15 @@ public final class WebLinksView {
 		}
 		
 		regexTextField.setText(regex);
-		localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
+		localModel.setValueAt(regex, localTable.getSelectedRows()[0], COL_REGEX);
 	}
 
 	public void idRadioButton() {
-		localModel.setValueAt(WebLink.RegexType.ID, selectedRows[0], COL_TYPE);
+		localModel.setValueAt(WebLink.RegexType.ID, localTable.getSelectedRows()[0], COL_TYPE);
 	}
 
 	public void nameRadioButton() {
-		localModel.setValueAt(WebLink.RegexType.TYPE, selectedRows[0], COL_TYPE);
+		localModel.setValueAt(WebLink.RegexType.TYPE, localTable.getSelectedRows()[0], COL_TYPE);
 	}
 
 	/**
@@ -387,6 +386,10 @@ public final class WebLinksView {
 	}
 
 	private void setEnabled(boolean b) {
+		setEnabled(b, b);
+	}
+	
+	private void setEnabled(boolean b, boolean enableDeleteButton) {
 		nameTextField.setEnabled(b);
 		urlTextField.setEnabled(b);
 		regexTextField.setEnabled(b);
@@ -396,9 +399,9 @@ public final class WebLinksView {
 		endWithTextField.setEnabled(b);
 		containsTextField.setEnabled(b);
 		ignoreCaseCheckBox.setEnabled(b);
-		deleteButton.setEnabled(b);
+		deleteButton.setEnabled(enableDeleteButton);
 	}
-
+	
 	class WebLinksTableModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = 1L;
@@ -518,7 +521,7 @@ public final class WebLinksView {
 		public void valueChanged(ListSelectionEvent lse) {
 			setEnabled(true);
 			
-			selectedRows = table.getSelectedRows();
+			int[] selectedRows = table.getSelectedRows();
 
 			initializationDetector = true;
 
@@ -528,8 +531,8 @@ public final class WebLinksView {
 			} else if (selectedRows.length == 1) {
 				showWebLinksDetail(table);
 			} else {
-				// Clear fields for multiple selection
-				setEnabled(false);
+				// Clear fields for multiple selection but enable delete button
+				setEnabled(false, true);
 				clear();
 			}
 			
@@ -551,7 +554,7 @@ public final class WebLinksView {
 		
 		@Override
 		public void valueChanged(ListSelectionEvent lse) {
-			selectedRows = table.getSelectedRows();
+			int[] selectedRows = table.getSelectedRows();
 
 			if(selectedRows.length == 1) {
 				showWebLinksDetail(table);
@@ -568,7 +571,7 @@ public final class WebLinksView {
 	
 	// Filling up the necessary fields when table row selected
 	private void showWebLinksDetail(JTable table) {
-		WebLink link = ((WebLinksTableModel) table.getModel()).getLinks().get(selectedRows[0]);
+		WebLink link = ((WebLinksTableModel) table.getModel()).getLinks().get(table.getSelectedRows()[0]);
 
 		nameTextField.setText(link.getName());
 		urlTextField.setText(link.getUrl());

@@ -2,7 +2,6 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -12,8 +11,7 @@ import com.affymetrix.igb.bookmarks.action.SaveSessionAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
-import com.affymetrix.igb.window.service.WindowActivator;
-import java.io.File;
+import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
@@ -25,23 +23,24 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class Activator extends WindowActivator implements BundleActivator {
-	private ServiceRegistration<GenericAction> saveSessionActionRegistration, loadSessionActionRegistration;
+public class Activator extends ServiceRegistrar implements BundleActivator {
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 
 	@Override
-	protected IGBTabPanel getPage(IGBService igbService) {
-		ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
-		
+	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception{
 		SaveSessionAction.createAction(igbService);
 		LoadSessionAction.createAction(igbService);
-		
-		saveSessionActionRegistration = getContext().registerService(GenericAction.class, SaveSessionAction.getAction(), null);
-		loadSessionActionRegistration = getContext().registerService(GenericAction.class, LoadSessionAction.getAction(), null);
-		
-		//GenericActionHolder.getInstance().addGenericAction(saveSessionAction);
-		//GenericActionHolder.getInstance().addGenericAction(loadSessionAction);
-		
+
+		return new ServiceRegistration[] {
+			bundleContext.registerService(IGBTabPanel.class, getPage(igbService), null),
+			bundleContext.registerService(GenericAction.class, SaveSessionAction.getAction(), null),
+			bundleContext.registerService(GenericAction.class, LoadSessionAction.getAction(), null)
+		};
+	}
+	
+	private IGBTabPanel getPage(IGBService igbService) {
+		ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
+	
 		// Need to let the QuickLoad system get started-up before starting
 		//   the control server that listens to ping requests?
 		// Therefore start listening for http requests only after all set-up is done.
@@ -132,10 +131,4 @@ public class Activator extends WindowActivator implements BundleActivator {
 		return false;
 	}
 
-	@Override
-	public void stop(BundleContext _bundleContext) throws Exception {
-		super.stop(_bundleContext);
-		saveSessionActionRegistration.unregister();
-		loadSessionActionRegistration.unregister();
-	}
 }

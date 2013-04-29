@@ -9,6 +9,14 @@
  */
 package com.affymetrix.igb.tiers;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.TreeSet;
+import javax.swing.*;
+import javax.swing.border.Border;
+
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -21,17 +29,9 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.TreeSet;
-import javax.swing.*;
-import javax.swing.border.Border;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
@@ -394,6 +394,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		set_color_by_score.setEnabled(!coordinates_track_selected && !any_graph);
 		popup.add(set_color_by_score);
 		
+		popup.add(new JSeparator());
+		
+		JMenuItem set_color_by = new JRPMenuItemTLP(ColorByAction.getAction());
+		set_color_by.setIcon(null);
+		popup.add(set_color_by);
+			
 		popup.add(new JSeparator());
 				
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());

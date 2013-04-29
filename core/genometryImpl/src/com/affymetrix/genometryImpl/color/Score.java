@@ -5,9 +5,8 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
@@ -15,24 +14,30 @@ import java.util.Map.Entry;
  */
 public class Score extends ColorProvider {
 	
+	private final static String COLOR_1 = "color 1";
+	private final static String COLOR_2 = "color 2";
 	private final static String MIN_SCORE = "min";
 	private final static String MAX_SCORE = "max";
 	private final static String STYLE = "style";
-	public static float DEFAULT_MIN_SCORE = 1.0f;
-	public static float DEFAULT_MAX_SCORE = 1000.0f;
+	public final static float DEFAULT_MIN_SCORE = 1.0f;
+	public final static float DEFAULT_MAX_SCORE = 1000.0f;
+	public final static Color DEFAULT_COLOR_1 = new Color(204, 255, 255);
+	public final static Color DEFAULT_COLOR_2 = new Color(51, 255, 255);
 	
-	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
+	private final static Map<String, Class<?>> PARAMETERS = new LinkedHashMap<String, Class<?>>();
 	static {
 		PARAMETERS.put(MIN_SCORE, Float.class);
 		PARAMETERS.put(MAX_SCORE, Float.class);
-		PARAMETERS.put(STYLE, ITrackStyle.class);
+		PARAMETERS.put(COLOR_1, Color.class);
+		PARAMETERS.put(COLOR_2, Color.class);
 	}
 	
 	private float min_score_color = DEFAULT_MIN_SCORE;
 	private float max_score_color = DEFAULT_MAX_SCORE;
+	private Color color_1 = DEFAULT_COLOR_1;
+	private Color color_2 = DEFAULT_COLOR_2;
 	private HeatMap custom_heatmap;
-	private ITrackStyle style;
-
+	
 	@Override
 	public Color getColor(SeqSymmetry sym){
 		if(sym instanceof Scored) {
@@ -46,7 +51,7 @@ public class Score extends ColorProvider {
 	
 	@Override
 	public void update(){
-		custom_heatmap = generateNewHeatmap(style);
+		custom_heatmap = generateNewHeatmap(color_1, color_2);
 	}
 	
 	/**
@@ -55,21 +60,18 @@ public class Score extends ColorProvider {
 	 * slightly different from the background color so that it can be
 	 * distinguished from it. This will return a HeatMap even if
 	 * getColorByScore() is false.
-	 */
-	private static HeatMap generateNewHeatmap(ITrackStyle style){
-		Color bottom_color = HeatMap.interpolateColor(style.getForeground(), style.getBackground(), 0.20f);
-		return HeatMap.makeLinearHeatmap("Custom", bottom_color, style.getForeground());
+	 */	
+	private static HeatMap generateNewHeatmap(Color color1, Color color2){
+		Color bottom_color = HeatMap.interpolateColor(color1, color2, 0.20f);
+		return HeatMap.makeLinearHeatmap("Custom", bottom_color, color1);
 	}
 	
 	public void setTrackStyle(ITrackStyle style){
-		this.style = style;
+		color_1 = style.getForeground();
+		color_2 = style.getBackground();
 		update();
 	}
-	
-	public ITrackStyle getTrackStyle(){
-		return style;
-	}
-	
+		
 	public void setMinScoreColor(float min_score_color) {
 		this.min_score_color = min_score_color;
 	}
@@ -115,8 +117,17 @@ public class Score extends ColorProvider {
 		} else if (MAX_SCORE.equals(key) && value instanceof Number){
 			max_score_color = (Float)value;
 			return true;
+		} if(COLOR_1.equals(key) && value instanceof Color){
+			color_1 = (Color)value;
+			update();
+			return true;
+		} else if (COLOR_2.equals(key) && value instanceof Color){
+			color_2 = (Color)value;
+			update();
+			return true;
 		} else if (STYLE.equals(key) && value instanceof ITrackStyle){
-			style = (ITrackStyle)value;
+			color_1 = ((ITrackStyle)value).getForeground();
+			color_2 = ((ITrackStyle)value).getBackground();
 			update();
 			return true;
 		}
@@ -129,9 +140,11 @@ public class Score extends ColorProvider {
 			return min_score_color;
 		} else if (MAX_SCORE.equals(key)){
 			return max_score_color;
-		} else if (STYLE.equals(key)){
-			return style;
-		}
+		} if(COLOR_1.equals(key)){
+			return color_1;
+		} else if (COLOR_2.equals(key)){
+			return color_2;
+		} 
 		return null;
 	}
 }

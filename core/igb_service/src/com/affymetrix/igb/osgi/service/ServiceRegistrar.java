@@ -13,8 +13,8 @@ import org.osgi.util.tracker.ServiceTracker;
  * and they only need to implement the registerService() method
  */
 public abstract class ServiceRegistrar implements BundleActivator {
+	private ServiceRegistration<?> registrations[];
 	protected BundleContext bundleContext;
-	protected ServiceRegistration<?> registrations[];
 	
 	protected abstract ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception;
 	

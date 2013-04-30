@@ -49,20 +49,7 @@ public class PopupInfo extends JWindow {
 	private AbstractAction copyAction = new AbstractAction("c",CommonUtils.getInstance().getIcon("/toolbarButtonGraphics/general/Copy16.gif")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
-			StringBuilder props = new StringBuilder();
-			if (properties != null && properties.length > 1) {
-				for (int i = 0; i < properties.length; i++) {
-					props.append(properties[i][0]);
-					props.append(" : ");
-
-					if (i != properties.length - 1) {
-						props.append(properties[i][1] + "\n");
-					} else {
-						props.append(properties[i][1]);
-					}
-				}
-			}
-			GeneralUtils.copyToClipboard(props.toString());
+			GeneralUtils.copyToClipboard(tooltip.getText());
 		}
 	};
 	

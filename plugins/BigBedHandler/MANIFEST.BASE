@@ -8,7 +8,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: plugin to allow the user to load BigBed files
 Bundle-Vendor: Genentech
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/BigWig.jar,
+ lib/tribble-0.1.jar
 Bundle-Category: FileTypeHandler-com.gene.bigbedhandler.BigBedHandler
 Import-Package: com.affymetrix.common;version=@appVersion@,
  com.affymetrix.genometryImpl,
@@ -19,8 +21,6 @@ Import-Package: com.affymetrix.common;version=@appVersion@,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.igb.osgi.service,
  org.apache.log4j,
- org.broad.igv.bbfile, 
- org.broad.tribble.util, 
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"
 

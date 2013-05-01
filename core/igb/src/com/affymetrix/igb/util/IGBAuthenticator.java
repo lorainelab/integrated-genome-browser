@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.Authenticator;
@@ -162,7 +163,7 @@ public class IGBAuthenticator extends Authenticator {
 		} else if (authType == AuthType.ANONYMOUS) {
 			return doAnonymous();
 		} else {
-			return displayDialog(parent, serverNode, serverObject, url);
+			return displayDialog(parent.getFocusOwner(), serverNode, serverObject, url);
 		}
 	}
 
@@ -184,7 +185,7 @@ public class IGBAuthenticator extends Authenticator {
 	 * @param url
 	 * @return Password authentication to the user
 	 */
-	private static PasswordAuthentication displayDialog(final JFrame parent, final Preferences serverNode, final GenericServer serverObject, final String url) {
+	private static PasswordAuthentication displayDialog(final Component parent, final Preferences serverNode, final GenericServer serverObject, final String url) {
 		boolean authOptional = serverObject != null && serverObject.serverType != null && serverObject.serverType.isAuthOptional();
 		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
 		JLabel server = new JLabel();

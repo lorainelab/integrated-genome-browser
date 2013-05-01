@@ -150,7 +150,7 @@ public class FasterExpandPacker extends ExpandPacker {
 		
 		for (int i = 0; i < child_count; i++) {
 			GlyphI child = children.get(i);
-			child.setVisibility(true);
+//			child.setVisibility(true);
 			child.setOverlapped(false);
 //			child.setSkipDraw(false);
 			cbox = child.getCoordBox();

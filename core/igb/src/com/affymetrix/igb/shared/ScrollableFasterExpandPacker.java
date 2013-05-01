@@ -38,7 +38,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
 
 		for (int i = 0; i < child_count; i++) {
 			GlyphI child = parent.getChild(i);
-			child.setVisibility(true);
+//			child.setVisibility(true);
 			child.setOverlapped(false);
 			cbox = child.getCoordBox();
 			double child_min = cbox.x;

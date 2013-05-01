@@ -1564,9 +1564,30 @@ public class SeqMapView extends JPanel
 			match_query_count += query_glyphs.get(i).getChildCount();
 		}
 
-		if (match_query_count <= max_for_matching) {
+		if (qcount > 0 && match_query_count <= max_for_matching) {
 			ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
-			target_glyphs.add(seqmap.getScene().getGlyph());
+//			target_glyphs.add(seqmap.getScene().getGlyph());
+			
+			Rectangle2D.Double coordrect = new Rectangle2D.Double(query_glyphs.get(0).getCoordBox().x, 0, 0, seqmap.getScene().getCoordBox().height);
+			for(GlyphI glyph : query_glyphs){
+				Rectangle2D.Double.union(coordrect, glyph.getCoordBox(), coordrect);
+			}
+			
+			for (TierGlyph tg : seqmap.getTiers()) {
+				// Do not perform selection on axis tier childrens
+				if(tg == getAxisTier()){
+					continue;
+				}
+				
+				if (tg.isVisible()) {
+					target_glyphs.addAll(tg.pickTraversal(coordrect, seqmap.getView()));
+				}
+			}
+			
+			if(target_glyphs.isEmpty()){
+				return;
+			}
+			
 			double fuzz = getEdgeMatcher().getFuzziness();
 			if (fuzz == 0.0) {
 				Color edge_match_color = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_EDGE_MATCH_COLOR, default_edge_match_color);

@@ -80,6 +80,7 @@ public class HeatMapSlider extends JSlider {
 
         public void setValue(int thumbNumber, int value) {
             values[thumbNumber] = value;
+			fireStateChanged();
         }
         
         public int totalValues(){

@@ -445,7 +445,7 @@ class HeatMapSliderUI extends BasicSliderUI {
                     int thumbHeightMiddle = thumbTop + halfThumbHeight;;
                     
                     ((HeatMapSlider)slider).setValue(no, valueForYPosition(thumbHeightMiddle));
-                    setUpperThumbLocation(no, thumbRect.x, thumbTop);
+                    setUpperThumbLocation(no, thumbRect.x, yPositionForValue(((HeatMapSlider)slider).getValue(no)));
                     
                     break;
 

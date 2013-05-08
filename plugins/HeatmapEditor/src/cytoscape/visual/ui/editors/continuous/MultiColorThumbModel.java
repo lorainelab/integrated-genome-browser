@@ -46,7 +46,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	}
 	
 	public void setVirtualMinimum(float minValue){
-		this.maxVirtualValue = minValue;
+		this.minVirtualValue = minValue;
 	}
 	
 	public float getVirtualMinimum(){

@@ -173,7 +173,6 @@ public final class BAM extends XAM {
 				iter = reader.query(seqs.get(seq), min, max, contained);
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
-					lastSleepTime = System.nanoTime();
 					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try {
 							sr = iter.next();

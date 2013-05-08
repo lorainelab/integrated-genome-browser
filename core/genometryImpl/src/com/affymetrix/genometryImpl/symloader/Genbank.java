@@ -280,7 +280,6 @@ public final class Genbank extends SymLoader {
 			length = -1;
 		}
 
-		lastSleepTime = System.nanoTime();
 		while (current_line != null && !done) {
 
 			getCurrentInput(input);

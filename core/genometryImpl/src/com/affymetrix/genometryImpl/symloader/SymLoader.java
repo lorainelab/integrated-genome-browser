@@ -26,7 +26,6 @@ import com.affymetrix.genometryImpl.util.*;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	protected long lastSleepTime;
 	public static final String FILE_PREFIX = "file:";
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
 	public String extension;	// used for ServerUtils call

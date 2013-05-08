@@ -211,7 +211,6 @@ public class BED extends SymLoader implements LineProcessor {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
 
-		lastSleepTime = System.nanoTime();
 		while ((line = it.next()) != null && (!thread.isInterrupted())) {
 			if (line.length() == 0) {
 				continue;
@@ -740,7 +739,6 @@ public class BED extends SymLoader implements LineProcessor {
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
-			lastSleepTime = System.nanoTime();
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				lineCounter++;
 				if (line.length() == 0) {

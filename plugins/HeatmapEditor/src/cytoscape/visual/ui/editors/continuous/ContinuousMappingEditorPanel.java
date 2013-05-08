@@ -61,9 +61,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 	protected static final String BELOW_VALUE_CHANGED = "BELOW_VALUE_CHANGED";
 	protected static final String ABOVE_VALUE_CHANGED = "ABOVE_VALUE_CHANGED";
 
-	protected Object below;
-	protected Object above;
-
 	protected static ContinuousMappingEditorPanel editor;
 
 	protected static boolean updatePending = false;
@@ -427,12 +424,16 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 	} // </editor-fold>
 
 	protected void minMaxButtonActionPerformed(ActionEvent evt) {
-		final Double[] newVal = MinMaxDialog.getMinMax(null, 0, 100,
+		MultiColorThumbModel model = (MultiColorThumbModel)slider.getModel();
+		final Float[] newVal = MinMaxDialog.getMinMax(null, model.getVirtualMinimum(), model.getVirtualMaximum(),
 				"min-max-attribute");
 
 		if (newVal == null)
 			return;
-
+		
+		model.setVirtualMinimum(newVal[0].floatValue());
+		model.setVirtualMaximum(newVal[1].floatValue());
+		
 		updateMap();
 		this.repaint();
 	}

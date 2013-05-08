@@ -183,11 +183,11 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 				//below = (Color) allPoints.get(0).getRange().lesserValue;
 				//above = (Color) allPoints.get(allPoints.size() - 1).getRange().greaterValue;
 			} else {
-				below = Color.black;
-				above = Color.white;
+				//below = Color.black;
+				//above = Color.white;
 			}
 
-			setSidePanelIconColor((Color) below, (Color) above);
+			setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
 		}
 
 		TriangleThumbRenderer thumbRend = new TriangleThumbRenderer();
@@ -214,14 +214,11 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 			String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
 
 			if (sourceName.equals("abovePanel")) {
-				this.above = e.getNewValue();
+				((MultiColorThumbModel)slider.getModel()).setAboveColor((Color)e.getNewValue());
 			} else {
-				this.below = e.getNewValue();
+				((MultiColorThumbModel)slider.getModel()).setBelowColor((Color)e.getNewValue());
 			}
-
-			final CyGradientTrackRenderer gRend = new CyGradientTrackRenderer();
-			slider.setTrackRenderer(gRend);
-
+			
 			repaint();
 		}
 	}

@@ -20,7 +20,7 @@ public class MinMaxDialog extends javax.swing.JDialog {
 	private static MinMaxDialog dialog;
 
 	/** Creates new form MinMaxDialog */
-	private MinMaxDialog(Frame parent, boolean modal, Double min, Double max, final String attrName) {
+	private MinMaxDialog(Frame parent, boolean modal, Float min, Float max, final String attrName) {
 		super(parent, modal);
 		this.min = min;
 		this.max = max;
@@ -31,8 +31,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		this.maxTextField.setText(max.toString());
 	}
 
-	private Double min;
-	private Double max;
+	private Float min;
+	private Float max;
 	
 	private String attrName;
 
@@ -44,8 +44,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 	 *
 	 * @return  DOCUMENT ME!
 	 */
-	public static Double[] getMinMax(Frame frame, double min, double max, final String attrName) {
-		final Double[] minMax = new Double[2];
+	public static Float[] getMinMax(Frame frame, float min, float max, final String attrName) {
+		final Float[] minMax = new Float[2];
 		
 		dialog = new MinMaxDialog(frame, true, min, max, attrName);
 		dialog.setLocationRelativeTo(frame);
@@ -203,8 +203,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
-			min = Double.valueOf(minTextField.getText());
-			max = Double.valueOf(maxTextField.getText());
+			min = Float.valueOf(minTextField.getText());
+			max = Float.valueOf(maxTextField.getText());
 		} catch (NumberFormatException e) {
 			min = null;
 			max = null;
@@ -220,8 +220,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 	}
 	
 	private void restoreButtonActionPerformed(ActionEvent evt) {
-		Double maxValue = Double.NEGATIVE_INFINITY;
-		Double minValue = Double.POSITIVE_INFINITY;
+		Float maxValue = Float.NEGATIVE_INFINITY;
+		Float minValue = Float.POSITIVE_INFINITY;
 
 
 		minTextField.setText(minValue.toString());

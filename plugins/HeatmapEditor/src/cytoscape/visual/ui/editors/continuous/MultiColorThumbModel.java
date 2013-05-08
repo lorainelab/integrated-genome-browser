@@ -62,17 +62,20 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	}
 	
 	public float getVirtualValue(float position){
-		float range = maxVirtualValue - minVirtualValue;
-		return minVirtualValue + (getFraction(position) * range);
+		return getVirtualMinimum() + (getFraction(position) * getVirtualRange());
 	}
 	
 	public float getFraction(float position){
-		float range = maxVirtualValue - minVirtualValue;
-		//float minFraction = (float)minValue/(float)range;
-		return (position / range);
+		return position / getRange();
 	}
 	
+	private float getRange(){
+		return this.getMaximumValue() - this.getMinimumValue();
+	}
 	
+	private float getVirtualRange(){
+		return this.getVirtualMaximum() - this.getVirtualMinimum();
+	}
 	
 	public Color getColor(float position) {
 		if (this.getThumbCount() > 0) {

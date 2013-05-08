@@ -1559,12 +1559,16 @@ public class SeqMapView extends JPanel
 		seqmap.clearEdgeMatches();
 
 		int qcount = query_glyphs.size();
+		if(qcount <= 0){
+			return;
+		}
+		
 		int match_query_count = query_glyphs.size();
 		for (int i = 0; i < qcount && match_query_count <= max_for_matching; i++) {
 			match_query_count += query_glyphs.get(i).getChildCount();
 		}
 
-		if (qcount > 0 && match_query_count <= max_for_matching) {
+		if (match_query_count <= max_for_matching) {
 			ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
 //			target_glyphs.add(seqmap.getScene().getGlyph());
 			

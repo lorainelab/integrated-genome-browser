@@ -5,19 +5,14 @@ import org.jdesktop.swingx.multislider.Thumb;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 import java.beans.PropertyChangeListener;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -434,7 +429,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 		model.setVirtualMinimum(newVal[0].floatValue());
 		model.setVirtualMaximum(newVal[1].floatValue());
 		
-		updateMap();
 		this.repaint();
 	}
 
@@ -530,25 +524,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 	}
 
-	@SuppressWarnings("unchecked")
-	protected void updateMap() {
-		final List<Thumb> thumbs = slider.getModel().getSortedThumbs();
-
-		Thumb t;
-		Double newVal;
-
-		if (thumbs.size() == 1) {
-
-			return;
-		}
-
-		int size = thumbs.size();
-		for (int i = 0; i < size; i++) {
-			t = thumbs.get(i);
-
-		}
-	}
-
 	protected void enableSpinner(int selectedIndex) {
 		valueSpinner.setEnabled(true);
 
@@ -567,11 +542,9 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 				+ min;
 
 		valueSpinner.setValue(newVal);
-		updateMap();
-
+	
 		colorButton.setEnabled(true);
 		setButtonColor((Color) selectedThumb.getObject());
-
 	}
 
 	protected void disableSpinner() {
@@ -644,8 +617,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 				selectedThumb.setLocation(
 						(int) ((slider.getSize().width - 12) * newPosition), 0);
-
-				updateMap();
 
 				selectedThumb.repaint();
 				slider.getParent().repaint();

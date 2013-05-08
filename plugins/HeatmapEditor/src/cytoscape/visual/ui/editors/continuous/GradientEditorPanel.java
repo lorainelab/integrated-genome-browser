@@ -123,7 +123,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		// Make this slider the selected one
 		selectThumbAtPosition(51f);
 
-		updateMap();
 		slider.repaint();
 		repaint();
 	}
@@ -133,7 +132,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		if (slider.getSelectedIndex()  >= 0) {
 			slider.getModel().removeThumb(slider.getSelectedIndex());
 			//mapping.removePoint(selectedIndex);
-			updateMap();
 			//mapping.fireStateChanged();
 
 			repaint();

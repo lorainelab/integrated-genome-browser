@@ -435,7 +435,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 		updateMap();
 		this.repaint();
-		updateCytoscape();
 	}
 
 	abstract protected void deleteButtonActionPerformed(
@@ -530,16 +529,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 	}
 
-	protected void updateCytoscape() {
-		// TODO: We only want to do this for relatively small graphs....
-		// Start a thread???
-		updatePending = true;
-		if (!updating) {
-			UpdaterThread u = new UpdaterThread();
-			new Thread(u).start();
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	protected void updateMap() {
 		final List<Thumb> thumbs = slider.getModel().getSortedThumbs();
@@ -600,7 +589,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 				enableSpinner(selectedIndex);
 				slider.repaint();
 				repaint();
-				updateCytoscape();
 			} else {
 				disableSpinner();
 			}
@@ -661,9 +649,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 				selectedThumb.repaint();
 				slider.getParent().repaint();
 				slider.repaint();
-
-				updateCytoscape();
-
 				lastSpinnerNumber = newVal.doubleValue();
 			}
 		}
@@ -689,21 +674,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 			slider.repaint();
 			repaint();
-			updateCytoscape();
-
-		}
-	}
-
-	class UpdaterThread implements Runnable {
-		public UpdaterThread() {
-		}
-
-		public void run() {
-			updating = true;
-			while (updatePending) {
-				updatePending = false;
-			}
-			updating = false;
 		}
 	}
 }

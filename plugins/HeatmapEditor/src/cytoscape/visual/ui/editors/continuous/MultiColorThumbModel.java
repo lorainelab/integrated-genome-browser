@@ -69,6 +69,13 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		return position / getRange();
 	}
 	
+	public float getPosition(float value){
+		float position = value - getVirtualMinimum();
+		position /= getVirtualRange();
+		position *= getRange();
+		return position;
+	}
+	
 	private float getRange(){
 		return this.getMaximumValue() - this.getMinimumValue();
 	}

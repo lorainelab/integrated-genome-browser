@@ -487,9 +487,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 	protected void selectThumbAtPosition(float position) {
 		int selectedIndex = getThumbIndexAtPosition(position);
 		if (selectedIndex != -1) {
-			TriangleThumbRenderer renderer = (TriangleThumbRenderer) slider
-					.getThumbRenderer();
-			// renderer.setSelectedIndex(selectedIndex);
 			enableSpinner(selectedIndex);
 		}
 	}
@@ -526,21 +523,9 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 	protected void enableSpinner(int selectedIndex) {
 		valueSpinner.setEnabled(true);
-
-		final int count = slider.getModel().getThumbCount();
-		// for(int i=0; i<count; i++) {
-		// final Thumb<?> thumb = slider.getModel().getThumbAt(i);
-		// System.out.println(i + ": " + thumb.getPosition() + " = " +
-		// thumb.getObject());
-		// }
-
-		float range = 100;
-		float min = 100;
-		final Thumb<?> selectedThumb = slider.getModel().getThumbAt(
-				selectedIndex);
-		final float newVal = ((selectedThumb.getPosition() / 100) * range)
-				+ min;
-
+		
+		final Thumb<?> selectedThumb = slider.getModel().getThumbAt(selectedIndex);
+		final float newVal = ((MultiColorThumbModel)slider.getModel()).getVirtualValue(selectedThumb.getPosition());
 		valueSpinner.setValue(newVal);
 	
 		colorButton.setEnabled(true);
@@ -554,11 +539,11 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 	// End of variables declaration
 	protected class ThumbMouseListener extends MouseAdapter {
+		
+		@Override
 		public void mouseReleased(MouseEvent e) {
-			int selectedIndex = -1;
-			// int selectedIndex =
-			// ((TriangleThumbRenderer)slider.getThumbRenderer()).getSelectedIndex();
-
+			int selectedIndex = slider.getSelectedIndex();
+	
 			if ((0 <= selectedIndex) && (slider.getModel().getThumbCount() > 0)) {
 				enableSpinner(selectedIndex);
 				slider.repaint();
@@ -584,21 +569,17 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 
 		public void stateChanged(ChangeEvent e) {
 
-			float min = 100;
-			float max = 200;
-			float range = 100;
+			MultiColorThumbModel model = ((MultiColorThumbModel)slider.getModel());
 			final Number newVal = spinnerModel.getNumber();
-			final int selectedIndex = -1;
-			// final int selectedIndex =
-			// ((TriangleThumbRenderer)slider.getThumbRenderer()).getSelectedIndex();
+			final int selectedIndex = slider.getSelectedIndex();
 
 			if ((0 <= selectedIndex)
 					&& (slider.getModel().getThumbCount() >= 1)) {
 
-				if ((newVal.doubleValue() < min)
-						|| (newVal.doubleValue() > max)) {
+				if ((newVal.doubleValue() < model.getVirtualMinimum())
+						|| (newVal.doubleValue() > model.getVirtualMaximum())) {
 
-					if ((lastSpinnerNumber > min) && (lastSpinnerNumber < max)) {
+					if ((lastSpinnerNumber > model.getVirtualMinimum()) && (lastSpinnerNumber < model.getVirtualMaximum())) {
 						spinnerModel.setValue(lastSpinnerNumber);
 					} else {
 						spinnerModel.setValue(0);
@@ -607,16 +588,11 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 					return;
 				}
 
-				final float newPosition = ((newVal.floatValue() - min) / range);
+				final float newPosition = ((MultiColorThumbModel)slider.getModel()).getPosition(newVal.floatValue());
+				slider.getModel().getThumbAt(selectedIndex).setPosition(newPosition);
 
-				JComponent selectedThumb = null;
-				// JComponent selectedThumb =
-				// ((TriangleThumbRenderer)slider.getThumbRenderer()).getSelectedThumb();
-				slider.getModel().getThumbAt(selectedIndex)
-						.setPosition(newPosition * 100);
-
-				selectedThumb.setLocation(
-						(int) ((slider.getSize().width - 12) * newPosition), 0);
+				JComponent selectedThumb = slider.getSelectedThumb();
+				selectedThumb.setLocation((int) ((slider.getSize().width - 12) * model.getFraction(newPosition)), 0);
 
 				selectedThumb.repaint();
 				slider.getParent().repaint();

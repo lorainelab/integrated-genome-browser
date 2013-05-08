@@ -174,7 +174,11 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			lastSleepTime = System.nanoTime();
-			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {				
+			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
+				if(line.length() <= 0){
+					continue;
+				}
+				
 				ch = line.charAt(0);
 				if (ch == 't' && line.startsWith("track")) {
 					trackLine = line;

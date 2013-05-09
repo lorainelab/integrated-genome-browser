@@ -53,7 +53,7 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	 * @param type DOCUMENT ME!
 	 */
 	public static Object showDialog(final int width, final int height, final String title) {
-		editor = new GradientEditorPanel();
+		ContinuousMappingEditorPanel editor = new GradientEditorPanel();
 
 		final Dimension size = new Dimension(width, height);
 		editor.slider.setPreferredSize(size);
@@ -67,34 +67,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		editor.setVisible(true);
 
 		return editor;
-	}
-
-	/**
-	 * DOCUMENT ME!
-	 *
-	 * @param width DOCUMENT ME!
-	 * @param height DOCUMENT ME!
-	 * @param type DOCUMENT ME!
-	 *
-	 * @return DOCUMENT ME!
-	 */
-	public static ImageIcon getLegend(final int width, final int height) {
-		editor = new GradientEditorPanel();
-		CyGradientTrackRenderer rend = (CyGradientTrackRenderer) editor.slider.getTrackRenderer();
-		rend.getRendererComponent(editor.slider);
-		return rend.getLegend(width, height);
-	}
-
-	/**
-	 * DOCUMENT ME!
-	 *
-	 * @return DOCUMENT ME!
-	 */
-	public static ImageIcon getIcon(final int iconWidth, final int iconHeight) {
-		editor = new GradientEditorPanel();
-		CyGradientTrackRenderer rend = (CyGradientTrackRenderer) editor.slider.getTrackRenderer();
-		rend.getRendererComponent(editor.slider);
-		return rend.getTrackGraphicIcon(iconWidth, iconHeight);
 	}
 
 	@SuppressWarnings("unchecked")

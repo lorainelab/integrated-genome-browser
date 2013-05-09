@@ -55,14 +55,9 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 	 */
 	protected static final String BELOW_VALUE_CHANGED = "BELOW_VALUE_CHANGED";
 	protected static final String ABOVE_VALUE_CHANGED = "ABOVE_VALUE_CHANGED";
-
-	protected static ContinuousMappingEditorPanel editor;
-
-	protected static boolean updatePending = false;
-	protected static boolean updating = false;
-
-	protected double lastSpinnerNumber = 0;
-
+	
+	protected float lastSpinnerNumber = 0;
+	
 	/** Creates new form ContinuousMapperEditorPanel */
 	public ContinuousMappingEditorPanel() {
 		super();
@@ -79,22 +74,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 		// firePropertyChange(EDITOR_WINDOW_CLOSED, this, type);
 		// }
 		// });
-	}
-
-	/**
-	 * Dynamically generate small icons from continuous mappers.
-	 * 
-	 * @param width
-	 *            DOCUMENT ME!
-	 * @param height
-	 *            DOCUMENT ME!
-	 * @param type
-	 *            DOCUMENT ME!
-	 * 
-	 * @return DOCUMENT ME!
-	 */
-	public static ImageIcon getIcon(final int width, final int height) {
-		return GradientEditorPanel.getIcon(width, height);
 	}
 
 	protected void setSpinners() {
@@ -630,7 +609,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 				selectedThumb.repaint();
 				slider.getParent().repaint();
 				slider.repaint();
-				lastSpinnerNumber = newVal.doubleValue();
+				lastSpinnerNumber = newVal.floatValue();
 			}
 		}
 	}

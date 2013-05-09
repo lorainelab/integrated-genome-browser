@@ -6,15 +6,15 @@ import org.jdesktop.swingx.multislider.Thumb;
 
 
 public abstract class ColorInterpolator {
-	private final MultiColorThumbModel model;
+	private final VirtualRange virtualRange;
 	
-	protected ColorInterpolator(MultiColorThumbModel model){
-		this.model = model;
+	protected ColorInterpolator(VirtualRange virtualRange){
+		this.virtualRange = virtualRange;
 	}
 	
 	public Color[] getColorRange(int range){	
 		Color[] colors = new Color[range];
-		float factor = model.getRange()/range;
+		float factor = (virtualRange.getVirtualMaximum() - virtualRange.getVirtualMinimum())/range;
 		for(int i=0; i<range; i++){
 			colors[i] = getColor(i*factor);
 		}
@@ -22,23 +22,18 @@ public abstract class ColorInterpolator {
 	}
 	
 	public Color getColor(float position) {
-		if (model.getThumbCount() > 0) {
-			List<Thumb<Color>> sortedThumbs = model.getSortedThumbs();
-			for (int i = 1; i < sortedThumbs.size(); i++) {
-				Thumb<Color> lowerThumb = sortedThumbs.get(i-1);
-				Thumb<Color> upperThumb = sortedThumbs.get(i);
-				if (upperThumb.getPosition() > position && position > lowerThumb.getPosition()) {
-					return getRangeValue(lowerThumb.getPosition(), lowerThumb.getObject(), 
-							upperThumb.getPosition(), upperThumb.getObject(), position);
-				}
-			}
-			if (position <= sortedThumbs.get(0).getPosition()) {
-				return model.getBelowColor();
-			} else {
-				return model.getAboveColor();
+		float[] positions = virtualRange.getVirtualValues();
+		Color[] colors = virtualRange.getColors();
+		for (int i = 1; i < positions.length; i++) {
+			if (positions[i] > position && position > positions[i - 1]) {
+				return getRangeValue(positions[i - 1], colors[i - 1],
+						positions[i], colors[i], position);
 			}
 		}
-		return Color.black;
+		if (position <= positions[0]) {
+			return virtualRange.getBelowColor();
+		}
+		return virtualRange.getAboveColor();
 	}
 
 	private Color getRangeValue(float lowerDomain, Color lowerRange, float upperDomain, Color upperRange, float domainValue) {

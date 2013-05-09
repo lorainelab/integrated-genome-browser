@@ -5,8 +5,8 @@ import java.awt.Color;
 
 public class GradientColorInterpolator extends ColorInterpolator {
 	
-	public GradientColorInterpolator(MultiColorThumbModel model){
-		super(model);
+	public GradientColorInterpolator(VirtualRange virtualRange){
+		super(virtualRange);
 	}
 	
 	@Override

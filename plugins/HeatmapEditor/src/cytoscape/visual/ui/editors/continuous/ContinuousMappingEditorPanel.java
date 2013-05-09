@@ -162,11 +162,17 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 		valueLabel.setLabelFor(valueSpinner);
 
 		// We use the colorButton for both discrete and color
-		colorButton = new javax.swing.JButton("Change");
+		colorButton = new javax.swing.JButton("");
 		colorButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
 		colorButton.setEnabled(false);
+		colorButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				colorButtonActionPerformed();
+			}
+		});
+		
 		propertyComponent = colorButton;
-		propertyLabel = new JLabel("Color Name");
+		propertyLabel = new JLabel("Color ");
 		propertyLabel.setLabelFor(propertyComponent);
 
 		rotaryEncoder = new JXMultiThumbSlider();
@@ -432,12 +438,39 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 		this.repaint();
 	}
 
-	abstract protected void deleteButtonActionPerformed(
-			java.awt.event.ActionEvent evt);
-
 	abstract protected void addButtonActionPerformed(
 			java.awt.event.ActionEvent evt);
 
+	protected void deleteButtonActionPerformed(ActionEvent evt) {
+		if (slider.getSelectedIndex()  >= 0) {
+			slider.getModel().removeThumb(slider.getSelectedIndex());
+			//mapping.removePoint(selectedIndex);
+			//mapping.fireStateChanged();
+
+			repaint();
+		}
+	}
+
+	protected void colorButtonActionPerformed() {
+		final Color newColor = CyColorChooser.showDialog(slider,
+				"Choose new color...",
+				Color.white);
+		if (newColor != null) {
+			//Set new color
+			setColor(newColor);
+		}
+	}
+		
+	@SuppressWarnings("unchecked")
+	private void setColor(final Color newColor) {
+		final int selectedIndex = slider.getSelectedIndex();
+		int selected = getSelectedPoint(selectedIndex);
+		
+		slider.getModel().getThumbAt(selectedIndex).setObject(newColor);
+		setButtonColor(newColor);
+		slider.repaint();
+	}
+	
 	private void initRangeValues() {
 
 	}

@@ -42,12 +42,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		abovePanel.addPropertyChangeListener(this);
 		//if(mapping != null && mapping.getPointCount() == 0)
 		addButtonActionPerformed(null);
-
-		colorButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				getAndSetColor();
-			}
-		});
 	}
 
 	/**
@@ -127,37 +121,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		repaint();
 	}
 
-	@Override
-	protected void deleteButtonActionPerformed(ActionEvent evt) {
-		if (slider.getSelectedIndex()  >= 0) {
-			slider.getModel().removeThumb(slider.getSelectedIndex());
-			//mapping.removePoint(selectedIndex);
-			//mapping.fireStateChanged();
-
-			repaint();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void setColor(final Color newColor) {
-		final int selectedIndex = slider.getSelectedIndex();
-		int selected = getSelectedPoint(selectedIndex);
-		
-		slider.getModel().getThumbAt(selectedIndex).setObject(newColor);
-		setButtonColor(newColor);
-		slider.repaint();
-	}
-
-	public void getAndSetColor() {
-		final Color newColor = CyColorChooser.showDialog(slider,
-				"Choose new color...",
-				Color.white);
-		if (newColor != null) {
-			//Set new color
-			setColor(newColor);
-		}
-	}
-
 	/**
 	 * DOCUMENT ME!
 	 */
@@ -168,7 +131,7 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 				if (!SwingUtilities.isRightMouseButton(e)) {
 					if (slider.getSelectedIndex() >= 0) {
 						if (e.getClickCount() == 2) {
-							getAndSetColor();
+							colorButtonActionPerformed();
 						}
 					}
 				}

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import org.jdesktop.swingx.multislider.DefaultMultiThumbModel;
 
-public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
+public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implements VirtualRange {
 	public static final Color DEFAULT_BELOW_COLOR = Color.black;
 	public static final Color DEFAULT_ABOVE_COLOR = Color.white;
 	public static final float DEFAULT_MIN_VIRTUAL = 0.0f;
@@ -21,12 +21,25 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	}
 	
 	public MultiColorThumbModel(float[] values, Color[] colors){
+		set(values, colors);
+	}
+	
+	public void setBelowColor(Color color){
+		this.belowColor = color;
+	}
+	
+	public final void set(float[] values, Color[] colors){
 		if(values.length != colors.length){
 			throw new IllegalArgumentException("Both lengths should be same");
 		}
 		if(values.length < 2){
 			throw new IllegalArgumentException("Minimum length should be two");
 		}
+		// Clear previous thumbs
+		for(int i=0; i<this.getThumbCount(); i++){
+			this.removeThumb(i);
+		}
+		
 		this.minVirtualValue = values[0];
 		this.maxVirtualValue = values[values.length - 1];
 		this.belowColor = colors[0];
@@ -37,10 +50,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		}
 	}
 	
-	public void setBelowColor(Color color){
-		this.belowColor = color;
-	}
-	
+	@Override
 	public Color getBelowColor(){
 		return belowColor;
 	}
@@ -49,6 +59,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		this.aboveColor = color;
 	}
 	
+	@Override
 	public Color getAboveColor(){
 		return aboveColor;
 	}
@@ -57,6 +68,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		this.minVirtualValue = minValue;
 	}
 	
+	@Override
 	public float getVirtualMinimum(){
 		return minVirtualValue;
 	}
@@ -65,6 +77,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		this.maxVirtualValue = maxValue;
 	}
 	
+	@Override
 	public float getVirtualMaximum(){
 		return maxVirtualValue;
 	}
@@ -92,6 +105,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		return this.getVirtualMaximum() - this.getVirtualMinimum();
 	}
 	
+	@Override
 	public float[] getVirtualValues(){
 		float[] values = new float[this.getThumbCount() + 2];
 		values[0] = this.getVirtualMinimum();
@@ -102,6 +116,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		return values;
 	}
 	
+	@Override
 	public Color[] getColors(){
 		Color[] colors = new Color[this.getThumbCount() + 2];
 		colors[0] = this.getBelowColor();

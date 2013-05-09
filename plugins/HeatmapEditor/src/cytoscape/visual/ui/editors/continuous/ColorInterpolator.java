@@ -12,6 +12,15 @@ public abstract class ColorInterpolator {
 		this.model = model;
 	}
 	
+	public Color[] getColorRange(int range){	
+		Color[] colors = new Color[range];
+		float factor = model.getRange()/range;
+		for(int i=0; i<range; i++){
+			colors[i] = getColor(i*factor);
+		}
+		return colors;
+	}
+	
 	public Color getColor(float position) {
 		if (model.getThumbCount() > 0) {
 			List<Thumb<Color>> sortedThumbs = model.getSortedThumbs();

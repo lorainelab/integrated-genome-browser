@@ -14,6 +14,7 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	
 	private Color belowColor, aboveColor;
 	private float minVirtualValue, maxVirtualValue;
+	private ColorInterpolator colorInterpolator = new GradientColorInterpolator();
 	
 	public MultiColorThumbModel(){
 		this.minVirtualValue = DEFAULT_MIN_VIRTUAL;
@@ -83,49 +84,24 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	private float getVirtualRange(){
 		return this.getVirtualMaximum() - this.getVirtualMinimum();
 	}
-	
+		
 	public Color getColor(float position) {
+		float[] positions = new float[this.getThumbCount() + 2];
+		Color[] colors = new Color[this.getThumbCount() + 2];
+		positions[0] = this.getMinimumValue();
+		positions[positions.length - 1] = this.getMaximumValue();
+		colors[0] = this.getBelowColor();
+		colors[colors.length - 1] = this.getAboveColor();
 		if (this.getThumbCount() > 0) {
+			Thumb<Color> thumb;
 			List<Thumb<Color>> sortedThumbs = getSortedThumbs();
 			for (int i = 1; i < sortedThumbs.size(); i++) {
-				Thumb<Color> lowerThumb = sortedThumbs.get(i-1);
-				Thumb<Color> upperThumb = sortedThumbs.get(i);
-				if (upperThumb.getPosition() > position && position > lowerThumb.getPosition()) {
-					return getRangeValue(lowerThumb.getPosition(), lowerThumb.getObject(), 
-							upperThumb.getPosition(), upperThumb.getObject(), position);
-				}
-			}
-			if (position <= getThumbAt(0).getPosition()) {
-				return belowColor;
-			} else {
-				return aboveColor;
+				thumb = sortedThumbs.get(i);
+				positions[i] = thumb.getPosition();
+				colors[i] = thumb.getObject();
 			}
 		}
-		return Color.black;
+		return colorInterpolator.getColor(position, positions, colors);
 	}
 	
-	private Color getRangeValue(float lowerDomain, Color lowerRange,
-			float upperDomain, Color upperRange, float domainValue) {
-		if (lowerDomain == upperDomain)
-			return lowerRange;
-
-		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
-
-		return getRangeValue(frac, lowerRange, upperRange);
-	}
-	
-	private Color getRangeValue(double frac, Color lowerColor, Color upperColor) {
-
-		double red = lowerColor.getRed()
-				+ (frac * (upperColor.getRed() - lowerColor.getRed()));
-		double green = lowerColor.getGreen()
-				+ (frac * (upperColor.getGreen() - lowerColor.getGreen()));
-		double blue = lowerColor.getBlue()
-				+ (frac * (upperColor.getBlue() - lowerColor.getBlue()));
-		double alpha = lowerColor.getAlpha()
-				+ (frac * (upperColor.getAlpha() - lowerColor.getAlpha()));
-
-		return new Color((int) Math.round(red), (int) Math.round(green),
-				(int) Math.round(blue), (int) Math.round(alpha));
-	}
 }

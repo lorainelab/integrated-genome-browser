@@ -1,20 +1,35 @@
 package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
+import java.util.List;
+import org.jdesktop.swingx.multislider.Thumb;
 
 
 public abstract class ColorInterpolator {
-
-	public Color getColor(float position, float[] positions, Color[] colors) {
-		for (int i = 1; i < positions.length; i++) {
-			if (positions[i] > position && position > positions[i - 1]) {
-				return getRangeValue(positions[i - 1], colors[i - 1], positions[i], colors[i], position);
+	private final MultiColorThumbModel model;
+	
+	protected ColorInterpolator(MultiColorThumbModel model){
+		this.model = model;
+	}
+	
+	public Color getColor(float position) {
+		if (model.getThumbCount() > 0) {
+			List<Thumb<Color>> sortedThumbs = model.getSortedThumbs();
+			for (int i = 1; i < sortedThumbs.size(); i++) {
+				Thumb<Color> lowerThumb = sortedThumbs.get(i-1);
+				Thumb<Color> upperThumb = sortedThumbs.get(i);
+				if (upperThumb.getPosition() > position && position > lowerThumb.getPosition()) {
+					return getRangeValue(lowerThumb.getPosition(), lowerThumb.getObject(), 
+							upperThumb.getPosition(), upperThumb.getObject(), position);
+				}
+			}
+			if (position <= sortedThumbs.get(0).getPosition()) {
+				return model.getBelowColor();
+			} else {
+				return model.getAboveColor();
 			}
 		}
-		if (position <= positions[0]) {
-			return colors[0];
-		}
-		return colors[positions.length - 1];
+		return Color.black;
 	}
 
 	private Color getRangeValue(float lowerDomain, Color lowerRange, float upperDomain, Color upperRange, float domainValue) {

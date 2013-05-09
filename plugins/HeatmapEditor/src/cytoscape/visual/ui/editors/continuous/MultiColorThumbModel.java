@@ -14,7 +14,6 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	
 	private Color belowColor, aboveColor;
 	private float minVirtualValue, maxVirtualValue;
-	private ColorInterpolator colorInterpolator = new GradientColorInterpolator();
 	
 	public MultiColorThumbModel(){
 		this.minVirtualValue = DEFAULT_MIN_VIRTUAL;
@@ -85,23 +84,4 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		return this.getVirtualMaximum() - this.getVirtualMinimum();
 	}
 		
-	public Color getColor(float position) {
-		float[] positions = new float[this.getThumbCount() + 2];
-		Color[] colors = new Color[this.getThumbCount() + 2];
-		positions[0] = this.getMinimumValue();
-		positions[positions.length - 1] = this.getMaximumValue();
-		colors[0] = this.getBelowColor();
-		colors[colors.length - 1] = this.getAboveColor();
-		if (this.getThumbCount() > 0) {
-			Thumb<Color> thumb;
-			List<Thumb<Color>> sortedThumbs = getSortedThumbs();
-			for (int i = 1; i < sortedThumbs.size(); i++) {
-				thumb = sortedThumbs.get(i);
-				positions[i] = thumb.getPosition();
-				colors[i] = thumb.getObject();
-			}
-		}
-		return colorInterpolator.getColor(position, positions, colors);
-	}
-	
 }

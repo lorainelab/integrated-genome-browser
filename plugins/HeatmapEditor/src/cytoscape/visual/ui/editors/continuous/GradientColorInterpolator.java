@@ -5,6 +5,10 @@ import java.awt.Color;
 
 public class GradientColorInterpolator extends ColorInterpolator {
 	
+	public GradientColorInterpolator(MultiColorThumbModel model){
+		super(model);
+	}
+	
 	@Override
 	protected Color getRangeValue(double frac, Color lowerColor, Color upperColor) {
 

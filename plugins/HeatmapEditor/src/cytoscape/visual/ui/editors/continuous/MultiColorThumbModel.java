@@ -1,10 +1,8 @@
 package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.jdesktop.swingx.multislider.DefaultMultiThumbModel;
-import org.jdesktop.swingx.multislider.Thumb;
 
 public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	public static final Color DEFAULT_BELOW_COLOR = Color.black;
@@ -22,11 +20,21 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 		this.aboveColor = DEFAULT_ABOVE_COLOR;
 	}
 	
-	public MultiColorThumbModel(float minValue, float maxValue, Color below, Color above){
-		this.minVirtualValue = minValue;
-		this.maxVirtualValue = maxValue;
-		this.belowColor = below;
-		this.aboveColor = above;
+	public MultiColorThumbModel(float[] values, Color[] colors){
+		if(values.length != colors.length){
+			throw new IllegalArgumentException("Both lengths should be same");
+		}
+		if(values.length < 2){
+			throw new IllegalArgumentException("Minimum length should be two");
+		}
+		this.minVirtualValue = values[0];
+		this.maxVirtualValue = values[values.length - 1];
+		this.belowColor = colors[0];
+		this.aboveColor = colors[colors.length - 1];
+		
+		for(int i=1; i<values.length; i++){
+			addThumb(values[i], colors[i]);
+		}
 	}
 	
 	public void setBelowColor(Color color){
@@ -83,5 +91,24 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> {
 	float getVirtualRange(){
 		return this.getVirtualMaximum() - this.getVirtualMinimum();
 	}
-		
+	
+	public float[] getVirtualValues(){
+		float[] values = new float[this.getThumbCount() + 2];
+		values[0] = this.getVirtualMinimum();
+		for(int i=1; i<this.getThumbCount(); i++){
+			values[i] = getVirtualValue(this.getThumbAt(i).getPosition());
+		}
+		values[values.length - 1] = this.getVirtualMaximum();
+		return values;
+	}
+	
+	public Color[] getColors(){
+		Color[] colors = new Color[this.getThumbCount() + 2];
+		colors[0] = this.getBelowColor();
+		for(int i=1; i<this.getThumbCount(); i++){
+			colors[i] = this.getThumbAt(i).getObject();
+		}
+		colors[colors.length - 1] = this.getAboveColor();
+		return colors;
+	}
 }

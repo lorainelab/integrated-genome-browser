@@ -137,6 +137,12 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		slider.setToolTipText("Double-click handles to edit boundary colors.");
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setModel(MultiColorThumbModel model){
+		slider.setModel(model);
+		setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
+	}
+	
 	/**
 	 * DOCUMENT ME!
 	 *

@@ -20,7 +20,8 @@ public class Main {
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //
 //		JXMultiThumbSlider<Color> slider = new JXMultiThumbSlider<Color>();
-//		final MultiColorThumbModel model = new MultiColorThumbModel(150, 200, Color.red, Color.blue);
+//		final MultiColorThumbModel model = new MultiColorThumbModel(0, 200, Color.red, Color.blue);
+//		final ColorInterpolator colorInterpolator = new GradientColorInterpolator(model);
 //		slider.setModel(model);
 //		slider.setTrackRenderer(new CyGradientTrackRenderer());
 //		slider.setThumbRenderer(new TriangleThumbRenderer());
@@ -38,7 +39,7 @@ public class Main {
 //		slider.addMultiThumbListener(new ThumbListener() {
 //			@Override
 //			public void thumbMoved(int thumb, float pos) {
-//				label.setForeground(model.getColor(50));
+//				label.setForeground(colorInterpolator.getColor(50));
 //			}
 //
 //			@Override

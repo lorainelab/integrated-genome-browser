@@ -23,7 +23,7 @@
 		<property name="igb-18n"             value="${basedir}/core/igb-i18n" />
 		<property name="igb_service"         value="${basedir}/core/igb_service" />
 		<property name="window_service"      value="${basedir}/core/window_service" />
-		<property name="HeatmapEditor"		 value="${basedir}/core/HeatMapEditor" />
+		<property name="HeatmapEditor"		 value="${basedir}/core/HeatmapEditor" />
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
 		<property name="das2server"          value="${basedir}/das2_server" />
 		<property name="protannot"           value="${basedir}/protannot" />

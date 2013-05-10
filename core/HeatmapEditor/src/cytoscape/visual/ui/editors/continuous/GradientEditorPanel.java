@@ -2,15 +2,12 @@ package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 /**
@@ -41,7 +38,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		belowPanel.addPropertyChangeListener(this);
 		abovePanel.addPropertyChangeListener(this);
 		//if(mapping != null && mapping.getPointCount() == 0)
-		addButtonActionPerformed(null);
 	}
 
 	/**
@@ -52,9 +48,12 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	 * @param title DOCUMENT ME!
 	 * @param type DOCUMENT ME!
 	 */
+	@SuppressWarnings("unchecked")
 	public static Object showDialog(final int width, final int height, final String title) {
 		ContinuousMappingEditorPanel editor = new GradientEditorPanel();
-
+		editor.slider.getModel().addThumb(10f, DEF_LOWER_COLOR);
+		editor.slider.getModel().addThumb(90f, DEF_UPPER_COLOR);
+		
 		final Dimension size = new Dimension(width, height);
 		editor.slider.setPreferredSize(size);
 		editor.setPreferredSize(size);
@@ -73,14 +72,6 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	@Override
 	protected void addButtonActionPerformed(ActionEvent evt) {
 
-		if (slider.getModel().getThumbCount() == 0) {
-			slider.getModel().addThumb(10f, DEF_LOWER_COLOR);
-			slider.getModel().addThumb(90f, DEF_UPPER_COLOR);
-			slider.repaint();
-			repaint();
-			return;
-		}
-
 		// Add a new white thumb in the min.
 		// slider.getModel().addThumb(100f, Color.white);
 		// Add a new white thumb near the middle
@@ -93,6 +84,10 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		repaint();
 	}
 
+	public VirtualRange getVirtualRange(){
+		return (VirtualRange)slider.getModel();
+	}
+	
 	/**
 	 * DOCUMENT ME!
 	 */
@@ -138,8 +133,8 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setModel(MultiColorThumbModel model){
-		slider.setModel(model);
+	public void setVirtualRange(float[] values, Color[] colors){
+		((MultiColorThumbModel)slider.getModel()).set(values, colors);
 		setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
 	}
 	

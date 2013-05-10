@@ -45,8 +45,8 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 		this.belowColor = colors[0];
 		this.aboveColor = colors[colors.length - 1];
 		
-		for(int i=1; i<values.length; i++){
-			addThumb(values[i], colors[i]);
+		for(int i=1; i<values.length - 1; i++){
+			addThumb(getPosition(values[i]), colors[i]);
 		}
 	}
 	

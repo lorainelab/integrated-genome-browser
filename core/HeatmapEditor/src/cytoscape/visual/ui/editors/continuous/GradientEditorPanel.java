@@ -2,7 +2,6 @@ package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -19,14 +18,34 @@ import javax.swing.SwingUtilities;
  * @since Cytoscpae 2.5
  * @author kono
  */
-public class GradientEditorPanel extends ContinuousMappingEditorPanel
-		implements PropertyChangeListener {
+public class GradientEditorPanel extends ContinuousMappingEditorPanel {
 
 	private static final long serialVersionUID = -7645303507318540305L;
 	// For presets
 	private static final Color DEF_LOWER_COLOR = Color.BLACK;
 	private static final Color DEF_UPPER_COLOR = Color.WHITE;
+	
+	private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+		/**
+		 * DOCUMENT ME!
+		 *
+		 * @param e DOCUMENT ME!
+		 */
+		public void propertyChange(PropertyChangeEvent e) {
+			if (e.getPropertyName().equals(BelowAndAbovePanel.COLOR_CHANGED)) {
+				String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
 
+				if (sourceName.equals("abovePanel")) {
+					((MultiColorThumbModel) slider.getModel()).setAboveColor((Color) e.getNewValue());
+				} else {
+					((MultiColorThumbModel) slider.getModel()).setBelowColor((Color) e.getNewValue());
+				}
+
+				repaint();
+			}
+		}
+	};
+	
 	/**
 	 * Creates a new GradientEditorPanel object.
 	 *
@@ -42,8 +61,8 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		iconPanel.setVisible(false);
 		initSlider();
 
-		belowPanel.addPropertyChangeListener(this);
-		abovePanel.addPropertyChangeListener(this);
+		belowPanel.addPropertyChangeListener(propertyChangeListener);
+		abovePanel.addPropertyChangeListener(propertyChangeListener);
 		//if(mapping != null && mapping.getPointCount() == 0)
 	}
 	
@@ -101,6 +120,7 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	private void initSlider() {
 		slider.updateUI();
 		slider.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (!SwingUtilities.isRightMouseButton(e)) {
 					if (slider.getSelectedIndex() >= 0) {
@@ -143,24 +163,5 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	public void setVirtualRange(float[] values, Color[] colors){
 		((MultiColorThumbModel)slider.getModel()).set(values, colors);
 		setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
-	}
-	
-	/**
-	 * DOCUMENT ME!
-	 *
-	 * @param e DOCUMENT ME!
-	 */
-	public void propertyChange(PropertyChangeEvent e) {
-		if (e.getPropertyName().equals(BelowAndAbovePanel.COLOR_CHANGED)) {
-			String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
-
-			if (sourceName.equals("abovePanel")) {
-				((MultiColorThumbModel)slider.getModel()).setAboveColor((Color)e.getNewValue());
-			} else {
-				((MultiColorThumbModel)slider.getModel()).setBelowColor((Color)e.getNewValue());
-			}
-			
-			repaint();
-		}
 	}
 }

@@ -1,10 +1,6 @@
 package cytoscape.visual.ui.editors.continuous;
 
-import org.jdesktop.swingx.JXMultiThumbSlider;
-import org.jdesktop.swingx.multislider.Thumb;
-
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Window;
@@ -12,9 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
-import java.beans.PropertyChangeListener;
-
 import java.util.List;
 
 import javax.swing.Icon;
@@ -29,6 +22,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.jdesktop.swingx.JXMultiThumbSlider;
+import org.jdesktop.swingx.multislider.Thumb;
+
 /**
  * Abstract class for all Continuous Mapping Editors.
  * 
@@ -36,8 +32,7 @@ import javax.swing.event.ChangeListener;
  * @since Cytoscape 2.5
  * @author kono
  */
-public abstract class ContinuousMappingEditorPanel extends JDialog implements
-		PropertyChangeListener {
+public abstract class ContinuousMappingEditorPanel extends JDialog {
 
 	private static final long serialVersionUID = -2558647616344119220L;
 

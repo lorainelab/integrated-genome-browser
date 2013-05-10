@@ -3,6 +3,8 @@ package com.affymetrix.igb.action;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -10,6 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Map.Entry;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -20,14 +23,19 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
+
+import com.affymetrix.igb.colorproviders.ColorProviderHolder;
 import com.jidesoft.combobox.ColorComboBox;
+import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
+import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
+import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.igb.colorproviders.ColorProviderHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -167,6 +175,31 @@ public class ColorByAction extends SeqMapViewActionA {
 						colorComboBox.setMaximumSize(new java.awt.Dimension(20, 20));
 						//colorComboBox.setStretchToFit(true);
 						component = colorComboBox;
+					} else if (HeatMapExtended.class.isAssignableFrom(clazz)){
+						final JButton editButton = new JButton("Edit");
+						editButton.addActionListener(new ActionListener(){
+							@Override
+							public void actionPerformed(ActionEvent evt) {
+								final GradientEditorPanel editor = new GradientEditorPanel(ColorByDialog.this);
+								editor.setVirtualRange(new float[]{100,120,150,200}, new Color[]{Color.red, Color.green, Color.blue, Color.BLACK});
+								
+								editor.setTitle("Configure Heatmap");
+								editor.setModal(true);
+								editor.setAlwaysOnTop(false);
+								editor.setLocationRelativeTo(ColorByDialog.this);
+								editor.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+								Object value = editor.showDialog();
+								if(value.equals(JOptionPane.OK_OPTION)){
+									ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
+									float[] values = editor.getVirtualRange().getVirtualValues();
+									Color[] colorRanges = editor.getVirtualRange().getColors();
+									Color[] colors = colorInterpolator.getColorRange(256);
+									
+									cp.setParameter(label, new HeatMapExtended("HeatMapExtended", colors, values, colorRanges));
+								}
+							}
+						});
+						component = editButton;
 					}
 					
 					if (component != null) {

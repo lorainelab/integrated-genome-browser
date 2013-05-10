@@ -19,5 +19,5 @@ public interface VirtualRange {
 	public float getVirtualMinimum();
 
 	public float[] getVirtualValues();
-    
+ 
 }

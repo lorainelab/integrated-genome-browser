@@ -1,9 +1,6 @@
 package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
-import java.util.List;
-import org.jdesktop.swingx.multislider.Thumb;
-
 
 public abstract class ColorInterpolator {
 	private final VirtualRange virtualRange;

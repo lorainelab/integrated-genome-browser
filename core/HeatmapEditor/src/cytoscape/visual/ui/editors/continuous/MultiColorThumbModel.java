@@ -82,6 +82,13 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 		return maxVirtualValue;
 	}
 	
+	public float getPosition(float value){
+		float position = value - getVirtualMinimum();
+		position /= getVirtualRange();
+		position *= getRange();
+		return position;
+	}
+	
 	public float getVirtualValue(float position){
 		return getVirtualMinimum() + (getFraction(position) * getVirtualRange());
 	}
@@ -90,18 +97,11 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 		return position / getRange();
 	}
 	
-	public float getPosition(float value){
-		float position = value - getVirtualMinimum();
-		position /= getVirtualRange();
-		position *= getRange();
-		return position;
-	}
-	
-	float getRange(){
+	private float getRange(){
 		return this.getMaximumValue() - this.getMinimumValue();
 	}
 	
-	float getVirtualRange(){
+	private float getVirtualRange(){
 		return this.getVirtualMaximum() - this.getVirtualMinimum();
 	}
 	
@@ -109,8 +109,8 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 	public float[] getVirtualValues(){
 		float[] values = new float[this.getThumbCount() + 2];
 		values[0] = this.getVirtualMinimum();
-		for(int i=1; i<this.getThumbCount(); i++){
-			values[i] = getVirtualValue(this.getThumbAt(i).getPosition());
+		for(int i=0; i<this.getThumbCount(); i++){
+			values[i+1] = getVirtualValue(this.getThumbAt(i).getPosition());
 		}
 		values[values.length - 1] = this.getVirtualMaximum();
 		return values;
@@ -120,8 +120,8 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 	public Color[] getColors(){
 		Color[] colors = new Color[this.getThumbCount() + 2];
 		colors[0] = this.getBelowColor();
-		for(int i=1; i<this.getThumbCount(); i++){
-			colors[i] = this.getThumbAt(i).getObject();
+		for(int i=0; i<this.getThumbCount(); i++){
+			colors[i+1] = this.getThumbAt(i).getObject();
 		}
 		colors[colors.length - 1] = this.getAboveColor();
 		return colors;

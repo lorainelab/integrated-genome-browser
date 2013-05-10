@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -36,17 +37,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 
 	private static final long serialVersionUID = -2558647616344119220L;
 
-	// Tell vizMapper main which editor is disabled/enabled.
-	/**
-	 * DOCUMENT ME!
-	 */
-	public static final String EDITOR_WINDOW_CLOSED = "EDITOR_WINDOW_CLOSED";
-
-	/**
-	 * DOCUMENT ME!
-	 */
-	public static final String EDITOR_WINDOW_OPENED = "EDITOR_WINDOW_OPENED";
-
 	/*
 	 * Used by trackrenderers.
 	 */
@@ -54,6 +44,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	protected static final String ABOVE_VALUE_CHANGED = "ABOVE_VALUE_CHANGED";
 	
 	protected float lastSpinnerNumber = 0;
+	private Object value = JOptionPane.UNINITIALIZED_VALUE;
 	
 	/** Creates new form ContinuousMapperEditorPanel */
 	public ContinuousMappingEditorPanel() {
@@ -200,8 +191,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		cancelButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
 		cancelButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				firePropertyChange(EDITOR_WINDOW_CLOSED, this, null);
-				setVisible(false);
+				optionSelectedEvent(JOptionPane.CANCEL_OPTION);
 			}
 		});
 
@@ -210,8 +200,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		okButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
 		okButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				firePropertyChange(EDITOR_WINDOW_CLOSED, this, null);
-				setVisible(false);
+				optionSelectedEvent(JOptionPane.OK_OPTION);
 			}
 		});
 
@@ -404,6 +393,27 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		this.pack();
 	} // </editor-fold>
 
+	public Object showDialog(){
+		setVisible(true);
+		return getValue();
+	}
+	
+	private void optionSelectedEvent(Object value){
+		Object oldValue = getValue();
+		setValue(value);
+		setVisible(false);
+		dispose();
+		firePropertyChange(JOptionPane.VALUE_PROPERTY, oldValue, value);
+	}
+	
+	private void setValue(Object value){
+		this.value = value;
+	}
+	
+	private Object getValue(){
+		return value;
+	}
+	
 	protected void minMaxButtonActionPerformed(ActionEvent evt) {
 		MultiColorThumbModel model = (MultiColorThumbModel)slider.getModel();
 		final Float[] newVal = MinMaxDialog.getMinMax(null, model.getVirtualMinimum(), model.getVirtualMaximum(),

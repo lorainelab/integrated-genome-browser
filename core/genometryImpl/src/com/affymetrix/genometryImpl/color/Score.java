@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.color;
 
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
@@ -19,6 +20,7 @@ public class Score extends ColorProvider {
 	private final static String MIN_SCORE = "min";
 	private final static String MAX_SCORE = "max";
 	private final static String STYLE = "style";
+	private final static String HEATMAP = "heatmap";
 	public final static float DEFAULT_MIN_SCORE = 1.0f;
 	public final static float DEFAULT_MAX_SCORE = 1000.0f;
 	public final static Color DEFAULT_COLOR_1 = new Color(204, 255, 255);
@@ -30,6 +32,7 @@ public class Score extends ColorProvider {
 		PARAMETERS.put(MAX_SCORE, Float.class);
 		PARAMETERS.put(COLOR_1, Color.class);
 		PARAMETERS.put(COLOR_2, Color.class);
+//		PARAMETERS.put(HEATMAP, HeatMapExtended.class);
 	}
 	
 	private float min_score_color = DEFAULT_MIN_SCORE;
@@ -129,6 +132,12 @@ public class Score extends ColorProvider {
 			color_1 = ((ITrackStyle)value).getForeground();
 			color_2 = ((ITrackStyle)value).getBackground();
 			update();
+			return true;
+		} else if (HEATMAP.equals(key) && value instanceof HeatMapExtended){
+			HeatMapExtended heatmap = (HeatMapExtended)value;
+			custom_heatmap = heatmap;
+			min_score_color = heatmap.getValues()[0];
+			max_score_color = heatmap.getValues()[heatmap.getValues().length - 1];
 			return true;
 		}
 		return false;

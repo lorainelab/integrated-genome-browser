@@ -176,26 +176,39 @@ public class ColorByAction extends SeqMapViewActionA {
 						//colorComboBox.setStretchToFit(true);
 						component = colorComboBox;
 					} else if (HeatMapExtended.class.isAssignableFrom(clazz)){
+						final GradientEditorPanel editor = new GradientEditorPanel(ColorByDialog.this);
+						Object hm = cp.getParameterValue(label);
+						float[] positions;
+						Color[] colorRanges;
+						Color[] colors;
+						if (hm instanceof HeatMapExtended) {
+							positions = ((HeatMapExtended) hm).getValues();
+							colorRanges = ((HeatMapExtended) hm).getRangeColors();
+						} else {
+							positions = HeatMapExtended.DEFAULT_VALUES;
+							colorRanges = HeatMapExtended.DEFAULT_COLORS;
+						}
+						editor.setVirtualRange(positions, colorRanges);
+						final ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
+						colors = colorInterpolator.getColorRange(256);
+						cp.setParameter(label, new HeatMapExtended("HeatMapExtended", colors, positions, colorRanges));
+
 						final JButton editButton = new JButton("Edit");
 						editButton.addActionListener(new ActionListener(){
 							@Override
 							public void actionPerformed(ActionEvent evt) {
-								final GradientEditorPanel editor = new GradientEditorPanel(ColorByDialog.this);
-								editor.setVirtualRange(new float[]{100,120,150,200}, new Color[]{Color.red, Color.green, Color.blue, Color.BLACK});
-								
 								editor.setTitle("Configure Heatmap");
 								editor.setModal(true);
 								editor.setAlwaysOnTop(false);
 								editor.setLocationRelativeTo(ColorByDialog.this);
 								editor.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 								Object value = editor.showDialog();
-								if(value.equals(JOptionPane.OK_OPTION)){
-									ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-									float[] values = editor.getVirtualRange().getVirtualValues();
-									Color[] colorRanges = editor.getVirtualRange().getColors();
-									Color[] colors = colorInterpolator.getColorRange(256);
-									
-									cp.setParameter(label, new HeatMapExtended("HeatMapExtended", colors, values, colorRanges));
+								if(value.equals(JOptionPane.OK_OPTION)){	
+									cp.setParameter(label, 
+											new HeatMapExtended("HeatMapExtended", 
+											colorInterpolator.getColorRange(256), 
+											editor.getVirtualRange().getVirtualValues(), 
+											editor.getVirtualRange().getColors()));
 								}
 							}
 						});

@@ -21,11 +21,12 @@
 		<property name="genometry"           value="${basedir}/core/genometryImpl" />
 		<property name="igb"                 value="${basedir}/core/igb" />
 		<property name="igb-18n"             value="${basedir}/core/igb-i18n" />
-		<property name="das2server"          value="${basedir}/das2_server" />
-		<property name="protannot"           value="${basedir}/protannot" />
 		<property name="igb_service"         value="${basedir}/core/igb_service" />
 		<property name="window_service"      value="${basedir}/core/window_service" />
+		<property name="HeatmapEditor"		 value="${basedir}/core/HeatMapEditor" />
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
+		<property name="das2server"          value="${basedir}/das2_server" />
+		<property name="protannot"           value="${basedir}/protannot" />
 
 		<!-- Locations of optional bundle subprojects -->
 		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
@@ -44,7 +45,7 @@
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
 		<property name="IGBScript"           value="${basedir}/plugins/IGBScript" />
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
-		
+
 		<!-- directory paths -->
 		<property name="lib.dir"			 value="${basedir}/ext" />
 		<property name="etc.dir"			 value="${basedir}/etc" />
@@ -712,6 +713,7 @@
 				<dirset dir="${basedir}/core">
 					<include name="igb_service" />
 					<include name="window_service" />
+					<include name="HeatmapEditor" />
 				</dirset>
 				<dirset dir="${basedir}/core">
 					<include name="igb" />

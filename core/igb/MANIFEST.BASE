@@ -110,6 +110,6 @@ Import-Package: affymetrix.calvin.data,
  ch.lambdaj,
  org.hamcrest,
  org.hamcrest.core,
+ cytoscape.visual.ui.editors.continuous,
  sun.reflect;resolution:=optional,
  com.sun.awt;resolution:=optional
- 

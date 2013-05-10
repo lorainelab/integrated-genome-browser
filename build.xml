@@ -713,6 +713,8 @@
 				<dirset dir="${basedir}/core">
 					<include name="igb_service" />
 					<include name="window_service" />
+				</dirset>
+				<dirset dir="${basedir}/core">
 					<include name="HeatmapEditor" />
 				</dirset>
 				<dirset dir="${basedir}/core">

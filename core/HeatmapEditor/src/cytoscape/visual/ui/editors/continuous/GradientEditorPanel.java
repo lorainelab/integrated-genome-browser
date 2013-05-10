@@ -2,6 +2,8 @@ package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -31,7 +33,12 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 	 * @param type DOCUMENT ME!
 	 */
 	public GradientEditorPanel() {
-		super();
+		this(null);
+		
+	}
+
+	public GradientEditorPanel(Window window) {
+		super(window);
 		iconPanel.setVisible(false);
 		initSlider();
 
@@ -39,7 +46,7 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel
 		abovePanel.addPropertyChangeListener(this);
 		//if(mapping != null && mapping.getPointCount() == 0)
 	}
-
+	
 	/**
 	 * DOCUMENT ME!
 	 *

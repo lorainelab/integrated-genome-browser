@@ -4,8 +4,10 @@ import org.jdesktop.swingx.JXMultiThumbSlider;
 import org.jdesktop.swingx.multislider.Thumb;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -60,7 +62,11 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 	
 	/** Creates new form ContinuousMapperEditorPanel */
 	public ContinuousMappingEditorPanel() {
-		super();
+		this(null);
+	}
+	
+	public ContinuousMappingEditorPanel(Window window) {
+		super(window);
 		initComponents();
 
 		initRangeValues();
@@ -75,7 +81,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog implements
 		// }
 		// });
 	}
-
+	
 	protected void setSpinners() {
 		final Class dataType = null;
 		setSpinner();

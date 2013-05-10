@@ -153,7 +153,9 @@ public class Score extends ColorProvider {
 			return color_1;
 		} else if (COLOR_2.equals(key)){
 			return color_2;
-		} 
+		} else if (HEATMAP.equals(key)) {
+			return custom_heatmap;
+		}
 		return null;
 	}
 }

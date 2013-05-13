@@ -54,7 +54,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
@@ -171,20 +170,15 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	 * Refresh seqtable if more chromosomes are added, for example.
 	 */
 	public void refreshTable() {
-		((AbstractTableModel) seqtable.getModel()).fireTableDataChanged();
-	}
-
-	public void updateTableHeader() {
-		JTableHeader headers = seqtable.getTableHeader();
-		TableColumnModel model = headers.getColumnModel();
-
-		TableColumn col1 = model.getColumn(0);
-		int n = seqtable.getRowCount();
-		//Exclude 'genome'
-		if (n >= 2) {
-			n -= 1;
-		}
-		col1.setHeaderValue("(" + nformat.format(n) + ") Sequence(s)");
+		final AbstractTableModel model = ((AbstractTableModel) seqtable.getModel());
+		model.fireTableDataChanged();
+		ThreadUtils.runOnEventQueue(new Runnable(){
+			@Override
+			public void run() {
+				seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
+				seqtable.getTableHeader().repaint();
+			}
+		});
 	}
 
 	private void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {

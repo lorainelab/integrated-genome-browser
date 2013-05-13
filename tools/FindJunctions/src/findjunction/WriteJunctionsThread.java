@@ -30,7 +30,7 @@ public class WriteJunctionsThread{
     private final boolean DEBUG;
     private final FindJunctionOperator operator;
     
-    public WriteJunctionsThread(BAM bam, int threshold, boolean twoTracks, boolean uniqueness, DataOutputStream dos, boolean DEBUG){
+    public WriteJunctionsThread(BAM bam, int threshold, boolean twoTracks, boolean uniqueness, boolean topHatStyleFlanking, DataOutputStream dos, boolean DEBUG){
         this.bam = bam;
         this.dos = dos;
         this.DEBUG = DEBUG;
@@ -39,6 +39,7 @@ public class WriteJunctionsThread{
         paraMeters.put(FindJunctionOperator.THRESHOLD, threshold);
         paraMeters.put(FindJunctionOperator.TWOTRACKS, twoTracks);
         paraMeters.put(FindJunctionOperator.UNIQUENESS, uniqueness);
+        paraMeters.put(FindJunctionOperator.TOPHATSTYLEFLANKING, topHatStyleFlanking);
         operator.setParameters(paraMeters);
     }
 

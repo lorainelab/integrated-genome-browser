@@ -37,7 +37,7 @@ public class FindJunctionsTest {
                 String ext = name.substring(name.length()-3, name.length());
                 if(ext.equals("bam")){
                     String out = name.substring(0, name.length()-3)+"bed";
-                    fJ.init("data/input/"+name, "data/output/"+out, 5, false, null, true);
+                    fJ.init("data/input/"+name, "data/output/"+out, 5, false, null, true, true);
                     output.add(out);
                 }
             }

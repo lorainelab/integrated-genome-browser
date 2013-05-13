@@ -38,6 +38,7 @@ public class FindJunction {
         int threshold = DEFAULT_THRESHOLD;
         boolean twoTracks = false;
         boolean uniqueness = false;
+        boolean topHatStyleFlanking = false;
         String input = args[args.length-1];
         String last_argument_message = "Last argument should be a comma-separated list of one or more BAM files";
         if(input.lastIndexOf(".") < 0){
@@ -52,6 +53,7 @@ public class FindJunction {
         String twoBit = "";
         String thresh = getArg("-n", args);
         String unique = getArg("-u", args);
+        String topHatFlanking = getArg("-t", args);
         String debug_option = getArg("-d",args);
         if (debug_option != null) {
             DEBUG = true;
@@ -61,6 +63,8 @@ public class FindJunction {
             threshold = Integer.parseInt(thresh);
         if(unique != null)
             uniqueness = true;
+        if(topHatFlanking != null)
+            topHatStyleFlanking = true;
         output = getArg("-o", args);
         if((getArg("-s", args) != null) && (getArg("-b" , args) != null)){
             System.err.println("Both -s and -b cannot be given together");
@@ -75,7 +79,7 @@ public class FindJunction {
             twoTracks = true;
             twoBit = null;
         }        
-        fJ.init(input, output, threshold, twoTracks, twoBit, uniqueness);
+        fJ.init(input, output, threshold, twoTracks, twoBit, uniqueness, topHatStyleFlanking);
     }
     
     /* getArg is the method used to return the appropriate argument from the list of arguments 
@@ -104,7 +108,7 @@ public class FindJunction {
     /* This is the method where the control of the program gets started and all of the variables like input file output file and 2bit files gets assigned
      * and then calls the method to find the Junctions. 
      */
-    public void init(String input, String output, int threshold, boolean twoTracks, String twoBit, boolean uniqueness) throws URISyntaxException, Exception{
+    public void init(String input, String output, int threshold, boolean twoTracks, String twoBit, boolean uniqueness, boolean topHatStyleFlanking) throws URISyntaxException, Exception{
         if(DEBUG)
             System.err.println("Initial Heap Memory: "+Runtime.getRuntime().freeMemory());
         URI inputURI, twoBitURI = null; 
@@ -122,7 +126,7 @@ public class FindJunction {
         SynonymLookup.getChromosomeLookup().loadSynonyms(isreader, true) ;
         GeneralUtils.safeClose(isreader);
         
-        convertBAMToBed(inputURI , output, threshold, twoTracks, twoBitURI, uniqueness);        
+        convertBAMToBed(inputURI , output, threshold, twoTracks, twoBitURI, uniqueness, topHatStyleFlanking);        
     }
     
     /* This method is used to convert the given file path from relative to absolute.
@@ -141,7 +145,7 @@ public class FindJunction {
     }
     
     //Takes BAM file in the given path as an input and filters it with the Simple Filter Class
-    public void convertBAMToBed(URI input , String output, int threshold, boolean twoTracks, URI twoBit, boolean uniqueness) throws URISyntaxException, Exception{
+    public void convertBAMToBed(URI input , String output, int threshold, boolean twoTracks, URI twoBit, boolean uniqueness, boolean topHatStyleFlanking) throws URISyntaxException, Exception{
         TwoBit twoBitFile = null;
         AnnotatedSeqGroup group = new AnnotatedSeqGroup("Find Junctions");
         String fileName = input.toString().substring(input.toString().lastIndexOf("/")+1, input.toString().lastIndexOf("."));
@@ -159,7 +163,7 @@ public class FindJunction {
             dos = new DataOutputStream(System.out);
         } 
         
-        WriteJunctionsThread writeJunction = new WriteJunctionsThread(bam, threshold, twoTracks, uniqueness, dos, DEBUG);
+        WriteJunctionsThread writeJunction = new WriteJunctionsThread(bam, threshold, twoTracks, uniqueness, topHatStyleFlanking, dos, DEBUG);
         for(BioSeq bioSeq : bam.getChromosomeList()){
             SeqSpan currentSpan = new SimpleMutableSeqSpan(bioSeq.getMin(), bioSeq.getMax(), bioSeq);
             if(twoBitFile != null){

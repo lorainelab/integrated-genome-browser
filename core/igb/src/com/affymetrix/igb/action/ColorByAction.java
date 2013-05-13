@@ -180,7 +180,6 @@ public class ColorByAction extends SeqMapViewActionA {
 						Object hm = cp.getParameterValue(label);
 						float[] positions;
 						Color[] colorRanges;
-						Color[] colors;
 						if (hm instanceof HeatMapExtended) {
 							positions = ((HeatMapExtended) hm).getValues();
 							colorRanges = ((HeatMapExtended) hm).getRangeColors();
@@ -189,10 +188,7 @@ public class ColorByAction extends SeqMapViewActionA {
 							colorRanges = HeatMapExtended.DEFAULT_COLORS;
 						}
 						editor.setVirtualRange(positions, colorRanges);
-						final ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-						colors = colorInterpolator.getColorRange(256);
-						cp.setParameter(label, new HeatMapExtended("HeatMapExtended", colors, positions, colorRanges));
-
+						
 						final JButton editButton = new JButton("Edit");
 						editButton.addActionListener(new ActionListener(){
 							@Override
@@ -204,6 +200,7 @@ public class ColorByAction extends SeqMapViewActionA {
 								editor.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 								Object value = editor.showDialog();
 								if(value.equals(JOptionPane.OK_OPTION)){	
+									ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
 									cp.setParameter(label, 
 											new HeatMapExtended("HeatMapExtended", 
 											colorInterpolator.getColorRange(256), 
@@ -274,8 +271,9 @@ public class ColorByAction extends SeqMapViewActionA {
 		}
 
 		public void setInitialValue(ColorProvider cp){
-			returnValue = cp;
 			comboBox.setSelectedItem(ColorProviderHolder.getCPName(cp == null ? null : cp.getClass()));
+			returnValue = cp;
+			selectedCP = cp;
 			initParamPanel(cp);
 		}
 		

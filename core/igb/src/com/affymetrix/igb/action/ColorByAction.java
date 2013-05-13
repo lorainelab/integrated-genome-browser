@@ -32,6 +32,7 @@ import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -203,7 +204,7 @@ public class ColorByAction extends SeqMapViewActionA {
 									ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
 									cp.setParameter(label, 
 											new HeatMapExtended("HeatMapExtended", 
-											colorInterpolator.getColorRange(256), 
+											colorInterpolator.getColorRange(HeatMap.BINS), 
 											editor.getVirtualRange().getVirtualValues(), 
 											editor.getVirtualRange().getColors()));
 								}

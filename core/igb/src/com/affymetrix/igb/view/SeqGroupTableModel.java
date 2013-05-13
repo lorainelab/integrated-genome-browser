@@ -48,7 +48,12 @@ final class SeqGroupTableModel extends AbstractTableModel {
 	@Override
 	public String getColumnName(int col) {
 		if (col == 0) {
-			return MessageFormat.format(IGBConstants.BUNDLE.getString("sequenceColumnHeader"), nformat.format(getRowCount()));
+			int n = getRowCount();
+			//Exclude 'genome'
+			if (n >= 2) {
+				n -= 1;
+			}
+			return MessageFormat.format(IGBConstants.BUNDLE.getString("sequenceColumnHeader"), nformat.format(n));
 		} else if (col == 1) {
 			return IGBConstants.BUNDLE.getString("lengthColumnHeader");
 		} else {

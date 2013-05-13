@@ -16,6 +16,7 @@ package com.affymetrix.genometryImpl.style;
 import java.awt.Color;
 
 public class HeatMap {
+	public static final int BINS = 256;
 	public static final String FOREGROUND_BACKGROUND = "FG/BG";
 	public enum StandardHeatMap {
 		BLACK_WHITE("Black/White", Color.BLACK, Color.WHITE),
@@ -25,8 +26,8 @@ public class HeatMap {
 		RED_BLACK_GREEN("Red/Black/Green", null, null) {
 			@Override
 			protected HeatMap create(String name, Color c1, Color c2) {
-				Color[] colors = new Color[bins];
-				for (int bin = 0; bin < bins; bin++) {
+				Color[] colors = new Color[BINS];
+				for (int bin = 0; bin < BINS; bin++) {
 					colors[bin] = new Color(Math.max(255 - 2*bin, 0), Math.min(Math.max(2 * (bin-128), 0), 255), 0);
 				}
 				return new HeatMap(name, colors);
@@ -36,9 +37,9 @@ public class HeatMap {
 		RAINBOW("Rainbow", null, null) {
 			@Override
 			protected HeatMap create(String name, Color c1, Color c2) {
-				Color[] colors = new Color[bins];
-				for (int bin = 0; bin < bins; bin++) {
-					colors[bin] = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/bins, 0.8f, 1.0f));
+				Color[] colors = new Color[BINS];
+				for (int bin = 0; bin < BINS; bin++) {
+					colors[bin] = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/BINS, 0.8f, 1.0f));
 				}
 				return new HeatMap(name, colors);
 			}
@@ -47,9 +48,9 @@ public class HeatMap {
 			@Override
 			protected HeatMap create(String name, Color c1, Color c2) {
 				Color c;
-				Color[] colors = new Color[bins];
-				for (int bin = 0; bin < bins; bin++) {
-					c = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/bins, 0.8f, 1.0f));
+				Color[] colors = new Color[BINS];
+				for (int bin = 0; bin < BINS; bin++) {
+					c = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/BINS, 0.8f, 1.0f));
 					int g = (192 * c.getGreen()) / 256;
 					colors[bin] = new Color(Math.max(c.getRed(), g), g, Math.max(c.getBlue(), g));
 				}
@@ -61,7 +62,6 @@ public class HeatMap {
 		TRANSPARENT_GREEN("Transparent Green", new Color(0, 0, 0, 128), new Color(0, 255, 0, 128)),
 		TRANSPARENT_BLUE("Transparent Blue", new Color(0, 0, 0, 128), new Color(0, 0, 255, 128));
 
-		private static final int bins = 256;
 		private final HeatMap heatmap;
 
 		private StandardHeatMap(String name, Color c1, Color c2) {
@@ -121,8 +121,8 @@ public class HeatMap {
 	public Color getColor(int heatmap_index) {
 		if (heatmap_index < 0) {
 			return colors[0];
-		} else if (heatmap_index > 255) {
-			return colors[255];
+		} else if (heatmap_index > BINS-1) {
+			return colors[BINS-1];
 		} else {
 			return colors[heatmap_index];
 		}
@@ -154,11 +154,11 @@ public class HeatMap {
 
 	/** Make a HeatMap that interpolates linearly between the two given colors. */
 	public static HeatMap makeLinearHeatmap(String name, Color low, Color high) {
-		Color[] colors = new Color[256];
+		Color[] colors = new Color[BINS];
 		HeatMap heat_map = new HeatMap(name, colors);
 		
-		for (int i=0; i<256; i++) {
-			float x = (i*1.0f)/255.0f;
+		for (int i=0; i<BINS; i++) {
+			float x = (i*1.0f)/BINS - 1;
 			colors[i] = interpolateColor(low, high, x);
 		}
 

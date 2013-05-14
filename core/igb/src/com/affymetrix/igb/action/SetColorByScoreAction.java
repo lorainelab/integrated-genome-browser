@@ -20,7 +20,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 	private static final SetColorByScoreAction ACTION = new SetColorByScoreAction();
 
 	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
 	
 	public static SetColorByScoreAction getAction() {
@@ -47,13 +47,13 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			style = (TrackStyle)tg.getAnnotStyle();
 			ColorProvider cp = style.getColorProvider();
-			if(cp instanceof Score){
-				min = ((Score)cp).getMinScoreColor();
-				max = ((Score)cp).getMaxScoreColor();
-			}else{
+//			if(cp instanceof Score){
+//				min = ((Score)cp).getMinScoreColor();
+//				max = ((Score)cp).getMaxScoreColor();
+//			}else{
 				min = Score.DEFAULT_MIN_SCORE;
 				max = Score.DEFAULT_MAX_SCORE;
-			}
+//			}
 			minText+= min;
 			maxText+=max;
 		}
@@ -70,8 +70,8 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 					style = (TrackStyle)tg.getAnnotStyle();
 					ColorProvider cp = style.getColorProvider();
 					if(cp instanceof Score){
-						((Score)cp).setMinScoreColor(updatedMinRange);
-						((Score)cp).setMaxScoreColor(updatedMaxRange);
+//						((Score)cp).setMinScoreColor(updatedMinRange);
+//						((Score)cp).setMaxScoreColor(updatedMaxRange);
 					}
 				//	style.setColorIntervals(updatedIntervals);
 				}

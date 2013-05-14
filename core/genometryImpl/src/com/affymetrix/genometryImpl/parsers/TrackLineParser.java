@@ -233,7 +233,7 @@ public final class TrackLineParser {
 			}
 			if ("1".equals(track_hash.get(USE_SCORE))) {
 				Score score = new Score();
-				score.setTrackStyle(style);
+//				score.setTrackStyle(style);
 				annot_style.setColorProvider(score);
 			} 
 		}

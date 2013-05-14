@@ -16,7 +16,7 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 	private static final ColorByScoreAction ACTION = new ColorByScoreAction("colorByScoreAction");
 		
 	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
+//		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
 	
 	public static ColorByScoreAction getAction() {
@@ -34,7 +34,7 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 			cp = null;
 		}else{
 			cp = new Score();
-			((Score)cp).setTrackStyle(style);
+			//((Score)cp).setTrackStyle(style);
 		}
 		style.setColorProvider(cp);
 		this.putValue(SELECTED_KEY, cp != null);

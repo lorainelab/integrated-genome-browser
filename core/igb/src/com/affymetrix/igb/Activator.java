@@ -320,8 +320,8 @@ public class Activator implements BundleActivator {
 		ChangeReverseColorAction.getAction();
 		ChangeFontSizeAction.getAction();
 		ChangeExpandMaxAllAction.getAction();
-		SetColorByScoreAction.getAction();
-		ColorByScoreAction.getAction();
+//		SetColorByScoreAction.getAction();
+//		ColorByScoreAction.getAction();
 		ExportFileAction.getAction();
 		ExportSelectedAnnotationFileAction.getAction();
 		UseAsReferenceSeqAction.getAction();

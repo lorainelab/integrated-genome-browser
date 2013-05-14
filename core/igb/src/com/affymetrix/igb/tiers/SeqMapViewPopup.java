@@ -384,15 +384,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(operationsMenu);
 		operationsMenu.getPopupMenu().setBorder(finalBorder);
 		operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
-		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
-		color_by_score.setSelected(any_are_color_by_score && num_selections > 0 && !coordinates_track_selected);
-		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);
-		color_by_score.setIcon(null);
-		popup.add(color_by_score);
-		JMenuItem set_color_by_score = new JRPMenuItemTLP(SetColorByScoreAction.getAction());
-		set_color_by_score.setIcon(null);
-		set_color_by_score.setEnabled(!coordinates_track_selected && !any_graph);
-		popup.add(set_color_by_score);
+//		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
+//		color_by_score.setSelected(any_are_color_by_score && num_selections > 0 && !coordinates_track_selected);
+//		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);
+//		color_by_score.setIcon(null);
+//		popup.add(color_by_score);
+//		JMenuItem set_color_by_score = new JRPMenuItemTLP(SetColorByScoreAction.getAction());
+//		set_color_by_score.setIcon(null);
+//		set_color_by_score.setEnabled(!coordinates_track_selected && !any_graph);
+//		popup.add(set_color_by_score);
 		
 		popup.add(new JSeparator());
 		
@@ -401,7 +401,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(set_color_by);
 			
 		popup.add(new JSeparator());
-				
+		
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
 		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_selected_annotations.setIcon(null);

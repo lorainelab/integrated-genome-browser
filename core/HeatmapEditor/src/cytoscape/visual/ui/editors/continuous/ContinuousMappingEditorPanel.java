@@ -68,7 +68,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	
 	protected float lastSpinnerNumber = 0;
 	private Object value = JOptionPane.UNINITIALIZED_VALUE;
-	private SpinnerChangeListener spinnerChangeListner;
+	private SpinnerChangeListener spinnerChangeListener;
 	
 	/** Creates new form ContinuousMapperEditorPanel */
 	public ContinuousMappingEditorPanel() {
@@ -95,8 +95,8 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	protected void setSpinner() {
 		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0.0d,
 				Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 0.01d);
-		spinnerChangeListner = new SpinnerChangeListener();
-		spinnerModel.addChangeListener(spinnerChangeListner);
+		spinnerChangeListener = new SpinnerChangeListener();
+		spinnerModel.addChangeListener(spinnerChangeListener);
 		valueSpinner.setModel(spinnerModel);
 	}
 
@@ -526,14 +526,16 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	}
 
 	protected void enableSpinner(int selectedIndex) {
-		valueSpinner.setEnabled(true);
-		
-		final Thumb<?> selectedThumb = slider.getModel().getThumbAt(selectedIndex);
-		final float newVal = ((MultiColorThumbModel)slider.getModel()).getVirtualValue(selectedThumb.getPosition());
+		valueSpinner.getModel().removeChangeListener(spinnerChangeListener);
+
+		Thumb<?> selectedThumb = slider.getModel().getThumbAt(selectedIndex);
+		float newVal = ((MultiColorThumbModel)slider.getModel()).getVirtualValue(selectedThumb.getPosition());
 		valueSpinner.setValue(newVal);
-	
-		colorButton.setEnabled(true);
 		setButtonColor((Color) selectedThumb.getObject());
+		
+		colorButton.setEnabled(true);
+		valueSpinner.setEnabled(true);
+		valueSpinner.getModel().addChangeListener(spinnerChangeListener);
 	}
 
 	protected void disableSpinner() {
@@ -550,8 +552,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	
 			if ((0 <= selectedIndex) && (slider.getModel().getThumbCount() > 0)) {
 				enableSpinner(selectedIndex);
-				slider.repaint();
-				repaint();
 			} else {
 				disableSpinner();
 			}

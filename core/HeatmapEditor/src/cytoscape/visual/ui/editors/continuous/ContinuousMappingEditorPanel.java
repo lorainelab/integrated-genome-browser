@@ -68,6 +68,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	
 	protected float lastSpinnerNumber = 0;
 	private Object value = JOptionPane.UNINITIALIZED_VALUE;
+	private SpinnerChangeListener spinnerChangeListner;
 	
 	/** Creates new form ContinuousMapperEditorPanel */
 	public ContinuousMappingEditorPanel() {
@@ -94,7 +95,8 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	protected void setSpinner() {
 		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0.0d,
 				Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 0.01d);
-		spinnerModel.addChangeListener(new SpinnerChangeListener(spinnerModel));
+		spinnerChangeListner = new SpinnerChangeListener();
+		spinnerModel.addChangeListener(spinnerChangeListner);
 		valueSpinner.setModel(spinnerModel);
 	}
 
@@ -563,15 +565,11 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	 * 
 	 */
 	class SpinnerChangeListener implements ChangeListener {
-		SpinnerNumberModel spinnerModel;
-
-		public SpinnerChangeListener(SpinnerNumberModel model) {
-			this.spinnerModel = model;
-		}
-
+	
 		public void stateChanged(ChangeEvent e) {
 
 			MultiColorThumbModel model = ((MultiColorThumbModel)slider.getModel());
+			SpinnerNumberModel spinnerModel = (SpinnerNumberModel)e.getSource();
 			final Number newVal = spinnerModel.getNumber();
 			final int selectedIndex = slider.getSelectedIndex();
 

@@ -323,10 +323,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				codon_glyph_processor.processGlyph(cglyph, annotseq);
 				
 				if(!cds){
-					GlyphI cds_glyph = handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height);
-					if(cds_glyph != null){
-						pglyph.addChild(cds_glyph);
-					}
+					handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
 				}
 			}
 		}
@@ -379,7 +376,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private GlyphI handleCDSSpan(SeqMapViewExtendedI gviewer,
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
 			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
-			Color child_color, double thick_height)
+			Color child_color, double thick_height, GlyphI pglyph)
 			throws IllegalAccessException, InstantiationException {
 		if (SeqUtils.overlap(cdsSpan, cspan)) {
 			SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
@@ -397,6 +394,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
+				pglyph.addChild(cds_glyph);
 				codon_glyph_processor.processGlyph(cds_glyph, annotseq);
 				return cds_glyph;
 			}

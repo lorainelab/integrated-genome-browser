@@ -79,7 +79,12 @@ public abstract class OpenURIAction extends GenericAction {
 		chooser = new MergeOptionChooser(id);
 		chooser.setMultiSelectionEnabled(true);
 	
-		// Build the set for sequence file
+		/**
+		 * The following code implements function check each single file (from file selector or URI input) for known sequence file, 
+		 * enable the 'Open as reference sequence' checkbox if yes.
+		 * 
+		 */
+		
 		seq_ref_endings = new HashSet<String>();
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(FileTypeCategory.Sequence);
 		for (String name : nameToExtensionMap.keySet()) {

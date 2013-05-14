@@ -127,8 +127,9 @@ public abstract class PrefsLoader {
 				default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
 				Preferences.importPreferences(default_prefs_stream);
 				
-				// Use command key instead of control for Mac, only applies after resetting preferences
-				// Because user's preferences will be loaded back next
+				/**
+				 * Use 'command' instead of 'control' in keystrokes for Mac OS.
+				 */
 				if(isMac()){
 					String[] keys = PreferenceUtils.getKeystrokesNode().keys();
 					for(int i =0; i< keys.length; i++) {

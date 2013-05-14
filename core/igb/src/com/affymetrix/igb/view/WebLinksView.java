@@ -254,6 +254,12 @@ public final class WebLinksView {
 		}
 	}
 	
+	/**
+	 * This method will check every user input field to compose regular expression
+	 * 
+	 * The 'reverse engineering' (translate regex) is not available now due to the complexiity 
+	 */
+	
 	public void composeRegex() {
 		if (localTable.getSelectedRow() != -1) {
 			String startWith = startWithTextField.getText();

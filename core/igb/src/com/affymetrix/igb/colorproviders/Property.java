@@ -16,12 +16,14 @@ import com.affymetrix.genoviz.color.ColorScheme;
  */
 public class Property extends ColorProvider{
 	private final static String PROPERTY = "property";
+	public final static String DEFAULT_PROPERTY = "id";
+	
 	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
 	static {
 		PARAMETERS.put(PROPERTY, String.class);
 	}
 	
-	protected String property = null;
+	protected String property = DEFAULT_PROPERTY;
 	ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
 	
 	@Override

@@ -23,7 +23,7 @@ public class ColorProviderHolder {
 		OPTIONS.put("None", null);
 		OPTIONS.put("RGB", RGB.class);
 		OPTIONS.put("Score", Score.class);
-		OPTIONS.put("Strand", Strand.class);
+		//OPTIONS.put("Strand", Strand.class);
 		OPTIONS.put("Length", Length.class);
 		OPTIONS.put("Property", Property.class);
 	}

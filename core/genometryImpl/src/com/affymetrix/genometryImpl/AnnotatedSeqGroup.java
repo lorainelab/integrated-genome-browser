@@ -240,6 +240,7 @@ public class AnnotatedSeqGroup {
 		if(removed && getSeqCount() == 1){
 			BioSeq seq = getSeq(0);
 			if(seq.getID().equals("genome")){
+				id2seq.remove(seq.getID());
 				seqlist.remove(seq);
 			}
 		}

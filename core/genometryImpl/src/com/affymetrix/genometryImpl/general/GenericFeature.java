@@ -181,15 +181,21 @@ public final class GenericFeature {
 						|| friendlyURLString.toLowerCase().startsWith("ftp:")
 						|| friendlyURLString.toLowerCase().startsWith("file:"))) {
 			if(this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-				// For quickload, use serverObj for the available server path
-				// and the relative URL starts from server root directory
+
 				if(friendlyURLString.startsWith("./")) {
 					friendlyURLString = friendlyURLString.substring(2);
 				} else if(friendlyURLString.startsWith("/")) {
 					friendlyURLString = friendlyURLString.substring(1);
 				}
 				
+				/**
+				 * For Quickload the server path to be used is stored in serverObj, and it always
+				 * end with a '/' during server initialization
+				 * 
+				 * Concentrate that URL with server path to support relative friendly URL (documentation link in feature tree)
+				 */
 				return (String) this.gVersion.gServer.serverObj + friendlyURLString;
+				
 			} else {
 				return friendlyURLString;
 			}

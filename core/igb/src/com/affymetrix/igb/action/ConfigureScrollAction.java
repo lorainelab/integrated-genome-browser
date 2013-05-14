@@ -74,6 +74,12 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
 		AutoScrollConfigDialog autoScrollConfigDialog = new AutoScrollConfigDialog(null, seqMapView);
 		autoScrollConfigDialog.setVisible(true);
 	}
+	
+	/**
+	 * This dialog provides an interactive way for auto scroll configuration
+	 * e.g. Config dialog remains visible during auto scrolling for updating scroll parameter conveniently
+	 * Smart to start & stop: supports enter/return key and stop when parameters changes
+	 */
 
 	class AutoScrollConfigDialog extends JDialog {
 

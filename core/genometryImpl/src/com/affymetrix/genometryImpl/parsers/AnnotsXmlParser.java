@@ -49,6 +49,41 @@ public abstract class AnnotsXmlParser {
 		}
 	}
 	
+	/**
+	 * This method validates annots.xml for Quickload site using XML Schema - annots.xsd
+	 * 
+	 * - Document root is <files>, it contains <file> and <folder>
+	 * - <folder> contains another <folder> or <file>, with a required string attribute 'name'
+	 * - <file> contains:
+	 * 
+	 * ****************************************************************************************
+	 *      attribute name          data type      required       comments 
+	 * ****************************************************************************************
+	 *      name                    string         yes 
+	 *      title                   string         no
+	 *      url                     uri            no 
+	 *      description             string         no
+	 *      load_hing               string         no             W(w)hole S(s)equence
+	 *      show2tracks             string         no             Case Insensitive false & true 
+	 *      label_field             string         no
+	 *      foreground              string         no             Color value - 000000 to FFFFFF 
+	 *      background              string         no             Color value - 000000 to FFFFFF 
+	 *      positive_strand_color   string         no             Color value - 000000 to FFFFFF 
+	 *      negative_strand_color   string         no             Color value - 000000 to FFFFFF 
+	 *      name_size               integer        no
+	 *      direction_type          enum           no             color, arrow, none or both
+	 *      max_depth               integer        no
+	 *      connected               string         no             Case Insensitive false & true  
+	 *      view_mode               string         no
+	 *      serverURL               uri            no
+	 *      collapsed               string         no             Case Insensitive false & true 
+	 * 
+	 * @param istr
+	 * @return
+	 * @throws SAXException
+	 * @throws MalformedURLException
+	 * @throws IOException 
+	 */
 	private static boolean validateAnnotsXML(InputStream istr) throws SAXException, MalformedURLException, IOException {
 		SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 		URL schemaURL = AnnotsXmlParser.class.getClassLoader().getResource("annots.xsd");

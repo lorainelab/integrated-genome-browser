@@ -237,7 +237,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		}
 
 		GenericServer server = GeneralLoadUtils.addServer(serverList,
-				type, name, url, order, isDefault, null); //fwang4:qlmirror
+				type, name, url, order, isDefault, null); //qlmirror
 
 		if (server == null) {
 			ErrorHandler.errorPanel(

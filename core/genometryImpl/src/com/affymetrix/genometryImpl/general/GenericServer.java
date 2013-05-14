@@ -37,7 +37,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	/**
 	 * Mirror site url
 	 */
-	public String mirrorURL; //fwang4:qlmirror
+	public String mirrorURL; //qlmirror
 	/**
 	 * DAS, DAS2, QuickLoad, Unknown (local file)
 	 */
@@ -61,7 +61,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	/**
 	 * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	 */
-	public Object serverObj; //fwang4:qlmirror
+	public Object serverObj; //qlmirror
 	/**
 	 * friendly URL that users may look at.
 	 */
@@ -82,7 +82,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private final boolean isDefault;
 
 	public GenericServer(String serverName, String URL, ServerTypeI serverType,
-			boolean enabled, Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
+			boolean enabled, Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
 		this(
 				serverName,
 				URL,
@@ -95,7 +95,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public GenericServer(String serverName, String URL, ServerTypeI serverType, 
-			boolean enabled, Object serverObj, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
+			boolean enabled, Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
 		this(
 				serverName,
 				URL,
@@ -108,7 +108,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public GenericServer(Preferences node, Object serverObj,
-			ServerTypeI serverType, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
+			ServerTypeI serverType, boolean isDefault, String mirrorURL) { //qlmirror
 		this(
 				node.get(GenericServerPref.NAME, "Unknown"),
 				GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")),
@@ -134,10 +134,10 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private GenericServer(
 			String serverName, String URL, ServerTypeI serverType,
 			boolean enabled, boolean referenceOnly, Preferences node,
-			Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
+			Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
 		this.serverName = serverName;
 		this.URL = URL;
-		this.mirrorURL = mirrorURL; //fwang4:qlmirror
+		this.mirrorURL = mirrorURL; //qlmirror
 		this.serverType = serverType;
 		this.enabled = enabled;
 		this.node = node;

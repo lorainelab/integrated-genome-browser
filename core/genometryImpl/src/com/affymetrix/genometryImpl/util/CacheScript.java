@@ -167,7 +167,7 @@ public class CacheScript extends Thread {
 					String server_name = el.getAttribute("name").replaceAll("\\W", "");
 					String server_url = el.getAttribute("url");
 
-					// fwang4:qlmirror - Quickload Mirror Server
+					// qlmirror - Quickload Mirror Server
 					String mirror_url = el.getAttribute("mirror");
 					
 					String en = el.getAttribute("enabled");

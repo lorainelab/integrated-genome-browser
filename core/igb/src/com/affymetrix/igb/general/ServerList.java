@@ -43,8 +43,8 @@ public final class ServerList {
 
 	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
-	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false, null); //fwang4:qlmirror
-	private final GenericServer igbFilesServer = new GenericServer("IGB Tracks", "", ServerTypeI.LocalFiles, true, null, false, null); //fwang4:qlmirror
+	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
+	private final GenericServer igbFilesServer = new GenericServer("IGB Tracks", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
 	private static ServerList serverInstance = new ServerList("server");
 	private static ServerList repositoryInstance = new ServerList("repository");
 	private final String textName;
@@ -151,7 +151,7 @@ public final class ServerList {
 	}
 
 	public GenericServer addServer(ServerTypeI serverType, String name, String url,
-			boolean enabled, boolean primary, int order, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
+			boolean enabled, boolean primary, int order, boolean isDefault, String mirrorURL) { //qlmirror
 		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
 		Object info;
@@ -199,7 +199,7 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public GenericServer addServer(ServerTypeI serverType, String name,
-			String url, boolean enabled, int order, boolean isDefault, String mirrorURL) { //fwang4:qlmirror
+			String url, boolean enabled, int order, boolean isDefault, String mirrorURL) { //qlmirror
 		return addServer(serverType, name, url, enabled, false, order, isDefault, mirrorURL);
 	}
 
@@ -221,7 +221,7 @@ public final class ServerList {
 			isDefault = Boolean.valueOf(node.get(GenericServerPref.DEFAULT, "true"));
 
 			if (info != null) {
-				server = new GenericServer(node, info, serverType, isDefault, null); //fwang4:qlmirror
+				server = new GenericServer(node, info, serverType, isDefault, null); //qlmirror
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -413,7 +413,7 @@ public final class ServerList {
 		}
 		return new GenericServer(node, null,
 				getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())),
-				node.getBoolean(GenericServerPref.DEFAULT, true), null); //fwang4:qlmirror
+				node.getBoolean(GenericServerPref.DEFAULT, true), null); //qlmirror
 	}
 
 	/**
@@ -433,7 +433,7 @@ public final class ServerList {
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
 		node.putBoolean(GenericServerPref.DEFAULT, isDefault);
 
-		return new GenericServer(node, null, null, false, null); //fwang4:qlmirror
+		return new GenericServer(node, null, null, false, null); //qlmirror
 	}
 
 	/**

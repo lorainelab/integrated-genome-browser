@@ -730,7 +730,18 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 							// check whether the selected feature url is reachable or not
 							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad && !isURLReachable(feature.getURI())) {
 								
-								// fwang4:qlmirror - Quickload Mirror Server
+								/**
+								 * qlmirror - Quickload Mirror Server
+								 * 
+								 * All related changes can be searched by 'qlmirror'
+								 * 
+								 * The following code will try to use mirror server when user is selecting a feature
+								 * from feature tree but server is not available
+								 * 
+								 * Mirror server address is specified in igb_defaults_prefs.xml by 'mirror' attribute
+								 * 
+								 */
+								
 								GenericServer gServer = feature.gVersion.gServer;
 								if (gServer.mirrorURL != null && IGB.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
 									gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
@@ -743,7 +754,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 									}
 									tn.setChecked(true);
 								} else {
-								///fwang4:qlmirror
+								//qlmirror
 									
 									message = "The feature " + feature.getURI() + " is not reachable.";
 									ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);

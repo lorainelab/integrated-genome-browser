@@ -221,16 +221,26 @@ public final class GeneralLoadUtils {
 				
 				if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
 					
-					// Try to use mirror site
+					/**
+					 * qlmirror - Quickload Mirror Server
+					 *
+					 * All related changes can be searched by 'qlmirror'
+					 *
+					 * The following code will try to use mirror server when
+					 * server is being discovered e.g. IGB startup
+					 *
+					 * Mirror server address is specified in igb_defaults_prefs.xml by 'mirror' attribute
+					 *
+					 */
 					if(gServer.mirrorURL != null && gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is not reachable.\nDo you want to use mirror site?")) {
 //
 						// Change serverObj for Quickload to apply mirror site
 						// Currently only Quickload has mirror
 						if (gServer.serverType == ServerTypeI.QuickLoad) {
-							Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Using mirror site: {0}", gServer.mirrorURL);
-							gServer.serverObj = gServer.mirrorURL;
+						Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Using mirror site: {0}", gServer.mirrorURL);
+						gServer.serverObj = gServer.mirrorURL;
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
-							discoverServer(gServer);
+						discoverServer(gServer);
 						} else {
 							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 							gServer.setEnabled(false);

@@ -209,7 +209,7 @@ public interface IGBService {
 	public void deselect(GlyphI tierGlyph);
 	public void setHome();
 	public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order);
-	public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order, String mirrorURL); //fwang4:qlmirror
+	public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order, String mirrorURL); //qlmirror
 	public void removeServer(GenericServer gServer);
 	public Component determineSlicedComponent();
 	public void setComponent(Component c);

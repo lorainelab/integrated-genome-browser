@@ -23,6 +23,7 @@ public class TriangleThumbRenderer extends JComponent implements ThumbRenderer {
 	private static final Color SELECTED_COLOR = Color.red;
 	private static final Color DEFAULT_COLOR = Color.DARK_GRAY;
 	
+	@Override
 	protected void paintComponent(Graphics g) {
 		/*
 		 * Enable anti-aliasing

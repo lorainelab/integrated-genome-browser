@@ -43,6 +43,29 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	protected static final String BELOW_VALUE_CHANGED = "BELOW_VALUE_CHANGED";
 	protected static final String ABOVE_VALUE_CHANGED = "ABOVE_VALUE_CHANGED";
 	
+	// Variables declaration - do not modify
+	protected javax.swing.JButton addButton;
+	protected javax.swing.JButton colorButton;
+	protected javax.swing.JButton deleteButton;
+	protected javax.swing.JButton okButton;
+	protected javax.swing.JButton cancelButton;
+	protected javax.swing.JPanel iconPanel;
+	private javax.swing.JPanel rangeSettingPanel;
+	protected JXMultiThumbSlider slider;
+	protected JSpinner valueSpinner;
+	private JLabel valueLabel;
+	private JLabel propertyLabel;
+	protected JSpinner propertySpinner = null;
+	protected JComponent propertyComponent;
+	protected JXMultiThumbSlider rotaryEncoder;
+	protected JButton minMaxButton;
+
+	/*
+	 * For Gradient panel only.
+	 */
+	protected BelowAndAbovePanel abovePanel;
+	protected BelowAndAbovePanel belowPanel;
+	
 	protected float lastSpinnerNumber = 0;
 	private Object value = JOptionPane.UNINITIALIZED_VALUE;
 	
@@ -56,7 +79,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		initComponents();
 
 		initRangeValues();
-		setSpinners();
+		setSpinner();
 		// this.addWindowListener(new WindowAdapter() {
 		// public void windowOpened(WindowEvent e) {
 		// firePropertyChange(EDITOR_WINDOW_OPENED, null, type);
@@ -68,30 +91,11 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		// });
 	}
 	
-	protected void setSpinners() {
-		final Class dataType = null;
-		setSpinner();
-		if (dataType == Color.class) {
-		} else if (dataType == Number.class) {
-			setPropertySpinner();
-		} else {
-		}
-	}
-
 	protected void setSpinner() {
 		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0.0d,
 				Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 0.01d);
 		spinnerModel.addChangeListener(new SpinnerChangeListener(spinnerModel));
 		valueSpinner.setModel(spinnerModel);
-	}
-
-	protected void setPropertySpinner() {
-		SpinnerNumberModel propertySpinnerModel = new SpinnerNumberModel(0.0d,
-				Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 0.01d);
-		propertySpinnerModel
-				.addChangeListener(new PropertySpinnerChangeListener(
-						propertySpinnerModel));
-		propertySpinner.setModel(propertySpinnerModel);
 	}
 
 	/**
@@ -454,8 +458,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	@SuppressWarnings("unchecked")
 	private void setColor(final Color newColor) {
 		final int selectedIndex = slider.getSelectedIndex();
-		int selected = getSelectedPoint(selectedIndex);
-		
 		slider.getModel().getThumbAt(selectedIndex).setObject(newColor);
 		setButtonColor(newColor);
 		slider.repaint();
@@ -470,29 +472,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		this.belowPanel.setColor(below);
 		repaint();
 	}
-
-	// Variables declaration - do not modify
-	protected javax.swing.JButton addButton;
-	protected javax.swing.JButton colorButton;
-	protected javax.swing.JButton deleteButton;
-	protected javax.swing.JButton okButton;
-	protected javax.swing.JButton cancelButton;
-	protected javax.swing.JPanel iconPanel;
-	private javax.swing.JPanel rangeSettingPanel;
-	protected JXMultiThumbSlider slider;
-	protected JSpinner valueSpinner;
-	private JLabel valueLabel;
-	private JLabel propertyLabel;
-	protected JSpinner propertySpinner = null;
-	protected JComponent propertyComponent;
-	protected JXMultiThumbSlider rotaryEncoder;
-	protected JButton minMaxButton;
-
-	/*
-	 * For Gradient panel only.
-	 */
-	protected BelowAndAbovePanel abovePanel;
-	protected BelowAndAbovePanel belowPanel;
 
 	@SuppressWarnings("unchecked")
 	protected int getSelectedPoint(int selectedIndex) {
@@ -625,26 +604,4 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		}
 	}
 
-	class PropertySpinnerChangeListener implements ChangeListener {
-		SpinnerNumberModel spinnerModel;
-
-		public PropertySpinnerChangeListener(SpinnerNumberModel model) {
-			this.spinnerModel = model;
-		}
-
-		public void stateChanged(ChangeEvent e) {
-			final Float newVal = new Float(spinnerModel.getNumber()
-					.doubleValue());
-			// final int selectedIndex =
-			// ((TriangleThumbRenderer)slider.getThumbRenderer()).getSelectedIndex();
-			// ContinuousTrackRenderer trackRenderer =
-			// (ContinuousTrackRenderer)slider.getTrackRenderer();
-			// trackRenderer.setSelectedIndex(selectedIndex);
-			//
-			// trackRenderer.setSelectedValue(newVal);
-
-			slider.repaint();
-			repaint();
-		}
-	}
 }

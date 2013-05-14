@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
@@ -18,7 +17,7 @@ public class Strand extends ColorProvider {
 	private final static Color DEFAULT_REVERSE_COLOR = new Color(51, 255, 255);		
 	private static GenometryModel model = GenometryModel.getGenometryModel();
 	
-	private static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
+	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
 	static {
 		PARAMETERS.put(FORWARD_COLOR, Color.class);
 		PARAMETERS.put(REVERSE_COLOR, Color.class);

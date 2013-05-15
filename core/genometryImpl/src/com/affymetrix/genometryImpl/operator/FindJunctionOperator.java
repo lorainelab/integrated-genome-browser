@@ -154,7 +154,7 @@ public class FindJunctionOperator implements Operator{
             for(Integer i : childIntronIndices){
                 intronChild = intronSym.getChild(i);
                 if(intronChild != null){
-					SeqSpan span = intronSym.getSpan(bioseq);
+					SeqSpan span = intronChild.getSpan(bioseq);
                     addToMap(span, map, bioseq, threshold, twoTracks);
 				}
             }

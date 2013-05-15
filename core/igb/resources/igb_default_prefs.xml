@@ -4,9 +4,8 @@
 
 <!-- servers enabled by default -->
 <!-- server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" order="0" / -->
-<server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="0" default="true" mirror="http://bioviz.org/quickload/"/>
-<server type="quickload" name="IGB Pollen" url="http://www.igbquickload.org/pollen" order="1" default="true"/>
-<server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="2" default="true"/>
+<server type="quickload" name="Bioviz Quickload" url="http://bioviz.org/quickload/" order="0" default="true" mirror="http://bioviz.org/quickload/"/>
+<server type="quickload" name="Bioviz Pollen" url="http://bioviz.org/pollen" order="1" default="true"/>
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="3" default="true"/>
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="4" default="true"/>
 <server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="5" enabled="false" default="true"/>

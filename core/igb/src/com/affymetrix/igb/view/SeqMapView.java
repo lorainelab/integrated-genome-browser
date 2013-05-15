@@ -314,6 +314,32 @@ public class SeqMapView extends JPanel
 		}
 	};
 	
+	AWTEventListener modeController = new AWTEventListener(){
+		public void eventDispatched(AWTEvent event) {
+			if (seqmap.isShowing()) {
+				Rectangle rect = new Rectangle();
+				rect.setBounds(seqmap.getLocationOnScreen().x, seqmap.getLocationOnScreen().y,
+						seqmap.getBounds().width, seqmap.getBounds().height);
+				if (rect.contains(MouseInfo.getPointerInfo().getLocation())) {
+					toggleMode((KeyEvent) event);
+				}
+			}
+		}
+		
+		private void toggleMode(KeyEvent event){
+			MapMode currMode = getMapMode();
+			if (event.getKeyCode() == KeyEvent.VK_ALT && 
+					(event.getID() == KeyEvent.KEY_PRESSED ||
+					 event.getID() == KeyEvent.KEY_RELEASED)) {
+				if(currMode == MapMode.MapSelectMode){
+					scroll_mode_button.doClick();
+				}else {
+					select_mode_button.doClick();
+				}
+			}
+		}
+	};
+	
 	public SeqMapView(boolean add_popups, String theId) {
 		super();
 		this.id = theId;
@@ -486,7 +512,7 @@ public class SeqMapView extends JPanel
 		PreferenceUtils.getTopNode().put(PREF_TRACK_RESIZING_BEHAVIOR, behavior);
 		
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
-		
+		Toolkit.getDefaultToolkit().addAWTEventListener(modeController, AWTEvent.KEY_EVENT_MASK);
 	}
 	
 	protected void addZoomInXButton(String id) {

@@ -9,7 +9,6 @@ import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.IGBConstants;
@@ -150,100 +149,113 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	}
 
 //	private void sort() {
-//		List<VirtualFeature> tempVirtualFeatures = new ArrayList<VirtualFeature>();
-//		tempVirtualFeatures.addAll(virtualFeatures);
-//		virtualFeatures.clear();
-//		
-//		List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
-//		int size = orderedGlyphs.size();
-//		
-//		VirtualFeature vf;
-//		for(int i=0; i<size; i++){
-//			TierGlyph tg = orderedGlyphs.get(i).getReferenceTier();
-//			ITrackStyleExtended style = tg.getAnnotStyle();
-//			//Only consider positive track.
-//			if(style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE){
-//				continue;
-//			}
-//			
-//			// Fix for joined graphs disappears from DMT when click on joined track label or remove feature
-//			if (style.isGraphTier() && tg.getChildCount() > 0) {
-//				for (int j = 0; j < tg.getChildCount(); j++) {
-//					GlyphI g = tg.getChild(j);
-//					if(!(g instanceof GraphGlyph)) continue;
-//					vf = style2Feature.get(((GraphGlyph) g).getAnnotStyle());
-//					if (vf != null && !virtualFeatures.contains(vf)) {
-//						virtualFeatures.add(vf);
-//						tempVirtualFeatures.remove(vf);
-//					}
-//				}
-//				continue;
-//			}
-//			
-//			vf = style2Feature.get(style);
-//			if(vf != null && !virtualFeatures.contains(vf)){
-//				virtualFeatures.add(vf);
-//				tempVirtualFeatures.remove(vf);
-//			}
-//		}
-//				
-//		// Fix for link.psl files
-//		List<TierLabelGlyph> tierGlyphs = map.getTierLabels();
-//		size = tierGlyphs.size();
-//		for(int i=0; i<size; i++){
-//			TierGlyph tg = tierGlyphs.get(i).getReferenceTier();
-//			// If tier is invisible and it has no children then do not add it.
-//			if(!tg.isVisible() && tg.getChildCount() == 0){
-//				continue;
-//			}
-//			
-//			ITrackStyleExtended style = tg.getAnnotStyle();
-//			//Only consider positive track.
-//			if(style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE){
-//				continue;
-//			}
-//			
-//			vf = style2Feature.get(style);
-//			if(vf != null && !virtualFeatures.contains(vf)){
-//				virtualFeatures.add(vf);
-//				tempVirtualFeatures.remove(vf);
-//			}
-//		}
-//		
-//		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
-//			//virtualFeatures.add(tempVirtualFeature);
-//			if(tempVirtualFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME) || 
-//					tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND) || 
-//					tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS )){
-//				virtualFeatures.add(tempVirtualFeature);
-//			}
-//		}
-//		
-//		//Temporary fix to show joined graph features when sequence is changed.
-//		for(VirtualFeature tempVirtualFeature : tempVirtualFeatures){
-//			vf = style2Feature.get(tempVirtualFeature.getStyle());
-//			if(vf != null && vf.getStyle().getJoin() && !virtualFeatures.contains(vf)){
-//				virtualFeatures.add(vf);
-//			}
-//		}
-//		
-//		List<GraphGlyph> floatingGraphGlyphs = smv.getFloatingGraphGlyphs();
-//		size = floatingGraphGlyphs.size();
-//		for(int i=0; i<size; i++){
-//			ITrackStyleExtended style = floatingGraphGlyphs.get(i).getAnnotStyle();
-//
-//			vf = style2Feature.get(style);
-//			if(vf != null && !virtualFeatures.contains(vf)){
-//				virtualFeatures.add(vf);
-//				tempVirtualFeatures.remove(vf);
-//			}
-//		}
-//		
-//		tempVirtualFeatures.clear();
-//		
+//		Collections.sort(virtualFeatures, new FeatureTierComparator());
 //		fireTableDataChanged();
 //	}
-
+//
+//	private class FeatureTierComparator implements Comparator<VirtualFeature> {
+//		Map<VirtualFeature,Integer> vfToPos;
+//		
+//		FeatureTierComparator() {
+//			vfToPos = new HashMap<VirtualFeature,Integer>();
+//			
+//			int pos = 0;
+//			List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
+//			int size = orderedGlyphs.size();
+//
+//			VirtualFeature vf;
+//			for (int i = 0; i < size; i++) {
+//				TierGlyph tg = orderedGlyphs.get(i).getReferenceTier();
+//				ITrackStyleExtended style = tg.getAnnotStyle();
+//				//Only consider positive track.
+//				if (style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE) {
+//					continue;
+//				}
+//
+//				// Fix for joined graphs disappears from DMT when click on joined track label or remove feature
+//				if (style.isGraphTier() && tg.getChildCount() > 1) {
+//					for (int j = 0; j < tg.getChildCount(); j++) {
+//						GlyphI g = tg.getChild(j);
+//						if (!(g instanceof GraphGlyph)) {
+//							continue;
+//						}
+//						vf = style2Feature.get(((GraphGlyph) g).getAnnotStyle());
+//						if (vf != null && !vfToPos.containsKey(vf)) {
+//							vfToPos.put(vf, pos++);
+//						}
+//					}
+//					continue;
+//				}
+//
+//				vf = style2Feature.get(style);
+//				if (vf != null && !vfToPos.containsKey(vf)) {
+//					vfToPos.put(vf, pos++);
+//				}
+//			}
+//
+//			// Fix for link.psl files
+//			List<TierLabelGlyph> tierGlyphs = map.getTierLabels();
+//			size = tierGlyphs.size();
+//			for (int i = 0; i < size; i++) {
+//				TierGlyph tg = tierGlyphs.get(i).getReferenceTier();
+//				// If tier is invisible and it has no children then do not add it.
+//				if (!tg.isVisible() && tg.getChildCount() == 0) {
+//					continue;
+//				}
+//
+//				ITrackStyleExtended style = tg.getAnnotStyle();
+//				//Only consider positive track.
+//				if (style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE) {
+//					continue;
+//				}
+//
+//				vf = style2Feature.get(style);
+//				if (vf != null && !vfToPos.containsKey(vf)) {
+//					vfToPos.put(vf, pos++);
+//				}
+//			}
+//
+//			for (VirtualFeature tempVirtualFeature : virtualFeatures) {
+//				//virtualFeatures.add(tempVirtualFeature);
+//				if (tempVirtualFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)
+//						|| tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND)
+//						|| tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
+//					vfToPos.put(tempVirtualFeature, pos++);
+//					continue;
+//				}
+//			
+//				//Temporary fix to show joined graph features when sequence is changed.
+//				vf = style2Feature.get(tempVirtualFeature.getStyle());
+//				if (vf != null && vf.getStyle().getJoin() && !vfToPos.containsKey(vf)) {
+//					vfToPos.put(vf, pos++);
+//				}
+//			}
+//
+//
+//			for (VirtualFeature tempVirtualFeature : virtualFeatures) {
+//				if (!vfToPos.containsKey(tempVirtualFeature)) {
+//					vfToPos.put(tempVirtualFeature, pos++);
+//				}
+//			}
+//			
+//			List<GraphGlyph> floatingGraphGlyphs = smv.getFloatingGraphGlyphs();
+//			size = floatingGraphGlyphs.size();
+//			for (int i = 0; i < size; i++) {
+//				ITrackStyleExtended style = floatingGraphGlyphs.get(i).getAnnotStyle();
+//				vf = style2Feature.get(style);
+//				if (vf != null && !vfToPos.containsKey(vf)) {
+//					vfToPos.put(vf, pos++);
+//				}
+//			}
+//		}
+//		
+//		@Override
+//		public int compare(VirtualFeature o1, VirtualFeature o2) {
+//			return vfToPos.get(o1).compareTo(vfToPos.get(o2));
+//		}
+//		
+//	}
+	
 	private final static class featureTableComparator implements Comparator<GenericFeature> {
 
 		public int compare(GenericFeature feature1, GenericFeature feature2) {

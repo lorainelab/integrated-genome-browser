@@ -2,6 +2,7 @@ package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -36,26 +37,18 @@ public class BelowAndAbovePanel extends JPanel {
 	 * @param below
 	 *            DOCUMENT ME!
 	 */
-	public BelowAndAbovePanel(Color color, boolean below) {
+	public BelowAndAbovePanel(Color color, boolean below, Component parent) {
 		this.boxColor = color;
 		this.below = below;
 
-		if (below)
+		if (below) {
 			this.setToolTipText("Double-click triangle to set below color...");
-		else
+		}
+		else {
 			this.setToolTipText("Double-click triangle to set above color...");
+		}
 
-		this.addMouseListener(new MouseEventHandler(this));
-	}
-
-	/**
-	 * Creates a new BelowAndAbovePanel object.
-	 * 
-	 * @param below
-	 *            DOCUMENT ME!
-	 */
-	public BelowAndAbovePanel(boolean below) {
-		this(Color.DARK_GRAY, below);
+		this.addMouseListener(new MouseEventHandler(parent));
 	}
 
 	/**
@@ -107,12 +100,13 @@ public class BelowAndAbovePanel extends JPanel {
 	}
 
 	class MouseEventHandler extends MouseAdapter {
-		private BelowAndAbovePanel caller;
+		private Component caller;
 
-		public MouseEventHandler(BelowAndAbovePanel c) {
+		public MouseEventHandler(Component c) {
 			this.caller = c;
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 
@@ -123,9 +117,9 @@ public class BelowAndAbovePanel extends JPanel {
 					return;
 				}
 
-				caller.setColor((Color) newValue);
-				caller.repaint();
-				caller.getParent().repaint();
+				BelowAndAbovePanel.this.setColor((Color) newValue);
+				BelowAndAbovePanel.this.repaint();
+				BelowAndAbovePanel.this.getParent().repaint();
 			}
 		}
 	}

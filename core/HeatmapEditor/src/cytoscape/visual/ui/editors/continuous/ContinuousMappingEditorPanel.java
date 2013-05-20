@@ -111,9 +111,9 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	private void initComponents() {
 		JPanel mainPanel = new JPanel();
 
-		abovePanel = new BelowAndAbovePanel(Color.yellow, false);
+		abovePanel = new BelowAndAbovePanel(MultiColorThumbModel.DEFAULT_ABOVE_COLOR, false, this);
 		abovePanel.setName("abovePanel");
-		belowPanel = new BelowAndAbovePanel(Color.white, true);
+		belowPanel = new BelowAndAbovePanel(MultiColorThumbModel.DEFAULT_BELOW_COLOR, true, this);
 		belowPanel.setName("belowPanel");
 
 		abovePanel.setPreferredSize(new Dimension(16, 1));

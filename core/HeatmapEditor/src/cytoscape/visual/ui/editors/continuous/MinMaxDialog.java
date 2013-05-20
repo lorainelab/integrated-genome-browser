@@ -3,9 +3,7 @@ package cytoscape.visual.ui.editors.continuous;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-
 import javax.swing.JButton;
-
 
 /**
  *
@@ -24,6 +22,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		super(parent, modal);
 		this.min = min;
 		this.max = max;
+		this.defaultMin = min;
+		this.defaultMax = max;
 		this.attrName = attrName;
 		initComponents();
 		
@@ -31,8 +31,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		this.maxTextField.setText(max.toString());
 	}
 
-	private Float min;
-	private Float max;
+	private Float min, defaultMin;
+	private Float max, defaultMax;
 	
 	private String attrName;
 
@@ -220,12 +220,8 @@ public class MinMaxDialog extends javax.swing.JDialog {
 	}
 	
 	private void restoreButtonActionPerformed(ActionEvent evt) {
-		Float maxValue = Float.NEGATIVE_INFINITY;
-		Float minValue = Float.POSITIVE_INFINITY;
-
-
-		minTextField.setText(minValue.toString());
-		maxTextField.setText(maxValue.toString());
+		minTextField.setText(defaultMin.toString());
+		maxTextField.setText(defaultMax.toString());
 	}
 	
 	

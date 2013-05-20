@@ -38,12 +38,7 @@ public class Score extends ColorProvider {
 		}
 		return null;
 	}
-	
-	@Override
-	public void update(){
 		
-	}
-	
 	private float getMinScoreColor() {
 		return min_score_color;
 	}

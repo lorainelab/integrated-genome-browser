@@ -16,11 +16,7 @@ public abstract class ColorProvider {
 	 * @return 
 	 */
 	public abstract Color getColor(SeqSymmetry sym);
-	
-	public void update() {
-		//Do Nothing
-	}
-	
+		
 	public Map<String, Class<?>> getParameters(){
 		return null;
 	}

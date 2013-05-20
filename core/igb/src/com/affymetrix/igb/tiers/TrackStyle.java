@@ -1,7 +1,5 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.color.ColorProvider;
-import com.affymetrix.genometryImpl.color.RGB;
 import java.awt.Color;
 import java.io.File;
 import java.util.*;
@@ -9,8 +7,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -573,11 +572,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	@Override
 	public void setForeground(Color c) {
-		if (c != this.foreground) {
-			if(color_provider != null){
-				color_provider.update();
-			}
-		}
 		this.foreground = c;
 		save(PREF_FOREGROUND, c);
 	}
@@ -592,11 +586,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	@Override
 	public void setBackground(Color c) {
-		if (c != this.background) {
-			if(color_provider != null){
-				color_provider.update();
-			}
-		}
 		this.background = c;
 		save(PREF_BACKGROUND, c);
 	}

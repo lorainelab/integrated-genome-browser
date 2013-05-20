@@ -17,46 +17,50 @@ public class Strand extends ColorProvider {
 	private final static Color DEFAULT_REVERSE_COLOR = new Color(51, 255, 255);		
 	private static GenometryModel model = GenometryModel.getGenometryModel();
 	
-	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
+	private final static Map<String, Class<?>> PARAMETERS_TYPE;
 	static {
-		PARAMETERS.put(FORWARD_COLOR, Color.class);
-		PARAMETERS.put(REVERSE_COLOR, Color.class);
+		PARAMETERS_TYPE = new HashMap<String, Class<?>>();
+		PARAMETERS_TYPE.put(FORWARD_COLOR, Color.class);
+		PARAMETERS_TYPE.put(REVERSE_COLOR, Color.class);
 	}
 	
-	private Color forwardColor = DEFAULT_FORWARD_COLOR;
-	private Color reverseColor = DEFAULT_REVERSE_COLOR;
+	private Map<String, Parameter> PARAMETERS_VALUE;
+	public Strand(){
+		PARAMETERS_VALUE = new HashMap<String, Parameter>();
+		PARAMETERS_VALUE.put(FORWARD_COLOR, new Parameter(DEFAULT_FORWARD_COLOR));
+		PARAMETERS_VALUE.put(REVERSE_COLOR, new Parameter(DEFAULT_REVERSE_COLOR));
+	}
 		
 	@Override
 	public Color getColor(SeqSymmetry sym) {
 		if(sym.getSpan(model.getSelectedSeq()).isForward()){
-			return forwardColor;
+			return (Color)PARAMETERS_VALUE.get(FORWARD_COLOR).get();
 		}
-		return reverseColor;
+		return (Color)PARAMETERS_VALUE.get(REVERSE_COLOR).get();
 	}
 
 	@Override
 	public Map<String, Class<?>> getParameters(){
-		return PARAMETERS;
+		return PARAMETERS_TYPE;
 	}
 
 	@Override
 	public boolean setParameter(String key, Object value) {
-		if (FORWARD_COLOR.equals(key) && value instanceof Color) {
-			forwardColor = (Color) value;
-			return true;
-		} else if (REVERSE_COLOR.equals(key) && value instanceof Color) {
-			reverseColor = (Color) value;
-			return true;
+		for(Map.Entry<String, Parameter> parameter : PARAMETERS_VALUE.entrySet()){
+			if(parameter.getKey().equals(key)){
+				parameter.getValue().set(value);
+				return true;
+			}
 		}
 		return false;
 	}
 	
 	@Override
 	public Object getParameterValue(String key) {
-		if (FORWARD_COLOR.equals(key)) {
-			return forwardColor;
-		} else if (REVERSE_COLOR.equals(key)) {
-			return reverseColor;
+		for(Map.Entry<String, Parameter> parameter : PARAMETERS_VALUE.entrySet()){
+			if(parameter.getKey().equals(key)){
+				return parameter.getValue().get();
+			}
 		}
 		return null;
 	}

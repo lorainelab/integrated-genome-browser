@@ -78,7 +78,8 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	public ContinuousMappingEditorPanel(Window window) {
 		super(window);
 		initComponents();
-
+		setModel();
+		
 		initRangeValues();
 		setSpinner();
 		// this.addWindowListener(new WindowAdapter() {
@@ -100,6 +101,11 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		valueSpinner.setModel(spinnerModel);
 	}
 
+	@SuppressWarnings("unchecked")
+	private void setModel(){
+		slider.setModel(new MultiColorThumbModel());
+	}
+	
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -107,7 +113,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 	 */
 
 	// <editor-fold defaultstate="collapsed" desc=" Generated Code ">
-	@SuppressWarnings("unchecked")
 	private void initComponents() {
 		JPanel mainPanel = new JPanel();
 
@@ -130,7 +135,6 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		cancelButton = new javax.swing.JButton();
 
 		slider = new JXMultiThumbSlider<Color>();
-		slider.setModel(new MultiColorThumbModel());
 		iconPanel = new YValueLegendPanel();
 
 		valueSpinner = new JSpinner();

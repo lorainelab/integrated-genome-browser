@@ -34,22 +34,6 @@ public class Strand extends ColorProvider {
 		return reverseColor;
 	}
 
-	public void setForwardColor(Color color){
-		forwardColor = color;
-	}
-	
-	public Color getForwardColor(){
-		return forwardColor;
-	}
-	
-	public void setReverseColor(Color color){
-		reverseColor = color;
-	}
-	
-	public Color getReverseColor(){
-		return reverseColor;
-	}
-		
 	@Override
 	public Map<String, Class<?>> getParameters(){
 		return PARAMETERS;

@@ -64,8 +64,8 @@ public class TrackUtils {
 		style.setGraphTier(sym instanceof GraphSym);
 		style.setExpandable(sym instanceof GraphSym);
 		style.setLabelField(null);
-		if(style instanceof TrackStyle && operator instanceof Operator.Style){
-			((TrackStyle)style).setProperties(((Operator.Style)operator).getStyleProperties());
+		if(operator instanceof Operator.Style){
+			style.setProperties(((Operator.Style)operator).getStyleProperties());
 		}
 		
 		return style;

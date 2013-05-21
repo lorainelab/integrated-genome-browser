@@ -9,6 +9,11 @@ import java.util.Map;
  * @author hiralv
  */
 public abstract class ColorProvider implements IParameters {
+	protected Parameters parameters;
+	
+	protected ColorProvider(){
+		parameters = new Parameters();
+	}
 	
 	/**
 	 * Get color for the given object
@@ -19,24 +24,22 @@ public abstract class ColorProvider implements IParameters {
 	
 	@Override
 	public Map<String, Class<?>> getParametersType(){
-		return null;
+		return parameters.getParametersType();
 	}
 
 	@Override
 	public final void setParametersValue(Map<String, Object> params){
-		for(Map.Entry<String, Object> param : params.entrySet()){
-			setParameterValue(param.getKey(), param.getValue());
-		}
+		parameters.setParametersValue(params);
 	}
 	
 	@Override
 	public boolean setParameterValue(String key, Object value) {
-		return false;
+		return parameters.setParameterValue(key, value);
 	}
 
 	@Override
 	public Object getParameterValue(String key) {
-		return null;
+		return parameters.getParameterValue(key);
 	}
 	
 }

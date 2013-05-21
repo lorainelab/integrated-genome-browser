@@ -18,15 +18,26 @@ public class Score extends ColorProvider {
 	public final static float DEFAULT_MIN_SCORE = 1.0f;
 	public final static float DEFAULT_MAX_SCORE = 1000.0f;
 	public final static HeatMap DEFAULT_HEATMAP = HeatMap.StandardHeatMap.BLACK_WHITE.getHeatMap();
-	
-	private final static Map<String, Class<?>> PARAMETERS = new LinkedHashMap<String, Class<?>>();
-	static {
-		PARAMETERS.put(HEATMAP, HeatMapExtended.class);
-	}
-	
+		
 	private float min_score_color  = DEFAULT_MIN_SCORE;
 	private float max_score_color  = DEFAULT_MAX_SCORE;
-	private HeatMap custom_heatmap = DEFAULT_HEATMAP;
+	private float range			   = max_score_color - min_score_color;
+	
+	private Parameter<HeatMap> custom_heatmap = new Parameter<HeatMap>(DEFAULT_HEATMAP){
+		@Override
+		public void set(Object e){
+			super.set(e);
+			HeatMapExtended heatmap = (HeatMapExtended)e;
+			min_score_color = heatmap.getValues()[0];
+			max_score_color = heatmap.getValues()[heatmap.getValues().length - 1];
+			range = max_score_color - min_score_color;
+		}
+	};
+	
+	public Score(){
+		super();
+		parameters.addParameter(HEATMAP, HeatMapExtended.class, custom_heatmap);
+	}
 	
 	@Override
 	public Color getColor(SeqSymmetry sym){
@@ -38,53 +49,16 @@ public class Score extends ColorProvider {
 		}
 		return null;
 	}
-		
-	private float getMinScoreColor() {
-		return min_score_color;
-	}
 
-	private float getMaxScoreColor() {
-		return max_score_color;
-	}
-	
 	private Color getScoreColor(float score) {
-		final float min = getMinScoreColor();
-		final float max = getMaxScoreColor();
-
-		if (score < min) {
-			score = min;
-		} else if (score >= max) {
-			score = max;
+		if (score < min_score_color) {
+			score = min_score_color;
+		} else if (score >= max_score_color) {
+			score = max_score_color;
 		}
 
-		final float range = max - min;
-		int index = (int) (((score - min) / range) * 255);
+		int index = (int) (((score - min_score_color) / range) * 255);
 
-		return custom_heatmap.getColors()[index];
-	}
-	
-	@Override
-	public Map<String, Class<?>> getParametersType(){
-		return PARAMETERS;
-	}
-
-	@Override
-	public boolean setParameterValue(String key, Object value){
-		if (HEATMAP.equals(key) && value instanceof HeatMapExtended){
-			HeatMapExtended heatmap = (HeatMapExtended)value;
-			custom_heatmap = heatmap;
-			min_score_color = heatmap.getValues()[0];
-			max_score_color = heatmap.getValues()[heatmap.getValues().length - 1];
-			return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public Object getParameterValue(String key) {
-		if (HEATMAP.equals(key)) {
-			return custom_heatmap;
-		}
-		return null;
+		return custom_heatmap.get().getColors()[index];
 	}
 }

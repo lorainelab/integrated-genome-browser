@@ -13,7 +13,7 @@ import java.awt.Color;
  */
 public class Length extends ColorProvider {
 	private static GenometryModel model = GenometryModel.getGenometryModel();
-	ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
+	private ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
 	
 	@Override
 	public Color getColor(SeqSymmetry sym){

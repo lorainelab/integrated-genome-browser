@@ -1,10 +1,9 @@
 package com.affymetrix.igb.colorproviders;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.color.ColorPalette;
@@ -14,47 +13,25 @@ import com.affymetrix.genoviz.color.ColorScheme;
  *
  * @author hiralv
  */
-public class Property extends ColorProvider{
+public class Property extends ColorProvider {
 	private final static String PROPERTY = "property";
 	public final static String DEFAULT_PROPERTY = "id";
 	
-	private final static Map<String, Class<?>> PARAMETERS = new HashMap<String, Class<?>>();
-	static {
-		PARAMETERS.put(PROPERTY, String.class);
-	}
+	protected Parameter<String> property = new Parameter<String>(DEFAULT_PROPERTY);
+	private ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
 	
-	protected String property = DEFAULT_PROPERTY;
-	ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
+	public Property(){
+		super();
+		parameters.addParameter(PROPERTY, String.class, property);
+	}
 	
 	@Override
 	public Color getColor(SeqSymmetry sym){
 		if(sym instanceof SymWithProps){
-			Object value = ((SymWithProps)sym).getProperty(property);
+			Object value = ((SymWithProps)sym).getProperty(property.get());
 			if(value != null){
 				return cp.getColor(value.toString());
 			}
-		}
-		return null;
-	}
-	
-	@Override
-	public Map<String, Class<?>> getParametersType(){
-		return PARAMETERS;
-	}
-
-	@Override
-	public boolean setParameterValue(String key, Object value){
-		if(PROPERTY.equals(key) && value instanceof String){
-			property = (String)value;
-			return true;
-		} 
-		return false;
-	}
-	
-	@Override
-	public Object getParameterValue(String key) {
-		if(PROPERTY.equals(key)){
-			return property;
 		}
 		return null;
 	}

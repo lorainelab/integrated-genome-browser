@@ -87,4 +87,8 @@ public interface Operator  {
 	public static interface Order{
 		public int getOrder();
 	}
+	
+	public static interface Style{
+		public Map<String,Object> getStyleProperties();
+	}
 }

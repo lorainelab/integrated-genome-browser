@@ -3,7 +3,7 @@ package com.affymetrix.igb.colorproviders;
 import java.awt.Color;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
-import com.affymetrix.genometryImpl.color.Parameter;
+import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.color.ColorPalette;

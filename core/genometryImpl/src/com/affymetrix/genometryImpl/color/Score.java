@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.color;
 
+import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;

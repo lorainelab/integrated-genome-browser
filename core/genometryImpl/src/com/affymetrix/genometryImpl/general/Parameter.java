@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.color;
+package com.affymetrix.genometryImpl.general;
 
 /**
  *

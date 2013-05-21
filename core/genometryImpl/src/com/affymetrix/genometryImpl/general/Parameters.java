@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.color;
+package com.affymetrix.genometryImpl.general;
 
 import java.util.HashMap;
 import java.util.Map;

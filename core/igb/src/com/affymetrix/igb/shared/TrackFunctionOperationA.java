@@ -109,7 +109,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 					meth.append(((StyledGlyph)gl).getAnnotStyle().getTrackName()).append(", ");
 				}
 			}
-			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
+			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), operator, preferredStyle);
 		}
 	}
 			
@@ -166,6 +166,9 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	
 		style.setTrackName(featureName);
 		style.setLabelField(null);
+		if(style instanceof TrackStyle && operator instanceof Operator.Style){
+			((TrackStyle)style).setProperties(((Operator.Style)operator).getStyleProperties());
+		}
 		
 		return feature;
 	}

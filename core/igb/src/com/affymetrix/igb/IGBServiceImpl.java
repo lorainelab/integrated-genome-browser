@@ -393,7 +393,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void addTrack(SeqSymmetry sym, String method) {
-		TrackUtils.getInstance().addTrack(sym, method, null);
+		TrackUtils.getInstance().addTrack(sym, method, null, null);
 	}
 
 	@Override

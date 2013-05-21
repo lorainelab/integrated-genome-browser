@@ -34,14 +34,14 @@ public class TrackUtils {
 		super();
 	}
 
-	public void addTrack(SeqSymmetry sym, String method, ITrackStyleExtended preferredStyle) {
-		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
+	public void addTrack(SeqSymmetry sym, String method, Operator operator, ITrackStyleExtended preferredStyle) {
+		makeNonPersistentStyle((SymWithProps) sym, method, operator, preferredStyle);
 		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 		aseq.addAnnotation(sym);
 		Application.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle) {
+	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, Operator operator, ITrackStyleExtended preferredStyle) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = IGBStateProvider.getUniqueName(human_name);
@@ -64,6 +64,9 @@ public class TrackUtils {
 		style.setGraphTier(sym instanceof GraphSym);
 		style.setExpandable(sym instanceof GraphSym);
 		style.setLabelField(null);
+		if(style instanceof TrackStyle && operator instanceof Operator.Style){
+			((TrackStyle)style).setProperties(((Operator.Style)operator).getStyleProperties());
+		}
 		
 		return style;
 	}

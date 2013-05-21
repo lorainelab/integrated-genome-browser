@@ -35,7 +35,7 @@ public class Parameters {
 	
 	public boolean setParameterValue(String key, Object value) {
 		for(Entry<String, Parameter> parameter : PARAMETERS_VALUE.entrySet()){
-			if(parameter.getKey().equals(key)){
+			if(parameter.getKey().equals(key) && PARAMETERS_TYPE.get(parameter.getKey()).isInstance(value)){
 				parameter.getValue().set(value);
 				return true;
 			}

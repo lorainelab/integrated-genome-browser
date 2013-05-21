@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
 import com.affymetrix.genometryImpl.operator.Operator.Style;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.PropertyConstants;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
@@ -28,7 +29,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	private static final Map<String, Object> style;
 	static {
 		style = new HashMap<String, Object>();
-		style.put("label_field", "score");
+		style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
 	}
 	
 	/**

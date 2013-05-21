@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.IGB;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -122,7 +121,7 @@ public class FindJunction {
             output = getAbsoluteFile(output).getAbsolutePath();
         }
         
-        InputStream isreader = IGB.class.getResourceAsStream("/chromosomes.txt");
+        InputStream isreader = FindJunction.class.getResourceAsStream("/chromosomes.txt");
         SynonymLookup.getChromosomeLookup().loadSynonyms(isreader, true) ;
         GeneralUtils.safeClose(isreader);
         

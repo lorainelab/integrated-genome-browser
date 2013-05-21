@@ -17,8 +17,8 @@ public class Strand extends ColorProvider {
 	private Parameters parameters;
 	public Strand(){
 		parameters = new Parameters();
-		parameters.addParameter(FORWARD_COLOR, Color.class, new Parameter<Color>(new Color(204, 255, 255)));
-		parameters.addParameter(REVERSE_COLOR, Color.class, new Parameter<Color>(new Color(51, 255, 255)));
+		parameters.addParameter(FORWARD_COLOR, Color.class, new Color(204, 255, 255));
+		parameters.addParameter(REVERSE_COLOR, Color.class, new Color(51, 255, 255));
 	}
 		
 	@Override

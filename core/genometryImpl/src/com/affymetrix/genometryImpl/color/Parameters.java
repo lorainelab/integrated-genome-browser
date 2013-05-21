@@ -11,14 +11,14 @@ import java.util.Map.Entry;
 public class Parameters {
 	
 	private Map<String, Class<?>> PARAMETERS_TYPE;
-	private Map<String, Parameter> PARAMETERS_VALUE;
+	private Map<String, Object> PARAMETERS_VALUE;
 	
 	public Parameters(){
 		PARAMETERS_TYPE = new HashMap<String, Class<?>>();
-		PARAMETERS_VALUE = new HashMap<String, Parameter>();
+		PARAMETERS_VALUE = new HashMap<String, Object>();
 	}
 	
-	public void addParameter(String key, Class<?> clazz, Parameter parameter){
+	public void addParameter(String key, Class<?> clazz, Object parameter){
 		PARAMETERS_TYPE.put(key, clazz);
 		PARAMETERS_VALUE.put(key, parameter);
 	}
@@ -34,9 +34,9 @@ public class Parameters {
 	}
 	
 	public boolean setParameterValue(String key, Object value) {
-		for(Entry<String, Parameter> parameter : PARAMETERS_VALUE.entrySet()){
+		for(Entry<String, Object> parameter : PARAMETERS_VALUE.entrySet()){
 			if(parameter.getKey().equals(key) && PARAMETERS_TYPE.get(parameter.getKey()).isInstance(value)){
-				parameter.getValue().set(value);
+				parameter.setValue(value);
 				return true;
 			}
 		}
@@ -44,9 +44,9 @@ public class Parameters {
 	}
 
 	public Object getParameterValue(String key) {
-		for(Entry<String, Parameter> parameter : PARAMETERS_VALUE.entrySet()){
+		for(Entry<String, Object> parameter : PARAMETERS_VALUE.entrySet()){
 			if(parameter.getKey().equals(key)){
-				return parameter.getValue().get();
+				return parameter.getValue();
 			}
 		}
 		return null;

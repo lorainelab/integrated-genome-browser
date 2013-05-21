@@ -64,12 +64,12 @@ public class Score extends ColorProvider {
 	}
 	
 	@Override
-	public Map<String, Class<?>> getParameters(){
+	public Map<String, Class<?>> getParametersType(){
 		return PARAMETERS;
 	}
 
 	@Override
-	public boolean setParameter(String key, Object value){
+	public boolean setParameterValue(String key, Object value){
 		if (HEATMAP.equals(key) && value instanceof HeatMapExtended){
 			HeatMapExtended heatmap = (HeatMapExtended)value;
 			custom_heatmap = heatmap;

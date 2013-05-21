@@ -8,7 +8,7 @@ import java.util.Map;
  * A helper class to be used when color is to extracted for each object.
  * @author hiralv
  */
-public abstract class ColorProvider {
+public abstract class ColorProvider implements IParameters {
 	
 	/**
 	 * Get color for the given object
@@ -16,21 +16,25 @@ public abstract class ColorProvider {
 	 * @return 
 	 */
 	public abstract Color getColor(SeqSymmetry sym);
-		
-	public Map<String, Class<?>> getParameters(){
+	
+	@Override
+	public Map<String, Class<?>> getParametersType(){
 		return null;
 	}
 
-	public final void setParameters(Map<String, Object> params){
+	@Override
+	public final void setParametersValue(Map<String, Object> params){
 		for(Map.Entry<String, Object> param : params.entrySet()){
-			setParameter(param.getKey(), param.getValue());
+			setParameterValue(param.getKey(), param.getValue());
 		}
 	}
 	
-	public boolean setParameter(String key, Object value) {
+	@Override
+	public boolean setParameterValue(String key, Object value) {
 		return false;
 	}
 
+	@Override
 	public Object getParameterValue(String key) {
 		return null;
 	}

@@ -128,8 +128,8 @@ public class ColorByAction extends SeqMapViewActionA {
 			panel.add(new JLabel("                "));
 			
 			paramsPanel.removeAll();
-			if (cp != null && cp.getParameters() != null) {
-				for (Entry<String, Class<?>> entry : cp.getParameters().entrySet()) {
+			if (cp != null && cp.getParametersType() != null) {
+				for (Entry<String, Class<?>> entry : cp.getParametersType().entrySet()) {
 					final String label = entry.getKey();
 					Class<?> clazz = entry.getValue();
 					JComponent component = null;
@@ -152,7 +152,7 @@ public class ColorByAction extends SeqMapViewActionA {
 							public void changedUpdate(DocumentEvent e) { setParameter(); }
 							
 							private void setParameter(){
-								cp.setParameter(label, tf.getText());
+								cp.setParameterValue(label, tf.getText());
 							}
 						});
 						
@@ -165,7 +165,7 @@ public class ColorByAction extends SeqMapViewActionA {
 						colorComboBox.setSelectedColor((Color)cp.getParameterValue(label));
 						colorComboBox.addItemListener(new ItemListener() {
 							public void itemStateChanged(ItemEvent e) {
-								cp.setParameter(label, e.getItem());
+								cp.setParameterValue(label, e.getItem());
 							}
 						});
 						colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
@@ -202,7 +202,7 @@ public class ColorByAction extends SeqMapViewActionA {
 								Object value = editor.showDialog();
 								if(value.equals(JOptionPane.OK_OPTION)){	
 									ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-									cp.setParameter(label, 
+									cp.setParameterValue(label, 
 											new HeatMapExtended("HeatMapExtended", 
 											colorInterpolator.getColorRange(HeatMap.BINS), 
 											editor.getVirtualRange().getVirtualValues(), 

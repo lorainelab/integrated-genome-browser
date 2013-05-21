@@ -34,12 +34,12 @@ public class Strand extends ColorProvider {
 	}
 
 	@Override
-	public Map<String, Class<?>> getParameters(){
+	public Map<String, Class<?>> getParametersType(){
 		return parameters.getParametersType();
 	}
 
 	@Override
-	public boolean setParameter(String key, Object value) {
+	public boolean setParameterValue(String key, Object value) {
 		return parameters.setParameterValue(key, value);
 	}
 	

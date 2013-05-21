@@ -21,6 +21,7 @@ import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.SeqMapView;
+import java.util.Map.Entry;
 
 /**
  * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start
@@ -1025,5 +1026,53 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	
 	private Object load(String key, Object def){
 		return PreferenceUtils.load(getNode(), key, def);
+	}
+
+	public void setProperties(Map<String, Object> properties){
+		for(Entry<String, Object> entry : properties.entrySet()){
+			setProperty(entry.getKey(), entry.getValue());
+		}
+	}
+	
+	public void setProperty(String key, Object value){
+		if (PROP_COLOR.equals(key) && value instanceof Color){
+			this.setForeground((Color)value);
+		} else if (PROP_FOREGROUND.equals(key) && value instanceof Color){
+			this.setForeground((Color)value);
+		} else if (PROP_BACKGROUND.equals(key) && value instanceof Color){
+			this.setBackground((Color)value);
+		} else if (PROP_POSITIVE_STRAND.equals(key) && value instanceof Color){
+			this.setForwardColor((Color)value);
+		} else if (PROP_NEGATIVE_STRAND.equals(key) && value instanceof Color){
+			this.setReverseColor((Color)value);
+		} else if (PROP_NAME_SIZE.equals(key) && value instanceof Number){
+			this.setTrackNameSize((Float)value);
+		} else if (PROP_SHOW_2TRACK.equals(key) && value instanceof Boolean){
+			this.setSeparate((Boolean)value);
+		} else if (PROP_CONNECTED.equals(key) && value instanceof Boolean){
+			this.setConnected((Boolean)value);
+		} else if (PROP_GLYPH_DEPTH.equals(key) && value instanceof Number){
+			this.setGlyphDepth((Integer)value);
+		} else if (PROP_LABEL_FIELD.equals(key) && value instanceof String){
+			this.setLabelField((String)value);
+		} else if (PROP_LABEL_COLOR.equals(key) && value instanceof Color){
+			this.setLabelForeground((Color)value);
+		} else if (PROP_MAX_DEPTH.equals(key) && value instanceof Number){
+			this.setMaxDepth((Integer)value);
+		} else if (PROP_SEPARATE.equals(key) && value instanceof Boolean){
+			this.setSeparate((Boolean)value);
+		} else if (PROP_SHOW.equals(key) && value instanceof Boolean){
+			this.setShow((Boolean)value);
+		} else if (PROP_COLLAPSED.equals(key) && value instanceof Boolean){
+			this.setCollapsed((Boolean)value);
+		} else if (PROP_FONT_SIZE.equals(key) && value instanceof Number){
+			this.setTrackNameSize((Float)value);
+		} else if (PROP_DIRECTION_TYPE.equals(key) && value instanceof String){
+			
+		} else if (PROP_START_COLOR.equals(key) && value instanceof Color){
+			this.setForwardColor((Color)value);
+		} else if (PROP_END_COLOR.equals(key) && value instanceof Color){
+			this.setReverseColor((Color)value);
+		}
 	}
 }

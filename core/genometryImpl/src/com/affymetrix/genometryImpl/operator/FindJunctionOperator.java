@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
 import com.affymetrix.genometryImpl.filter.NoIntronFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
+import com.affymetrix.genometryImpl.operator.Operator.Style;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
@@ -20,10 +21,15 @@ import java.util.Map;
  *
  * @author Anuj
  */
-public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator{
+public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, Style {
 	public static final String THRESHOLD = "threshold";
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
+	private static final Map<String, Object> style;
+	static {
+		style = new HashMap<String, Object>();
+		style.put("label_field", "score");
+	}
 	
 	/**
 	 * TopHat style flanking makes the junction flanks as long as the largest length 
@@ -123,6 +129,11 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         return true;
     }
    
+	@Override
+	public Map<String, Object> getStyleProperties() {
+		return style;
+	}
+
     /* This method splits the given Sym into introns and filters out the qualified Introns
 	 * and adds the qualified introns into map using addtoMap method
 	 */
@@ -275,7 +286,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
             map.put(name, (SeqSymmetry)tempSym);
         }
     }
-    
+    	
 	/*
 	 * Specific BED Sym used for Junction representation which has some extra parameters than a normal UcscBedSym
 	 */

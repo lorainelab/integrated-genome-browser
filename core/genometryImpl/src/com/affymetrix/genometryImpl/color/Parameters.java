@@ -2,13 +2,12 @@ package com.affymetrix.genometryImpl.color;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
  * @author hiralv
  */
-public class Parameters {
+public class Parameters implements IParameters {
 	
 	private Map<String, Class<?>> PARAMETERS_TYPE;
 	private Map<String, Object> PARAMETERS_VALUE;
@@ -23,32 +22,29 @@ public class Parameters {
 		PARAMETERS_VALUE.put(key, parameter);
 	}
 	
+	@Override
 	public Map<String, Class<?>> getParametersType(){
 		return PARAMETERS_TYPE;
 	}
 	
+	@Override
 	public void setParametersValue(Map<String, Object> params){
 		for(Map.Entry<String, Object> param : params.entrySet()){
 			setParameterValue(param.getKey(), param.getValue());
 		}
 	}
 	
+	@Override
 	public boolean setParameterValue(String key, Object value) {
-		for(Entry<String, Object> parameter : PARAMETERS_VALUE.entrySet()){
-			if(parameter.getKey().equals(key) && PARAMETERS_TYPE.get(parameter.getKey()).isInstance(value)){
-				parameter.setValue(value);
-				return true;
-			}
+		if (PARAMETERS_TYPE.get(key).isInstance(value)) {
+			PARAMETERS_VALUE.put(key, value);
+			return true;
 		}
 		return false;
 	}
 
+	@Override
 	public Object getParameterValue(String key) {
-		for(Entry<String, Object> parameter : PARAMETERS_VALUE.entrySet()){
-			if(parameter.getKey().equals(key)){
-				return parameter.getValue();
-			}
-		}
-		return null;
+		return PARAMETERS_VALUE.get(key);
 	}
 }

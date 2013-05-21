@@ -10,14 +10,14 @@ import java.util.Map;
 public class Parameters implements IParameters {
 	
 	private Map<String, Class<?>> PARAMETERS_TYPE;
-	private Map<String, Object> PARAMETERS_VALUE;
+	private Map<String, Parameter> PARAMETERS_VALUE;
 	
 	public Parameters(){
 		PARAMETERS_TYPE = new HashMap<String, Class<?>>();
-		PARAMETERS_VALUE = new HashMap<String, Object>();
+		PARAMETERS_VALUE = new HashMap<String, Parameter>();
 	}
 	
-	public void addParameter(String key, Class<?> clazz, Object parameter){
+	public void addParameter(String key, Class<?> clazz, Parameter parameter){
 		PARAMETERS_TYPE.put(key, clazz);
 		PARAMETERS_VALUE.put(key, parameter);
 	}
@@ -37,7 +37,7 @@ public class Parameters implements IParameters {
 	@Override
 	public boolean setParameterValue(String key, Object value) {
 		if (PARAMETERS_TYPE.get(key).isInstance(value)) {
-			PARAMETERS_VALUE.put(key, value);
+			PARAMETERS_VALUE.get(key).set(value);
 			return true;
 		}
 		return false;
@@ -45,6 +45,6 @@ public class Parameters implements IParameters {
 
 	@Override
 	public Object getParameterValue(String key) {
-		return PARAMETERS_VALUE.get(key);
+		return PARAMETERS_VALUE.get(key).get();
 	}
 }

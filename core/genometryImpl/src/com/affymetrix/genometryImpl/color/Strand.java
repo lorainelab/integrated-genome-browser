@@ -12,21 +12,25 @@ import java.util.Map;
 public class Strand extends ColorProvider {
 	private final static String FORWARD_COLOR = "+";
 	private final static String REVERSE_COLOR = "-";
+	private final static Color DEFAULT_FORWARD_COLOR = new Color(204, 255, 255);
+	private final static Color DEFAULT_REVERSE_COLOR = new Color(51, 255, 255);
 	private static GenometryModel model = GenometryModel.getGenometryModel();
 	
 	private Parameters parameters;
+	private Parameter<Color> forwardColor = new Parameter<Color>(DEFAULT_FORWARD_COLOR);
+	private Parameter<Color> reverseColor = new Parameter<Color>(DEFAULT_REVERSE_COLOR);
 	public Strand(){
 		parameters = new Parameters();
-		parameters.addParameter(FORWARD_COLOR, Color.class, new Color(204, 255, 255));
-		parameters.addParameter(REVERSE_COLOR, Color.class, new Color(51, 255, 255));
+		parameters.addParameter(FORWARD_COLOR, Color.class, forwardColor);
+		parameters.addParameter(REVERSE_COLOR, Color.class, reverseColor);
 	}
 		
 	@Override
 	public Color getColor(SeqSymmetry sym) {
 		if(sym.getSpan(model.getSelectedSeq()).isForward()){
-			return (Color)parameters.getParameterValue(FORWARD_COLOR);
+			return forwardColor.get();
 		}
-		return (Color)parameters.getParameterValue(REVERSE_COLOR);
+		return reverseColor.get();
 	}
 
 	@Override

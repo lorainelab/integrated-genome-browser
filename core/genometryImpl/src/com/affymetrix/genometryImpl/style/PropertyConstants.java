@@ -1,4 +1,4 @@
-package com.affymetrix.igb.stylesheet;
+package com.affymetrix.genometryImpl.style;
 
 /**
  *

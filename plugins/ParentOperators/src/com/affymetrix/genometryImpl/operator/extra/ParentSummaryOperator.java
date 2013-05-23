@@ -113,5 +113,14 @@ public class ParentSummaryOperator implements Operator{
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Annotation;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(FileTypeCategory.class).newInstance(fileTypeCategory);
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }
 

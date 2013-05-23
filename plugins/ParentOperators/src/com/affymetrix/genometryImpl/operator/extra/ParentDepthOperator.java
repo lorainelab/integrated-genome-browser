@@ -61,5 +61,14 @@ public class ParentDepthOperator implements Operator {
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Graph;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(FileTypeCategory.class).newInstance(fileTypeCategory);
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }
 

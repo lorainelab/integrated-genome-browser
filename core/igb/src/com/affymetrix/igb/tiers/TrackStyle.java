@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -75,7 +76,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
-	private ColorProvider color_provider = null;
+	private ColorProviderI color_provider = null;
 	private SymmetryFilterI filter = null;
 	
 	public void restoreToDefault() {
@@ -795,12 +796,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	@Override
-	public void setColorProvider(ColorProvider cp){
+	public void setColorProvider(ColorProviderI cp){
 		this.color_provider = cp;
 	}
 	
 	@Override
-	public ColorProvider getColorProvider(){
+	public ColorProviderI getColorProvider(){
 		return color_provider;
 	}
 	

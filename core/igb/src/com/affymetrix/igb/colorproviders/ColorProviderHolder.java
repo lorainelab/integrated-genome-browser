@@ -1,10 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.colorproviders;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.color.Strand;
@@ -38,7 +35,7 @@ public class ColorProviderHolder {
 		return null;
 	}
 
-	public static String getCPName(Class<? extends ColorProvider> clazz) {
+	public static String getCPName(Class<? extends ColorProviderI> clazz) {
 		for (Entry<String, Class<? extends ColorProvider>> entry : OPTIONS.entrySet()) {
 			if (entry.getValue() == clazz) {
 				return entry.getKey();

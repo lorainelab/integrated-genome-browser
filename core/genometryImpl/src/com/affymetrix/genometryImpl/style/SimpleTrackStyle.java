@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
@@ -231,14 +231,14 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 		join = b;
 	}
 
-	ColorProvider color_provider;
+	ColorProviderI color_provider;
 	@Override
-	public void setColorProvider(ColorProvider cp){
+	public void setColorProvider(ColorProviderI cp){
 		this.color_provider = cp;
 	}
 	
 	@Override
-	public ColorProvider getColorProvider(){
+	public ColorProviderI getColorProvider(){
 		return color_provider;
 	}
 	

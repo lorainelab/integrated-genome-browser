@@ -2,8 +2,6 @@ package com.affymetrix.genometryImpl.color;
 
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.Parameters;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import java.awt.Color;
 import java.util.Map;
 
 /**

@@ -15,7 +15,7 @@ package com.affymetrix.igb.view.factories;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
@@ -354,7 +354,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 		
 	protected static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, 
-			boolean isForward, DIRECTION_TYPE direction_type, ColorProvider cp) {
+			boolean isForward, DIRECTION_TYPE direction_type, ColorProviderI cp) {
 		Color color = null;
 		if(cp != null){
 			SeqSymmetry sym = insym;

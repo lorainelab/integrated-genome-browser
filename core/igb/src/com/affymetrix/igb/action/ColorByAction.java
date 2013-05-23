@@ -31,7 +31,9 @@ import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -63,7 +65,7 @@ public class ColorByAction extends SeqMapViewActionA {
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
 		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
-		ColorProvider cp = style.getColorProvider();
+		ColorProviderI cp = style.getColorProvider();
 		
 		ColorByDialog colorByDialog = new ColorByDialog();
 		colorByDialog.setLocationRelativeTo(getSeqMapView());
@@ -77,7 +79,7 @@ public class ColorByAction extends SeqMapViewActionA {
 	
 	private class ColorByDialog extends JDialog {
 
-		private ColorProvider returnValue, selectedCP;
+		private ColorProviderI returnValue, selectedCP;
 		private JOptionPane optionPane;
 		private JComboBox comboBox;
 		private JPanel paramsPanel;
@@ -122,7 +124,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			pack();
 		}
 
-		private void addOptions(final ColorProvider cp, final JPanel paramsPanel) {
+		private void addOptions(final IParameters cp, final JPanel paramsPanel) {
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 			panel.add(new JLabel("                "));
@@ -235,7 +237,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			}
 		}
 		
-		private void initParamPanel(ColorProvider cp) {
+		private void initParamPanel(IParameters cp) {
 			addOptions(cp, paramsPanel);
 			ThreadUtils.runOnEventQueue(new Runnable() {
 				public void run() {
@@ -271,14 +273,16 @@ public class ColorByAction extends SeqMapViewActionA {
 			});
 		}
 
-		public void setInitialValue(ColorProvider cp){
+		public void setInitialValue(ColorProviderI cp){
 			comboBox.setSelectedItem(ColorProviderHolder.getCPName(cp == null ? null : cp.getClass()));
 			returnValue = cp;
 			selectedCP = cp;
-			initParamPanel(cp);
+			if(cp instanceof IParameters){
+				initParamPanel((IParameters)cp);
+			}
 		}
 		
-		public ColorProvider showDialog() {
+		public ColorProviderI showDialog() {
 			setVisible(true);
 			return returnValue;
 		}

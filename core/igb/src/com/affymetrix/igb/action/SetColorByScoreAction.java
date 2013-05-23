@@ -4,9 +4,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.color.Score;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.igb.shared.TierGlyph;
@@ -46,7 +45,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 			TierLabelGlyph tlg = theTiers.get(0);
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			style = (TrackStyle)tg.getAnnotStyle();
-			ColorProvider cp = style.getColorProvider();
+			ColorProviderI cp = style.getColorProvider();
 //			if(cp instanceof Score){
 //				min = ((Score)cp).getMinScoreColor();
 //				max = ((Score)cp).getMaxScoreColor();
@@ -68,7 +67,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 				for(TierLabelGlyph label : theTiers){
 					TierGlyph tg = (TierGlyph)label.getInfo();
 					style = (TrackStyle)tg.getAnnotStyle();
-					ColorProvider cp = style.getColorProvider();
+					ColorProviderI cp = style.getColorProvider();
 					if(cp instanceof Score){
 //						((Score)cp).setMinScoreColor(updatedMinRange);
 //						((Score)cp).setMaxScoreColor(updatedMaxRange);

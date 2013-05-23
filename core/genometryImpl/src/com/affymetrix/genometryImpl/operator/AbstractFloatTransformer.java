@@ -78,6 +78,15 @@ public abstract class AbstractFloatTransformer implements Operator {
 		return null;
 	}
 
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
+	}
+	
 	public static boolean isGraphTransform(Operator operator) {
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			if (category == FileTypeCategory.Graph) {

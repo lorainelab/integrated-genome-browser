@@ -67,4 +67,14 @@ public final class CopyGraphOperator implements Operator, ICopy {
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Graph;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 }

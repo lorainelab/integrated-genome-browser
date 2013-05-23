@@ -50,4 +50,12 @@ public abstract class AbstractAnnotationTransformer implements Operator {
 		return FileTypeCategory.Annotation;
 	}
 	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(FileTypeCategory.class).newInstance(fileTypeCategory);
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }

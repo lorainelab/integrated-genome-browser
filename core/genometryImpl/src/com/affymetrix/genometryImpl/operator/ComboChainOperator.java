@@ -128,4 +128,14 @@ public class ComboChainOperator implements Operator {
 		}
 		return support;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(Operator[].class).newInstance(operators.toArray());
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 }

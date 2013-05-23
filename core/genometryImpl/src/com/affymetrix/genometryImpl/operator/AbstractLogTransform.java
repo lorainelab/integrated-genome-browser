@@ -88,4 +88,16 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 		}
 		return true;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			if(parameterized){
+				return getClass().getConstructor().newInstance();
+			}
+			return getClass().getConstructor(Double.class).newInstance(base);
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }

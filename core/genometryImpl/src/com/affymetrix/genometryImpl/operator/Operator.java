@@ -80,6 +80,8 @@ public interface Operator  {
 	 */
 	public FileTypeCategory getOutputCategory();
 
+	public Operator clone();
+	
 	/**
 	 * optional interface for Operators, used to order
 	 * the list of Operators in the UI

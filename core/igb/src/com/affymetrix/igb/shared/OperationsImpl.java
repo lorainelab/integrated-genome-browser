@@ -129,14 +129,17 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 	}
 	
 	private static Operator setParameters(Operator operator, JTextField paramField){
+		Operator operatorClone = operator.clone();
+		
 		if(paramField.isEnabled() && paramField.getText() != null
 				&& paramField.getText().length() > 0){
-			Map<String, Class<?>> params = operator.getParameters();
+			Map<String, Class<?>> params = operatorClone.getParameters();
 			Map<String, Object> setparams = new HashMap<String, Object>();
 			setparams.put(params.keySet().iterator().next(), paramField.getText());
-			operator.setParameters(setparams);
+			operatorClone.setParameters(setparams);
 		}
-		return operator;
+		
+		return operatorClone;
 	}
 	
 	private void loadOperators(boolean enable) {

@@ -97,4 +97,13 @@ public class CopyMismatchOperator implements Operator, ICopy {
 		return FileTypeCategory.Mismatch;
 	}
 	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 }

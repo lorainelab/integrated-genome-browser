@@ -195,34 +195,6 @@ public abstract class AbstractGraphOperator implements Operator {
 
 	protected abstract float operate(List<Float> operands);
 
-	private static int getWidth(ArrayList<Integer> widths, int index, boolean hasWidthGraphs) {
-		int width = 0;
-		if (widths == null) {
-			if (hasWidthGraphs) {
-				width = 1;
-			}
-		} else {
-			width = widths.get(index);
-		}
-		return width;
-	}
-
-	public static int[] intListToArray(List<Integer> list) {
-		int[] array = new int[list.size()];
-		for (int i = 0; i < list.size(); i++) {
-			array[i] = list.get(i);
-		}
-		return array;
-	}
-
-	public static float[] floatListToArray(List<Float> list) {
-		float[] array = new float[list.size()];
-		for (int i = 0; i < list.size(); i++) {
-			array[i] = list.get(i);
-		}
-		return array;
-	}
-
 	@Override
 	public boolean supportsTwoTrack() {
 		return false;
@@ -253,6 +225,43 @@ public abstract class AbstractGraphOperator implements Operator {
 		return false;
 	}
 
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
+	}
+
+	private static int getWidth(ArrayList<Integer> widths, int index, boolean hasWidthGraphs) {
+		int width = 0;
+		if (widths == null) {
+			if (hasWidthGraphs) {
+				width = 1;
+			}
+		} else {
+			width = widths.get(index);
+		}
+		return width;
+	}
+
+	public static int[] intListToArray(List<Integer> list) {
+		int[] array = new int[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			array[i] = list.get(i);
+		}
+		return array;
+	}
+
+	public static float[] floatListToArray(List<Float> list) {
+		float[] array = new float[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			array[i] = list.get(i);
+		}
+		return array;
+	}
+	
 	public static boolean isGraphOperator(Operator operator) {
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			if (category == FileTypeCategory.Graph) {

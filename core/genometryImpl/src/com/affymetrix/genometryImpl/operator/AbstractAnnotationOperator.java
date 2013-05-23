@@ -49,6 +49,15 @@ public abstract class AbstractAnnotationOperator implements Operator {
 		return this.category;
 	}
 
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(FileTypeCategory.class).newInstance(category);
+		} catch (Exception ex) {
+		}
+		return null;
+	}
+	
 	protected static List<SeqSymmetry> findChildSyms(SeqSymmetry sym) {
 		List<SeqSymmetry> childSyms = new ArrayList<SeqSymmetry>();
 		for (int i = 0; i < sym.getChildCount(); i++) {

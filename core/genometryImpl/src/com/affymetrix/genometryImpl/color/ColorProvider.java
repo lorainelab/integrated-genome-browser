@@ -35,4 +35,22 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 		return parameters.getParameterValue(key);
 	}
 	
+	@Override
+	public String getName(){
+		return getClass().getName();
+	}
+	
+	@Override
+	public String getDisplay(){
+		return getClass().getSimpleName();
+	}
+	
+	@Override
+	public ColorProviderI clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }

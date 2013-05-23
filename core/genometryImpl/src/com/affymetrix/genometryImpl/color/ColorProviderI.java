@@ -9,10 +9,16 @@ import java.awt.Color;
  */
 public interface ColorProviderI {
 
+	public String getName();
+	
+	public String getDisplay();
+	
 	/**
 	 * Get color for the given object
 	 * @param sym
 	 * @return 
 	 */
 	public Color getColor(SeqSymmetry sym);
+	
+	public ColorProviderI clone();
 }

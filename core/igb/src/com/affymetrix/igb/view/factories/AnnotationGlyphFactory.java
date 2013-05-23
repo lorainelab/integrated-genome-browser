@@ -175,14 +175,14 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		GlyphI pglyph;
 		Color color = getSymColor(insym, the_style, pspan.isForward(), direction_type, the_style.getColorProvider());
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(gviewer, insym, sym, pspan, the_style, annotseq, pglyph, coordseq, child_height, color);
 			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, child_height /*the_style.getHeight() */);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
 			GlyphI alignResidueGlyph = getAlignedResiduesGlyph(insym, annotseq, true);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -196,7 +196,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			Class<?> glyphClass, Class<?> labelledGlyphClass,
 			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer, 
-			int child_height, DIRECTION_TYPE direction_type, Color color) 
+			int child_height, DIRECTION_TYPE direction_type, Color color, BioSeq annotseq) 
 			throws IllegalAccessException, InstantiationException {
 		EfficientSolidGlyph pglyph;
 		// Note: Setting parent height (pheight) larger than the child height (cheight)
@@ -232,6 +232,10 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			pglyph.setDirection(pspan.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
 		}
 		gviewer.setDataModelFromOriginalSym(pglyph, sym);
+		if(the_style.getFilter() != null){
+			pglyph.setVisibility(the_style.getFilter().filterSymmetry(annotseq, sym));
+		}
+		
 		return pglyph;
 	}
 

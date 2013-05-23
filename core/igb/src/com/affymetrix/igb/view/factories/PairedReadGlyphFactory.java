@@ -45,7 +45,7 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 			BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type) 
 			throws IllegalAccessException, InstantiationException {
 		Color color = getSymColor(pinsym, the_style, pspan.isForward(), direction_type, the_style.getColorProvider());
-		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, pinsym, labelInSouth, pspan, psym, gviewer, child_height, direction_type, color);
+		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, pinsym, labelInSouth, pspan, psym, gviewer, child_height, direction_type, color, annotseq);
 		
 		List<SeqSymmetry> children = new ArrayList<SeqSymmetry>();
 		int childCount = pinsym.getChildCount();

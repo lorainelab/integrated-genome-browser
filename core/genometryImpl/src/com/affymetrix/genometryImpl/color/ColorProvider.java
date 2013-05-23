@@ -10,19 +10,12 @@ import java.util.Map;
  * A helper class to be used when color is to extracted for each object.
  * @author hiralv
  */
-public abstract class ColorProvider implements IParameters {
+public abstract class ColorProvider implements ColorProviderI, IParameters {
 	protected Parameters parameters;
 	
 	protected ColorProvider(){
 		parameters = new Parameters();
 	}
-	
-	/**
-	 * Get color for the given object
-	 * @param sym
-	 * @return 
-	 */
-	public abstract Color getColor(SeqSymmetry sym);
 	
 	@Override
 	public Map<String, Class<?>> getParametersType(){

@@ -149,12 +149,19 @@ public class FasterExpandPacker extends ExpandPacker {
 		int row_number = 0;
 		
 		for (int i = 0; i < child_count; i++) {
-			GlyphI child = children.get(i);
+			GlyphI child = children.get(i);			
 //			child.setVisibility(true);
 			child.setOverlapped(false);
 //			child.setSkipDraw(false);
 			cbox = child.getCoordBox();
 			double child_min = cbox.x;
+			
+			if(!child.isVisible()){
+				child.moveAbsolute(child_min, 0);
+				child.setRowNumber(-1);
+				continue;
+			}
+			
 			double child_max = child_min + cbox.width;
 			boolean child_placed = false;
 			int start_slot_index = 0;
@@ -229,8 +236,10 @@ public class FasterExpandPacker extends ExpandPacker {
 		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
 		//    (y+height) of bottom-most (ymax) child is at
 	
-		for (GlyphI child : children) {
-			child.moveRelative(0, parent_spacer - ymin);
+		if(ymin != Double.POSITIVE_INFINITY){
+			for (GlyphI child : children) {
+				child.moveRelative(0, parent_spacer - ymin);
+			}
 		}
 
 		slot_maxes.trimToSize();

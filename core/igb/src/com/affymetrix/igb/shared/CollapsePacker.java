@@ -45,6 +45,13 @@ public final class CollapsePacker extends CollapsedTierPacker {
 //			child.setSkipDraw(false);
 			cbox = child.getCoordBox();
 			double child_min = cbox.x;
+						
+			if(!child.isVisible()){
+				child.moveAbsolute(child_min, 0);
+				child.setRowNumber(-1);
+				continue;
+			}
+			
 			double child_max = child_min + cbox.width;
 			boolean child_placed = false;
 			int start_slot_index = 0;

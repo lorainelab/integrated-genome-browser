@@ -1,6 +1,5 @@
 package com.affymetrix.igb.colorproviders;
 
-import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.color.Score;
@@ -14,9 +13,9 @@ import java.util.Map.Entry;
  * @author hiralv
  */
 public class ColorProviderHolder {
-	public static final Map<String, Class<? extends ColorProvider>> OPTIONS;
+	public static final Map<String, Class<? extends ColorProviderI>> OPTIONS;
 	static {
-		OPTIONS = new LinkedHashMap<String, Class<? extends ColorProvider>>();
+		OPTIONS = new LinkedHashMap<String, Class<? extends ColorProviderI>>();
 		OPTIONS.put("None", null);
 		OPTIONS.put("RGB", RGB.class);
 		OPTIONS.put("Score", Score.class);
@@ -25,7 +24,7 @@ public class ColorProviderHolder {
 		OPTIONS.put("Property", Property.class);
 	}
 	
-	public static ColorProvider getCPInstance(Class<? extends ColorProvider> clazz) {
+	public static ColorProviderI getCPInstance(Class<? extends ColorProviderI> clazz) {
 		try {
 			if (clazz != null) {
 				return clazz.getConstructor().newInstance();
@@ -36,7 +35,7 @@ public class ColorProviderHolder {
 	}
 
 	public static String getCPName(Class<? extends ColorProviderI> clazz) {
-		for (Entry<String, Class<? extends ColorProvider>> entry : OPTIONS.entrySet()) {
+		for (Entry<String, Class<? extends ColorProviderI>> entry : OPTIONS.entrySet()) {
 			if (entry.getValue() == clazz) {
 				return entry.getKey();
 			}

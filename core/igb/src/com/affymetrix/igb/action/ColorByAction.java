@@ -250,9 +250,11 @@ public class ColorByAction extends SeqMapViewActionA {
 			comboBox.addItemListener(new ItemListener() {
 				
 				public void itemStateChanged(ItemEvent e) {
-					ColorProvider cp = ColorProviderHolder.getCPInstance(ColorProviderHolder.OPTIONS.get(e.getItem().toString()));
+					ColorProviderI cp = ColorProviderHolder.getCPInstance(ColorProviderHolder.OPTIONS.get(e.getItem().toString()));
 					selectedCP = cp;
-					initParamPanel(cp);
+					if(cp instanceof IParameters){
+						initParamPanel((IParameters)cp);
+					}
 				}
 			});
 

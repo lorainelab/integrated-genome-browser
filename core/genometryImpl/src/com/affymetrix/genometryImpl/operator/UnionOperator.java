@@ -48,7 +48,7 @@ public class UnionOperator extends AbstractAnnotationOperator implements Operato
 	
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == category ? Integer.MAX_VALUE : 0;
+		return category == this.category ? Integer.MAX_VALUE : 0;
 	}
 		
 	private static SymWithProps projectLandscape(GraphSym landscape) {

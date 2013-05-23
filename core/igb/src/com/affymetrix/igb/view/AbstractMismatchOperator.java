@@ -2,10 +2,10 @@
 package com.affymetrix.igb.view;
 
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -18,8 +18,12 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  *
  * @author hiralv
  */
-public abstract class AbstractMismatchOperator implements Operator {
+public abstract class AbstractMismatchOperator extends AbstractAnnotationTransformer implements Operator {
 
+	public AbstractMismatchOperator(){
+		super(FileTypeCategory.Alignment);
+	}
+	
 	public abstract SeqSymmetry getMismatch(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end);
 	
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
@@ -40,26 +44,7 @@ public abstract class AbstractMismatchOperator implements Operator {
 		return getMismatch(symList, aseq, false, "", startEnd[0], startEnd[1]);
 	}
 
-	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Alignment ? 1 : 0;
-	}
-
-	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Alignment ? 1 : 0;
-	}
-
-	public Map<String, Class<?>> getParameters() {
-		return null;
-	}
-
-	public boolean setParameters(Map<String, Object> parms) {
-		return false;
-	}
-
-	public boolean supportsTwoTrack() {
-		return false;
-	}
-
+	@Override
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Mismatch;
 	}

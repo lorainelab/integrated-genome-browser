@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
 import com.affymetrix.genometryImpl.filter.NoIntronFilter;
@@ -12,8 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.Map;
  *
  * @author Anuj
  */
-public class FindJunctionOperator implements Operator{
+public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator{
 	public static final String THRESHOLD = "threshold";
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
@@ -41,6 +38,7 @@ public class FindJunctionOperator implements Operator{
 	private boolean uniqueness;
 	
     public FindJunctionOperator(){
+		super(FileTypeCategory.Alignment);
 		threshold = default_threshold;
 		twoTracks = default_twoTracks;
 		uniqueness = default_uniqueness;
@@ -49,11 +47,6 @@ public class FindJunctionOperator implements Operator{
     @Override
     public String getName() {
         return "findjunctions";
-    }
-
-    @Override
-    public String getDisplay() {
-        return GenometryConstants.BUNDLE.getString("operator_" + getName());
     }
     
     /* This is an Operator method which is used to operates on a given list of symmetries and find the junctions between them
@@ -96,21 +89,6 @@ public class FindJunctionOperator implements Operator{
     }
 	
     @Override
-    public int getOperandCountMin(FileTypeCategory ftc) {
-        return ftc == FileTypeCategory.Alignment ? 1 : 0;
-    }
-
-    @Override
-    public int getOperandCountMax(FileTypeCategory ftc) {
-        return ftc == FileTypeCategory.Alignment ? 1 : 0;
-    }
-
-    @Override
-    public Map<String, Class<?>> getParameters() {
-		return null;
-    }
-
-    @Override
     public boolean setParameters(Map<String, Object> map) {
         if(map.size() <= 0)
             return false;                
@@ -130,12 +108,7 @@ public class FindJunctionOperator implements Operator{
     public boolean supportsTwoTrack() {
         return true;
     }
-
-    @Override
-    public FileTypeCategory getOutputCategory() {
-        return FileTypeCategory.Annotation;
-    }
-    
+   
     /* This method splits the given Sym into introns and filters out the qualified Introns
 	 * and adds the qualified introns into map using addtoMap method
 	 */

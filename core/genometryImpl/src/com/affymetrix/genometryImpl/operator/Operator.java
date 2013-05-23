@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
  * FileTypeCategory. Parameters for the Operator are optional,
  * as well as ordering (for the UI).
  */
-public interface Operator  {
+public interface Operator extends ID{
 
 	/**
 	 * Unique identifier for the Operator, MUST be unique,

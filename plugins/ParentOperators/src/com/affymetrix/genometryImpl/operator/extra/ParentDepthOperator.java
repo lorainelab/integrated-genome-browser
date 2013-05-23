@@ -2,19 +2,18 @@
 package com.affymetrix.genometryImpl.operator.extra;
 
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public class ParentDepthOperator implements Operator {
-	private final FileTypeCategory fileTypeCategory;
+public class ParentDepthOperator extends AbstractAnnotationTransformer implements Operator {
 
 	public ParentDepthOperator(FileTypeCategory fileTypeCategory) {
-		this.fileTypeCategory = fileTypeCategory;
+		super(fileTypeCategory);
 	}
 
 	@Override
@@ -33,42 +32,9 @@ public class ParentDepthOperator implements Operator {
 	}
 
 	@Override
-	public int getOperandCountMin(FileTypeCategory category) {
-		return category == this.fileTypeCategory ? 1 : 0;
-	}
-
-	@Override
-	public int getOperandCountMax(FileTypeCategory category) {
-		return category == this.fileTypeCategory ? 1 : 0;
-	}
-
-	@Override
-	public Map<String, Class<?>> getParameters() {
-		return null;
-	}
-
-	@Override
-	public boolean setParameters(Map<String, Object> obj) {
-		return false;
-	}
-
-	@Override
-	public boolean supportsTwoTrack() {
-		return false;
-	}
-
-	@Override
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Graph;
 	}
 	
-	@Override
-	public Operator clone(){
-		try {
-			return getClass().getConstructor(FileTypeCategory.class).newInstance(fileTypeCategory);
-		} catch (Exception ex) {
-		}
-		return null;
-	}
 }
 

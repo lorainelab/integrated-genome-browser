@@ -75,5 +75,15 @@ public class ThresholdOperator implements Operator{
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Annotation;
 	}
+
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(GraphGlyph.class, ViewI.class).newInstance(sgg, view);
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 	
 }

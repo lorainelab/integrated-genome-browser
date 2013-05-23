@@ -80,4 +80,13 @@ public class FilterOperator implements Operator {
 	public FileTypeCategory getOutputCategory() {
 		return category;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor(FileTypeCategory.class, SymmetryFilterI.class).newInstance(category, filter);
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }

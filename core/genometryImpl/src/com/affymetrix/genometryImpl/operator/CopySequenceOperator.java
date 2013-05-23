@@ -62,4 +62,14 @@ public final class CopySequenceOperator implements Operator, ICopy {
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Sequence;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 }

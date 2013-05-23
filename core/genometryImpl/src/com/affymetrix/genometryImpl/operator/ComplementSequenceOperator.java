@@ -83,4 +83,14 @@ public class ComplementSequenceOperator implements Operator {
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Sequence;
 	}
+	
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
 }

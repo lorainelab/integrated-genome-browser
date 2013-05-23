@@ -127,6 +127,16 @@ public class GraphMultiplexer implements Operator {
 		return FileTypeCategory.Graph;
 	}
 
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
+	
 	public static void main(String[] argv) {
 		System.out.println("Hi from the multiplexer.");
 		Operator o = new GraphMultiplexer();

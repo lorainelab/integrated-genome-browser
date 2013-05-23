@@ -13,6 +13,7 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 
@@ -84,4 +85,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public void setSummaryThreshold(int level);
 	public void setColorProvider(ColorProvider cp);
 	public ColorProvider getColorProvider();
+	public void setFilter(SymmetryFilterI filter);
+	public SymmetryFilterI getFilter();
 }

@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
 import java.awt.Color;
@@ -239,5 +240,16 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 	@Override
 	public ColorProvider getColorProvider(){
 		return color_provider;
+	}
+	
+	private SymmetryFilterI filter;
+	@Override
+	public void setFilter(SymmetryFilterI filter){
+		this.filter = filter;
+	}
+	
+	@Override
+	public SymmetryFilterI getFilter(){
+		return filter;
 	}
 }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -110,16 +111,17 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
     @Override
     public boolean setParameters(Map<String, Object> map) {
         if(map.size() <= 0)
-            return false;                
-        for(String s: map.keySet()){
-            if(s.equalsIgnoreCase(THRESHOLD))
-                threshold = (Integer)map.get(s);
-            else if(s.equalsIgnoreCase(TWOTRACKS))
-                twoTracks = (Boolean)map.get(s);
-            else if(s.equalsIgnoreCase(UNIQUENESS))
-                uniqueness = (Boolean)map.get(s);
-			else if(s.equalsIgnoreCase(TOPHATSTYLEFLANKING))
-				topHatStyleFlanking = (Boolean)map.get(s);
+            return false;
+        for(Entry<String, Object> entry : map.entrySet()){
+            if(entry.getKey().equalsIgnoreCase(THRESHOLD)) {
+				threshold = Integer.valueOf(entry.getValue().toString());
+			} else if(entry.getKey().equalsIgnoreCase(TWOTRACKS)) {
+				twoTracks = Boolean.valueOf(entry.getValue().toString());
+			} else if(entry.getKey().equalsIgnoreCase(UNIQUENESS)) {
+				uniqueness = Boolean.valueOf(entry.getValue().toString());
+			} else if(entry.getKey().equalsIgnoreCase(TOPHATSTYLEFLANKING)) {
+				topHatStyleFlanking = Boolean.valueOf(entry.getValue().toString());
+			}
         }
         return true;
     }
@@ -135,6 +137,15 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 		return style;
 	}
 
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
+	}
+	
     /* This method splits the given Sym into introns and filters out the qualified Introns
 	 * and adds the qualified introns into map using addtoMap method
 	 */

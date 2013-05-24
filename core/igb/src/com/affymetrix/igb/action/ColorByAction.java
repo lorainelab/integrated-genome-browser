@@ -87,6 +87,7 @@ public class ColorByAction extends SeqMapViewActionA {
 		private JOptionPane optionPane;
 		private JComboBox comboBox;
 		private JPanel paramsPanel;
+		private JButton okOption, cancelOption;
 		private Map<String, ColorProviderI> name2CP;
 		
 		/**
@@ -101,7 +102,11 @@ public class ColorByAction extends SeqMapViewActionA {
 			JPanel pan = new JPanel();
 			pan.setLayout(new BorderLayout());
 	
-			optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+			okOption = new JButton("OK");
+			cancelOption = new JButton("Cancel");
+			Object[] options = new Object[]{okOption, cancelOption};
+			
+			optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 			optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 			
 			setTitle("Color By");
@@ -266,7 +271,7 @@ public class ColorByAction extends SeqMapViewActionA {
 				public void itemStateChanged(ItemEvent e) {
 					ColorProviderI cp = name2CP.get((String)e.getItem());
 					// If a user selects same color provider as initial then reuses the same object
-					if(returnValue != null && cp.getName().equals(returnValue.getName())){
+					if(returnValue != null && cp != null && cp.getName().equals(returnValue.getName())){
 						cp = returnValue;
 					} else if(cp != null){
 						cp = cp.clone();
@@ -278,21 +283,17 @@ public class ColorByAction extends SeqMapViewActionA {
 				}
 			});
 
-			optionPane.addPropertyChangeListener(new PropertyChangeListener(){
-				public void propertyChange(PropertyChangeEvent evt) {
-					Object value = optionPane.getValue();
-					if(value != null){
-						if(value.equals(JOptionPane.CANCEL_OPTION)){
-							optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-							dispose();
-						}else if (value.equals(JOptionPane.OK_OPTION)){
-							optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-							returnValue = selectedCP;
-							dispose();
-						}
-					}
+			ActionListener al = new ActionListener(){
+				public void actionPerformed(ActionEvent ae) {
+					optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+					if (ae.getSource() == okOption) {	
+						returnValue = selectedCP;
+					} 
+					dispose();
 				}
-			});
+			};
+			okOption.addActionListener(al);
+			cancelOption.addActionListener(al);
 		}
 
 		public void setInitialValue(ColorProviderI cp){

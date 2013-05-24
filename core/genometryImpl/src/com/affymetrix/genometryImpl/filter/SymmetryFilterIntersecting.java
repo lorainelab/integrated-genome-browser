@@ -21,6 +21,11 @@ public class SymmetryFilterIntersecting implements SymmetryFilterI{
 		return "existing";
 	}
 
+	@Override
+	public String getDisplay() {
+		return getName();
+	}
+	
 	public boolean setParam(Object param) {
 		this.param = param;
 		if(!(param instanceof SeqSymmetry)){

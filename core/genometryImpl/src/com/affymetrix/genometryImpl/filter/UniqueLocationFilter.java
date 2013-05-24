@@ -24,6 +24,11 @@ public class UniqueLocationFilter implements SymmetryFilterI{
         return null;
     }
 
+	@Override
+	public String getDisplay() {
+		return getName();
+	}
+	
     @Override
     public boolean setParam(Object o) {
         return false;

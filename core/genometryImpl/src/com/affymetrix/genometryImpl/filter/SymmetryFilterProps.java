@@ -24,6 +24,11 @@ public class SymmetryFilterProps implements SymmetryFilterI {
 	}
 
 	@Override
+	public String getDisplay() {
+		return getName();
+	}
+	
+	@Override
 	public Object getParam() {
 		return param;
 	}

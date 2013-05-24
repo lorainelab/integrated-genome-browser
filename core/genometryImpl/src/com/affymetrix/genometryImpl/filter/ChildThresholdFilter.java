@@ -23,6 +23,11 @@ public class ChildThresholdFilter implements SymmetryFilterI{
         return null;
     }
 
+	@Override
+	public String getDisplay() {
+		return getName();
+	}
+	
     @Override
     public boolean setParam(Object o) {
         threshold = (Integer)o;

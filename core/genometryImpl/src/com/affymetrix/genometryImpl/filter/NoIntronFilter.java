@@ -18,6 +18,11 @@ public class NoIntronFilter implements SymmetryFilterI{
         return null;
     }
 
+	@Override
+	public String getDisplay() {
+		return getName();
+	}
+	
     @Override
     public boolean setParam(Object o) {
         return false;

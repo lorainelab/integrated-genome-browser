@@ -19,6 +19,11 @@ public class SymmetryFilterId implements SymmetryFilterI {
 	}
 
 	@Override
+	public String getDisplay() {
+		return getName();
+	}
+	
+	@Override
 	public Object getParam() {
 		return param;
 	}

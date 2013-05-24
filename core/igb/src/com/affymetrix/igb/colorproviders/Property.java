@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.general.Parameter;
+import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.color.ColorPalette;
@@ -17,7 +18,18 @@ public class Property extends ColorProvider {
 	private final static String PROPERTY = "property";
 	public final static String DEFAULT_PROPERTY = "id";
 	
-	protected Parameter<String> property = new Parameter<String>(DEFAULT_PROPERTY);
+	protected Parameter<String> property = new Parameter<String>(DEFAULT_PROPERTY) {
+		@Override
+		public boolean set(Object e){
+			String prop = (String)e;
+			if(prop == null || prop.length() == 0){
+				return false;
+			}
+			super.set(e);
+			return true;
+		}
+	};
+	
 	private ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
 	
 	public Property(){

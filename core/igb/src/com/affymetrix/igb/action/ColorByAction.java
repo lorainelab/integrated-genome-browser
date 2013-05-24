@@ -9,6 +9,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -24,13 +28,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 
-import com.affymetrix.igb.colorproviders.ColorProviderHolder;
 import com.jidesoft.combobox.ColorComboBox;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 
-import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.IParameters;
@@ -40,6 +43,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 
 /**
  *
@@ -83,6 +87,7 @@ public class ColorByAction extends SeqMapViewActionA {
 		private JOptionPane optionPane;
 		private JComboBox comboBox;
 		private JPanel paramsPanel;
+		private Map<String, ColorProviderI> name2CP;
 		
 		/**
 		 * Creates the reusable dialog.
@@ -106,8 +111,17 @@ public class ColorByAction extends SeqMapViewActionA {
 			setAlwaysOnTop(false);
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			
-			comboBox = new JComboBox(ColorProviderHolder.OPTIONS.keySet().toArray());
-			comboBox.setSelectedItem(ColorProviderHolder.getCPName(null));
+			comboBox = new JComboBox();
+			Set<ColorProviderI> colorProviders = new HashSet<ColorProviderI>();
+			colorProviders.addAll(ExtensionPointHandler.getExtensionPoint(ColorProviderI.class).getExtensionPointImpls());
+			name2CP = new HashMap<String, ColorProviderI>();
+			
+			comboBox.addItem("None");
+			for(ColorProviderI cp : colorProviders){
+				name2CP.put(cp.getDisplay(), cp);
+				comboBox.addItem(cp.getDisplay());
+			}
+			comboBox.setSelectedItem("None");
 			
 			JPanel optionsBox = new JPanel();
 			optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
@@ -250,7 +264,13 @@ public class ColorByAction extends SeqMapViewActionA {
 			comboBox.addItemListener(new ItemListener() {
 				
 				public void itemStateChanged(ItemEvent e) {
-					ColorProviderI cp = ColorProviderHolder.getCPInstance(ColorProviderHolder.OPTIONS.get(e.getItem().toString()));
+					ColorProviderI cp = name2CP.get((String)e.getItem());
+					// If a user selects same color provider as initial then reuses the same object
+					if(returnValue != null && cp.getName().equals(returnValue.getName())){
+						cp = returnValue;
+					} else if(cp != null){
+						cp = cp.clone();
+					}
 					selectedCP = cp;
 					if(cp instanceof IParameters){
 						initParamPanel((IParameters)cp);
@@ -276,7 +296,11 @@ public class ColorByAction extends SeqMapViewActionA {
 		}
 
 		public void setInitialValue(ColorProviderI cp){
-			comboBox.setSelectedItem(ColorProviderHolder.getCPName(cp == null ? null : cp.getClass()));
+			if(cp == null){
+				comboBox.setSelectedItem("None");
+			}else{
+				comboBox.setSelectedItem(cp.getDisplay());
+			}
 			returnValue = cp;
 			selectedCP = cp;
 			if(cp instanceof IParameters){

@@ -16,6 +16,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 
+import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
@@ -164,6 +165,7 @@ public class Activator implements BundleActivator {
 			}
 		});
 		initOperators();
+		initColorProvider();
 	}
 
 	@Override
@@ -341,6 +343,15 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
+	}
+	
+	private void initColorProvider() {
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ColorProviderI.class);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.RGB(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Score(), null);
+		//bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Strand(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
 	}
 	
 	private void initMapViewGlyphFactorys() {

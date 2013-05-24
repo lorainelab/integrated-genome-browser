@@ -21,7 +21,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.operator.OperatorComparator;
+import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -133,7 +133,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (IGBConstants.GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
 			return operationsMenu; 
 		}
-		TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
+		TreeSet<Operator> operators = new TreeSet<Operator>(new IDComparator());
 		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 		for (Operator operator : operators) {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator, false)) { // cannot handle Operators with parameters
@@ -395,13 +395,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		popup.add(set_color_by_score);
 		
 		popup.add(new JSeparator());
-		
+			
 		JMenuItem set_color_by = new JRPMenuItemTLP(ColorByAction.getAction());
 		set_color_by.setIcon(null);
 		popup.add(set_color_by);
 			
 		popup.add(new JSeparator());
-		
+				
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
 		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
 		save_selected_annotations.setIcon(null);

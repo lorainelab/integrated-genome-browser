@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.operator.OperatorComparator;
+import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -160,7 +160,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			}
 		}
 		boolean transformOK = transformCategory != null;
-		TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
+		TreeSet<Operator> operators = new TreeSet<Operator>(new IDComparator());
 		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 		List<RootSeqSymmetry> transformSyms = new ArrayList<RootSeqSymmetry>(); // fake List to test compatibility of Transform operations
 		transformSyms.add(rootSyms.get(0));

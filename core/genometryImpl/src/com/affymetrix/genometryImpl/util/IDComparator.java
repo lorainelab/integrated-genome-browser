@@ -1,6 +1,7 @@
 
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.general.ID.Order;
 import java.util.Comparator;
 
@@ -8,9 +9,9 @@ import java.util.Comparator;
  *
  * @author hiralv
  */
-public class OperatorComparator implements Comparator<Operator> {
+public class IDComparator implements Comparator<ID> {
 
-	public int compare(Operator o1, Operator o2) {
+	public int compare(ID o1, ID o2) {
 		if (o1 instanceof Order && o2 instanceof Order) {
 			if (((Order) o1).getOrder() == ((Order) o2).getOrder()) {
 				return 0;

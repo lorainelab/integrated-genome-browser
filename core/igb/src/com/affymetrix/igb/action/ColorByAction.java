@@ -10,10 +10,9 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -37,6 +36,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.IParameters;
+import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -112,7 +112,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			
 			comboBox = new JComboBox();
-			Set<ColorProviderI> colorProviders = new HashSet<ColorProviderI>();
+			TreeSet<ColorProviderI> colorProviders = new TreeSet<ColorProviderI>(new IDComparator());
 			colorProviders.addAll(ExtensionPointHandler.getExtensionPoint(ColorProviderI.class).getExtensionPointImpls());
 			name2CP = new HashMap<String, ColorProviderI>();
 			

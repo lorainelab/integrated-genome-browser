@@ -1,5 +1,11 @@
 package com.affymetrix.genometryImpl.operator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
@@ -11,10 +17,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -24,7 +26,12 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	public static final String THRESHOLD = "threshold";
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
-	
+	private static final Map<String, Class<?>> properties;
+	static {
+		properties = new HashMap<String, Class<?>>();
+		properties.put(THRESHOLD, Integer.class);
+	}
+		
     public static final int default_threshold = 5;
 	public static final boolean default_twoTracks = true;
 	public static final boolean default_uniqueness = true;
@@ -88,17 +95,22 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         }
     }
 	
+	@Override
+	public java.util.Map<String, Class<?>> getParameters() {
+		return properties;
+	}
+	
     @Override
     public boolean setParameters(Map<String, Object> map) {
         if(map.size() <= 0)
-            return false;                
-        for(String s: map.keySet()){
-            if(s.equalsIgnoreCase(THRESHOLD))
-                threshold = (Integer)map.get(s);
-            else if(s.equalsIgnoreCase(TWOTRACKS))
-                twoTracks = (Boolean)map.get(s);
-            else if(s.equalsIgnoreCase(UNIQUENESS))
-                uniqueness = (Boolean)map.get(s);
+        for(Entry<String, Object> entry : map.entrySet()){
+            if(entry.getKey().equalsIgnoreCase(THRESHOLD)) {
+				threshold = Integer.valueOf(entry.getValue().toString());
+			} else if(entry.getKey().equalsIgnoreCase(TWOTRACKS)) {
+				twoTracks = Boolean.valueOf(entry.getValue().toString());
+			} else if(entry.getKey().equalsIgnoreCase(UNIQUENESS)) {
+				uniqueness = Boolean.valueOf(entry.getValue().toString());
+			} 
         }
         return true;
     }
@@ -109,6 +121,15 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         return true;
     }
    
+	@Override
+	public Operator clone(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
+	}
+	
     /* This method splits the given Sym into introns and filters out the qualified Introns
 	 * and adds the qualified introns into map using addtoMap method
 	 */

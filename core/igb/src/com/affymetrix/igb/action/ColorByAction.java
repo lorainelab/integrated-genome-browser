@@ -166,15 +166,12 @@ public class ColorByAction extends SeqMapViewActionA {
 						tf.setText(String.valueOf(cp.getParameterValue(label)));
 						tf.getDocument().addDocumentListener(new DocumentListener(){
 							
-							public void insertUpdate(DocumentEvent e) { setParameter(); }
+							public void insertUpdate(DocumentEvent e) { setParameter(cp, label, tf.getText()); }
 
-							public void removeUpdate(DocumentEvent e) { setParameter(); }
+							public void removeUpdate(DocumentEvent e) { setParameter(cp, label, tf.getText()); }
 
-							public void changedUpdate(DocumentEvent e) { setParameter(); }
-							
-							private void setParameter(){
-								cp.setParameterValue(label, tf.getText());
-							}
+							public void changedUpdate(DocumentEvent e) { setParameter(cp, label, tf.getText()); }
+						
 						});
 						
 						tf.setMaximumSize(new java.awt.Dimension(60, 20));
@@ -186,7 +183,7 @@ public class ColorByAction extends SeqMapViewActionA {
 						colorComboBox.setSelectedColor((Color)cp.getParameterValue(label));
 						colorComboBox.addItemListener(new ItemListener() {
 							public void itemStateChanged(ItemEvent e) {
-								cp.setParameterValue(label, e.getItem());
+								setParameter(cp, label, e.getItem());
 							}
 						});
 						colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
@@ -223,8 +220,7 @@ public class ColorByAction extends SeqMapViewActionA {
 								Object value = editor.showDialog();
 								if(value.equals(JOptionPane.OK_OPTION)){	
 									ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-									cp.setParameterValue(label, 
-											new HeatMapExtended("HeatMapExtended", 
+									setParameter(cp, label, new HeatMapExtended("HeatMapExtended", 
 											colorInterpolator.getColorRange(HeatMap.BINS), 
 											editor.getVirtualRange().getVirtualValues(), 
 											editor.getVirtualRange().getColors()));
@@ -254,6 +250,11 @@ public class ColorByAction extends SeqMapViewActionA {
 				paramsPanel.add(Box.createVerticalStrut(10));
 				paramsPanel.add(panel);
 			}
+		}
+		
+		private void setParameter(IParameters cp, String key, Object value){
+			boolean isValid = cp.setParameterValue(key, value);
+			okOption.setEnabled(isValid);
 		}
 		
 		private void initParamPanel(IParameters cp) {

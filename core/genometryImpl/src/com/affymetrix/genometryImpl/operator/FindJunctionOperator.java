@@ -1,5 +1,11 @@
 package com.affymetrix.genometryImpl.operator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
@@ -13,11 +19,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
@@ -27,6 +28,11 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	public static final String THRESHOLD = "threshold";
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
+	private static final Map<String, Class<?>> properties;
+	static {
+		properties = new HashMap<String, Class<?>>();
+		properties.put(THRESHOLD, Integer.class);
+	}
 	private static final Map<String, Object> style;
 	static {
 		style = new HashMap<String, Object>();
@@ -107,6 +113,11 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
             }
         }
     }
+	
+	@Override
+	public java.util.Map<String, Class<?>> getParameters() {
+		return properties;
+	}
 	
     @Override
     public boolean setParameters(Map<String, Object> map) {

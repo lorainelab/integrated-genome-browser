@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -152,7 +150,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			if (cp != null && cp.getParametersType() != null) {
 				for (Entry<String, Class<?>> entry : cp.getParametersType().entrySet()) {
 					final String label = entry.getKey();
-					Class<?> clazz = entry.getValue();
+					final Class<?> clazz = entry.getValue();
 					JComponent component = null;
 
 					if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
@@ -166,12 +164,19 @@ public class ColorByAction extends SeqMapViewActionA {
 						tf.setText(String.valueOf(cp.getParameterValue(label)));
 						tf.getDocument().addDocumentListener(new DocumentListener(){
 							
-							public void insertUpdate(DocumentEvent e) { setParameter(cp, label, tf.getText()); }
+							public void insertUpdate(DocumentEvent e) { setParameter(); }
 
-							public void removeUpdate(DocumentEvent e) { setParameter(cp, label, tf.getText()); }
+							public void removeUpdate(DocumentEvent e) { setParameter(); }
 
-							public void changedUpdate(DocumentEvent e) { setParameter(cp, label, tf.getText()); }
+							public void changedUpdate(DocumentEvent e) { setParameter(); }
 						
+							private void setParameter(){
+								if(Number.class.isAssignableFrom(clazz)){
+									ColorByDialog.this.setParameter(cp, label, Float.valueOf(tf.getText()));
+								} else {
+									ColorByDialog.this.setParameter(cp, label, tf.getText());
+								}
+							}
 						});
 						
 						tf.setMaximumSize(new java.awt.Dimension(60, 20));

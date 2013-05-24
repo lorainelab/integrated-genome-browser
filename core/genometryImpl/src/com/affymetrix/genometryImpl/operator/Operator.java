@@ -82,15 +82,7 @@ public interface Operator extends ID{
 	public FileTypeCategory getOutputCategory();
 
 	public Operator clone();
-	
-	/**
-	 * optional interface for Operators, used to order
-	 * the list of Operators in the UI
-	 */
-	public static interface Order{
-		public int getOrder();
-	}
-	
+		
 	public static interface Style{
 		public Map<String,Object> getStyleProperties();
 	}

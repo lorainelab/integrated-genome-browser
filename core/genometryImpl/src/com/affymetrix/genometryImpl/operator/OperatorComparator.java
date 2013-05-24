@@ -1,7 +1,7 @@
 
 package com.affymetrix.genometryImpl.operator;
 
-import com.affymetrix.genometryImpl.operator.Operator.Order;
+import com.affymetrix.genometryImpl.general.ID.Order;
 import java.util.Comparator;
 
 /**

@@ -20,4 +20,12 @@ public interface ID {
 	 * @return a string suitable for showing a user.
 	 */
 	public String getDisplay();
+	
+	/**
+	 * optional interface for Operators, used to order
+	 * the list of Operators in the UI
+	 */
+	public static interface Order{
+		public int getOrder();
+	}
 }

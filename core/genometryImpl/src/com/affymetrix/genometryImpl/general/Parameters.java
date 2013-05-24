@@ -37,8 +37,7 @@ public class Parameters implements IParameters {
 	@Override
 	public boolean setParameterValue(String key, Object value) {
 		if (PARAMETERS_TYPE.get(key).isInstance(value)) {
-			PARAMETERS_VALUE.get(key).set(value);
-			return true;
+			return PARAMETERS_VALUE.get(key).set(value);
 		}
 		return false;
 	}

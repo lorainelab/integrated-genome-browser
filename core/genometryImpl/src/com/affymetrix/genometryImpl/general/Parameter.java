@@ -18,8 +18,9 @@ public class Parameter<E> {
 		return e;
 	}
 	
-	public void set(Object e){
+	public boolean set(Object e){
 		this.e = (E)e;
+		return true;
 	}
 	
 	public void reset(){

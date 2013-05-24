@@ -26,12 +26,13 @@ public class Score extends ColorProvider {
 	
 	private Parameter<HeatMap> custom_heatmap = new Parameter<HeatMap>(DEFAULT_HEATMAP){
 		@Override
-		public void set(Object e){
+		public boolean set(Object e){
 			super.set(e);
 			HeatMapExtended heatmap = (HeatMapExtended)e;
 			min_score_color = heatmap.getValues()[0];
 			max_score_color = heatmap.getValues()[heatmap.getValues().length - 1];
 			range = max_score_color - min_score_color;
+			return true;
 		}
 	};
 	

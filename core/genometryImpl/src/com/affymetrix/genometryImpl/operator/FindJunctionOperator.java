@@ -28,6 +28,15 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	public static final String THRESHOLD = "threshold";
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
+	/**
+	 * TopHat style flanking makes the junction flanks as long as the largest length 
+	 * of extrons from each side of a qualified intron.
+	 * 
+	 * If not specifying TopHat style, the flank length equals to threadhold (5 by default) 
+	 * 
+	 */
+	public static final String TOPHATSTYLEFLANKING = "topHatStyleFlanking";
+	
 	private static final Map<String, Class<?>> properties;
 	static {
 		properties = new HashMap<String, Class<?>>();
@@ -38,15 +47,6 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 		style = new HashMap<String, Object>();
 		style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
 	}
-	
-	/**
-	 * TopHat style flanking makes the junction flanks as long as the largest length 
-	 * of extrons from each side of a qualified intron.
-	 * 
-	 * If not specifying TopHat style, the flank length equals to threadhold (5 by default) 
-	 * 
-	 */
-	public static final String TOPHATSTYLEFLANKING = "topHatStyleFlanking";
 	
     public static final int default_threshold = 5;
 	public static final boolean default_twoTracks = true;
@@ -63,16 +63,21 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	private boolean topHatStyleFlanking;
 	
     public FindJunctionOperator(){
+		this(default_topHatStyleFlanking);
+    }   
+    
+	public FindJunctionOperator(boolean topHatStyle){
 		super(FileTypeCategory.Alignment);
 		threshold = default_threshold;
 		twoTracks = default_twoTracks;
 		uniqueness = default_uniqueness;
-		topHatStyleFlanking = default_topHatStyleFlanking;
-    }   
-    
+		topHatStyleFlanking = topHatStyle;
+    }
+	
     @Override
     public String getName() {
-        return "findjunctions";
+		String append = topHatStyleFlanking ? "_tophat" : "";
+        return "findjunctions" + append;
     }
     
     /* This is an Operator method which is used to operates on a given list of symmetries and find the junctions between them
@@ -151,7 +156,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	@Override
 	public Operator clone(){
 		try {
-			return getClass().getConstructor().newInstance();
+			return getClass().getConstructor(Boolean.class).newInstance(topHatStyleFlanking);
 		} catch (Exception ex) {
 		}
 		return null;

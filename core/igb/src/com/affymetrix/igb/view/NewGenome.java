@@ -57,6 +57,7 @@ public class NewGenome extends javax.swing.JPanel {
             }
         });
 
+        switchCheckBox.setSelected(true);
         switchCheckBox.setText("Switch to new species after creating it");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);

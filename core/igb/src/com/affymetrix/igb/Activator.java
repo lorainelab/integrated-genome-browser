@@ -337,6 +337,7 @@ public class Activator implements BundleActivator {
 		RemoveDataFromTracksAction.getAction();
 		RepackSelectedTiersAction.getAction();
 		AutoLoadThresholdAction.getAction();
+		NewGenomeAction.getAction();
 	}
 
 	private void initOperators() {

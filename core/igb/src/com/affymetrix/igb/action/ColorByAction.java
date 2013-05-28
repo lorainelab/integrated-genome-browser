@@ -33,7 +33,9 @@ import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.general.IParameters;
+import com.affymetrix.genometryImpl.general.NewInstance;
 import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
@@ -69,7 +71,8 @@ public class ColorByAction extends SeqMapViewActionA {
 		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
 		ColorProviderI cp = style.getColorProvider();
 		
-		ColorByDialog colorByDialog = new ColorByDialog();
+		ColorByDialog<ColorProviderI> colorByDialog = new ColorByDialog<ColorProviderI>(ColorProviderI.class);
+		colorByDialog.setTitle("Color By");
 		colorByDialog.setLocationRelativeTo(getSeqMapView());
 		colorByDialog.setInitialValue(cp);
 		cp = colorByDialog.showDialog();
@@ -79,24 +82,25 @@ public class ColorByAction extends SeqMapViewActionA {
 		//TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 	
-	private class ColorByDialog extends JDialog {
+	@SuppressWarnings("unchecked")
+	private class ColorByDialog<T extends ID & NewInstance> extends JDialog {
 
-		private ColorProviderI returnValue, selectedCP;
+		private T returnValue, selectedCP;
 		private JOptionPane optionPane;
 		private JComboBox comboBox;
 		private JPanel paramsPanel;
 		private JButton okOption, cancelOption;
-		private Map<String, ColorProviderI> name2CP;
+		private Map<String, T> name2CP;
 		
 		/**
 		 * Creates the reusable dialog.
 		 */
-		public ColorByDialog () {
+		public ColorByDialog (Class clazz) {
 			super((Frame)null, true);
-			init();
+			init(clazz);
 		}
 
-		private void init() throws SecurityException {
+		private void init(Class clazz) throws SecurityException {
 			JPanel pan = new JPanel();
 			pan.setLayout(new BorderLayout());
 	
@@ -107,7 +111,6 @@ public class ColorByAction extends SeqMapViewActionA {
 			optionPane = new JOptionPane(pan, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 			optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 			
-			setTitle("Color By");
 			setResizable(true);
 			setContentPane(optionPane);
 			//setModal(false);
@@ -115,12 +118,12 @@ public class ColorByAction extends SeqMapViewActionA {
 			setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			
 			comboBox = new JComboBox();
-			TreeSet<ColorProviderI> colorProviders = new TreeSet<ColorProviderI>(new IDComparator());
-			colorProviders.addAll(ExtensionPointHandler.getExtensionPoint(ColorProviderI.class).getExtensionPointImpls());
-			name2CP = new HashMap<String, ColorProviderI>();
+			TreeSet<T> colorProviders = new TreeSet<T>(new IDComparator());
+			colorProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
+			name2CP = new HashMap<String, T>();
 			
 			comboBox.addItem("None");
-			for(ColorProviderI cp : colorProviders){
+			for(T cp : colorProviders){
 				name2CP.put(cp.getDisplay(), cp);
 				comboBox.addItem(cp.getDisplay());
 			}
@@ -275,12 +278,12 @@ public class ColorByAction extends SeqMapViewActionA {
 			comboBox.addItemListener(new ItemListener() {
 				
 				public void itemStateChanged(ItemEvent e) {
-					ColorProviderI cp = name2CP.get((String)e.getItem());
+					T cp = name2CP.get((String)e.getItem());
 					// If a user selects same color provider as initial then reuses the same object
 					if(returnValue != null && cp != null && cp.getName().equals(returnValue.getName())){
 						cp = returnValue;
 					} else if(cp != null){
-						cp = cp.newInstance();
+						cp = (T)cp.newInstance();
 					}
 					selectedCP = cp;
 					if(cp instanceof IParameters){
@@ -302,7 +305,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			cancelOption.addActionListener(al);
 		}
 
-		public void setInitialValue(ColorProviderI cp){
+		public void setInitialValue(T cp){
 			if(cp == null){
 				comboBox.setSelectedItem("None");
 			}else{
@@ -315,7 +318,7 @@ public class ColorByAction extends SeqMapViewActionA {
 			}
 		}
 		
-		public ColorProviderI showDialog() {
+		public T showDialog() {
 			setVisible(true);
 			return returnValue;
 		}

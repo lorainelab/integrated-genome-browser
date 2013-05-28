@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.color;
 
 import com.affymetrix.genometryImpl.general.ID;
+import com.affymetrix.genometryImpl.general.NewInstance;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
 
@@ -8,7 +9,7 @@ import java.awt.Color;
  *
  * @author hiralv
  */
-public interface ColorProviderI extends ID {
+public interface ColorProviderI extends ID, NewInstance<ColorProviderI> {
 
 	/**
 	 * Get color for the given object
@@ -16,6 +17,4 @@ public interface ColorProviderI extends ID {
 	 * @return 
 	 */
 	public Color getColor(SeqSymmetry sym);
-	
-	public ColorProviderI clone();
 }

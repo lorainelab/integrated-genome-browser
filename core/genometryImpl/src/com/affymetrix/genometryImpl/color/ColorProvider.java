@@ -46,7 +46,7 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 	}
 	
 	@Override
-	public ColorProviderI clone(){
+	public ColorProvider newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

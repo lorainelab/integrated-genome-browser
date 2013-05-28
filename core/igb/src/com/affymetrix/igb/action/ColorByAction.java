@@ -280,7 +280,7 @@ public class ColorByAction extends SeqMapViewActionA {
 					if(returnValue != null && cp != null && cp.getName().equals(returnValue.getName())){
 						cp = returnValue;
 					} else if(cp != null){
-						cp = cp.clone();
+						cp = cp.newInstance();
 					}
 					selectedCP = cp;
 					if(cp instanceof IParameters){

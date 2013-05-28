@@ -66,7 +66,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 		this(default_topHatStyleFlanking);
     }   
     
-	public FindJunctionOperator(boolean topHatStyle){
+	public FindJunctionOperator(Boolean topHatStyle){
 		super(FileTypeCategory.Alignment);
 		threshold = default_threshold;
 		twoTracks = default_twoTracks;
@@ -155,7 +155,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
 	@Override
 	public Operator clone(){
-		try {
+		try {		
 			return getClass().getConstructor(Boolean.class).newInstance(topHatStyleFlanking);
 		} catch (Exception ex) {
 		}

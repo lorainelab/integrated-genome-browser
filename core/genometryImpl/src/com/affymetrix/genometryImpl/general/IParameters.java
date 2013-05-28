@@ -14,6 +14,6 @@ public interface IParameters {
 
 	public boolean setParameterValue(String key, Object value);
 
-	public void setParametersValue(Map<String, Object> params);
+	public boolean setParametersValue(Map<String, Object> params);
     
 }

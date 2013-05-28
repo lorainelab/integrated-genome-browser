@@ -28,10 +28,12 @@ public class Parameters implements IParameters {
 	}
 	
 	@Override
-	public void setParametersValue(Map<String, Object> params){
+	public boolean setParametersValue(Map<String, Object> params){
+		boolean retValue = true;
 		for(Map.Entry<String, Object> param : params.entrySet()){
-			setParameterValue(param.getKey(), param.getValue());
+			retValue &= setParameterValue(param.getKey(), param.getValue());
 		}
+		return retValue;
 	}
 	
 	@Override

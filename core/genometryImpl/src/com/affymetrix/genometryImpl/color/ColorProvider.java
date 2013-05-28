@@ -21,8 +21,8 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 	}
 
 	@Override
-	public final void setParametersValue(Map<String, Object> params){
-		parameters.setParametersValue(params);
+	public final boolean setParametersValue(Map<String, Object> params){
+		return parameters.setParametersValue(params);
 	}
 	
 	@Override

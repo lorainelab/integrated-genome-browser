@@ -60,11 +60,11 @@ public class ThresholdOperator implements Operator{
 		return category == FileTypeCategory.Graph ? 1 : 0;
 	}
 
-	public Map<String, Class<?>> getParameters() {
+	public Map<String, Class<?>> getParametersType() {
 		return null;
 	}
 
-	public boolean setParameters(Map<String, Object> parms) {
+	public boolean setParametersValue(Map<String, Object> parms) {
 		return true;
 	}
 

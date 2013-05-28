@@ -56,14 +56,14 @@ public class FilterOperator implements Operator {
 	}
 
 	@Override
-	public Map<String, Class<?>> getParameters() {
+	public Map<String, Class<?>> getParametersType() {
 		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
 		parameters.put(filter.getName(), String.class);
 		return parameters;
 	}
 
 	@Override
-	public boolean setParameters(Map<String, Object> parms) {
+	public boolean setParametersValue(Map<String, Object> parms) {
 		if (parms.size() == 1 && parms.get(filter.getName()) instanceof String) {
 			filter.setParam(parms.get(filter.getName()));
 			return true;

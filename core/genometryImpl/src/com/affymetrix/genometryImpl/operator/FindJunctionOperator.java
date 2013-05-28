@@ -120,12 +120,12 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
     }
 	
 	@Override
-	public java.util.Map<String, Class<?>> getParameters() {
+	public java.util.Map<String, Class<?>> getParametersType() {
 		return properties;
 	}
 	
     @Override
-    public boolean setParameters(Map<String, Object> map) {
+    public boolean setParametersValue(Map<String, Object> map) {
         if(map.size() <= 0)
             return false;
         for(Entry<String, Object> entry : map.entrySet()){

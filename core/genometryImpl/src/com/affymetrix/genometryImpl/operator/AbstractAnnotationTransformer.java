@@ -31,12 +31,12 @@ public abstract class AbstractAnnotationTransformer implements Operator {
 	}
 
 	@Override
-	public java.util.Map<String, Class<?>> getParameters() {
+	public java.util.Map<String, Class<?>> getParametersType() {
 		return null;
 	}
 
 	@Override
-	public boolean setParameters(java.util.Map<String, Object> obj) {
+	public boolean setParametersValue(java.util.Map<String, Object> obj) {
 		return false;
 	}
 

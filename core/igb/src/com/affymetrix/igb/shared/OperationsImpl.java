@@ -133,10 +133,10 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		
 		if(paramField.isEnabled() && paramField.getText() != null
 				&& paramField.getText().length() > 0){
-			Map<String, Class<?>> params = operatorClone.getParameters();
+			Map<String, Class<?>> params = operatorClone.getParametersType();
 			Map<String, Object> setparams = new HashMap<String, Object>();
 			setparams.put(params.keySet().iterator().next(), paramField.getText());
-			operatorClone.setParameters(setparams);
+			operatorClone.setParametersValue(setparams);
 		}
 		
 		return operatorClone;
@@ -252,7 +252,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		} else {
 			Operator operator = name2ation.get(selection);
 //			ationGoB.setToolTipText(getTooltipMessage(operator));
-			Map<String, Class<?>> params = operator.getParameters();
+			Map<String, Class<?>> params = operator.getParametersType();
 			if (params == null || params.size() == 0 || (!singleOK && allGlyphs.size() < 2)) {
 				ationParamLabel.setText(" ");
 				ationParamLabel.setEnabled(false);

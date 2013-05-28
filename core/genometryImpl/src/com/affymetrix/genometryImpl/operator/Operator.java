@@ -59,14 +59,14 @@ public interface Operator extends ID{
 	 * instances of the same Operator class.
 	 * @return parameters for this Operator
 	 */
-	public Map<String, Class<?>> getParameters();
+	public Map<String, Class<?>> getParametersType();
 
 	/**
 	 * Used for properties specific to a type of operator.
 	 * Why does it take a different type Map
-	 * from that returned by {@link #getParameters}?
+	 * from that returned by {@link #getParametersType}?
 	 */
-	public boolean setParameters( Map<String, Object> parms);
+	public boolean setParametersValue(Map<String, Object> parms);
 
 	/**
 	 * Indicates whether or not forward and reverse tracks are supported.

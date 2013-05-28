@@ -127,7 +127,7 @@ public class TrackUtils {
 	public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator, boolean paramsOK) {
 		
 		if (!paramsOK) {
-			Map<String, Class<?>> params = operator.getParameters();
+			Map<String, Class<?>> params = operator.getParametersType();
 			if (null != params) {
 				if (0 < params.size()) {
 					return false;

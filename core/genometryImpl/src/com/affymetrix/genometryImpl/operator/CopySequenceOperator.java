@@ -44,12 +44,12 @@ public final class CopySequenceOperator implements Operator, ICopy {
 	}
 
 	@Override
-	public Map<String, Class<?>> getParameters() {
+	public Map<String, Class<?>> getParametersType() {
 		return null;
 	}
 
 	@Override
-	public boolean setParameters(Map<String, Object> parms) {
+	public boolean setParametersValue(Map<String, Object> parms) {
 		return false;
 	}
 

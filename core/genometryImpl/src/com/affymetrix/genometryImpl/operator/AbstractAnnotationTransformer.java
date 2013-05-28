@@ -31,16 +31,6 @@ public abstract class AbstractAnnotationTransformer implements Operator {
 	}
 
 	@Override
-	public java.util.Map<String, Class<?>> getParametersType() {
-		return null;
-	}
-
-	@Override
-	public boolean setParametersValue(java.util.Map<String, Object> obj) {
-		return false;
-	}
-
-	@Override
 	public boolean supportsTwoTrack() {
 		return false;
 	}

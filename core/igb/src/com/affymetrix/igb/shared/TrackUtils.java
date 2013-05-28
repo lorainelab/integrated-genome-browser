@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -126,8 +127,8 @@ public class TrackUtils {
 
 	public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator, boolean paramsOK) {
 		
-		if (!paramsOK) {
-			Map<String, Class<?>> params = operator.getParametersType();
+		if (!paramsOK && operator instanceof IParameters) {
+			Map<String, Class<?>> params = ((IParameters)operator).getParametersType();
 			if (null != params) {
 				if (0 < params.size()) {
 					return false;

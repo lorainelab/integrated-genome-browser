@@ -41,21 +41,15 @@ public final class CopyGraphOperator implements Operator, ICopy {
 		}
 		return graphSym;
 	}
+	
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
 		return category == FileTypeCategory.Graph ? 1 : 0;
 	}
+	
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
 		return category == FileTypeCategory.Graph ? 1 : 0;
-	}
-	@Override
-	public Map<String, Class<?>> getParametersType() {
-		return null;
-	}
-	@Override
-	public boolean setParametersValue(Map<String, Object> obj) {
-		return false;
 	}
 
 	@Override

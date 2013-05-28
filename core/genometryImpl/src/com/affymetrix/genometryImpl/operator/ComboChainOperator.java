@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
@@ -98,21 +99,24 @@ public class ComboChainOperator implements Operator {
 		return operators.size() == 0 ? 0 : operators.get(0).getOperandCountMax(category);
 	}
 
-	@Override
 	public Map<String, Class<?>> getParametersType() {
 		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
 		for (Operator operator : operators) {
-			parameters.putAll(operator.getParametersType());
+			if(operator instanceof IParameters){
+				parameters.putAll(((IParameters)operator).getParametersType());
+			}
 		}
 		return parameters;
 	}
 
-	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
+		boolean ret = true;
 		for (Operator operator : operators) {
-			operator.setParametersValue(parms);
+			if(operator instanceof IParameters){
+				ret &= ((IParameters)operator).setParametersValue(parms);
+			}
 		}
-		return true;
+		return ret;
 	}
 
 	@Override

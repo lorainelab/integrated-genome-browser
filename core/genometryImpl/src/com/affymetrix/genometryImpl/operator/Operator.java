@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.ID;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.List;
@@ -53,20 +54,6 @@ public interface Operator extends ID{
 	 * @return the largest size list allowed.
 	 */
 	public int getOperandCountMax(FileTypeCategory category);
-
-	/**
-	 * Some operators can take parameters for different
-	 * instances of the same Operator class.
-	 * @return parameters for this Operator
-	 */
-	public Map<String, Class<?>> getParametersType();
-
-	/**
-	 * Used for properties specific to a type of operator.
-	 * Why does it take a different type Map
-	 * from that returned by {@link #getParametersType}?
-	 */
-	public boolean setParametersValue(Map<String, Object> parms);
 
 	/**
 	 * Indicates whether or not forward and reverse tracks are supported.

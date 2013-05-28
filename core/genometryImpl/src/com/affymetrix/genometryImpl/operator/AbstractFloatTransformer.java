@@ -55,16 +55,6 @@ public abstract class AbstractFloatTransformer implements Operator {
 	}
 
 	@Override
-	public Map<String, Class<?>> getParametersType() {
-		return null;
-	}
-
-	@Override
-	public boolean setParametersValue(Map<String, Object> parms) {
-		return parms.isEmpty();
-	}
-
-	@Override
 	public boolean supportsTwoTrack() {
 		return false;
 	}

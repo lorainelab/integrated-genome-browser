@@ -216,16 +216,6 @@ public abstract class AbstractGraphOperator implements Operator {
 	}
 
 	@Override
-	public Map<String, Class<?>> getParametersType() {
-		return null;
-	}
-
-	@Override
-	public boolean setParametersValue(Map<String, Object> parms) {
-		return false;
-	}
-
-	@Override
 	public Operator clone(){
 		try {
 			return getClass().getConstructor().newInstance();

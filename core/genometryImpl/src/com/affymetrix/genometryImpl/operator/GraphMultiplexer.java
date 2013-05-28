@@ -98,21 +98,6 @@ public class GraphMultiplexer implements Operator {
 		return category == FileTypeCategory.Graph ? MAXIMUMINPUTGRAPHS : 0;
 	}
 
-	@Override
-	public Map<String, Class<?>> getParametersType() {
-		return null;
-	}
-
-	/**
-	 * No need for this yet.
-	 * @param parms doesn't matter.
-	 * @return false
-	 */
-	@Override
-	public boolean setParametersValue(Map<String, Object> parms) {
-		return false;
-	}
-
 	/**
 	 * Do we need this?
 	 * @return false

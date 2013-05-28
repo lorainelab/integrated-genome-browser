@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -131,12 +132,13 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 	private static Operator setParameters(Operator operator, JTextField paramField){
 		Operator operatorClone = operator.clone();
 		
-		if(paramField.isEnabled() && paramField.getText() != null
+		if(operator instanceof IParameters && 
+				paramField.isEnabled() && paramField.getText() != null
 				&& paramField.getText().length() > 0){
-			Map<String, Class<?>> params = operatorClone.getParametersType();
+			Map<String, Class<?>> params = ((IParameters)operatorClone).getParametersType();
 			Map<String, Object> setparams = new HashMap<String, Object>();
 			setparams.put(params.keySet().iterator().next(), paramField.getText());
-			operatorClone.setParametersValue(setparams);
+			((IParameters)operatorClone).setParametersValue(setparams);
 		}
 		
 		return operatorClone;
@@ -252,8 +254,8 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		} else {
 			Operator operator = name2ation.get(selection);
 //			ationGoB.setToolTipText(getTooltipMessage(operator));
-			Map<String, Class<?>> params = operator.getParametersType();
-			if (params == null || params.size() == 0 || (!singleOK && allGlyphs.size() < 2)) {
+			Map<String, Class<?>> params = operator instanceof IParameters? ((IParameters)operator).getParametersType() : null ;
+			if (params == null || params.isEmpty() || (!singleOK && allGlyphs.size() < 2)) {
 				ationParamLabel.setText(" ");
 				ationParamLabel.setEnabled(false);
 				ationParam.setEditable(false);

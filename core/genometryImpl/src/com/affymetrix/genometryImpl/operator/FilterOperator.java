@@ -55,14 +55,12 @@ public class FilterOperator implements Operator {
 		return category == this.category ? Integer.MAX_VALUE : 0;
 	}
 
-	@Override
 	public Map<String, Class<?>> getParametersType() {
 		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
 		parameters.put(filter.getName(), String.class);
 		return parameters;
 	}
 
-	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (parms.size() == 1 && parms.get(filter.getName()) instanceof String) {
 			filter.setParam(parms.get(filter.getName()));

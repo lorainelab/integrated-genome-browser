@@ -45,7 +45,6 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		return (float)Math.pow(x, exponent);
 	}
 	
-	@Override
 	public Map<String, Class<?>> getParametersType() {
 		if (getParamPrompt() == null) {
 			return null;
@@ -55,7 +54,6 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		return parameters;
 	}
 	
-	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (getParamPrompt() != null && parms.size() == 1 && parms.get(getParamPrompt()) instanceof String) {
 			setParameter((String)parms.get(getParamPrompt()));

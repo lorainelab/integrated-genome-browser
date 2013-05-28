@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public class ComboChainOperator implements Operator {
+public class ComboChainOperator implements Operator, IParameters {
 	private static final String BASE_NAME = "chain";
 	private final List<Operator> operators;
 	public ComboChainOperator(Operator ... operators_) {
@@ -99,6 +99,7 @@ public class ComboChainOperator implements Operator {
 		return operators.size() == 0 ? 0 : operators.get(0).getOperandCountMax(category);
 	}
 
+	@Override
 	public Map<String, Class<?>> getParametersType() {
 		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
 		for (Operator operator : operators) {
@@ -109,6 +110,7 @@ public class ComboChainOperator implements Operator {
 		return parameters;
 	}
 
+	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		boolean ret = true;
 		for (Operator operator : operators) {
@@ -119,6 +121,16 @@ public class ComboChainOperator implements Operator {
 		return ret;
 	}
 
+	@Override
+	public Object getParameterValue(String key) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public boolean setParameterValue(String key, Object value) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
 	@Override
 	public FileTypeCategory getOutputCategory() {
 		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();

@@ -1,10 +1,11 @@
 package com.affymetrix.genometryImpl.operator;
 
+import com.affymetrix.genometryImpl.general.IParameters;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class PowerTransformer extends AbstractFloatTransformer implements Operator {
+public final class PowerTransformer extends AbstractFloatTransformer implements Operator, IParameters {
 	private static final DecimalFormat DF = new DecimalFormat("#,##0.##");
 	double exponent;
 	final String paramPrompt;
@@ -45,6 +46,7 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		return (float)Math.pow(x, exponent);
 	}
 	
+	@Override
 	public Map<String, Class<?>> getParametersType() {
 		if (getParamPrompt() == null) {
 			return null;
@@ -54,22 +56,24 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		return parameters;
 	}
 	
+	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (getParamPrompt() != null && parms.size() == 1 && parms.get(getParamPrompt()) instanceof String) {
-			setParameter((String)parms.get(getParamPrompt()));
+			setParameterValue(getParamPrompt(), (String)parms.get(getParamPrompt()));
 			return true;
 		}
 		return false;
 	}
-		
-	public boolean setParameter(String s) {
-		if (parameterized) {
-			if ("sqrt".equals(s.trim().toLowerCase())) {
+	
+	@Override
+	public boolean setParameterValue(String key, Object value) {
+		if (parameterized && value != null) {
+			if ("sqrt".equals(value.toString().trim().toLowerCase())) {
 				exponent = 0.5;
 			}
 			else {
 				try {
-					exponent = Double.parseDouble(s);
+					exponent = Double.parseDouble(value.toString());
 				}
 				catch (Exception x) {
 					return false;
@@ -77,5 +81,13 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public Object getParameterValue(String key) {
+		if(key != null && key.equalsIgnoreCase(getParamPrompt())){
+			return exponent;
+		}
+		return null;
 	}
 }

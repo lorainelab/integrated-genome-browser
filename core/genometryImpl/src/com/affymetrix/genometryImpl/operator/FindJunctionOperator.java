@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
 import com.affymetrix.genometryImpl.filter.NoIntronFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator.Style;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
@@ -24,7 +25,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
  *
  * @author Anuj
  */
-public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, Style {
+public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 	public static final String THRESHOLD = "threshold";
 	public static final String TWOTRACKS = "twoTracks";
 	public static final String UNIQUENESS = "uniqueness";
@@ -119,28 +120,58 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         }
     }
 	
+	@Override
 	public java.util.Map<String, Class<?>> getParametersType() {
 		return properties;
 	}
 	
+	@Override
     public boolean setParametersValue(Map<String, Object> map) {
         if(map.size() <= 0)
             return false;
+		
+		boolean ret = true;
         for(Entry<String, Object> entry : map.entrySet()){
-            if(entry.getKey().equalsIgnoreCase(THRESHOLD)) {
-				threshold = Integer.valueOf(entry.getValue().toString());
-			} else if(entry.getKey().equalsIgnoreCase(TWOTRACKS)) {
-				twoTracks = Boolean.valueOf(entry.getValue().toString());
-			} else if(entry.getKey().equalsIgnoreCase(UNIQUENESS)) {
-				uniqueness = Boolean.valueOf(entry.getValue().toString());
-			} else if(entry.getKey().equalsIgnoreCase(TOPHATSTYLEFLANKING)) {
-				topHatStyleFlanking = Boolean.valueOf(entry.getValue().toString());
-			}
+            ret &= setParameterValue(entry.getKey(), entry.getValue());
         }
-        return true;
+        return ret;
     }
 
+	@Override
+	public Object getParameterValue(String key) {
+		if(key == null || key.length() == 0)
+			return null;
+		
+		if(key.equalsIgnoreCase(THRESHOLD)) {
+			return threshold;
+		} else if(key.equalsIgnoreCase(TWOTRACKS)) {
+			return twoTracks;
+		} else if(key.equalsIgnoreCase(UNIQUENESS)) {
+			return uniqueness;
+		} else if(key.equalsIgnoreCase(TOPHATSTYLEFLANKING)) {
+			return topHatStyleFlanking;
+		}
+		return null;
+	}
 
+	@Override
+	public boolean setParameterValue(String key, Object value) {
+		if(key.equalsIgnoreCase(THRESHOLD)) {
+			threshold = Integer.valueOf(value.toString());
+			return true;
+		} else if(key.equalsIgnoreCase(TWOTRACKS)) {
+			twoTracks = Boolean.valueOf(value.toString());
+			return true;
+		} else if(key.equalsIgnoreCase(UNIQUENESS)) {
+			uniqueness = Boolean.valueOf(value.toString());
+			return true;
+		} else if(key.equalsIgnoreCase(TOPHATSTYLEFLANKING)) {
+			topHatStyleFlanking = Boolean.valueOf(value.toString());
+			return true;
+		}
+		return false;
+	}
+	
     @Override
     public boolean supportsTwoTrack() {
         return true;
@@ -150,7 +181,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	public Map<String, Object> getStyleProperties() {
 		return style;
 	}
-
+	
 	@Override
 	public Operator clone(){
 		try {		

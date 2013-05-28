@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.GenometryConstants;
+import com.affymetrix.genometryImpl.general.IParameters;
 
 /**
  *
  * @author lfrohman
  */
-public abstract class AbstractLogTransform extends AbstractFloatTransformer implements Operator{
+public abstract class AbstractLogTransform extends AbstractFloatTransformer implements Operator, IParameters{
 
 	protected static final DecimalFormat DF = new DecimalFormat("#,##0.##");
 	double base;
@@ -50,6 +51,7 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 		}
 	}
 
+	@Override
 	public Map<String, Class<?>> getParametersType() {
 		if (paramPrompt == null) {
 			return null;
@@ -59,22 +61,32 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 		return parameters;
 	}
 	
+	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (paramPrompt != null && parms.size() == 1 && parms.get(paramPrompt) instanceof String) {
-			setParameter((String)parms.get(paramPrompt));
+			setParameterValue(paramPrompt, (String)parms.get(paramPrompt));
 			return true;
 		}
 		return false;
 	}
 	
-	protected boolean setParameter(String s) {
-		if (parameterized) {
-			if ("e".equals(s.trim().toLowerCase())) {
+	@Override
+	public Object getParameterValue(String key) {
+		if(key != null && key.equalsIgnoreCase(getParamPrompt())){
+			return base;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean setParameterValue(String key, Object value) {
+		if (parameterized && value != null) {
+			if ("e".equals(value.toString().trim().toLowerCase())) {
 				base = Math.E;
 			}
 			else {
 				try {
-					base = Double.parseDouble(s);
+					base = Double.parseDouble(value.toString());
 					if (base <= 0) {
 						return false;
 					}

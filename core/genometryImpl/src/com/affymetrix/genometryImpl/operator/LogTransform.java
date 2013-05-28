@@ -26,13 +26,14 @@ public final class LogTransform extends AbstractLogTransform implements Operator
 	}
 
 	@Override
-	protected boolean setParameter(String s) {
-		if (parameterized && super.setParameter(s)) {
-			if (!("e".equals(s.trim().toLowerCase()))) {
+	public boolean setParameterValue(String key, Object value) {
+		if (parameterized && super.setParameterValue(key, value)) {
+			if (!("e".equals(value.toString().trim().toLowerCase()))) {
 				LN_BASE = Math.log(base);
 				LOG_1 = (float) (Math.log(1) / LN_BASE);
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 }

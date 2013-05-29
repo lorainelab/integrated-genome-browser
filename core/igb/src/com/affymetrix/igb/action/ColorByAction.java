@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
-import com.affymetrix.igb.util.ColorByDialog;
+import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -33,7 +33,7 @@ public class ColorByAction extends SeqMapViewActionA {
 		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
 		ColorProviderI cp = style.getColorProvider();
 		
-		ColorByDialog<ColorProviderI> colorByDialog = new ColorByDialog<ColorProviderI>(ColorProviderI.class);
+		ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<ColorProviderI>(ColorProviderI.class, "Color By");
 		colorByDialog.setTitle("Color By");
 		colorByDialog.setLocationRelativeTo(getSeqMapView());
 		colorByDialog.setInitialValue(cp);

@@ -43,7 +43,7 @@ import javax.swing.text.AbstractDocument;
  * @author hiralv
  */
 @SuppressWarnings("unchecked")
-public class ColorByDialog<T extends ID & NewInstance> extends JDialog {
+public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog {
 
 	private T returnValue, selectedCP;
 	private JOptionPane optionPane;
@@ -55,12 +55,12 @@ public class ColorByDialog<T extends ID & NewInstance> extends JDialog {
 	/**
 	 * Creates the reusable dialog.
 	 */
-	public ColorByDialog(Class clazz) {
+	public ConfigureOptionsDialog(Class clazz, String label) {
 		super((Frame) null, true);
-		init(clazz);
+		init(clazz, label);
 	}
 
-	private void init(Class clazz) throws SecurityException {
+	private void init(Class clazz, String label) throws SecurityException {
 		JPanel pan = new JPanel();
 		pan.setLayout(new BorderLayout());
 
@@ -91,7 +91,7 @@ public class ColorByDialog<T extends ID & NewInstance> extends JDialog {
 
 		JPanel optionsBox = new JPanel();
 		optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
-		optionsBox.add(new JLabel("Color By :  "));
+		optionsBox.add(new JLabel(label+" :  "));
 		optionsBox.add(comboBox);
 
 		paramsPanel = new JPanel();
@@ -140,9 +140,9 @@ public class ColorByDialog<T extends ID & NewInstance> extends JDialog {
 
 						private void setParameter() {
 							if (Number.class.isAssignableFrom(clazz)) {
-								ColorByDialog.this.setParameter(cp, label, Float.valueOf(tf.getText()));
+								ConfigureOptionsDialog.this.setParameter(cp, label, Float.valueOf(tf.getText()));
 							} else {
-								ColorByDialog.this.setParameter(cp, label, tf.getText());
+								ConfigureOptionsDialog.this.setParameter(cp, label, tf.getText());
 							}
 						}
 					});
@@ -168,7 +168,7 @@ public class ColorByDialog<T extends ID & NewInstance> extends JDialog {
 					//colorComboBox.setStretchToFit(true);
 					component = colorComboBox;
 				} else if (HeatMapExtended.class.isAssignableFrom(clazz)) {
-					final GradientEditorPanel editor = new GradientEditorPanel(ColorByDialog.this);
+					final GradientEditorPanel editor = new GradientEditorPanel(ConfigureOptionsDialog.this);
 					Object hm = cp.getParameterValue(label);
 					float[] positions;
 					Color[] colorRanges;
@@ -188,7 +188,7 @@ public class ColorByDialog<T extends ID & NewInstance> extends JDialog {
 							editor.setTitle("Configure Heatmap");
 							editor.setModal(true);
 							editor.setAlwaysOnTop(false);
-							editor.setLocationRelativeTo(ColorByDialog.this);
+							editor.setLocationRelativeTo(ConfigureOptionsDialog.this);
 							editor.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 							Object value = editor.showDialog();
 							if (value.equals(JOptionPane.OK_OPTION)) {

@@ -261,12 +261,14 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 
 		ActionListener al = new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 				if (ae.getSource() == okOption) {
 					returnValue = selectedCP;
 					if(returnValue instanceof IParameters){
 						((IParameters)returnValue).setParametersValue(paramMap);
 					}
+					optionPane.setValue(JOptionPane.OK_OPTION);
+				} else {
+					optionPane.setValue(JOptionPane.CANCEL_OPTION);
 				}
 				dispose();
 			}
@@ -275,6 +277,11 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		cancelOption.addActionListener(al);
 	}
 
+	@Override
+	public void setEnabled(boolean b){
+		comboBox.setEnabled(b);
+	}
+	
 	public void setInitialValue(T cp) {
 		if (cp == null) {
 			comboBox.setSelectedItem("None");
@@ -291,5 +298,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	public T showDialog() {
 		setVisible(true);
 		return returnValue;
+	}
+	
+	public Object getValue(){
+		return optionPane.getValue();
 	}
 }

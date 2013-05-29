@@ -130,7 +130,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 	}
 	
 	private static Operator setParameters(Operator operator, JTextField paramField){
-		Operator operatorClone = operator.clone();
+		Operator operatorClone = operator.newInstance();
 		
 		if(operator instanceof IParameters && 
 				paramField.isEnabled() && paramField.getText() != null

@@ -2,7 +2,7 @@ package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.ID;
-import com.affymetrix.genometryImpl.general.IParameters;
+import com.affymetrix.genometryImpl.general.NewInstance;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Map;
  * FileTypeCategory. Parameters for the Operator are optional,
  * as well as ordering (for the UI).
  */
-public interface Operator extends ID{
+public interface Operator extends ID, NewInstance<Operator> {
 
 	/**
 	 * Unique identifier for the Operator, MUST be unique,
@@ -67,8 +67,6 @@ public interface Operator extends ID{
 	 * returned by {@link #operate}.
 	 */
 	public FileTypeCategory getOutputCategory();
-
-	public Operator clone();
 		
 	public static interface Style{
 		public Map<String,Object> getStyleProperties();

@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.operator;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -75,7 +74,7 @@ public class ComplementSequenceOperator implements Operator {
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

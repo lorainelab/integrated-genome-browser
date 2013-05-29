@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.operator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -216,7 +215,7 @@ public abstract class AbstractGraphOperator implements Operator {
 	}
 
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -69,7 +68,7 @@ public abstract class AbstractFloatTransformer implements Operator {
 	}
 
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

@@ -3,7 +3,6 @@ package com.affymetrix.genometryImpl.operator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -46,7 +45,7 @@ public abstract class AbstractAnnotationOperator implements Operator {
 	}
 
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor(FileTypeCategory.class).newInstance(category);
 		} catch (Exception ex) {

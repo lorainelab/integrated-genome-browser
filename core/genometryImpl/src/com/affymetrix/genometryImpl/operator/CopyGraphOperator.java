@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.operator;
 
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
@@ -63,7 +62,7 @@ public final class CopyGraphOperator implements Operator, ICopy {
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

@@ -41,7 +41,7 @@ public abstract class AbstractAnnotationTransformer implements Operator {
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor(FileTypeCategory.class).newInstance(fileTypeCategory);
 		} catch (Exception ex) {

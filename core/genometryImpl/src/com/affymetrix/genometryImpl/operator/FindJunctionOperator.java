@@ -183,7 +183,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {		
 			return getClass().getConstructor(Boolean.class).newInstance(topHatStyleFlanking);
 		} catch (Exception ex) {

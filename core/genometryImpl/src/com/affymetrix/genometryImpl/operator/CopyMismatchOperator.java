@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -88,7 +87,7 @@ public class CopyMismatchOperator implements Operator, ICopy {
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

@@ -12,9 +12,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Combines multiple graphs into one.
@@ -113,7 +111,7 @@ public class GraphMultiplexer implements Operator {
 	}
 
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor().newInstance();
 		} catch (Exception ex) {

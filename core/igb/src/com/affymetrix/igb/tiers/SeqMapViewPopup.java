@@ -32,6 +32,7 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import java.util.Map;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
@@ -136,11 +137,26 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		TreeSet<Operator> operators = new TreeSet<Operator>(new IDComparator());
 		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 		for (Operator operator : operators) {
-			if (TrackUtils.getInstance().checkCompatible(syms, operator, false)) { // cannot handle Operators with parameters
+			if (TrackUtils.getInstance().checkCompatible(syms, operator, true)) {
 				String title = operator.getDisplay();
-				JMenuItem operatorMI = new JMenuItem(title);
-				operatorMI.addActionListener(new TrackOperationAction(operator));
-				operationsMenu.add(operatorMI);
+				Map<String, Class<?>> params = null; //operator.getParametersType();
+				if (null != params && 0 < params.size()) {
+					JMenu operatorSMI = new JMenu(title);
+					
+					JMenuItem operatorMI = new JMenuItem("Use Default");
+					operatorMI.addActionListener(new TrackOperationAction(operator));
+					operatorSMI.add(operatorMI);
+					
+					operatorMI = new JMenuItem("Configure");
+					//operatorMI.addActionListener(new TrackOperationAction(operator));
+					operatorSMI.add(operatorMI);
+					
+					operationsMenu.add(operatorSMI);
+				} else {
+					JMenuItem operatorMI = new JMenuItem(title);
+					operatorMI.addActionListener(new TrackOperationAction(operator));
+					operationsMenu.add(operatorMI);
+				}
 			}
 		}
 		return operationsMenu;

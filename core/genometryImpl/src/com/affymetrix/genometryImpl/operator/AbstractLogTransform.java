@@ -100,7 +100,7 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			if(parameterized){
 				return getClass().getConstructor().newInstance();

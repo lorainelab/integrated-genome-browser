@@ -77,7 +77,7 @@ public class ThresholdOperator implements Operator{
 	}
 
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor(GraphGlyph.class, ViewI.class).newInstance(sgg, view);
 		} catch (Exception ex) {

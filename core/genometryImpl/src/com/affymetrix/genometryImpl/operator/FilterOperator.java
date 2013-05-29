@@ -93,7 +93,7 @@ public class FilterOperator implements Operator, IParameters {
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor(FileTypeCategory.class, SymmetryFilterI.class).newInstance(category, filter);
 		} catch (Exception ex) {

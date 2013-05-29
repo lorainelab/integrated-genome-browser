@@ -146,7 +146,7 @@ public class ComboChainOperator implements Operator, IParameters {
 	}
 	
 	@Override
-	public Operator clone(){
+	public Operator newInstance(){
 		try {
 			return getClass().getConstructor(Operator[].class).newInstance(operators.toArray());
 		} catch (Exception ex) {

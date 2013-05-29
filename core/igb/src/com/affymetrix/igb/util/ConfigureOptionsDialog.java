@@ -51,7 +51,8 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	private JPanel paramsPanel;
 	private JButton okOption, cancelOption;
 	private Map<String, T> name2CP;
-
+	private Map<String, Object> paramMap;
+	
 	/**
 	 * Creates the reusable dialog.
 	 */
@@ -105,6 +106,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	}
 
 	private void addOptions(final IParameters cp, final JPanel paramsPanel) {
+		paramMap = new HashMap<String, Object>();
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.add(new JLabel("                "));
@@ -226,8 +228,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	}
 
 	private void setParameter(IParameters cp, String key, Object value) {
-		boolean isValid = cp.setParameterValue(key, value);
-		okOption.setEnabled(isValid);
+//		boolean isValid = cp.setParameterValue(key, value);
+//		okOption.setEnabled(isValid);
+		paramMap.put(key, value);
 	}
 
 	private void initParamPanel(IParameters cp) {
@@ -261,6 +264,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 				optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 				if (ae.getSource() == okOption) {
 					returnValue = selectedCP;
+					if(returnValue instanceof IParameters){
+						((IParameters)returnValue).setParametersValue(paramMap);
+					}
 				}
 				dispose();
 			}

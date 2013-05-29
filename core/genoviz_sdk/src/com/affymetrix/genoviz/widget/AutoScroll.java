@@ -30,7 +30,7 @@ public class AutoScroll {
 	public void start(final NeoWidget map) {
 		stop();
 		
-		final boolean cycle = true;
+		final boolean cycle = false;
 		final double pix_per_coord = 1.0 / bases_per_pix;
 		final double coords_to_scroll = pix_to_scroll / pix_per_coord;
 		

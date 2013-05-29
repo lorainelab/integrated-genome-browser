@@ -20,6 +20,7 @@ import javax.swing.border.Border;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -139,22 +140,22 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		for (Operator operator : operators) {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator, true)) {
 				String title = operator.getDisplay();
-				Map<String, Class<?>> params = null; //operator.getParametersType();
+				Map<String, Class<?>> params = operator instanceof IParameters? ((IParameters)operator).getParametersType() : null;
 				if (null != params && 0 < params.size()) {
 					JMenu operatorSMI = new JMenu(title);
 					
 					JMenuItem operatorMI = new JMenuItem("Use Default");
-					operatorMI.addActionListener(new TrackOperationAction(operator));
+					operatorMI.addActionListener(new TrackOperationAction(operator.newInstance()));
 					operatorSMI.add(operatorMI);
 					
 					operatorMI = new JMenuItem("Configure");
-					//operatorMI.addActionListener(new TrackOperationAction(operator));
+					operatorMI.addActionListener(new TrackOperationWithParametersAction(operator.newInstance()));
 					operatorSMI.add(operatorMI);
 					
 					operationsMenu.add(operatorSMI);
 				} else {
 					JMenuItem operatorMI = new JMenuItem(title);
-					operatorMI.addActionListener(new TrackOperationAction(operator));
+					operatorMI.addActionListener(new TrackOperationAction(operator.newInstance()));
 					operationsMenu.add(operatorMI);
 				}
 			}

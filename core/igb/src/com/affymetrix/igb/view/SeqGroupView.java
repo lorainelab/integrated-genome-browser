@@ -175,8 +175,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		ThreadUtils.runOnEventQueue(new Runnable(){
 			@Override
 			public void run() {
-				seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
-				seqtable.getTableHeader().repaint();
+				if(seqtable.getTableHeader().getColumnModel().getColumnCount() > 0){
+					seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
+					seqtable.getTableHeader().repaint();
+				}
 			}
 		});
 	}
@@ -520,7 +522,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		if (aseq == null) {
 			GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-			GeneralLoadView.getLoadView().refreshDataManagementView();
+//			GeneralLoadView.getLoadView().refreshDataManagementView();
 			// refreshTreeView should only be called if feature table
 			// needs to be cleared.
 			GeneralLoadView.getLoadView().disableAllButtons();

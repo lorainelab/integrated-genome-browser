@@ -1189,8 +1189,8 @@ public final class GeneralLoadUtils {
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 				}
-				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 				if (result) {
+					GeneralLoadView.addFeatureTier(gFeature);
 					SeqGroupView.getInstance().refreshTable();
 					if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
 						// select a chromosomes
@@ -1199,6 +1199,7 @@ public final class GeneralLoadUtils {
 				} else {
 					gmodel.setSelectedSeq(gmodel.getSelectedSeq());
 				}
+				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 			}
 		};
 		CThreadHolder.getInstance().execute(gFeature, worker);
@@ -1255,7 +1256,6 @@ public final class GeneralLoadUtils {
 
 			gFeature.setVisible(); // this should be automatically checked in the feature tree
 
-			GeneralLoadView.addFeatureTier(gFeature);
 		} else {
 			ErrorHandler.errorPanel("Cannot add same feature",
 					"The feature " + uri + " has already been added.",Level.WARNING);

@@ -37,8 +37,6 @@ public final class LoadURLAction extends OpenURIAction {
 		return ACTION;
 	}
 
-	private JTextField urlTextField = new JTextField();
-
 	private LoadURLAction() {
 		super(BUNDLE.getString("openURL"), null,
 				"16x16/status/network-receive.png",
@@ -157,6 +155,8 @@ public final class LoadURLAction extends OpenURIAction {
 		String fileExtension = SymLoader.getExtension(fileName);
 		boolean enableLoadAsSeqCB = seq_ref_endings.contains(fileExtension);
 		chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
-		if(!enableLoadAsSeqCB) chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
+		if(!enableLoadAsSeqCB) {
+			chooser.optionChooser.getLoadAsSeqCB().setSelected(false);
+		} // Uncheck for disabled
 	}
 }

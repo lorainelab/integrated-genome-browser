@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.action;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
@@ -19,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -27,19 +29,22 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
+import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.shared.FileTracker;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
  * @version $Id: LoadFileAction.java 11360 2012-05-02 14:41:01Z anuj4159 $
  */
-public final class LoadFileAction extends AbstractLoadFileAction {
+public final class LoadFileAction extends AbstractLoadFileOrURLAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final LoadFileAction ACTION = new LoadFileAction();
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	private boolean mergeSelected = false;
+	private final FileTracker load_dir_tracker;
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -128,9 +133,47 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 				"22x22/actions/document-open.png",
 				KeyEvent.VK_O, null, true);
 		this.ordinal = -9009000;
+		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 		this.igbService.getFrame().setTransferHandler(fdh);
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+
+		MergeOptionChooser fileChooser = getFileChooser(getId());
+		File currDir = load_dir_tracker.getFile();
+		if (currDir == null) {
+			currDir = new File(System.getProperty("user.home"));
+		}
+		fileChooser.setCurrentDirectory(currDir);
+		fileChooser.rescanCurrentDirectory();
+
+		int option = fileChooser.showOpenDialog(igbService.getFrame());
+
+		if (option != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+
+		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
+
+		final File[] fils = fileChooser.getSelectedFiles();
+
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String) fileChooser.getSelectedVersion());
+
+		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
+
+		for (File file : fils) {
+			URI uri = file.toURI();
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies());
+		}
+	}
+		
+	public void openURI(URI uri, String fileName) {
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+		openURI(uri, fileName, true, group, group.getOrganism());
+	}
+	
 	@Override
 	protected String getID() {
 		return "loadFile";

@@ -7,7 +7,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -38,8 +37,6 @@ public final class LoadURLAction extends OpenURIAction {
 		return ACTION;
 	}
 
-	private final JFrame gviewerFrame;
-	private JDialog dialog = null;
 	private JTextField urlTextField = new JTextField();
 
 	private LoadURLAction() {
@@ -48,7 +45,6 @@ public final class LoadURLAction extends OpenURIAction {
 				"22x22/status/network-receive.png",
 				KeyEvent.VK_UNDEFINED, null, true);
 		this.ordinal = -9009100;
-		this.gviewerFrame = igbService.getFrame();
 	}
 
 	@Override
@@ -60,6 +56,7 @@ public final class LoadURLAction extends OpenURIAction {
 	private void loadURL() {
 		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, 
 				JOptionPane.OK_CANCEL_OPTION);
+		final JTextField urlTextField = new JTextField();
 		chooser = getFileChooser(getID());
 		chooser.optionChooser.refreshSpeciesList();
 		String clipBoardContent = GeneralUtils.getClipboard();
@@ -86,11 +83,11 @@ public final class LoadURLAction extends OpenURIAction {
 		
 		pane.setMessage(new Object[]{"Enter URL", urlTextField});
 		
-		dialog = pane.createDialog(gviewerFrame, BUNDLE.getString("openURL"));
+		JDialog dialog = pane.createDialog(igbService.getFrame(), BUNDLE.getString("openURL"));
 		dialog.setModal(true);
 		dialog.getContentPane().add(chooser.optionChooser, BorderLayout.SOUTH);
 		dialog.pack();
-		dialog.setLocationRelativeTo(gviewerFrame);
+		dialog.setLocationRelativeTo(igbService.getFrame());
 		dialog.setVisible(true);
 		
 		String urlStr = urlTextField.getText();

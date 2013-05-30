@@ -5,10 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URI;
 import java.net.URL;
+import java.util.logging.Level;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import java.util.logging.Level;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
@@ -16,17 +19,14 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.IGB;
 
+import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 /**
  *
  * @author jnicol
  */
-public final class LoadURLAction extends AbstractLoadFileOrURLAction {
+public final class LoadURLAction extends OpenURIAction {
 	private static final long serialVersionUID = 1l;
 	private static final LoadURLAction ACTION = new LoadURLAction();
 
@@ -48,7 +48,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 				"22x22/status/network-receive.png",
 				KeyEvent.VK_UNDEFINED, null, true);
 		this.ordinal = -9009100;
-		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
+		this.gviewerFrame = igbService.getFrame();
 	}
 
 	@Override

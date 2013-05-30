@@ -32,13 +32,14 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
  * @version $Id: LoadFileAction.java 11360 2012-05-02 14:41:01Z anuj4159 $
  */
-public final class LoadFileAction extends AbstractLoadFileOrURLAction {
+public final class LoadFileAction extends OpenURIAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final LoadFileAction ACTION = new LoadFileAction();

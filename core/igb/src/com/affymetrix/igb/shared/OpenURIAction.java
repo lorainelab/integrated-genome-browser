@@ -12,12 +12,16 @@
  */
 package com.affymetrix.igb.shared;
 
-
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import java.util.Map;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.net.URI;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -33,12 +37,8 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
+import com.affymetrix.igb.IGBServiceImpl;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.List;
-import java.util.Map;
-import javax.swing.JFileChooser;
 
 public abstract class OpenURIAction extends GenericAction {
 
@@ -52,11 +52,11 @@ public abstract class OpenURIAction extends GenericAction {
 	protected MergeOptionChooser chooser = null;
 	protected Set<String> seq_ref_endings = new HashSet<String>();
 	
-	public OpenURIAction(IGBService _igbService, String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup){
+	public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup){
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
-		igbService = _igbService;
+		igbService = IGBServiceImpl.getInstance();
 	}
-	
+			
 	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
 		final AnnotatedSeqGroup loadGroup, final String speciesName) {
 		
@@ -68,7 +68,7 @@ public abstract class OpenURIAction extends GenericAction {
 			return;
 		}
 		
-		igbService.openURI(uri, fileName, loadGroup, speciesName, loadSequenceAsTrack());
+		igbService.openURI(uri, fileName, loadGroup, speciesName, !chooser.optionChooser.getLoadAsSeqCB().isSelected());
 		
 		if (!mergeSelected) {
 			unknown_group_count++;
@@ -153,9 +153,5 @@ public abstract class OpenURIAction extends GenericAction {
 				ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
 	}
 	
-	protected abstract String getFriendlyNameID();
-	
-	protected abstract boolean loadSequenceAsTrack();
-	
-	
+	protected abstract String getID();
 }

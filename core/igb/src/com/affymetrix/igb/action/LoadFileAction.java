@@ -71,22 +71,11 @@ public final class LoadFileAction extends OpenURIAction {
 
 		@Override
 		public void openURLAction(String url) {
-			if (url.contains("fromTree:")) {
-				url = url.substring(url.indexOf(":") + 1, url.length());
-				try {
-					GeneralLoadView.getLoadView().getFeatureTree().updateTree(url);
-					GeneralLoadView.getLoadView().refreshTreeView();
-				} catch (URISyntaxException ex) {
-					Logger.getLogger(LoadFileAction.class.getPackage().getName())
-							.log(Level.SEVERE, null, ex);
-				}
-			} else {
-				try {
-					openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, url);
-				} catch (URISyntaxException ex) {
-					ex.printStackTrace();
-					ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
-				}
+			try {
+				openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, url);
+			} catch (URISyntaxException ex) {
+				ex.printStackTrace();
+				ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
 			}
 		}
 	};

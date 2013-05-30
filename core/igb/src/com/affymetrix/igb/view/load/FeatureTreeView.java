@@ -23,16 +23,6 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -44,7 +34,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.EventObject;
@@ -72,7 +61,6 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.datatransfer.DataFlavor;
 import java.net.*;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -81,7 +69,7 @@ import java.util.logging.Logger;
 /**
  * View of genome features as a tree.
  */
-public final class FeatureTreeView extends JComponent implements ActionListener, DragSourceListener {
+public final class FeatureTreeView extends JComponent implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	private static boolean DEBUG = false;
@@ -112,7 +100,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		tree_panel.setAlignmentY(TOP_ALIGNMENT);
 		tree_panel.add(serverPrefsB);
 
-		tree = new FeatureTree("FeatureTreeView_tree");
+		tree = new JRPTree("FeatureTreeView_tree");
 
 		//Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
@@ -329,21 +317,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
 		root.add(newNode);
 		addOrFindNode(newNode, feature, featureRight);
-	}
-
-	public void dragEnter(DragSourceDragEvent dsde) {
-	}
-
-	public void dragOver(DragSourceDragEvent dsde) {
-	}
-
-	public void dropActionChanged(DragSourceDragEvent dsde) {
-	}
-
-	public void dragExit(DragSourceEvent dse) {
-	}
-
-	public void dragDropEnd(DragSourceDropEvent dsde) {
 	}
 
 	//Ref : http://www.javalobby.org/java/forums/t19857.html
@@ -925,85 +898,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			return null;
 		}
 	}
-
-	private static class TransferableTreeNode implements Transferable {
-
-		private DefaultMutableTreeNode data;
-		private DataFlavor flavors[] = {DataFlavor.stringFlavor};
-
-		public TransferableTreeNode(DefaultMutableTreeNode data) {
-			this.data = data;
-		}
-
-		public Object getTransferData(DataFlavor flavor)
-				throws UnsupportedFlavorException, IOException {
-			Object returnObject = null;
-			if (flavor.equals(DataFlavor.stringFlavor)) {
-				TreeNodeUserInfo nodeData = (TreeNodeUserInfo) data.getUserObject();
-				if (nodeData.genericObject instanceof GenericFeature) {
-					GenericFeature feature = (GenericFeature) nodeData.genericObject;
-					returnObject = "fromTree:" + feature.getURI().toString();
-				}
-			}
-
-			return returnObject;
-		}
-
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
-			if (flavor.equals(DataFlavor.stringFlavor)) {
-				return true;
-			}
-			return false;
-		}
-
-		public DataFlavor[] getTransferDataFlavors() {
-			return flavors;
-		}
-	}
-
-	private class FeatureTree extends JRPTree implements DragSourceListener, DragGestureListener {
-
-		private static final long serialVersionUID = 1L;
-		private final DragSource source;
-
-		FeatureTree(String id) {
-			super(id);
-
-			source = new DragSource();
-			source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
-		}
-
-		public void dragGestureRecognized(DragGestureEvent dge) {
-			TreePath path = getSelectionPath();
-
-			if (path != null) {
-				DefaultMutableTreeNode selection = (DefaultMutableTreeNode) path.getLastPathComponent();
-
-				if (selection.isLeaf()) {
-
-					TransferableTreeNode t = new TransferableTreeNode(selection);
-
-					source.startDrag(dge, DragSource.DefaultMoveDrop, t, this);
-				}
-			}
-		}
-
-		public void dragEnter(DragSourceDragEvent dsde) {
-		}
-
-		public void dragOver(DragSourceDragEvent dsde) {
-		}
-
-		public void dropActionChanged(DragSourceDragEvent dsde) {
-		}
-
-		public void dragExit(DragSourceEvent dse) {
-		}
-
-		public void dragDropEnd(DragSourceDropEvent dsde) {
-		}
-	}
-
+	
 	public void updateTree(String url) throws URISyntaxException {
 		URI uri = new URI(url);
 		updateTree(uri);

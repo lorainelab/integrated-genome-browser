@@ -14,6 +14,7 @@ package com.affymetrix.igb.shared;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
@@ -50,7 +51,7 @@ public abstract class OpenURIAction extends GenericAction {
 	protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected final IGBService igbService;
 	protected MergeOptionChooser chooser = null;
-	protected Set<String> seq_ref_endings = new HashSet<String>();
+	protected UniFileFilter seq_ref_filter;
 	
 	public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup){
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
@@ -85,22 +86,21 @@ public abstract class OpenURIAction extends GenericAction {
 		 * enable the 'Open as reference sequence' checkbox if yes.
 		 * 
 		 */
-		
-		seq_ref_endings = new HashSet<String>();
-		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(FileTypeCategory.Sequence);
-		for (String name : nameToExtensionMap.keySet()) {
-			seq_ref_endings.addAll(nameToExtensionMap.get(name));
+		List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
+		Set<String> all_known_endings = new HashSet<String>();
+		for (UniFileFilter filter : filters) {
+			all_known_endings.addAll(filter.getExtensions());
 		}
+		
+		final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
 		
 		chooser.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
 					File[] files = chooser.getSelectedFiles();
 					if(files.length == 1) {
-						File file = files[0];
-						if(file!=null) {
-							String fileExtension = SymLoader.getExtension(file.getName());
-							boolean enableLoadAsSeqCB = seq_ref_endings.contains(fileExtension);
+						if(files[0] != null) {
+							boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
 							chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
 							
 							if(!enableLoadAsSeqCB) {
@@ -116,16 +116,15 @@ public abstract class OpenURIAction extends GenericAction {
 			}
 		});
 		
-		addSupportedFiles();
+		filters = getSupportedFiles(null);
+		filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
 		
-		Set<String> all_known_endings = new HashSet<String>();
-		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
-			if (filter instanceof UniFileFilter) {
-				UniFileFilter uff = (UniFileFilter) filter;
-				uff.addCompressionEndings(GeneralUtils.compression_endings);
-				all_known_endings.addAll(uff.getExtensions());
-			}
+		all_known_endings = new HashSet<String>();
+		for (UniFileFilter filter : filters) {
+			chooser.addChoosableFileFilter(filter);
+			all_known_endings.addAll(filter.getExtensions());
 		}
+		
 		UniFileFilter all_known_types = new UniFileFilter(
 				all_known_endings.toArray(new String[all_known_endings.size()]),
 				"Known Types");
@@ -142,15 +141,17 @@ public abstract class OpenURIAction extends GenericAction {
 		}
 		return true;
 	}
-	
-	protected void addSupportedFiles() {
-		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
+		
+	protected List<UniFileFilter> getSupportedFiles(FileTypeCategory category){
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
+		List<UniFileFilter> filters = new ArrayList<UniFileFilter>(nameToExtensionMap.keySet().size() + 1);
+		
 		for (String name : nameToExtensionMap.keySet()) {
-			chooser.addChoosableFileFilter(new UniFileFilter(
-					nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files"));
+			UniFileFilter uff = new UniFileFilter(nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files");
+			uff.addCompressionEndings(GeneralUtils.compression_endings);
+			filters.add(uff);
 		}
-		chooser.addChoosableFileFilter(new UniFileFilter(
-				ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
+		return filters;
 	}
 	
 	protected abstract String getID();

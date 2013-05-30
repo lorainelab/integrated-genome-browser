@@ -3,8 +3,12 @@ package com.affymetrix.igb.action;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -14,10 +18,11 @@ import javax.swing.event.DocumentListener;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 
 import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -55,27 +60,36 @@ public final class LoadURLAction extends OpenURIAction {
 		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, 
 				JOptionPane.OK_CANCEL_OPTION);
 		final JTextField urlTextField = new JTextField();
+		
+		List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
+		Set<String> all_known_endings = new HashSet<String>();
+		for (UniFileFilter filter : filters) {
+			all_known_endings.addAll(filter.getExtensions());
+		}
+		final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
+		
+		
 		chooser = getFileChooser(getID());
 		chooser.optionChooser.refreshSpeciesList();
 		String clipBoardContent = GeneralUtils.getClipboard();
 		if(LocalUrlCacher.isURL(clipBoardContent)){
 			urlTextField.setText(clipBoardContent);
-			checkLoadSeqCB(false, clipBoardContent);
+			checkLoadSeqCB(false, clipBoardContent, seq_ref_filter);
 		}
 		
         urlTextField.getDocument().addDocumentListener(new DocumentListener(){
             public void changedUpdate(DocumentEvent de) {
-				checkLoadSeqCB(true, urlTextField.getText());
+				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter);
             }
 
             @Override
             public void insertUpdate(DocumentEvent de) {
-				checkLoadSeqCB(true, urlTextField.getText());
+				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter);
             }
 
             @Override
             public void removeUpdate(DocumentEvent de) {
-				checkLoadSeqCB(true, urlTextField.getText());
+				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter);
             }
         });
 		
@@ -143,17 +157,16 @@ public final class LoadURLAction extends OpenURIAction {
 		return "loadURL";
 	}
 	
-	private void checkLoadSeqCB(boolean checkURL, String fileName) {
+	private void checkLoadSeqCB(boolean checkURL, String fileName, UniFileFilter filter) {
 		if(checkURL && LocalUrlCacher.isURL(fileName)) {
-			checkLoadSeqCB(fileName);
+			checkLoadSeqCB(fileName, filter);
 		} else {
-			checkLoadSeqCB(fileName);
+			checkLoadSeqCB(fileName, filter);
 		}
 	}
 	
-	private void checkLoadSeqCB(String fileName) {
-		String fileExtension = SymLoader.getExtension(fileName);
-		boolean enableLoadAsSeqCB = seq_ref_endings.contains(fileExtension);
+	private void checkLoadSeqCB(String fileName, UniFileFilter filter) {
+		boolean enableLoadAsSeqCB = filter.accept(new File(fileName));
 		chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
 		if(!enableLoadAsSeqCB) {
 			chooser.optionChooser.getLoadAsSeqCB().setSelected(false);

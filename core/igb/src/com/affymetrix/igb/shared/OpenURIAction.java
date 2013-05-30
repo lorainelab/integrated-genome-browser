@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.action.RunScriptAction;
@@ -142,7 +143,15 @@ public abstract class OpenURIAction extends GenericAction {
 		return true;
 	}
 	
-	protected abstract void addSupportedFiles();
+	protected void addSupportedFiles() {
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
+		for (String name : nameToExtensionMap.keySet()) {
+			chooser.addChoosableFileFilter(new UniFileFilter(
+					nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files"));
+		}
+		chooser.addChoosableFileFilter(new UniFileFilter(
+				ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
+	}
 	
 	protected abstract String getFriendlyNameID();
 	

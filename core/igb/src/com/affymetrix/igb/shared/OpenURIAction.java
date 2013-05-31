@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -30,12 +29,13 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 
+import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.IGBServiceImpl;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-public class OpenURIAction extends GenericAction {
+public class OpenURIAction extends SeqMapViewActionA {
 
 	private static final long serialVersionUID = 1L;
 
@@ -69,7 +69,7 @@ public class OpenURIAction extends GenericAction {
 
 	}
 	
-	protected UniFileFilter getAllKnowFilter(){
+	public static UniFileFilter getAllKnowFilter(){
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
 		Set<String> all_known_endings = new HashSet<String>();
 		
@@ -87,7 +87,7 @@ public class OpenURIAction extends GenericAction {
 		return all_known_types;
 	}
 	
-	protected List<UniFileFilter> getSupportedFiles(FileTypeCategory category){
+	public static List<UniFileFilter> getSupportedFiles(FileTypeCategory category){
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
 		List<UniFileFilter> filters = new ArrayList<UniFileFilter>(nameToExtensionMap.keySet().size() + 1);
 		

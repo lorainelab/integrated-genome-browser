@@ -59,7 +59,7 @@ public abstract class OpenURIAction extends GenericAction {
 	}
 			
 	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
-		final AnnotatedSeqGroup loadGroup, final String speciesName) {
+		final AnnotatedSeqGroup loadGroup, final String speciesName, boolean loadAsTrack) {
 		
 		if(ScriptManager.getInstance().isScript(uri.toString())){
 			int result = JOptionPane.showConfirmDialog(igbService.getFrame(), "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
@@ -69,7 +69,7 @@ public abstract class OpenURIAction extends GenericAction {
 			return;
 		}
 		
-		igbService.openURI(uri, fileName, loadGroup, speciesName, !chooser.optionChooser.getLoadAsSeqCB().isSelected());
+		igbService.openURI(uri, fileName, loadGroup, speciesName, loadAsTrack);
 		
 		if (!mergeSelected) {
 			unknown_group_count++;

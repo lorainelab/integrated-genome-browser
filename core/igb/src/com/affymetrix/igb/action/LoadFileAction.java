@@ -96,7 +96,7 @@ public final class LoadFileAction extends OpenURIAction {
 		if (!checkFriendlyName(friendlyName, all_known_types)) {
 			return false;
 		}
-		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
+		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, true);//Always load as track
 
 		return true;
 	}
@@ -157,13 +157,8 @@ public final class LoadFileAction extends OpenURIAction {
 
 		for (File file : fils) {
 			URI uri = file.toURI();
-			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies());
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies(), !chooser.optionChooser.getLoadAsSeqCB().isSelected());
 		}
-	}
-		
-	public void openURI(URI uri, String fileName) {
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		openURI(uri, fileName, true, group, group.getOrganism());
 	}
 	
 	@Override

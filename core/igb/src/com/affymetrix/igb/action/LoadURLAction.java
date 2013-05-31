@@ -67,7 +67,7 @@ public final class LoadURLAction extends OpenURIAction {
 			all_known_endings.addAll(filter.getExtensions());
 		}
 		final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
-		
+		final UniFileFilter all_known_types = getAllKnowFilter();
 		
 		chooser = getFileChooser(getID());
 		chooser.optionChooser.refreshSpeciesList();
@@ -127,7 +127,7 @@ public final class LoadURLAction extends OpenURIAction {
 		
 		String friendlyName = getFriendlyName(urlStr);
 		
-		if (!checkFriendlyName(friendlyName)) {
+		if (!checkFriendlyName(friendlyName, all_known_types)) {
 			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
 			return;
 		}

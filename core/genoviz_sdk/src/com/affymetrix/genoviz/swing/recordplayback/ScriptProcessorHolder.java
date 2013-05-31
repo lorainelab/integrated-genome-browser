@@ -2,6 +2,7 @@ package com.affymetrix.genoviz.swing.recordplayback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScriptProcessorHolder {
@@ -27,10 +28,10 @@ public class ScriptProcessorHolder {
 		return scriptProcessors.get(extension);
 	}
 
-	public String[] getScriptExtensions() {
+	public List<String> getScriptExtensions() {
 		ArrayList<String> scriptExtensions = new ArrayList<String>();
 		scriptExtensions.addAll(scriptProcessors.keySet());
-		return scriptExtensions.toArray(new String[scriptExtensions.size()]);
+		return scriptExtensions;
 	}
 
 	public String[] getSaveScriptExtensions() {

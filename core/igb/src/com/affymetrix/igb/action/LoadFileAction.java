@@ -19,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
 
@@ -28,12 +27,13 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 
 import com.affymetrix.igb.util.MergeOptionChooser;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import javax.swing.filechooser.FileFilter;
 
 /**
  *
@@ -63,16 +63,18 @@ public final class LoadFileAction extends OpenURIAction {
 		public void openFileAction(List<File> files) {
 			AnnotatedSeqGroup loadGroup = getloadGroup();
 			String speciesName = getSpeciesName();
+			UniFileFilter all_known_types = getAllKnowFilter();
 			for (File f : files) {
-				openURIOrRunScript(f.toURI(), loadGroup, speciesName, f.getAbsolutePath(), f.getName());
-					mergeSelected = true; // loadGroup will not be null at this point
+				openURIOrRunScript(f.toURI(), loadGroup, speciesName, f.getName(), all_known_types);
+				mergeSelected = true; // loadGroup will not be null at this point
 			}
 		}
 
 		@Override
 		public void openURLAction(String url) {
 			try {
-				openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, url);
+				UniFileFilter all_known_types = getAllKnowFilter();
+				openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, all_known_types);
 			} catch (URISyntaxException ex) {
 				ex.printStackTrace();
 				ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
@@ -80,18 +82,18 @@ public final class LoadFileAction extends OpenURIAction {
 		}
 	};
 	
-	private void openURIOrRunScript(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, String path, String name){
-		if (openURI(uri, loadGroup, speciesName)) {
+	private void openURIOrRunScript(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, String name, FileFilter all_known_types){
+		if (openURI(uri, loadGroup, speciesName, all_known_types)) {
 			return;
 		}	
 		ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + name, Level.WARNING);
 	}
 	
-	private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName) {
+	private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, FileFilter all_known_types) {
 		getFileChooser(getId());
 		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
-		if (!checkFriendlyName(friendlyName)) {
+		if (!checkFriendlyName(friendlyName, all_known_types)) {
 			return false;
 		}
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);

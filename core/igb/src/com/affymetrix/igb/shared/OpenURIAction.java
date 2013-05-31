@@ -40,6 +40,7 @@ import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.IGBServiceImpl;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import javax.swing.filechooser.FileFilter;
 
 public abstract class OpenURIAction extends GenericAction {
 
@@ -51,7 +52,6 @@ public abstract class OpenURIAction extends GenericAction {
 	protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected final IGBService igbService;
 	protected MergeOptionChooser chooser = null;
-	protected UniFileFilter seq_ref_filter;
 	
 	public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup){
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
@@ -117,7 +117,7 @@ public abstract class OpenURIAction extends GenericAction {
 		});
 		
 		filters = getSupportedFiles(null);
-		filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
+		filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}), "Script File"));
 		
 		all_known_endings = new HashSet<String>();
 		for (UniFileFilter filter : filters) {
@@ -135,13 +135,32 @@ public abstract class OpenURIAction extends GenericAction {
 		return chooser;
 	}
 	
-	protected boolean checkFriendlyName(String friendlyName) {
-		if (!chooser.accept(new File(friendlyName))) {
+	protected boolean checkFriendlyName(String friendlyName, FileFilter all_known_types) {
+		if (!all_known_types.accept(new File(friendlyName))) {
 			return false;
 		}
 		return true;
 	}
+	
+	protected UniFileFilter getAllKnowFilter(){
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
+		Set<String> all_known_endings = new HashSet<String>();
+		//filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
 		
+		for (String name : nameToExtensionMap.keySet()) {
+			all_known_endings.addAll(nameToExtensionMap.get(name));
+		}
+		all_known_endings.addAll(ScriptProcessorHolder.getInstance().getScriptExtensions());
+		
+		UniFileFilter all_known_types = new UniFileFilter(
+				all_known_endings.toArray(new String[all_known_endings.size()]),
+				"Known Types");
+		all_known_types.setExtensionListInDescription(false);
+		all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
+		
+		return all_known_types;
+	}
+	
 	protected List<UniFileFilter> getSupportedFiles(FileTypeCategory category){
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
 		List<UniFileFilter> filters = new ArrayList<UniFileFilter>(nameToExtensionMap.keySet().size() + 1);

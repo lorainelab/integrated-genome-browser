@@ -1,8 +1,23 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.jidesoft.hints.ListDataIntelliHints;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.swing.JFileChooser;
+
+import com.jidesoft.hints.ListDataIntelliHints;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
+import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.shared.OpenURIAction;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 /**
  *
@@ -30,6 +45,10 @@ public class NewGenome extends javax.swing.JPanel {
 		return switchCheckBox.isSelected();
 	}
 	
+	public String getRefSeqFile(){
+		return refSeqTextField.getText();
+	}
+	
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,6 +63,9 @@ public class NewGenome extends javax.swing.JPanel {
         versionLabel = new javax.swing.JLabel();
         versionTextField = new javax.swing.JTextField();
         switchCheckBox = new javax.swing.JCheckBox();
+        refSeqLabel = new javax.swing.JLabel();
+        refSeqTextField = new javax.swing.JTextField();
+        refSeqBrowseButton = new javax.swing.JButton();
 
         speciesLabel.setText("Species Name");
 
@@ -60,23 +82,45 @@ public class NewGenome extends javax.swing.JPanel {
         switchCheckBox.setSelected(true);
         switchCheckBox.setText("Switch to new species after creating it");
 
+        refSeqLabel.setText("Reference Sequence");
+
+        refSeqBrowseButton.setText("...");
+        refSeqBrowseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refSeqBrowseButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(5, 5, 5)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(versionLabel)
-                    .add(speciesLabel))
-                .add(5, 5, 5)
+                    .add(layout.createSequentialGroup()
+                        .add(5, 5, 5)
+                        .add(speciesLabel))
+                    .add(layout.createSequentialGroup()
+                        .add(5, 5, 5)
+                        .add(versionLabel))
+                    .add(layout.createSequentialGroup()
+                        .add(5, 5, 5)
+                        .add(refSeqLabel)))
+                .add(15, 15, 15)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(speciesTextField)
-                    .add(versionTextField))
-                .add(5, 5, 5))
-            .add(layout.createSequentialGroup()
-                .add(switchCheckBox)
-                .add(0, 6, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(speciesTextField)
+                            .add(versionTextField))
+                        .add(5, 5, 5))
+                    .add(layout.createSequentialGroup()
+                        .add(refSeqTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 257, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(refSeqBrowseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 0, 0))
+                    .add(layout.createSequentialGroup()
+                        .add(switchCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(0, 0, 0))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -90,8 +134,13 @@ public class NewGenome extends javax.swing.JPanel {
                     .add(versionLabel)
                     .add(versionTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(10, 10, 10)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(refSeqLabel)
+                    .add(refSeqTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(refSeqBrowseButton))
+                .add(15, 15, 15)
                 .add(switchCheckBox)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(5, 5, 5))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -110,7 +159,47 @@ public class NewGenome extends javax.swing.JPanel {
 		}
     }//GEN-LAST:event_versionTextFieldFocusGained
 
+    private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refSeqBrowseButtonActionPerformed
+		FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
+		Set<String> all_known_endings = new HashSet<String>();
+		JRPFileChooser chooser = new JRPFileChooser("newGenome", fileTracker.getFile());
+		
+		
+		List<UniFileFilter> filters = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence);
+		for (UniFileFilter filter : filters) {
+			chooser.addChoosableFileFilter(filter);
+			all_known_endings.addAll(filter.getExtensions());
+		}
+		
+		UniFileFilter all_known_types = new UniFileFilter(
+				all_known_endings.toArray(new String[all_known_endings.size()]),
+				"Known Types");
+		all_known_types.setExtensionListInDescription(false);
+		all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
+		chooser.addChoosableFileFilter(all_known_types);
+		chooser.setFileFilter(all_known_types);
+		
+		chooser.setMultiSelectionEnabled(false);
+		int selection = chooser.showOpenDialog(this);
+		if (selection != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+		fileTracker.setFile(chooser.getCurrentDirectory());
+
+		File selectedRefSeqFile = chooser.getSelectedFile();
+		if(selectedRefSeqFile != null){
+			try {
+				this.refSeqTextField.setText(selectedRefSeqFile.getCanonicalPath());
+			} catch (IOException ex) {
+				Logger.getLogger(NewGenome.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+    }//GEN-LAST:event_refSeqBrowseButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton refSeqBrowseButton;
+    private javax.swing.JLabel refSeqLabel;
+    private javax.swing.JTextField refSeqTextField;
     private javax.swing.JLabel speciesLabel;
     private javax.swing.JTextField speciesTextField;
     private javax.swing.JCheckBox switchCheckBox;

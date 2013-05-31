@@ -137,7 +137,7 @@ public final class LoadFileAction extends OpenURIAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 
-		MergeOptionChooser fileChooser = getFileChooser(getId());
+		MergeOptionChooser fileChooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
 			currDir = new File(System.getProperty("user.home"));
@@ -165,8 +165,8 @@ public final class LoadFileAction extends OpenURIAction {
 		}
 	}
 	
-	private MergeOptionChooser getFileChooser(String id) {
-		final MergeOptionChooser chooser = new MergeOptionChooser(id);
+	private MergeOptionChooser getFileChooser() {
+		final MergeOptionChooser chooser = new MergeOptionChooser("loadFile");
 		chooser.setMultiSelectionEnabled(true);
 	
 		/**
@@ -222,9 +222,4 @@ public final class LoadFileAction extends OpenURIAction {
 		return chooser;
 	}
 	
-	@Override
-	protected String getID() {
-		return "loadFile";
-	}
-
 }

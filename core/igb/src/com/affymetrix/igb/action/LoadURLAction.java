@@ -152,11 +152,6 @@ public final class LoadURLAction extends OpenURIAction {
 
 		return urlStr;
 	}
-
-	@Override
-	protected String getID() {
-		return "loadURL";
-	}
 	
 	private void checkLoadSeqCB(boolean checkURL, String fileName, UniFileFilter filter, OptionChooserImpl optionChooser) {
 		if(checkURL && LocalUrlCacher.isURL(fileName)) {

@@ -35,7 +35,7 @@ import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.IGBServiceImpl;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-public abstract class OpenURIAction extends GenericAction {
+public class OpenURIAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
 
@@ -101,5 +101,4 @@ public abstract class OpenURIAction extends GenericAction {
 		return filters;
 	}
 	
-	protected abstract String getID();
 }

@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
@@ -205,6 +206,7 @@ public final class LoadFileAction extends OpenURIAction {
 		});
 		
 		filters = getSupportedFiles(null);
+		filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}), "Script File"));
 		
 		all_known_endings = new HashSet<String>();
 		for (UniFileFilter filter : filters) {

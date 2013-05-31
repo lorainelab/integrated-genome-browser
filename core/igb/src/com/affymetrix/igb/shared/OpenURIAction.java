@@ -96,7 +96,6 @@ public class OpenURIAction extends GenericAction {
 			uff.addCompressionEndings(GeneralUtils.compression_endings);
 			filters.add(uff);
 		}
-		filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}), "Script File"));
 		
 		return filters;
 	}

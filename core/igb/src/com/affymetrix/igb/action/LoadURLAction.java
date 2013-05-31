@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 
+import com.affymetrix.igb.util.OptionChooserImpl;
 import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
@@ -33,7 +34,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public final class LoadURLAction extends OpenURIAction {
 	private static final long serialVersionUID = 1l;
 	private static final LoadURLAction ACTION = new LoadURLAction();
-
+	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
@@ -69,27 +70,27 @@ public final class LoadURLAction extends OpenURIAction {
 		final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
 		final UniFileFilter all_known_types = getAllKnowFilter();
 		
-		chooser = getFileChooser(getID());
-		chooser.optionChooser.refreshSpeciesList();
+		final OptionChooserImpl optionChooser = new OptionChooserImpl();
+		optionChooser.refreshSpeciesList();
 		String clipBoardContent = GeneralUtils.getClipboard();
 		if(LocalUrlCacher.isURL(clipBoardContent)){
 			urlTextField.setText(clipBoardContent);
-			checkLoadSeqCB(false, clipBoardContent, seq_ref_filter);
+			checkLoadSeqCB(false, clipBoardContent, seq_ref_filter, optionChooser);
 		}
 		
         urlTextField.getDocument().addDocumentListener(new DocumentListener(){
             public void changedUpdate(DocumentEvent de) {
-				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter);
+				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter, optionChooser);
             }
 
             @Override
             public void insertUpdate(DocumentEvent de) {
-				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter);
+				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter, optionChooser);
             }
 
             @Override
             public void removeUpdate(DocumentEvent de) {
-				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter);
+				checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter, optionChooser);
             }
         });
 		
@@ -97,7 +98,7 @@ public final class LoadURLAction extends OpenURIAction {
 		
 		JDialog dialog = pane.createDialog(igbService.getFrame(), BUNDLE.getString("openURL"));
 		dialog.setModal(true);
-		dialog.getContentPane().add(chooser.optionChooser, BorderLayout.SOUTH);
+		dialog.getContentPane().add(optionChooser, BorderLayout.SOUTH);
 		dialog.pack();
 		dialog.setLocationRelativeTo(igbService.getFrame());
 		dialog.setVisible(true);
@@ -127,16 +128,16 @@ public final class LoadURLAction extends OpenURIAction {
 		
 		String friendlyName = getFriendlyName(urlStr);
 		
-		if (!checkFriendlyName(friendlyName, all_known_types)) {
+		if ((!all_known_types.accept(new File(friendlyName)))) {
 			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
 			return;
 		}
 		
-		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)chooser.getSelectedVersion());
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)optionChooser.getVersionCB().getSelectedItem());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 	
-		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.getSelectedSpecies(), !chooser.optionChooser.getLoadAsSeqCB().isSelected());
+		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)optionChooser.getSpeciesCB().getSelectedItem(), !optionChooser.getLoadAsSeqCB().isSelected());
 		
 	}
 
@@ -157,19 +158,19 @@ public final class LoadURLAction extends OpenURIAction {
 		return "loadURL";
 	}
 	
-	private void checkLoadSeqCB(boolean checkURL, String fileName, UniFileFilter filter) {
+	private void checkLoadSeqCB(boolean checkURL, String fileName, UniFileFilter filter, OptionChooserImpl optionChooser) {
 		if(checkURL && LocalUrlCacher.isURL(fileName)) {
-			checkLoadSeqCB(fileName, filter);
+			checkLoadSeqCB(fileName, filter, optionChooser);
 		} else {
-			checkLoadSeqCB(fileName, filter);
+			checkLoadSeqCB(fileName, filter, optionChooser);
 		}
 	}
 	
-	private void checkLoadSeqCB(String fileName, UniFileFilter filter) {
+	private void checkLoadSeqCB(String fileName, UniFileFilter filter, OptionChooserImpl optionChooser) {
 		boolean enableLoadAsSeqCB = filter.accept(new File(fileName));
-		chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
+		optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
 		if(!enableLoadAsSeqCB) {
-			chooser.optionChooser.getLoadAsSeqCB().setSelected(false);
+			optionChooser.getLoadAsSeqCB().setSelected(false);
 		} // Uncheck for disabled
 	}
 }

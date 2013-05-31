@@ -14,26 +14,31 @@ package com.affymetrix.igb.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
+import javax.swing.filechooser.FileFilter;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 
-import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
+import com.affymetrix.igb.util.MergeOptionChooser;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import javax.swing.filechooser.FileFilter;
 
 /**
  *
@@ -90,10 +95,9 @@ public final class LoadFileAction extends OpenURIAction {
 	}
 	
 	private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, FileFilter all_known_types) {
-		getFileChooser(getId());
 		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
-		if (!checkFriendlyName(friendlyName, all_known_types)) {
+		if (!all_known_types.accept(new File(friendlyName))) {
 			return false;
 		}
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, true);//Always load as track
@@ -157,8 +161,65 @@ public final class LoadFileAction extends OpenURIAction {
 
 		for (File file : fils) {
 			URI uri = file.toURI();
-			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies(), !chooser.optionChooser.getLoadAsSeqCB().isSelected());
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies(), !fileChooser.optionChooser.getLoadAsSeqCB().isSelected());
 		}
+	}
+	
+	private MergeOptionChooser getFileChooser(String id) {
+		final MergeOptionChooser chooser = new MergeOptionChooser(id);
+		chooser.setMultiSelectionEnabled(true);
+	
+		/**
+		 * The following code implements function check each single file (from file selector or URI input) for known sequence file, 
+		 * enable the 'Open as reference sequence' checkbox if yes.
+		 * 
+		 */
+		List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
+		Set<String> all_known_endings = new HashSet<String>();
+		for (UniFileFilter filter : filters) {
+			all_known_endings.addAll(filter.getExtensions());
+		}
+		
+		final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
+		
+		chooser.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
+					File[] files = chooser.getSelectedFiles();
+					if(files.length == 1) {
+						if(files[0] != null) {
+							boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
+							chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
+							
+							if(!enableLoadAsSeqCB) {
+								chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
+							}
+						}
+					} else if(files.length > 1) {
+						chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
+						chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
+					}
+					
+				}
+			}
+		});
+		
+		filters = getSupportedFiles(null);
+		
+		all_known_endings = new HashSet<String>();
+		for (UniFileFilter filter : filters) {
+			chooser.addChoosableFileFilter(filter);
+			all_known_endings.addAll(filter.getExtensions());
+		}
+		
+		UniFileFilter all_known_types = new UniFileFilter(
+				all_known_endings.toArray(new String[all_known_endings.size()]),
+				"Known Types");
+		all_known_types.setExtensionListInDescription(false);
+		all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
+		chooser.addChoosableFileFilter(all_known_types);
+		chooser.setFileFilter(all_known_types);
+		return chooser;
 	}
 	
 	@Override

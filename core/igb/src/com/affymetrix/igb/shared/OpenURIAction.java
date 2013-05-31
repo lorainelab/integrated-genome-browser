@@ -72,11 +72,11 @@ public class OpenURIAction extends GenericAction {
 	protected UniFileFilter getAllKnowFilter(){
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
 		Set<String> all_known_endings = new HashSet<String>();
-		//filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions(), "Script File"));
 		
 		for (String name : nameToExtensionMap.keySet()) {
 			all_known_endings.addAll(nameToExtensionMap.get(name));
 		}
+		all_known_endings.addAll(ScriptProcessorHolder.getInstance().getScriptExtensions());
 		
 		UniFileFilter all_known_types = new UniFileFilter(
 				all_known_endings.toArray(new String[all_known_endings.size()]),

@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
@@ -99,7 +98,7 @@ public final class ServerList {
 
 	public boolean areAllServersInited() {
 		for (GenericServer gServer : getAllServers()) {
-			if (!gServer.isEnabled()) {
+			if (!gServer.isEnabled() || gServer.isPrimary()) {
 				continue;
 			}
 			if (gServer.getServerStatus() == ServerStatus.NotInitialized) {

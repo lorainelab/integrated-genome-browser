@@ -52,6 +52,11 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 	}
 
 	@Override
+	public String getParamPrompt() { 
+		return paramPrompt; 
+	}
+	
+	@Override
 	public Map<String, Class<?>> getParametersType() {
 		if (paramPrompt == null) {
 			return null;

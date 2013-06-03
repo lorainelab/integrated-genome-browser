@@ -7,7 +7,9 @@ public final class LogTransform extends AbstractLogTransform implements Operator
 	float LOG_1;
 
 	public LogTransform() {
-		super();
+		this(0.0);
+		paramPrompt = "Base";
+		parameterized = true;
 	}
 	
 	public LogTransform(Double base) {

@@ -9,7 +9,9 @@ public class InverseLogTransform extends AbstractLogTransform implements Operato
 	private static final String BASE_NAME = "inverse_log";
 	
 	public InverseLogTransform(){
-		super();
+		this(0.0);
+		paramPrompt = "Base";
+		parameterized = true;
 	}
 	
 	public InverseLogTransform(Double base) {

@@ -14,6 +14,7 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 
 	public PowerTransformer() {
 		super();
+		this.exponent = 2.0;
 		paramPrompt = "Exponent";
 		name = "Power";
 		parameterized = true;

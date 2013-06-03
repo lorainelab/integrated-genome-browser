@@ -17,10 +17,12 @@ public class ExtensionPointHandler<S> {
 	private static final Map<Class<?>, ExtensionPointHandler<?>> handlerInstances = new HashMap<Class<?>, ExtensionPointHandler<?>>();
 	private List<ExtensionPointListener<S>> listeners = new ArrayList<ExtensionPointListener<S>>();
 	private List<S> extensionPointImpls = new ArrayList<S>();
+	
 	@SuppressWarnings("unchecked")
 	public static <Z> ExtensionPointHandler<Z> getExtensionPoint(final Class<Z> clazz) {
 		return (ExtensionPointHandler<Z>) handlerInstances.get(clazz);
 	}
+	
 	@SuppressWarnings("unchecked")
 	public static <Z> ExtensionPointHandler<Z> getOrCreateExtensionPoint(final BundleContext bundleContext, final Class<Z> clazz) {
 		ExtensionPointHandler<Z> existingExtensionPointHandler = (ExtensionPointHandler<Z>) handlerInstances.get(clazz);
@@ -81,11 +83,11 @@ public class ExtensionPointHandler<S> {
 		return extensionPointImpls;
 	}
 
-	public void addExtensionPointImpl(S s) {
+	private void addExtensionPointImpl(S s) {
 		extensionPointImpls.add(s);
 	}
 
-	public void removeExtensionPointImpl(S s) {
+	private void removeExtensionPointImpl(S s) {
 		extensionPointImpls.remove(s);
 	}
 }

@@ -371,7 +371,6 @@
 			<fileset file="protannot_exe.jar" />
 			<fileset file="${genoviz}/genoviz.jar" />
 			<fileset file="${demos.dir}/genoviz.jar" />
-			<fileset file="${etc.dir}/bundles.properties" />
 		</delete>
 		<iterate target="clean" />
 		<iterate-non-plugins target="clean" />
@@ -399,7 +398,7 @@
 	</target>
 
 	<target name="bundles_properties" depends="declare_igb_ant" description="Create the bundles.properties file">
-		<bndlprops propertiesfile="${etc.dir}/bundles.properties">
+		<bndlprops propertiesfile="${bundle.dir}/bundles.properties">
 			<fileset dir="${bundle.dir}">
 				<include name="*.jar"/>
 			</fileset>
@@ -424,12 +423,10 @@
 			<zipgroupfileset file="${osgi.impl}" />
 			<fileset dir="${bundle.dir}">
 				<include name="*.jar"/>
+				<include name="bundles.properties"/>
 			</fileset>
 			<fileset dir="${ext.bundle.dir}">
 				<include name="*.jar"/>
-			</fileset>
-			<fileset dir="${etc.dir}">
-				<include name="bundles.properties"/>
 			</fileset>
 		</jar>
 	</target>

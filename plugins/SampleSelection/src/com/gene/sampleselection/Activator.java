@@ -13,7 +13,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	private ServiceRegistration<TrackClickListener> trackClickListenerRegistration;
 
 	@Override
-	protected IGBTabPanel getPage(IGBService igbService) {
+	protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
 		trackClickListenerRegistration = bundleContext.registerService(TrackClickListener.class, new VCFListener(igbService), null);
         return new SampleSelectionView(igbService);
 	}

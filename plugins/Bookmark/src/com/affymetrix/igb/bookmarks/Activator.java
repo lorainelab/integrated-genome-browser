@@ -27,7 +27,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception{
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception{
 		SaveSessionAction.createAction(igbService);
 		LoadSessionAction.createAction(igbService);
 		
@@ -37,7 +37,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		file_menu.insertSeparator(index);
 	
 		return new ServiceRegistration[] {
-			bundleContext.registerService(IGBTabPanel.class, getPage(igbService), null),
+			bundleContext.registerService(IGBTabPanel.class, getPage(bundleContext, igbService), null),
 			bundleContext.registerService(GenericAction.class, SaveSessionAction.getAction(), null),
 			bundleContext.registerService(GenericAction.class, LoadSessionAction.getAction(), null),
 			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_saveSession", SaveSessionAction.getAction()), "file", index), null),
@@ -45,7 +45,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		};
 	}
 	
-	private IGBTabPanel getPage(IGBService igbService) {
+	private IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
 		ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 	
 		// Need to let the QuickLoad system get started-up before starting

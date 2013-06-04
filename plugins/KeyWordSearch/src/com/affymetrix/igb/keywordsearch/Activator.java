@@ -19,7 +19,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator  extends ServiceRegistrar implements BundleActivator {
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
 		ExtensionPointHandler<IKeyWordSearch> extensionPointKWS = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IKeyWordSearch.class);
 		final KeyWordSearch keyWordSearch = new KeyWordSearch();
 

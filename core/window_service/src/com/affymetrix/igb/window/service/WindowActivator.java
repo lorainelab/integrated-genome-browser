@@ -6,6 +6,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import org.osgi.framework.BundleContext;
 
 /**
  * This is the main Activator for all tab panel bundles.
@@ -15,9 +16,9 @@ import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 public abstract class WindowActivator extends ServiceRegistrar implements BundleActivator {
 
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
-			bundleContext.registerService(IGBTabPanel.class, getPage(igbService), null),	
+			bundleContext.registerService(IGBTabPanel.class, getPage(bundleContext, igbService), null),	
 		};
 	}
 	
@@ -26,6 +27,6 @@ public abstract class WindowActivator extends ServiceRegistrar implements Bundle
 	 * @param igbService the IGBService implementation
 	 * @return the tab panel
 	 */
-	protected abstract IGBTabPanel getPage(IGBService igbService);
+	protected abstract IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService);
 
 }

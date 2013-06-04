@@ -11,7 +11,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	private PluginsView pluginsView;
 
 	@Override
-	protected IGBTabPanel getPage(IGBService igbService) {
+	protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
         pluginsView = new PluginsView(igbService);
         pluginsView.setBundleContext(bundleContext);
 		return pluginsView;

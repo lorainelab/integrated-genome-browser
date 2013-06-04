@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
@@ -33,7 +34,7 @@ import static com.affymetrix.igb.survey.ShowSurvey.*;
 public class Activator extends ServiceRegistrar implements BundleActivator {
 
 	@Override
-	protected ServiceRegistration<?>[] registerService(final IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(final BundleContext bundleContext, final IGBService igbService) throws Exception {
 		ResourceBundle BUNDLE = ResourceBundle.getBundle("survey");
 		JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "News and Surveys");
 		

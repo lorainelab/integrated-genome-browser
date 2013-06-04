@@ -11,12 +11,13 @@ import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.window.service.WindowActivator;
+import org.osgi.framework.BundleContext;
 
 public class Activator extends WindowActivator implements org.osgi.framework.BundleActivator {
 	static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet};
 	
 	@Override
-	protected IGBTabPanel getPage(final IGBService igbService) {
+	protected IGBTabPanel getPage(BundleContext bundleContext, final IGBService igbService) {
 		AnnotationTrackPanel tabPanel = new AnnotationTrackPanel(igbService) {
 			@Override
 			protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {

@@ -20,12 +20,13 @@ import com.affymetrix.genoviz.swing.AMenuItem;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import org.osgi.framework.BundleContext;
 
 public class Activator extends ServiceRegistrar implements BundleActivator {
 	private static final int MENU_POS = 3;
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
 		final TableView tv = new TableView();
 		final JFrame frame = new JFrame("TableView");
 		frame.getContentPane().add(tv, BorderLayout.CENTER);

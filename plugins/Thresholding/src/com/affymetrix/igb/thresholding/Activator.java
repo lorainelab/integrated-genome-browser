@@ -16,7 +16,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	private SelectionListener selectionListener;
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
 		ThresholdingAction.createAction(igbService);
 		
 		JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding",  ThresholdingAction.getAction());

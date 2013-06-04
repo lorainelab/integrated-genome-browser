@@ -7,6 +7,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import org.osgi.framework.BundleContext;
 
 public class Activator extends ServiceRegistrar implements BundleActivator {
 
@@ -15,7 +16,7 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 //	private static final String _1000_GENOMES_EUROPE = "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/";
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
 		igbService.addServer(ThousandGenomesServerType.getInstance(), "1000 Genomes", _1000_GENOMES_US, Integer.MAX_VALUE);
 		return new ServiceRegistration[] {

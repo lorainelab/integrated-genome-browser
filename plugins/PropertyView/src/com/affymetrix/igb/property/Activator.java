@@ -10,20 +10,20 @@ import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
 	@Override
-	protected IGBTabPanel getPage(IGBService igbService) {
+	protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
 		PropertyView propertyView = new PropertyView(igbService);
         igbService.getSeqMapView().setPropertyHandler(propertyView);
 		return propertyView;
 	}
 
 	@Override
-	public void stop(BundleContext _bundleContext) throws Exception
+	public void stop(BundleContext bundleContext) throws Exception
 	{
     	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
         if (igbServiceReference != null) {
             IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
             igbService.getSeqMapView().setPropertyHandler(null);
         }
-		super.stop(_bundleContext);
+		super.stop(bundleContext);
 	}
 }

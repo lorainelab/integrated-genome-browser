@@ -10,12 +10,13 @@ import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.window.service.WindowActivator;
+import org.osgi.framework.BundleContext;
 
 public class Activator extends WindowActivator implements org.osgi.framework.BundleActivator {
 	static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Graph, FileTypeCategory.Mismatch};
 	
 	@Override
-	protected IGBTabPanel getPage(IGBService igbService) {
+	protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
 		
 		GraphTrackPanel tabPanel = new GraphTrackPanel(igbService) {
 			@Override

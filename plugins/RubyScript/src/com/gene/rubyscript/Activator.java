@@ -4,21 +4,16 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
 
-public class Activator implements BundleActivator {
-	protected ServiceRegistration<ScriptProcessor> scriptProcessorRegistration;
+public class Activator extends ServiceRegistrar implements BundleActivator {
 	
 	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		scriptProcessorRegistration = bundleContext.registerService(ScriptProcessor.class, new RubyScriptProcessor(), null);
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+		return new ServiceRegistration[]{
+			bundleContext.registerService(ScriptProcessor.class, new RubyScriptProcessor(), null)
+		};
     }
-
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		if(scriptProcessorRegistration != null){
-			scriptProcessorRegistration.unregister();
-			scriptProcessorRegistration = null;
-		}
-	}
 }

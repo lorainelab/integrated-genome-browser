@@ -17,6 +17,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		return pluginsView;
 	}
 
+	@Override
     public void stop(BundleContext bundleContext) throws Exception
     {
     	if (pluginsView != null) {

@@ -6,20 +6,16 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.igb.window.service.WindowActivator;
 
-public class Activator extends WindowActivator implements BundleActivator {
-	private ServiceRegistration<TrackClickListener> trackClickListenerRegistration;
-
+public class Activator extends ServiceRegistrar implements BundleActivator {
+	
 	@Override
-	protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
-		trackClickListenerRegistration = bundleContext.registerService(TrackClickListener.class, new VCFListener(igbService), null);
-        return new SampleSelectionView(igbService);
-	}
-
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		trackClickListenerRegistration.unregister();
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+		return new ServiceRegistration[]{
+			bundleContext.registerService(IGBTabPanel.class, new SampleSelectionView(igbService), null),
+			bundleContext.registerService(TrackClickListener.class, new VCFListener(igbService), null)
+		};
 	}
 }

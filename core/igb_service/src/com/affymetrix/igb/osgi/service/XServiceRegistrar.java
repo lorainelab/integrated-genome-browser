@@ -11,44 +11,39 @@ import org.osgi.util.tracker.ServiceTracker;
  *
  * @author hiralv
  */
-public abstract class XServiceRegistrar<Z> implements BundleActivator {
+public abstract class XServiceRegistrar<Z> extends SimpleServiceRegistrar implements BundleActivator {
 	private final Class<Z> clazz;
-	protected ServiceRegistration<?>[] registrations;
 	
 	protected XServiceRegistrar(Class<Z> clazz){
 		this.clazz = clazz;
 	}
 	
 	protected abstract ServiceRegistration<?>[] registerService(BundleContext bundleContext, Z zService) throws Exception;
-
-	/**
-	 * once the Z is available, we can register service with OSGi
-	 * @param zServiceReference the ServiceReference for the IGBService
-	 */
-	protected void registerService(BundleContext bundleContext, ServiceReference<Z> zServiceReference) {
+	
+	@Override
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext) {
 		try {
-			Z igbService = bundleContext.getService(zServiceReference);
-			registrations = registerService(bundleContext, igbService);
-			bundleContext.ungetService(zServiceReference);
+			return registerService(bundleContext, getService(bundleContext));
 		} catch (Exception ex) {
 			System.out.println(this.getClass().getName() + " - Exception in Activator.registerService() -> " + ex.getMessage());
 			ex.printStackTrace(System.out);
 		}
+		return null;
 	}
-
+	
 	/**
 	 * waits (if necessary) for the zService, and then calls createPage
 	 * @throws Exception
 	 */
-	protected void registerService(final BundleContext bundleContext) throws Exception {
-		ServiceReference<Z> zServiceReference = bundleContext.getServiceReference(clazz);
-		if (zServiceReference != null) {
-			registerService(bundleContext, zServiceReference);
+	@Override
+	protected void registerService(final BundleContext bundleContext) {
+		if (bundleContext.getServiceReference(clazz) != null) {
+			super.registerService(bundleContext);
 		} else {
 			ServiceTracker<Z, Object> serviceTracker = new ServiceTracker<Z, Object>(bundleContext, clazz.getName(), null) {
 				@Override
 				public Object addingService(ServiceReference<Z> zServiceReference) {
-					registerService(bundleContext, zServiceReference);
+					XServiceRegistrar.super.registerService(bundleContext);
 					return super.addingService(zServiceReference);
 				}
 			};
@@ -56,22 +51,10 @@ public abstract class XServiceRegistrar<Z> implements BundleActivator {
 		}
 	}
 
-	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		if (CommonUtils.getInstance().isExit(bundleContext)) {
-			return;
-		}
-		registerService(bundleContext);
+	private Z getService(BundleContext bundleContext) throws Exception {
+		ServiceReference<Z> zServiceReference = bundleContext.getServiceReference(clazz);
+		Z zService = bundleContext.getService(zServiceReference);
+		bundleContext.ungetService(zServiceReference);
+		return zService;
 	}
-
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		if (registrations != null) {
-			for (ServiceRegistration registration : registrations) {
-				registration.unregister();
-			}
-			registrations = null;
-		}
-	}
-    
 }

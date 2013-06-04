@@ -1,12 +1,5 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.window.service.IWindowService;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +11,23 @@ import java.util.logging.Logger;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 import javax.swing.JMenuItem;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class Activator implements BundleActivator {
+import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.swing.AMenuItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.window.service.IWindowService;
+
+public class Activator extends ServiceRegistrar implements BundleActivator {
 	
 	private static final String DEFAULT_PREFS_TUTORIAL_RESOURCE = "/tutorial_default_prefs.xml";
 	private static final Logger ourLogger =
@@ -97,29 +100,6 @@ public class Activator implements BundleActivator {
 	}
 
 	@Override
-	public void start(final BundleContext bundleContext) throws Exception {
-    	if (CommonUtils.getInstance().isExit(bundleContext)) {
-    		return;
-    	}
-		ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
-
-		if (igbServiceReference != null) {
-			handleIGBService(bundleContext);
-		} else {
-			ServiceTracker<IGBService, Object> serviceTracker = new ServiceTracker<IGBService, Object>(bundleContext, IGBService.class.getName(), null) {
-
-				@Override
-				public Object addingService(ServiceReference<IGBService> igbServiceReference) {
-					handleIGBService(bundleContext);
-					return super.addingService(igbServiceReference);
-				}
-			};
-			serviceTracker.open();
-		}
-		initActions();
-	}
-
-	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		if(menuRegistration != null){
 			menuRegistration.unregister();
@@ -160,5 +140,12 @@ public class Activator implements BundleActivator {
 
 	private Preferences getTutorialsNode() {
 		return getTopNode().node("tutorials");
+	}
+
+	@Override
+	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+		handleIGBService(bundleContext);
+		initActions();
+		return null;
 	}
 }

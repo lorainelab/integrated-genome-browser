@@ -14,12 +14,10 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
  * OSGi Activator for genoviz bundle
  */
 public class Activator implements BundleActivator {
-	protected BundleContext bundleContext;
 	private ServiceRegistration<ScriptManager> scriptManagerServiceReference;
 	
 	@Override
-	public void start(BundleContext _bundleContext) throws Exception {
-		bundleContext = _bundleContext;
+	public void start(BundleContext bundleContext) throws Exception {
     	if (CommonUtils.getInstance().isExit(bundleContext)) {
     		return;
     	}
@@ -43,6 +41,5 @@ public class Activator implements BundleActivator {
 			scriptManagerServiceReference.unregister();
 			scriptManagerServiceReference = null;
 		}
-		bundleContext = null;
 	}
 }

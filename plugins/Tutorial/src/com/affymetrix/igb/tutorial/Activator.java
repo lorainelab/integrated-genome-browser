@@ -30,10 +30,9 @@ public class Activator implements BundleActivator {
 	private static final Logger ourLogger =
 			Logger.getLogger(Activator.class.getPackage().getName());
 
-	private BundleContext bundleContext;
 	private ServiceRegistration<AMenuItem> menuRegistration;
 	
-	private void handleWindowService(ServiceReference<IWindowService> windowServiceReference) {
+	private void handleWindowService(final ServiceReference<IWindowService> windowServiceReference, final BundleContext bundleContext) {
 		loadDefaultTutorialPrefs();
 		try {
 			IWindowService windowService = bundleContext.getService(windowServiceReference);
@@ -75,16 +74,16 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	private void handleIGBService(ServiceReference<IGBService> igbServiceReference) {
+	private void handleIGBService(final BundleContext bundleContext) {
 		try {
 			ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
 			if (windowServiceReference != null) {
-				handleWindowService(windowServiceReference);
+				handleWindowService(windowServiceReference, bundleContext);
 			} else {
 				ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class.getName(), null) {
 					@Override
 					public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-						handleWindowService(windowServiceReference);
+						handleWindowService(windowServiceReference, bundleContext);
 						return super.addingService(windowServiceReference);
 					}
 				};
@@ -98,21 +97,20 @@ public class Activator implements BundleActivator {
 	}
 
 	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		this.bundleContext = bundleContext;
+	public void start(final BundleContext bundleContext) throws Exception {
     	if (CommonUtils.getInstance().isExit(bundleContext)) {
     		return;
     	}
 		ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
 		if (igbServiceReference != null) {
-			handleIGBService(igbServiceReference);
+			handleIGBService(bundleContext);
 		} else {
 			ServiceTracker<IGBService, Object> serviceTracker = new ServiceTracker<IGBService, Object>(bundleContext, IGBService.class.getName(), null) {
 
 				@Override
 				public Object addingService(ServiceReference<IGBService> igbServiceReference) {
-						handleIGBService(igbServiceReference);
+					handleIGBService(bundleContext);
 					return super.addingService(igbServiceReference);
 				}
 			};

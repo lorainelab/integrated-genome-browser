@@ -18,25 +18,23 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
  * OSGi Activator for genometry bundle
  */
 public class Activator implements BundleActivator {
-	protected BundleContext bundleContext;
-
+	
 	@Override
-	public void start(BundleContext _bundleContext) throws Exception {
-		bundleContext = _bundleContext;
+	public void start(BundleContext bundleContext) throws Exception {
     	if (CommonUtils.getInstance().isExit(bundleContext)) {
     		return;
     	}
 		//bundleContext.registerService(WaitHelperI.class, CThreadHolder.getInstance(), null);
-		initFileTypeHandlers();
-		initGenericActions();
-		initServerTypes();
-		initOperators();
+		initFileTypeHandlers(bundleContext);
+		initGenericActions(bundleContext);
+		initServerTypes(bundleContext);
+		initOperators(bundleContext);
 	}
 
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {}
 
-	private void initFileTypeHandlers() {
+	private void initFileTypeHandlers(BundleContext bundleContext) {
 		// add all FileTypeHandler implementations to FileTypeHolder
 		ExtensionPointHandler<FileTypeHandler> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
 		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
@@ -52,7 +50,7 @@ public class Activator implements BundleActivator {
 		});
 	}
 
-	private void initGenericActions() {
+	private void initGenericActions(BundleContext bundleContext) {
 		// add all GenericAction implementations to GenericActionHolder
 		ExtensionPointHandler<GenericAction> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GenericAction.class);
 		extensionPoint.addListener(new ExtensionPointListener<GenericAction>() {
@@ -68,7 +66,7 @@ public class Activator implements BundleActivator {
 		});
 	}
 
-	private void initServerTypes() {
+	private void initServerTypes(BundleContext bundleContext) {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
 		bundleContext.registerService(ServerTypeI.class, ServerTypeI.LocalFiles, null);
 		bundleContext.registerService(ServerTypeI.class, ServerTypeI.QuickLoad, null);
@@ -76,7 +74,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(ServerTypeI.class, ServerTypeI.DAS2, null);
 	}
 
-	private void initOperators() {
+	private void initOperators(BundleContext bundleContext) {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ComplementSequenceOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyGraphOperator(), null);

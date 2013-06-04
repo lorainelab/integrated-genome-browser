@@ -25,9 +25,8 @@ public class Activator implements BundleActivator {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles");
 	private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TAB_PANEL_CATEGORY = "IGBTabPanel-";
-	private BundleContext bundleContext;
 
-	private void addTab(ServiceReference<IGBTabPanel> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
+	private void addTab(BundleContext bundleContext, ServiceReference<IGBTabPanel> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
 		IGBTabPanel panel = bundleContext.getService(serviceReference);
 		windowServiceDefaultImpl.addTab(panel);
 		synchronized(this){
@@ -39,8 +38,7 @@ public class Activator implements BundleActivator {
 	}
 
 	@Override
-	public void start(BundleContext _bundleContext) throws Exception {
-		bundleContext = _bundleContext;
+	public void start(final BundleContext bundleContext) throws Exception {
     	if (CommonUtils.getInstance().isExit(bundleContext)) {
     		return;
     	}
@@ -74,7 +72,7 @@ public class Activator implements BundleActivator {
 		ServiceReference<IGBTabPanel>[] serviceReferences = (ServiceReference<IGBTabPanel>[])bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
 		if (serviceReferences != null) {
 			for (ServiceReference<IGBTabPanel> serviceReference : serviceReferences) {
-				addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
+				addTab(bundleContext, serviceReference, windowServiceDefaultImpl, tabPanels);
 			}
 		}
 		try {
@@ -88,7 +86,7 @@ public class Activator implements BundleActivator {
 							windowServiceDefaultImpl.removeTab(bundleContext.getService(serviceReference));
 						}
 						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-							addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
+							addTab(bundleContext, serviceReference, windowServiceDefaultImpl, tabPanels);
 						}
 					}
 				}
@@ -110,6 +108,6 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		bundleContext = null;
+		
 	}
 }

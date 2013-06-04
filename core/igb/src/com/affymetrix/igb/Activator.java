@@ -59,15 +59,13 @@ import com.affymetrix.igb.window.service.IWindowService;
  * OSGi Activator for igb bundle
  */
 public class Activator implements BundleActivator {
-	protected BundleContext bundleContext;
     private String commandLineBatchFileStr;
 	String[] args;
 
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 	
 	@Override
-	public void start(BundleContext _bundleContext) throws Exception {
-		this.bundleContext = _bundleContext;
+	public void start(final BundleContext bundleContext) throws Exception {
         args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
     		if (CommonUtils.getInstance().isHelp(bundleContext)) { // display all command options
@@ -133,16 +131,16 @@ public class Activator implements BundleActivator {
 				= bundleContext.getServiceReference(IWindowService.class);
 
         if (windowServiceReference != null) {
-        	run(windowServiceReference);
+        	run(bundleContext, windowServiceReference);
         }
         else {
         	ServiceTracker<IWindowService, Object> serviceTracker
 					= new ServiceTracker<IWindowService, Object>(
 					bundleContext, IWindowService.class, null) {
+						
 				@Override
-        	    public Object addingService(
-						ServiceReference<IWindowService> windowServiceReference) {
-        	    	run(windowServiceReference);
+        	    public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
+        	    	run(bundleContext, windowServiceReference);
         	        return super.addingService(windowServiceReference);
         	    }
         	};
@@ -164,8 +162,8 @@ public class Activator implements BundleActivator {
 				GeneralLoadView.getLoadView().refreshTreeView();
 			}
 		});
-		initOperators();
-		initColorProvider();
+		initOperators(bundleContext);
+		initColorProvider(bundleContext);
 	}
 
 	@Override
@@ -177,29 +175,29 @@ public class Activator implements BundleActivator {
 	 * add any extension points handling here
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
-	private void run(ServiceReference<IWindowService> windowServiceReference) {
+	private void run(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference) {
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 		
 		// To avoid race condition on startup
-		initMapViewGlyphFactorys();
+		initMapViewGlyphFactorys(bundleContext);
 		
         igb.init(args);
 		
 		addGenericActionListener();
-		registerServices(windowServiceReference, igb);
+		registerServices(bundleContext, windowServiceReference, igb);
 		
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
 
-		addMenuItemListener();
-		addPopupListener();
-		addScriptListener();
-		addPrefEditorComponentListener();
+		addMenuItemListener(bundleContext);
+		addPopupListener(bundleContext);
+		addScriptListener(bundleContext);
+		addPrefEditorComponentListener(bundleContext);
 		initSeqMapViewActions();
 		addShortcuts();
-		addStatusAlertListener();
+		addStatusAlertListener(bundleContext);
 	}
 
 	private void addShortcuts() {
@@ -340,13 +338,13 @@ public class Activator implements BundleActivator {
 		NewGenomeAction.getAction();
 	}
 
-	private void initOperators() {
+	private void initOperators(final BundleContext bundleContext) {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
 	}
 	
-	private void initColorProvider() {
+	private void initColorProvider(final BundleContext bundleContext) {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ColorProviderI.class);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.RGB(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Score(), null);
@@ -355,7 +353,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
 	}
 	
-	private void initMapViewGlyphFactorys() {
+	private void initMapViewGlyphFactorys(final BundleContext bundleContext) {
 		ExtensionPointHandler<MapTierGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapTierGlyphFactoryI.class);
 		mapViewGlyphFactoryExtensionPoint.addListener(
 			new ExtensionPointListener<MapTierGlyphFactoryI>() {
@@ -445,7 +443,7 @@ public class Activator implements BundleActivator {
 		);
 	}
 
-	private void addPrefEditorComponentListener() {
+	private void addPrefEditorComponentListener(final BundleContext bundleContext) {
 		ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
 		preferencesExtensionPoint.addListener(
 			new ExtensionPointListener<IPrefEditorComponent>() {
@@ -459,7 +457,7 @@ public class Activator implements BundleActivator {
 		);
 	}
 
-	private void registerServices(ServiceReference<IWindowService> windowServiceReference, final IGB igb) {
+	private void registerServices(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference, final IGB igb) {
 		IWindowService windowService = bundleContext.getService(windowServiceReference);
 		final IGBTabPanel[] tabs = igb.setWindowService(windowService);
 		// set IGBService
@@ -483,7 +481,7 @@ public class Activator implements BundleActivator {
 		);
 	}
 	
-	private void addMenuItemListener(){
+	private void addMenuItemListener(final BundleContext bundleContext){
 		ExtensionPointHandler<AMenuItem> menuExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AMenuItem.class);
 		menuExtensionPoint.addListener(
 			new ExtensionPointListener<AMenuItem>() {
@@ -514,7 +512,7 @@ public class Activator implements BundleActivator {
 		);
 	}
 	
-	private void addPopupListener(){
+	private void addPopupListener(final BundleContext bundleContext){
 		ExtensionPointHandler<ContextualPopupListener> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ContextualPopupListener.class);
 		popupExtensionPoint.addListener(
 			new ExtensionPointListener<ContextualPopupListener>() {
@@ -530,7 +528,7 @@ public class Activator implements BundleActivator {
 		);
 	}
 	
-	private void addScriptListener(){
+	private void addScriptListener(final BundleContext bundleContext){
 		ExtensionPointHandler<ScriptProcessor> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ScriptProcessor.class);
 		popupExtensionPoint.addListener(
 			new ExtensionPointListener<ScriptProcessor>() {
@@ -546,7 +544,7 @@ public class Activator implements BundleActivator {
 		);
 	}
 	
-	private void addStatusAlertListener(){
+	private void addStatusAlertListener(final BundleContext bundleContext){
 		ExtensionPointHandler<StatusAlert> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, StatusAlert.class);
 		popupExtensionPoint.addListener(
 			new ExtensionPointListener<StatusAlert>() {

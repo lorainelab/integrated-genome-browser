@@ -7,11 +7,9 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
 public class Activator implements BundleActivator {
-	private BundleContext bundleContext;
 
 	@Override
-	public void start(BundleContext bundleContext_) throws Exception {
-		this.bundleContext = bundleContext_;
+	public void start(final BundleContext bundleContext) throws Exception {
         if (CommonUtils.getInstance().isHelp(bundleContext)) {
         	System.out.println("-exit - exit the program after completing above functions");
         }
@@ -20,14 +18,14 @@ public class Activator implements BundleActivator {
 				new BundleListener() {
 					@Override
 					public void bundleChanged(BundleEvent evt) {
-						checkAllStarted();
+						checkAllStarted(bundleContext);
 					}
 				}
 			);
         }
     }
 
-	private void checkAllStarted() {
+	private void checkAllStarted(BundleContext bundleContext) {
 		boolean allStarted = true;
 		for (Bundle bundle : bundleContext.getBundles()) {
 			if (bundle.getState() != Bundle.ACTIVE) {

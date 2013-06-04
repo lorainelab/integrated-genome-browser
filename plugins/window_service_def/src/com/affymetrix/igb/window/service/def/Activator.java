@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ResourceBundle;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -21,6 +22,7 @@ import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles");
 	private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TAB_PANEL_CATEGORY = "IGBTabPanel-";
 	private BundleContext bundleContext;
@@ -28,9 +30,11 @@ public class Activator implements BundleActivator {
 	private void addTab(ServiceReference<IGBTabPanel> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
 		IGBTabPanel panel = bundleContext.getService(serviceReference);
 		windowServiceDefaultImpl.addTab(panel);
-		tabPanels.remove(panel.getName());
-		if (tabPanels.isEmpty()) {
-			windowServiceDefaultImpl.showTabs();
+		synchronized(this){
+			tabPanels.remove(serviceReference.getBundle().getSymbolicName());
+			if (tabPanels.isEmpty()) {
+				windowServiceDefaultImpl.showTabs();
+			}
 		}
 	}
 
@@ -57,18 +61,12 @@ public class Activator implements BundleActivator {
 			}
 		);
 		final List<String> tabPanels = new ArrayList<String>();
-		Enumeration<String> bundleKeys = WindowServiceDefaultImpl.BUNDLE.getKeys();
+		Enumeration<String> bundleKeys = BUNDLE.getKeys();
 		while (bundleKeys.hasMoreElements()) {
 			String key = bundleKeys.nextElement();
-			String value = WindowServiceDefaultImpl.BUNDLE.getString(key);
+			String value = BUNDLE.getString(key);
 			if (value.contains(TAB_PANEL_CATEGORY)) {
-				for (String part : value.split(";")) {
-					if (part.startsWith(TAB_PANEL_CATEGORY)) {
-						for (String className : part.substring(TAB_PANEL_CATEGORY.length()).split(",")) {
-							tabPanels.add(className);
-						}
-					}
-				}
+				tabPanels.add(key.substring(0, key.indexOf(";")));
 			}
 		}
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, null);

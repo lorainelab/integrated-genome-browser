@@ -77,27 +77,6 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 		}
 	}
 
-	private void handleIGBService(final BundleContext bundleContext) {
-		try {
-			ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
-			if (windowServiceReference != null) {
-				handleWindowService(windowServiceReference, bundleContext);
-			} else {
-				ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class.getName(), null) {
-					@Override
-					public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-						handleWindowService(windowServiceReference, bundleContext);
-						return super.addingService(windowServiceReference);
-					}
-				};
-				serviceTracker.open();
-			}
-		} catch (Exception ex) {
-			ourLogger.logp(Level.SEVERE, this.getClass().getName(),
-					"handleIGBService", "?", ex);
-			ourLogger.severe("          continuing...");
-		}
-	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
@@ -143,8 +122,26 @@ public class Activator extends ServiceRegistrar implements BundleActivator {
 	}
 
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
-		handleIGBService(bundleContext);
+	protected ServiceRegistration<?>[] registerService(final BundleContext bundleContext, final IGBService igbService) throws Exception {
+		try {
+			ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
+			if (windowServiceReference != null) {
+				handleWindowService(windowServiceReference, bundleContext);
+			} else {
+				ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class.getName(), null) {
+					@Override
+					public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
+						handleWindowService(windowServiceReference, bundleContext);
+						return super.addingService(windowServiceReference);
+					}
+				};
+				serviceTracker.open();
+			}
+		} catch (Exception ex) {
+			ourLogger.logp(Level.SEVERE, this.getClass().getName(),
+					"handleIGBService", "?", ex);
+			ourLogger.severe("          continuing...");
+		}
 		initActions();
 		return null;
 	}

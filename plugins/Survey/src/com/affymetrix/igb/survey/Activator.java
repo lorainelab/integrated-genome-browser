@@ -24,14 +24,18 @@ import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import static com.affymetrix.igb.survey.ShowSurvey.*;
 
 /**
  *
  * @author hiralv
  */
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService>implements BundleActivator {
+	
+	public Activator(){
+		super(IGBService.class);
+	}
 
 	@Override
 	protected ServiceRegistration<?>[] registerService(final BundleContext bundleContext, final IGBService igbService) throws Exception {

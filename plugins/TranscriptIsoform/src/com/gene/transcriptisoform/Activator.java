@@ -18,10 +18,14 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 	private TranscriptIsoformEvidenceVisualizationManager tievListener;
+	
+	public Activator(){
+		super(IGBService.class);
+	}
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, final IGBService igbService) throws Exception {

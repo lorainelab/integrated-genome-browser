@@ -6,10 +6,14 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import com.affymetrix.igb.shared.TrackClickListener;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+	
+	public Activator(){
+		super(IGBService.class);
+	}
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {

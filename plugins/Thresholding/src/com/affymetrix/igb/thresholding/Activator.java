@@ -8,12 +8,16 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 	private SelectionListener selectionListener;
+	
+	public Activator(){
+		super(IGBService.class);
+	}
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {

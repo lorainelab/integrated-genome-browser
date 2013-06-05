@@ -12,6 +12,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
@@ -23,9 +24,13 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 
+	public Activator(){
+		super(IGBService.class);
+	}
+	
 	@Override
 	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception{
 		SaveSessionAction.createAction(igbService);

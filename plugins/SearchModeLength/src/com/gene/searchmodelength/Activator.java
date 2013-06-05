@@ -8,7 +8,7 @@ import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.searchmodesymmetryfilter.SearchModeSymmetryFilter;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(IGBService igbService) throws Exception {

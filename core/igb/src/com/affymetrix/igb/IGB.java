@@ -65,6 +65,9 @@ import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import static com.affymetrix.igb.IGBConstants.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 /**
@@ -256,8 +259,23 @@ public final class IGB extends Application
 		});
 
 		ScriptManager.getInstance().setInputHandler(new ScriptManager.InputHandler() {
-			public InputStream getInputStream(String fileName) throws IOException {
-				return LocalUrlCacher.getInputStream(fileName);
+			public InputStream getInputStream(String fileName) throws Exception {
+				return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
+			}
+
+			/* This method is used to convert the given file path from relative to absolute.
+			 */
+			private URI relativeToAbsolute(String path) throws URISyntaxException {
+				if (!(path.startsWith("file:") && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:")))) {
+					return getAbsoluteFile(path).toURI();
+				}
+				return new URI(path);
+			}
+
+			/*Returns the File object at given path
+			 */
+			private File getAbsoluteFile(String path) {
+				return new File(path).getAbsoluteFile();
 			}
 		});
 				

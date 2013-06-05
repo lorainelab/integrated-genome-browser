@@ -20,7 +20,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	}
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
 		ThresholdingAction.createAction(igbService);
 		
 		JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding",  ThresholdingAction.getAction());

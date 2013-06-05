@@ -1,6 +1,5 @@
 package com.affymetrix.igb.osgi.service;
 
-import com.affymetrix.common.CommonUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -18,12 +17,12 @@ public abstract class XServiceRegistrar<Z> extends SimpleServiceRegistrar implem
 		this.clazz = clazz;
 	}
 	
-	protected abstract ServiceRegistration<?>[] registerService(BundleContext bundleContext, Z zService) throws Exception;
+	protected abstract ServiceRegistration<?>[] getServices(BundleContext bundleContext, Z zService) throws Exception;
 	
 	@Override
 	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext) {
 		try {
-			return registerService(bundleContext, getService(bundleContext));
+			return getServices(bundleContext, getService(bundleContext));
 		} catch (Exception ex) {
 			System.out.println(this.getClass().getName() + " - Exception in Activator.registerService() -> " + ex.getMessage());
 			ex.printStackTrace(System.out);

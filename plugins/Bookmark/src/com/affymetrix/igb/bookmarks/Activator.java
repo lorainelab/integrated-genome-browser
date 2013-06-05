@@ -32,7 +32,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	}
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception{
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception{
 		SaveSessionAction.createAction(igbService);
 		LoadSessionAction.createAction(igbService);
 		

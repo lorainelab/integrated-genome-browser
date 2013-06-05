@@ -17,7 +17,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	}
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
 		DASRegistryServerType drst = new DASRegistryServerType(igbService);
 		if (GenometryModel.getGenometryModel().getSelectedSeqGroup() != null) {

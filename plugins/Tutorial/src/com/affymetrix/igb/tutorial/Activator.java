@@ -66,7 +66,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 		VerticalStretchZoomAction.getAction();
 	}
 	
-	private ServiceRegistration<?>[] registerService(final BundleContext bundleContext,
+	private ServiceRegistration<?>[] getServices(final BundleContext bundleContext,
 			final IGBService igbService, final IWindowService windowService) throws Exception {
 		final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
 		GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
@@ -107,13 +107,13 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 		XServiceRegistrar<IGBService> igbServiceRegistrar = new XServiceRegistrar<IGBService>(IGBService.class) {
 			
 			@Override
-			protected ServiceRegistration<?>[] registerService(final BundleContext bundleContext, final IGBService igbService) throws Exception {
+			protected ServiceRegistration<?>[] getServices(final BundleContext bundleContext, final IGBService igbService) throws Exception {
 
 				XServiceRegistrar<IWindowService> windowServiceRegistrar = new XServiceRegistrar<IWindowService>(IWindowService.class) {
 					
 					@Override
-					protected ServiceRegistration<?>[] registerService(final BundleContext bundleContext, final IWindowService windowService) throws Exception {
-						return Activator.this.registerService(bundleContext, igbService, windowService);
+					protected ServiceRegistration<?>[] getServices(final BundleContext bundleContext, final IWindowService windowService) throws Exception {
+						return Activator.this.getServices(bundleContext, igbService, windowService);
 					}
 				};
 				windowServiceRegistrar.start(bundleContext);

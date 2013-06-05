@@ -16,7 +16,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	}
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
 			bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterProps(), 2000), null)
 		};

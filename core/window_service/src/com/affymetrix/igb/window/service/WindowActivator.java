@@ -20,7 +20,7 @@ public abstract class WindowActivator extends XServiceRegistrar<IGBService> impl
 	}
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
 		return new ServiceRegistration[] {
 			bundleContext.registerService(IGBTabPanel.class, getPage(bundleContext, igbService), null),	
 		};

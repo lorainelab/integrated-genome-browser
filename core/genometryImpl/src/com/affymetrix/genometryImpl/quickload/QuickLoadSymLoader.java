@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.quickload;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,9 @@ import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.util.ParserController;
+import java.io.IOException;
 
 /**
  *
@@ -37,7 +38,13 @@ public class QuickLoadSymLoader extends SymLoader {
 
 	protected SymLoader symL;	// parser factory
 	protected GenometryModel gmodel = GenometryModel.getGenometryModel();
-
+	protected boolean loadResidueAsTrack = false;
+	
+	public QuickLoadSymLoader(URI uri, String featureName, AnnotatedSeqGroup group, boolean loadResidueAsTrack) {
+		this(uri, featureName, group);
+		this.loadResidueAsTrack = loadResidueAsTrack;
+	}
+	
 	public QuickLoadSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, featureName, group);
 	}
@@ -49,6 +56,9 @@ public class QuickLoadSymLoader extends SymLoader {
 		}
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, group);
 		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
+		if(isResidueLoader && loadResidueAsTrack){
+			this.symL = new ResidueTrackSymLoader(symL);
+		}
 		this.isInitialized = true;
 	}
 

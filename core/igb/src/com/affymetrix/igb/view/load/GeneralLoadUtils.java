@@ -359,7 +359,7 @@ public final class GeneralLoadUtils {
 
 		List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
 		for (GenericFeature gFeature : getFeatures(group)) {
-			if (gFeature.isVisible()) {
+			if (gFeature.isVisible() && gFeature.loadAsTrack()) {
 				visibleFeatures.add(gFeature);
 			}
 		}
@@ -1249,7 +1249,7 @@ public final class GeneralLoadUtils {
 			QuickLoadSymLoader quickLoad = SymLoader.getExtension(uri).endsWith("chp")
 					? new QuickLoadSymLoaderChp(uri, friendlyName, version.group)
 					: new QuickLoadSymLoader(uri, friendlyName, version.group, loadAsTrack);
-			gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload);
+			gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload, loadAsTrack);
 
 			version.addFeature(gFeature);
 

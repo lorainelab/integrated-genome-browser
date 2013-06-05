@@ -56,7 +56,8 @@ public final class GenericFeature {
 	public final SymLoader symL;
 	private final Set<String> methods = new HashSet<String>();
 	private static final List<LoadStrategy> standardLoadChoices = new ArrayList<LoadStrategy>();
-
+	private final boolean loadAsTrack;
+	
 	static {
 		standardLoadChoices.add(LoadStrategy.NO_LOAD);
 		standardLoadChoices.add(LoadStrategy.VISIBLE);
@@ -68,6 +69,11 @@ public final class GenericFeature {
 	// Request that are currently going on. (To avoid parsing more than once)
 	private final MutableSeqSymmetry currentRequestSym = new SimpleMutableSeqSymmetry();
 
+	public GenericFeature(
+			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload) {
+		this(featureName, featureProps, gVersion, gsr, typeObj, autoload, true);
+	}
+	
 	/**
 	 * @param featureName
 	 * @param featureProps
@@ -75,7 +81,7 @@ public final class GenericFeature {
 	 * @param typeObj
 	 */
 	public GenericFeature(
-			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload) {
+			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload, boolean loadAsTrack) {
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
@@ -89,6 +95,7 @@ public final class GenericFeature {
 		
 		this.setAutoload(autoload);
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
+		this.loadAsTrack = loadAsTrack;
 		//methods.add(featureName);
 	}
 
@@ -136,6 +143,10 @@ public final class GenericFeature {
 		return this.visible;
 	}
 
+	public boolean loadAsTrack(){
+		return loadAsTrack;
+	}
+	
 	public LoadStrategy getLoadStrategy() {
 		return loadStrategy;
 	}

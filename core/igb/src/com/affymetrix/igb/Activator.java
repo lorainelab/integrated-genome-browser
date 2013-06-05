@@ -452,27 +452,29 @@ public class Activator implements BundleActivator {
 		final IGBTabPanel[] tabs = igb.setWindowService(windowService);
 		// set IGBService
 		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
-		bundleContext.registerService(GeneralLoadView.class, GeneralLoadView.getLoadView(), null);
 		// register tabs created in IGB itself - IGBTabPanel is an extension point
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
-		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
-		ExtensionPointHandler<FileTypeHandler> extensionPoint
-				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
-		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
-			// note - the FileTypeHolder calls may happen before or after
-			// these, but the refreshTreeView() is a separate thread
-			@Override
-			public void removeService(FileTypeHandler fileTypeHandler) {
-				GeneralLoadView.getLoadView().refreshTreeView();
-			}
-			
-			@Override
-			public void addService(FileTypeHandler fileTypeHandler) {
-				GeneralLoadView.getLoadView().refreshTreeView();
-			}
-		});
+		
+//		bundleContext.registerService(GeneralLoadView.class, GeneralLoadView.getLoadView(), null);
+		
+//		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
+//		ExtensionPointHandler<FileTypeHandler> extensionPoint
+//				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
+//		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
+//			// note - the FileTypeHolder calls may happen before or after
+//			// these, but the refreshTreeView() is a separate thread
+//			@Override
+//			public void removeService(FileTypeHandler fileTypeHandler) {
+//				GeneralLoadView.getLoadView().refreshTreeView();
+//			}
+//			
+//			@Override
+//			public void addService(FileTypeHandler fileTypeHandler) {
+//				GeneralLoadView.getLoadView().refreshTreeView();
+//			}
+//		});
 		bundleContext.registerService(IWindowRoutine.class, 
 			new IWindowRoutine() {
 				@Override

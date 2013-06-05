@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.util.StatusAlert;
 
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 
@@ -198,6 +199,11 @@ public class Activator implements BundleActivator {
 		initSeqMapViewActions();
 		addShortcuts();
 		addStatusAlertListener(bundleContext);
+		
+		if(IGB.commandLineBatchFileStr != null && IGB.commandLineBatchFileStr.length() > 0){
+			ScriptExecutor se = new ScriptExecutor();
+			se.start();
+		}
 	}
 
 	private void addShortcuts() {
@@ -558,5 +564,46 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
+	}
+	
+	private class ScriptExecutor extends Thread {
+		private boolean timeup = false;
+		private Timer timer;
+		
+		@Override
+		public void run(){
+			java.awt.event.ActionListener al = new java.awt.event.ActionListener(){
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					timeup = true;
+					timer.stop();
+				}
+			};
+			timer = new Timer(10000, al);
+			timer.setRepeats(false);
+			timer.start();
+			
+			while(true){
+				try {
+					sleep(1000);
+					
+					boolean shouldRun = check();
+					if(shouldRun || timeup){
+						if(shouldRun){
+							ScriptManager.getInstance().runScript(IGB.commandLineBatchFileStr);
+							IGB.commandLineBatchFileStr = null;
+						}
+						break;
+					}
+				} catch (Exception ex) {
+					break;
+				}
+			}
+		}
+		
+		private boolean check() {
+			return IGBServiceImpl.getInstance().areAllServersInited() 
+					&& IGBServiceImpl.getInstance().getFrame().isVisible();
+		}
 	}
 }

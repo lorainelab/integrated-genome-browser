@@ -6,14 +6,18 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 
 //	private static final String _1000_GENOMES_US = "ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/";
 	static final String _1000_GENOMES_US = "ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/phase1/";
 //	private static final String _1000_GENOMES_EUROPE = "ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/";
+	
+	public Activator(){
+		super(IGBService.class);
+	}
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {

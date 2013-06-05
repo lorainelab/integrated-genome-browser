@@ -4,13 +4,17 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.BundleActivator;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+	
+	public Activator(){
+		super(IGBService.class);
+	}
 	
 	@Override
 	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {

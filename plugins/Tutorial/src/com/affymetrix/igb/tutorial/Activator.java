@@ -113,7 +113,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 					
 					@Override
 					protected ServiceRegistration<?>[] registerService(final BundleContext bundleContext, final IWindowService windowService) throws Exception {
-						return registerService(bundleContext, igbService, windowService);
+						return Activator.this.registerService(bundleContext, igbService, windowService);
 					}
 				};
 				windowServiceRegistrar.start(bundleContext);

@@ -2,24 +2,21 @@ package com.affymetrix.igb.keywordsearch;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  *
  * @author hiralv
  */
-public class Activator  extends ServiceRegistrar implements BundleActivator {
+public class Activator  extends SimpleServiceRegistrar implements BundleActivator {
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext) throws Exception {
 		ExtensionPointHandler<IKeyWordSearch> extensionPointKWS = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IKeyWordSearch.class);
 		final KeyWordSearch keyWordSearch = new KeyWordSearch();
 
@@ -36,7 +33,7 @@ public class Activator  extends ServiceRegistrar implements BundleActivator {
 		});
 
 		return new ServiceRegistration[] {
-				bundleContext.registerService(ISearchModeSym.class, keyWordSearch, null)
-			};
+			bundleContext.registerService(ISearchModeSym.class, keyWordSearch, null)
+		};
 	}
 }

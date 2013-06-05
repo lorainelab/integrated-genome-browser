@@ -32,7 +32,7 @@ public class ScriptManager {
 	private InputHandler inputHandler;
 	
 	public static interface InputHandler {
-		public InputStream getInputStream(String fileName) throws IOException;
+		public InputStream getInputStream(String fileName) throws Exception;
 	}
 	
 	public static ScriptManager getInstance() {

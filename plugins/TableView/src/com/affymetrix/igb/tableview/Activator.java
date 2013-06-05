@@ -18,15 +18,14 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.ServiceRegistrar;
+import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
-public class Activator extends ServiceRegistrar implements BundleActivator {
+public class Activator extends SimpleServiceRegistrar implements BundleActivator {
 	private static final int MENU_POS = 3;
 	
 	@Override
-	protected ServiceRegistration<?>[] registerService(BundleContext bundleContext, IGBService igbService) throws Exception {
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext) throws Exception {
 		final TableView tv = new TableView();
 		final JFrame frame = new JFrame("TableView");
 		frame.getContentPane().add(tv, BorderLayout.CENTER);

@@ -1241,7 +1241,6 @@ public final class GeneralLoadUtils {
 				return null;
 			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.group);
 			if (symL != null && symL.isResidueLoader() && loadAsTrack) {
-				symL = new ResidueTrackSymLoader(symL);
 				featureProps = new HashMap<String, String>();
 				featureProps.put("collapsed", "true");
 				featureProps.put("show2tracks", "false");
@@ -1249,7 +1248,7 @@ public final class GeneralLoadUtils {
 			String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
 			QuickLoadSymLoader quickLoad = SymLoader.getExtension(uri).endsWith("chp")
 					? new QuickLoadSymLoaderChp(uri, friendlyName, version.group)
-					: new QuickLoadSymLoader(uri, friendlyName, version.group);
+					: new QuickLoadSymLoader(uri, friendlyName, version.group, loadAsTrack);
 			gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload);
 
 			version.addFeature(gFeature);

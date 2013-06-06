@@ -49,7 +49,7 @@ public class NewGenomeAction extends OpenURIAction {
 			if(refSeqPath != null && refSeqPath.length() > 0){
 				boolean mergeSelected = gmodel.getSeqGroup(ng.getVersionName()) == null;
 				String fileName = getFriendlyName(refSeqPath);
-				openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, fileName, false);
+				openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, ng.getSpeciesName(), false);
 			} else {
 				GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
 			}

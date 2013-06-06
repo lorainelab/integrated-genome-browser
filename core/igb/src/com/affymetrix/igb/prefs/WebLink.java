@@ -169,18 +169,17 @@ public final class WebLink {
 			System.out.println("ID is : " + sym.getID());
 		}
 
-		List<WebLink> webLinks = getWebLink(sym, method);
+		Set<WebLink> webLinks = new HashSet<WebLink>();
+		webLinks.addAll(getWebLink(sym, method));
 
 	//	if (webLinks.isEmpty()) {
 			if (style.getFeature() != null) {
-				webLinks = getWebLink(sym, style.getFeature().featureName);
+				webLinks.addAll(getWebLink(sym, style.getFeature().featureName));
 			}
 	//	}
 
-		if (!webLinks.isEmpty()) {
-			results.addAll(webLinks);
-		}
-
+		results.addAll(webLinks);
+		
 		return results;
 	}
 

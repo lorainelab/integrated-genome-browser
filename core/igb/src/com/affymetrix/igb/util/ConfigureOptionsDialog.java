@@ -122,7 +122,12 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 					final JTextField tf;
 					if (Number.class.isAssignableFrom(clazz)) {
 						tf = new JTextField(6);
-						((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+						if(Integer.class.isAssignableFrom(clazz)){
+							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
+						} else {
+							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+						}
+						
 					} else {
 						tf = new JTextField(10);
 					}
@@ -142,7 +147,13 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 
 						private void setParameter() {
 							if (Number.class.isAssignableFrom(clazz)) {
-								ConfigureOptionsDialog.this.setParameter(cp, label, Float.valueOf(tf.getText()));
+								if(tf.getText() != null && tf.getText().length() > 0) {
+									if(Integer.class.isAssignableFrom(clazz)){
+										ConfigureOptionsDialog.this.setParameter(cp, label, Integer.valueOf(tf.getText()));
+									} else {
+										ConfigureOptionsDialog.this.setParameter(cp, label, Float.valueOf(tf.getText()));
+									}
+								}
 							} else {
 								ConfigureOptionsDialog.this.setParameter(cp, label, tf.getText());
 							}

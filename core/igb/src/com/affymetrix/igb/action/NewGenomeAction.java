@@ -3,10 +3,18 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.NewGenome;
@@ -49,7 +57,16 @@ public class NewGenomeAction extends OpenURIAction {
 			if(refSeqPath != null && refSeqPath.length() > 0){
 				boolean mergeSelected = gmodel.getSeqGroup(ng.getVersionName()) == null;
 				String fileName = getFriendlyName(refSeqPath);
-				openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, ng.getSpeciesName(), false);
+				if(Constants.genomeTxt.equals(fileName) || Constants.modChromInfoTxt.equals(fileName)){
+					try {
+						ChromInfoParser.parse(group, getInputStream(refSeqPath));
+						GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+					} catch (Exception ex) {
+						Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				} else {
+					openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, ng.getSpeciesName(), false);
+				}
 			} else {
 				GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
 			}
@@ -60,6 +77,25 @@ public class NewGenomeAction extends OpenURIAction {
 		}
 	}
 	
+	private InputStream getInputStream(String fileName) throws Exception {
+		return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
+	}
+
+	/* This method is used to convert the given file path from relative to absolute.
+	 */
+	private URI relativeToAbsolute(String path) throws URISyntaxException {
+		if (!(path.startsWith("file:") && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:")))) {
+			return getAbsoluteFile(path).toURI();
+		}
+		return new URI(path);
+	}
+
+	/*Returns the File object at given path
+	 */
+	private File getAbsoluteFile(String path) {
+		return new File(path).getAbsoluteFile();
+	}
+			
 	private static String getFriendlyName(String urlStr) {
 		// strip off final "/" character, if it exists.
 		if (urlStr.endsWith("/")) {

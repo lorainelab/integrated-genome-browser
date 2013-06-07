@@ -170,6 +170,13 @@ public class NewGenome extends javax.swing.JPanel {
 			chooser.addChoosableFileFilter(filter);
 			all_known_endings.addAll(filter.getExtensions());
 		}
+		UniFileFilter filter = new UniFileFilter("bam", "BAM Files");
+		filter.addCompressionEndings(GeneralUtils.compression_endings);
+		chooser.addChoosableFileFilter(filter);
+		all_known_endings.addAll(filter.getExtensions());
+		filter = new UniFileFilter("txt", "Chromosome lengths information");
+		chooser.addChoosableFileFilter(filter);
+		all_known_endings.addAll(filter.getExtensions());
 		
 		UniFileFilter all_known_types = new UniFileFilter(
 				all_known_endings.toArray(new String[all_known_endings.size()]),

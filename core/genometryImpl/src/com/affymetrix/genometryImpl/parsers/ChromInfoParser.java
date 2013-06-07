@@ -27,10 +27,16 @@ public final class ChromInfoParser {
 	 *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
 	 *  adds it to the GenometryModel.
 	 */
-	public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version)
+	public static AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version)
 		throws IOException {
 
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
+		parse(seq_group, istr);
+		return seq_group;
+	}
+
+	public static void parse(AnnotatedSeqGroup seq_group, InputStream istr)
+		throws IOException {
 		BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
 		String line;
 		while ((line = dis.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
@@ -51,7 +57,5 @@ public final class ChromInfoParser {
 			}
 			seq_group.addSeq(chrom_name, chrLength);	// adds if it doesn't already exist.
 		}
-		return seq_group;
 	}
-
 }

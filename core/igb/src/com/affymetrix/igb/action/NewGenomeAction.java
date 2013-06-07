@@ -12,14 +12,17 @@ import javax.swing.JOptionPane;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.NewGenome;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.general.ServerList;
 
 /**
  *
@@ -60,7 +63,8 @@ public class NewGenomeAction extends OpenURIAction {
 				if(Constants.genomeTxt.equals(fileName) || Constants.modChromInfoTxt.equals(fileName)){
 					try {
 						ChromInfoParser.parse(group, getInputStream(refSeqPath));
-						GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+						GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+						ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, true, false);
 					} catch (Exception ex) {
 						Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
 					}
@@ -68,7 +72,8 @@ public class NewGenomeAction extends OpenURIAction {
 					openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, ng.getSpeciesName(), false);
 				}
 			} else {
-				GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+				GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+				ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, true, false);
 			}
 		
 			if(ng.shouldSwitch()){

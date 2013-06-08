@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.stylesheet.*;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.io.File;
@@ -444,24 +445,24 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	private void initFromPropertyMap(Map<String, String> props) {
-		String fgString = props.get("foreground");
-		if (fgString != null && !"".equals(fgString)) {
-			this.setForeground(Color.decode("0x" + fgString));
+		Color color = getColor(props, "foreground");
+		if (color != null) {
+			this.setForeground(color);
 		}
 
-		String bgString = props.get("background");
-		if (bgString != null && !"".equals(bgString)) {
-			this.setBackground(Color.decode("0x" + bgString));
+		color = getColor(props, "background");
+		if (color != null) {
+			this.setBackground(color);
 		}
 
-		String startColorString = props.get("positive_strand_color");
-		if (startColorString != null && !"".equals(startColorString)) {
-			this.setForwardColor(Color.decode("0x" + startColorString));
+		color = getColor(props, "positive_strand_color");
+		if (color != null) {
+			this.setForwardColor(color);
 		}
 
-		String endColorString = props.get("negative_strand_color");
-		if (endColorString != null && !"".equals(endColorString)) {
-			this.setReverseColor(Color.decode("0x" + endColorString));
+		color =  getColor(props, "negative_strand_color");
+		if (color != null) {
+			this.setReverseColor(color);
 		}
 
 		String labfield = props.get("label_field");
@@ -1335,5 +1336,20 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setJoin(boolean b){
 		join = b;
+	}
+	
+	private static Color getColor(Map<String, ? extends Object> props, String key) {
+		Color c = null;
+		Object o = props.get(key);
+		if ("".equals(o)) {
+			// setting the value of color to "" means that you want to ignore the
+			// color settings in any inherited context and revert to the default.
+			return null;
+		} else if (o instanceof Color) {
+			c = (Color) o;
+		} else if (o instanceof String) {
+			c = ColorUtils.getColor((String)o);
+		}
+		return c;
 	}
 }

@@ -4,19 +4,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-
 import com.jidesoft.combobox.ColorComboBox;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-
 /**
  *
  * @version $Id: ColorUtils.java 8371 2011-06-29 19:55:31Z dcnorris $
  */
 public class ColorUtils {
+	private static Map<String, Color> colorMap = new HashMap<String, Color>();
 	
 	/**
 	 *  Creates a Color chooser combo box associated with a Color preference.
@@ -59,5 +60,27 @@ public class ColorUtils {
 		
 
 		return combobox;
+	}
+	
+	public static Color getColor(String str) {
+		Color c = colorMap.get(str);
+		if (c == null) {
+			try {
+				if (str.contains(",")) {
+					String[] rgb = str.split(",");
+					c = new Color(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+				} else {
+					if(str.startsWith("0x")){
+						c = Color.decode(str);
+					}else {
+						c = Color.decode("0x" + str);
+					}
+				}
+				colorMap.put(str, c);
+			} catch (Exception e) {
+				c = null;
+			}
+		}
+		return c;
 	}
 }

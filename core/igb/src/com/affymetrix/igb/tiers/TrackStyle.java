@@ -22,6 +22,7 @@ import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.Map.Entry;
 
@@ -418,12 +419,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		} else if (o instanceof Color) {
 			c = (Color) o;
 		} else if (o instanceof String) {
-			try {
-				c = Color.decode("0x" + o);
-			} catch (Exception e) {
-				c = null;
-
-			}
+			c = ColorUtils.getColor((String)o);
 		}
 		return c;
 	}

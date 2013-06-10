@@ -3,7 +3,6 @@ package com.affymetrix.igb.general;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
@@ -52,11 +51,11 @@ public final class ServerList {
 		this.textName = textName;
 	}
 
-	public static final ServerList getServerInstance() {
+	public static ServerList getServerInstance() {
 		return serverInstance;
 	}
 
-	public static final ServerList getRepositoryInstance() {
+	public static ServerList getRepositoryInstance() {
 		return repositoryInstance;
 	}
 
@@ -187,19 +186,6 @@ public final class ServerList {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 *
-	 * @param serverType
-	 * @param name
-	 * @param url
-	 * @param enabled
-	 * @return GenericServer
-	 */
-	public GenericServer addServer(ServerTypeI serverType, String name,
-			String url, boolean enabled, int order, boolean isDefault, String mirrorURL) { //qlmirror
-		return addServer(serverType, name, url, enabled, false, order, isDefault, mirrorURL);
 	}
 
 	public GenericServer addServer(Preferences node) {

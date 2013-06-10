@@ -147,7 +147,7 @@ public final class GeneralLoadUtils {
 		}
 
 		GenericServer gServer = serverList.addServer(serverType,
-				serverName, serverURL, true, order, isDefault, mirrorURL);
+				serverName, serverURL, true, false, order, isDefault, mirrorURL);
 		if (gServer == null) {
 			return null;
 		}

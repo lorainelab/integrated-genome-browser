@@ -11,19 +11,18 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.HeadlessException;
@@ -34,12 +33,12 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javax.swing.*;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
 import javax.swing.GroupLayout.Group;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
-import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -275,7 +274,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	public void updateDataSource(String url, ServerTypeI type, String name, String newUrl) {
 		Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
-		int order = node.getInt(GenericServerPref.ORDER, -1);
+		int order = node.getInt(GenericServer.ORDER, -1);
 		boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
 		ServerList.getServerInstance().removeServer(url);
 		ServerList.getServerInstance().removeServerFromPrefs(url);

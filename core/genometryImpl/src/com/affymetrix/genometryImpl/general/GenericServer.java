@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
  *
  * @version $Id: GenericServer.java 10498 2012-02-28 15:49:34Z imnick $
  */
-public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
+public final class GenericServer implements GenericServerPref, Comparable<GenericServer>, PreferenceChangeListener {
 
 	/**
 	 * Stores this servers settings on Java Preferences
@@ -63,7 +63,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	 */
 	public Object serverObj; //qlmirror
 	/**
-	 * friendly URL that users may look at.
+	 * friendly SERVER_URL that users may look at.
 	 */
 	private final String friendlyURL;
 	/**
@@ -110,8 +110,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	public GenericServer(Preferences node, Object serverObj,
 			ServerTypeI serverType, boolean isDefault, String mirrorURL) { //qlmirror
 		this(
-				node.get(GenericServerPref.NAME, "Unknown"),
-				GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")),
+				node.get(NAME, "Unknown"),
+				GeneralUtils.URLDecode(node.get(SERVER_URL, "")),
 				serverType,
 				true,
 				false,
@@ -146,9 +146,9 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 //		this.referenceOnly = referenceOnly;
 
 		if (this.node != null) {
-			this.setEnabled(this.node.getBoolean(GenericServerPref.ENABLED, enabled));
-			this.setLogin(this.node.get(GenericServerPref.LOGIN, ""));
-			this.setPassword(decrypt(this.node.get(GenericServerPref.PASSWORD, "")));
+			this.setEnabled(this.node.getBoolean(ENABLED, enabled));
+			this.setLogin(this.node.get(LOGIN, ""));
+			this.setPassword(decrypt(this.node.get(PASSWORD, "")));
 
 			this.node.addPreferenceChangeListener(this);
 		}
@@ -197,14 +197,14 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 
 	public void setEnabled(boolean enabled) {
 		if (node != null) {
-			node.putBoolean(GenericServerPref.ENABLED, enabled);
+			node.putBoolean(ENABLED, enabled);
 		}
 		this.enabled = enabled;
 	}
 
 	public void setName(String name) {
 		if (node != null) {
-			node.put(GenericServerPref.NAME, name);
+			node.put(NAME, name);
 		}
 		this.serverName = name;
 	}
@@ -219,7 +219,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 
 	public void setLogin(String login) {
 		if (node != null) {
-			node.put(GenericServerPref.LOGIN, login);
+			node.put(LOGIN, login);
 		}
 		this.login = login;
 	}
@@ -230,14 +230,14 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 
 	public void setEncryptedPassword(String password) {
 		if (node != null) {
-			node.put(GenericServerPref.PASSWORD, password);
+			node.put(PASSWORD, password);
 		}
 		this.password = decrypt(password);
 	}
 
 	public void setPassword(String password) {
 		if (node != null) {
-			node.put(GenericServerPref.PASSWORD, encrypt(password));
+			node.put(PASSWORD, encrypt(password));
 		}
 		this.password = password;
 	}
@@ -292,15 +292,15 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		final String key = evt.getKey();
 
-		if (key.equals(GenericServerPref.NAME) || key.equals(GenericServerPref.TYPE)) {
+		if (key.equals(NAME) || key.equals(TYPE)) {
 			/*
 			 * Ignore
 			 */
-		} else if (key.equals(GenericServerPref.LOGIN)) {
+		} else if (key.equals(LOGIN)) {
 			this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
-		} else if (key.equals(GenericServerPref.PASSWORD)) {
+		} else if (key.equals(PASSWORD)) {
 			this.password = evt.getNewValue() == null ? "" : decrypt(evt.getNewValue());
-		} else if (key.equals(GenericServerPref.ENABLED)) {
+		} else if (key.equals(ENABLED)) {
 			this.enabled = evt.getNewValue() == null ? true : Boolean.valueOf(evt.getNewValue());
 		}
 	}

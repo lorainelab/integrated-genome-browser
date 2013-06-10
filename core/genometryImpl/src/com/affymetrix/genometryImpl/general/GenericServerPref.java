@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genometryImpl.general;
 
 /**
@@ -11,7 +7,7 @@ package com.affymetrix.genometryImpl.general;
  * 
  * @author jfvillal
  */
-public class GenericServerPref {
+interface GenericServerPref {
 	/**
 	 * Key to retrieve the value for the server name
 	 */
@@ -31,7 +27,7 @@ public class GenericServerPref {
 	/**
 	 * Key to retrieve the url for the server
 	 */
-	public static final String URL = "url";
+	public static final String SERVER_URL = "url";
 	/**
 	 * Key to retrieve the server type (DAS2, DAS, Quickload or other)
 	 */

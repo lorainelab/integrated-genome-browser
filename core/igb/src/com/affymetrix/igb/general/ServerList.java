@@ -3,7 +3,7 @@ package com.affymetrix.igb.general;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericServerPref;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
@@ -130,7 +130,7 @@ public final class ServerList {
 	}
 
 	/**
-	 * Given an URLorName string which should be the resolvable root URL (but
+	 * Given an URLorName string which should be the resolvable root SERVER_URL (but
 	 * may optionally be the server name) Return the GenericServer object. (This
 	 * could be non-unique if passed a name.)
 	 *
@@ -161,8 +161,8 @@ public final class ServerList {
 			if (info != null) {
 				if (serverType == null || serverType.isSaveServersInPrefs()) {
 					Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-					if (node.get(GenericServerPref.NAME, null) != null) {
-						name = node.get(GenericServerPref.NAME, null); //Apply changes users may have made to server name
+					if (node.get(GenericServer.NAME, null) != null) {
+						name = node.get(GenericServer.NAME, null); //Apply changes users may have made to server name
 					}
 				}
 				server = new GenericServer(name, url, serverType, enabled, info, primary, isDefault, mirrorURL);
@@ -203,7 +203,7 @@ public final class ServerList {
 	}
 
 	public GenericServer addServer(Preferences node) {
-		GenericServer server = url2server.get(GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")));
+		GenericServer server = url2server.get(GeneralUtils.URLDecode(node.get(GenericServer.SERVER_URL, "")));
 		String url;
 		String name;
 		ServerTypeI serverType;
@@ -211,13 +211,13 @@ public final class ServerList {
 		boolean isDefault;
 
 		if (server == null) {
-			url = GeneralUtils.URLDecode(node.get(GenericServerPref.URL, ""));
-			name = node.get(GenericServerPref.NAME, "Unknown");
-			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerTypeI.DEFAULT.getName() : null);
+			url = GeneralUtils.URLDecode(node.get(GenericServer.SERVER_URL, ""));
+			name = node.get(GenericServer.NAME, "Unknown");
+			String type = node.get(GenericServer.TYPE, hasTypes() ? ServerTypeI.DEFAULT.getName() : null);
 			serverType = getServerType(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = (serverType == null) ? url : serverType.getServerInfo(url, name);
-			isDefault = Boolean.valueOf(node.get(GenericServerPref.DEFAULT, "true"));
+			isDefault = Boolean.valueOf(node.get(GenericServer.DEFAULT, "true"));
 
 			if (info != null) {
 				server = new GenericServer(node, info, serverType, isDefault, null); //qlmirror
@@ -268,23 +268,23 @@ public final class ServerList {
 					String url = GeneralUtils.URLDecode(node.name());
 					System.out.println("Converting old standard server preferences to new standard (" + url + ").");
 					Preferences n_node = getPreferencesNode().node(GenericServer.getHash(url));
-					n_node.put(GenericServerPref.URL, node.name());
-					n_node.put(GenericServerPref.LOGIN, node.get(GenericServerPref.LOGIN, ""));
-					n_node.put(GenericServerPref.PASSWORD, node.get(GenericServerPref.PASSWORD, ""));
-					n_node.put(GenericServerPref.NAME, node.get(GenericServerPref.NAME, ""));
-					n_node.putInt(GenericServerPref.ORDER, node.getInt(GenericServerPref.ORDER, 0));
-					if (node.get(GenericServerPref.TYPE, null) != null) {
-						n_node.put(GenericServerPref.TYPE, node.get(GenericServerPref.TYPE, null));
+					n_node.put(GenericServer.SERVER_URL, node.name());
+					n_node.put(GenericServer.LOGIN, node.get(GenericServer.LOGIN, ""));
+					n_node.put(GenericServer.PASSWORD, node.get(GenericServer.PASSWORD, ""));
+					n_node.put(GenericServer.NAME, node.get(GenericServer.NAME, ""));
+					n_node.putInt(GenericServer.ORDER, node.getInt(GenericServer.ORDER, 0));
+					if (node.get(GenericServer.TYPE, null) != null) {
+						n_node.put(GenericServer.TYPE, node.get(GenericServer.TYPE, null));
 					}
-					n_node.putBoolean(GenericServerPref.ENABLED, node.getBoolean(GenericServerPref.ENABLED, true));
-					n_node.putBoolean(GenericServerPref.DEFAULT, node.getBoolean(GenericServerPref.DEFAULT, true));
+					n_node.putBoolean(GenericServer.ENABLED, node.getBoolean(GenericServer.ENABLED, true));
+					n_node.putBoolean(GenericServer.DEFAULT, node.getBoolean(GenericServer.DEFAULT, true));
 					node.removeNode();
 					node = n_node;
 				}
 
 				serverType = null;
-				if (node.get(GenericServerPref.TYPE, null) != null) {
-					serverType = getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName()));
+				if (node.get(GenericServer.TYPE, null) != null) {
+					serverType = getServerType(node.get(GenericServer.TYPE, ServerTypeI.DEFAULT.getName()));
 				}
 
 				if (serverType == ServerTypeI.LocalFiles) {
@@ -322,12 +322,12 @@ public final class ServerList {
 					boolean enabled, isDefault;
 					//in here, again, the url is actually a hash of type long
 					for (String url : prefServers.keys()) {
-						name = prefServers.node(GenericServerPref.NAME).get(url, "Unknown");
-						login = prefServers.node(GenericServerPref.LOGIN).get(url, "");
-						password = prefServers.node(GenericServerPref.PASSWORD).get(url, "");
-						enabled = prefServers.node(GenericServerPref.ENABLED).getBoolean(url, true);
-						real_url = prefServers.node(GenericServerPref.URL).get(url, "");
-						isDefault = prefServers.node(GenericServerPref.DEFAULT).getBoolean(url, true);
+						name = prefServers.node(GenericServer.NAME).get(url, "Unknown");
+						login = prefServers.node(GenericServer.LOGIN).get(url, "");
+						password = prefServers.node(GenericServer.PASSWORD).get(url, "");
+						enabled = prefServers.node(GenericServer.ENABLED).getBoolean(url, true);
+						real_url = prefServers.node(GenericServer.SERVER_URL).get(url, "");
+						isDefault = prefServers.node(GenericServer.DEFAULT).getBoolean(url, true);
 
 						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1, isDefault);
 						server.setLogin(login);
@@ -390,7 +390,7 @@ public final class ServerList {
 	 * the preferences nodes, it does not affect any other part of the
 	 * application.
 	 *
-	 * @param url URL of this server.
+	 * @param url SERVER_URL of this server.
 	 * @param name name of this server.
 	 * @param type type of this server.
 	 * @return an anemic GenericServer object whose sole purpose is to aid in
@@ -400,19 +400,19 @@ public final class ServerList {
 			ServerTypeI type, int order, boolean isDefault) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-		if (node.get(GenericServerPref.NAME, null) == null) {
-			node.put(GenericServerPref.NAME, name);
-			node.put(GenericServerPref.TYPE, type.getName());
-			node.putInt(GenericServerPref.ORDER, order);
+		if (node.get(GenericServer.NAME, null) == null) {
+			node.put(GenericServer.NAME, name);
+			node.put(GenericServer.TYPE, type.getName());
+			node.putInt(GenericServer.ORDER, order);
 			//Added url to preferences.
 			//long url was bugging the node name since it only accepts 80 char names
-			node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
-			node.putBoolean(GenericServerPref.DEFAULT, isDefault);
+			node.put(GenericServer.SERVER_URL, GeneralUtils.URLEncode(url));
+			node.putBoolean(GenericServer.DEFAULT, isDefault);
 
 		}
 		return new GenericServer(node, null,
-				getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())),
-				node.getBoolean(GenericServerPref.DEFAULT, true), null); //qlmirror
+				getServerType(node.get(GenericServer.TYPE, ServerTypeI.DEFAULT.getName())),
+				node.getBoolean(GenericServer.DEFAULT, true), null); //qlmirror
 	}
 
 	/**
@@ -420,7 +420,7 @@ public final class ServerList {
 	 * modifies the preferences nodes, it does not affect any other part of the
 	 * application.
 	 *
-	 * @param url URL of this server.
+	 * @param url SERVER_URL of this server.
 	 * @param name name of this server.
 	 * @return an anemic GenericServer object whose sole purpose is to aid in
 	 * setting of additional preferences
@@ -428,9 +428,9 @@ public final class ServerList {
 	private GenericServer addRepositoryToPrefs(String url, String name, boolean isDefault) {
 		Preferences node = PreferenceUtils.getRepositoriesNode().node(GenericServer.getHash(url));
 
-		node.put(GenericServerPref.NAME, name);
-		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
-		node.putBoolean(GenericServerPref.DEFAULT, isDefault);
+		node.put(GenericServer.NAME, name);
+		node.put(GenericServer.SERVER_URL, GeneralUtils.URLEncode(url));
+		node.putBoolean(GenericServer.DEFAULT, isDefault);
 
 		return new GenericServer(node, null, null, false, null); //qlmirror
 	}
@@ -455,7 +455,7 @@ public final class ServerList {
 	 * Remove a server from the preferences subsystem. This only modifies the
 	 * preference nodes, it does not affect any other part of the application.
 	 *
-	 * @param url URL of the server to remove
+	 * @param url SERVER_URL of the server to remove
 	 */
 	public void removeServerFromPrefs(String url) {
 		try {
@@ -466,16 +466,16 @@ public final class ServerList {
 	}
 
 	public void setServerOrder(String url, int order) {
-		getPreferencesNode().node(GenericServer.getHash(url)).putInt(GenericServerPref.ORDER, order);
+		getPreferencesNode().node(GenericServer.getHash(url)).putInt(GenericServer.ORDER, order);
 	}
 
 	private int getServerOrder(GenericServer server) {
 		String url = ServerUtils.formatURL(server.URL, server.serverType);
-		return PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).getInt(GenericServerPref.ORDER, 0);
+		return PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).getInt(GenericServer.ORDER, 0);
 	}
 
 	/**
-	 * Get server from ServerList that matches the URL.
+	 * Get server from ServerList that matches the SERVER_URL.
 	 *
 	 * @param u
 	 * @return server

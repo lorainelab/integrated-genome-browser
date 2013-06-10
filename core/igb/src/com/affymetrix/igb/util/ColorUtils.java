@@ -68,12 +68,12 @@ public class ColorUtils {
 			try {
 				if (str.contains(",")) {
 					String[] rgb = str.split(",");
-					c = new Color(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+					c = new Color(Integer.valueOf(rgb[0].trim()), Integer.valueOf(rgb[1].trim()), Integer.valueOf(rgb[2].trim()));
 				} else {
 					if(str.startsWith("0x")){
-						c = Color.decode(str);
+						c = Color.decode(str.trim());
 					}else {
-						c = Color.decode("0x" + str);
+						c = Color.decode("0x" + str.trim());
 					}
 				}
 				colorMap.put(str, c);

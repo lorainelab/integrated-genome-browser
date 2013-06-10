@@ -242,12 +242,12 @@ public final class GeneralLoadUtils {
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
 						discoverServer(gServer);
 						} else {
-							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false, false);
 							gServer.setEnabled(false);
 							return false;
 						}
 					} else { // Disable server if no mirror or not used
-						ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+						ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false, false);
 						gServer.setEnabled(false);
 						return false;
 					}
@@ -256,7 +256,7 @@ public final class GeneralLoadUtils {
 					XmlPrefsParser.parse(gServer.serverObj.toString() +  "preferences.xml"); // Use server object for Quickload
 				}
 			}
-			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);
+			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, false, true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;

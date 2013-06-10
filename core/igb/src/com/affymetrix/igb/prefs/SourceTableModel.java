@@ -152,10 +152,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 					discoverServer(server);
 					server.setEnabled(true);
 				} else {
-					if (server.serverType == null || 
-							DataLoadPrefsView.getSingleton().confirmDelete()) {
-						serverList.fireServerInitEvent(server,
-								LoadUtils.ServerStatus.NotResponding);
+					if (server.serverType == null || DataLoadPrefsView.getSingleton().confirmDelete()) {
+						serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding, false, true);
 						server.setEnabled(false);
 					}
 				}

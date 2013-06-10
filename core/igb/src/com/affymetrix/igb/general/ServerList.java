@@ -230,7 +230,7 @@ public final class ServerList {
 			if (server.serverType == ServerTypeI.QuickLoad) {
 				QuickLoadServerModel.removeQLModelForURL(url);
 			}
-			fireServerInitEvent(server, ServerStatus.NotResponding); // remove it from our lists.
+			fireServerInitEvent(server, ServerStatus.NotResponding, false, true); // remove it from our lists.
 		}
 	}
 
@@ -489,14 +489,6 @@ public final class ServerList {
 
 	public void removeServerInitListener(GenericServerInitListener listener) {
 		server_init_listeners.remove(listener);
-	}
-
-	public void fireServerInitEvent(GenericServer server, ServerStatus status) {
-		fireServerInitEvent(server, status, false, true);
-	}
-
-	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
-		fireServerInitEvent(server, status, false, removedManually);
 	}
 
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {

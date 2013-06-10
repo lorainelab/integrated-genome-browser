@@ -5,9 +5,9 @@ import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 
-import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
@@ -24,7 +24,6 @@ import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.SeqMapView;
-import java.util.Map.Entry;
 
 /**
  * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start
@@ -107,6 +106,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				initFromPropertyMap(props);
 			}
 		}
+		
+		if(this.getFeature() != null){
+			Map<String, ?> props = this.getFeature().featureProps;
+			if(props != null && !props.isEmpty()){
+				initFromPropertyMap(props);
+			}
+		}
+		
 		if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 			this.setForeground(CoordinateStyle.default_coordinate_color);
 			this.setBackground(CoordinateStyle.default_coordinate_background);
@@ -116,6 +123,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		if (!track_name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 			this.setTrackName(original_track_name);
+		}
+		if (getNode() != null) {
+			try {			
+				getNode().removeNode();
+				getNode().flush();
+			} catch (Exception ex) {
+				Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 	}
 

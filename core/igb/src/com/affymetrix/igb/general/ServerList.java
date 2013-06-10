@@ -194,8 +194,7 @@ public final class ServerList {
 		String name;
 		ServerTypeI serverType;
 		Object info;
-		boolean isDefault;
-
+		
 		if (server == null) {
 			url = GeneralUtils.URLDecode(node.get(GenericServer.SERVER_URL, ""));
 			name = node.get(GenericServer.NAME, "Unknown");
@@ -203,10 +202,9 @@ public final class ServerList {
 			serverType = getServerType(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = (serverType == null) ? url : serverType.getServerInfo(url, name);
-			isDefault = Boolean.valueOf(node.get(GenericServer.DEFAULT, "true"));
-
+		
 			if (info != null) {
-				server = new GenericServer(node, info, serverType, isDefault, null); //qlmirror
+				server = new GenericServer(node, info, serverType, false, null); //qlmirror
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -263,7 +261,7 @@ public final class ServerList {
 						n_node.put(GenericServer.TYPE, node.get(GenericServer.TYPE, null));
 					}
 					n_node.putBoolean(GenericServer.ENABLED, node.getBoolean(GenericServer.ENABLED, true));
-					n_node.putBoolean(GenericServer.DEFAULT, node.getBoolean(GenericServer.DEFAULT, true));
+					
 					node.removeNode();
 					node = n_node;
 				}
@@ -313,9 +311,8 @@ public final class ServerList {
 						password = prefServers.node(GenericServer.PASSWORD).get(url, "");
 						enabled = prefServers.node(GenericServer.ENABLED).getBoolean(url, true);
 						real_url = prefServers.node(GenericServer.SERVER_URL).get(url, "");
-						isDefault = prefServers.node(GenericServer.DEFAULT).getBoolean(url, true);
-
-						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1, isDefault);
+						
+						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1, false);
 						server.setLogin(login);
 						server.setEncryptedPassword(password);
 						server.setEnabled(enabled);
@@ -393,12 +390,11 @@ public final class ServerList {
 			//Added url to preferences.
 			//long url was bugging the node name since it only accepts 80 char names
 			node.put(GenericServer.SERVER_URL, GeneralUtils.URLEncode(url));
-			node.putBoolean(GenericServer.DEFAULT, isDefault);
 
 		}
-		return new GenericServer(node, null,
+		return new GenericServer(node, null, 
 				getServerType(node.get(GenericServer.TYPE, ServerTypeI.DEFAULT.getName())),
-				node.getBoolean(GenericServer.DEFAULT, true), null); //qlmirror
+				isDefault, null); //qlmirror
 	}
 
 	/**
@@ -416,9 +412,8 @@ public final class ServerList {
 
 		node.put(GenericServer.NAME, name);
 		node.put(GenericServer.SERVER_URL, GeneralUtils.URLEncode(url));
-		node.putBoolean(GenericServer.DEFAULT, isDefault);
-
-		return new GenericServer(node, null, null, false, null); //qlmirror
+		
+		return new GenericServer(node, null, null, isDefault, null); //qlmirror
 	}
 
 	/**

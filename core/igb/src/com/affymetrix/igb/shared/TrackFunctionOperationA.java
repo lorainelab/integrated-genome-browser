@@ -149,7 +149,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree
 		
-		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true);
 		
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 		

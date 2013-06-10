@@ -146,8 +146,9 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 
-		GenericServer gServer = serverList.addServer(serverType,
-				serverName, serverURL, true, false, order, isDefault, mirrorURL);
+		GenericServer gServer = serverList.addServer(serverType, serverName, 
+				serverURL, true, false, order, isDefault, mirrorURL);
+		
 		if (gServer == null) {
 			return null;
 		}
@@ -242,12 +243,12 @@ public final class GeneralLoadUtils {
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
 						discoverServer(gServer);
 						} else {
-							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false, false);
+							ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 							gServer.setEnabled(false);
 							return false;
 						}
 					} else { // Disable server if no mirror or not used
-						ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false, false);
+						ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 						gServer.setEnabled(false);
 						return false;
 					}
@@ -256,7 +257,7 @@ public final class GeneralLoadUtils {
 					XmlPrefsParser.parse(gServer.serverObj.toString() +  "preferences.xml"); // Use server object for Quickload
 				}
 			}
-			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, false, true);
+			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -1152,7 +1153,7 @@ public final class GeneralLoadUtils {
 		}
 
 		// force a refresh of this server		
-		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 
 		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
 
@@ -1163,7 +1164,7 @@ public final class GeneralLoadUtils {
 		if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			loadAllSymmetriesThread(gFeature);
 			// force a refresh of this server. This forces creation of 'genome' sequence.
-			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 			return;
 		}
 
@@ -1222,7 +1223,7 @@ public final class GeneralLoadUtils {
 				} else {
 					gmodel.setSelectedSeq(gmodel.getSelectedSeq());
 				}
-				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 			}
 		};
 		CThreadHolder.getInstance().execute(gFeature, worker);

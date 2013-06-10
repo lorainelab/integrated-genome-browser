@@ -64,7 +64,7 @@ public class NewGenomeAction extends OpenURIAction {
 					try {
 						ChromInfoParser.parse(group, getInputStream(refSeqPath));
 						GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
-						ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, true, false);
+						ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
 					} catch (Exception ex) {
 						Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
 					}
@@ -73,7 +73,7 @@ public class NewGenomeAction extends OpenURIAction {
 				}
 			} else {
 				GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
-				ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, true, false);
+				ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
 			}
 		
 			if(ng.shouldSwitch()){

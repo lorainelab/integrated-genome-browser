@@ -168,10 +168,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			this.setTrackName(original_track_name);
 		}
 		
-		if (getNode() != null) {
+		if (node != null) {
 			try {			
-				getNode().removeNode();
-				getNode().flush();
+				node.removeNode();
+				node.flush();
+				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
 			} catch (Exception ex) {
 				Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, null, ex);
 			}

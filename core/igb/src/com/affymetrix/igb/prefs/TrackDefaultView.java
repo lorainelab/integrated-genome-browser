@@ -159,7 +159,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 			}
 
 			for (TrackStyle style : styles) {
-				if (!style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
+				if (style != default_annot_style) {
 					XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
 					((TrackDefaultPrefTableModel) model).removeElement(style.getTrackName());
 				}
@@ -195,7 +195,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 			selectedStyle = ((TrackDefaultPrefTableModel) model).getStyles().get(selectedRows[0]);
 
-			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
+			if (selectedStyle == default_annot_style) {
 				removeTrackDefaultButton.setEnabled(false);
 			} else {
 				removeTrackDefaultButton.setEnabled(true);

@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.igb.Application;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -511,11 +510,11 @@ public final class ServerList {
 				}
 			}
 
-			if (server.serverType == null) {
-				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
-			} else if (server.serverType != ServerTypeI.LocalFiles) {
-				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
-			}
+//			if (server.serverType == null) {
+//				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
+//			} else if (server.serverType != ServerTypeI.LocalFiles) {
+//				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
+//			}
 		}
 
 		// Fire event whenever server status in set to initialized 

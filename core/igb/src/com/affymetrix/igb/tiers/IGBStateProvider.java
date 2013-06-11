@@ -62,14 +62,14 @@ public final class IGBStateProvider extends DefaultStateProvider {
 		}
 	}
 
-	private static TrackStyle getInstance(String unique_name, String track_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {
+	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
 			if (TrackStyle.DEBUG) {
 				System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
 			}
 			TrackStyle template = getDefaultInstance();
-			style = new TrackStyle(unique_name, track_name, file_type, persistent, template, props);
+			style = new TrackStyle(unique_name, track_name, file_type, template, props);
 			FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
 			if (fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph || fth.getFileTypeCategory() == FileTypeCategory.Mismatch)) {
 				style.setExpandable(false);
@@ -81,11 +81,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	}
 
 	public static TrackStyle getInstance(String unique_name) {
-		return getInstance(unique_name, null, null, true, false, null);
-	}
-
-	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
-		return getInstance(unique_name, track_name, file_type, true, true, props);
+		return getInstance(unique_name, null, null, null);
 	}
 
 	/**
@@ -103,7 +99,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
 	public static TrackStyle getDefaultInstance() {
 		if (default_instance == null) {
-			TrackStyle instance = new TrackStyle(TrackConstants.NAME_OF_DEFAULT_INSTANCE, TrackConstants.NAME_OF_DEFAULT_INSTANCE, null, true, null, null);
+			TrackStyle instance = new TrackStyle(TrackConstants.NAME_OF_DEFAULT_INSTANCE, TrackConstants.NAME_OF_DEFAULT_INSTANCE, null, null, null);
 			instance.setTrackName("");
 			instance.setShow(true);
 			default_instance = instance;

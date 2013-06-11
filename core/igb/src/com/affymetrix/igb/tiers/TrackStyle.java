@@ -38,8 +38,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
-	// whether to create and use a java Preferences node object for this instance
-	private boolean is_persistent = true;
+	
 	private boolean show = default_show;
 	private boolean connected = default_connected;
 	private boolean collapsed = default_collapsed;
@@ -132,40 +131,33 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 * Not sure yet where stylesheets from DAS/2 servers fits in yet -- between
 	 * B/C or between C/D ?
 	 */
-	TrackStyle(String unique_ame, String track_name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
+	TrackStyle(String unique_ame, String track_name, String file_type, TrackStyle template, Map<String, String> properties) {
 		this.method_name = unique_ame;
 		this.track_name = track_name; // this is the default human name, and is not lower case
 		this.original_track_name = track_name;
 		this.file_type = file_type;
 		this.unique_name = unique_ame.toLowerCase();
-		this.is_persistent = is_persistent;
 		this.float_graph = false;
 
-		if (is_persistent) {
-			if (this.unique_name.endsWith("/")) {
-				this.unique_name = this.unique_name.substring(0, this.unique_name.length() - 1);
-			}
-			this.unique_name = multiple_slashes.matcher(this.unique_name).replaceAll("/");
+		if (this.unique_name.endsWith("/")) {
+			this.unique_name = this.unique_name.substring(0, this.unique_name.length() - 1);
+		}
+		this.unique_name = multiple_slashes.matcher(this.unique_name).replaceAll("/");
 			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
 			//   is now handled within PreferenceUtils.getSubnod() call
-		}
 		
 		initStyle(template, properties);
 
-		if (is_persistent) {
-			try {
-				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
-			} catch (Exception e) {
-				// if there is a problem creating the node, continue with a non-persistent style.
-				e.printStackTrace();
-				node = null;
-				is_persistent = false;
-			}
-			if (node != null) {
-				initFromNode();
-			}
-		} else {
+		try {
+			node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
+		} catch (Exception e) {
+			// if there is a problem creating the node, continue with a non-persistent style.
+			e.printStackTrace();
 			node = null;
+		}
+		
+		if (node != null) {
+			initFromNode();
 		}
 	}
 
@@ -744,10 +736,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.url;
 	}
 
-	public final boolean getPersistent() {
-		return (is_persistent && getNode() != null);
-	}
-
 	@Override
 	public boolean getExpandable() {
 		return expandable;
@@ -863,7 +851,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public String toString() {
 		String s = "AnnotStyle: (" + Integer.toHexString(this.hashCode()) + ")"
 				+ " '" + unique_name + "' ('" + track_name + "') "
-				+ " persistent: " + is_persistent
 				+ " color: " + getForeground()
 				+ " bg: " + getBackground();
 		return s;

@@ -17,19 +17,11 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Component id="speciesLabel" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Component id="versionLabel" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Component id="refSeqLabel" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="speciesLabel" min="-2" max="-2" attributes="0"/>
+                  <Component id="versionLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="refSeqLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -44,12 +36,8 @@
                       <Component id="refSeqTextField" min="-2" pref="257" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Component id="refSeqBrowseButton" min="-2" pref="41" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="switchCheckBox" max="32767" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="switchCheckBox" alignment="0" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -88,7 +76,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="speciesTextField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ListDataIntelliHints&lt;String&gt; hints = new ListDataIntelliHints&lt;String&gt;(speciesTextField, GeneralLoadUtils.getSpecies2Generic().keySet().toArray(new String[1]));"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ListDataIntelliHints&lt;String&gt; hints = new ListDataIntelliHints&lt;String&gt;(speciesTextField, GeneralLoadUtils.getSpeciesList().toArray(new String[1]));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="versionLabel">

@@ -69,7 +69,7 @@ public class NewGenome extends javax.swing.JPanel {
 
         speciesLabel.setText("Species Name");
 
-        ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, GeneralLoadUtils.getSpecies2Generic().keySet().toArray(new String[1]));
+        ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, GeneralLoadUtils.getSpeciesList().toArray(new String[1]));
 
         versionLabel.setText("Genome Version");
 
@@ -96,16 +96,11 @@ public class NewGenome extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .add(5, 5, 5)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(5, 5, 5)
-                        .add(speciesLabel))
-                    .add(layout.createSequentialGroup()
-                        .add(5, 5, 5)
-                        .add(versionLabel))
-                    .add(layout.createSequentialGroup()
-                        .add(5, 5, 5)
-                        .add(refSeqLabel)))
+                    .add(speciesLabel)
+                    .add(versionLabel)
+                    .add(refSeqLabel))
                 .add(15, 15, 15)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
@@ -116,11 +111,8 @@ public class NewGenome extends javax.swing.JPanel {
                     .add(layout.createSequentialGroup()
                         .add(refSeqTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 257, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, Short.MAX_VALUE)
-                        .add(refSeqBrowseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, 0))
-                    .add(layout.createSequentialGroup()
-                        .add(switchCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(0, 0, 0))))
+                        .add(refSeqBrowseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(switchCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

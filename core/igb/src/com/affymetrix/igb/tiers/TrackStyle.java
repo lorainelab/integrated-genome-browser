@@ -80,39 +80,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private SymmetryFilterI filter = null;
 	
 	public void restoreToDefault() {
-		TrackStyle template = IGBStateProvider.getDefaultInstance();
-
-		if (template != null) {
-			// calling initFromTemplate should take care of A) and B)
-			initFromTemplate(template);
-		}
-
-		// Hidden default file type pref. from system stylesheet
-		Stylesheet stylesheet = XmlStylesheetParser.getSystemStylesheet();
-		AssociationElement assel = stylesheet.getAssociationForFileType(file_type);
-		if (assel != null) {
-			PropertyMap props = assel.getPropertyMap();
-			if (props != null) {
-				initFromPropertyMap(props);
-			}
-		}
-
-		// File defaults panel user stylesheet
-		stylesheet = XmlStylesheetParser.getUserStylesheet();
-		assel = stylesheet.getAssociationForFileType(file_type);
-		if (assel != null) {
-			PropertyMap props = assel.getPropertyMap();
-			if (props != null) {
-				initFromPropertyMap(props);
-			}
+		Map<String, String> properties = null;
+		if(this.getFeature() != null){
+			properties = this.getFeature().featureProps;
 		}
 		
-		if(this.getFeature() != null){
-			Map<String, ?> props = this.getFeature().featureProps;
-			if(props != null && !props.isEmpty()){
-				initFromPropertyMap(props);
-			}
-		}
+		initStyle(IGBStateProvider.getDefaultInstance(), properties);
 		
 		if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 			this.setForeground(CoordinateStyle.default_coordinate_color);
@@ -124,10 +97,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (!track_name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 			this.setTrackName(original_track_name);
 		}
-		if (getNode() != null) {
+		
+		if (node != null) {
 			try {			
-				getNode().removeNode();
-				getNode().flush();
+				node.removeNode();
+				node.flush();
+				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
 			} catch (Exception ex) {
 				Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -174,7 +149,28 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
 			//   is now handled within PreferenceUtils.getSubnod() call
 		}
+		
+		initStyle(template, properties);
 
+		if (is_persistent) {
+			try {
+				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
+			} catch (Exception e) {
+				// if there is a problem creating the node, continue with a non-persistent style.
+				e.printStackTrace();
+				node = null;
+				is_persistent = false;
+			}
+			if (node != null) {
+				initFromNode();
+			}
+		} else {
+			node = null;
+		}
+	}
+
+	private void initStyle(TrackStyle template, Map<String, String> properties) {
+		
 		if (template != null) {
 			// calling initFromTemplate should take care of A) and B)
 			initFromTemplate(template);
@@ -216,9 +212,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		// Saved settings ????
-		assel = stylesheet.getAssociationForType(unique_ame);
+		assel = stylesheet.getAssociationForType(unique_name);
 		if (assel == null) {
-			assel = stylesheet.getAssociationForMethod(unique_ame);
+			assel = stylesheet.getAssociationForMethod(unique_name);
 		}
 		if (assel != null) {
 			PropertyMap props = assel.getPropertyMap();
@@ -226,24 +222,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				initFromPropertyMap(props);
 			}
 		}
-
-		if (is_persistent) {
-			try {
-				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
-			} catch (Exception e) {
-				// if there is a problem creating the node, continue with a non-persistent style.
-				e.printStackTrace();
-				node = null;
-				is_persistent = false;
-			}
-			if (node != null) {
-				initFromNode();
-			}
-		} else {
-			node = null;
-		}
 	}
-
+	
 	// Copies properties from the given node, using the currently-loaded values as defaults.
 	// generally call initFromTemplate before this.
 	// Make sure to set human_name to some default before calling this.

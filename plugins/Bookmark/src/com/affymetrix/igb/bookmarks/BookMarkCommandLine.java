@@ -13,34 +13,34 @@ import javax.swing.SwingUtilities;
  *
  * @author hiralv
  */
-public class BookMarkCommandLine implements GenericServerInitListener{
+public class BookMarkCommandLine {
 
 	private final IGBService igbService;
 	private final String url;
 	private final boolean force;
 	private static final Logger ourLogger
 		  = Logger.getLogger(BookMarkCommandLine.class.getPackage().getName());
-
-	BookMarkCommandLine(IGBService igbService, String url, boolean force){
+				
+	BookMarkCommandLine(final IGBService igbService, final String url, final boolean force) {
 		this.igbService = igbService;
 		this.url = url;
 		this.force = force;
+		
 		if (igbService.areAllServersInited()) {
 			gotoBookmark();
+		} else {
+			GenericServerInitListener genericServerListener = new GenericServerInitListener() {
+				@Override
+				public void genericServerInit(GenericServerInitEvent evt) {
+					if (!igbService.areAllServersInited()) { // do this first to avoid race condition
+						return;
+					}
+					igbService.removeServerInitListener(this);
+					gotoBookmark();
+				}
+			};
+			igbService.addServerInitListener(genericServerListener);
 		}
-		else {
-			igbService.addServerInitListener(this);
-		}
-	}
-
-	@Override
-	public void genericServerInit(GenericServerInitEvent evt) {
-		boolean areAllServersInited = igbService.areAllServersInited();	// do this first to avoid race condition
-		if (!areAllServersInited) {
-			return;
-		}
-		igbService.removeServerInitListener(this);
-		gotoBookmark();
 	}
 
 	// If the command line contains a parameter "-href http://..." where

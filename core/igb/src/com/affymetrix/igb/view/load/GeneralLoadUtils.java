@@ -5,6 +5,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
+import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -16,7 +18,6 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
@@ -129,6 +130,22 @@ public final class GeneralLoadUtils {
 	 */
 //	private static RegionFinder regionFinder = new DefaultRegionFinder();
 	
+	private static GenericServerInitListener genericServerInitListener = new GenericServerInitListener(){
+
+		@Override
+		public void genericServerInit(GenericServerInitEvent evt) {
+			GenericServer server = (GenericServer)evt.getSource();
+			if(server.getServerStatus() == ServerStatus.NotResponding){
+				removeServer(server);
+			}
+		}
+		
+	};
+	
+	static {
+		ServerList.getServerInstance().addServerInitListener(genericServerInitListener);
+	}
+	
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 *
@@ -158,7 +175,7 @@ public final class GeneralLoadUtils {
 		return gServer;
 	}
 
-	public static void removeServer(GenericServer server) {
+	private static void removeServer(GenericServer server) {
 		Iterator<Map.Entry<String, List<GenericVersion>>> entryIterator = species2genericVersionList.entrySet().iterator();
 		Map.Entry<String, List<GenericVersion>> entry;
 		Iterator<GenericVersion> versionIterator;

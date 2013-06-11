@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -488,7 +487,6 @@ public final class ServerList {
 
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
-			GeneralLoadUtils.removeServer(server);
 			if (server.serverType != null && !server.serverType.isSaveServersInPrefs()) {
 				removeServer(server.URL);
 			}

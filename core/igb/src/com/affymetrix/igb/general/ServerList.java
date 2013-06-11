@@ -1,5 +1,6 @@
 package com.affymetrix.igb.general;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -12,7 +13,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -496,12 +496,12 @@ public final class ServerList {
 				if (server.serverType != null && server.serverType == ServerTypeI.QuickLoad) {
 					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
 					errorText = siteOK
-							? MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
-							: MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
+							? MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
+							: MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
 						ErrorHandler.errorPanelWithReportBug(server.serverName, errorText, Level.SEVERE);
 				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
-					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);
+					errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.serverName);
 					if (server.serverType != null && server.serverType.isSaveServersInPrefs()) {
 						ErrorHandler.errorPanel(server.serverName, errorText, Level.SEVERE);
 					}

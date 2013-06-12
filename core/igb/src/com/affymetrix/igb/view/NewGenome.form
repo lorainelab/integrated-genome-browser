@@ -76,7 +76,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="speciesTextField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ListDataIntelliHints&lt;String&gt; hints = new ListDataIntelliHints&lt;String&gt;(speciesTextField, GeneralLoadUtils.getSpeciesList().toArray(new String[1]));"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ListDataIntelliHints&lt;String&gt; hints = new ListDataIntelliHints&lt;String&gt;(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="versionLabel">

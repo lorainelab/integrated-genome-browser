@@ -195,6 +195,14 @@ public final class SpeciesLookup {
 		return version;
 	}
 
+	public static Set<String> getAllSpeciesName(){
+		return speciesLookup.getSynonyms();
+	}
+	
+	public static String getPreferredName(String name){
+		return speciesLookup.getPreferredName(name);
+	}
+	
 	private static String formatSpeciesName(Pattern pattern, String species){
 		if(STANDARD_REGEX.equals(pattern)){
 			return species.substring(0, 1).toUpperCase() + species.substring(1, species.length()).toLowerCase();

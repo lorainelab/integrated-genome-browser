@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.NewGenome;
@@ -54,7 +56,10 @@ public class NewGenomeAction extends OpenURIAction {
 		NewGenome ng = new NewGenome();
 		int reply = JOptionPane.showConfirmDialog(getSeqMapView(), ng, getText(), JOptionPane.OK_CANCEL_OPTION);
 		if(reply == JOptionPane.OK_OPTION && ng.getVersionName().length() > 0 && ng.getSpeciesName().length() > 0){
-			AnnotatedSeqGroup group = gmodel.addSeqGroup(ng.getVersionName());
+			String speciesName = SpeciesLookup.getPreferredName(ng.getSpeciesName());
+			String versionName = SynonymLookup.getDefaultLookup().getPreferredName(ng.getVersionName());
+			
+			AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName);
 			String refSeqPath = ng.getRefSeqFile();
 			
 			if(refSeqPath != null && refSeqPath.length() > 0){
@@ -63,16 +68,16 @@ public class NewGenomeAction extends OpenURIAction {
 				if(Constants.genomeTxt.equals(fileName) || Constants.modChromInfoTxt.equals(fileName)){
 					try {
 						ChromInfoParser.parse(group, getInputStream(refSeqPath));
-						GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+						GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
 						ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
 					} catch (Exception ex) {
 						Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
 					}
 				} else {
-					openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, ng.getSpeciesName(), false);
+					openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, speciesName, false);
 				}
 			} else {
-				GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, ng.getSpeciesName());
+				GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
 				ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
 			}
 		

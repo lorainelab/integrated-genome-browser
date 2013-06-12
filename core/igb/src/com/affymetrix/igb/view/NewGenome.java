@@ -13,11 +13,11 @@ import javax.swing.JFileChooser;
 import com.jidesoft.hints.ListDataIntelliHints;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 /**
  *
@@ -69,7 +69,7 @@ public class NewGenome extends javax.swing.JPanel {
 
         speciesLabel.setText("Species Name");
 
-        ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, GeneralLoadUtils.getSpeciesList().toArray(new String[1]));
+        ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));
 
         versionLabel.setText("Genome Version");
 

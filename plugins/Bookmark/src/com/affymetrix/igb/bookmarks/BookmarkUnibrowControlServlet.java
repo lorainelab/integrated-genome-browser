@@ -418,8 +418,8 @@ public final class BookmarkUnibrowControlServlet {
 		
 		// Show message on how to load
 		if(show_message){
-			igbService.infoPanel(GenericFeature.howtoloadmsg, PreferenceUtils.getTopNode(), 
-				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+			igbService.infoPanel(GenericFeature.howtoloadmsg, 
+					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 		}
 		
 		return gFeatures;

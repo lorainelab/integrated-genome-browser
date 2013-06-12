@@ -80,8 +80,7 @@ public interface IGBService {
 	/**
 	 * Shows a info panel to the user.
 	 */
-	public void infoPanel(final String message, final Preferences node,
-			final String check, final boolean def_val);
+	public void infoPanel(final String message, final String check, final boolean def_val);
 	/**
 	 * Get the specified icon.
 	 * @param name of the icon

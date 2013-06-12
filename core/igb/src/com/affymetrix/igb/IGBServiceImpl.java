@@ -131,10 +131,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 	
 	@Override
-	public void infoPanel(final String message, final Preferences node,
-			final String check, final boolean def_val){
-		Application.infoPanel(message, node, check, def_val);
+	public void infoPanel(final String message, final String check, final boolean def_val){
+		Application.infoPanel(message, check, def_val);
 	}
+	
 	@Override
 	public ImageIcon getIcon(String name) {
 		return CommonUtils.getInstance().getIcon("images/" + name);

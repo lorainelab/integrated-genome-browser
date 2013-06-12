@@ -210,16 +210,15 @@ public abstract class Application {
 		//return JOptionPane.showConfirmDialog(comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
 	}
 	
-	public static void infoPanel(final String message, final Preferences node,
-			final String check, final boolean def_val) {
-	
+	public static void infoPanel(final String message, final String check, final boolean def_val) {
+		Preferences node = PreferenceUtils.getTopNode();
 		Application app = getSingleton();
 		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
 		
-		if(node == null){
-			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
+//		if(node == null){
+//			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);
+//			return;
+//		}
 		
 		final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
 		Object[] params = new Object[]{message, checkbox};

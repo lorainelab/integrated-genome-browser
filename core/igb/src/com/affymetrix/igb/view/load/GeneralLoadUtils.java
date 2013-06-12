@@ -1158,7 +1158,7 @@ public final class GeneralLoadUtils {
 			
 			if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
 					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/){
-				Application.infoPanel(GenericFeature.howtoloadmsg, PreferenceUtils.getTopNode(), 
+				Application.infoPanel(GenericFeature.howtoloadmsg, 
 				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 			}
 		}

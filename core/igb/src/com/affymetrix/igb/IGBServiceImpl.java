@@ -68,6 +68,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionListener;
 import org.osgi.framework.BundleActivator;
@@ -125,10 +126,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public boolean confirmPanel(final String message, final Preferences node,
-			final String check, final boolean def_val) {
-		return Application.confirmPanel(message, node, check, def_val);
+	public boolean confirmPanel(final String message, final String check, final boolean def_val) {
+		return Application.confirmPanel(message, check, def_val);
 	}
+	
 	@Override
 	public void infoPanel(final String message, final Preferences node,
 			final String check, final boolean def_val){

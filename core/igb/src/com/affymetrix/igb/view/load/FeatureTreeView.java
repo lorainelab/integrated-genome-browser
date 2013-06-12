@@ -747,7 +747,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 						} else {
 							message = "Unchecking " + feature.featureName
 									+ " will remove all loaded data. \nDo you want to continue? ";
-							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, 
 									PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 								GeneralLoadView.getLoadView().removeFeature(feature, true, false);
 							} else {

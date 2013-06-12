@@ -76,8 +76,7 @@ public interface IGBService {
 	/**
 	 * Shows a panel asking for the user to confirm something.
 	 */
-	public boolean confirmPanel(final String message, final Preferences node,
-			final String check, final boolean def_val);
+	public boolean confirmPanel(final String message, final String check, final boolean def_val);
 	/**
 	 * Shows a info panel to the user.
 	 */

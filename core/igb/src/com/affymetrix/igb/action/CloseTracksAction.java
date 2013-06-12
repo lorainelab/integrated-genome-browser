@@ -46,8 +46,7 @@ extends SeqMapViewActionA implements SymSelectionListener {
 			message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().featureName + " data set?";
 		}
 		
-		if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-				PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+		if (Application.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 
 			super.actionPerformed(e);
 			// First split the graph.

@@ -77,8 +77,8 @@ public class SearchModeResidue implements ISearchModeExtended,
 		}
 		
 		if (vseq != igbService.getSeqMapView().getAnnotatedSeq()){
-			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), vseq.getID(), vseq.getID()),
-					PreferenceUtils.getTopNode(), CONFIRM_BEFORE_SEQ_CHANGE, default_confirm_before_seq_change);
+			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), 
+					vseq.getID(), vseq.getID()), CONFIRM_BEFORE_SEQ_CHANGE, default_confirm_before_seq_change);
 			if(!confirm) {
 				return BUNDLE.getString("searchCancelled");
 			}

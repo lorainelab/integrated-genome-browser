@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.igb.view.StatusBar;
 
@@ -149,19 +150,21 @@ public abstract class Application {
 	 * @return true if the user confirms, else false.
 	 */
 	public static boolean confirmPanel(String message) {
-		return confirmPanel(message, null, null, false);
-	}
-	
-	public static boolean confirmPanel(final String message, final Preferences node,
-			final String check, final boolean def_val) {
 		Application app = getSingleton();
 		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
-		return confirmPanel(comp, message, node, check, def_val);
+		return confirmPanel(comp, message, null, null, false);
 	}
 	
+	public static boolean confirmPanel(final String message, final String check, 
+			final boolean def_val) {
+		Application app = getSingleton();
+		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		return confirmPanel(comp, message, PreferenceUtils.getTopNode(), check, def_val);
+	}
+		
 	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,
 			final String check, final boolean def_val) {
-		Object[] params = null;
+		Object[] params;
 
 		//If no node is provided then show default message
 		if (node == null) {

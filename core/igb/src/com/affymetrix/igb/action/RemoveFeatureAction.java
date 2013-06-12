@@ -49,8 +49,7 @@ public class RemoveFeatureAction extends SeqMapViewActionA implements SymSelecti
 
 		super.actionPerformed(e);
 		String message = "Really remove all selected data set ?";
-		if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+		if (Application.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 			for (ITrackStyleExtended style : allStyles) {
 				if(style.getFeature() != null){
 					GeneralLoadView.getLoadView().removeFeature(style.getFeature(), true);

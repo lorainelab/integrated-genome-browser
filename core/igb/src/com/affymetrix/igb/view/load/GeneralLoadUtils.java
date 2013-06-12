@@ -894,7 +894,7 @@ public final class GeneralLoadUtils {
 			}
 
 			if (spanWidth > 500000) {
-				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+				return !(Application.confirmPanel(message, 
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
 		}
@@ -1334,7 +1334,6 @@ public final class GeneralLoadUtils {
 					|| version == newVersion
 					|| Application.confirmPanel(	MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
 							version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
-							PreferenceUtils.getTopNode(),
 							PreferenceUtils.CONFIRM_BEFORE_GROUP_CHANGE,
 							PreferenceUtils.default_confirm_before_group_change)){
 				version = newVersion;

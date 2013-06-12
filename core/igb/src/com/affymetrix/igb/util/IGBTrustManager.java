@@ -8,6 +8,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 /**
@@ -39,7 +40,9 @@ public class IGBTrustManager implements X509TrustManager {
 
 	public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 		for (int i = 0; i < certs.length; i++) {
-			boolean response = Application.confirmPanel("Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?", 
+			Application app = Application.getSingleton();
+			JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+			boolean response = Application.confirmPanel(comp, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?", 
 					PreferenceUtils.getCertificatePrefsNode(), certs[i].getIssuerX500Principal().getName(), true);
 			 
 			if (!response) {

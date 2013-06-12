@@ -242,7 +242,7 @@ public final class IGB extends Application
 				JFrame frame = (JFrame) evt.getComponent();
 				String message = "Do you really want to exit?";
 
-				if (confirmPanel(message, PreferenceUtils.getTopNode(), PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
+				if (confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
 					TrackStyle.autoSaveUserStylesheet();
 					Persistence.saveCurrentView(map_view);
 					defaultCloseOperations();

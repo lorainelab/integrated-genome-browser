@@ -426,7 +426,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		switch (col) {
 			case DELETE_FEATURE_COLUMN:
 				String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
-				if (ScriptManager.SCRIPTING.equals(value) || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+				if (ScriptManager.SCRIPTING.equals(value) || Application.confirmPanel(message, 
 						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 					for (GenericFeature gFeature : features) {
 						if (gFeature.equals(vFeature.getFeature())) {

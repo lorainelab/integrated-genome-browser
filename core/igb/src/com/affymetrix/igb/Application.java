@@ -152,10 +152,6 @@ public abstract class Application {
 		return confirmPanel(message, null, null, false);
 	}
 	
-	public static boolean confirmPanel(final JComponent comp, String message) {
-		return confirmPanel(comp, message, null, null, false);
-	}
-	
 	public static boolean confirmPanel(final String message, final Preferences node,
 			final String check, final boolean def_val) {
 		Application app = getSingleton();

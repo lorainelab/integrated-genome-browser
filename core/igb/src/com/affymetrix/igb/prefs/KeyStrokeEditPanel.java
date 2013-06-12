@@ -96,7 +96,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 								"This shortcut is currently in use; \n"
 								+ "reassigning this will remove the shortcut for '"
 								+ actionDisplayName + "'.\n"
-								+ "Do you want to proceed?")) {
+								+ "Do you want to proceed?", null, null, false)) {
 							key_field.setText(lastTimeFocusGained);
 							lastCommand = null;
 						}

@@ -45,7 +45,7 @@ public class BookmarkEditor {
 			commentField.setWrapStyleWord(true);
 			positionOnlyB = new JRadioButton("Position Only");
 			positionDataB = new JRadioButton("Position and Data", true);
-			useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME, PreferenceUtils.getTopNode(),
+			useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME,
 					PREF_USE_DEFAULT_NAME, defaultUseDefaultName);
 			useDefaultName.addActionListener(new java.awt.event.ActionListener() {
 

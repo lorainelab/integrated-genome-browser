@@ -115,8 +115,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				}
 			});
 
-			autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH,
-					PreferenceUtils.getTopNode(), PREF_AUTO_REFRESH,
+			autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH, PREF_AUTO_REFRESH,
 					default_auto_refresh);
 			autoRefreshCheckBox.addActionListener(new ActionListener() {
 

@@ -556,8 +556,8 @@ public abstract class PreferenceUtils {
 	 * preference and will update itself, via a PreferenceChangeListener,
 	 * if the preference value changes.
 	 */
-	public static JCheckBox createCheckBox(String title, final Preferences node,
-			final String pref_name, boolean default_val) {
+	public static JCheckBox createCheckBox(String title, final String pref_name, boolean default_val) {
+		final Preferences node = PreferenceUtils.getTopNode();
 		final JCheckBox check_box = new JCheckBox(title);
 		check_box.addActionListener(new ActionListener() {
 

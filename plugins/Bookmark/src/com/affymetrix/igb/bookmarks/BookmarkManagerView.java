@@ -302,8 +302,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			return;
 		}
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.",
-				PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", false);
+		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", "BookmarkManagerView_showDialog", false);
 		String message = "Delete these " + selectionPaths.length + " selected items?";
 		Object[] params = {message, checkbox};
 		doNotShowWarning = checkbox.isSelected();

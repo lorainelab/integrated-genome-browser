@@ -82,7 +82,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 	
 	private void addNonUpdateableTier(List<? extends GlyphI> vgs){
 		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-		TrackStyle preferredStyle = null;
+		ITrackStyleExtended preferredStyle = null;
 		List<SeqSymmetry> seqSymList = new ArrayList<SeqSymmetry>();
 		for (GlyphI gl : vgs) {
 			SeqSymmetry rootSym = (SeqSymmetry)gl.getInfo();
@@ -91,8 +91,9 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			}
 			if (rootSym != null) {
 				seqSymList.add(rootSym);
-				if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && ((SimpleSymWithProps)rootSym).getProperty("method") != null) {
-					preferredStyle = IGBStateProvider.getInstance(((SimpleSymWithProps)rootSym).getProperty("method").toString());
+				String method = BioSeq.determineMethod(rootSym);
+				if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && method != null) {
+					preferredStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 				}
 			}
 		}

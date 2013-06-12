@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -42,7 +43,7 @@ public class TrackUtils {
 		Application.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, Operator operator, ITrackStyleExtended preferredStyle) {
+	private ITrackStyleExtended makeNonPersistentStyle(SymWithProps sym, String human_name, Operator operator, ITrackStyleExtended preferredStyle) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = IGBStateProvider.getUniqueName(human_name);
@@ -50,7 +51,7 @@ public class TrackUtils {
 		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
-		TrackStyle style = IGBStateProvider.getInstance(unique_name, human_name, Delegate.EXT, null);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(unique_name, human_name, Delegate.EXT, null);
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands
@@ -65,8 +66,8 @@ public class TrackUtils {
 		style.setGraphTier(sym instanceof GraphSym);
 		style.setExpandable(sym instanceof GraphSym);
 		style.setLabelField(null);
-		if(operator instanceof Operator.Style){
-			style.setProperties(((Operator.Style)operator).getStyleProperties());
+		if(operator instanceof Operator.Style && style instanceof TrackStyle){
+			((TrackStyle)style).setProperties(((Operator.Style)operator).getStyleProperties());
 		}
 		
 		return style;

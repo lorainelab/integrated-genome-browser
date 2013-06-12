@@ -1,16 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.tiers.IGBStateProvider;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
@@ -19,6 +8,18 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
+import com.affymetrix.igb.parsers.XmlPrefsParser;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
@@ -157,7 +158,7 @@ public final class WebLink {
 		List<WebLink> results = new ArrayList<WebLink>();
 
 		// If the method name has already been used, then the annotStyle must have already been created
-		TrackStyle style = IGBStateProvider.getInstance(method);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 		String style_url = style.getUrl();
 		if (style_url != null && style_url.length() > 0) {
 			WebLink link = new WebLink("Track Line URL", null, style_url, RegexType.TYPE);

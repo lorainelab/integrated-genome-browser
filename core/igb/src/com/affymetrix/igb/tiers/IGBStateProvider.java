@@ -38,31 +38,12 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	}
 
 	@Override
-	public ITrackStyleExtended getAnnotStyle(String name) {
-		return getInstance(name);
+	public ITrackStyleExtended getAnnotStyle(String unique_name) {
+		return getAnnotStyle(unique_name, null, null, null);
 	}
 
 	@Override
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, java.util.Map<String, String> props) {
-		return getInstance(name, human_name, file_type, props);
-	}
-
-	/**
-	 * Returns all (persistent and temporary) instances of AnnotStyle.
-	 */
-	public static List<TrackStyle> getAllLoadedInstances() {
-		return new ArrayList<TrackStyle>(static_map.values());
-	}
-
-	public static void removeInstance(String unique_name) {
-		TrackStyle style = static_map.get(unique_name.toLowerCase());
-		if (style != null) {
-			style.setShow(true);
-			static_map.remove(unique_name.toLowerCase());
-		}
-	}
-
-	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
+	public ITrackStyleExtended getAnnotStyle(String unique_name, String track_name, String file_type, java.util.Map<String, String> props) {
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
 			if (TrackStyle.DEBUG) {
@@ -80,8 +61,19 @@ public final class IGBStateProvider extends DefaultStateProvider {
 		return style;
 	}
 
-	public static TrackStyle getInstance(String unique_name) {
-		return getInstance(unique_name, null, null, null);
+	/**
+	 * Returns all (persistent and temporary) instances of AnnotStyle.
+	 */
+	public static List<TrackStyle> getAllLoadedInstances() {
+		return new ArrayList<TrackStyle>(static_map.values());
+	}
+
+	public static void removeInstance(String unique_name) {
+		TrackStyle style = static_map.get(unique_name.toLowerCase());
+		if (style != null) {
+			style.setShow(true);
+			static_map.remove(unique_name.toLowerCase());
+		}
 	}
 
 	/**

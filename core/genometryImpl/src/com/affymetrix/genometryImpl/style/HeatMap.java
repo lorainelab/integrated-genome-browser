@@ -18,7 +18,7 @@ import java.awt.Color;
 public class HeatMap {
 	public static final int BINS = 256;
 	public static final String FOREGROUND_BACKGROUND = "FG/BG";
-	public enum StandardHeatMap {
+	public static enum StandardHeatMap {
 		BLACK_WHITE("Black/White", Color.BLACK, Color.WHITE),
 		VIOLET("Violet", Color.BLACK, new Color(255, 0, 255)),
 		BLUE_YELLOW("Blue/Yellow", Color.BLUE, Color.YELLOW),
@@ -93,10 +93,9 @@ public class HeatMap {
 			return heatmap.getName();
 		}
 	}
-
+	
 	public static final String PREF_HEATMAP_NAME = "Default Heatmap";
-	public static final StandardHeatMap def_heatmap_name = StandardHeatMap.BLUE_YELLOW;
-
+	
 	private final String name;
 	protected final Color[] colors;
 

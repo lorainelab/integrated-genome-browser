@@ -159,7 +159,7 @@ public class GraphState {
 	public final GraphType getGraphStyle() { return graph_style; }
 	public HeatMap getHeatMap() {
 		if (heat_map == null) {
-			String preferredHeatMap = PreferenceUtils.getTopNode().get(HeatMap.PREF_HEATMAP_NAME, HeatMap.def_heatmap_name.name());
+			String preferredHeatMap = PreferenceUtils.getTopNode().get(HeatMap.PREF_HEATMAP_NAME, HeatMap.StandardHeatMap.BLUE_YELLOW.name());
 			heat_map = HeatMap.getStandardHeatMap(preferredHeatMap);
 		}
 		return heat_map;

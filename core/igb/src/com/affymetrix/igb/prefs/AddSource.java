@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * AddSource.java
  *
  * Created on Dec 30, 2011, 12:26:34 PM
@@ -237,7 +232,7 @@ public class AddSource extends JFrame {
 			@Override
 			protected Void runInBackground() {
 				if (isEditPanel) {
-					DataLoadPrefsView.getSingleton().updateDataSource(serverURL,
+					DataLoadPrefsView.getSingleton().updateSource(serverURL,
 							(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
 				} else {
 					if (enableCombo) {

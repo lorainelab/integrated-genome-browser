@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import javax.swing.GroupLayout.Group;
 
 import com.affymetrix.igb.general.ServerList;
@@ -64,5 +65,12 @@ public class BundleRepositoryPrefsView extends ServerPrefsView {
 	@Override
 	protected boolean enableCombo() {
 		return false;
+	}
+	
+	@Override
+	protected void updateSource(String url, ServerTypeI type, String name, String newUrl){
+		ServerList.getServerInstance().removeServer(url);
+		ServerList.getServerInstance().removeServerFromPrefs(url);
+		addDataSource(type, name, url, -1, false);
 	}
 }

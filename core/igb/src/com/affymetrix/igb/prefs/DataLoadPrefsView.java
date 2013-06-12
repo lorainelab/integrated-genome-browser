@@ -41,6 +41,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -368,5 +369,15 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	@Override
 	protected boolean enableCombo() {
 		return true;
+	}
+	
+	@Override
+	protected void updateSource(String url, ServerTypeI type, String name, String newUrl){
+		Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
+		int order = node.getInt(GenericServer.ORDER, -1);
+		boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
+		ServerList.getServerInstance().removeServer(url);
+		ServerList.getServerInstance().removeServerFromPrefs(url);
+		addDataSource(type, name, newUrl, order, isDefault);
 	}
 }

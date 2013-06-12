@@ -272,21 +272,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 				PreferenceUtils.default_confirm_before_delete);
 	}
 
-	public void updateDataSource(String url, ServerTypeI type, String name, String newUrl) {
-		Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
-		int order = node.getInt(GenericServer.ORDER, -1);
-		boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
-		ServerList.getServerInstance().removeServer(url);
-		ServerList.getServerInstance().removeServerFromPrefs(url);
-		addDataSource(type, name, newUrl, order, isDefault);
-	}
-
-	public void updatePluginRepository(String url, ServerTypeI type, String name) {
-		ServerList.getServerInstance().removeServer(url);
-		ServerList.getServerInstance().removeServerFromPrefs(url);
-		addDataSource(type, name, url, -1, false);
-	}
-
 	protected void removeDataSource(String url) {
 		if (serverList.getServer(url) == null) {
 			Logger.getLogger(ServerPrefsView.class.getName()).log(
@@ -331,4 +316,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected abstract String getToolTip();
 
 	protected abstract boolean enableCombo();
+	
+	protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl);
 }

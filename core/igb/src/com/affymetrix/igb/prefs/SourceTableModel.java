@@ -15,7 +15,6 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
-
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -139,12 +138,12 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 				if (server.serverType != null) {
 					if (!server.isEnabled()
 							|| DataLoadPrefsView.getSingleton().confirmRefresh()) {
-						DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
+						DataLoadPrefsView.getSingleton().updateSource(server.URL,
 								server.serverType, server.serverName, server.URL);
 					}
 				} else {
-					BundleRepositoryPrefsView.getSingleton().updatePluginRepository(server.URL,
-							server.serverType, server.serverName);
+					BundleRepositoryPrefsView.getSingleton().updateSource(server.URL,
+							server.serverType, server.serverName, server.URL);
 				}
 				break;
 			case Enabled:

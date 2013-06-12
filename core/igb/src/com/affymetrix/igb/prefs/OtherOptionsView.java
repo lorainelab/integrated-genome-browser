@@ -78,28 +78,28 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         orfAnalyzerPanel = new javax.swing.JPanel();
         stopCodonLabel = new javax.swing.JLabel();
         dynamicORFLabel = new javax.swing.JLabel();
-        StopCodonColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this);
-        DynamicORFColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this);
+        StopCodonColorComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this);
+        DynamicORFColorComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this);
         bgLabel = new javax.swing.JLabel();
-        bgComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, this);
+        bgComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, this);
         residueColorPanel = new javax.swing.JPanel();
         aLabel = new javax.swing.JLabel();
         tLabel = new javax.swing.JLabel();
         gLabel = new javax.swing.JLabel();
         cLabel = new javax.swing.JLabel();
         otherLabel = new javax.swing.JLabel();
-        AColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this);
-        TColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this);
-        GColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this);
-        CColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this);
-        OtherColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this);
+        AColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this);
+        TColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this);
+        GColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this);
+        CColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this);
+        OtherColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this);
         askBeforeExitCheckBox = PreferenceUtils.createCheckBox("Ask Before Exit",
             PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
         confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm Before Delete",
             PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
         clear_prefsB = new javax.swing.JButton(ClearPreferencesAction.getAction());
         edgeMatchPanel = new javax.swing.JPanel();
-        edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
+        edgeMatchColorComboBox = ColorUtils.createColorComboBox(SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
         showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching());
         confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm Before Loading Large Data Set",

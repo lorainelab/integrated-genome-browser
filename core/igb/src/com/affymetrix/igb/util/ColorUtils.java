@@ -26,9 +26,9 @@ public class ColorUtils {
 	 *  if the preference value changes.
 	 */	
 
-	public static ColorComboBox createColorComboBox(final Preferences node,
-		final String pref_name, final Color default_val, final PreferenceChangeListener listener){
-		Color initial_color = PreferenceUtils.getColor(node, pref_name, default_val);
+	public static ColorComboBox createColorComboBox(final String pref_name, final Color default_val, final PreferenceChangeListener listener){
+		final Preferences node = PreferenceUtils.getTopNode();
+		final Color initial_color = PreferenceUtils.getColor(node, pref_name, default_val);
 		final ColorComboBox combobox = new ColorComboBox();
 		combobox.setSelectedColor(initial_color);
 		combobox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));

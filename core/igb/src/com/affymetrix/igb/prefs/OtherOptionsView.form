@@ -204,7 +204,7 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="StopCodonColorComboBox">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="DynamicORFColorComboBox">
@@ -212,7 +212,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DynamicORFColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="bgLabel">
@@ -222,7 +222,7 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="bgComboBox">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, this);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, this)"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -317,7 +317,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="TColorComboBox">
@@ -325,7 +325,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="GColorComboBox">
@@ -333,7 +333,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="CColorComboBox">
@@ -341,7 +341,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="OtherColorComboBox">
@@ -349,7 +349,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OtherColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this)"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -429,7 +429,7 @@
       <SubComponents>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="edgeMatchColorComboBox">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this)"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="edgeMatchLabel">

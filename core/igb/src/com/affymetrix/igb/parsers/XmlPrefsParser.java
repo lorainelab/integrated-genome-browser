@@ -12,27 +12,31 @@
  */
 package com.affymetrix.igb.parsers;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.PatternSyntaxException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.igb.IGBConstants;
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
 
-import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
-import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.general.ServerList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
+import com.affymetrix.igb.prefs.WebLink;
 
 /**
  *Class for parsing preferences for IGB.
@@ -89,9 +93,8 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
  * @version $Id: XmlPrefsParser.java 10766 2012-03-15 22:38:43Z lfrohman $
  */
 public final class XmlPrefsParser {
-
-	private static final Class<?> default_factory_class = AnnotationGlyphFactory.class;
-
+	private static final boolean DEBUG = false;
+	
 	private XmlPrefsParser() {
 	}
 
@@ -143,9 +146,7 @@ public final class XmlPrefsParser {
 			name = child.getNodeName();
 			if (child instanceof Element) {
 				el = (Element) child;
-				if (name.equalsIgnoreCase("annotation_style")) {
-					processAnnotStyle(el);
-				} else if (name.equalsIgnoreCase("annotation_url")) {
+				if (name.equalsIgnoreCase("annotation_url")) {
 					isWebLinkXML = true;
 					processLinkUrl(el);
 				} else if (name.equalsIgnoreCase("server")) {
@@ -174,7 +175,7 @@ public final class XmlPrefsParser {
 		String d = el.getAttribute("default");
 		Boolean isDefault = d == null || d.isEmpty() ? false : Boolean.valueOf(d);
 		
-		if (IGBConstants.DEBUG) {
+		if (DEBUG) {
 			System.out.println("XmlPrefsParser adding " + server_type 
 					+ " server: " + server_name + ",  " + server_url + " mirror: " + mirror_url
 					+ ", enabled: " + enabled + "default: " + isDefault);
@@ -249,37 +250,6 @@ public final class XmlPrefsParser {
 			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
 		}
 		WebLink.addWebLink(link);
-	}
-
-	private static void processAnnotStyle(Element el) {
-		Class<?> factory_class = default_factory_class;
-		Map<String, Object> attmap = XmlPrefsParser.getAttributeMap(el);
-
-		// annotation_style element _must_ have and annot_type attribute
-		// planning to relax this at some point to allow for element to have one (and only one) of:
-		//     annot_type, annot_type_starts_with, annot_type_ends_with, annot_type_regex...
-		if (attmap.get("factory") != null) {
-			String factory_name = null;
-			try {
-				factory_name = (String)attmap.get("factory");
-				factory_class = Class.forName(factory_name);
-			} catch (ClassNotFoundException ex) {
-				System.out.println("ERROR: Class '" + factory_name + "' specified in the preferences file can not be found");
-				factory_class = default_factory_class;
-			}
-		}
-		try {
-			MapTierGlyphFactoryI factory = (MapTierGlyphFactoryI) factory_class.newInstance();
-			factory.init(attmap);
-		} catch (InstantiationException ex) {
-			System.out.println("ERROR: Could not instantiate a glyph factory while processing preferences file: " + factory_class);
-		} catch (IllegalAccessException ex) {
-			System.out.println("ERROR: Could not instantiate a glyph factory while processing preferences file: " + factory_class);
-		} catch (ClassCastException ex) {
-			System.out.println("ERROR: Could not instantiate a glyph factory while processing preferences file: " + factory_class + " is not an instance of MapViewGlyphFactoryI");
-		} catch (Exception ex) {
-			System.out.println("ERROR: Exception while parsing preferences: " + ex.toString());
-		}
 	}
 
 	private static Map<String, Object> getAttributeMap(Element el) {

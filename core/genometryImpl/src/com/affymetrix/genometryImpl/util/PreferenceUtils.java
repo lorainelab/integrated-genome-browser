@@ -46,7 +46,10 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.affymetrix.common.CommonUtils;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.OutputStream;
+import javax.swing.Action;
 import javax.swing.JRadioButton;
 
 /**
@@ -694,6 +697,28 @@ public abstract class PreferenceUtils {
 
 	public static void setPrefsMode(String mode) {
 		prefs_mode = mode;
+	}
+	
+	public static void saveToPreferences(final String pref_name, final Boolean default_val, final Action action){
+		final Preferences node = PreferenceUtils.getTopNode();
+		
+		action.putValue(Action.SELECTED_KEY, getBooleanParam(pref_name, default_val));
+		action.addPropertyChangeListener(new PropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals(Action.SELECTED_KEY)){
+					node.putBoolean(pref_name, (Boolean)action.getValue(Action.SELECTED_KEY));
+				}
+			}
+		});
+		
+		node.addPreferenceChangeListener(new PreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent evt) {
+				if (action != null && evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
+					action.putValue(Action.SELECTED_KEY, getBooleanParam(pref_name, default_val));
+					action.actionPerformed(new ActionEvent(evt.getSource(), -1, pref_name));
+				}
+			}
+		});
 	}
 	
 	public static boolean save(Preferences node, String key, Object value){

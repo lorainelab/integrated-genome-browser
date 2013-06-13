@@ -501,11 +501,15 @@ public abstract class PreferenceUtils {
 		return s;
 	}
 
+	public static Color getColor(String key, Color default_color) {
+		return getColor(PreferenceUtils.getTopNode(), key, default_color);
+	}
+	
 	/**
 	 * Retrieves a color preference
 	 * that was stored with {@link #putColor(Preferences, String, Color)}.
 	 */
-	public static Color getColor(Preferences node, String key, Color default_color) {
+	private static Color getColor(Preferences node, String key, Color default_color) {
 		Color result = default_color;
 		String value = node.get(key, "unknown");
 		if (!value.equals("unknown")) {
@@ -736,7 +740,7 @@ public abstract class PreferenceUtils {
 			} else if (def instanceof String) {
 				return node.get(key, (String)def);
 			} else if (def instanceof Color) {
-				return PreferenceUtils.getColor(node, key, (Color)def);
+				return getColor(node, key, (Color)def);
 			}
 		}
 		return null;

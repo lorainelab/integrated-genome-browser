@@ -28,7 +28,7 @@ public class ColorUtils {
 
 	public static ColorComboBox createColorComboBox(final String pref_name, final Color default_val, final PreferenceChangeListener listener){
 		final Preferences node = PreferenceUtils.getTopNode();
-		final Color initial_color = PreferenceUtils.getColor(node, pref_name, default_val);
+		final Color initial_color = PreferenceUtils.getColor(pref_name, default_val);
 		final ColorComboBox combobox = new ColorComboBox();
 		combobox.setSelectedColor(initial_color);
 		combobox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
@@ -44,7 +44,7 @@ public class ColorUtils {
 				if (c != null) {
 					PreferenceUtils.putColor(node, pref_name, c);
 				}else{
-					combobox.setSelectedColor(PreferenceUtils.getColor(node, pref_name, default_val));
+					combobox.setSelectedColor(PreferenceUtils.getColor(pref_name, default_val));
 				}
 			}
 		});

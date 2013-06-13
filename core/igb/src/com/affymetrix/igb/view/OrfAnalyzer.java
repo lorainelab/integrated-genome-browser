@@ -164,7 +164,7 @@ public final class OrfAnalyzer extends JComponent
 			//ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
 		}
 		
-		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);
+		Color bgcol = PreferenceUtils.getColor(PREF_BACKGROUND_COLOR, default_background_color);
 		SimpleTrackStyle forSts = new SimpleTrackStyle("Stop Codon", false){
 			@Override
 			public boolean drawCollapseControl(){
@@ -201,8 +201,8 @@ public final class OrfAnalyzer extends JComponent
 		revtier.setDirection(TierGlyph.Direction.REVERSE);
 		map.addTier(revtier, false);  // put reverse tier below axis
 
-		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
-		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
+		Color pointcol = PreferenceUtils.getColor(PREF_STOP_CODON_COLOR, default_stop_codon_color);
+		Color linkcol = PreferenceUtils.getColor(PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
 
 		int span_mid = (int) (0.5f * span_start + 0.5f * span_end);
 

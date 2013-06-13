@@ -16,8 +16,8 @@ public final class CoordinateStyle {
 		
 		{ // a non-static initializer block
 			setTrackName("Coordinates");
-			foreground = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_COLOR, default_coordinate_color);
-			background = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_BACKGROUND, default_coordinate_background);
+			foreground = PreferenceUtils.getColor(PREF_COORDINATE_COLOR, default_coordinate_color);
+			background = PreferenceUtils.getColor(PREF_COORDINATE_BACKGROUND, default_coordinate_background);
 		}
 
 		@Override

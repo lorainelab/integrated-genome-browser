@@ -1620,10 +1620,10 @@ public class SeqMapView extends JPanel
 			
 			double fuzz = getEdgeMatcher().getFuzziness();
 			if (fuzz == 0.0) {
-				Color edge_match_color = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_EDGE_MATCH_COLOR, default_edge_match_color);
+				Color edge_match_color = PreferenceUtils.getColor(PREF_EDGE_MATCH_COLOR, default_edge_match_color);
 				getEdgeMatcher().setColor(edge_match_color);
 			} else {
-				Color edge_match_fuzzy_color = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
+				Color edge_match_fuzzy_color = PreferenceUtils.getColor(PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
 				getEdgeMatcher().setColor(edge_match_fuzzy_color);
 			}
 			seqmap.addEdgeMatches(getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs));

@@ -56,7 +56,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
 		colors = new Color[5];
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 		for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
-			colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
+			colors[i] = PreferenceUtils.getColor(entry.getKey(), entry.getValue());
 			i++;
 		}
 	}
@@ -65,7 +65,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
 		int i = 0;
 		for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
 			if (entry.getKey().equals(evt.getKey())) {
-				colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
+				colors[i] = PreferenceUtils.getColor(entry.getKey(), entry.getValue());
 				break;
 			}
 			i++;

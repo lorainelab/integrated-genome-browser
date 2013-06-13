@@ -74,9 +74,8 @@ public abstract class PreferenceUtils {
 	public static final String AUTO_LOAD = "Auto Load Data";
 	public static final String COVERAGE_SUMMARY_HEATMAP = "Coverage Summary as HeatMap";
 	public static final String DISPLAY_ERRORS_STATUS_BAR = "Display Errors on Status Bar";
-	public static final String SHOW_COLLAPSE_OPTION = "Show Collapse Option";
 	public static final String SHOW_EDGEMATCH_OPTION = "Show Edge Matching Option";
-	public static final String SHOW_IGB_TRACKMARK_OPTION = "Show IGB Track Mark";
+	
 	public static final boolean default_display_errors = false;
 	public static final boolean default_ask_before_exiting = true;
 	public static final boolean default_confirm_before_delete = true;
@@ -87,8 +86,7 @@ public abstract class PreferenceUtils {
 	public static final boolean default_auto_load = true;
 	public static final boolean default_coverage_summary_heatmap = true;
 	public static final boolean default_show_edge_match = true;
-	public static final boolean default_show_igb_track = true;
-	public static final boolean default_show_collapse_option = true;
+	
 	private static final String DEFAULT_PREFS_MODE = "igb";
 	private static final String SLASH_STANDIN = "%";
 	private static String prefs_mode = DEFAULT_PREFS_MODE;

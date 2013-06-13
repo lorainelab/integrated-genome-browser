@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
+
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -16,13 +16,13 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 public final class IGBStateProvider extends DefaultStateProvider {
 
-	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
-	private static boolean showIGBTracks = tiers_root_node.getBoolean(TrackConstants.PREF_SHOW_IGB_TRACK_MARK, TrackConstants.default_show_igb_track_mark);
-	private static boolean showLockIcon = tiers_root_node.getBoolean(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, TrackConstants.default_show_locked_track_icon);
-	private static boolean draw_collapse_icon = tiers_root_node.getBoolean(TrackConstants.PREF_DRAW_COLLAPSE_ICON, TrackConstants.default_draw_collapse_icon);
+	private static boolean draw_collapse_icon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_DRAW_COLLAPSE_ICON, TrackConstants.default_draw_collapse_icon);
+	private static boolean showIGBTracks = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_IGB_TRACK_MARK, TrackConstants.default_show_igb_track_mark);
+	private static boolean showLockIcon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, TrackConstants.default_show_locked_track_icon);
+	
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
 	private static TrackStyle default_instance = null;
-
+	
 	@Override
 	public GraphState getGraphState(String id, String human_name, String extension, java.util.Map<String, String> props) {
 		if (human_name == null) {
@@ -102,20 +102,14 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	
 	public static void setShowIGBTrackMark(boolean b) {
 		showIGBTracks = b;
-		if (tiers_root_node != null) {
-			tiers_root_node.putBoolean(TrackConstants.PREF_SHOW_IGB_TRACK_MARK, b);
-		}
 	}
-
+	
 	public static boolean getShowIGBTrackMarkState() {
 		return showIGBTracks;
 	}
 	
 	public static void setShowLockIcon(boolean b){
 		showLockIcon = b;
-		if (tiers_root_node != null) {
-			tiers_root_node.putBoolean(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, b);
-		}
 	}
 	
 	public static boolean getShowLockIcon() {
@@ -124,9 +118,6 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
 	public static void setDrawCollapseControl(boolean b) {
 		draw_collapse_icon = b;
-		if (tiers_root_node != null) {
-			tiers_root_node.putBoolean(TrackConstants.PREF_DRAW_COLLAPSE_ICON, b);
-		}
 	}
 	
 	public static boolean getDrawCollapseState() {

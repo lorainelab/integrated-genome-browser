@@ -1,24 +1,25 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
+import com.affymetrix.igb.tiers.TrackConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 /**
  *
  * @author hiralv
  */
-public class ShowLockedTrackIconAction extends GenericAction {
+public class ShowLockedTrackIconAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ShowLockedTrackIconAction ACTION = new ShowLockedTrackIconAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		PreferenceUtils.saveToPreferences(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, TrackConstants.default_show_locked_track_icon, ACTION);
 	}
 	
 	public static ShowLockedTrackIconAction getAction() {
@@ -27,15 +28,13 @@ public class ShowLockedTrackIconAction extends GenericAction {
 
 	private ShowLockedTrackIconAction() {
 		super(BUNDLE.getString("showLockedTrackIcon"), "16x16/actions/blank_placeholder.png", null);
-		this.putValue(SELECTED_KEY, IGBStateProvider.getShowLockIcon());
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		boolean b = (Boolean)getValue(SELECTED_KEY);
-		IGBStateProvider.setShowLockIcon(b);
-		((IGB) IGB.getSingleton()).getMapView().getSeqMap().repackTheTiers(true, true);
+		IGBStateProvider.setShowLockIcon((Boolean)getValue(SELECTED_KEY));
+		getSeqMapView().getSeqMap().repackTheTiers(true, true);
 	}
 
 	@Override

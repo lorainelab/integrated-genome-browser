@@ -50,14 +50,10 @@ public class GFF3ParserTest {
 			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 			assertNotNull(seq_group);
 
-			GFFParser instance = new GFFParser(); // the parser should be able to recognized
-			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
-
-
-			List expResult = null;
-			List result = instance.parse(istr, seq_group, true);
-
-			testResults(result);
+//			GFFParser instance = new GFFParser(); // the parser should be able to recognized
+//			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
+//			List result = instance.parse(istr, seq_group, true);
+//			testResults(result);
 
 			GFF3 gff3 = new GFF3(new File(filename).toURI(),new File(filename).getName(),seq_group, false);
 			testResults(gff3.getGenome());

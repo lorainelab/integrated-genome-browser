@@ -319,9 +319,11 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 							throw new IOException("You can only use the '##gff-version' parameter at the beginning of the file");
 						} else {
 							// The "#gff-version 3" pragma is *required* to be on the first line.
-							GFF3Parser gff3_parser = new GFF3Parser();
-							gff3_parser.parse(br, default_source, seq_group, annotate_seq);
-							return gff3_parser.symlist;
+//							GFF3Parser gff3_parser = new GFF3Parser();
+//							gff3_parser.parse(br, default_source, seq_group, annotate_seq);
+//							return gff3_parser.symlist;
+							
+							throw new IOException("Using GFF symloader but GFF3 file detected.");
 						}
 					} else {
 						continue;

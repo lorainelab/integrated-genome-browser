@@ -36,6 +36,7 @@ import org.broad.tribble.readers.LineReader;
  */
 public class GFF3 extends SymLoader implements LineProcessor {
 
+	private static final boolean MERGE_CDS = true;
 	private static final boolean DEBUG = false;
 	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
@@ -110,7 +111,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parser.parse(istr, uri.toString(), group, true);
+			return parser.parse(istr, uri.toString(), seq, group, false, MERGE_CDS);
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
@@ -145,7 +146,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parser.parse(it, uri.toString(), group, true);
+		parser.parse(it, uri.toString(), seq, group, false, MERGE_CDS);
 		return parser.symlist;
 	}
 

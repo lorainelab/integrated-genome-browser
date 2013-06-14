@@ -42,7 +42,8 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	private GFF3Parser parser;
-
+	private final boolean merge_cds;
+	
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
@@ -51,10 +52,15 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	}
 
 	public GFF3(URI uri, String featureName, AnnotatedSeqGroup group) {
-		super(uri, featureName, group);
-		parser = new GFF3Parser();
+		this(uri, featureName, group, MERGE_CDS);
 	}
 
+	public GFF3(URI uri, String featureName, AnnotatedSeqGroup group, boolean merge_cds) {
+		super(uri, featureName, group);
+		this.parser = new GFF3Parser();
+		this.merge_cds = merge_cds;
+	}
+	
 	@Override
 	public List<LoadStrategy> getLoadChoices() {
 		return strategyList;
@@ -111,7 +117,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parser.parse(istr, uri.toString(), seq, group, false, MERGE_CDS);
+			return parser.parse(istr, uri.toString(), seq, group, false, merge_cds);
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
@@ -146,7 +152,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parser.parse(it, uri.toString(), seq, group, false, MERGE_CDS);
+		parser.parse(it, uri.toString(), seq, group, false, merge_cds);
 		return parser.symlist;
 	}
 

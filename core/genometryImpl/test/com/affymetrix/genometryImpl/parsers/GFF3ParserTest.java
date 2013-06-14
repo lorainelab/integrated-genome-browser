@@ -59,7 +59,7 @@ public class GFF3ParserTest {
 
 			testResults(result);
 
-			GFF3 gff3 = new GFF3(new File(filename).toURI(),new File(filename).getName(),seq_group);
+			GFF3 gff3 = new GFF3(new File(filename).toURI(),new File(filename).getName(),seq_group, false);
 			testResults(gff3.getGenome());
 			
 			// Replacing test with above test. hiralv 08-16-10

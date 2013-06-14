@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.io.*;
@@ -369,9 +369,14 @@ public final class GFF3Parser implements Parser {
 				parent_sym.removeCdsSpans();
 				if(merge_cds){
 					List<SeqSymmetry> cds = new ArrayList<SeqSymmetry>();
-					SimpleMutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
+					SimpleSymWithProps sym = new SimpleSymWithProps();
 					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
-						cds.addAll(entry.getValue());
+						for(SeqSymmetry s : entry.getValue()){
+							cds.add(s);
+							if(s instanceof SimpleSymWithProps){
+								sym.setProperties(((SimpleSymWithProps)s).getProperties());
+							}
+						}
 					}
 					SeqUtils.union(cds, sym, seq);
 					parent_sym.addChild(sym);

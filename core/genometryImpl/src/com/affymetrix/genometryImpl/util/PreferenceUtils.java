@@ -699,24 +699,31 @@ public abstract class PreferenceUtils {
 	
 	public static void saveToPreferences(final String pref_name, final Boolean default_val, final Action action){
 		final Preferences node = PreferenceUtils.getTopNode();
-		
-		action.putValue(Action.SELECTED_KEY, getBooleanParam(pref_name, default_val));
-		action.addPropertyChangeListener(new PropertyChangeListener(){
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getPropertyName().equals(Action.SELECTED_KEY)){
-					node.putBoolean(pref_name, (Boolean)action.getValue(Action.SELECTED_KEY));
-				}
-			}
-		});
-		
-		node.addPreferenceChangeListener(new PreferenceChangeListener() {
+		final PrefAndPropChangeListener papCL = new PrefAndPropChangeListener(){
+			
+			@Override
 			public void preferenceChange(PreferenceChangeEvent evt) {
 				if (action != null && evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
+					action.removePropertyChangeListener(this);
 					action.putValue(Action.SELECTED_KEY, getBooleanParam(pref_name, default_val));
-					action.actionPerformed(new ActionEvent(evt.getSource(), -1, pref_name));
+					action.addPropertyChangeListener(this);
 				}
 			}
-		});
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals(Action.SELECTED_KEY)){
+					node.removePreferenceChangeListener(this);
+					node.putBoolean(pref_name, (Boolean)action.getValue(Action.SELECTED_KEY));
+					node.addPreferenceChangeListener(this);
+				}
+			}
+			
+		};
+
+		action.putValue(Action.SELECTED_KEY, getBooleanParam(pref_name, default_val));
+		action.addPropertyChangeListener(papCL);
+		node.addPreferenceChangeListener(papCL);
 	}
 	
 	public static boolean save(Preferences node, String key, Object value){
@@ -768,4 +775,7 @@ public abstract class PreferenceUtils {
 		}
 		return null;
 	}
+	
+	private static interface PrefAndPropChangeListener 
+		extends PreferenceChangeListener, PropertyChangeListener {	}
 }

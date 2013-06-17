@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
+import com.affymetrix.igb.bookmarks.action.BookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
@@ -216,7 +216,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			try {
 				File fil = chooser.getSelectedFile();
 				BookmarksParser.parse(bookmark_list, fil);
-				AddBookmarkAction.addNode(bookmark_list);
+				BookmarkAction.addNode(bookmark_list);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Error importing bookmarks", ex, Level.SEVERE);
 			}

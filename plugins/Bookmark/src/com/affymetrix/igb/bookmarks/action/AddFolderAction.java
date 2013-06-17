@@ -12,7 +12,7 @@ import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
  *
  * @author lorainelab
  */
-public class AddFolderAction extends AddBookmarkAction {
+public class AddFolderAction extends BookmarkAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final AddFolderAction ACTION = new AddFolderAction();

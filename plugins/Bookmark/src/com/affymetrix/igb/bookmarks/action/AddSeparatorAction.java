@@ -11,7 +11,7 @@ import com.affymetrix.igb.bookmarks.Separator;
  *
  * @author lorainelab
  */
-public class AddSeparatorAction extends AddBookmarkAction {
+public class AddSeparatorAction extends BookmarkAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final AddSeparatorAction ACTION = new AddSeparatorAction();

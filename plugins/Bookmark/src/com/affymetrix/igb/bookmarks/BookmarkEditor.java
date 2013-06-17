@@ -2,7 +2,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction;
+import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
@@ -130,7 +130,7 @@ public class BookmarkEditor {
 
 			bookmark.setName(name);
 			bookmark.setComment(comment);
-			AddPositionBookmarkAction.addBookmark(bookmark);
+			AddBookmarkAction.addBookmark(bookmark);
 		}
 	}
 }

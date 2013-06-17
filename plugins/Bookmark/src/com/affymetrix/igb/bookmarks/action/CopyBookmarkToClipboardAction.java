@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.Bookmark;
 
-public class CopyBookmarkToClipboardAction extends AddBookmarkAction {
+public class CopyBookmarkToClipboardAction extends BookmarkAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final CopyBookmarkToClipboardAction ACTION = new CopyBookmarkToClipboardAction();

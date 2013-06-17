@@ -85,7 +85,7 @@ public final class BookmarkActionManager implements ActionListener {
 	public BookmarkActionManager(IGBService _igbService, JRPMenu bm_menu) {
 		igbService = _igbService;
 		bookmark_menu = bm_menu;
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_pos", AddPositionBookmarkAction.getAction()));
+		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_pos", AddBookmarkAction.getAction()));
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_import", ImportBookmarkAction.getAction()));
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_export", ExportBookmarkAction.getAction()));
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_clipboard", CopyBookmarkToClipboardAction.getAction()));

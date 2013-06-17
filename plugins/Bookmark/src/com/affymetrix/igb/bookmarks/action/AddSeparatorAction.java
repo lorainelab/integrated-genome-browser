@@ -1,9 +1,12 @@
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.igb.bookmarks.BookmarkList;
+import com.affymetrix.igb.bookmarks.Separator;
 /**
  *
  * @author lorainelab
@@ -30,5 +33,15 @@ public class AddSeparatorAction extends AddBookmarkAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		addSeparator();
+	}
+	
+	/**
+	 * add a separator to bookmark tree.
+	 */
+	public static void addSeparator() {
+		Separator s = new Separator();
+		BookmarkList bl = new BookmarkList(s);
+		DefaultMutableTreeNode node = bl;
+		addNode(node);
 	}
 }

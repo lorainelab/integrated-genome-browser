@@ -27,10 +27,6 @@ public abstract class AddBookmarkAction extends GenericAction {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 	}
 
-	protected Bookmark getCurrentPosition() {
-		return getCurrentPosition(false);
-	}
-	
 	protected Bookmark getCurrentPosition(boolean include_sym_and_props) {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
@@ -48,50 +44,6 @@ public abstract class AddBookmarkAction extends GenericAction {
 		return bookmark;
 	}
 	
-	/**
-	 * Generate a bookmark editor panel for adding a new bookmark.
-	 */
-	protected void bookmarkCurrentPosition() {
-		Bookmark bookmark = getCurrentPosition();
-		if (bookmark != null) {
-			BookmarkEditor.init(bookmark);
-			BookmarkEditor.run();
-		}
-	}
-
-	/**
-	 * add a folder to bookmark tree.
-	 */
-	public static void addBookmarkFolder() {
-		BookmarkList bl = new BookmarkList("Folder");
-		DefaultMutableTreeNode node = bl;
-		addNode(node);
-	}
-
-	/**
-	 * add a bookmark to bookmark tree.
-	 *
-	 * @param bm
-	 */
-	public static void addBookmark(Bookmark bm) {
-		BookmarkList parent_list = BookmarkManagerView.getSingleton().thing.selected_bl;
-		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
-
-		BookmarkList bl = new BookmarkList(bm);
-		DefaultMutableTreeNode node = bl;
-		addNode(node);
-	}
-
-	/**
-	 * add a separator to bookmark tree.
-	 */
-	public static void addSeparator() {
-		Separator s = new Separator();
-		BookmarkList bl = new BookmarkList(s);
-		DefaultMutableTreeNode node = bl;
-		addNode(node);
-	}
-
 	/**
 	 * add node to the tree.
 	 *

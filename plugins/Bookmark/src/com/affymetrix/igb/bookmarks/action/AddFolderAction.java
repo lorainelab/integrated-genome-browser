@@ -1,8 +1,11 @@
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.igb.bookmarks.BookmarkList;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 
 /**
@@ -31,5 +34,14 @@ public class AddFolderAction extends AddBookmarkAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		addBookmarkFolder();
+	}
+	
+	/**
+	 * add a folder to bookmark tree.
+	 */
+	public static void addBookmarkFolder() {
+		BookmarkList bl = new BookmarkList("Folder");
+		DefaultMutableTreeNode node = bl;
+		addNode(node);
 	}
 }

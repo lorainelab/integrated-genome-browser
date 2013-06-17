@@ -1,14 +1,12 @@
 package com.affymetrix.igb.action;
 
+import java.awt.event.KeyEvent;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 /**
  *
  * @author hiralv
@@ -25,25 +23,15 @@ public class ToggleToolTipAction extends GenericAction {
 		this.ordinal = 160;
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
-
-		boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(SeqMapView.PREF_SHOW_TOOLTIP, 
-				IGB.getSingleton().getMapView().getShowPropertiesTooltip());
-		this.putValue(SELECTED_KEY, show_prop_tooltip);
 	}
 	
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		PreferenceUtils.saveToPreferences(SeqMapView.PREF_SHOW_TOOLTIP, SeqMapView.default_show_prop_tooltip, ACTION);
 	}
 	
 	public static ToggleToolTipAction getAction() {
 		return ACTION;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		PreferenceUtils.getTopNode().putBoolean(SeqMapView.PREF_SHOW_TOOLTIP, (Boolean)getValue(SELECTED_KEY));
-		IGB.getSingleton().getMapView().setShowPropertiesTooltip((Boolean)getValue(SELECTED_KEY));
 	}
 
 	@Override

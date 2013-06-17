@@ -85,6 +85,8 @@ public class SeqMapView extends JPanel
 		
 	private final static String SEQ_MODE = "SEQ_MODE";
 	public static final boolean default_auto_change_view = false;
+	public static final boolean default_show_prop_tooltip = true;
+	
 	private static final boolean DEBUG_TIERS = false;
 	
 	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
@@ -98,7 +100,7 @@ public class SeqMapView extends JPanel
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	protected boolean coord_shift = false;
 	boolean show_edge_matches = PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
-	private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, true);
+	private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip);
 	private MapMode mapMode;
 	private JRPToggleButton select_mode_button;
 	private JRPToggleButton scroll_mode_button;
@@ -293,7 +295,9 @@ public class SeqMapView extends JPanel
 					SeqMapView.this.add(BorderLayout.EAST, yzoombox);
 				}
 				SeqMapView.this.invalidate();
-			} 
+			} else if (pce.getKey().equals(PREF_SHOW_TOOLTIP)) {
+				setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
+			}
 		}
 	};
 
@@ -2410,7 +2414,7 @@ public class SeqMapView extends JPanel
 		return " ..." + string.substring(strlen - 25, strlen);
 	}
 	
-	public void setShowPropertiesTooltip(boolean b) {
+	private void setShowPropertiesTooltip(boolean b) {
 		show_prop_tooltip = b;
 		if(!b){
 			setToolTip(null, null, -1);

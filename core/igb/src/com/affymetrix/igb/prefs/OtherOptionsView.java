@@ -1,17 +1,10 @@
 package com.affymetrix.igb.prefs;
 
-import java.awt.BorderLayout;
-import java.util.EventObject;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.shared.CodonGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.AccordionTierResizer;
 import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.util.ColorUtils;
@@ -22,29 +15,20 @@ import com.affymetrix.igb.view.SeqMapView;
  *
  * @author nick
  */
-public class OtherOptionsView extends IPrefEditorComponent implements PreferenceChangeListener, TrackStylePropertyListener {
+public class OtherOptionsView extends IPrefEditorComponent {
 
 	private static final long serialVersionUID = 1L;
-	private static OtherOptionsView singleton;
 	String default_label_format = SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
 	String[] label_format_options = new String[]{SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_FULL,
 		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA,
 		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_ABBREV};
 
-	public static synchronized OtherOptionsView getSingleton() {
-		if (singleton == null) {
-			singleton = new OtherOptionsView();
-		}
-		return singleton;
-	}
 
 	/** Creates new form OtherOptions */
 	public OtherOptionsView() {
 		super();
 		this.setName("Other Options");
-		this.setLayout(new BorderLayout());
 		initComponents();
-		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
 	/** This method is called from within the constructor to
@@ -67,28 +51,28 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         orfAnalyzerPanel = new javax.swing.JPanel();
         stopCodonLabel = new javax.swing.JLabel();
         dynamicORFLabel = new javax.swing.JLabel();
-        StopCodonColorComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this);
-        DynamicORFColorComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this);
+        StopCodonColorComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, null);
+        DynamicORFColorComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, null);
         bgLabel = new javax.swing.JLabel();
-        bgComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, this);
+        bgComboBox = ColorUtils.createColorComboBox(OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, null);
         residueColorPanel = new javax.swing.JPanel();
         aLabel = new javax.swing.JLabel();
         tLabel = new javax.swing.JLabel();
         gLabel = new javax.swing.JLabel();
         cLabel = new javax.swing.JLabel();
         otherLabel = new javax.swing.JLabel();
-        AColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this);
-        TColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this);
-        GColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this);
-        CColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this);
-        OtherColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this);
+        AColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, null);
+        TColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, null);
+        GColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, null);
+        CColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, null);
+        OtherColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, null);
         askBeforeExitCheckBox = PreferenceUtils.createCheckBox("Ask Before Exit",
             PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
         confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm Before Delete",
             PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
         clear_prefsB = new javax.swing.JButton(ClearPreferencesAction.getAction());
         edgeMatchPanel = new javax.swing.JPanel();
-        edgeMatchColorComboBox = ColorUtils.createColorComboBox(SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
+        edgeMatchColorComboBox = ColorUtils.createColorComboBox(SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, null);
         edgeMatchLabel = new javax.swing.JLabel();
         showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
         confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm Before Loading Large Data Set",
@@ -421,7 +405,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         );
     }// </editor-fold>//GEN-END:initComponents
 
-	boolean refresh = false;
 	private void AColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AColorComboBoxActionPerformed
 		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_AColorComboBoxActionPerformed
@@ -492,21 +475,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     // End of variables declaration//GEN-END:variables
 
 	@Override
-	public void preferenceChange(PreferenceChangeEvent pce) {
-		
-	}
-
-	@Override
 	public void refresh() {
-		refresh = true;
-		//Update Coordinate Track Colors
-		//bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());
-		//fgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getForeground());
-		refresh = false;
-	}
-
-	@Override
-	public void trackstylePropertyChanged(EventObject eo) {
-		refresh();
 	}
 }

@@ -236,8 +236,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	public void clearTable() {
 		((TierPrefsTableModel) model).clear();
-		//also refresh options panel to ensure coordinate track colors stay synchronized
-		OtherOptionsView.getSingleton().refresh();
 	}
 
 	private void setEnabled(boolean b) {

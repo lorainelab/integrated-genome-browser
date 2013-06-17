@@ -1,11 +1,13 @@
 package com.affymetrix.igb.prefs;
 
+import java.awt.BorderLayout;
+import java.util.EventObject;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
-import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
 import com.affymetrix.igb.shared.CodonGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -15,10 +17,6 @@ import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.BorderLayout;
-import java.util.EventObject;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 /**
  *
@@ -27,7 +25,6 @@ import java.util.prefs.PreferenceChangeListener;
 public class OtherOptionsView extends IPrefEditorComponent implements PreferenceChangeListener, TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
-	private final SeqMapView smv;
 	private static OtherOptionsView singleton;
 	String default_label_format = SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
 	String[] label_format_options = new String[]{SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_FULL,
@@ -46,14 +43,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		super();
 		this.setName("Other Options");
 		this.setLayout(new BorderLayout());
-
-		Application igb = Application.getSingleton();
-		if (igb != null) {
-			smv = igb.getMapView();
-		} else {
-			smv = null;
-		}
-
 		initComponents();
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
@@ -101,7 +90,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
-        showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching());
+        showEdgeMatchCheckBox = PreferenceUtils.createCheckBox("Show Edge Matching", PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
         confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm Before Loading Large Data Set",
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar",
@@ -152,12 +141,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         stopCodonLabel.setText("Stop Codon:");
 
         dynamicORFLabel.setText("Dynamic ORF:");
-
-        DynamicORFColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DynamicORFColorComboBoxActionPerformed(evt);
-            }
-        });
 
         bgLabel.setText("Background: ");
 
@@ -280,38 +263,15 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(5, 5, 5))
         );
 
-        askBeforeExitCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                askBeforeExitCheckBoxActionPerformed(evt);
-            }
-        });
-
-        confirmBeforeDeleteCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confirmBeforeDeleteCheckBoxActionPerformed(evt);
-            }
-        });
-
         clear_prefsB.setText("Reset Preference to Defaults");
         clear_prefsB.setMaximumSize(new java.awt.Dimension(32767, 32767));
         clear_prefsB.setMinimumSize(new java.awt.Dimension(0, 0));
         clear_prefsB.setPreferredSize(new java.awt.Dimension(210, 29));
-        clear_prefsB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clear_prefsBActionPerformed(evt);
-            }
-        });
 
         edgeMatchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edge Match"));
         edgeMatchPanel.setPreferredSize(new java.awt.Dimension(510, 55));
 
         edgeMatchLabel.setText("Color:");
-
-        showEdgeMatchCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showEdgeMatchCheckBoxActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout edgeMatchPanelLayout = new org.jdesktop.layout.GroupLayout(edgeMatchPanel);
         edgeMatchPanel.setLayout(edgeMatchPanelLayout);
@@ -488,26 +448,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		else
 			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
 	}//GEN-LAST:event_displayOptionStateChanged
-
-	private void DynamicORFColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DynamicORFColorComboBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_DynamicORFColorComboBoxActionPerformed
-
-	private void confirmBeforeDeleteCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmBeforeDeleteCheckBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_confirmBeforeDeleteCheckBoxActionPerformed
-
-	private void askBeforeExitCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_askBeforeExitCheckBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_askBeforeExitCheckBoxActionPerformed
-
-	private void clear_prefsBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clear_prefsBActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_clear_prefsBActionPerformed
-
-	private void showEdgeMatchCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showEdgeMatchCheckBoxActionPerformed
-		ToggleEdgeMatchingAction.getAction().actionPerformed(evt);
-	}//GEN-LAST:event_showEdgeMatchCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;

@@ -208,9 +208,6 @@
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="DynamicORFColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DynamicORFColorComboBoxActionPerformed"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this)"/>
           </AuxValues>
@@ -355,17 +352,11 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JCheckBox" name="askBeforeExitCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="askBeforeExitCheckBoxActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Ask Before Exit&quot;, &#xa;    PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="confirmBeforeDeleteCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="confirmBeforeDeleteCheckBoxActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm Before Delete&quot;, &#xa;    PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)"/>
       </AuxValues>
@@ -383,9 +374,6 @@
           <Dimension value="[210, 29]"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clear_prefsBActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton(ClearPreferencesAction.getAction())"/>
       </AuxValues>
@@ -438,11 +426,8 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="showEdgeMatchCheckBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showEdgeMatchCheckBoxActionPerformed"/>
-          </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Edge Matching&quot;, PreferenceUtils.SHOW_EDGEMATCH_OPTION, IGB.getSingleton().getMapView().getEdgeMatching())"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Edge Matching&quot;, PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match)"/>
           </AuxValues>
         </Component>
       </SubComponents>

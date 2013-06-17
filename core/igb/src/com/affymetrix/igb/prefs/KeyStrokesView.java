@@ -36,8 +36,7 @@ import javax.swing.table.TableCellRenderer;
 /**
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
-public final class KeyStrokesView implements ListSelectionListener,
-		PreferenceChangeListener {
+public final class KeyStrokesView {
 
 	public final JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
@@ -50,19 +49,43 @@ public final class KeyStrokesView implements ListSelectionListener,
 	private final ListSelectionModel lsm;
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
-	private static KeyStrokesView singleton;
 	private int selected = -1;
 
-	public static synchronized KeyStrokesView getSingleton() {
-		if (singleton == null) {
-			singleton = new KeyStrokesView();
-			singleton.lsm.addListSelectionListener(singleton);
-			PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(singleton);
+	private ListSelectionListener listSelectionListener = new ListSelectionListener() {
+		/**
+		 * This is called when the user selects a row of the table.
+		 */
+		@Override
+		public void valueChanged(ListSelectionEvent evt) {
+			if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
+				int srow = table.getSelectedRow();
+				if (srow >= 0) {
+					String id = (String) table.getModel().getValueAt(srow, IdColumn);
+					editKeystroke(id);
+				} else {
+					edit_panel.setPreferenceKey(null, null, null, null);
+				}
+			}
 		}
-		return singleton;
-	}
 
-	private KeyStrokesView() {
+		private void editKeystroke(String id) {
+			edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
+		}
+	};
+	
+	private PreferenceChangeListener pcl = new PreferenceChangeListener() {
+		@Override
+		public void preferenceChange(PreferenceChangeEvent evt) {
+			if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
+				return;
+			}
+			// Each time a keystroke preference is changed, update the whole table.
+			// Inelegant, but it works. 
+			invokeRefreshTable();
+		}
+	};
+	
+	public KeyStrokesView() {
 		super();
 		lsm = table.getSelectionModel();
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -92,6 +115,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 		}
 
 		refresh();
+		lsm.addListSelectionListener(listSelectionListener);
+		PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(pcl);
 	}
 
 	private static String getSortField(GenericAction genericAction) {
@@ -261,36 +286,6 @@ public final class KeyStrokesView implements ListSelectionListener,
 			}
 		});
 
-	}
-
-	/**
-	 * This is called when the user selects a row of the table.
-	 */
-	@Override
-	public void valueChanged(ListSelectionEvent evt) {
-		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
-			int srow = table.getSelectedRow();
-			if (srow >= 0) {
-				String id = (String) table.getModel().getValueAt(srow, IdColumn);
-				editKeystroke(id);
-			} else {
-				edit_panel.setPreferenceKey(null, null, null, null);
-			}
-		}
-	}
-
-	private void editKeystroke(String id) {
-		edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
-	}
-
-	@Override
-	public void preferenceChange(PreferenceChangeEvent evt) {
-		if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
-			return;
-		}
-		// Each time a keystroke preference is changed, update the whole table.
-		// Inelegant, but it works. 
-		invokeRefreshTable();
 	}
 
 	class KeyStrokeViewTable extends JRPStyledTable {

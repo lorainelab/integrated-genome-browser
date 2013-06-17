@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * KeyStrokesViewGUI.java
  *
  * Created on Jan 19, 2012, 10:11:49 AM
@@ -16,19 +11,12 @@ package com.affymetrix.igb.prefs;
  */
 public class KeyStrokesViewGUI extends IPrefEditorComponent {
 	private static final long serialVersionUID = 1L;
-	private static KeyStrokesViewGUI singleton;
-	private static KeyStrokesView ksv;
-
-	public static synchronized KeyStrokesViewGUI getSingleton() {
-		if (singleton == null) {
-			return singleton = new KeyStrokesViewGUI();
-		}
-		return singleton;
-	}
+	
+	private KeyStrokesView ksv;
 
 	/** Creates new form KeyStrokesViewGUI */
-	private KeyStrokesViewGUI() {
-		ksv = KeyStrokesView.getSingleton();
+	public KeyStrokesViewGUI() {
+		ksv = new KeyStrokesView();
 		validate();
 		this.setName("Toolbar");
 		this.setToolTipText("Edit Locations");
@@ -82,15 +70,4 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
 		ksv.invokeRefreshTable();
 	}
 
-	private void setDefaultCloseOperation(int i) {
-		// do nothing
-	}
-
-	private void pack() {
-		//do nothing
-	}
-
-	private IPrefEditorComponent getContentPane() {
-		return this;
-	}
 }

@@ -76,7 +76,7 @@ public final class PreferencesPanel extends JPanel {
 
 		TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
 		TAB_TRACK_DEFAULT_VIEW = singleton.addPrefEditorComponent(new TrackDefaultsPanel());
-		TAB_KEY_STROKES_VIEW = singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
+		TAB_KEY_STROKES_VIEW = singleton.addPrefEditorComponent(new KeyStrokesViewGUI());
 		TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(new OtherOptionsView());
 		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());
 		TAB_DATALOAD_PREFS = singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());

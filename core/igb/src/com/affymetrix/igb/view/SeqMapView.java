@@ -96,8 +96,8 @@ public class SeqMapView extends JPanel
 	}
 
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
-	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
+	boolean show_edge_matches = PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
 	private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, true);
 	private MapMode mapMode;
 	private JRPToggleButton select_mode_button;
@@ -268,6 +268,9 @@ public class SeqMapView extends JPanel
 					setAxisFormatFromPrefs(ag);
 				}
 				seqmap.updateWidget();
+			} else if (pce.getKey().equals(PreferenceUtils.SHOW_EDGEMATCH_OPTION)) {
+				setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
+				getSeqMap().updateWidget();
 			} else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
 				if (show_edge_matches) {
 					doEdgeMatching(seqmap.getSelected(), true);
@@ -1637,17 +1640,13 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public final boolean getEdgeMatching() {
-		return show_edge_matches;
-	}
-
-	public final void setEdgeMatching(boolean b) {
+	protected final void setEdgeMatching(boolean b) {
 		show_edge_matches = b;
 		if (show_edge_matches) {
 			doEdgeMatching(seqmap.getSelected(), true);
 		} else {
 			doEdgeMatching(new ArrayList<GlyphI>(0), true);
-	}
+		}
 	}
 
 	public final void adjustEdgeMatching(int bases) {

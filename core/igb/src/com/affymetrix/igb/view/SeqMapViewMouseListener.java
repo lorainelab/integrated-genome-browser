@@ -4,8 +4,6 @@ import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
@@ -23,9 +21,6 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-import javax.swing.ToolTipManager;
 
 /**
  * A MouseListener for the SeqMapView.
@@ -44,7 +39,7 @@ import javax.swing.ToolTipManager;
  * it is not standard, but should be fine.
  */
 public final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener,
-		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener, PreferenceChangeListener {
+		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener {
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().
@@ -77,13 +72,10 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 //	private int toolTipDismissDelay;
 	private boolean shouldSubSelect = false;
 	public static String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
-	public static boolean show_tooltip = true;
 	
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
 		this.map = smv.seqmap;
-		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
-		show_tooltip = PreferenceUtils.getTopNode().getBoolean(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP, true);
 	}
 
 	@Override
@@ -707,12 +699,4 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		shouldSubSelect = false;
 	}
 
-	public void preferenceChange(PreferenceChangeEvent pce) {
-		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
-          return;
-        }
-		if (pce.getKey().equals(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP)) {
-			show_tooltip = PreferenceUtils.getTopNode().getBoolean(SeqMapViewMouseListener.PREF_SHOW_TOOLTIP, true);
-        }
-	}
 }

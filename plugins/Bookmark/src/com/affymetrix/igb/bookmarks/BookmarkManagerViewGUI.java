@@ -1,10 +1,9 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.igb.bookmarks.action.AddFolderAction;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
+import com.affymetrix.igb.bookmarks.action.AddFolderAction;
 import com.affymetrix.igb.bookmarks.action.AddSeparatorAction;
-import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.awt.Rectangle;
@@ -408,7 +407,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
 	private void removeBookmarkActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBookmarkActionButtonActionPerformed
 		bmv.delete_action.actionPerformed(evt);
-		BookmarkActionManager.getInstance().rebuildMenus();
 	}//GEN-LAST:event_removeBookmarkActionButtonActionPerformed
 
 	private void addSeparatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSeparatorActionPerformed

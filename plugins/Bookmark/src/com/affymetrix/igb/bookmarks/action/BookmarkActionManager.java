@@ -308,10 +308,6 @@ public final class BookmarkActionManager implements ActionListener {
 		return main_bookmark_list;
 	}
 
-	public Map<Object, Component> getComponentHash() {
-		return component_hash;
-	}
-
 	public SeqSpan getVisibleSpan() {
 		return igbService.getSeqMapView().getVisibleSpan();
 	}

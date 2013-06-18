@@ -105,11 +105,16 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree.addTreeSelectionListener(this);
 	}
 
-	public boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {
-		if (tree_path == null) {
-			return false;
+	public void insert(DefaultMutableTreeNode node) {
+		if (tree.getSelectionCount() < 0) {
+			tree.setSelectionRow(0);
 		}
-
+		
+		TreePath tree_path = tree.getSelectionModel().getSelectionPath();
+		if (tree_path == null) {
+			return;
+		}
+		
 		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
 
 		if (tree_node == null) {
@@ -126,20 +131,15 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		int index = parent.getChildCount();
 
-		// Copy or move each source object to the target
-		for (int i = nodes.length - 1; i >= 0; i--) {
-			DefaultMutableTreeNode node = nodes[i];
-			try {
-				((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, index);
-				TreePath path = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(node));
-
-				tree.setSelectionPath(path);
-			} catch (IllegalStateException e) {
-				// Cancelled by user
-				return false;
-			}
+		try {
+			((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, index);
+			TreePath path = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(node));
+			tree.setSelectionPath(path);
+			
+			BookmarkActionManager.getInstance().rebuildMenus();
+		} catch (IllegalStateException e) {
+			// Cancelled by user
 		}
-		return true;
 	}
 
 	public void setBList(BookmarkList blist) {

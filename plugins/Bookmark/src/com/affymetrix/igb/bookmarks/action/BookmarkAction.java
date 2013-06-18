@@ -47,15 +47,6 @@ public abstract class BookmarkAction extends GenericAction {
 	 * @param node (bookmark, folder or separator)
 	 */
 	public static void addNode(DefaultMutableTreeNode node) {
-		JTree tree = BookmarkManagerView.getSingleton().tree;
-		TreePath path;
-		if (tree.getSelectionCount() > 0) {
-			path = tree.getSelectionModel().getSelectionPath();
-		} else {
-			tree.setSelectionRow(0);
-			path = tree.getSelectionModel().getSelectionPath();
-		}
-		BookmarkManagerView.getSingleton().insert(tree, path, new DefaultMutableTreeNode[]{node});
-		BookmarkActionManager.getInstance().rebuildMenus();
+		BookmarkManagerView.getSingleton().insert(node);
 	}
 }

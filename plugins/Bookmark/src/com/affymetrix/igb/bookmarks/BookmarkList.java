@@ -106,22 +106,15 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 	public String getName() {
 		return this.toString();
 	}
-
-	@Override
-	public String toString() {
-		Object o = getUserObject();
-		if (o instanceof String) {
-			return ((String) o);
-		} else if (o instanceof Bookmark) {
-			return ((Bookmark) o).getName();
-		} else if (o instanceof Separator) {
-			return "-----";
-		} else {
-			assert false; // should not get here
-			return "" + o; // but if you do....
-		}
+	
+	public String getComment() {
+		return COMMENT;
 	}
 
+	public void setComment(String comment) {
+		COMMENT = comment;
+	}
+	
 	/** Finds a sublist with the given name.
 	 *  @param create if true, will create the sublist if it doesn't exist.
 	 */
@@ -186,11 +179,32 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			}
 		}
 	}
-
+	
+	/** Returns true only if the two objects are the same identical object. */
+	@Override
+	public boolean equals(Object o) {
+		return (this == o);
+	}
+	
+	@Override
+	public String toString() {
+		Object o = getUserObject();
+		if (o instanceof String) {
+			return ((String) o);
+		} else if (o instanceof Bookmark) {
+			return ((Bookmark) o).getName();
+		} else if (o instanceof Separator) {
+			return "-----";
+		} else {
+			assert false; // should not get here
+			return "" + o; // but if you do....
+		}
+	}
+		
 	/** Exports the BookmarkList in the Netscape/Mozilla/Firebird bookmark list
 	 *  format.  Microsoft IE can also read this format.
 	 */
-	 public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
+	public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
@@ -237,6 +251,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			}
 		}
 	}
+
 	// Used by exportAsNetscapeHTML
 	private static void exportAsTEXT_recursive(BookmarkList list, Writer bw, String indent, boolean isSelectedNode) throws IOException {
 		// Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
@@ -320,18 +335,5 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 
 	private static String formatComment(String comment) {
 		return comment.replaceAll("\n", "&newLine");
-	}
-
-	/** Returns true only if the two objects are the same identical object. */
-	public boolean equals(Object o) {
-		return (this == o);
-	}
-
-	public String getComment() {
-		return COMMENT;
-	}
-
-	public void setComment(String comment) {
-		COMMENT = comment;
 	}
 }

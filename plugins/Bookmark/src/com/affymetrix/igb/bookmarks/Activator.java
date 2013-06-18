@@ -91,7 +91,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 			null
 		);
 		BookmarkManagerViewGUI.init(igbService);
-		bmark_action.setBmv(BookmarkManagerViewGUI.getSingleton());
+		BookmarkManagerViewGUI.getSingleton().getBookmarkManagerView().setBList(bmark_action.getMainBookmarkList());
 		return BookmarkManagerViewGUI.getSingleton();
 	}
 

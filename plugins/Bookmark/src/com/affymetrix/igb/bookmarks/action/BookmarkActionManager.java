@@ -42,7 +42,6 @@ public final class BookmarkActionManager implements ActionListener {
 	private final Map<Object, Component> component_hash = new HashMap<Object, Component>();
 	private final JRPMenu main_bm_menu;
 	private BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
-	private BookmarkManagerViewGUI bmvGUI = null;
 	private IGBService igbService;
 	private static BookmarkActionManager instance;
 	private static final Logger ourLogger
@@ -97,11 +96,6 @@ public final class BookmarkActionManager implements ActionListener {
 		addDefaultBookmarks();
 		buildMenus(main_bm_menu, main_bookmark_list);
 		bookmark_menu.addMenuListener(menuListener);
-	}
-
-	public void setBmv(BookmarkManagerViewGUI bmvGUI) {
-		this.bmvGUI = bmvGUI;
-		bmvGUI.getBookmarkManagerView().setBList(main_bookmark_list);
 	}
 
 	public static File getBookmarksFile() {
@@ -312,10 +306,6 @@ public final class BookmarkActionManager implements ActionListener {
 
 	public BookmarkList getMainBookmarkList() {
 		return main_bookmark_list;
-	}
-
-	public BookmarkManagerViewGUI getBookmarkManagerViewGUI() {
-		return bmvGUI;
 	}
 
 	public Map<Object, Component> getComponentHash() {

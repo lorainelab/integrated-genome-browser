@@ -529,8 +529,9 @@ public abstract class PreferenceUtils {
 	 * preference and will update itself, via a PreferenceChangeListener,
 	 * if the preference value changes.
 	 */
-	public static JRadioButton createRadioButton(String title, final String action_command, 
-			final Preferences node, final String pref_name, final String default_val) {
+	public static JRadioButton createRadioButton(String title, 
+			final String action_command, final String pref_name, final String default_val) {
+		final Preferences node = PreferenceUtils.getTopNode();
 		final JRadioButton radio_button = new JRadioButton(title);
 		radio_button.addActionListener(new ActionListener() {
 			

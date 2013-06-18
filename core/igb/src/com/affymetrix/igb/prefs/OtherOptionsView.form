@@ -490,7 +490,7 @@
             <Property name="text" type="java.lang.String" value="Hide"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Hide&quot;, &quot;0&quot;, PreferenceUtils.getTopNode(),&#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Hide&quot;, &quot;0&quot;, &#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="oneLetterButton">
@@ -501,7 +501,7 @@
             <Property name="text" type="java.lang.String" value="One Letter"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;One Letter&quot;, &quot;1&quot;, PreferenceUtils.getTopNode(),&#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;One Letter&quot;, &quot;1&quot;, &#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="threeLetterButton">
@@ -512,7 +512,7 @@
             <Property name="text" type="java.lang.String" value="Three Letter"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Three Letter&quot;, &quot;3&quot;, PreferenceUtils.getTopNode(),&#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Three Letter&quot;, &quot;3&quot;, &#xa;    CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size))"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -558,7 +558,7 @@
             <Property name="text" type="java.lang.String" value="Adjust All Tracks"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust All Tracks&quot;, AccordionTierResizer.class.getSimpleName(), &#xa;        PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust All Tracks&quot;, AccordionTierResizer.class.getSimpleName(),&#xa;    SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="jRadioButton2">
@@ -569,7 +569,7 @@
             <Property name="text" type="java.lang.String" value="Adjust Adjacent Tracks"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust Adjacent Tracks&quot;, TierResizer.class.getSimpleName(), &#xa;        PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust Adjacent Tracks&quot;, TierResizer.class.getSimpleName(),&#xa;    SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
           </AuxValues>
         </Component>
       </SubComponents>

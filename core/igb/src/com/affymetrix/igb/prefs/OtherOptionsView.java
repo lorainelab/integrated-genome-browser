@@ -80,17 +80,17 @@ public class OtherOptionsView extends IPrefEditorComponent {
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar",
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
         jPanel1 = new javax.swing.JPanel();
-        hideButton = PreferenceUtils.createRadioButton("Hide", "0", PreferenceUtils.getTopNode(),
+        hideButton = PreferenceUtils.createRadioButton("Hide", "0",
             CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
-        oneLetterButton = PreferenceUtils.createRadioButton("One Letter", "1", PreferenceUtils.getTopNode(),
+        oneLetterButton = PreferenceUtils.createRadioButton("One Letter", "1",
             CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
-        threeLetterButton = PreferenceUtils.createRadioButton("Three Letter", "3", PreferenceUtils.getTopNode(),
+        threeLetterButton = PreferenceUtils.createRadioButton("Three Letter", "3",
             CodonGlyph.CODON_GLYPH_CODE_SIZE, String.valueOf(CodonGlyph.default_codon_glyph_code_size));
         jPanel2 = new javax.swing.JPanel();
         jRadioButton1 = PreferenceUtils.createRadioButton("Adjust All Tracks", AccordionTierResizer.class.getSimpleName(),
-            PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
+            SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
         jRadioButton2 = PreferenceUtils.createRadioButton("Adjust Adjacent Tracks", TierResizer.class.getSimpleName(),
-            PreferenceUtils.getTopNode(), SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
+            SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
 
         setPreferredSize(new java.awt.Dimension(545, 540));
 

@@ -12,7 +12,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
-import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -415,7 +414,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	private Color checkFG(TrackStyle style, TrackStyle temp) {
 		Color value = style.getForeground();
-		if (!value.equals(temp.getForeground())) {
+		if (!value.equals(temp.getForeground()) || style.getColorByRGB()) {
 			return null;
 		}
 
@@ -513,7 +512,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		displayNameTextField.setText(style.getTrackName());
 		bgColorComboBox.setSelectedColor(style.getBackground());
-		fgColorComboBox.setSelectedColor(style.getForeground());
+		fgColorComboBox.setSelectedColor(!style.getColorByRGB() ? style.getForeground() : null);
 		labelColorComboBox.setSelectedColor(style.getLabelForeground());
 		trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
 		labelFieldComboBox.setSelectedItem(style.getLabelField());
@@ -764,6 +763,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			style = tier_styles.get(row);
 			switch (column) {
 				case COL_FOREGROUND:
+					if(style.getColorByRGB()){
+						return null;
+					}
 					return style.getForeground();
 				case COL_BACKGROUND:
 					return style.getBackground();

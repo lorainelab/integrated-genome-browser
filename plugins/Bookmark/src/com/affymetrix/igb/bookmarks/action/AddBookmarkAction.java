@@ -55,8 +55,7 @@ public class AddBookmarkAction extends BookmarkAction {
 	protected void bookmarkCurrentPosition() {
 		Bookmark bookmark = getCurrentPosition(false);
 		if (bookmark != null) {
-			BookmarkEditor.init(bookmark);
-			BookmarkEditor.run();
+			BookmarkEditor.run(bookmark);
 		}
 	}
 }

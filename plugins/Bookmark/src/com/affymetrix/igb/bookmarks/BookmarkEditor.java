@@ -16,68 +16,64 @@ import javax.swing.*;
 public class BookmarkEditor {
 
 	private static BookmarkEditor singleton;
-	private static Bookmark bookmark;
-	private static JTextField nameField;
-	private static JTextArea commentField;
-	private static JRadioButton positionOnlyB;
-	private static JRadioButton positionDataB;
-	private static JCheckBox useDefaultName;
-	private static ButtonGroup group;
-	private static JOptionPane op;
-	private static JScrollPane scrollpane;
-	private static JDialog dialog;
-	public static final boolean defaultUseDefaultName = true;
-	public static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
+	private Bookmark bookmark;
+	private JTextField nameField;
+	private JTextArea commentField;
+	private JRadioButton positionOnlyB;
+	private JRadioButton positionDataB;
+	private JCheckBox useDefaultName;
+	private JOptionPane op;
 	
-	/**
-	 * Initialize all the components in the panel by passed bookmark.
-	 *
-	 * @param b
-	 */
-	public static void init(Bookmark b) {
-		bookmark = b;
-
+	private static final boolean defaultUseDefaultName = true;
+	private static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
+	
+	private BookmarkEditor() {
+		nameField = new JTextField(40);
+		commentField = new JTextArea(5, 8);
+		commentField.setLineWrap(true);
+		commentField.setWrapStyleWord(true);
+		positionOnlyB = new JRadioButton("Position Only");
+		positionDataB = new JRadioButton("Position and Data", true);
+		useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME,
+				PREF_USE_DEFAULT_NAME, defaultUseDefaultName);
+		useDefaultName.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				setNameField();
+			}
+		});
+		ButtonGroup group = new ButtonGroup();
+		group.add(positionOnlyB);
+		group.add(positionDataB);
+		JScrollPane scrollpane = new JScrollPane(commentField);
+		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE,
+				JOptionPane.CANCEL_OPTION, null, null);
+		op.addPropertyChangeListener("value", new java.beans.PropertyChangeListener() {
+			public void propertyChange(java.beans.PropertyChangeEvent evt) {
+				addBookmark();
+			}
+		});
+		op.setMessage(new Object[]{"", useDefaultName, "Name:", nameField,
+					"Comment:", scrollpane, positionOnlyB, positionDataB});
+	}
+	
+	private static BookmarkEditor getInstance() {
 		if (singleton == null) {
 			singleton = new BookmarkEditor();
-			nameField = new JTextField(40);
-			commentField = new JTextArea(5, 8);
-			commentField.setLineWrap(true);
-			commentField.setWrapStyleWord(true);
-			positionOnlyB = new JRadioButton("Position Only");
-			positionDataB = new JRadioButton("Position and Data", true);
-			useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME,
-					PREF_USE_DEFAULT_NAME, defaultUseDefaultName);
-			useDefaultName.addActionListener(new java.awt.event.ActionListener() {
-
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					setNameField();
-				}
-			});
-			group = new ButtonGroup();
-			group.add(positionOnlyB);
-			group.add(positionDataB);
-			scrollpane = new JScrollPane(commentField);
-			scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE,
-					JOptionPane.CANCEL_OPTION, null, null);
-			op.addPropertyChangeListener("value", new java.beans.PropertyChangeListener() {
-				public void propertyChange(java.beans.PropertyChangeEvent evt) {
-					addBookmark();
-				}
-			});
+			
 		}
+		
+		return singleton;
 	}
 
 	/**
 	 * Used JDialog as display panel and initialized it.
 	 */
-	private static void initDialog() {
+	private void initDialog(Bookmark b) {
+		bookmark = b;
 		setNameField();
 		commentField.setText("");
-		op.setMessage(new Object[]{"", useDefaultName,
-					"Name:", nameField, "Comment:", scrollpane,
-					positionOnlyB, positionDataB});
-		dialog = op.createDialog("Enter Bookmark Information...");
+		JDialog dialog = op.createDialog("Enter Bookmark Information...");
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.setResizable(true);
 		dialog.setAlwaysOnTop(false);
@@ -86,7 +82,7 @@ public class BookmarkEditor {
 		dialog.pack();
 	}
 
-	private static void setNameField() {
+	private void setNameField() {
 		if (useDefaultName.isSelected()) {
 			nameField.setText(bookmark.getName());
 		} else {
@@ -94,14 +90,7 @@ public class BookmarkEditor {
 		}
 	}
 
-	/**
-	 * Activate the panel and complete adding a bookmark by user's operation.
-	 */
-	public static void run() {
-		initDialog();
-	}
-	
-	private static void addBookmark() {
+	private void addBookmark() {
 		int result = JOptionPane.CANCEL_OPTION;
 
 		if (op.getValue() != null && op.getValue() instanceof Integer) {
@@ -132,5 +121,12 @@ public class BookmarkEditor {
 			bookmark.setComment(comment);
 			AddBookmarkAction.getAction().addBookmark(bookmark);
 		}
+	}
+	
+	/**
+	 * Activate the panel and complete adding a bookmark by user's operation.
+	 */
+	public static void run(Bookmark b) {
+		getInstance().initDialog(b);
 	}
 }

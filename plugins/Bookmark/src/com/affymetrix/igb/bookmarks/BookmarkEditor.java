@@ -130,7 +130,7 @@ public class BookmarkEditor {
 
 			bookmark.setName(name);
 			bookmark.setComment(comment);
-			AddBookmarkAction.addBookmark(bookmark);
+			AddBookmarkAction.getAction().addBookmark(bookmark);
 		}
 	}
 }

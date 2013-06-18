@@ -32,16 +32,6 @@ public class AddSeparatorAction extends BookmarkAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		addSeparator();
-	}
-	
-	/**
-	 * add a separator to bookmark tree.
-	 */
-	public static void addSeparator() {
-		Separator s = new Separator();
-		BookmarkList bl = new BookmarkList(s);
-		DefaultMutableTreeNode node = bl;
-		addNode(node);
+		addNode(new BookmarkList(new Separator()));
 	}
 }

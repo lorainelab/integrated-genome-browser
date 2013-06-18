@@ -44,7 +44,7 @@ public abstract class BookmarkAction extends GenericAction {
 	 *
 	 * @param node (bookmark, folder or separator)
 	 */
-	public static void addNode(DefaultMutableTreeNode node) {
+	protected void addNode(DefaultMutableTreeNode node) {
 		BookmarkManagerView.getSingleton().insert(node);
 	}
 }

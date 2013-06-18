@@ -33,15 +33,6 @@ public class AddFolderAction extends BookmarkAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		addBookmarkFolder();
-	}
-	
-	/**
-	 * add a folder to bookmark tree.
-	 */
-	public static void addBookmarkFolder() {
-		BookmarkList bl = new BookmarkList("Folder");
-		DefaultMutableTreeNode node = bl;
-		addNode(node);
+		addNode(new BookmarkList("Folder"));
 	}
 }

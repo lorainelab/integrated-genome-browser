@@ -40,7 +40,7 @@ public class AddBookmarkAction extends BookmarkAction {
 	 *
 	 * @param bm
 	 */
-	public static void addBookmark(Bookmark bm) {
+	public void addBookmark(Bookmark bm) {
 		BookmarkList parent_list = BookmarkManagerView.getSingleton().thing.selected_bl;
 		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
 

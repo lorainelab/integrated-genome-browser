@@ -216,7 +216,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			try {
 				File fil = chooser.getSelectedFile();
 				BookmarksParser.parse(bookmark_list, fil);
-				BookmarkAction.addNode(bookmark_list);
+				insert(bookmark_list);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Error importing bookmarks", ex, Level.SEVERE);
 			}

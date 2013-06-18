@@ -27,13 +27,18 @@ public class BookmarkEditor {
 	private static final boolean defaultUseDefaultName = true;
 	private static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
 	
+	private static final String default_bookmark_type = "Position and Data";
+	private static final String PREF_BOOKMARK_TYPE = "Bookmark type";
+	
 	private BookmarkEditor() {
 		nameField = new JTextField(40);
 		commentField = new JTextArea(5, 8);
 		commentField.setLineWrap(true);
 		commentField.setWrapStyleWord(true);
-		positionOnlyB = new JRadioButton("Position Only");
-		positionDataB = new JRadioButton("Position and Data", true);
+		positionOnlyB = PreferenceUtils.createRadioButton("Position Only", 
+				"Position Only", PREF_BOOKMARK_TYPE, default_bookmark_type);
+		positionDataB = PreferenceUtils.createRadioButton("Position and Data", 
+				"Position and Data", PREF_BOOKMARK_TYPE, default_bookmark_type);
 		useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME,
 				PREF_USE_DEFAULT_NAME, defaultUseDefaultName);
 		useDefaultName.addActionListener(new java.awt.event.ActionListener() {

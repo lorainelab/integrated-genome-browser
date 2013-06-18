@@ -106,7 +106,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	public void insert(DefaultMutableTreeNode node) {
-		if (tree.getSelectionCount() < 0) {
+		if (tree.getSelectionCount() <= 0) {
 			tree.setSelectionRow(0);
 		}
 		

@@ -118,7 +118,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
 
 		if (tree_node == null) {
-			return false;
+			return;
 		}
 
 		DefaultMutableTreeNode parent;

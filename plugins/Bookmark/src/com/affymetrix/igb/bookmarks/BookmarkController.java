@@ -18,14 +18,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
@@ -46,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.awt.Color;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -58,6 +57,9 @@ import java.util.logging.Level;
  */
 public abstract class BookmarkController {
 
+	public static final String DEFAULT_BOOKMARK_NAME_FORMAT =  "{0}, {1} : {2} - {3}" ;
+	public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	
 	/** Causes a bookmark to be executed.  If this is a Unibrow bookmark,
 	 *  it will be opened in the viewer using
 	 *  {@link BookmarkUnibrowControlServlet.getInstance()#goToBookmark}.  If it is an external
@@ -392,14 +394,14 @@ public abstract class BookmarkController {
 	 * @param sym The symmetry to generate the bookmark properties from
 	 * @return a map of bookmark properties
 	 */
-	private static Map<String, String[]> constructBookmarkProperties(SeqSymmetry sym) {
+	private static Map<String, Object> constructBookmarkProperties(SeqSymmetry sym) {
 		SeqSpan span = sym.getSpan(0);
 		BioSeq seq = span.getBioSeq();
-		Map<String, String[]> props = new LinkedHashMap<String, String[]>();
-		props.put(Bookmark.SEQID, new String[]{seq.getID()});
-		props.put(Bookmark.VERSION, new String[]{seq.getVersion()});
-		props.put(Bookmark.START, new String[]{Integer.toString(span.getMin())});
-		props.put(Bookmark.END, new String[]{Integer.toString(span.getMax())});
+		Map<String, Object> props = new LinkedHashMap<String, Object>();
+		props.put(Bookmark.SEQID, seq.getID());
+		props.put(Bookmark.VERSION, seq.getVersion());
+		props.put(Bookmark.START, Integer.toString(span.getMin()));
+		props.put(Bookmark.END, Integer.toString(span.getMax()));
 		return props;
 	}
 
@@ -414,7 +416,7 @@ public abstract class BookmarkController {
 	 * @throws MalformedURLException if the URL specifies an unknown protocol
 	 */
 	public static Bookmark makeBookmark(SeqSymmetry sym, String name) throws MalformedURLException {
-		Map<String, String[]> props = constructBookmarkProperties(sym);
+		Map<String, Object> props = constructBookmarkProperties(sym);
 		String url = Bookmark.constructURL(props);
 		return new Bookmark(name, "", url);
 	}
@@ -446,48 +448,36 @@ public abstract class BookmarkController {
 
 	public static Bookmark getCurrentBookmark(boolean include_sym_and_props, SeqSpan span)
 			throws MalformedURLException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		BioSeq aseq = gmodel.getSelectedSeq();
+		BioSeq aseq = span.getBioSeq();
 		if (aseq == null) {
 			return null;
 		}
 
-		SeqSpan mark_span = new SimpleSeqSpan(span.getStart(), span.getEnd(), aseq);
-
-		SimpleSymWithProps mark_sym = new BookmarkSymmetry();
-		mark_sym.addSpan(mark_span);
-
-		String version = "unknown";
-		version = aseq.getVersion();
+		String version = aseq.getVersion();
+		Date date = new Date();
 		
-		String default_name =
-				version + ", " + aseq.getID() + ":" + mark_span.getMin()
-				+ ", " + mark_span.getMax();
+		SimpleSymWithProps mark_sym = new BookmarkSymmetry();
+		mark_sym.addSpan(span);
+
+		String default_name = MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, version, aseq.getID(), span.getMin(), span.getMax());
 		mark_sym.setProperty(Bookmark.VERSION, version);
 		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
-		mark_sym.setProperty(Bookmark.START, Integer.valueOf(mark_span.getMin()));
-		mark_sym.setProperty(Bookmark.END, Integer.valueOf(mark_span.getMax()));
-		mark_sym.setProperty(Bookmark.LOADRESIDUES, new String[]{Boolean.toString(aseq.isComplete())});
-
+		mark_sym.setProperty(Bookmark.START, Integer.valueOf(span.getMin()));
+		mark_sym.setProperty(Bookmark.END, Integer.valueOf(span.getMax()));
+		mark_sym.setProperty(Bookmark.LOADRESIDUES, Boolean.toString(aseq.isComplete()));
+//		props.put(Bookmark.USER, new String[]{System.getProperty("user.name")});
+		mark_sym.setProperty(Bookmark.CREATE, DATE_FORMAT.format(date));
+		mark_sym.setProperty(Bookmark.MODIFIED, DATE_FORMAT.format(date));
+		
 		Bookmarks bookmarks = new Bookmarks();
 
 		if (include_sym_and_props) {
 			BookmarkController.addSymmetries(bookmarks);
 			BookmarkController.addProperties(mark_sym);
 		}
-
 		bookmarks.set(mark_sym);
-		Map<?, ?> temp = mark_sym.getProperties();
 		
-		@SuppressWarnings("unchecked")
-		Map<String, String[]> props = (Map<String, String[]>)temp;		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-//		props.put(Bookmark.USER, new String[]{System.getProperty("user.name")});
-		props.put(Bookmark.CREATE, new String[]{dateFormat.format(date)});
-		props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
-		
-		String url = Bookmark.constructURL(props);
+		String url = Bookmark.constructURL(mark_sym.getProperties());
 		return new Bookmark(default_name, "", url);
 	}
 

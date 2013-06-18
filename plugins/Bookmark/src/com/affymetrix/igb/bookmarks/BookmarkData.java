@@ -59,9 +59,7 @@ public final class BookmarkData {
 
 					// record the modified time
 					Map<String, String[]> props = propertyModel.getValuesAsMap();
-					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-					Date date = new Date();
-					props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
+					props.put(Bookmark.MODIFIED, new String[]{BookmarkController.DATE_FORMAT.format(new Date())});
 
 					String str = Bookmark.constructURL(url_base, props);
 					try {

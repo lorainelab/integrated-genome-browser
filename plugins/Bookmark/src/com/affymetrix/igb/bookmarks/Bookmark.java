@@ -224,7 +224,7 @@ public final class Bookmark implements Serializable {
 	 *  (For String[] objects, each String gets appended individually as a
 	 *  key=value pair, with the same key name.)
 	 */
-	public static String constructURL(Map<String, String[]> props) {
+	public static String constructURL(Map<String, Object> props) {
 		return constructURL(SimpleBookmarkServer.DEFAULT_SERVLET_URL, props);
 	}
 
@@ -237,7 +237,7 @@ public final class Bookmark implements Serializable {
 	 *  @param url_base The beginning part of a url, like "http://www.xxx.com"
 	 *    or even "http://www.xxx.com?x=1&y=2".
 	 */
-	public static String constructURL(String url_base, Map<String, String[]> props) {
+	public static String constructURL(String url_base, Map<String, ?> props) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(url_base);
 
@@ -245,7 +245,7 @@ public final class Bookmark implements Serializable {
 		// but *not* if the url_base already contains a '?' character.
 		boolean first_tag = (url_base.indexOf('?') < 0);
 
-		for (java.util.Map.Entry<String, String[]> entry : props.entrySet()) {
+		for (java.util.Map.Entry<String, ?> entry : props.entrySet()) {
 			// for all properties, add as tag-val parameter pair in URL
 			String tag = entry.getKey();
 			Object val = entry.getValue();

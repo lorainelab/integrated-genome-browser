@@ -125,7 +125,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 				parent_dir.mkdirs();
 			}
 			ourLogger.log(Level.INFO, "Saving bookmarks to file {0}", filename);
-			BookmarkList.exportAsHTML(main_bookmark_list, f, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+			BookmarkList.exportAsHTML(main_bookmark_list, f);
 		}
 	}
 	

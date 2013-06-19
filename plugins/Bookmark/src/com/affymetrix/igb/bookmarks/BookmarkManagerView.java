@@ -766,9 +766,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		@Override
 		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
-			BookmarkList.exportAsHTML(main_bookmark_list, fil,
-					CommonUtils.getInstance().getAppName(),
-					CommonUtils.getInstance().getAppVersion());
+			BookmarkList.exportAsHTML(main_bookmark_list, fil);
 		}
 	}
 
@@ -780,9 +778,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		@Override
 		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
-			BookmarkList.exportAsTEXT(main_bookmark_list, fil,
-					CommonUtils.getInstance().getAppName(),
-					CommonUtils.getInstance().getAppVersion());
+			BookmarkList.exportAsTEXT(main_bookmark_list, fil);
 		}
 	}
 }

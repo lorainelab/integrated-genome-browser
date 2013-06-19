@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.common.CommonUtils;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -200,11 +201,14 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			return "" + o; // but if you do....
 		}
 	}
-		
+	
 	/** Exports the BookmarkList in the Netscape/Mozilla/Firebird bookmark list
 	 *  format.  Microsoft IE can also read this format.
 	 */
-	public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
+	public static void exportAsHTML(BookmarkList list, File fil) throws IOException {
+		String appName = CommonUtils.getInstance().getAppName();
+		String appVersion = CommonUtils.getInstance().getAppVersion();
+		
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
@@ -232,7 +236,11 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			}
 		}
 	}
-	public static void exportAsTEXT(BookmarkList list, File fil, String appName, String appVersion) throws IOException{
+	
+	public static void exportAsTEXT(BookmarkList list, File fil) throws IOException{
+		String appName = CommonUtils.getInstance().getAppName();
+		String appVersion = CommonUtils.getInstance().getAppVersion();
+		
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {

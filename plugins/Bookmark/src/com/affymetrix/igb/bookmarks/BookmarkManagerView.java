@@ -9,11 +9,11 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
@@ -35,7 +35,7 @@ import javax.swing.undo.UndoManager;
 /**
  * A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
-public final class BookmarkManagerView implements TreeSelectionListener {
+public final class BookmarkManagerView {
 
 	private static JFileChooser static_chooser = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
@@ -60,7 +60,35 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private static BookmarkManagerView singleton;
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
 	private boolean doNotShowWarning = false;
+	
+	private KeyAdapter kl = new KeyAdapter() {
+		
+		@Override
+		public void keyReleased(KeyEvent ke) {
+			if (ke.getKeyChar() == KeyEvent.VK_DELETE) {
+				deleteAction();
+			}
+		}
+	};
+	
+	private TreeSelectionListener tsl = new TreeSelectionListener() {
+		
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			if (e.getSource() != tree) {
+				return;
+			}
 
+			if (tree.getSelectionCount() > 0) {
+				if (tree.isRowSelected(0)) {
+					deleteBookmarkButton.setEnabled(false);
+				} else {
+					deleteBookmarkButton.setEnabled(true);
+				}
+			}
+		}
+	};
+	
 	public static void init(IGBService _igbService) {
 		if (singleton == null) {
 			singleton = new BookmarkManagerView(_igbService);
@@ -74,9 +102,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	/**
 	 * Creates a new instance of Class
 	 */
-	public BookmarkManagerView(IGBService igbService) {
+	private BookmarkManagerView(IGBService igbService) {
 
-		tree = new BookmarkTree(this);
+		tree = new DragDropTree();
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 
@@ -101,7 +129,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		initPopupMenu();
 
-		tree.addTreeSelectionListener(this);
+		tree.addKeyListener(kl);
+		tree.addTreeSelectionListener(tsl);
 	}
 
 	public void insert(DefaultMutableTreeNode node) {
@@ -143,20 +172,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree_model.setRoot(blist);
 		tree.setSelectionRow(0);
 		tree.clearSelection();
-	}
-
-	public void valueChanged(TreeSelectionEvent e) {
-		if (e.getSource() != tree) {
-			return;
-		}
-
-		if (tree.getSelectionCount() > 0) {
-			if (tree.isRowSelected(0)) {
-				deleteBookmarkButton.setEnabled(false);
-			} else {
-				deleteBookmarkButton.setEnabled(true);
-			}
-		}
 	}
 
 	private void initPopupMenu() {
@@ -293,7 +308,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		return a;
 	}
 
-	public void deleteAction() {
+	private void deleteAction() {
 		TreePath[] selectionPaths = tree.getSelectionPaths();
 		if (selectionPaths == null) {
 			return;
@@ -328,7 +343,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 	}
 
-	public TreePath getPath(TreeNode treeNode) {
+	private static TreePath getPath(TreeNode treeNode) {
 		List<Object> nodes = new ArrayList<Object>();
 		if (treeNode != null) {
 			nodes.add(treeNode);
@@ -345,7 +360,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		addBookmarkToHistory(getPath(bl));
 	}
 
-	public void addBookmarkToHistory(TreePath tp) {
+	private void addBookmarkToHistory(TreePath tp) {
 		if (tp == null) {
 			return;
 		}
@@ -365,7 +380,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 	}
 
-	public void removeBookmarkFromHistory(TreePath tp) {
+	private void removeBookmarkFromHistory(TreePath tp) {
 		if (tp == null) {
 			return;
 		}
@@ -380,11 +395,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 	}
 
-	public File getLoadDirectory() {
+	private File getLoadDirectory() {
 		return FileTracker.DATA_DIR_TRACKER.getFile();
 	}
 
-	public void setLoadDirectory(File file) {
+	private void setLoadDirectory(File file) {
 		FileTracker.DATA_DIR_TRACKER.setFile(file);
 	}
 
@@ -470,7 +485,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 	public void destroy() {
 //    this.setApplication(null);
-		tree.removeTreeSelectionListener(this);
+		tree.removeTreeSelectionListener(tsl);
 		thing = null;
 		tree = null;
 	}

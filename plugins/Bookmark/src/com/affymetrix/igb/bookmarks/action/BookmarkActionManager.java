@@ -38,7 +38,6 @@ import javax.swing.event.MenuListener;
 public final class BookmarkActionManager implements ActionListener {
 
 	private final static boolean DEBUG = false;
-	private final JRPMenu bookmark_menu;
 	private final Map<Object, Component> component_hash = new HashMap<Object, Component>();
 	private final JRPMenu main_bm_menu;
 	private BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
@@ -68,7 +67,7 @@ public final class BookmarkActionManager implements ActionListener {
 		 */
 		@Override
 		public void menuSelected(javax.swing.event.MenuEvent e) {
-			if (e.getSource() == bookmark_menu) {
+			if (e.getSource() == main_bm_menu) {
 				rebuildMenus();
 			}
 		}
@@ -83,19 +82,12 @@ public final class BookmarkActionManager implements ActionListener {
 
 	public BookmarkActionManager(IGBService _igbService, JRPMenu bm_menu) {
 		igbService = _igbService;
-		bookmark_menu = bm_menu;
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_pos", AddBookmarkAction.getAction()));
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_import", ImportBookmarkAction.getAction()));
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_export", ExportBookmarkAction.getAction()));
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_clipboard", CopyBookmarkToClipboardAction.getAction()));
-		bm_menu.addSeparator();
-
 		main_bm_menu = bm_menu;
 		component_hash.put(main_bookmark_list, main_bm_menu);
 
 		addDefaultBookmarks();
 		buildMenus(main_bm_menu, main_bookmark_list);
-		bookmark_menu.addMenuListener(menuListener);
+		main_bm_menu.addMenuListener(menuListener);
 	}
 
 	public static File getBookmarksFile() {

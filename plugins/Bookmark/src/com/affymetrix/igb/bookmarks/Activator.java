@@ -14,9 +14,14 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
+import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
+import com.affymetrix.igb.bookmarks.action.ExportBookmarkAction;
+import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.LoadSessionAction;
 import com.affymetrix.igb.bookmarks.action.SaveSessionAction;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -77,6 +82,12 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 
 		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
+		MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_add_pos", AddBookmarkAction.getAction()));
+		MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_import", ImportBookmarkAction.getAction()));
+		MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_export", ExportBookmarkAction.getAction()));
+		MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_clipboard", CopyBookmarkToClipboardAction.getAction()));
+		bookmark_menu.addSeparator();
+		
 		BookmarkActionManager.init(igbService, bookmark_menu);
 		final BookmarkActionManager bmark_action = BookmarkActionManager.getInstance();
 		bundleContext.registerService(IWindowRoutine.class.getName(), 

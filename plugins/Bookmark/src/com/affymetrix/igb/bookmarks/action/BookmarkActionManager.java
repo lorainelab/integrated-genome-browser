@@ -87,23 +87,12 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 		try {
 			ourLogger.log(Level.INFO, "Loading bookmarks from file {0}", filename);
 			BookmarksParser.parse(main_bookmark_list, f);
-
-			if (main_bookmark_list != null && main_bookmark_list.getChildCount() != 0) {
-				File f2 = new File(filename + "~");
-				try {
-					ourLogger.log(Level.INFO, "Creating backup bookmarks file: {0}", f2);
-					BookmarkList.exportAsHTML(main_bookmark_list, f2, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
-				} catch (Exception e) {
-					ourLogger.log(Level.SEVERE, "Error while trying to create backup bookmarks file: {0}", f2);
-				}
-			}
-
+			saveBookmarks(new File(filename + "~"));
 		} catch (FileNotFoundException fnfe) {
-			ourLogger.log(Level.SEVERE, "Could not load bookmarks. File not found or not readable: {0}", filename);
+			ourLogger.log(Level.SEVERE, "Could not auto-save bookmarks to {0}", filename);
 		} catch (IOException ioe) {
-			ourLogger.log(Level.SEVERE, "Could not load bookmarks from file {0}", filename);
+			ourLogger.log(Level.SEVERE, "Error while saving bookmarks to {0}", filename);
 		}
-
 	}
 
 	/**
@@ -111,29 +100,35 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 	 *
 	 * @return true for sucessfully saving the file
 	 */
-	public boolean autoSaveBookmarks() {
-		boolean saved = false;
-		if (main_bookmark_list == null) {
-			return saved;
-		}
+	public void autoSaveBookmarks() {
 		File f = getBookmarksFile();
 		String filename = f.getAbsolutePath();
 		try {
-			ourLogger.log(Level.INFO, "Saving bookmarks to file {0}", filename);
-			File parent_dir = f.getParentFile();
-			if (parent_dir != null) {
-				parent_dir.mkdirs();
-			}
-			BookmarkList.exportAsHTML(main_bookmark_list, f, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
-			saved = true;
+			saveBookmarks(f);
 		} catch (FileNotFoundException fnfe) {
 			ourLogger.log(Level.SEVERE, "Could not auto-save bookmarks to {0}", filename);
 		} catch (IOException ioe) {
 			ourLogger.log(Level.SEVERE, "Error while saving bookmarks to {0}", filename);
 		}
-		return saved;
 	}
 
+	private void saveBookmarks(File f) throws FileNotFoundException, IOException {
+		if (f == null) {
+			ourLogger.log(Level.SEVERE, "File variable null");
+			return;
+		}
+		
+		if (main_bookmark_list != null && main_bookmark_list.getChildCount() != 0) {
+			String filename = f.getAbsolutePath();
+			File parent_dir = f.getParentFile();
+			if (parent_dir != null) {
+				parent_dir.mkdirs();
+			}
+			ourLogger.log(Level.INFO, "Saving bookmarks to file {0}", filename);
+			BookmarkList.exportAsHTML(main_bookmark_list, f, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+		}
+	}
+	
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
 		if (src instanceof BookmarkJMenuItem) {

@@ -15,8 +15,6 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.igb.bookmarks.action.BookmarkAction;
-import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 import java.awt.Container;
@@ -27,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import javax.swing.*;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -135,8 +134,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, index);
 			TreePath path = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(node));
 			tree.setSelectionPath(path);
-			
-			BookmarkActionManager.getInstance().rebuildMenus();
 		} catch (IllegalStateException e) {
 			// Cancelled by user
 		}
@@ -329,8 +326,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				}
 			}
 		}
-
-		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	public TreePath getPath(TreeNode treeNode) {
@@ -480,6 +475,10 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree = null;
 	}
 
+	public void addTreeModelListener(TreeModelListener tml){
+		tree_model.addTreeModelListener(tml);
+	}
+	
 	/**
 	 * A JPanel that listens for TreeSelectionEvents, displays the name(s) of
 	 * the selected item(s), and may allow you to edit them.

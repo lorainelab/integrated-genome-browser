@@ -13,7 +13,6 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.*;
@@ -34,13 +33,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JSeparator;
 import javax.swing.event.MenuListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 
-public final class BookmarkActionManager implements ActionListener {
+public final class BookmarkActionManager implements ActionListener, TreeModelListener {
 
 	private final static boolean DEBUG = false;
 	private final Map<Object, Component> component_hash = new HashMap<Object, Component>();
 	private final JRPMenu main_bm_menu;
-	private BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
+	private final BookmarkList main_bookmark_list;
 	private IGBService igbService;
 	private static BookmarkActionManager instance;
 	private static final Logger ourLogger
@@ -72,17 +73,21 @@ public final class BookmarkActionManager implements ActionListener {
 			}
 		}
 	};
-	public static void init(IGBService _igbService, JRPMenu bm_menu) {
-		instance = new BookmarkActionManager(_igbService, bm_menu);
+	
+	public static void init(IGBService _igbService, JRPMenu bm_menu, BookmarkList main_bookmark_list) {
+		if(instance == null){
+			instance = new BookmarkActionManager(_igbService, bm_menu, main_bookmark_list);
+		}
 	}
 
 	public static synchronized BookmarkActionManager getInstance() {
 		return instance;
 	}
 
-	public BookmarkActionManager(IGBService _igbService, JRPMenu bm_menu) {
+	public BookmarkActionManager(IGBService _igbService, JRPMenu bm_menu, BookmarkList main_bm_list) {
 		igbService = _igbService;
 		main_bm_menu = bm_menu;
+		main_bookmark_list = main_bm_list;
 		component_hash.put(main_bookmark_list, main_bm_menu);
 
 		addDefaultBookmarks();
@@ -291,16 +296,32 @@ public final class BookmarkActionManager implements ActionListener {
 		return jsep;
 	}
 
-	public void rebuildMenus() {
+	private void rebuildMenus() {
 		removeAllBookmarkMenuItems();
 		buildMenus(main_bm_menu, main_bookmark_list);
 	}
 
-	public BookmarkList getMainBookmarkList() {
-		return main_bookmark_list;
-	}
-
 	public SeqSpan getVisibleSpan() {
 		return igbService.getSeqMapView().getVisibleSpan();
+	}
+	
+	@Override
+	public void treeNodesChanged(TreeModelEvent e){
+		
+	}
+
+	@Override
+    public void treeNodesInserted(TreeModelEvent e){
+		rebuildMenus();
+	}
+
+	@Override
+    public void treeNodesRemoved(TreeModelEvent e) {
+		rebuildMenus();
+	}
+
+	@Override
+    public void treeStructureChanged(TreeModelEvent e) {
+		rebuildMenus();
 	}
 }

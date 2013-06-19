@@ -80,6 +80,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		}
 		SimpleBookmarkServer.init(igbService);
 
+		BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
 		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_add_pos", AddBookmarkAction.getAction()));
@@ -88,7 +89,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_clipboard", CopyBookmarkToClipboardAction.getAction()));
 		bookmark_menu.addSeparator();
 		
-		BookmarkActionManager.init(igbService, bookmark_menu);
+		BookmarkActionManager.init(igbService, bookmark_menu, main_bookmark_list);
 		final BookmarkActionManager bmark_action = BookmarkActionManager.getInstance();
 		bundleContext.registerService(IWindowRoutine.class.getName(), 
 			new IWindowRoutine() {
@@ -102,7 +103,8 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 			null
 		);
 		BookmarkManagerViewGUI.init(igbService);
-		BookmarkManagerViewGUI.getSingleton().getBookmarkManagerView().setBList(bmark_action.getMainBookmarkList());
+		BookmarkManagerView.getSingleton().addTreeModelListener(bmark_action);
+		BookmarkManagerViewGUI.getSingleton().getBookmarkManagerView().setBList(main_bookmark_list);
 		return BookmarkManagerViewGUI.getSingleton();
 	}
 

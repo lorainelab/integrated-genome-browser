@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JSeparator;
-import javax.swing.event.MenuListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
@@ -46,33 +45,6 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 	private static BookmarkActionManager instance;
 	private static final Logger ourLogger
 		  = Logger.getLogger("com.affymetrix.igb.bookmarks");
-	MenuListener menuListener = new MenuListener() {
-		/**
-		 * Does nothing.
-		 */
-		@Override
-		public void menuCanceled(javax.swing.event.MenuEvent e) {
-		}
-
-		/**
-		 * Does nothing.
-		 */
-		@Override
-		public void menuDeselected(javax.swing.event.MenuEvent e) {
-		}
-
-		/**
-		 * Every time the menu is selected (thus opened) re-build the bookmark
-		 * menu items. Thus if the bookmarks have been changed by the bookmark
-		 * manager, we will adapt to that now. Slow? Yes. Too slow? Not really.
-		 */
-		@Override
-		public void menuSelected(javax.swing.event.MenuEvent e) {
-			if (e.getSource() == main_bm_menu) {
-				rebuildMenus();
-			}
-		}
-	};
 	
 	public static void init(IGBService _igbService, JRPMenu bm_menu, BookmarkList main_bookmark_list) {
 		if(instance == null){
@@ -92,7 +64,6 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 
 		addDefaultBookmarks();
 		buildMenus(main_bm_menu, main_bookmark_list);
-		main_bm_menu.addMenuListener(menuListener);
 	}
 
 	public static File getBookmarksFile() {

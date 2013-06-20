@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -272,8 +271,28 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 	}
 	
 	@Override
-	public void treeNodesChanged(TreeModelEvent e){
-		
+	public void treeNodesChanged(TreeModelEvent e) {
+		Object[] children = e.getChildren();
+		for (Object child : children) {
+			if (child instanceof BookmarkList) {
+				BookmarkList node = (BookmarkList) child;
+				Object o = node.getUserObject();
+				if (o instanceof String) {
+					Component comp = component_hash.get(node);
+					if(comp instanceof JRPMenu){
+						((JRPMenu)comp).setText(node.getName());
+					}
+				} else if (o instanceof Bookmark) {
+					//addBookmarkMI(bl_menu, (Bookmark) o);
+					Component comp = component_hash.get(o);
+					if(comp != null && comp instanceof BookmarkJMenuItem) {
+						((BookmarkJMenuItem)comp).setText(((Bookmark)o).getName());
+					}
+				} else if (o instanceof Separator) {
+					
+				}
+			}
+		}
 	}
 
 	@Override

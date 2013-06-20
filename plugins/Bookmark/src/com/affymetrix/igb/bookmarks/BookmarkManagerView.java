@@ -636,16 +636,14 @@ public final class BookmarkManagerView {
 		 * Auto save name and comments when bookmark edit action performed.
 		 */
 		public void updateBookmarkData() {
-			updateNode(selected_bl,
-					name_text_field.getText(),
-					comment_text_area.getText());
-		}
-
-		public void updateNode(BookmarkList bl, String name, String comment) {
-			if (bl == tree_model.getRoot()) {
+			if (selected_bl == tree_model.getRoot()) {
 				// I do not allow re-naming the root node currently
 				return;
 			}
+			
+			String name = name_text_field.getText();
+			String comment = comment_text_area.getText();
+			
 			if (name == null || name.length() == 0) {
 				return;
 			}
@@ -659,7 +657,7 @@ public final class BookmarkManagerView {
 				selected_bl.setComment(comment);
 			}
 
-			tree_model.nodeChanged(bl);
+			tree_model.nodeChanged(selected_bl);
 		}
 
 		private void setInfoTableFromBookmark(BookmarkList bl) {

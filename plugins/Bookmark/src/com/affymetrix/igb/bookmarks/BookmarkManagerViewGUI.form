@@ -278,9 +278,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JTabbedPane" name="tabPane">
-          <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="tabPaneStateChanged"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.tabPane"/>
           </AuxValues>

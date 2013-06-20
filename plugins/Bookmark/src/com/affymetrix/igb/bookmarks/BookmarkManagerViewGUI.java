@@ -235,12 +235,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
         splitPane.setLeftComponent(bmPanel);
 
-        tabPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                tabPaneStateChanged(evt);
-            }
-        });
-
         nameLabel.setText("Name:");
 
         undoNameButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/edit-undo.png"));
@@ -417,9 +411,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_redoNameButtonActionPerformed
 
-	private void tabPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPaneStateChanged
-		bmv.thing.updateInfoOrDataTable();
-	}//GEN-LAST:event_tabPaneStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBookmarkActionButton;
     private javax.swing.JButton addFolderButton;

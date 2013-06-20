@@ -116,7 +116,8 @@ public final class BookmarkManagerView {
 	private TableModelListener tml = new TableModelListener(){
 		@Override
 		public void tableChanged(TableModelEvent e) {
-			thing.updateInfoOrDataTable();
+			thing.setInfoTableFromBookmark();
+			thing.setDataListTableFromBookmark();
 		}
 	};
 	
@@ -573,37 +574,21 @@ public final class BookmarkManagerView {
 		};
 		
 		BottomThing() {
-			undoManager = new UndoManager();
+			undoManager = new UndoManager();			
 			tabPane = new JTabbedPane();
 			
 			name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
-			comment_text_area = new JTextArea();
-			name_text_field.setEnabled(false);
-			comment_text_area.setEnabled(false);
 			name_text_field.getDocument().addUndoableEditListener(undoManager);
-			comment_text_area.getDocument().addUndoableEditListener(undoManager);
 			((AbstractDocument)name_text_field.getDocument()).addDocumentListener(dl);
+			name_text_field.setEnabled(false);
+			
+			comment_text_area = new JTextArea();
+			comment_text_area.getDocument().addUndoableEditListener(undoManager);
 			((AbstractDocument)comment_text_area.getDocument()).addDocumentListener(dl);
+			comment_text_area.setEnabled(false);
 			
 			infoModel = new BookmarkInfoTableModel();
 			datalistModel = new BookmarkDataListTableModel();
-		}
-
-		public void updateInfoOrDataTable() {
-			Object o = null;
-			if (selected_bl != null) {
-				o = selected_bl.getUserObject();
-			}
-			if (o instanceof Bookmark) {
-				switch (tabPane.getSelectedIndex()) {
-					case 1:
-						setInfoTableFromBookmark(selected_bl);
-						break;
-					case 2:
-						setDataListTableFromBookmark(selected_bl);
-						break;
-				}
-			}
 		}
 
 		/**
@@ -626,7 +611,8 @@ public final class BookmarkManagerView {
 					comment_text_area.setEnabled(true);
 					name_text_field.setEnabled(true);
 					comment_text_area.setText(((Bookmark) user_object).getComment());
-					updateInfoOrDataTable();
+					setInfoTableFromBookmark();
+					setDataListTableFromBookmark();
 				} else if (user_object instanceof Separator) {
 					name_text_field.setText("Separator");
 					comment_text_area.setText("Uneditable");
@@ -670,12 +656,12 @@ public final class BookmarkManagerView {
 			tree_model.nodeChanged(selected_bl);
 		}
 
-		private void setInfoTableFromBookmark(BookmarkList bl) {
-			setTableFromBookmark(infoModel, bl);
+		private void setInfoTableFromBookmark() {
+			setTableFromBookmark(infoModel, selected_bl);
 		}
 
-		private void setDataListTableFromBookmark(BookmarkList bl) {
-			setTableFromBookmark(datalistModel, bl);
+		private void setDataListTableFromBookmark() {
+			setTableFromBookmark(datalistModel, selected_bl);
 		}
 	
 		private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {

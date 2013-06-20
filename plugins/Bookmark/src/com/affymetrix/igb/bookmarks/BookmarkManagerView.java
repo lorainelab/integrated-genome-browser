@@ -509,9 +509,7 @@ public final class BookmarkManagerView {
 		JLabel name_label = new JLabel("Name:");
 		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
 		public JTextArea comment_text_area = new JTextArea();
-		TreePath selected_path = null;
 		public BookmarkList selected_bl = null;
-		BookmarkList previousSelected_bl = null;
 		public IGBService igbService = null;
 		Action properties_action;
 		Action goto_action;
@@ -573,8 +571,6 @@ public final class BookmarkManagerView {
 		 * @param e
 		 */
 		public void valueChanged(TreeSelectionEvent e) {
-			updatePreviousBookmarkData();
-
 			Object source = e.getSource();
 			assert source == tree;
 			if (source != tree) {
@@ -591,8 +587,7 @@ public final class BookmarkManagerView {
 			goto_action.setEnabled(false);
 
 			if (selections != null && selections.length == 1) {
-				selected_path = selections[0];
-				selected_bl = (BookmarkList) selected_path.getLastPathComponent();
+				selected_bl = (BookmarkList) selections[0].getLastPathComponent();
 				Object user_object = selected_bl.getUserObject();
 				name_text_field.setText(selected_bl.getName());
 				comment_text_area.setText(selected_bl.getComment());
@@ -615,27 +610,13 @@ public final class BookmarkManagerView {
 					name_text_field.setEnabled(true);
 					comment_text_area.setEnabled(true);
 				}
-
-				previousSelected_bl = selected_bl;
 			}
-		}
-
-		/*
-		 * Auto save name and comments when another node is selected.
-		 */
-		public void updatePreviousBookmarkData() {
-			updateNode(previousSelected_bl,
-					name_text_field.getText(),
-					comment_text_area.getText());
 		}
 
 		/*
 		 * Auto save name and comments when bookmark edit action performed.
 		 */
 		public void updateBookmarkData() {
-			TreePath[] selections = tree.getSelectionPaths();
-			selected_path = selections[0];
-			selected_bl = (BookmarkList) selected_path.getLastPathComponent();
 			updateNode(selected_bl,
 					name_text_field.getText(),
 					comment_text_area.getText());

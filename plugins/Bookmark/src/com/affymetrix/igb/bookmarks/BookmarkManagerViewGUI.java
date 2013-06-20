@@ -6,6 +6,7 @@ import com.affymetrix.igb.bookmarks.action.AddFolderAction;
 import com.affymetrix.igb.bookmarks.action.AddSeparatorAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.StyledJTable;
 import java.awt.Rectangle;
 import java.util.ResourceBundle;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -88,10 +89,10 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentLabel = new javax.swing.JLabel();
         informationPanel = new javax.swing.JPanel();
         iScrollPane = new javax.swing.JScrollPane();
-        infoTable = bmv.thing.infoTable;
+        infoTable = new StyledJTable(bmv.thing.infoModel);
         datalistPanel = new javax.swing.JPanel();
         dScrollPane = new javax.swing.JScrollPane();
-        dataTable = bmv.thing.datalistTable;
+        dataTable = new StyledJTable(bmv.thing.datalistModel);
 
         splitPane.setDividerLocation(400);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);

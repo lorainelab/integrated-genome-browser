@@ -17,7 +17,6 @@ import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.StyledJTable;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
@@ -555,18 +554,16 @@ public final class BookmarkManagerView {
 	 * A JPanel that listens for TreeSelectionEvents, displays the name(s) of
 	 * the selected item(s), and may allow you to edit them.
 	 */
-	public class BottomThing extends JPanel {
+	public class BottomThing {
 
 		private static final long serialVersionUID = 1L;
-		public JTabbedPane tabPane = new JTabbedPane();
-		JLabel name_label = new JLabel("Name:");
-		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
-		public JTextArea comment_text_area = new JTextArea();
-		UndoManager undoManager = new UndoManager();
-		private final BookmarkPropertyTableModel infoModel;
-		private final BookmarkPropertyTableModel datalistModel;
-		public final JTable infoTable;
-		public final JTable datalistTable;
+		public final JTabbedPane tabPane;
+		public final JRPTextField name_text_field;
+		public final JTextArea comment_text_area;
+		public final UndoManager undoManager;
+		public final BookmarkPropertyTableModel infoModel;
+		public final BookmarkPropertyTableModel datalistModel;
+	
 		private DocumentListener dl = new DocumentListener(){
 
 			public void insertUpdate(DocumentEvent e)  { updateBookmarkData(); }
@@ -576,6 +573,11 @@ public final class BookmarkManagerView {
 		};
 		
 		BottomThing() {
+			undoManager = new UndoManager();
+			tabPane = new JTabbedPane();
+			
+			name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
+			comment_text_area = new JTextArea();
 			name_text_field.setEnabled(false);
 			comment_text_area.setEnabled(false);
 			name_text_field.getDocument().addUndoableEditListener(undoManager);
@@ -584,10 +586,7 @@ public final class BookmarkManagerView {
 			((AbstractDocument)comment_text_area.getDocument()).addDocumentListener(dl);
 			
 			infoModel = new BookmarkInfoTableModel();
-			infoTable = new StyledJTable(infoModel);
-
 			datalistModel = new BookmarkDataListTableModel();
-			datalistTable = new StyledJTable(datalistModel);
 		}
 
 		public void updateInfoOrDataTable() {

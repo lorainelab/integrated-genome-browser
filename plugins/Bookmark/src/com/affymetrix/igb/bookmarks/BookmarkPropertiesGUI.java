@@ -28,21 +28,12 @@ public class BookmarkPropertiesGUI extends JFrame {
 	private static final String TITLE = "Bookmark Properties";
 	private static final Logger ourLogger
 		  = Logger.getLogger(BookmarkPropertiesGUI.class.getPackage().getName());
-	private static BookmarkPropertiesGUI singleton;
 	
 	private final BookmarkPropertyTableModel propertyModel;
 	private BookmarkList bookmarkList;
 	
-	public static synchronized BookmarkPropertiesGUI getSingleton() {
-		if (singleton == null) {
-			singleton = new BookmarkPropertiesGUI();
-		}
-		return singleton;
-	}
-
-	public BookmarkPropertiesGUI() {
+	public BookmarkPropertiesGUI(final TableModelListener listener) {
 		propertyModel = new BookmarkPropertyTableModel();
-		
 		propertyModel.addTableModelListener(new TableModelListener() {
 
 			/**
@@ -71,8 +62,7 @@ public class BookmarkPropertiesGUI extends JFrame {
 						ourLogger.log(Level.SEVERE, "Malformed URL", ex);
 					}
 					bm.setURL(url);
-
-					BookmarkManagerView.getSingleton().thing.updateInfoOrDataTable();
+					listener.tableChanged(e);
 				}
 			}
 		});
@@ -87,18 +77,14 @@ public class BookmarkPropertiesGUI extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent evt) {
-				saveWindowLocation();
+				/**
+				* Writes the window location to the persistent preferences.
+				*/
+				PreferenceUtils.saveWindowLocation(BookmarkPropertiesGUI.this, TITLE);
 			}
 		});
 
 		initComponents();
-	}
-
-	/**
-	 * Writes the window location to the persistent preferences.
-	 */
-	private void saveWindowLocation() {
-		PreferenceUtils.saveWindowLocation(singleton, TITLE);
 	}
 
 	public synchronized void displayPanel(BookmarkList bl) {

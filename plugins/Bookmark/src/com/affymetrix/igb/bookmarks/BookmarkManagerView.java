@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -64,6 +66,7 @@ public final class BookmarkManagerView {
 	private static BookmarkManagerView singleton;
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
 	private boolean doNotShowWarning = false;
+	private final BookmarkPropertiesGUI bpGUI;
 	public BookmarkList selected_bl = null;
 	public final IGBService igbService;
 	
@@ -108,6 +111,13 @@ public final class BookmarkManagerView {
 		}
 	};
 	
+	private TableModelListener tml = new TableModelListener(){
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			thing.updateInfoOrDataTable();
+		}
+	};
+	
 	public static void init(IGBService _igbService) {
 		if (singleton == null) {
 			singleton = new BookmarkManagerView(_igbService);
@@ -128,6 +138,7 @@ public final class BookmarkManagerView {
 		bookmark_history = new ArrayList<TreePath>();
 
 		thing = new BottomThing();
+		bpGUI = new BookmarkPropertiesGUI(tml);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 		tree.setRootVisible(true);
 		tree.setShowsRootHandles(true);
@@ -299,7 +310,7 @@ public final class BookmarkManagerView {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
-				BookmarkList bl = null;
+				BookmarkList bl;
 				TreePath path = tree.getSelectionPath();
 				try {
 					bl = (BookmarkList) path.getLastPathComponent(); // Export selected node
@@ -372,7 +383,7 @@ public final class BookmarkManagerView {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
-				BookmarkPropertiesGUI.getSingleton().displayPanel(selected_bl);
+				bpGUI.displayPanel(selected_bl);
 			}
 		};
 		return a;

@@ -17,9 +17,11 @@ import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.shared.StyledJTable;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -505,7 +507,6 @@ public final class BookmarkManagerView {
 		JLabel name_label = new JLabel("Name:");
 		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
 		public JTextArea comment_text_area = new JTextArea();
-		public BookmarkData bookmarkData;
 		TreePath selected_path = null;
 		public BookmarkList selected_bl = null;
 		BookmarkList previousSelected_bl = null;
@@ -515,7 +516,11 @@ public final class BookmarkManagerView {
 		Action properties_action;
 		Action goto_action;
 		UndoManager undoManager = new UndoManager();
-
+		private final BookmarkPropertyTableModel infoModel;
+		private final BookmarkPropertyTableModel datalistModel;
+		public final JTable infoTable;
+		public final JTable datalistTable;
+	
 		BottomThing(JTree tree) {
 			if (tree == null) {
 				throw new IllegalArgumentException();
@@ -563,7 +568,11 @@ public final class BookmarkManagerView {
 			this.comment_text_area.setEnabled(false);
 			this.comment_text_area.getDocument().addUndoableEditListener(undoManager);
 
-			bookmarkData = new BookmarkData();
+			infoModel = new BookmarkInfoTableModel();
+			infoTable = new StyledJTable(infoModel);
+
+			datalistModel = new BookmarkDataListTableModel();
+			datalistTable = new StyledJTable(datalistModel);
 		}
 
 		public void updateInfoOrDataTable() {
@@ -574,10 +583,10 @@ public final class BookmarkManagerView {
 			if (o instanceof Bookmark) {
 				switch (tabPane.getSelectedIndex()) {
 					case 1:
-						bookmarkData.setInfoTableFromBookmark(selected_bl);
+						setInfoTableFromBookmark(selected_bl);
 						break;
 					case 2:
-						bookmarkData.setDataListTableFromBookmark(selected_bl);
+						setDataListTableFromBookmark(selected_bl);
 						break;
 				}
 			}
@@ -622,8 +631,8 @@ public final class BookmarkManagerView {
 				Object user_object = selected_bl.getUserObject();
 				name_text_field.setText(selected_bl.getName());
 				comment_text_area.setText(selected_bl.getComment());
-				bookmarkData.getInfoModel().clear();
-				bookmarkData.getDataListModel().clear();
+				infoModel.clear();
+				datalistModel.clear();
 
 				if (user_object instanceof Bookmark) {
 					comment_text_area.setEnabled(true);
@@ -733,6 +742,24 @@ public final class BookmarkManagerView {
 				Bookmark bm = (Bookmark) selected_bl.getUserObject();
 				addBookmarkToHistory(tree.getSelectionPath());
 				BookmarkController.viewBookmark(igbService, bm);
+			}
+		}
+
+		private void setInfoTableFromBookmark(BookmarkList bl) {
+			setTableFromBookmark(infoModel, bl);
+		}
+
+		private void setDataListTableFromBookmark(BookmarkList bl) {
+			setTableFromBookmark(datalistModel, bl);
+		}
+	
+		private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
+			Bookmark bm = (Bookmark) bl.getUserObject();
+			if (bm == null) {
+				model.setValuesFromMap(Collections.<String, String[]>emptyMap());
+			} else {
+				URL url = bm.getURL();
+				model.setValuesFromMap(Bookmark.parseParameters(url));
 			}
 		}
 	}

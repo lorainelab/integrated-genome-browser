@@ -88,10 +88,10 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentLabel = new javax.swing.JLabel();
         informationPanel = new javax.swing.JPanel();
         iScrollPane = new javax.swing.JScrollPane();
-        infoTable = bmv.thing.bookmarkData.getInfoTable();
+        infoTable = bmv.thing.infoTable;
         datalistPanel = new javax.swing.JPanel();
         dScrollPane = new javax.swing.JScrollPane();
-        dataTable = bmv.thing.bookmarkData.getDataListTable();
+        dataTable = bmv.thing.datalistTable;
 
         splitPane.setDividerLocation(400);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);

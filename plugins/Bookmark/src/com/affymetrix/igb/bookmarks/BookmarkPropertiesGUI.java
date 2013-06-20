@@ -27,7 +27,7 @@ public class BookmarkPropertiesGUI extends JFrame {
 	
 	private static final String TITLE = "Bookmark Properties";
 	private static final Logger ourLogger
-		  = Logger.getLogger(BookmarkData.class.getPackage().getName());
+		  = Logger.getLogger(BookmarkPropertiesGUI.class.getPackage().getName());
 	private static BookmarkPropertiesGUI singleton;
 	
 	private final BookmarkPropertyTableModel propertyModel;

@@ -450,7 +450,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JTable" name="infoTable">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.bookmarkData.getInfoTable()"/>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.infoTable"/>
                       </AuxValues>
                     </Component>
                   </SubComponents>
@@ -488,7 +488,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JTable" name="dataTable">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.bookmarkData.getDataListTable()"/>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.datalistTable"/>
                       </AuxValues>
                     </Component>
                   </SubComponents>

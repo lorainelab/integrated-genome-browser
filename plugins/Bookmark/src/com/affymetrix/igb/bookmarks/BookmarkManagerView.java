@@ -49,9 +49,6 @@ public final class BookmarkManagerView {
 	public BottomThing thing;
 	public final DefaultTreeModel tree_model = new DefaultTreeModel(null, true);
 	// refresh_action is an action that is useful during debugging, but should go away later.
-	public final Action import_action;
-	public final Action export_action;
-	public final Action delete_action;
 	public final Action properties_action;
 	
 	public JButton forwardButton = new JButton();
@@ -152,9 +149,6 @@ public final class BookmarkManagerView {
 
 		ToolTipManager.sharedInstance().registerComponent(tree);
 
-		export_action = makeExportAction();
-		import_action = makeImportAction();
-		delete_action = makeDeleteAction();
 		properties_action = makePropertiesAction();
 	
 		forwardButton.setEnabled(false);
@@ -250,7 +244,13 @@ public final class BookmarkManagerView {
 	/**
 	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
-	private void importBookmarks(BookmarkList bookmark_list) {
+	public void importBookmarks() {
+		BookmarkList bookmark_list = new BookmarkList("Import");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String createdTime = dateFormat.format(Calendar.getInstance().getTime());
+		bookmark_list.setComment("Created Time: " + createdTime);
+		
+		
 		JFileChooser chooser = getJFileChooser(false);
 		chooser.setDialogTitle("Import");
 		chooser.setCurrentDirectory(getLoadDirectory());
@@ -267,26 +267,15 @@ public final class BookmarkManagerView {
 		}
 	}
 
-	public Action makeImportAction() {
-		Action a = new GenericAction("Import ...", null, null) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				BookmarkList bl = new BookmarkList("Import");
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				String createdTime = dateFormat.format(Calendar.getInstance().getTime());
-				bl.setComment("Created Time: " + createdTime);
-				importBookmarks(bl);
-				//tree_model.reload();
-			}
-		};
-		return a;
-	}
-
-	private void exportBookmarks(BookmarkList main_bookmark_list) {
+	public void exportBookmarks() {
+		BookmarkList main_bookmark_list;
+		TreePath path = tree.getSelectionPath();
+		try {
+			main_bookmark_list = (BookmarkList) path.getLastPathComponent(); // Export selected node
+		} catch(NullPointerException ex) {
+			main_bookmark_list = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected
+		}
+		
 		if (main_bookmark_list == null) { // Support exporting from any node 
 			ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
 			return;
@@ -305,42 +294,7 @@ public final class BookmarkManagerView {
 		}
 	}
 
-	public Action makeExportAction() {
-		Action a = new GenericAction("Export ...", null, null) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				BookmarkList bl;
-				TreePath path = tree.getSelectionPath();
-				try {
-					bl = (BookmarkList) path.getLastPathComponent(); // Export selected node
-				} catch(NullPointerException ex) {
-					bl = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected
-				}
-				exportBookmarks(bl); // already contains a null check on bookmark list
-			}
-		};
-		return a;
-	}
-
-	Action makeDeleteAction() {
-		Action a = new GenericAction("Delete ...", null, null) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				deleteAction();
-			}
-		};
-		return a;
-	}
-
-	private void deleteAction() {
+	public void deleteAction() {
 		TreePath[] selectionPaths = tree.getSelectionPaths();
 		if (selectionPaths == null) {
 			return;

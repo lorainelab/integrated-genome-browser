@@ -391,7 +391,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 }//GEN-LAST:event_addBookmarkActionButtonActionPerformed
 
 	private void removeBookmarkActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBookmarkActionButtonActionPerformed
-		bmv.delete_action.actionPerformed(evt);
+		bmv.deleteAction();
 	}//GEN-LAST:event_removeBookmarkActionButtonActionPerformed
 
 	private void addSeparatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSeparatorActionPerformed

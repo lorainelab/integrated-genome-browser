@@ -29,6 +29,6 @@ public class ExportBookmarkAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		BookmarkManagerView.getSingleton().makeExportAction().actionPerformed(e);
+		BookmarkManagerView.getSingleton().exportBookmarks();
 	}
 }

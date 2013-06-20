@@ -29,6 +29,6 @@ public class ImportBookmarkAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		BookmarkManagerView.getSingleton().makeImportAction().actionPerformed(e);
+		BookmarkManagerView.getSingleton().importBookmarks();
 	}
 }

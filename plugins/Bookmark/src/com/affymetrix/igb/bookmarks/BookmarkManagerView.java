@@ -558,7 +558,6 @@ public final class BookmarkManagerView {
 	public class BottomThing {
 
 		private static final long serialVersionUID = 1L;
-		public final JTabbedPane tabPane;
 		public final JRPTextField name_text_field;
 		public final JTextArea comment_text_area;
 		public final UndoManager undoManager;
@@ -575,7 +574,6 @@ public final class BookmarkManagerView {
 		
 		BottomThing() {
 			undoManager = new UndoManager();			
-			tabPane = new JTabbedPane();
 			
 			name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
 			name_text_field.getDocument().addUndoableEditListener(undoManager);

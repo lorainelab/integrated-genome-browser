@@ -9,6 +9,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.StyledJTable;
 import java.awt.Rectangle;
 import java.util.ResourceBundle;
+import javax.swing.JTabbedPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.undo.CannotRedoException;
@@ -78,7 +79,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         addBookmarkActionButton = bmv.addBookmarkButton;
         removeBookmarkActionButton = bmv.deleteBookmarkButton;
         addSeparator = bmv.addSeparatorButton;
-        tabPane = bmv.thing.tabPane;
+        tabPane = new JTabbedPane();
         commentPanel = new javax.swing.JPanel();
         nameTextField = bmv.thing.name_text_field;
         nameLabel = new javax.swing.JLabel();

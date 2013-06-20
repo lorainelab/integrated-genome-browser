@@ -26,8 +26,7 @@ public class AddFolderAction extends BookmarkAction {
 	}
 
 	private AddFolderAction() {
-		super(BUNDLE.getString("addBookmarkFolder"), null,
-				null, null, KeyEvent.VK_G, null, false);
+		super(BUNDLE.getString("addBookmarkFolder"), null, null);
 	}
 
 	@Override

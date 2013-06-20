@@ -22,8 +22,8 @@ public class CopyBookmarkToClipboardAction extends BookmarkAction {
 	}
 
 	private CopyBookmarkToClipboardAction() {
-		super(BUNDLE.getString("copyBookmarkToClipboard"), null, "16x16/actions/edit-paste.png",
-				"22x22/actions/edit-paste.png", KeyEvent.VK_C, null, false);
+		super(BUNDLE.getString("copyBookmarkToClipboard"), "16x16/actions/edit-paste.png",
+				"22x22/actions/edit-paste.png");
 	}
 
 	@Override

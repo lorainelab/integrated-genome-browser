@@ -18,8 +18,8 @@ public abstract class BookmarkAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
 
-	public BookmarkAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
-		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+	public BookmarkAction(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath, largeIconPath);
 	}
 
 	protected Bookmark getCurrentPosition(boolean include_sym_and_props) {

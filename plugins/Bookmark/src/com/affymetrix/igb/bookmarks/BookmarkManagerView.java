@@ -48,6 +48,8 @@ public final class BookmarkManagerView {
 	public final Action import_action;
 	public final Action export_action;
 	public final Action delete_action;
+	public final Action properties_action;
+	
 	public JButton forwardButton = new JButton();
 	public JButton backwardButton = new JButton();
 	public JButton addBookmarkButton = new JButton();
@@ -63,6 +65,7 @@ public final class BookmarkManagerView {
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
 	private boolean doNotShowWarning = false;
 	public BookmarkList selected_bl = null;
+	public final IGBService igbService;
 	
 	private KeyAdapter kl = new KeyAdapter() {
 		
@@ -71,7 +74,7 @@ public final class BookmarkManagerView {
 			if (ke.getKeyChar() == KeyEvent.VK_DELETE) {
 				deleteAction();
 			} else if (ke.getKeyCode() == KeyEvent.VK_ENTER) { // Only if ENTER is pressed
-				thing.goToAction();
+				goToAction();
 			}
 		}
 	};
@@ -92,9 +95,14 @@ public final class BookmarkManagerView {
 				}
 			}
 			
+			properties_action.setEnabled(false);
+		
 			TreePath[] selections = tree.getSelectionPaths();
 			if (selections != null && selections.length == 1) {
 				selected_bl = (BookmarkList) selections[0].getLastPathComponent();
+				if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
+					properties_action.setEnabled(true);
+				}
 				thing.valueChanged();
 			}
 		}
@@ -114,13 +122,12 @@ public final class BookmarkManagerView {
 	 * Creates a new instance of Class
 	 */
 	private BookmarkManagerView(IGBService igbService) {
-
+		this.igbService = igbService;
 		tree = new DragDropTree();
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 
 		thing = new BottomThing();
-		thing.setIGBService(igbService);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 		tree.setRootVisible(true);
 		tree.setShowsRootHandles(true);
@@ -134,8 +141,11 @@ public final class BookmarkManagerView {
 		export_action = makeExportAction();
 		import_action = makeImportAction();
 		delete_action = makeDeleteAction();
+		properties_action = makePropertiesAction();
+	
 		forwardButton.setEnabled(false);
 		backwardButton.setEnabled(false);
+		properties_action.setEnabled(false);
 
 		initPopupMenu();
 
@@ -197,7 +207,7 @@ public final class BookmarkManagerView {
 			}
 		};
 
-		popup.add(thing.getPropertiesAction());
+		popup.add(properties_action);
 
 		MouseAdapter mouse_adapter = new MouseAdapter() {
 
@@ -216,9 +226,7 @@ public final class BookmarkManagerView {
 				if (e.getClickCount() != 2) {
 					return false;
 				}
-
-				thing.getGoToAction().actionPerformed(null);
-
+				goToAction();
 				return true;
 			}
 		};
@@ -353,6 +361,31 @@ public final class BookmarkManagerView {
 		}
 	}
 
+	public Action getPropertiesAction() {
+		return properties_action;
+	}
+
+	private Action makePropertiesAction() {
+		Action a = new GenericAction("Properties ...", null, null) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				super.actionPerformed(ae);
+				BookmarkPropertiesGUI.getSingleton().displayPanel(selected_bl);
+			}
+		};
+		return a;
+	}
+
+	private void goToAction() {
+		if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
+			Bookmark bm = (Bookmark) selected_bl.getUserObject();
+			addBookmarkToHistory(tree.getSelectionPath());
+			BookmarkController.viewBookmark(igbService, bm);
+		}
+	}
+		
 	private static TreePath getPath(TreeNode treeNode) {
 		List<Object> nodes = new ArrayList<Object>();
 		if (treeNode != null) {
@@ -515,9 +548,6 @@ public final class BookmarkManagerView {
 		JLabel name_label = new JLabel("Name:");
 		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
 		public JTextArea comment_text_area = new JTextArea();
-		public IGBService igbService = null;
-		Action properties_action;
-		Action goto_action;
 		UndoManager undoManager = new UndoManager();
 		private final BookmarkPropertyTableModel infoModel;
 		private final BookmarkPropertyTableModel datalistModel;
@@ -525,12 +555,6 @@ public final class BookmarkManagerView {
 		public final JTable datalistTable;
 	
 		BottomThing() {
-		
-			properties_action = makePropertiesAction();
-			properties_action.setEnabled(false);
-			goto_action = makeGoToAction();
-			goto_action.setEnabled(false);
-
 			this.name_text_field.setEnabled(false);
 			this.name_text_field.getDocument().addUndoableEditListener(undoManager);
 			this.comment_text_area.setEnabled(false);
@@ -561,16 +585,6 @@ public final class BookmarkManagerView {
 		}
 
 		/**
-		 * Sets the instance of IGBService. This is the instance in which the
-		 * bookmarks will be opened when the "GoTo" button is pressed.
-		 *
-		 * @param igbService an instance of IGBService; null is ok.
-		 */
-		void setIGBService(IGBService igbService) {
-			this.igbService = igbService;
-		}
-
-		/**
 		 * Method triggered when tree selection changed.
 		 *
 		 * @param e
@@ -580,8 +594,7 @@ public final class BookmarkManagerView {
 			comment_text_area.setText("");
 			comment_text_area.setEnabled(false);
 			name_text_field.setEnabled(false);
-			properties_action.setEnabled(false);
-			goto_action.setEnabled(false);
+			
 
 			if (selected_bl != null) {
 				Object user_object = selected_bl.getUserObject();
@@ -593,8 +606,7 @@ public final class BookmarkManagerView {
 				if (user_object instanceof Bookmark) {
 					comment_text_area.setEnabled(true);
 					name_text_field.setEnabled(true);
-					properties_action.setEnabled(true);
-					goto_action.setEnabled(igbService != null);
+					
 					comment_text_area.setText(((Bookmark) user_object).getComment());
 					updateInfoOrDataTable();
 				} else if (user_object instanceof Separator) {
@@ -637,54 +649,6 @@ public final class BookmarkManagerView {
 			}
 
 			tree_model.nodeChanged(bl);
-		}
-
-		public Action getPropertiesAction() {
-			return properties_action;
-		}
-
-		private Action makePropertiesAction() {
-			Action a = new GenericAction("Properties ...", null, null) {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void actionPerformed(ActionEvent ae) {
-					super.actionPerformed(ae);
-					BookmarkPropertiesGUI.getSingleton().displayPanel(selected_bl);
-				}
-			};
-			return a;
-		}
-
-		public Action getGoToAction() {
-			return goto_action;
-		}
-
-		private Action makeGoToAction() {
-			Action a = new GenericAction("Go To", null, null) {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void actionPerformed(ActionEvent ae) {
-					super.actionPerformed(ae);
-					goToAction();
-				}
-			};
-			return a;
-		}
-
-		private void goToAction() {
-			if (igbService == null || selected_bl == null
-					|| !(selected_bl.getUserObject() instanceof Bookmark)) {
-				setEnabled(false);
-			} else {
-
-				Bookmark bm = (Bookmark) selected_bl.getUserObject();
-				addBookmarkToHistory(tree.getSelectionPath());
-				BookmarkController.viewBookmark(igbService, bm);
-			}
 		}
 
 		private void setInfoTableFromBookmark(BookmarkList bl) {

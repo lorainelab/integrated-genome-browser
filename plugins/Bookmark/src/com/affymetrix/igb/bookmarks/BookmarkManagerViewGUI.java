@@ -376,7 +376,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 			if (node.getUserObject() instanceof Bookmark) {
 				Bookmark bm = (Bookmark) node.getUserObject();
-				BookmarkController.viewBookmark(bmv.thing.igbService, bm);
+				BookmarkController.viewBookmark(bmv.igbService, bm);
 				backwardActionButton.setEnabled(bmv.history_pointer > 0);
 				forwardActionButton.setEnabled(true);
 			}
@@ -390,7 +390,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 			bmv.tree.setSelectionPath(path);
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 			Bookmark bm = (Bookmark) node.getUserObject();
-			BookmarkController.viewBookmark(bmv.thing.igbService, bm);
+			BookmarkController.viewBookmark(bmv.igbService, bm);
 			forwardActionButton.setEnabled(bmv.history_pointer < bmv.bookmark_history.size() - 1);
 			backwardActionButton.setEnabled(true);
 		}

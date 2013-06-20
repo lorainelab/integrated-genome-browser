@@ -140,7 +140,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        bookmarkTree.setModel(bmv.thing.def_tree_model);
+        bookmarkTree.setModel(bmv.tree_model);
         bmScrollPane.setViewportView(bookmarkTree);
 
         addFolderButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/folder-new.png"));

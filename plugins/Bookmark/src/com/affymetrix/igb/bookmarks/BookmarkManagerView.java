@@ -43,7 +43,7 @@ public final class BookmarkManagerView {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 	public JTree tree;
 	public BottomThing thing;
-	private final DefaultTreeModel tree_model = new DefaultTreeModel(null, true);
+	public final DefaultTreeModel tree_model = new DefaultTreeModel(null, true);
 	// refresh_action is an action that is useful during debugging, but should go away later.
 	public final Action import_action;
 	public final Action export_action;
@@ -69,6 +69,8 @@ public final class BookmarkManagerView {
 		public void keyReleased(KeyEvent ke) {
 			if (ke.getKeyChar() == KeyEvent.VK_DELETE) {
 				deleteAction();
+			} else if (ke.getKeyCode() == KeyEvent.VK_ENTER) { // Only if ENTER is pressed
+				thing.goToAction();
 			}
 		}
 	};
@@ -110,7 +112,7 @@ public final class BookmarkManagerView {
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 
-		thing = new BottomThing(tree);
+		thing = new BottomThing();
 		thing.setIGBService(igbService);
 		tree.addTreeSelectionListener(thing);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
@@ -510,9 +512,7 @@ public final class BookmarkManagerView {
 		TreePath selected_path = null;
 		public BookmarkList selected_bl = null;
 		BookmarkList previousSelected_bl = null;
-		private final JTree tree;
 		public IGBService igbService = null;
-		public final DefaultTreeModel def_tree_model;
 		Action properties_action;
 		Action goto_action;
 		UndoManager undoManager = new UndoManager();
@@ -521,43 +521,8 @@ public final class BookmarkManagerView {
 		public final JTable infoTable;
 		public final JTable datalistTable;
 	
-		BottomThing(JTree tree) {
-			if (tree == null) {
-				throw new IllegalArgumentException();
-			}
-
-			this.tree = tree;
-			this.tree.addKeyListener(new KeyListener() {
-				
-				// Set to remember which keys are pressed to handle combination keys pressed for deleting and adding bookmark
-				private final Set<Integer> pressedKeySet = new HashSet<Integer>(); 
-
-				@Override
-				public void keyTyped(KeyEvent e) {
-				}
-
-				@Override
-				public void keyPressed(KeyEvent e) {
-					pressedKeySet.add(e.getKeyCode());
-					
-					if (pressedKeySet.size() ==1 && (e.getKeyCode() == KeyEvent.VK_DELETE)) { // Only if DELETE is pressed
-						deleteAction();	
-						pressedKeySet.remove(e.getKeyCode()); // Force remove because keyReleased() not always be triggered
-					}
-					
-					if (pressedKeySet.size() ==1 && (e.getKeyCode() == KeyEvent.VK_ENTER)) { // Only if ENTER is pressed
-						goToAction();
-						pressedKeySet.remove(e.getKeyCode());
-					}
-				}
-
-				@Override
-				public void keyReleased(KeyEvent e) {
-					pressedKeySet.remove(e.getKeyCode());
-				}
-			});
-			this.def_tree_model = (DefaultTreeModel) tree.getModel();
-
+		BottomThing() {
+		
 			properties_action = makePropertiesAction();
 			properties_action.setEnabled(false);
 			goto_action = makeGoToAction();
@@ -644,7 +609,7 @@ public final class BookmarkManagerView {
 				} else if (user_object instanceof Separator) {
 					name_text_field.setText("Separator");
 					comment_text_area.setText("Uneditable");
-				} else if (selected_bl == def_tree_model.getRoot()) {
+				} else if (selected_bl == tree_model.getRoot()) {
 					comment_text_area.setText("Uneditable");
 				} else {
 					name_text_field.setEnabled(true);
@@ -677,7 +642,7 @@ public final class BookmarkManagerView {
 		}
 
 		public void updateNode(BookmarkList bl, String name, String comment) {
-			if (bl == def_tree_model.getRoot()) {
+			if (bl == tree_model.getRoot()) {
 				// I do not allow re-naming the root node currently
 				return;
 			}
@@ -694,7 +659,7 @@ public final class BookmarkManagerView {
 				selected_bl.setComment(comment);
 			}
 
-			def_tree_model.nodeChanged(bl);
+			tree_model.nodeChanged(bl);
 		}
 
 		public Action getPropertiesAction() {

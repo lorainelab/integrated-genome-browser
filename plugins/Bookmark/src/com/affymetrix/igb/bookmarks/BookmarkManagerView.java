@@ -62,6 +62,7 @@ public final class BookmarkManagerView {
 	private static BookmarkManagerView singleton;
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
 	private boolean doNotShowWarning = false;
+	public BookmarkList selected_bl = null;
 	
 	private KeyAdapter kl = new KeyAdapter() {
 		
@@ -90,6 +91,12 @@ public final class BookmarkManagerView {
 					deleteBookmarkButton.setEnabled(true);
 				}
 			}
+			
+			TreePath[] selections = tree.getSelectionPaths();
+			if (selections != null && selections.length == 1) {
+				selected_bl = (BookmarkList) selections[0].getLastPathComponent();
+				thing.valueChanged();
+			}
 		}
 	};
 	
@@ -114,7 +121,6 @@ public final class BookmarkManagerView {
 
 		thing = new BottomThing();
 		thing.setIGBService(igbService);
-		tree.addTreeSelectionListener(thing);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 		tree.setRootVisible(true);
 		tree.setShowsRootHandles(true);
@@ -502,14 +508,13 @@ public final class BookmarkManagerView {
 	 * A JPanel that listens for TreeSelectionEvents, displays the name(s) of
 	 * the selected item(s), and may allow you to edit them.
 	 */
-	public class BottomThing extends JPanel implements TreeSelectionListener {
+	public class BottomThing extends JPanel {
 
 		private static final long serialVersionUID = 1L;
 		public JTabbedPane tabPane = new JTabbedPane();
 		JLabel name_label = new JLabel("Name:");
 		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
 		public JTextArea comment_text_area = new JTextArea();
-		public BookmarkList selected_bl = null;
 		public IGBService igbService = null;
 		Action properties_action;
 		Action goto_action;
@@ -570,15 +575,7 @@ public final class BookmarkManagerView {
 		 *
 		 * @param e
 		 */
-		public void valueChanged(TreeSelectionEvent e) {
-			Object source = e.getSource();
-			assert source == tree;
-			if (source != tree) {
-				return;
-			}
-
-			TreePath[] selections = tree.getSelectionPaths();
-
+		public void valueChanged() {
 			name_text_field.setText("");
 			comment_text_area.setText("");
 			comment_text_area.setEnabled(false);
@@ -586,8 +583,7 @@ public final class BookmarkManagerView {
 			properties_action.setEnabled(false);
 			goto_action.setEnabled(false);
 
-			if (selections != null && selections.length == 1) {
-				selected_bl = (BookmarkList) selections[0].getLastPathComponent();
+			if (selected_bl != null) {
 				Object user_object = selected_bl.getUserObject();
 				name_text_field.setText(selected_bl.getName());
 				comment_text_area.setText(selected_bl.getComment());

@@ -240,12 +240,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        nameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                nameTextFieldKeyReleased(evt);
-            }
-        });
-
         nameLabel.setText("Name:");
 
         undoNameButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/edit-undo.png"));
@@ -270,11 +264,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentTextArea.setLineWrap(true);
         commentTextArea.setRows(5);
         commentTextArea.setWrapStyleWord(true);
-        commentTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                commentTextAreaKeyReleased(evt);
-            }
-        });
         cScrollPane.setViewportView(commentTextArea);
 
         commentLabel.setText("Comment:");
@@ -416,7 +405,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	private void undoNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoNameButtonActionPerformed
 		try {
 			bmv.thing.undoManager.undo();
-			bmv.thing.updateBookmarkData();
 		} catch (CannotUndoException ex) {
 		}
 	}//GEN-LAST:event_undoNameButtonActionPerformed
@@ -424,18 +412,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	private void redoNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoNameButtonActionPerformed
 		try {
 			bmv.thing.undoManager.redo();
-			bmv.thing.updateBookmarkData();
 		} catch (CannotRedoException ex) {
 		}
 	}//GEN-LAST:event_redoNameButtonActionPerformed
-
-	private void nameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameTextFieldKeyReleased
-		bmv.thing.updateBookmarkData();
-	}//GEN-LAST:event_nameTextFieldKeyReleased
-
-	private void commentTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_commentTextAreaKeyReleased
-		bmv.thing.updateBookmarkData();
-	}//GEN-LAST:event_commentTextAreaKeyReleased
 
 	private void tabPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPaneStateChanged
 		bmv.thing.updateInfoOrDataTable();

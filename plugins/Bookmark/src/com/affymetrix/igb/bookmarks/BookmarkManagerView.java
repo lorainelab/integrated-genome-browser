@@ -27,12 +27,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.AbstractDocument;
 import javax.swing.tree.*;
 import javax.swing.undo.UndoManager;
 
@@ -564,13 +567,22 @@ public final class BookmarkManagerView {
 		private final BookmarkPropertyTableModel datalistModel;
 		public final JTable infoTable;
 		public final JTable datalistTable;
-	
-		BottomThing() {
-			this.name_text_field.setEnabled(false);
-			this.name_text_field.getDocument().addUndoableEditListener(undoManager);
-			this.comment_text_area.setEnabled(false);
-			this.comment_text_area.getDocument().addUndoableEditListener(undoManager);
+		private DocumentListener dl = new DocumentListener(){
 
+			public void insertUpdate(DocumentEvent e)  { updateBookmarkData(); }
+			public void removeUpdate(DocumentEvent e)  { updateBookmarkData(); }
+			public void changedUpdate(DocumentEvent e) { updateBookmarkData(); }
+			
+		};
+		
+		BottomThing() {
+			name_text_field.setEnabled(false);
+			comment_text_area.setEnabled(false);
+			name_text_field.getDocument().addUndoableEditListener(undoManager);
+			comment_text_area.getDocument().addUndoableEditListener(undoManager);
+			((AbstractDocument)name_text_field.getDocument()).addDocumentListener(dl);
+			((AbstractDocument)comment_text_area.getDocument()).addDocumentListener(dl);
+			
 			infoModel = new BookmarkInfoTableModel();
 			infoTable = new StyledJTable(infoModel);
 
@@ -601,12 +613,9 @@ public final class BookmarkManagerView {
 		 * @param e
 		 */
 		public void valueChanged() {
-			name_text_field.setText("");
-			comment_text_area.setText("");
 			comment_text_area.setEnabled(false);
 			name_text_field.setEnabled(false);
 			
-
 			if (selected_bl != null) {
 				Object user_object = selected_bl.getUserObject();
 				name_text_field.setText(selected_bl.getName());
@@ -617,7 +626,6 @@ public final class BookmarkManagerView {
 				if (user_object instanceof Bookmark) {
 					comment_text_area.setEnabled(true);
 					name_text_field.setEnabled(true);
-					
 					comment_text_area.setText(((Bookmark) user_object).getComment());
 					updateInfoOrDataTable();
 				} else if (user_object instanceof Separator) {
@@ -629,13 +637,16 @@ public final class BookmarkManagerView {
 					name_text_field.setEnabled(true);
 					comment_text_area.setEnabled(true);
 				}
+			} else {
+				name_text_field.setText("");
+				comment_text_area.setText("");
 			}
 		}
 
 		/*
 		 * Auto save name and comments when bookmark edit action performed.
 		 */
-		public void updateBookmarkData() {
+		private void updateBookmarkData() {
 			if (selected_bl == tree_model.getRoot()) {
 				// I do not allow re-naming the root node currently
 				return;

@@ -339,9 +339,6 @@
               </Layout>
               <SubComponents>
                 <Component class="javax.swing.JTextField" name="nameTextField">
-                  <Events>
-                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="nameTextFieldKeyReleased"/>
-                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.name_text_field"/>
                   </AuxValues>
@@ -403,9 +400,6 @@
                         <Property name="rows" type="int" value="5"/>
                         <Property name="wrapStyleWord" type="boolean" value="true"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="commentTextAreaKeyReleased"/>
-                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.comment_text_area"/>
                       </AuxValues>

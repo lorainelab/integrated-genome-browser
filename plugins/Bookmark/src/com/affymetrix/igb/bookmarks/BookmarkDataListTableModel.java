@@ -1,46 +1,22 @@
 package com.affymetrix.igb.bookmarks;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 /**
  *
  * @author nick
  */
-public class BookmarkDataListTableModel extends BookmarkInfoTableModel {
+public class BookmarkDataListTableModel extends BookmarkPropertyTableModel {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Save all the bookmark data that are not contained in info_list.
-	 *
-	 * @param map
-	 */
 	@Override
-	public void setValuesFromMap(Map<String, String[]> map) {
-		if (map == null) {
-			throw new IllegalArgumentException("Map was null");
-		}
-		duples = new ArrayList<Duple>();
-
-		String key;
-		String[] value;
-		Duple duple;
-
-		for (Map.Entry<String, String[]> entry : map.entrySet()) {
-			key = entry.getKey();
-			value = entry.getValue();
-
-			if (!info_list.contains(key)) {
-				if (value.length == 0) {
-					duples.add(new Duple(key, ""));
-				} else {
-					duple = new Duple(key, value[0]);
-					duples.add(duple);
-				}
-			}
-		}
-
-		fireTableDataChanged();
+	protected List<String> getProperties(){
+		return info_list;
+	}
+	
+	@Override
+	protected boolean shouldInclude(List<String> properties, String key){
+		return !properties.contains(key);
 	}
 
 	@Override

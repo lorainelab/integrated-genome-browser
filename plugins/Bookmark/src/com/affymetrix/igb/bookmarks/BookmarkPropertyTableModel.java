@@ -9,12 +9,23 @@ import javax.swing.table.AbstractTableModel;
  */
 public class BookmarkPropertyTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
-
+	
+	// A list to determine what bookmark data should be listed in table.
+	static protected final List<String> info_list = new ArrayList<String>(6);
+	static {
+		info_list.add("version");
+		info_list.add("seqid");
+		info_list.add("start");
+		info_list.add("end");
+		info_list.add("create");
+		info_list.add("modified");
+	}
+	
 	/**
 	 * A silly little helper class that holds two strings. A String[2] array
 	 * would work just as well.
 	 */
-	public static class Duple {
+	private static class Duple {
 
 		public String a;
 		public String b;
@@ -24,14 +35,16 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 			this.b = b;
 		}
 	}
-	public List<Duple> duples = Collections.<Duple>emptyList();
-	public final String[] names = {"Parameter", "Value"};
+	
+	private final List<Duple> duples = new ArrayList<Duple>(20);
+	private final String[] names = {"Parameter", "Value"};
+	
 	/**
 	 * The number of extra rows to display to give users room to enter extra
 	 * data into the table.
 	 */
 	public final static int EXTRA_ROWS = 0;
-
+	
 	/**
 	 * Fills the table model with data from the Map. Some extra empty rows may
 	 * also be appended to the table to allow room for extra data.
@@ -40,16 +53,19 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 		if (map == null) {
 			throw new IllegalArgumentException("Map was null");
 		}
-		duples = new ArrayList<Duple>();
+		duples.clear();
+		List<String> properties = getProperties();
 		for (Map.Entry<String, String[]> entry : map.entrySet()) {
 			String key = entry.getKey();
 			String[] value = entry.getValue();
-			if (value.length == 0) {
-				duples.add(new Duple(key, ""));
-			} else {
-				for (int i = 0; i < value.length; i++) {
-					Duple duple = new Duple(key, value[i]);
-					duples.add(duple);
+			if (shouldInclude(properties, key)) {
+				if (value.length == 0) {
+					duples.add(new Duple(key, ""));
+				} else {
+					for (int i = 0; i < value.length; i++) {
+						Duple duple = new Duple(key, value[i]);
+						duples.add(duple);
+					}
 				}
 			}
 		}
@@ -129,5 +145,13 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 	public void clear() {
 		duples.clear();
 		fireTableDataChanged();
+	}
+	
+	protected List<String> getProperties(){
+		return Collections.<String>emptyList();
+	}
+	
+	protected boolean shouldInclude(List<String> properties, String key){
+		return true;
 	}
 }

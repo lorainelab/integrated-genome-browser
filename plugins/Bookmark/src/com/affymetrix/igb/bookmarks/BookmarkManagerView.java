@@ -539,8 +539,37 @@ public final class BookmarkManagerView {
 			((AbstractDocument)comment_text_area.getDocument()).addDocumentListener(dl);
 			comment_text_area.setEnabled(false);
 			
-			infoModel = new BookmarkInfoTableModel();
-			datalistModel = new BookmarkDataListTableModel();
+			final List<String> info_list = new ArrayList<String>(6);
+			info_list.add("version");
+			info_list.add("seqid");
+			info_list.add("start");
+			info_list.add("end");
+			info_list.add("create");
+			info_list.add("modified");
+			
+			infoModel = new BookmarkPropertyTableModel(){
+				@Override
+				protected boolean shouldInclude(String key) {
+					return info_list.contains(key);
+				}
+
+				@Override
+				public boolean isCellEditable(int row, int col) {
+					return false;
+				}
+			};
+			
+			datalistModel = new BookmarkPropertyTableModel() {
+				@Override
+				protected boolean shouldInclude(String key) {
+					return !info_list.contains(key);
+				}
+
+				@Override
+				public boolean isCellEditable(int row, int col) {
+					return false;
+				}
+			};
 		}
 
 		/**

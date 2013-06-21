@@ -9,18 +9,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class BookmarkPropertyTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
-	
-	// A list to determine what bookmark data should be listed in table.
-	static protected final List<String> info_list = new ArrayList<String>(6);
-	static {
-		info_list.add("version");
-		info_list.add("seqid");
-		info_list.add("start");
-		info_list.add("end");
-		info_list.add("create");
-		info_list.add("modified");
-	}
-	
+		
 	/**
 	 * A silly little helper class that holds two strings. A String[2] array
 	 * would work just as well.
@@ -54,11 +43,10 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 			throw new IllegalArgumentException("Map was null");
 		}
 		duples.clear();
-		List<String> properties = getProperties();
 		for (Map.Entry<String, String[]> entry : map.entrySet()) {
 			String key = entry.getKey();
 			String[] value = entry.getValue();
-			if (shouldInclude(properties, key)) {
+			if (shouldInclude(key)) {
 				if (value.length == 0) {
 					duples.add(new Duple(key, ""));
 				} else {
@@ -147,11 +135,7 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 	
-	protected List<String> getProperties(){
-		return Collections.<String>emptyList();
-	}
-	
-	protected boolean shouldInclude(List<String> properties, String key){
+	protected boolean shouldInclude(String key){
 		return true;
 	}
 }

@@ -12,21 +12,17 @@
  */
 package com.affymetrix.genometryImpl.symmetry;
 
+import java.util.*;
+import java.util.regex.*;
+
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
-
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.*;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 /**
  *  A sym to efficiently store GFF version 3 annotations.
@@ -66,11 +62,13 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 
 	private String source;
 	private String method;
-	public String feature_type;
+	private String feature_type;
+	private MutableSeqSpan cdsSpan;
+	private String cdsID;
 	private final float score;
 	private final char frame;
 	private final String attributes;
-
+	
 	
 	/**
 	 * Constructor.
@@ -343,130 +341,155 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 			+ " children=" + getChildCount();
 	}
 
-	public boolean hasCdsSpan() {
-		for(SeqSymmetry child : children) {
-			if (isCdsSym(child)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private static boolean isCdsSym(SeqSymmetry sym) {
 		return sym instanceof GFF3Sym
 				&& ((GFF3Sym) sym).getFeatureType().equals(GFF3Sym.FEATURE_TYPE_CDS);
 	}
-
-	/**
-	 * TODO: this does not take into account multiple CDS for a single mRNA nor
-	 *       does it make use of the 5' and 3' UTR or multiple CDS regions on a
-	 *       single mRNA.
-	 *
-	 * TODO: Most of this should be precomputed in the addChild() or something
-	 *       so we do not need to compute it every time it is requested.
-	 *
-	 * @return A single SeqSpan covering the CDS region.
-	 */
-	public SeqSpan getCdsSpan() {
-		/* This can be null but Maps can store null keys */
-		String gff3ID;
-		Map<String,MutableSeqSpan> cdsSpans = new LinkedHashMap<String,MutableSeqSpan>();
-		MutableSeqSpan span = null;
-		
-		for(SeqSymmetry child : children) {
-			if (isCdsSym(child)) {
-				gff3ID = getIdFromGFF3Attributes(((GFF3Sym)child).getAttributes());
-				for(int i = 0; i < child.getSpanCount(); i++) {
-					span = cdsSpans.get(gff3ID);
-					if (span == null) {
-						span = new SimpleMutableSeqSpan(child.getSpan(i));
-						cdsSpans.put(gff3ID, span);
-					} else {
-						SeqUtils.encompass(child.getSpan(i), span, span);
-					}
-				}
-			}
-		}
-
-		if (cdsSpans.isEmpty()) {
-			throw new IllegalArgumentException("This Symmetry does not have a CDS");
-		} else if (cdsSpans.size() > 1){
-			Logger.getLogger(
-					this.getClass().getName()).log(Level.WARNING,
-					"Multiple CDS spans detected.  Skipping remaining CDS spans.  (found {0} spans for {1})",
-					new Object[] {Integer.valueOf(cdsSpans.size()),
-					getIdFromGFF3Attributes(attributes)});
-
-			if (!multipleCdsWarning) {
-				multipleCdsWarning = !multipleCdsWarning;
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						/* TODO: This should use StringUtils.wrap() */
-						JOptionPane.showMessageDialog(null,
-								"Multiple CDS regions for a shared parent have been\ndetected in a GFF3 file.  Only the first CDS region\nencountered will be displayed.  This is a known\nlimitation of the GFF3 parser.",
-								"Multiple CDS Regions Detected",
-								JOptionPane.WARNING_MESSAGE);
-					}
-				});
-			}
-		}
-
-		return cdsSpans.entrySet().iterator().next().getValue();
-	}
-
-	/*
-	 *Returns Map of id to list of symmetries of cds spans.
-	 */
-	public Map<String, List<SeqSymmetry>> getCdsSpans() {
-		String gff3ID;
-		Map<String, List<SeqSymmetry>> cdsSpans = new LinkedHashMap<String, List<SeqSymmetry>>();
-//		MutableSeqSpan span = null;
-
-		for (SeqSymmetry child : children) {
-			if (isCdsSym(child)) {
-				gff3ID = getIdFromGFF3Attributes(((GFF3Sym) child).getAttributes());
-				for (int i = 0; i < child.getSpanCount(); i++) {
-					List<SeqSymmetry> list = cdsSpans.get(gff3ID);
-					if (list == null) {
-						list = new ArrayList<SeqSymmetry>();
-						cdsSpans.put(gff3ID, list);
-						list.add(child);
-					}
-				}
-			}
-		}
-		return cdsSpans;
-	}
-
-	/**
-	 * Removes all cds symmetries.
-	 */
-	public void removeCdsSpans(){
-		List<SeqSymmetry> remove_list = new ArrayList<SeqSymmetry>();
-		for(SeqSymmetry child : children) {
-			if (isCdsSym(child)) {
-				remove_list.add(child);
-			}
-		}
-		children.removeAll(remove_list);
+	
+	@Override
+	public boolean hasCdsSpan() {
+		return cdsSpan != null;
 	}
 
 	@Override
-	public Object clone() {
-		GFF3Sym dup = new GFF3Sym(this.source, this.feature_type, this.score, this.frame, this.attributes);
-		if (children != null) {
-			for (SeqSymmetry child : children) {
-				dup.addChild(child);
-			}
-		}
-		if (spans != null) {
-			for (SeqSpan span : spans) {
-				dup.addSpan(span);
-			}
-		}
-		dup.props = this.cloneProperties();
-		dup.method = this.method;
-		
-		return dup;
+	public SeqSpan getCdsSpan() {
+		return cdsSpan;
 	}
+	
+	@Override
+	public void addChild(SeqSymmetry sym) {
+		super.addChild(sym);
+		if(isCdsSym(sym)){
+			for (int i = 0; i < sym.getSpanCount(); i++) {
+				SeqSpan span = sym.getSpan(i);
+				if (cdsSpan == null) {
+					cdsSpan = new SimpleMutableSeqSpan(span);
+				} else {
+					SeqUtils.encompass(span, cdsSpan, cdsSpan);
+				}
+			}
+		}
+	}
+	
+//	public boolean hasCdsSpan() {
+//		for(SeqSymmetry child : children) {
+//			if (isCdsSym(child)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	/**
+//	 * TODO: this does not take into account multiple CDS for a single mRNA nor
+//	 *       does it make use of the 5' and 3' UTR or multiple CDS regions on a
+//	 *       single mRNA.
+//	 *
+//	 * TODO: Most of this should be precomputed in the addChild() or something
+//	 *       so we do not need to compute it every time it is requested.
+//	 *
+//	 * @return A single SeqSpan covering the CDS region.
+//	 */
+//	public SeqSpan getCdsSpan() {
+//		/* This can be null but Maps can store null keys */
+//		String gff3ID;
+//		Map<String,MutableSeqSpan> cdsSpans = new LinkedHashMap<String,MutableSeqSpan>();
+//		MutableSeqSpan span = null;
+//		
+//		for(SeqSymmetry child : children) {
+//			if (isCdsSym(child)) {
+//				gff3ID = getIdFromGFF3Attributes(((GFF3Sym)child).getAttributes());
+//				for(int i = 0; i < child.getSpanCount(); i++) {
+//					span = cdsSpans.get(gff3ID);
+//					if (span == null) {
+//						span = new SimpleMutableSeqSpan(child.getSpan(i));
+//						cdsSpans.put(gff3ID, span);
+//					} else {
+//						SeqUtils.encompass(child.getSpan(i), span, span);
+//					}
+//				}
+//			}
+//		}
+//
+//		if (cdsSpans.isEmpty()) {
+//			throw new IllegalArgumentException("This Symmetry does not have a CDS");
+//		} else if (cdsSpans.size() > 1){
+//			Logger.getLogger(
+//					this.getClass().getName()).log(Level.WARNING,
+//					"Multiple CDS spans detected.  Skipping remaining CDS spans.  (found {0} spans for {1})",
+//					new Object[] {Integer.valueOf(cdsSpans.size()),
+//					getIdFromGFF3Attributes(attributes)});
+//
+//			if (!multipleCdsWarning) {
+//				multipleCdsWarning = !multipleCdsWarning;
+//				SwingUtilities.invokeLater(new Runnable() {
+//					public void run() {
+//						/* TODO: This should use StringUtils.wrap() */
+//						JOptionPane.showMessageDialog(null,
+//								"Multiple CDS regions for a shared parent have been\ndetected in a GFF3 file.  Only the first CDS region\nencountered will be displayed.  This is a known\nlimitation of the GFF3 parser.",
+//								"Multiple CDS Regions Detected",
+//								JOptionPane.WARNING_MESSAGE);
+//					}
+//				});
+//			}
+//		}
+//
+//		return cdsSpans.entrySet().iterator().next().getValue();
+//	}
+//
+//	/*
+//	 *Returns Map of id to list of symmetries of cds spans.
+//	 */
+//	public Map<String, List<SeqSymmetry>> getCdsSpans() {
+//		String gff3ID;
+//		Map<String, List<SeqSymmetry>> cdsSpans = new LinkedHashMap<String, List<SeqSymmetry>>();
+////		MutableSeqSpan span = null;
+//
+//		for (SeqSymmetry child : children) {
+//			if (isCdsSym(child)) {
+//				gff3ID = getIdFromGFF3Attributes(((GFF3Sym) child).getAttributes());
+//				for (int i = 0; i < child.getSpanCount(); i++) {
+//					List<SeqSymmetry> list = cdsSpans.get(gff3ID);
+//					if (list == null) {
+//						list = new ArrayList<SeqSymmetry>();
+//						cdsSpans.put(gff3ID, list);
+//						list.add(child);
+//					}
+//				}
+//			}
+//		}
+//		return cdsSpans;
+//	}
+//
+//	/**
+//	 * Removes all cds symmetries.
+//	 */
+//	public void removeCdsSpans(){
+//		List<SeqSymmetry> remove_list = new ArrayList<SeqSymmetry>();
+//		for(SeqSymmetry child : children) {
+//			if (isCdsSym(child)) {
+//				remove_list.add(child);
+//			}
+//		}
+//		children.removeAll(remove_list);
+//	}
+//
+//	@Override
+//	public Object clone() {
+//		GFF3Sym dup = new GFF3Sym(this.source, this.feature_type, this.score, this.frame, this.attributes);
+//		if (children != null) {
+//			for (SeqSymmetry child : children) {
+//				dup.addChild(child);
+//			}
+//		}
+//		if (spans != null) {
+//			for (SeqSpan span : spans) {
+//				dup.addSpan(span);
+//			}
+//		}
+//		dup.props = this.cloneProperties();
+//		dup.method = this.method;
+//		
+//		return dup;
+//	}
 }

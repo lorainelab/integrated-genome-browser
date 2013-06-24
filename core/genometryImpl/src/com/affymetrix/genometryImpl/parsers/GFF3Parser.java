@@ -17,12 +17,9 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.io.*;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
@@ -287,7 +284,7 @@ public final class GFF3Parser implements Parser {
 	 * @throws IOException
 	 */
 	private void addToParent(List<GFF3Sym> all_syms, List<GFF3Sym> results, Map<String, GFF3Sym> id2sym, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds) throws IOException {
-		Map<String, GFF3Sym> moreCdsSpans = new HashMap<String, GFF3Sym>();
+//		Map<String, GFF3Sym> moreCdsSpans = new HashMap<String, GFF3Sym>();
 		for (GFF3Sym sym : all_syms) {
 			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 			String id = sym.getID();
@@ -299,18 +296,11 @@ public final class GFF3Parser implements Parser {
 				seq_group.addToIndex(id, sym);
 			}
 			// gff3 display bug. hiralv 08-16-10
-			if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
+			if(sym.getFeatureType().equals("TF_binding_site")){
+				//Do nothing for now
+			} else if (parent_ids.length == 0) {
 				// If no parents, then it is top-level
 				results.add(sym);
-//				/* Do we really need to do for every span? */ 
-				// If span are on same sequence then,
-				// it is probably safe not to do it
-//				if (annot_seq) {
-//					for (int i = 0; i < sym.getSpanCount(); i++) {
-//						BioSeq seq = sym.getSpanSeq(i);
-//						seq.addAnnotation(sym);
-//					}
-//				}
 			} else {
 				// Else, add this as a child to *each* parent in its parent list.
 				// It is an error if the parent doesn't exist.
@@ -343,14 +333,14 @@ public final class GFF3Parser implements Parser {
 						addBadParent(sym);
 					} else {
 						parent_sym.addChild(sym);
-						if (parent_sym.getCdsSpans().size() > 1) {
-							moreCdsSpans.put(parent_sym.getID(), parent_sym);
-						}
+//						if (parent_sym.getCdsSpans().size() > 1) {
+//							moreCdsSpans.put(parent_sym.getID(), parent_sym);
+//						}
 					}
 				}
 			}
 		}
-		handleMultipleCDS(moreCdsSpans.values(), results, id2sym, seq, annot_seq, merge_cds);
+//		handleMultipleCDS(moreCdsSpans.values(), results, id2sym, seq, annot_seq, merge_cds);
 	}
 
 	/**
@@ -361,58 +351,58 @@ public final class GFF3Parser implements Parser {
 	 * @param annot_seq	Boolean weather to annotate sequence or not.
 	 * @param id2sym	Map of ids to symmetries.
 	 */
-	private void handleMultipleCDS(Collection<GFF3Sym> moreCdsSpans, List<GFF3Sym> results, Map<String, GFF3Sym> id2sym, BioSeq seq, boolean annot_seq, boolean merge_cds) {
-		for (GFF3Sym parent_sym : moreCdsSpans) {
-			String[] top_parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, parent_sym.getAttributes());
-			if (top_parent_ids.length == 0) {
-				Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
-				parent_sym.removeCdsSpans();
-				if(merge_cds){
-					List<SeqSymmetry> cds = new ArrayList<SeqSymmetry>();
-					SimpleSymWithProps sym = new SimpleSymWithProps();
-					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
-						for(SeqSymmetry s : entry.getValue()){
-							cds.add(s);
-							if(s instanceof SimpleSymWithProps){
-								sym.setProperties(((SimpleSymWithProps)s).getProperties());
-							}
-						}
-					}
-					SeqUtils.union(cds, sym, seq);
-					parent_sym.addChild(sym);
-				} else {
-					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
-						GFF3Sym clone = (GFF3Sym) parent_sym.clone();
-						for (SeqSymmetry seqsym : entry.getValue()) {
-							clone.addChild(seqsym);
-						}
-						results.add(clone);
-						if (annot_seq) {
-							for (int i = 0; i < clone.getSpanCount(); i++) {
-								//BioSeq seq = clone.getSpanSeq(i);
-								seq.addAnnotation(clone);
-							}
-						}
-					}
-				}
-				continue;
-			}
-			for (int k = 0; k < top_parent_ids.length; k++) {
-				String top_parent_id = top_parent_ids[k];
-				GFF3Sym top_parent_sym = id2sym.get(top_parent_id);
-				top_parent_sym.removeChild(parent_sym);
-				Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
-				parent_sym.removeCdsSpans();
-				for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
-					GFF3Sym clone = (GFF3Sym) parent_sym.clone();
-					for (SeqSymmetry seqsym : entry.getValue()) {
-						clone.addChild(seqsym);
-					}
-					top_parent_sym.addChild(clone);
-				}
-			}
-		}
-	}
+//	private void handleMultipleCDS(Collection<GFF3Sym> moreCdsSpans, List<GFF3Sym> results, Map<String, GFF3Sym> id2sym, BioSeq seq, boolean annot_seq, boolean merge_cds) {
+//		for (GFF3Sym parent_sym : moreCdsSpans) {
+//			String[] top_parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, parent_sym.getAttributes());
+//			if (top_parent_ids.length == 0) {
+//				Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
+//				parent_sym.removeCdsSpans();
+//				if(merge_cds){
+//					List<SeqSymmetry> cds = new ArrayList<SeqSymmetry>();
+//					SimpleSymWithProps sym = new SimpleSymWithProps();
+//					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+//						for(SeqSymmetry s : entry.getValue()){
+//							cds.add(s);
+//							if(s instanceof SimpleSymWithProps){
+//								sym.setProperties(((SimpleSymWithProps)s).getProperties());
+//							}
+//						}
+//					}
+//					SeqUtils.union(cds, sym, seq);
+//					parent_sym.addChild(sym);
+//				} else {
+//					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+//						GFF3Sym clone = (GFF3Sym) parent_sym.clone();
+//						for (SeqSymmetry seqsym : entry.getValue()) {
+//							clone.addChild(seqsym);
+//						}
+//						results.add(clone);
+//						if (annot_seq) {
+//							for (int i = 0; i < clone.getSpanCount(); i++) {
+//								//BioSeq seq = clone.getSpanSeq(i);
+//								seq.addAnnotation(clone);
+//							}
+//						}
+//					}
+//				}
+//				continue;
+//			}
+//			for (int k = 0; k < top_parent_ids.length; k++) {
+//				String top_parent_id = top_parent_ids[k];
+//				GFF3Sym top_parent_sym = id2sym.get(top_parent_id);
+//				top_parent_sym.removeChild(parent_sym);
+//				Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
+//				parent_sym.removeCdsSpans();
+//				for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+//					GFF3Sym clone = (GFF3Sym) parent_sym.clone();
+//					for (SeqSymmetry seqsym : entry.getValue()) {
+//						clone.addChild(seqsym);
+//					}
+//					top_parent_sym.addChild(clone);
+//				}
+//			}
+//		}
+//	}
 
 	private void addBadParent(GFF3Sym sym) {
 		String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());

@@ -32,7 +32,6 @@ import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.FastaIdx;
 import com.affymetrix.genometryImpl.symloader.GFF;
 import com.affymetrix.genometryImpl.symloader.GFF3;
-import com.affymetrix.genometryImpl.symloader.GTF;
 import com.affymetrix.genometryImpl.symloader.Genbank;
 import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symloader.PSL;
@@ -137,7 +136,7 @@ public class FileTypeHolder {
 			});
 		addFileTypeHandler(
 			new FileTypeHandler() {
-				String[] extensions = new String[]{"gff"};
+				String[] extensions = new String[]{"gff", "gtf"};
 				@Override
 				public String getName() { return "GFF"; }
 				@Override
@@ -153,29 +152,6 @@ public class FileTypeHolder {
 				}
 				@Override
 				public Parser getParser() { return new GFFParser(); }
-				@Override
-				public IndexWriter getIndexWriter(String stream_name) {
-					return null;
-				}
-				@Override
-				public FileTypeCategory getFileTypeCategory() {
-					return FileTypeCategory.Annotation;
-				}
-			}
-		);
-		addFileTypeHandler(
-			new FileTypeHandler() {
-				String[] extensions = new String[]{"gtf"};
-				@Override
-				public String getName() { return "GFF"; }
-				@Override
-				public String[] getExtensions() { return extensions; }
-				@Override
-				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-					return new GTF(uri, featureName, group);
-				}
-				@Override
-				public Parser getParser() { return null; }
 				@Override
 				public IndexWriter getIndexWriter(String stream_name) {
 					return null;

@@ -107,6 +107,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
 	public GFF(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, featureName, group);
+		setUseStandardFilters(true);
 	}
 
 	public void init(URI uri) throws Exception {

@@ -45,7 +45,7 @@ public class NewGenomeAction extends OpenURIAction {
 
 	private NewGenomeAction() {
 		super(BUNDLE.getString("addNewSpecies"), null, 
-				"16x16/actions/blank_placeholder.png", null,
+				"16x16/actions/new_genome.png", "22x22/actions/new_genome.png",
 				KeyEvent.VK_UNDEFINED, null, false);
 		this.ordinal = 200;
 	}

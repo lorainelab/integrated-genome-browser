@@ -12,6 +12,7 @@
  */
 package com.affymetrix.genometryImpl.symmetry;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import java.util.*;
 import java.util.regex.*;
 
@@ -31,7 +32,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
  *
  * @version $Id: GFF3Sym.java 7644 2011-03-03 18:36:35Z lfrohman $
  */
-public final class GFF3Sym extends SimpleSymWithProps implements Scored, SupportsCdsSpan, Cloneable {
+public final class GFF3Sym extends SimpleSymWithProps implements Scored, SupportsCdsSpan, SymSpanWithCds {
 	private String id;
 	private static boolean multipleCdsWarning = false;
 
@@ -64,7 +65,9 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 	private String method;
 	private String feature_type;
 	private MutableSeqSpan cdsSpan;
-	private String cdsID;
+	private BioSeq seq; // "chrom"
+	private int min; // "chromStart"
+	private int max; // "chromEnd"
 	private final float score;
 	private final char frame;
 	private final String attributes;
@@ -369,6 +372,21 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isCdsStartStopSame() {
+		return cdsSpan != null && cdsSpan.getStart() == cdsSpan.getEnd();
+	}
+	
+	@Override
+	public boolean isForward(){
+		return this.getSpan(0) != null && this.getSpan(0).isForward();
+	}
+	
+	@Override
+	public BioSeq getBioSeq(){
+		return this.getSpan(0) != null ? this.getSpan(0).getBioSeq() : null;
 	}
 	
 //	public boolean hasCdsSpan() {

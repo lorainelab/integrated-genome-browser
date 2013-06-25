@@ -580,6 +580,8 @@ public final class BookmarkManagerView {
 		public void valueChanged() {
 			comment_text_area.setEnabled(false);
 			name_text_field.setEnabled(false);
+			((AbstractDocument)name_text_field.getDocument()).removeDocumentListener(dl);
+			((AbstractDocument)comment_text_area.getDocument()).removeDocumentListener(dl);
 			
 			if (selected_bl != null) {
 				Object user_object = selected_bl.getUserObject();
@@ -607,6 +609,9 @@ public final class BookmarkManagerView {
 				name_text_field.setText("");
 				comment_text_area.setText("");
 			}
+			
+			((AbstractDocument)name_text_field.getDocument()).addDocumentListener(dl);
+			((AbstractDocument)comment_text_area.getDocument()).addDocumentListener(dl);
 		}
 
 		/*

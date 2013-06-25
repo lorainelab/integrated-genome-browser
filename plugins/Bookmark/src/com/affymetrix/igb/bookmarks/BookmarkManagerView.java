@@ -226,7 +226,11 @@ public final class BookmarkManagerView {
 				}
 
 				if (popup.isPopupTrigger(e)) {
-					popup.show(tree, e.getX(), e.getY());
+					TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
+					if(path != null){
+						tree.setSelectionPath(path);
+						popup.show(tree, e.getX(), e.getY());
+					}
 				}
 			}
 

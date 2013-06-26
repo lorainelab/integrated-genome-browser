@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.NumericFilter;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 
@@ -28,6 +29,8 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.osgi.service.IGBService;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.*;
+import java.util.Map.Entry;
+import javax.swing.text.AbstractDocument;
 
 public class OperationsImpl extends Operations implements RefreshSelectionListener{ 
 
@@ -263,7 +266,13 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 				ationParam.setVisible(false);
 				ationParamLabel.setVisible(false);
 			} else {
-				ationParamLabel.setText(params.keySet().iterator().next() + " :"); // only one parameter, for now
+				Entry <String, Class<?>> param = params.entrySet().iterator().next();
+				ationParamLabel.setText(param.getKey() + " :"); // only one parameter, for now
+				if(Integer.class.isAssignableFrom(param.getValue())){
+					((AbstractDocument) ationParam.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
+				} else if (Number.class.isAssignableFrom(param.getValue())) {
+					((AbstractDocument) ationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+				}
 				ationParamLabel.setEnabled(true);
 				ationParam.setEditable(true);
 				ationParam.setText("");

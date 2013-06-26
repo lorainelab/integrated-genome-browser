@@ -1,22 +1,20 @@
 package com.affymetrix.igb.bookmarks.action;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkEditor;
-import com.affymetrix.igb.bookmarks.BookmarkList;
-import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
+import com.affymetrix.igb.osgi.service.IGBService;
 
 public class AddBookmarkAction extends BookmarkAction {
 
 	private static final long serialVersionUID = 1L;
-	private static final AddBookmarkAction ACTION = new AddBookmarkAction();
-
-	static{
+	private static AddBookmarkAction ACTION;
+	private final IGBService igbService;
+	
+	public static void createAction(IGBService igbService){
+		ACTION = new AddBookmarkAction(igbService);
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
 	
@@ -24,38 +22,15 @@ public class AddBookmarkAction extends BookmarkAction {
 		return ACTION;
 	}
 
-	private AddBookmarkAction() {
+	private AddBookmarkAction(IGBService igbService) {
 		super(BUNDLE.getString("addBookmark"), "16x16/actions/bookmark-new.png",
 				"22x22/actions/bookmark-new.png");
+		this.igbService = igbService;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		bookmarkCurrentPosition();
-	}
-	
-	/**
-	 * add a bookmark to bookmark tree.
-	 *
-	 * @param bm
-	 */
-	public void addBookmark(Bookmark bm) {
-		BookmarkList parent_list = BookmarkManagerView.getSingleton().selected_bl;
-		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
-
-		BookmarkList bl = new BookmarkList(bm);
-		DefaultMutableTreeNode node = bl;
-		addNode(node);
-	}
-	
-	/**
-	 * Generate a bookmark editor panel for adding a new bookmark.
-	 */
-	protected void bookmarkCurrentPosition() {
-		Bookmark bookmark = getCurrentPosition(false);
-		if (bookmark != null) {
-			BookmarkEditor.run(bookmark);
-		}
+		BookmarkEditor.run(igbService.getSeqMapView().getVisibleSpan());
 	}
 }

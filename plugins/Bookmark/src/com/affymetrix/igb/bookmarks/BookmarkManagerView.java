@@ -66,7 +66,7 @@ public final class BookmarkManagerView {
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
 	private boolean doNotShowWarning = false;
 	private final BookmarkPropertiesGUI bpGUI;
-	public BookmarkList selected_bl = null;
+	private BookmarkList selected_bl = null;
 	public final IGBService igbService;
 	
 	private KeyAdapter kl = new KeyAdapter() {
@@ -369,10 +369,6 @@ public final class BookmarkManagerView {
 			}
 		}
 		return nodes.isEmpty() ? null : new TreePath(nodes.toArray());
-	}
-
-	public void addBookmarkToHistory(BookmarkList bl) {
-		addBookmarkToHistory(getPath(bl));
 	}
 
 	private void addBookmarkToHistory(TreePath tp) {

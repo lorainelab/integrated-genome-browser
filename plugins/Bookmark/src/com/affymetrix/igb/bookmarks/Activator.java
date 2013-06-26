@@ -79,7 +79,10 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 			SimpleBookmarkServer.setServerPort(portString);
 		}
 		SimpleBookmarkServer.init(igbService);
-
+		
+		AddBookmarkAction.createAction(igbService);
+		CopyBookmarkToClipboardAction.createAction(igbService);
+		
 		BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
 		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));

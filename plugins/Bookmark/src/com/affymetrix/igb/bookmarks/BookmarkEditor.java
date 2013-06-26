@@ -1,9 +1,9 @@
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
-import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import javax.swing.*;
@@ -16,13 +16,13 @@ import javax.swing.*;
 public class BookmarkEditor {
 
 	private static BookmarkEditor singleton;
-	private Bookmark bookmark;
 	private JTextField nameField;
 	private JTextArea commentField;
 	private JRadioButton positionOnlyB;
 	private JRadioButton positionDataB;
 	private JCheckBox useDefaultName;
 	private JOptionPane op;
+	private SeqSpan span;
 	
 	private static final boolean defaultUseDefaultName = true;
 	private static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
@@ -74,8 +74,8 @@ public class BookmarkEditor {
 	/**
 	 * Used JDialog as display panel and initialized it.
 	 */
-	private void initDialog(Bookmark b) {
-		bookmark = b;
+	private void initDialog(SeqSpan span) {
+		this.span = span;
 		setNameField();
 		commentField.setText("");
 		JDialog dialog = op.createDialog("Enter Bookmark Information...");
@@ -89,7 +89,7 @@ public class BookmarkEditor {
 
 	private void setNameField() {
 		if (useDefaultName.isSelected()) {
-			nameField.setText(bookmark.getName());
+			nameField.setText(BookmarkController.getDefaultBookmarkName(span));
 		} else {
 			nameField.setText("");
 		}
@@ -103,35 +103,34 @@ public class BookmarkEditor {
 		}
 
 		if (result == JOptionPane.OK_OPTION) {
-			if (positionDataB.isSelected()) {
-				// create a new bookmark includes position and data
-				// otherwise, the bookmark is just position only
-				try {
-					bookmark = BookmarkController.getCurrentBookmark(true,
-							BookmarkActionManager.getInstance().getVisibleSpan());
-				} catch (MalformedURLException m) {
-					ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
+			try {
+				Bookmark bookmark = BookmarkController.getCurrentBookmark(
+						positionDataB.isSelected(), span);
+
+				if (bookmark == null) {
+					ErrorHandler.errorPanel("Error", "Nothing to bookmark", Level.INFO);
 					return;
 				}
+				String name = nameField.getText();
+				String comment = commentField.getText();
+
+				if (name.trim().length() == 0) {
+					name = "IGB BOOKMARK";
+				}
+				bookmark.setName(name);
+				bookmark.setComment(comment);
+				BookmarkManagerView.getSingleton().insert(new BookmarkList(bookmark));
+				
+			} catch (MalformedURLException m) {
+				ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
 			}
-
-			String name = nameField.getText();
-			String comment = commentField.getText();
-
-			if (name.trim().length() == 0) {
-				name = "IGB BOOKMARK";
-			}
-
-			bookmark.setName(name);
-			bookmark.setComment(comment);
-			AddBookmarkAction.getAction().addBookmark(bookmark);
 		}
 	}
 	
 	/**
 	 * Activate the panel and complete adding a bookmark by user's operation.
 	 */
-	public static void run(Bookmark b) {
-		getInstance().initDialog(b);
+	public static void run(SeqSpan span) {
+		getInstance().initDialog(span);
 	}
 }

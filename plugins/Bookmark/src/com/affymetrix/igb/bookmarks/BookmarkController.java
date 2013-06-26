@@ -486,4 +486,12 @@ public abstract class BookmarkController {
 		BookmarkController.addSymmetries(bookmarks);
 		return !bookmarks.getSyms().isEmpty();
 	}
+	
+	public static String getDefaultBookmarkName(SeqSpan span){
+		BioSeq aseq = span.getBioSeq();
+		if (aseq == null) {
+			return null;
+		}
+		return MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, aseq.getVersion(), aseq.getID(), span.getMin(), span.getMax());
+	}
 }

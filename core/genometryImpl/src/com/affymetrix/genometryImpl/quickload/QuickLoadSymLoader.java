@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.quickload;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +27,6 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
-import com.affymetrix.genometryImpl.util.ParserController;
-import java.io.IOException;
 
 /**
  *
@@ -88,7 +87,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	public static String detemineFriendlyName(URI uri) {
 		String uriString = uri.toASCIIString().toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-		String ext = ParserController.getExtension(unzippedStreamName);
+		String ext = GeneralUtils.getExtension(unzippedStreamName);
 
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
 		String strippedName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);

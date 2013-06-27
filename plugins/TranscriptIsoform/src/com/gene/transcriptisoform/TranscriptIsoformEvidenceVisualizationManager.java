@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -86,7 +85,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		}
 		String uriString = uri.toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-		return ParserController.getExtension(unzippedStreamName);
+		return GeneralUtils.getExtension(unzippedStreamName);
 	}
 
 	public void setRefSeqTiers(List<TierGlyph> refSeqTiers) {

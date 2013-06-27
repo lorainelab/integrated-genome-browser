@@ -1309,7 +1309,7 @@ public final class GeneralLoadUtils {
 	 */
 	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version) {
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
-		String extension = ParserController.getExtension(unzippedStreamName);
+		String extension = GeneralUtils.getExtension(unzippedStreamName);
 		boolean getNewVersion = false;
 		
 		if (extension.equals(".bam")) {

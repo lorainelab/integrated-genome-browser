@@ -177,7 +177,7 @@ public final class GeneralUtils {
 		FileInputStream fis = null;
 		try {
 			String unzippedStreamName = stripEndings(streamName);
-			String extension = ParserController.getExtension(unzippedStreamName);
+			String extension = getExtension(unzippedStreamName);
 			//watch out for spaces and / in the stream name
 			File f = File.createTempFile(CLEAN.matcher(unzippedStreamName).replaceAll("_"), extension);
 			f.deleteOnExit();	// This is only a temporary file!  Delete when the app exits.
@@ -594,5 +594,20 @@ public final class GeneralUtils {
 		String hackstr = new String(hackbuf);
 		StringSelection data = new StringSelection(hackstr);
 		clipboard.setContents(data, null);
+	}
+
+	/**
+	 * Determine extension.
+	 * @param stream_name
+	 * @return the file extension
+	 */
+	public static String getExtension(String stream_name) {
+		if (stream_name.endsWith(".link.psl")) {
+			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
+		} else if (stream_name.lastIndexOf(".") >= 0) {
+			return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
+		} else {
+			return "";
+		}
 	}
 }

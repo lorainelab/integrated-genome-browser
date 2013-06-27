@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
@@ -65,7 +64,7 @@ public final class ServiceUtils {
 		if (feature == null && gServer.serverType == ServerTypeI.LocalFiles) {
 			String uriString = uri.toASCIIString().toLowerCase();
 			String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-			String extension = ParserController.getExtension(unzippedStreamName);
+			String extension = GeneralUtils.getExtension(unzippedStreamName);
 			extension = extension.substring(extension.indexOf('.') + 1);
 
 			if (FileTypeHolder.getInstance().getFileTypeHandler(extension) == null) {

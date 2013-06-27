@@ -281,7 +281,7 @@ public abstract class ServerUtils {
 			Map<String, String> graph_name2file,
 			String dataRoot) throws IOException {
 		String file_name = current_file.getName();
-		String extension = ParserController.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));	// .psl, .bed, et cetera
+		String extension = GeneralUtils.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));	// .psl, .bed, et cetera
 		if(extension != null && extension.length() > 0){
 			file_name = file_name.substring(0, file_name.lastIndexOf(extension));
 			extension = extension.substring(extension.indexOf('.') + 1);
@@ -396,7 +396,7 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		String extension = ParserController.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));	// .psl, .bed, et cetera
+		String extension = GeneralUtils.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));	// .psl, .bed, et cetera
 		
 		// current originalFile is not a directory, so try and recognize as annotation file
 		indexOrLoadFile(dataroot, current_file, type_prefix, extension, annots_map, genome, annot_id);

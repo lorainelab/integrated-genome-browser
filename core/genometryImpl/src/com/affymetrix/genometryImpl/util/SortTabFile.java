@@ -34,7 +34,7 @@ public class SortTabFile {
 		List<String> list = new ArrayList<String>(1000);
 		List<String> templist = new ArrayList<String>(1000);
 		String unzippedStreamName = GeneralUtils.stripEndings(file.getName());
-		String extension = ParserController.getExtension(unzippedStreamName);
+		String extension = GeneralUtils.getExtension(unzippedStreamName);
 		Comparator<String> comparator = new LineComparator(extension);
 		
 		try {

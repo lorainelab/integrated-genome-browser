@@ -6,8 +6,8 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.util.ExportDialog;
 import java.awt.Component;
@@ -332,7 +332,7 @@ public class IGBScriptEngine implements ScriptEngine {
 	private static void snapShot(IGBScriptEngine.ExportMode exportMode, File f) {
 		Logger.getLogger(IGBScriptEngine.class.getName()).log(
 				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
-		String ext = ParserController.getExtension(f.getName().toLowerCase());
+		String ext = GeneralUtils.getExtension(f.getName().toLowerCase());
 		if (ext.length() == 0) {
 			Logger.getLogger(IGBScriptEngine.class.getName()).log(
 					Level.SEVERE, "no file extension given for file", f.getName());

@@ -109,7 +109,7 @@ public final class ParserController {
 			IndexWriter iWriter = getIndexWriter(stream_name);
 			DataInputStream dis = new DataInputStream(str);
 
-			String extension = getExtension(stream_name);	// .psl, .bed, et cetera
+			String extension = GeneralUtils.getExtension(stream_name);	// .psl, .bed, et cetera
 			String annot_type = getAnnotType(annotList, stream_name, extension, type_prefix);
 
 			System.out.println("Indexing " + stream_name);
@@ -129,23 +129,6 @@ public final class ParserController {
 			GeneralUtils.safeClose(str);
 		}
 	}
-
-	/**
-	 * Determine extension.
-	 * @param stream_name
-	 * @return the file extension
-	 */
-	public static String getExtension(String stream_name) {
-		if (stream_name.endsWith(".link.psl")) {
-			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
-		} else if (stream_name.lastIndexOf(".") >= 0) {			
-			return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
-		} else {
-			return "";
-		}
-	}
-
-
 
 	public static IndexWriter getIndexWriter(String stream_name) {
 		return FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name).getIndexWriter(stream_name);

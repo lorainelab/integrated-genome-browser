@@ -2,7 +2,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -375,7 +375,7 @@ public class ExportDialog implements ExportConstants {
 		}
 
 		String path = file.getAbsolutePath();
-		String ext = ParserController.getExtension(path);
+		String ext = GeneralUtils.getExtension(path);
 		if (ext.equalsIgnoreCase(extension)) {
 			return file;
 		}
@@ -423,7 +423,7 @@ public class ExportDialog implements ExportConstants {
 			fileFilter = fileChooser.getSelectedFile();
 			defaultDir = fileChooser.getCurrentDirectory();
 			extFilter = fileChooser.getFileFilter();
-			String ext = ParserController.getExtension(newPath);
+			String ext = GeneralUtils.getExtension(newPath);
 			String des = fileChooser.getFileFilter().getDescription();
 
 			// the output file extension is based on user's input
@@ -499,7 +499,7 @@ public class ExportDialog implements ExportConstants {
 		}
 
 		String path = exportFile.getAbsolutePath();
-		String ext = ParserController.getExtension(path);
+		String ext = GeneralUtils.getExtension(path);
 
 		if (!isExt(ext)) {
 			ext = selectedExt;
@@ -722,7 +722,7 @@ public class ExportDialog implements ExportConstants {
 	 */
 	public void extComboBoxActionPerformed() {
 		String path = filePathTextField.getText();
-		String ext = ParserController.getExtension(path);
+		String ext = GeneralUtils.getExtension(path);
 		selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
 		int index = path.lastIndexOf(".");

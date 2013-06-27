@@ -299,21 +299,6 @@ public class AnnotatedSeqGroup {
 		}
 	}
 
-	final public Set<SeqSymmetry> findAllSyms() {
-		final Set<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
-		Thread current_thread = Thread.currentThread();
-		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
-			if(current_thread.isInterrupted())
-				break;
-			for (SeqSymmetry seq : ent.getValue()) {
-				if(current_thread.isInterrupted())
-					break;
-				symset.add(seq);
-			}
-		}
-		return symset;
-	}
-
 	final public Set<SeqSymmetry> findInSymProp(Pattern regex) {
 		return findInSymProp(regex, -1);
 	}

@@ -65,6 +65,7 @@ public class OpenURIAction extends SeqMapViewActionA {
 		
 		if (!mergeSelected) {
 			unknown_group_count++;
+			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 
 	}

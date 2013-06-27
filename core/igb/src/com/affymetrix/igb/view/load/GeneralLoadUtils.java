@@ -1172,7 +1172,7 @@ public final class GeneralLoadUtils {
 		// force a refresh of this server		
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 
-		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
+//		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
 
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}

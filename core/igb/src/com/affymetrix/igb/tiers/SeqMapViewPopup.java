@@ -18,7 +18,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.color.Score;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
@@ -257,28 +256,22 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		int num_selections = labels.size();
 		boolean any_are_collapsed = false;
 		boolean any_are_expanded = false;
-		boolean any_are_color_by_score = false; // whether any allow setColorByScore()
 		boolean any_are_separate_tiers = false;
 		boolean any_are_single_tier = false;
 		boolean coordinates_track_selected = false;
 		boolean containHiddenTiers = false;
 		boolean any_lockable = false;
 		boolean any_locked = false;
-		boolean all_but_one_locked = false;
-		boolean any_graph = false;
 		
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
 			ITrackStyleExtended astyle = glyph.getAnnotStyle();
-			any_are_color_by_score = any_are_color_by_score || (astyle.getColorProvider() != null && astyle.getColorProvider() instanceof Score);
 			if (!astyle.isGraphTier()) {
 				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
 				any_are_single_tier = 
 						any_are_single_tier || (!astyle.getSeparate() && 
 						MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory()));
-			} else {
-				any_graph = true;
-			}
+			} 
 		
 			if (astyle.getExpandable()) {
 				any_are_collapsed = any_are_collapsed || astyle.getCollapsed();
@@ -304,8 +297,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				no_of_locked++;
 			}
 		}
-		all_but_one_locked = no_of_locked == handler.getVisibleTierGlyphs().size() - 2;
-
+		
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
 		
 		Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);

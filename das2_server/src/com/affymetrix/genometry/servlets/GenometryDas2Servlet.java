@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 
 
 import hci.gnomex.model.GenomeBuild;
-import hci.gnomex.model.DataTrackFile;
 import hci.gnomex.model.UnloadDataTrack;
 import hci.gnomex.security.SecurityAdvisor;
 import hci.gnomex.utility.DataTrackQuery;
@@ -55,7 +54,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SearchUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -1871,7 +1870,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class<? extends AnnotationWriter> writerclass,
 			HttpServletResponse response, String xbase) {
 		String name = names.get(0);
-		Set<SeqSymmetry> result = SearchUtils.findNameInGenome(name, genome);
+		Set<SeqSymmetry> result = IndexingUtils.findNameInGenome(name, genome);
 		OutputStream outstream = null;
 		try {
 			AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();

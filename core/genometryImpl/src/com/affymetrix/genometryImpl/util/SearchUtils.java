@@ -91,51 +91,6 @@ public final class SearchUtils {
 		}
 	}
 
-
-
-	public static Set<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {
-		//int resultLimit = 1000000;
-
-		boolean glob_start = name.startsWith("*");
-		boolean glob_end = name.endsWith("*");
-
-		Set<SeqSymmetry> result = null;
-		Pattern name_pattern = null;
-		String name_regex = name;
-		if (glob_start || glob_end) {
-			//name_regex = name.toLowerCase();
-			if (glob_start) {
-				// do replacement of first "*" with ".*" ?
-				name_regex = ".*" + name_regex.substring(1);
-			}
-			if (glob_end) {
-				// do replacement of last "*" with ".*" ?
-				name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
-			}
-
-		} else {
-			// ABC -- field exactly matches "ABC"
-			name_regex = "^" + name.toLowerCase() + "$";
-			//result = genome.findSyms(name);
-		}
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
-				"name arg: {0},  regex to use for pattern-matching: {1}", new Object[]{name, name_regex});
-
-		name_pattern = Pattern.compile(name_regex, Pattern.CASE_INSENSITIVE);
-		result = genome.findSyms(name_pattern);
-
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
-				"non-indexed regex matches: {0}", result.size());
-
-		Set<SeqSymmetry> result2 = IndexingUtils.findSymsByName(genome, name_pattern);
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
-				"indexed regex matches: {0}", result2.size());
-
-		result.addAll(result2);
-
-		return result;
-	}
-
 	public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
 		String[] props_to_search;
 		Set<SeqSymmetry> syms = null;

@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.io.FileInputStream;
@@ -65,7 +64,7 @@ public class SearchUtilsTest {
 
 	@Test
 	public void testNonIndexedServerSearch() {
-		Set<SeqSymmetry> foundSyms = SearchUtils.findNameInGenome(".*EG510482.*", group);
+		Set<SeqSymmetry> foundSyms = IndexingUtils.findNameInGenome(".*EG510482.*", group);
 		assertEquals(0, foundSyms.size());
 		
 	}

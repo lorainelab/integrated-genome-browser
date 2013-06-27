@@ -40,7 +40,7 @@ import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometryImpl.util.Optimize;
-import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.util.DasServerUtils;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -317,8 +317,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			initFormats(output_registry);
 
-			ServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
-			ServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
+			DasServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
+			DasServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
 
 			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
         Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from gnomex database....");
@@ -331,7 +331,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				loadGenomesFromFileSystem(data_root, organisms, org_order_filename);
 			}
 
-			ServerUtils.printGenomes(organisms);
+			DasServerUtils.printGenomes(organisms);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -422,7 +422,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("\tFound and loading " + p);
 
 			//load file
-			HashMap<String, String> prop = ServerUtils.loadFileIntoHashMap(p);
+			HashMap<String, String> prop = DasServerUtils.loadFileIntoHashMap(p);
 
 			//load fields
 			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
@@ -517,7 +517,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						if (isServerRefreshMode) {
 							AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeVersionName);
 							if (genomeVersion != null) {
-								ServerUtils.unloadGenoPubAnnot(unloadAnnotation.getTypeName(), genomeVersion, genome2graphdirs.get(genomeVersion));																
+								DasServerUtils.unloadGenoPubAnnot(unloadAnnotation.getTypeName(), genomeVersion, genome2graphdirs.get(genomeVersion));																
 							}
 						}
 
@@ -595,7 +595,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							
 							if (file.isDirectory() ) {
 								if (isMultiFileDataTrackType(file)) {
-									ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
+									DasServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
 											file.getPath(), 
 											genomeVersion, 
 											file, 
@@ -619,7 +619,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 								}
 								
 								else {
-									ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
+									DasServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 										file, 
 										genomeVersion, 
 										annots_map,
@@ -732,7 +732,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	            if (isServerRefreshMode) {
 	              AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeBuildName);
 	              if (genomeVersion != null) {
-	                ServerUtils.unloadGenoPubAnnot(unloadDataTrack.getTypeName(), genomeVersion, null);                               
+	                DasServerUtils.unloadGenoPubAnnot(unloadDataTrack.getTypeName(), genomeVersion, null);                               
 	              }
 	            }
 
@@ -862,7 +862,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	              
 	              if (file.isDirectory() ) {
 	                if (isMultiFileDataTrackType(file)) {
-	                  ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
+	                  DasServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
 	                      file.getPath(), 
 	                      genomeVersion, 
 	                      file, 
@@ -886,7 +886,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	                }
 	                
 	                else {
-	                  ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
+	                  DasServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 	                    file, 
 	                    genomeVersion, 
 	                    annots_map,
@@ -975,14 +975,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		ServerUtils.sortGenomes(organisms, org_order_filename);
+		DasServerUtils.sortGenomes(organisms, org_order_filename);
 	}
 
 	private void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
 		String genome_version = genome_directory.getName();
 
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
-		ServerUtils.parseChromosomeData(genome_directory, genome_version);
+		DasServerUtils.parseChromosomeData(genome_directory, genome_version);
 
 		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
 		if (genome == null) {
@@ -1002,7 +1002,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
-		ServerUtils.loadAnnots(genome_directory, genome, annots_map, graph_name2dir, graph_name2file, dataRoot);
+		DasServerUtils.loadAnnots(genome_directory, genome, annots_map, graph_name2dir, graph_name2file, dataRoot);
 
 		// optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.genome(genome);
@@ -1208,7 +1208,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		SeqSpan span = null;
 		if (ranges.size() == 1) {
-			span = ServerUtils.getLocationSpan(seqname, ranges.get(0), genome);
+			span = DasServerUtils.getLocationSpan(seqname, ranges.get(0), genome);
 		}
 
 		String format = "";
@@ -1357,9 +1357,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		
 
 
-		Map<String, SimpleDas2Type> types_hash = ServerUtils.getAnnotationTypes(data_root,genome,getAnnotSecurity(request));
-		ServerUtils.getSymloaderTypes(genome, this.getAnnotSecurity(request), types_hash);
-		ServerUtils.getGraphTypes(data_root, genome, this.getAnnotSecurity(request), types_hash);
+		Map<String, SimpleDas2Type> types_hash = DasServerUtils.getAnnotationTypes(data_root,genome,getAnnotSecurity(request));
+		DasServerUtils.getSymloaderTypes(genome, this.getAnnotSecurity(request), types_hash);
+		DasServerUtils.getGraphTypes(data_root, genome, this.getAnnotSecurity(request), types_hash);
 
 		ByteArrayOutputStream buf = null;
 		ByteArrayInputStream bais = null;
@@ -1703,7 +1703,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				//    (therefore any annotation on the seq passes overlap filter)
 				//     then want all getLocationSpan will return bounds of seq as overlap
 				
-				overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
+				overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, genome);
 				if (overlap_span != null) {
 					Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 					Map<String, String> graph_name2file = genome2graphfiles.get(genome);
@@ -1722,7 +1722,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					
 					if (insides.size() == 1) {
 						String inside = insides.get(0);
-						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);						
+						inside_span = DasServerUtils.getLocationSpan(seqid, inside, genome);						
 					}
 					outseq = overlap_span.getBioSeq();
 
@@ -1741,7 +1741,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					}				
 
 					/** this is the main call to retrieve symmetries meeting query constraints */
-					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
+					result = DasServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}
 			} else {
 				// any query combination not recognized above may  be correct based on DAS/2 spec

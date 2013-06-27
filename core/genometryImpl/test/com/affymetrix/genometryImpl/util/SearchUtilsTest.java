@@ -81,7 +81,7 @@ public class SearchUtilsTest {
 			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
 			assertEquals(group.getSeqCount(), tempGroup.getSeqCount());
 			
-			List loadedSyms = ServerUtils.loadAnnotFile(f, "indexPSL", null, tempGroup, true);
+			List loadedSyms = DasServerUtils.loadAnnotFile(f, "indexPSL", null, tempGroup, true);
 			assertEquals(46, loadedSyms.size());
 
 			/*IndexingUtils.determineIndexes(group, tempGroup, System.getProperty("user.dir"), f, loadedSyms, iWriter, "indexPSL", "indexPSL");

@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.Optimize;
-import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.util.DasServerUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -226,35 +226,35 @@ public class LinkPSLParserTest {
 		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "RT_U34", "link.psl", writer);
 		IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
 		String overlap = "3000000:160000000";
-		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		List<SeqSymmetry> newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		List<SeqSymmetry> newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(96, newResults.size()); // first 96 lines of file are < 160000000
 		overlap = "160000000:160254000";
-		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(0, newResults.size()); // no spans here
 		overlap = "160254000:160254500";
-		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(1, newResults.size());
 		assertEquals("RT-U34:S78284_S_AT", newResults.get(0).getID()); // only feature in this span.
 		overlap = "160254500:160254600";
-		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(1, newResults.size());
 		assertEquals("RT-U34:S78284_S_AT", newResults.get(0).getID()); // only feature in this span.
 		overlap = "160254600:160254700";
-		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(0, newResults.size()); // no spans here
 		overlap = "122000000:123000000";
-		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(1, newResults.size());
 		assertEquals("RT-U34:L29232_AT", newResults.get(0).getID()); // only feature in this span
 		overlap = "12722772:12723220";
-		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(3, newResults.size()); // first three in the file
 		if (testFile.exists()) {
 			testFile.delete();

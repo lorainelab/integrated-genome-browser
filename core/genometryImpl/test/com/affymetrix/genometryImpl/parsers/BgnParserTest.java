@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.util.DasServerUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,15 +76,15 @@ public class BgnParserTest {
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms);
 
 			String overlap = "3000000:160000000";
-			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
+			SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, genome);
 
-			List newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",genome);
+			List newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",genome);
 			assertEquals(337, newResults.size());
 
 			overlap = "115000000:123000000";
-			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
+			overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, genome);
 
-			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",genome);
+			newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",genome);
 			assertEquals(6, newResults.size());
 
 			if (testFile.exists()) {

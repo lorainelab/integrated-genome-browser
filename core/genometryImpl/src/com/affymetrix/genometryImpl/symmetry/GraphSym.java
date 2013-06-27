@@ -7,11 +7,13 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.IndexingUtils;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -435,7 +437,7 @@ public class GraphSym extends RootSeqSymmetry {
 			// no need to index.  Array is too small.
 			return null;
 		}
-		return IndexingUtils.createIndexedFile(this.pointCount, x, y, w);
+		return createIndexedFile(this.pointCount, x, y, w);
 	}
 
 //	private String cleanFileName(String fileName) {
@@ -661,4 +663,37 @@ public class GraphSym extends RootSeqSymmetry {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Index a graph.
+	 */
+	private static File createIndexedFile(int pointCount, int[] x, float[] y, int[] w) {
+		File bufVal = null;
+		DataOutputStream dos = null;
+		try {
+			// create indexed file.
+			
+			//if (graphName.length() < 3) {
+				//graphName += "___";
+				// fix for Java error with short names
+			//}
+			
+			bufVal = File.createTempFile((Math.random()+"").substring(2), "idx");
+			//cannot use the graph name since this is sometimes too long and throws a IOException
+			//bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
+			bufVal.deleteOnExit(); // Delete this file when shutting down.
+			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
+			for (int i = 0; i < pointCount; i++) {
+				dos.writeInt(x[i]);
+				dos.writeFloat(y[i]);
+				dos.writeInt(w == null ? 1 : w[i]); // width of 1 is a single point.
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dos);
+		}
+		return bufVal;
+	}
+
 }

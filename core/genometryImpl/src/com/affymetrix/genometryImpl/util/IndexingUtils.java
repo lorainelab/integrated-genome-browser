@@ -640,36 +640,4 @@ public final class IndexingUtils {
 		return minVal;
 	}
 
-	/**
-	 * Index a graph.
-	 */
-	public static File createIndexedFile(int pointCount, int[] x, float[] y, int[] w) {
-		File bufVal = null;
-		DataOutputStream dos = null;
-		try {
-			// create indexed file.
-			
-			//if (graphName.length() < 3) {
-				//graphName += "___";
-				// fix for Java error with short names
-			//}
-			
-			bufVal = File.createTempFile((Math.random()+"").substring(2), "idx");
-			//cannot use the graph name since this is sometimes too long and throws a IOException
-			//bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
-			bufVal.deleteOnExit(); // Delete this file when shutting down.
-			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
-			for (int i = 0; i < pointCount; i++) {
-				dos.writeInt(x[i]);
-				dos.writeFloat(y[i]);
-				dos.writeInt(w == null ? 1 : w[i]); // width of 1 is a single point.
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(dos);
-		}
-		return bufVal;
-	}
-
 }

@@ -23,8 +23,8 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.NewGenome;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -63,7 +63,6 @@ public class NewGenomeAction extends OpenURIAction {
 			String refSeqPath = ng.getRefSeqFile();
 			
 			if(refSeqPath != null && refSeqPath.length() > 0){
-				boolean mergeSelected = gmodel.getSeqGroup(ng.getVersionName()) == null;
 				String fileName = getFriendlyName(refSeqPath);
 				if(Constants.genomeTxt.equals(fileName) || Constants.modChromInfoTxt.equals(fileName)){
 					try {
@@ -74,7 +73,7 @@ public class NewGenomeAction extends OpenURIAction {
 						Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
 					}
 				} else {
-					openURI(new File(refSeqPath).toURI(), fileName, mergeSelected, group, speciesName, false);
+					igbService.openURI(new File(refSeqPath).toURI(), fileName, group, speciesName, false);
 				}
 			} else {
 				GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
@@ -83,6 +82,9 @@ public class NewGenomeAction extends OpenURIAction {
 		
 			if(ng.shouldSwitch()){
 				gmodel.setSelectedSeqGroup(group);
+			} else {
+				GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
+				ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
 			}
 		}
 	}

@@ -676,6 +676,14 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private void refreshSpeciesCB() {
 		int speciesListLength = GeneralLoadUtils.getSpecies2Generic().keySet().size();
 		if (speciesListLength == speciesCB.getItemCount() - 1) {
+			String speciesName = (String) speciesCB.getSelectedItem();
+			// Check if new version has been added
+			if(!speciesName.equals(SELECT_SPECIES)){
+				int versionListLength = getAllVersions(speciesName).size();
+				if(versionListLength != versionCB.getItemCount() - 1){
+					refreshVersionCB(speciesName);
+				}
+			}
 			// No new species.  Don't bother refreshing.
 			return;
 		}

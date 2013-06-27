@@ -129,7 +129,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
 		if (enable) {
 			foregroundColor = styles.get(0).getForeground();
 			for (ITrackStyleExtended style : styles) {
-				if (!(foregroundColor.equals(style.getForeground())) || style.getColorProvider() != null) {
+				if (!(foregroundColor.equals(style.getForeground()))) {
 					foregroundColor = null;
 					break;
 				}

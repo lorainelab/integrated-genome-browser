@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 /**
  *
@@ -216,7 +217,7 @@ public class QuickLoadSymLoader extends SymLoader {
 	}
 
 	protected List<? extends SeqSymmetry> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
-		results = ServerUtils.filterForOverlappingSymmetries(span, results);
+		results = SeqUtils.filterForOverlappingSymmetries(span, results);
 		return SymLoader.splitFilterAndAddAnnotation(span, results, feature);
 	}
 

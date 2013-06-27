@@ -46,7 +46,6 @@ import com.affymetrix.genometryImpl.symloader.USeq;
 import com.affymetrix.genometryImpl.symloader.VCF;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ServerUtils;
 
 /**
  * all the FileTypeHandler implementations are saved here, included dynamically
@@ -448,7 +447,7 @@ public class FileTypeHolder {
 		String[] extensions = fileTypeHandler.getExtensions();
 		for (String extension : extensions) {
 			if (map.get(extension) != null) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+				Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
 			}
 			map.put(extension, fileTypeHandler);
 		}
@@ -462,7 +461,7 @@ public class FileTypeHolder {
 		String[] extensions = fileTypeHandler.getExtensions();
 		for (String extension : extensions) {
 			if (fileTypeHandlerMap.get(extension) == null) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "missing removed SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+				Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "missing removed SymLoaderFactory for extension {0}!!!", new Object[]{extension});
 			}
 			fileTypeHandlerMap.remove(extension);
 		}

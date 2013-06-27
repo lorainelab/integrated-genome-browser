@@ -41,7 +41,6 @@ import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
@@ -179,7 +178,7 @@ public class Das2ServerType implements ServerTypeI {
 		try {
 			info = new Das2ServerInfo(url, name, false);
 		} catch (URISyntaxException e) {
-			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
+			Logger.getLogger(Das2ServerType.class.getName()).log(Level.WARNING,
 					"Could not initialize {0} server with address: {1}", new Object[]{name, url});
 			e.printStackTrace(System.out);
 		}

@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 
 import java.util.*;
 
@@ -1387,4 +1388,42 @@ public static boolean areResiduesComplete(String residues) {
 			}
 		}
 	}
+	
+	/**
+	 * Return only the symmetries that have some overlap with this span.
+	 * Chromosome is not an issue; everything returned is on the same chromosome.
+	 * @param overlapSpan
+	 * @param symList
+	 * @return list of overlapping seq symmetries
+	 */
+	public static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<? extends SeqSymmetry> symList) {
+		List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
+		for (SeqSymmetry sym : symList) {
+			if (sym instanceof UcscPslSym) {
+				UcscPslSym uSym = (UcscPslSym)sym;
+				SeqSpan span = uSym.getSpan(uSym.getTargetSeq());
+				if (!overlap(span, overlapSpan)) {
+					continue;
+				}
+				newList.add(sym);
+				continue;
+			}
+			if (isOverlapping(sym, overlapSpan)) {
+				newList.add(sym);
+			}
+		}
+		return newList;
+	}
+
+	private static boolean isOverlapping(SeqSymmetry sym, SeqSpan overlapSpan) {
+		int spanCount = sym.getSpanCount();
+		for (int i = 0; i < spanCount; i++) {
+			SeqSpan span = sym.getSpan(i);
+			if (span != null && SeqUtils.overlap(span, overlapSpan)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

@@ -1,28 +1,19 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
-import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
-import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symloader.*;
 import com.affymetrix.genometryImpl.symmetry.SearchableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
@@ -33,183 +24,7 @@ import java.util.regex.Pattern;
  * Utils for DAS/2 and other servers.
  */
 public abstract class DasServerUtils {
-	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
-	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
-	private static final Pattern interval_splitter = Pattern.compile(":");
-	
-	private static final String modChromInfo = "mod_chromInfo.txt";
-	private static final String liftAll = "liftAll.lft";
-	public static final List<String> BAR_FORMATS = new ArrayList<String>();
-
-	static {
-		BAR_FORMATS.add("bar");
-	}
-
-	public static void parseChromosomeData(File genome_directory, AnnotatedSeqGroup genome) throws IOException {
-		String genome_version = genome.getID();
-		File chrom_info_file = new File(genome_directory, modChromInfo);
-		if (chrom_info_file.exists()) {
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
-					"parsing {0} for: {1}", new Object[]{modChromInfo,genome_version});
-			InputStream chromstream = new FileInputStream(chrom_info_file);
-			try {
-				ChromInfoParser.parse(chromstream, genome);
-			} finally {
-				GeneralUtils.safeClose(chromstream);
-			}
-		} else {
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
-					"couldn't find {0} for: {1}", new Object[]{modChromInfo,genome_version});
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
-					"looking for {0} instead", liftAll);
-			File lift_file = new File(genome_directory, "liftAll.lft");
-			if (lift_file.exists()) {
-				Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
-						"parsing {0} for: {1}", new Object[]{liftAll,genome_version});
-				InputStream liftstream = new FileInputStream(lift_file);
-				try {
-					LiftParser.parse(liftstream, genome);
-				} finally {
-					GeneralUtils.safeClose(liftstream);
-				}
-			} else {
-				Logger.getLogger(DasServerUtils.class.getName()).log(Level.SEVERE,
-						"couldn't find {0} or {1} for genome!!! {2}", new Object[]{modChromInfo, liftAll, genome_version});
-			}
-		}
-	}
-
-	/**
-	 * Loads a originalFile's lines into a hash.
-	 * The first column is the key, second the value.
-	 * Skips blank lines and those starting with a '#'
-	 * @return null if an exception in thrown
-	 * */
-	public static HashMap<String, String> loadFileIntoHashMap(File file) {
-		BufferedReader in = null;
-		HashMap<String, String> names = new HashMap<String, String>();
-		try {
-			in = new BufferedReader(new FileReader(file));
-			String line;
-			while ((line = in.readLine()) != null) {
-				line = line.trim();
-				if (line.length() == 0 || line.startsWith("#")) {
-					continue;
-				}
-				String[] keyValue = line.split("\\s+");
-				if (keyValue.length < 2) {
-					continue;
-				}
-				names.put(keyValue[0], keyValue[1]);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(in);
-		}
-		return names;
-	}
-
-	/**
-	 * Load synonyms from file into lookup.
-	 */
-	public static void loadSynonyms(File synfile, SynonymLookup lookup) {
-		if (synfile.exists()) {
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
-					"Synonym file {0} found, loading synonyms", synfile.getName());
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(synfile);
-				lookup.loadSynonyms(fis);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				GeneralUtils.safeClose(fis);
-			}
-		} else {
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
-					"Synonym file {0} not found, therefore not using synonyms", synfile.getName());
-		}
-	}
-
-	/** sorts genomes and versions within genomes
-	 *  sort genomes based on "organism_order.txt" config originalFile if present
-	 * @param organisms
-	 * @param org_order_filename
-	 */
-	public static void sortGenomes(Map<String, List<AnnotatedSeqGroup>> organisms, String org_order_filename) {
-		// sort genomes based on "organism_order.txt" config originalFile if present
-		// get Map.Entry for organism, sort based on order in organism_order.txt,
-		//    put in order in new LinkedHashMap(), then replace as organisms field
-		File org_order_file = new File(org_order_filename);
-		if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
-			Comparator<String> org_comp = new MatchToListComparator(org_order_filename);
-			List<String> orglist = new ArrayList<String>(organisms.keySet());
-			Collections.sort(orglist, org_comp);
-			Map<String, List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String, List<AnnotatedSeqGroup>>();
-			for (String org : orglist) {
-				sorted_organisms.put(org, organisms.get(org));
-			}
-			organisms = sorted_organisms;
-		}
-		if (SORT_VERSIONS_BY_DATE_CONVENTION) {
-			Comparator<AnnotatedSeqGroup> date_comp = new GenomeVersionDateComparator();
-			for (List<AnnotatedSeqGroup> versions : organisms.values()) {
-				Collections.sort(versions, date_comp);
-			}
-		}
-	}
-
-	public static void loadGenoPubAnnotFromDir(String type_name,
-			String file_path,
-			AnnotatedSeqGroup genome,
-			File current_file,
-			Integer annot_id,
-			Map<String,String> graph_name2dir) {
-		// each file in directory is same annotation type, but for a single seq?
-		// assuming bar files for now, each with starting with seq id?
-		//  String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
-		Logger.getLogger(DasServerUtils.class.getName()).log(Level.FINE,
-				"@@@ adding graph directory to types: {0}, path: {1}", new Object[]{type_name, file_path});
-		graph_name2dir.put(type_name, file_path);
-		genome.addType(type_name, annot_id);
-
-	}
-
-	public static void unloadGenoPubAnnot(String type_name,
-			AnnotatedSeqGroup genome,
-			Map<String,String> graph_name2dir) {
-		
-		
-		if (graph_name2dir != null && graph_name2dir.containsKey(type_name)) {
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.FINE,
-					"@@@ removing graph directory to types: {0}", type_name);
-			graph_name2dir.remove(type_name);
-			
-		}  else {
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.FINE,
-					"@@@ removing annotation {0}", type_name);
-			List<BioSeq> seqList = genome.getSeqList();
-			for (BioSeq aseq : seqList) {
-				SymWithProps tannot = aseq.getAnnotation(type_name);			
-				if (tannot != null) {
-					aseq.unloadAnnotation(tannot);
-					tannot = null;
-				} else {
-					IndexedSyms iSyms = aseq.getIndexedSym(type_name);
-					if (iSyms != null) {
-						if (!aseq.removeIndexedSym(type_name)) {
-							Logger.getLogger(DasServerUtils.class.getName()).log(
-									Level.WARNING, "Unable to remove indexed annotation {0}", type_name);
-						}
-						iSyms = null;
-					}
-				}
-			}
-		}
-		genome.removeType(type_name);
-
-	}
+	static final Pattern interval_splitter = Pattern.compile(":");
 	
 	/**
 	 *  Differs from Das2FeatureSaxParser.getLocationSpan():
@@ -406,19 +221,6 @@ public abstract class DasServerUtils {
 		finally {
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(newIstr);
-		}
-	}
-
-	// Print out the genomes
-	public static void printGenomes(Map<String, List<AnnotatedSeqGroup>> organisms) {
-		for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
-			String org = ent.getKey();
-			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO, "Organism: {0}", org);
-			for (AnnotatedSeqGroup version : ent.getValue()) {
-				Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO, 
-						"    Genome version: {0}, organism: {1}, seq count: {2}",
-						new Object[]{version.getID(), version.getOrganism(), version.getSeqCount()});
-			}
 		}
 	}
 

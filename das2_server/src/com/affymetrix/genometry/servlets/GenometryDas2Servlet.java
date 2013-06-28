@@ -318,8 +318,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			initFormats(output_registry);
 
-			DasServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
-			DasServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
+			Das2ServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
+			Das2ServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
 
 			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
         Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from gnomex database....");
@@ -332,7 +332,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				loadGenomesFromFileSystem(data_root, organisms, org_order_filename);
 			}
 
-			DasServerUtils.printGenomes(organisms);
+			Das2ServerUtils.printGenomes(organisms);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -423,7 +423,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("\tFound and loading " + p);
 
 			//load file
-			HashMap<String, String> prop = DasServerUtils.loadFileIntoHashMap(p);
+			HashMap<String, String> prop = Das2ServerUtils.loadFileIntoHashMap(p);
 
 			//load fields
 			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
@@ -518,7 +518,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						if (isServerRefreshMode) {
 							AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeVersionName);
 							if (genomeVersion != null) {
-								DasServerUtils.unloadGenoPubAnnot(unloadAnnotation.getTypeName(), genomeVersion, genome2graphdirs.get(genomeVersion));																
+								Das2ServerUtils.unloadGenoPubAnnot(unloadAnnotation.getTypeName(), genomeVersion, genome2graphdirs.get(genomeVersion));																
 							}
 						}
 
@@ -596,7 +596,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							
 							if (file.isDirectory() ) {
 								if (isMultiFileDataTrackType(file)) {
-									DasServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
+									Das2ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
 											file.getPath(), 
 											genomeVersion, 
 											file, 
@@ -733,7 +733,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	            if (isServerRefreshMode) {
 	              AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeBuildName);
 	              if (genomeVersion != null) {
-	                DasServerUtils.unloadGenoPubAnnot(unloadDataTrack.getTypeName(), genomeVersion, null);                               
+	                Das2ServerUtils.unloadGenoPubAnnot(unloadDataTrack.getTypeName(), genomeVersion, null);                               
 	              }
 	            }
 
@@ -863,7 +863,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	              
 	              if (file.isDirectory() ) {
 	                if (isMultiFileDataTrackType(file)) {
-	                  DasServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
+	                  Das2ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
 	                      file.getPath(), 
 	                      genomeVersion, 
 	                      file, 
@@ -976,7 +976,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		DasServerUtils.sortGenomes(organisms, org_order_filename);
+		Das2ServerUtils.sortGenomes(organisms, org_order_filename);
 	}
 
 	private void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
@@ -984,7 +984,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		AnnotatedSeqGroup genome = gmodel.addSeqGroup(genome_version);
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
-		DasServerUtils.parseChromosomeData(genome_directory, genome);
+		Das2ServerUtils.parseChromosomeData(genome_directory, genome);
 		
 		genome2graphdirs.put(genome, new LinkedHashMap<String, String>());
 		genome2graphfiles.put(genome, new LinkedHashMap<String, String>());

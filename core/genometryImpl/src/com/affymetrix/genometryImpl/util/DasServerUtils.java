@@ -520,28 +520,11 @@ public abstract class DasServerUtils {
 
 		genome.addType(returnTypeName, annot_id);
 		
-		DasServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
+		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
 
 		IndexingUtils.determineIndexes(genome,
 				tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName, extension);
 	}	
-
-	public static boolean createDirIfNecessary(String dirName) {
-		// Make sure the appropriate .indexed/species/version/chr directory exists.
-		// If not, create it.
-		File newFile = new File(dirName);
-		if (!newFile.exists()) {
-			if (!new File(dirName).mkdirs()) {
-				Logger.getLogger(DasServerUtils.class.getName()).log(Level.SEVERE,
-						"Couldn''t create directory: {0}", dirName);
-				return false;
-			} else {
-				Logger.getLogger(DasServerUtils.class.getName()).log(Level.FINE,
-						"Created new directory: {0}", dirName);
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Load an annotations file (indexed or non-indexed).

@@ -178,7 +178,7 @@ public final class IndexingUtils {
 
 			String indexedAnnotationsFileName = IndexingUtils.indexedFileName(dataRoot, file, typeName, tempGenome, tempSeq);
 			String dirName = indexedAnnotationsFileName.substring(0,indexedAnnotationsFileName.lastIndexOf("/"));
-			DasServerUtils.createDirIfNecessary(dirName);
+			ServerUtils.createDirIfNecessary(dirName);
 
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 			indexedAnnotationsFile.deleteOnExit();

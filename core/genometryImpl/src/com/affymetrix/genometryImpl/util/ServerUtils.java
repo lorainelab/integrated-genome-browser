@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -71,5 +72,18 @@ public class ServerUtils {
 	public static boolean isResidueFile(String format){
 		return (format.equalsIgnoreCase("bnib") || format.equalsIgnoreCase("fa") ||
 				format.equalsIgnoreCase("2bit"));
+	}
+
+	public static boolean createDirIfNecessary(String dirName) {
+		File newFile = new File(dirName);
+		if (!newFile.exists()) {
+			if (!new File(dirName).mkdirs()) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "Couldn''t create directory: {0}", dirName);
+				return false;
+			} else {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE, "Created new directory: {0}", dirName);
+			}
+		}
+		return true;
 	}
 }

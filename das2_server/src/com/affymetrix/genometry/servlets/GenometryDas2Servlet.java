@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
+import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 
 
@@ -547,8 +548,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
 							Level.FINE, "Genome version = {0}", genomeVersionName);
 
-					// Instantiate an AnnotatedSeqGroup (the genome version).         
-					AnnotatedSeqGroup genomeVersion = gmodel.addSeqGroup(genomeVersionName);
+					// Instantiate an AnnotatedSeqGroup (the genome version).    
+					AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeVersionName);
+					if(genomeVersion == null){
+						genomeVersion = new Das2AnnotatedSeqGroup(genomeVersionName);
+						gmodel.addSeqGroup(genomeVersion);
+					} 
 					genomeVersion.setOrganism(organism.getName());
 
 
@@ -982,7 +987,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
 		String genome_version = genome_directory.getName();
 
-		AnnotatedSeqGroup genome = gmodel.addSeqGroup(genome_version);
+		// Instantiate an AnnotatedSeqGroup (the genome version).    
+		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
+		if(genome == null){
+			genome = new Das2AnnotatedSeqGroup(genome_version);
+			gmodel.addSeqGroup(genome);
+		} 
+	
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
 		Das2ServerUtils.parseChromosomeData(genome_directory, genome);
 		
@@ -1354,7 +1365,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		response.setContentType(TYPES_CONTENT_TYPE);
 		
 		Map<String, SimpleDas2Type> types_hash = Das2ServerUtils.getAnnotationTypes(data_root,genome,getAnnotSecurity(request));
-		Das2ServerUtils.getSymloaderTypes(genome, this.getAnnotSecurity(request), types_hash);
+		if(genome instanceof Das2AnnotatedSeqGroup){
+			Das2ServerUtils.getSymloaderTypes((Das2AnnotatedSeqGroup)genome, this.getAnnotSecurity(request), types_hash);
+		}
 		Das2ServerUtils.getGraphTypes(data_root, genome, this.getAnnotSecurity(request), types_hash);
 
 		ByteArrayOutputStream buf = null;
@@ -1723,8 +1736,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					outseq = overlap_span.getBioSeq();
 
 					//bam files
-					if(formats.contains("bam")){	
-						handleBamRequest(query_type, genome, outseq, overlap_span, inside_span, response);
+					if(formats.contains("bam") && genome instanceof Das2AnnotatedSeqGroup){	
+						handleBamRequest(query_type, (Das2AnnotatedSeqGroup)genome, outseq, overlap_span, inside_span, response);
 						return;
 					}
 					
@@ -2072,7 +2085,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private void handleBamRequest(String query_type, AnnotatedSeqGroup genome, BioSeq seq, SeqSpan overlap_span, SeqSpan inside_span, HttpServletResponse response) {
+	private void handleBamRequest(String query_type, Das2AnnotatedSeqGroup genome, BioSeq seq, SeqSpan overlap_span, SeqSpan inside_span, HttpServletResponse response) {
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try{

@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.AnnotSecurity;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -155,12 +156,12 @@ public class Das2ServerUtils {
 		if (isSequenceFile(current_file) || isGraph(current_file, type_name, graph_name2file, genome) || isAnnotsFile(current_file)) {
 			return;
 		}
-		if (isSymLoader(extension)) {
+		if (isSymLoader(extension) && genome instanceof Das2AnnotatedSeqGroup) {
 			List<AnnotMapElt> annotList = annots_map.get(genome);
 			String annotTypeName = ParserController.getAnnotType(annotList, current_file.getName(), extension, type_name);
 			genome.addType(annotTypeName, null);
 			SymLoader symloader = ServerUtils.determineLoader(extension, current_file.toURI(), type_name, genome);
-			genome.addSymLoader(annotTypeName, symloader);
+			((Das2AnnotatedSeqGroup)genome).addSymLoader(annotTypeName, symloader);
 			return;
 		}
 		if (!annots_map.isEmpty() && annots_map.containsKey(genome)) {
@@ -212,13 +213,13 @@ public class Das2ServerUtils {
 			return;
 		}
 		String currentFileName = current_file.getName();
-		if (currentFileName.endsWith("bam")) {
+		if (currentFileName.endsWith("bam") && genome instanceof Das2AnnotatedSeqGroup) {
 			String type_name = type_prefix;
 			List<AnnotMapElt> annotList = annots_map.get(genome);
 			String annotTypeName = ParserController.getAnnotType(annotList, currentFileName, "bam", type_name);
 			genome.addType(annotTypeName, annot_id);
 			SymLoader symloader = ServerUtils.determineLoader("bam", current_file.toURI(), type_name, genome);
-			genome.addSymLoader(annotTypeName, symloader);
+			((Das2AnnotatedSeqGroup)genome).addSymLoader(annotTypeName, symloader);
 			return;
 		}
 		String extension = GeneralUtils.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));
@@ -416,7 +417,7 @@ public class Das2ServerUtils {
 	/**
 	 * Add symloader types to map.
 	 */
-	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+	public static void getSymloaderTypes(Das2AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
 		for (String type : genome.getSymloaderList()) {
 			SymLoader sym = genome.getSymLoader(type);
 			if (genome_types.containsKey(type)) {

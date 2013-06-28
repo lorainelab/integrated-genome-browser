@@ -128,13 +128,16 @@ public final class IndexingUtils {
 			return retVal + annot_name + "_indexed";
 		}
 	}
+	
 	static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
 		return indexedGenomeDirName(dataRoot, genome) + "/" + seq.getID();
 	}
+	
 	static String genomeDirName(AnnotatedSeqGroup genome) {
 		return genome.getOrganism() + "/" + genome.getID();
 	}
-	static String indexedGenomeDirName(String dataRoot, AnnotatedSeqGroup genome) {
+	
+	public static String indexedGenomeDirName(String dataRoot, AnnotatedSeqGroup genome) {
 		String optimizedDirectory = dataRoot + ".indexed";
 		return optimizedDirectory + "/" + genomeDirName(genome);
 	}

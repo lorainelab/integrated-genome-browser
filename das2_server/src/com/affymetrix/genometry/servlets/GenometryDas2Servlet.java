@@ -48,6 +48,7 @@ import org.hibernate.Transaction;
 
 import com.affymetrix.genometry.genopub.*;
 import com.affymetrix.genometry.gnomex.GNomExSecurity;
+import com.affymetrix.genometry.util.Das2ServerUtils;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
@@ -619,7 +620,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 								}
 								
 								else {
-									DasServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
+									Das2ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 										file, 
 										genomeVersion, 
 										annots_map,
@@ -886,7 +887,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	                }
 	                
 	                else {
-	                  DasServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
+	                  Das2ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 	                    file, 
 	                    genomeVersion, 
 	                    annots_map,
@@ -999,7 +1000,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
-		DasServerUtils.loadAnnots(genome_directory, genome, annots_map, graph_name2dir, graph_name2file, dataRoot);
+		Das2ServerUtils.loadAnnots(genome_directory, genome, annots_map, graph_name2dir, graph_name2file, dataRoot);
 
 		// optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.genome(genome);

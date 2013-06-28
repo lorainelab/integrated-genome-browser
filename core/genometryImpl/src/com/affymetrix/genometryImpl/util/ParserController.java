@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  */
 public final class ParserController {
     
-	static List<? extends SeqSymmetry> parse(
+	public static List<? extends SeqSymmetry> parse(
 			InputStream instr, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
 		List<? extends SeqSymmetry> results = null;
@@ -103,7 +103,7 @@ public final class ParserController {
 	 * @param type_prefix
 	 * @return A list of parsed indexes
 	 */
-	static List<? extends SeqSymmetry> parseIndexed(
+	public static List<? extends SeqSymmetry> parseIndexed(
 			InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		try {
 			IndexWriter iWriter = getIndexWriter(stream_name);

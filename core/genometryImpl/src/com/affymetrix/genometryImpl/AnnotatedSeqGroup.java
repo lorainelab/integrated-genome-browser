@@ -29,7 +29,6 @@ public class AnnotatedSeqGroup {
 	private List<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
-	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	private HashMap<String, Set<String>> uri2Seqs = new HashMap<String, Set<String>>();
 	
@@ -43,7 +42,6 @@ public class AnnotatedSeqGroup {
 		id2seq_dirty_bit = false;
 		seqlist = new ArrayList<BioSeq>();
 		id2sym_hash = new TreeMap<String,Set<SeqSymmetry>>();
-		symid2id_hash = new TreeMap<String,Set<String>>();
 	}
 
 	final public String getID() {
@@ -462,8 +460,8 @@ public class AnnotatedSeqGroup {
 		this.putSeqInList(id.toLowerCase(), sym);
 	}
 
-	final public Set<String> getSymmetryIDs(String symID) {
-		return this.symid2id_hash.get(symID);
+	public Set<String> getSymmetryIDs(String symID) {
+		return Collections.<String>emptySet();
 	}
 
 	/**
@@ -523,24 +521,13 @@ public class AnnotatedSeqGroup {
 	 * @param id ID string (lower-cased).
 	 * @param sym SeqSymmetry to add to the hash.
 	 */
-	private void putSeqInList(String id, SeqSymmetry sym) {
+	protected void putSeqInList(String id, SeqSymmetry sym) {
 		Set<SeqSymmetry> seq_list = id2sym_hash.get(id);
 		if (seq_list == null) {
 			seq_list = new LinkedHashSet<SeqSymmetry>();
 			id2sym_hash.put(id,seq_list);
 		}
 		seq_list.add(sym);
-
-		String lcSymID = sym.getID().toLowerCase();
-		if (id.equals(lcSymID)) {
-			return;
-		}
-		Set<String> id_list = symid2id_hash.get(lcSymID);
-		if (id_list == null) {
-			id_list = new HashSet<String>();
-			symid2id_hash.put(lcSymID, id_list);
-		}
-		id_list.add(id);
 	}
 
 	/**
@@ -570,7 +557,7 @@ public class AnnotatedSeqGroup {
 		}
 	}
 	
-	private void removeSymmetry(String lcSymID, SeqSymmetry sym){
+	protected void removeSymmetry(String lcSymID, SeqSymmetry sym){
 		Set<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
 		if (symList != null && symList.contains(sym)) {
 			symList.remove(sym);
@@ -578,7 +565,6 @@ public class AnnotatedSeqGroup {
 				id2sym_hash.remove(lcSymID);
 			}
 		}
-		symid2id_hash.remove(lcSymID);
 	}
 	
 	/**

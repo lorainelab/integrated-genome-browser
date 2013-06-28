@@ -58,14 +58,15 @@ public abstract class DasServerUtils {
 		BAR_FORMATS.add("bar");
 	}
 
-	public static void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
+	public static void parseChromosomeData(File genome_directory, AnnotatedSeqGroup genome) throws IOException {
+		String genome_version = genome.getID();
 		File chrom_info_file = new File(genome_directory, modChromInfo);
 		if (chrom_info_file.exists()) {
 			Logger.getLogger(DasServerUtils.class.getName()).log(Level.INFO,
 					"parsing {0} for: {1}", new Object[]{modChromInfo,genome_version});
 			InputStream chromstream = new FileInputStream(chrom_info_file);
 			try {
-				ChromInfoParser.parse(chromstream, GenometryModel.getGenometryModel(), genome_version);
+				ChromInfoParser.parse(chromstream, genome);
 			} finally {
 				GeneralUtils.safeClose(chromstream);
 			}
@@ -80,7 +81,7 @@ public abstract class DasServerUtils {
 						"parsing {0} for: {1}", new Object[]{liftAll,genome_version});
 				InputStream liftstream = new FileInputStream(lift_file);
 				try {
-					LiftParser.parse(liftstream, GenometryModel.getGenometryModel(), genome_version);
+					LiftParser.parse(liftstream, genome);
 				} finally {
 					GeneralUtils.safeClose(liftstream);
 				}
@@ -322,7 +323,7 @@ public abstract class DasServerUtils {
 		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft"));
 	}
 
-	public static boolean isResidueFile(String format){
+	private static boolean isResidueFile(String format){
 		return (format.equalsIgnoreCase("bnib") || format.equalsIgnoreCase("fa") ||
 				format.equalsIgnoreCase("2bit"));
 	}
@@ -349,7 +350,6 @@ public abstract class DasServerUtils {
 	}
 
 	private static boolean isSymLoader(String extension){
-		
 		return (extension.endsWith("bam") || isResidueFile(extension));
 	}
 

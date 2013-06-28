@@ -48,7 +48,7 @@ public class ServerUtilsTest {
 			// Load chromosomes
 			File chrom_info_file = new File(baseDir + "/" + versionString + "/mod_chromInfo.txt");
 			chromstream = new FileInputStream(chrom_info_file);
-			ChromInfoParser.parse(chromstream, gmodel, versionString);
+			ChromInfoParser.parse(chromstream, gmodel.addSeqGroup(genome_version));
 			
 			// Load genome
 			genome = gmodel.getSeqGroup(versionString);

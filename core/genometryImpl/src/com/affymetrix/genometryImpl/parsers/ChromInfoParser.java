@@ -17,8 +17,6 @@ import java.io.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
 
 public final class ChromInfoParser {
 	private static final Pattern tab_regex = Pattern.compile("\t");
@@ -27,15 +25,7 @@ public final class ChromInfoParser {
 	 *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
 	 *  adds it to the GenometryModel.
 	 */
-	public static AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version)
-		throws IOException {
-
-		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
-		parse(seq_group, istr);
-		return seq_group;
-	}
-
-	public static void parse(AnnotatedSeqGroup seq_group, InputStream istr)
+	public static void parse(InputStream istr, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
 		String line;

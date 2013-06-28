@@ -42,21 +42,19 @@ public final class LiftParser {
 
 	private static final boolean SET_COMPOSITION = true;
 
-	public static AnnotatedSeqGroup loadChroms(String file_name, GenometryModel gmodel, String genome_version)
+	public static void loadChroms(String file_name, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		Logger.getLogger(LiftParser.class.getName()).log(
 							Level.FINE, "trying to load lift file: {0}", file_name);
 		FileInputStream fistr = null;
-		AnnotatedSeqGroup result = null;
 		try {
 			File fil = new File(file_name);
 			fistr = new FileInputStream(fil);
-			result = LiftParser.parse(fistr, gmodel, genome_version);
+			LiftParser.parse(fistr, seq_group);
 		}
 		finally {
 			GeneralUtils.safeClose(fistr);
 		}
-		return result;
 	}
 
 
@@ -65,8 +63,8 @@ public final class LiftParser {
 	 *  @return  A Map with chromosome ids as keys, and SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file as values.
 	 */
-	public static AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version) throws IOException {
-		return parse(istr, gmodel, genome_version, true);
+	public static void parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+		parse(istr, seq_group, true);
 	}
 
 	/**
@@ -75,7 +73,7 @@ public final class LiftParser {
 	 *  @return an AnnotatedSeqGroup containing SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file.
 	 */
-	public static AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
+	public static void parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
 		Logger.getLogger(LiftParser.class.getName()).log(
 							Level.FINE,"parsing in lift file");
@@ -83,8 +81,6 @@ public final class LiftParser {
 		tim.start();
 		int contig_count = 0;
 		int chrom_count = 0;
-		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
-
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 
 		try {
@@ -114,7 +110,7 @@ public final class LiftParser {
 				if (chrom == null) {
 					chrom_count++;
 					chrom = seq_group.addSeq(chrom_name, chrom_length);
-					chrom.setVersion(genome_version);
+					chrom.setVersion(seq_group.getID());
 				}
 
 				MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();
@@ -154,7 +150,6 @@ public final class LiftParser {
 							Level.INFO, "contig count: {0}", contig_count);
 		Logger.getLogger(LiftParser.class.getName()).log(
 							Level.INFO, "chrom count: {0}", chrom_count);
-		return seq_group;
 	}
 
 }

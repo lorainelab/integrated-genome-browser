@@ -981,13 +981,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
 		String genome_version = genome_directory.getName();
 
+		AnnotatedSeqGroup genome = gmodel.addSeqGroup(genome_version);
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
-		DasServerUtils.parseChromosomeData(genome_directory, genome_version);
-
-		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
-		if (genome == null) {
-			return;	// bail out if genome didn't get added to AnnotatedSeqGroups
-		}
+		DasServerUtils.parseChromosomeData(genome_directory, genome);
+		
 		genome2graphdirs.put(genome, new LinkedHashMap<String, String>());
 		genome2graphfiles.put(genome, new LinkedHashMap<String, String>());
 		genome.setOrganism(organism);

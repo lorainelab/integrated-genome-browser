@@ -365,14 +365,15 @@ public final class QuickLoadServerModel {
 			}
 
 			boolean annot_contigs = false;
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().addSeqGroup(genome_name);
 			if (lift_stream != null) {
-				LiftParser.parse(lift_stream, GenometryModel.getGenometryModel(), genome_name, annot_contigs);
+				LiftParser.parse(lift_stream, group, annot_contigs);
 				success = true;
 			} else if (ginfo_stream != null ){
-				ChromInfoParser.parse(ginfo_stream, GenometryModel.getGenometryModel(), genome_name);
+				ChromInfoParser.parse(ginfo_stream, group);
 				success = true;
 			}else if (cinfo_stream != null) {
-				ChromInfoParser.parse(cinfo_stream, GenometryModel.getGenometryModel(), genome_name);
+				ChromInfoParser.parse(cinfo_stream, group);
 				success = true;
 			} 
 		} catch (Exception ex) {

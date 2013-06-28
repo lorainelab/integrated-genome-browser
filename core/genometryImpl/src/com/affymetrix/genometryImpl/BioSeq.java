@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -33,7 +32,6 @@ import java.util.regex.Pattern;
 public final class BioSeq implements SearchableCharIterator {
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private Map<String, IndexedSyms> type_id2indexedsym = null;
-	private Map<String, SymLoader> type_id2symloader = null;
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
 	private String version;
@@ -383,36 +381,6 @@ public final class BioSeq implements SearchableCharIterator {
 		return true;
 	}
 
-	public final void addSymLoader(String type, SymLoader value){
-		if(type_id2symloader == null){
-			type_id2symloader = new HashMap<String, SymLoader>();
-		}
-		type_id2symloader.put(type, value);
-	}
-
-	public final Set<String> getSymloaderList(){
-		if(type_id2symloader == null){
-			return Collections.<String>emptySet();
-		}
-		return type_id2symloader.keySet();
-	}
-
-	public final SymLoader getSymLoader(String type){
-		if(type_id2symloader == null) {
-			return null;
-		}		
-		return type_id2symloader.get(type);
-	}
-
-	public boolean  removeSymLoader(String type) {
-		if(type_id2symloader == null || !type_id2symloader.containsKey(type)) {
-			return false;
-		}
-		
-		type_id2symloader.remove(type);
-		return true;
-	}
-	
 	/**
 	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
 	 * GraphSym's and ScoredContainerSym's are added directly, not in containers.

@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -31,6 +32,7 @@ public class AnnotatedSeqGroup {
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	private HashMap<String, Set<String>> uri2Seqs = new HashMap<String, Set<String>>();
+	private Map<String, SymLoader> type_id2symloader = null;
 	
 	private final static SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
 	private final static SynonymLookup groupLookup = SynonymLookup.getDefaultLookup();
@@ -593,4 +595,35 @@ public class AnnotatedSeqGroup {
 		}
 		return tempGenome;
 	}
+	
+	public final void addSymLoader(String type, SymLoader value){
+		if(type_id2symloader == null){
+			type_id2symloader = new HashMap<String, SymLoader>();
+		}
+		type_id2symloader.put(type, value);
+	}
+
+	public final Set<String> getSymloaderList(){
+		if(type_id2symloader == null){
+			return Collections.<String>emptySet();
+		}
+		return type_id2symloader.keySet();
+	}
+
+	public final SymLoader getSymLoader(String type){
+		if(type_id2symloader == null) {
+			return null;
+		}		
+		return type_id2symloader.get(type);
+	}
+
+	public boolean  removeSymLoader(String type) {
+		if(type_id2symloader == null || !type_id2symloader.containsKey(type)) {
+			return false;
+		}
+		
+		type_id2symloader.remove(type);
+		return true;
+	}
+	
 }

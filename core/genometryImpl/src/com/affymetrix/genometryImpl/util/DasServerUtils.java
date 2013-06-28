@@ -300,10 +300,8 @@ public abstract class DasServerUtils {
 			List<AnnotMapElt> annotList = annots_map.get(genome);
 			String annotTypeName = ParserController.getAnnotType(annotList, current_file.getName(), extension, type_name);
 			genome.addType(annotTypeName, null);
-			for (BioSeq originalSeq : genome.getSeqList()) {
-				SymLoader symloader = ServerUtils.determineLoader(extension, current_file.toURI(), type_name, genome);
-				originalSeq.addSymLoader(annotTypeName, symloader);
-			}
+			SymLoader symloader = ServerUtils.determineLoader(extension, current_file.toURI(), type_name, genome);
+			genome.addSymLoader(annotTypeName, symloader);
 			return;
 		}
 		
@@ -383,10 +381,8 @@ public abstract class DasServerUtils {
 			List<AnnotMapElt> annotList = annots_map.get(genome);
 			String annotTypeName = ParserController.getAnnotType(annotList, currentFileName, "bam", type_name);	
 			genome.addType(annotTypeName, annot_id);
-			for (BioSeq originalSeq : genome.getSeqList()) {
-				SymLoader symloader = ServerUtils.determineLoader("bam", current_file.toURI(), type_name, genome);				
-				originalSeq.addSymLoader(annotTypeName, symloader);
-			}
+			SymLoader symloader = ServerUtils.determineLoader("bam", current_file.toURI(), type_name, genome);				
+			genome.addSymLoader(annotTypeName, symloader);
 			return;
 		}
 
@@ -840,16 +836,15 @@ public abstract class DasServerUtils {
 	/**
 	 * Add symloader types to map.
 	 */
-	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {		
-		for(BioSeq aseq : genome.getSeqList()){
-			for(String type: aseq.getSymloaderList()){				
-				SymLoader sym = aseq.getSymLoader(type);
-				if(genome_types.containsKey(type))
-					return;
+	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+		for (String type : genome.getSymloaderList()) {
+			SymLoader sym = genome.getSymLoader(type);
+			if (genome_types.containsKey(type)) {
+				return;
+			}
 
-				if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
-					genome_types.put(type, new SimpleDas2Type(type, sym.getFormatPrefList(), getProperties(genome, annotSecurity, type)));
-		        }
+			if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+				genome_types.put(type, new SimpleDas2Type(type, sym.getFormatPrefList(), getProperties(genome, annotSecurity, type)));
 			}
 		}
 	}

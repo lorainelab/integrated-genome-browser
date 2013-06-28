@@ -1728,7 +1728,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 					//bam files
 					if(formats.contains("bam")){	
-						handleBamRequest(query_type, outseq, overlap_span, inside_span, response);
+						handleBamRequest(query_type, genome, outseq, overlap_span, inside_span, response);
 						return;
 					}
 					
@@ -2076,11 +2076,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private void handleBamRequest(String query_type, BioSeq seq, SeqSpan overlap_span, SeqSpan inside_span, HttpServletResponse response) {
+	private void handleBamRequest(String query_type, AnnotatedSeqGroup genome, BioSeq seq, SeqSpan overlap_span, SeqSpan inside_span, HttpServletResponse response) {
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try{
-			BAM bamfile = (BAM) seq.getSymLoader(query_type);
+			BAM bamfile = (BAM) genome.getSymLoader(query_type);
 			response.setContentType(bamfile.getMimeType());
 			bos = new BufferedOutputStream(response.getOutputStream());
 			dos = new DataOutputStream(bos);			

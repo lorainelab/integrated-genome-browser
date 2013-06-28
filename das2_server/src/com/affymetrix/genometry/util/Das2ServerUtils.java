@@ -1,17 +1,23 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometryImpl.AnnotSecurity;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.io.File;
@@ -21,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -331,5 +339,117 @@ public class Das2ServerUtils {
 						alteredChromString);
 			}
 		}
+	}
+
+	/**
+	 *  Gets the list of types of annotations for a given genome version.
+	 *  Assuming top-level annotations hold type info in property "method" or "meth".
+	 *  @return a Map where keys are feature type Strings and values are 
+	 *    instances of SimpleDas2Type, which contains a list graph formats and
+	 *    a map of properties.
+	 *
+	 *  may want to cache this info (per versioned source) at some point...
+	 */
+	public static Map<String, SimpleDas2Type> getAnnotationTypes(
+					String data_root,
+					AnnotatedSeqGroup genome,
+					AnnotSecurity annotSecurity) {
+		List<BioSeq> seqList = genome.getSeqList();
+		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();		
+		for (BioSeq aseq : seqList) {
+			for (String type : aseq.getTypeList()) {
+				if (genome_types.get(type) != null) {
+					continue;
+				}
+				List<String> flist = Collections.<String>emptyList();
+				SymWithProps tannot = aseq.getAnnotation(type);
+				SymWithProps first_child = (SymWithProps) tannot.getChild(0);
+				if (first_child != null) {
+					List formats = (List)first_child.getProperty("preferred_formats");
+					if (formats != null) {
+						flist = new ArrayList<String>(formats.size());
+						for (Object o : formats) {
+							flist.add((String) o);
+						}
+					}
+				}
+				
+		        if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, flist, getProperties(genome, annotSecurity, type)));
+		        }
+			}
+			for (String type : aseq.getIndexedTypeList()) {
+				if (genome_types.get(type) != null) {
+					continue;
+				}
+				IndexedSyms iSyms = aseq.getIndexedSym(type);
+				List<String> flist = new ArrayList<String>();
+				flist.addAll(iSyms.iWriter.getFormatPrefList());
+				
+		        if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, flist, getProperties(genome, annotSecurity, type)));
+		        }
+
+			}
+		}
+		return genome_types;
+	}
+
+	/**
+	 * Add symloader types to map.
+	 */
+	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+		for (String type : genome.getSymloaderList()) {
+			SymLoader sym = genome.getSymLoader(type);
+			if (genome_types.containsKey(type)) {
+				return;
+			}
+			if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+				genome_types.put(type, new SimpleDas2Type(type, sym.getFormatPrefList(), getProperties(genome, annotSecurity, type)));
+			}
+		}
+	}
+
+	/**
+	 * Add graph types to the map.
+	 * @param data_root
+	 * @param genome
+	 * @param annotSecurity
+	 * @param genome_types
+	 */
+	public static void getGraphTypes(String data_root, AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+		for (String type : genome.getTypeList()) {
+			if (genome_types.containsKey(type) || !isAuthorized(genome, annotSecurity, type)) {
+				continue;
+			}
+			if (annotSecurity == null) {
+				if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
+				} else {
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), DasServerUtils.BAR_FORMATS, getProperties(genome, annotSecurity, type)));
+				}
+				continue;
+			}
+			if (annotSecurity.isBarGraphData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), DasServerUtils.BAR_FORMATS, getProperties(genome, annotSecurity, type)));
+			} else if (annotSecurity.isUseqGraphData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
+			} else if (annotSecurity.isBamData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAM.pref_list, getProperties(genome, annotSecurity, type)));
+			} else {
+				Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.WARNING, "Non-graph annotation {0} encountered, but does not match known entry.  This annotation will not show in the types request.", type);
+			}
+		}
+	}
+	
+	private static boolean isAuthorized(AnnotatedSeqGroup group, AnnotSecurity annotSecurity, String type) {
+		boolean isAuthorized = annotSecurity == null || annotSecurity.isAuthorized(group.getID(), type, group.getAnnotationId(type));
+		Logger.getLogger(AnnotatedSeqGroup.class.getName()).log(Level.FINE,
+				"{0} Annotation {1} ID={2}", new Object[]{isAuthorized ? "Showing  " : "Blocking ", type, group.getAnnotationId(type)});
+		return isAuthorized;
+	}
+
+	private static Map<String, Object> getProperties(AnnotatedSeqGroup group, AnnotSecurity annotSecurity, String type) {
+		return annotSecurity == null ? null : annotSecurity.getProperties(group.getID(), type, group.getAnnotationId(type));
 	}
 }

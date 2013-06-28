@@ -1353,11 +1353,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		response.setContentType(TYPES_CONTENT_TYPE);
 		
-
-
-		Map<String, SimpleDas2Type> types_hash = DasServerUtils.getAnnotationTypes(data_root,genome,getAnnotSecurity(request));
-		DasServerUtils.getSymloaderTypes(genome, this.getAnnotSecurity(request), types_hash);
-		DasServerUtils.getGraphTypes(data_root, genome, this.getAnnotSecurity(request), types_hash);
+		Map<String, SimpleDas2Type> types_hash = Das2ServerUtils.getAnnotationTypes(data_root,genome,getAnnotSecurity(request));
+		Das2ServerUtils.getSymloaderTypes(genome, this.getAnnotSecurity(request), types_hash);
+		Das2ServerUtils.getGraphTypes(data_root, genome, this.getAnnotSecurity(request), types_hash);
 
 		ByteArrayOutputStream buf = null;
 		ByteArrayInputStream bais = null;

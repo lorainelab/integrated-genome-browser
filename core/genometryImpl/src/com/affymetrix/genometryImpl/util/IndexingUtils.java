@@ -54,7 +54,7 @@ public final class IndexingUtils {
 		private final BitSet forward;
 		public final long[] filePos;
 		private final String typeName;
-		final IndexWriter iWriter;
+		public final IndexWriter iWriter;
 
 		// for each sym, we have an array of ids generated from the group's id2symhash.
 		// Each of these ids is in a byte array instead of a String to save memory

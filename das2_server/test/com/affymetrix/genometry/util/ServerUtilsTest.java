@@ -1,7 +1,5 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometry.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -14,7 +12,11 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
+import com.affymetrix.genometryImpl.util.DasServerUtils;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
+import com.affymetrix.genometryImpl.util.Optimize;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;

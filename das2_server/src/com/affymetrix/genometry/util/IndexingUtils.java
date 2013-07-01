@@ -1,20 +1,16 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
-
 import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexedSyms;
-import com.affymetrix.genometryImpl.util.SearchUtils;
-import com.affymetrix.genometryImpl.util.ServerUtils;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -117,7 +113,7 @@ public final class IndexingUtils {
 
 			String indexedAnnotationsFileName = IndexingUtils.indexedFileName(dataRoot, file, typeName, tempGenome, tempSeq);
 			String dirName = indexedAnnotationsFileName.substring(0,indexedAnnotationsFileName.lastIndexOf("/"));
-			ServerUtils.createDirIfNecessary(dirName);
+			Das2ServerUtils.createDirIfNecessary(dirName);
 
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 			indexedAnnotationsFile.deleteOnExit();
@@ -224,11 +220,11 @@ public final class IndexingUtils {
 		name_pattern = Pattern.compile(name_regex, Pattern.CASE_INSENSITIVE);
 		result = genome.findSyms(name_pattern);
 
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
+		Logger.getLogger(IndexingUtils.class.getName()).log(Level.INFO,
 				"non-indexed regex matches: {0}", result.size());
 
 		Set<SeqSymmetry> result2 = findSymsByName(genome, name_pattern);
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
+		Logger.getLogger(IndexingUtils.class.getName()).log(Level.INFO,
 				"indexed regex matches: {0}", result2.size());
 
 		result.addAll(result2);

@@ -1,13 +1,14 @@
 package com.affymetrix.genometry.util;
 
-import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import com.affymetrix.genometry.AnnotSecurity;
+import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
+import com.affymetrix.genometry.comparator.MatchToListComparator;
+import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
-import com.affymetrix.genometry.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -15,7 +16,6 @@ import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -269,7 +269,7 @@ public class Das2ServerUtils {
 		}
 		genome.addType(returnTypeName, annot_id);
 		
-		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
+		createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
 		
 		IndexingUtils.determineIndexes(genome, tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName, extension);
 	}
@@ -791,5 +791,18 @@ public class Das2ServerUtils {
 		}
 		Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.FINE, "  overlapping annotations that passed inside_span constraints: {0}", result.size());
 		return result;
+	}
+
+	public static boolean createDirIfNecessary(String dirName) {
+		File newFile = new File(dirName);
+		if (!newFile.exists()) {
+			if (!new File(dirName).mkdirs()) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "Couldn''t create directory: {0}", dirName);
+				return false;
+			} else {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE, "Created new directory: {0}", dirName);
+			}
+		}
+		return true;
 	}
 }

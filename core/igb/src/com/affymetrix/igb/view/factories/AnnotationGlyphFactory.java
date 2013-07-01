@@ -324,7 +324,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
-				codon_glyph_processor.processGlyph(cglyph, annotseq);
+				codon_glyph_processor.processGlyph(cglyph, child, annotseq);
 				
 				if(!cds){
 					handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
@@ -397,9 +397,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				}
 				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
 				cds_glyph.setColor(child_color); // CDS same color as exon
-				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
+				gviewer.setDataModelFromOriginalSym(cds_glyph, child);
 				pglyph.addChild(cds_glyph);
-				codon_glyph_processor.processGlyph(cds_glyph, annotseq);
+				codon_glyph_processor.processGlyph(cds_glyph, cds_sym_2, annotseq);
 				return cds_glyph;
 			}
 		}

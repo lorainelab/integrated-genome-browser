@@ -114,7 +114,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		SymSpanWithCds parentSym = (SymSpanWithCds)getParent().getParent().getInfo();
 //		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		BioSeq seq = parentSym.getBioSeq();
-		SeqSymmetry exonSym = (SeqSymmetry)getParent().getInfo();
+		SeqSymmetry exonSym = (SeqSymmetry)getInfo();
 //		SeqSpan exonSpan = exonSym.getSpan(seq);
 		SeqSpan exonSpan = exonSym.getSpan(0);
 		

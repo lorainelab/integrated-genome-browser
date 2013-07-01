@@ -50,12 +50,13 @@ public class CodonGlyphProcessor {
 	 * with. So this kludge causes the one without to not be drawn on its turn, but the one with
 	 * will draw the one without on its turn.
 	 */
-	public void processGlyph(GlyphI glyph, BioSeq seq) {
+	public void processGlyph(GlyphI glyph, SeqSymmetry exonSym, BioSeq seq) {
 		if (glyph.getParent() != null && !(glyph.getParent().getInfo() instanceof BAMSym) 
 				&& glyph.getParent().getInfo() instanceof SymSpanWithCds && codeSize != 0) {	
-			if (!hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), (SeqSymmetry)glyph.getInfo(), seq)) {
+			if (!hasUTR((SymSpanWithCds)glyph.getParent().getInfo(), exonSym, seq)) {
 				CodonGlyph codonGlyph = new CodonGlyph(codeSize);
 				codonGlyph.setHitable(false);
+				codonGlyph.setInfo(exonSym);
 				codonGlyph.setCoordBox(glyph.getCoordBox());
 				glyph.addChild(codonGlyph);
 			}

@@ -159,7 +159,7 @@ public class BpsParserTest {
 			PSLParser parser = new PSLParser();
 			syms = parser.parse(istr, "stream_test", group, group, annot_seq, true);
 		} catch (IOException ex) {
-			Logger.getLogger(com.affymetrix.genometryImpl.parsers.BpsParserTest.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BpsParserTest.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		assertEquals(4, syms.size());	// precisely 4 symmetries.

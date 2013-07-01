@@ -5,8 +5,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BpsParserTest;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
@@ -124,115 +122,115 @@ public class ServerUtilsTest {
 	}
 
 
-	@Test
-	public void testIndexing() {
-		try {
-			String filename = "test/data/bps/mRNA1.mm.bps";
-			String testFileName = "test/data/bps/mRNA1_test.mm.bps";
-			String query_type="mRNA1.sm";
-			String seqid = "chr1";
-			assertTrue(new File(filename).exists());
-
-			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-
-			List<UcscPslSym> syms = BpsParserTest.bpsParse(filename, query_type, group);
-
-			BioSeq seq = group.getSeq(seqid);
-
-			IndexWriter iWriter = new BpsParser();
-			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
-					syms, seq, iWriter.getComparator(seq));
-
-			File testFile = new File(testFileName);
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, "bps", iWriter);
-
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
-			
-			testIndexing1(seqid, group, seq, iSyms);
-
-			// Overflow conditions.
-			testIndexing2("0:30432562", seqid, group, seq, iSyms);
-			testIndexing2("0:30432563", seqid, group, seq, iSyms);
-			testIndexing2("0:30432564", seqid, group, seq, iSyms);
-
-			testIndexing3(seqid, group, seq, iSyms);
-			
-			testIndexing4(seqid, group, seq, iSyms);
-			
-			if (testFile.exists()) {
-				testFile.delete();
-			}
-
-		} catch (Exception ex) {
-			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
-			fail();
-		}
-	}
-
-
-	private void testIndexing1(String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
-		String overlap;
-		SeqSpan overlap_span;
-		List<SeqSymmetry> result;
-		overlap = "0:11200177";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		assertNotNull(overlap_span);
-		assertEquals(0, overlap_span.getMin());
-		assertEquals(11200177, overlap_span.getMax());
-		assertEquals(overlap_span.getBioSeq(), seq);
-		result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
-		assertEquals(385, result.size());
-		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
-		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
-	}
-
-	private void testIndexing2(String overlap, String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		assertEquals(overlap_span.getBioSeq(), seq);
-		List<SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
-		assertEquals(861, result.size());
-		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
-		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
-		assertEquals(30427075, ((UcscPslSym)result.get(result.size()-1)).getTargetMin());
-		assertEquals(30428332, ((UcscPslSym)result.get(result.size()-1)).getTargetMax());
-	}
-
-	private void testIndexing3(
-			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
-		String overlap = "0:11200177";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		assertNotNull(overlap_span);
-		assertEquals(0, overlap_span.getMin());
-		assertEquals(11200177, overlap_span.getMax());
-		assertEquals(overlap_span.getBioSeq(), seq);
-		List <SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
-		assertEquals(385, result.size());
-		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
-		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
-	}
-
-
-	private void testIndexing4(
-			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
-		String overlap = "90000:11200177";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		assertNotNull(overlap_span);
-		assertEquals(90000, overlap_span.getMin());
-		assertEquals(11200177, overlap_span.getMax());
-		assertEquals(overlap_span.getBioSeq(), seq);
-		List <SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
-		assertEquals(384, result.size());
-		assertEquals(136731, ((UcscPslSym)result.get(0)).getTargetMin());
-		assertEquals(137967, ((UcscPslSym)result.get(0)).getTargetMax());
-		String inside = "92000:4600000";
-		SeqSpan inside_span = DasServerUtils.getLocationSpan(seqid, inside, group);
-		assertNotNull(inside_span);
-		assertEquals(92000, inside_span.getMin());
-		assertEquals(4600000, inside_span.getMax());
-		assertEquals(inside_span.getBioSeq(), seq);
-		result = DasServerUtils.specifiedInsideSpan(inside_span, result);
-		assertEquals(138, result.size());
-	}
+//	@Test
+//	public void testIndexing() {
+//		try {
+//			String filename = "test/data/bps/mRNA1.mm.bps";
+//			String testFileName = "test/data/bps/mRNA1_test.mm.bps";
+//			String query_type="mRNA1.sm";
+//			String seqid = "chr1";
+//			assertTrue(new File(filename).exists());
+//
+//			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+//
+//			List<UcscPslSym> syms = BpsParserTest.bpsParse(filename, query_type, group);
+//
+//			BioSeq seq = group.getSeq(seqid);
+//
+//			IndexWriter iWriter = new BpsParser();
+//			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+//					syms, seq, iWriter.getComparator(seq));
+//
+//			File testFile = new File(testFileName);
+//			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, "bps", iWriter);
+//
+//			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
+//			
+//			testIndexing1(seqid, group, seq, iSyms);
+//
+//			// Overflow conditions.
+//			testIndexing2("0:30432562", seqid, group, seq, iSyms);
+//			testIndexing2("0:30432563", seqid, group, seq, iSyms);
+//			testIndexing2("0:30432564", seqid, group, seq, iSyms);
+//
+//			testIndexing3(seqid, group, seq, iSyms);
+//			
+//			testIndexing4(seqid, group, seq, iSyms);
+//			
+//			if (testFile.exists()) {
+//				testFile.delete();
+//			}
+//
+//		} catch (Exception ex) {
+//			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
+//			fail();
+//		}
+//	}
+//
+//
+//	private void testIndexing1(String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+//		String overlap;
+//		SeqSpan overlap_span;
+//		List<SeqSymmetry> result;
+//		overlap = "0:11200177";
+//		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+//		assertNotNull(overlap_span);
+//		assertEquals(0, overlap_span.getMin());
+//		assertEquals(11200177, overlap_span.getMax());
+//		assertEquals(overlap_span.getBioSeq(), seq);
+//		result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+//		assertEquals(385, result.size());
+//		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
+//		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
+//	}
+//
+//	private void testIndexing2(String overlap, String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+//		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+//		assertEquals(overlap_span.getBioSeq(), seq);
+//		List<SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+//		assertEquals(861, result.size());
+//		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
+//		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
+//		assertEquals(30427075, ((UcscPslSym)result.get(result.size()-1)).getTargetMin());
+//		assertEquals(30428332, ((UcscPslSym)result.get(result.size()-1)).getTargetMax());
+//	}
+//
+//	private void testIndexing3(
+//			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+//		String overlap = "0:11200177";
+//		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+//		assertNotNull(overlap_span);
+//		assertEquals(0, overlap_span.getMin());
+//		assertEquals(11200177, overlap_span.getMax());
+//		assertEquals(overlap_span.getBioSeq(), seq);
+//		List <SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+//		assertEquals(385, result.size());
+//		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
+//		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
+//	}
+//
+//
+//	private void testIndexing4(
+//			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+//		String overlap = "90000:11200177";
+//		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+//		assertNotNull(overlap_span);
+//		assertEquals(90000, overlap_span.getMin());
+//		assertEquals(11200177, overlap_span.getMax());
+//		assertEquals(overlap_span.getBioSeq(), seq);
+//		List <SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+//		assertEquals(384, result.size());
+//		assertEquals(136731, ((UcscPslSym)result.get(0)).getTargetMin());
+//		assertEquals(137967, ((UcscPslSym)result.get(0)).getTargetMax());
+//		String inside = "92000:4600000";
+//		SeqSpan inside_span = DasServerUtils.getLocationSpan(seqid, inside, group);
+//		assertNotNull(inside_span);
+//		assertEquals(92000, inside_span.getMin());
+//		assertEquals(4600000, inside_span.getMax());
+//		assertEquals(inside_span.getBioSeq(), seq);
+//		result = DasServerUtils.specifiedInsideSpan(inside_span, result);
+//		assertEquals(138, result.size());
+//	}
 
 	/**
 	 * Testing that max overlap method works as designed.

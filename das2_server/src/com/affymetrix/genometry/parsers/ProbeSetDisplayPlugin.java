@@ -1,9 +1,11 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometry.parsers;
 
 import java.io.*;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;

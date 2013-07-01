@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
+import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 

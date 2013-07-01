@@ -2,18 +2,17 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.TypedSym;
 import com.affymetrix.genometryImpl.util.DNAUtils;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +29,7 @@ import java.util.regex.Pattern;
  * @author $Id: BioSeq.java 10552 2012-03-02 18:35:42Z hiralv $
  */
 public final class BioSeq implements SearchableCharIterator {
-	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
+	private Map<String, RootSeqSymmetry> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private Map<String, IndexedSyms> type_id2indexedsym = null;
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
@@ -210,7 +209,7 @@ public final class BioSeq implements SearchableCharIterator {
 		List<SymWithProps> results = new ArrayList<SymWithProps>();
 		if (type_id2sym != null)  {
 			Matcher match = regex.matcher("");
-			for (Map.Entry<String, SymWithProps> entry : type_id2sym.entrySet()) {
+			for (Map.Entry<String, RootSeqSymmetry> entry : type_id2sym.entrySet()) {
 				String type = entry.getKey();
 				if (match.reset(type).matches()) {
 					results.add(entry.getValue());
@@ -244,22 +243,19 @@ public final class BioSeq implements SearchableCharIterator {
 	}
 
 	public synchronized void addAnnotation(SeqSymmetry sym, String ext) {
-		if (! needsContainer(sym)) {
-			if (!(sym instanceof SymWithProps)) {
-				throw new RuntimeException("sym must be a SymWithProps");
-			}
+ 		if (sym instanceof RootSeqSymmetry) {
 			String symID = sym.getID();
 			if (symID == null) {
 				throw new RuntimeException("sym.getID() == null && (! needsContainer(sym)), this should never happen!");
 			}
 			if (type_id2sym == null) { 
-				type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
+				type_id2sym = new LinkedHashMap<String, RootSeqSymmetry>(); 
 			} else {
 				if (type_id2sym.containsKey(symID) && sym.equals(type_id2sym.get(id))) {
 					return;	// sym already in hash (and thus also annots list)
 				}
 			}
-			type_id2sym.put(symID, (SymWithProps) sym);
+			type_id2sym.put(symID, (RootSeqSymmetry) sym);
 			if (annots == null) {
 				annots = new ArrayList<SeqSymmetry>();
 			}
@@ -287,15 +283,15 @@ public final class BioSeq implements SearchableCharIterator {
 	 */
 	private synchronized void addAnnotation(SeqSymmetry sym, String type, String ext) {
 		if (type_id2sym == null) {
-			type_id2sym = new LinkedHashMap<String, SymWithProps>();
+			type_id2sym = new LinkedHashMap<String, RootSeqSymmetry>();
 		}
-		MutableSeqSymmetry container = (MutableSeqSymmetry) type_id2sym.get(type);
+		RootSeqSymmetry container = type_id2sym.get(type);
 		if (container == null) {
 			container = new TypeContainerAnnot(type, ext);
 			((TypeContainerAnnot) container).setProperty("method", type);
 			SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
 			container.addSpan(span);
-			type_id2sym.put(type, (TypeContainerAnnot) container);
+			type_id2sym.put(type, container);
 			if (annots == null) {
 				annots = new ArrayList<SeqSymmetry>();
 			}
@@ -379,18 +375,6 @@ public final class BioSeq implements SearchableCharIterator {
 		}
 		type_id2indexedsym.remove(type);
 		return true;
-	}
-
-	/**
-	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
-	 * GraphSym's and ScoredContainerSym's are added directly, not in containers.
-	 */
-	public static boolean needsContainer(SeqSymmetry sym) {
-		if (sym instanceof GraphSym || sym instanceof ScoredContainerSym || sym instanceof TypeContainerAnnot) {
-			return false;
-		} else {
-			return true;
-		}
 	}
 
 	/**

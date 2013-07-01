@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometry.util;
 
 import java.io.*;
 import java.util.*;
@@ -13,6 +13,8 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

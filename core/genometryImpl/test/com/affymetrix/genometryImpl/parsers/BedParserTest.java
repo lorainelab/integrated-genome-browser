@@ -1,19 +1,18 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
+import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
-import com.affymetrix.genometryImpl.*;
-import com.affymetrix.genometryImpl.symloader.BED;
-import com.affymetrix.genometryImpl.util.ParserController;
+
 import java.io.*;
 import java.util.*;
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class BedParserTest {
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -41,8 +40,7 @@ public class BedParserTest {
 
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 
-			IndexWriter parser = ParserController.getIndexWriter(filename);
-			assertNotNull(parser);
+			IndexWriter parser = new BedParser();
 			List result = parser.parse(dis, filename, group);
 
 			testFileResult(result);

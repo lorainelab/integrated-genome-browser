@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometry.util.Optimize;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -131,5 +132,79 @@ public class LinkPSLParserTest {
 		if (testFile2.exists()) {
 			testFile2.delete();
 		}
+	}
+	
+	@Test
+	public void testSplittingByChromosome() {
+		DataInputStream istr = null;
+		try {
+			String filename = "test/data/psl/RT_U34.link.psl.gz";
+			String type = "testType";
+			
+			assertTrue(new File(filename).exists());
+
+			istr = new DataInputStream(new FileInputStream(filename));
+			GZIPInputStream gzstr = new GZIPInputStream(istr);
+
+			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+
+			BioSeq seq = group.addSeq("chr1", 1);
+
+			PSLParser parser = new PSLParser();
+			parser.setIsLinkPsl(true);
+			parser.enableSharedQueryTarget(true);
+			parser.setCreateContainerAnnot(true);
+
+			List result = parser.parse(gzstr, type, null, group, null, false, true, false);
+
+			assertNotNull(result);
+			assertEquals(2103, result.size()); // all types of symmetries
+			splittingByChromosome(result, parser.getComparator(seq), seq);
+
+			group = new AnnotatedSeqGroup("Test Group");
+			seq = group.addSeq("chr1",1);
+
+			PSL psl = new PSL(new File(filename).toURI(), type, group, null, null, false, true, false);
+			psl.setIsLinkPsl(true);
+			psl.enableSharedQueryTarget(true);
+			psl.setCreateContainerAnnot(true);
+
+			result = psl.getGenome();
+
+			//assertNotNull(result);
+			//assertEquals(2103, result.size());	Cannot pass this test because returned list
+			//										can have duplicate entries. The list has
+			//										duplicates entires because when a whole
+			//										genome is requested, each sequence is
+			//										parsed individually and a same symmetry
+			//										can be present in two different seqs.
+
+			splittingByChromosome(result, psl.getComparator(seq), seq);
+
+		} catch (Exception ex) {
+			Logger.getLogger(com.affymetrix.genometryImpl.parsers.LinkPSLParserTest.class.getName()).log(Level.SEVERE, null, ex);
+			fail();
+		}
+	}
+
+	private void splittingByChromosome(List result, Comparator<UcscPslSym> USCCCompare, BioSeq seq) throws IOException {
+		String consensusType = "RT_U34 " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
+
+		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(result, seq, USCCCompare); // the syms on chr1, sorted.
+		assertNotNull(sortedSyms);
+		assertEquals(168, sortedSyms.size());
+		assertEquals(12722644, ((UcscPslSym) sortedSyms.get(0)).getTargetMin());
+		assertEquals(267887419, ((UcscPslSym) sortedSyms.get(sortedSyms.size() - 1)).getTargetMin());
+		// Now that we have the sorted consensus for chr1, verify its probesets.
+		ByteArrayOutputStream outstream = null;
+		ProbeSetDisplayPlugin parser2 = null;
+		outstream = new ByteArrayOutputStream();
+		parser2 = new ProbeSetDisplayPlugin();
+		parser2.writeAnnotations(sortedSyms, seq, consensusType, outstream);
+		// 168 consensus syms on chr1.
+		// 143 probesets correspond to those consensus syms.
+		// 2 "track" lines.
+		// 168 + 143 + 2
+		assertEquals(168 + 143 + 2, outstream.toString().split("\n").length);
 	}
 }

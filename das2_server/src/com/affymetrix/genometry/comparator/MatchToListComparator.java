@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.comparator;
+package com.affymetrix.genometry.comparator;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedReader;

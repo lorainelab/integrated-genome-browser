@@ -797,10 +797,10 @@ public class Das2ServerUtils {
 		File newFile = new File(dirName);
 		if (!newFile.exists()) {
 			if (!new File(dirName).mkdirs()) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "Couldn''t create directory: {0}", dirName);
+				Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.SEVERE, "Couldn''t create directory: {0}", dirName);
 				return false;
 			} else {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE, "Created new directory: {0}", dirName);
+				Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.FINE, "Created new directory: {0}", dirName);
 			}
 		}
 		return true;

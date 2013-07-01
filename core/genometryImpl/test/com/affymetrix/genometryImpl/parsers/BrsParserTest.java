@@ -1,35 +1,15 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.util.IndexingUtils;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import com.affymetrix.genometryImpl.util.DasServerUtils;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import java.util.List;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -38,7 +18,6 @@ import static org.junit.Assert.*;
  * @author jnicol
  */
 public class BrsParserTest {
-	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	String filename = "test/data/brs/refseq.brs";
 	String versionString = "genomeVersion";
 	AnnotatedSeqGroup genome = null;

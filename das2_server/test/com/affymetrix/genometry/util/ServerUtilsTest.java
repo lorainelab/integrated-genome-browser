@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
@@ -86,7 +85,7 @@ public class ServerUtilsTest {
 		String seqid="chr1";
 
 		String overlap = "90000:11200177";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, genome);
+		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, genome);
 
 		assertNotNull(overlap_span);
 		assertEquals(90000,overlap_span.getMin());
@@ -94,7 +93,7 @@ public class ServerUtilsTest {
 
 		String query_type="mRNA1.sm";
 		List<SeqSymmetry> result = null;
-		result = DasServerUtils.getOverlappedSymmetries(overlap_span, query_type);
+		result = Das2ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
 		assertNotNull(result);
 		
 		List<UcscPslSym> tempResult = new ArrayList<UcscPslSym>(result.size());
@@ -110,13 +109,13 @@ public class ServerUtilsTest {
 		assertEquals(137967, tempResult.get(0).getTargetMax());
 
 		String inside = "92000:4600000";
-		SeqSpan inside_span = DasServerUtils.getLocationSpan(seqid, inside, genome);
+		SeqSpan inside_span = Das2ServerUtils.getLocationSpan(seqid, inside, genome);
 		assertNotNull(inside_span);
 		assertEquals(92000,inside_span.getMin());
 		assertEquals(4600000,inside_span.getMax());
 		assertEquals(seqid, inside_span.getBioSeq().getID());
 
-		result = DasServerUtils.specifiedInsideSpan(inside_span, result);
+		result = Das2ServerUtils.specifiedInsideSpan(inside_span, result);
 		assertEquals(138, result.size());
 	}
 
@@ -186,7 +185,7 @@ public class ServerUtilsTest {
 		String seqid="chr1";
 
 		String overlap = "30068522:30072392";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, genome);
+		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, genome);
 
 		assertNotNull(overlap_span);
 		//assertEquals(22949908,overlap_span.getMin());
@@ -194,7 +193,7 @@ public class ServerUtilsTest {
 
 		String query_type="mRNA1.sm";
 		List<SeqSymmetry> result = null;
-		result = DasServerUtils.getOverlappedSymmetries(overlap_span, query_type);
+		result = Das2ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
 		assertNotNull(result);
 		assertEquals(6, result.size());	// not sure why all 6 of these are here
 
@@ -220,7 +219,7 @@ public class ServerUtilsTest {
 			fail();
 		}
 
-		List<SeqSymmetry> result2 = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", genome);
+		List<SeqSymmetry> result2 = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", genome);
 		/*	for(SeqSymmetry res : result2) {
 			tempResult.add((UcscPslSym)res);
 			System.out.println("ID: " + res.getID());

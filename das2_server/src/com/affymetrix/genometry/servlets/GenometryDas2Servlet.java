@@ -41,7 +41,6 @@ import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometry.util.Optimize;
-import com.affymetrix.genometryImpl.util.DasServerUtils;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -1217,7 +1216,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		SeqSpan span = null;
 		if (ranges.size() == 1) {
-			span = DasServerUtils.getLocationSpan(seqname, ranges.get(0), genome);
+			span = Das2ServerUtils.getLocationSpan(seqname, ranges.get(0), genome);
 		}
 
 		String format = "";
@@ -1712,7 +1711,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				//    (therefore any annotation on the seq passes overlap filter)
 				//     then want all getLocationSpan will return bounds of seq as overlap
 				
-				overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, genome);
+				overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, genome);
 				if (overlap_span != null) {
 					Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 					Map<String, String> graph_name2file = genome2graphfiles.get(genome);
@@ -1731,7 +1730,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					
 					if (insides.size() == 1) {
 						String inside = insides.get(0);
-						inside_span = DasServerUtils.getLocationSpan(seqid, inside, genome);						
+						inside_span = Das2ServerUtils.getLocationSpan(seqid, inside, genome);						
 					}
 					outseq = overlap_span.getBioSeq();
 
@@ -1750,7 +1749,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					}				
 
 					/** this is the main call to retrieve symmetries meeting query constraints */
-					result = DasServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
+					result = Das2ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}
 			} else {
 				// any query combination not recognized above may  be correct based on DAS/2 spec

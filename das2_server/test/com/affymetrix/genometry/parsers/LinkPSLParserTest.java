@@ -1,5 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
+import com.affymetrix.genometry.util.Das2ServerUtils;
+import com.affymetrix.genometry.util.Optimize;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -9,10 +11,8 @@ import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import com.affymetrix.genometry.util.Optimize;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class LinkPSLParserTest {
 	
@@ -94,35 +94,35 @@ public class LinkPSLParserTest {
 		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "RT_U34", "link.psl", writer);
 		IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
 		String overlap = "3000000:160000000";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		List<SeqSymmetry> newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		List<SeqSymmetry> newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(96, newResults.size()); // first 96 lines of file are < 160000000
 		overlap = "160000000:160254000";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(0, newResults.size()); // no spans here
 		overlap = "160254000:160254500";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(1, newResults.size());
 		assertEquals("RT-U34:S78284_S_AT", newResults.get(0).getID()); // only feature in this span.
 		overlap = "160254500:160254600";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(1, newResults.size());
 		assertEquals("RT-U34:S78284_S_AT", newResults.get(0).getID()); // only feature in this span.
 		overlap = "160254600:160254700";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(0, newResults.size()); // no spans here
 		overlap = "122000000:123000000";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(1, newResults.size());
 		assertEquals("RT-U34:L29232_AT", newResults.get(0).getID()); // only feature in this span
 		overlap = "12722772:12723220";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
-		newResults = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
+		newResults = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(3, newResults.size()); // first three in the file
 		if (testFile.exists()) {
 			testFile.delete();

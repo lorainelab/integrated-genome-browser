@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
+import com.affymetrix.genometry.util.Das2ServerUtils;
 import com.affymetrix.genometry.util.ServerUtilsTest;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -9,7 +10,6 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
@@ -80,21 +80,21 @@ public class BpsParserTest {
 		SeqSpan overlap_span;
 		List<SeqSymmetry> result;
 		overlap = "0:11200177";
-		overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
 		assertNotNull(overlap_span);
 		assertEquals(0, overlap_span.getMin());
 		assertEquals(11200177, overlap_span.getMax());
 		assertEquals(overlap_span.getBioSeq(), seq);
-		result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		result = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(385, result.size());
 		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
 		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
 	}
 
 	private void testIndexing2(String overlap, String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
 		assertEquals(overlap_span.getBioSeq(), seq);
-		List<SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		List<SeqSymmetry> result = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(861, result.size());
 		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
 		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
@@ -105,12 +105,12 @@ public class BpsParserTest {
 	private void testIndexing3(
 			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
 		String overlap = "0:11200177";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
 		assertNotNull(overlap_span);
 		assertEquals(0, overlap_span.getMin());
 		assertEquals(11200177, overlap_span.getMax());
 		assertEquals(overlap_span.getBioSeq(), seq);
-		List <SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		List <SeqSymmetry> result = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(385, result.size());
 		assertEquals(88976, ((UcscPslSym)result.get(0)).getTargetMin());
 		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
@@ -120,22 +120,22 @@ public class BpsParserTest {
 	private void testIndexing4(
 			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
 		String overlap = "90000:11200177";
-		SeqSpan overlap_span = DasServerUtils.getLocationSpan(seqid, overlap, group);
+		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
 		assertNotNull(overlap_span);
 		assertEquals(90000, overlap_span.getMin());
 		assertEquals(11200177, overlap_span.getMax());
 		assertEquals(overlap_span.getBioSeq(), seq);
-		List <SeqSymmetry> result = DasServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		List <SeqSymmetry> result = Das2ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(384, result.size());
 		assertEquals(136731, ((UcscPslSym)result.get(0)).getTargetMin());
 		assertEquals(137967, ((UcscPslSym)result.get(0)).getTargetMax());
 		String inside = "92000:4600000";
-		SeqSpan inside_span = DasServerUtils.getLocationSpan(seqid, inside, group);
+		SeqSpan inside_span = Das2ServerUtils.getLocationSpan(seqid, inside, group);
 		assertNotNull(inside_span);
 		assertEquals(92000, inside_span.getMin());
 		assertEquals(4600000, inside_span.getMax());
 		assertEquals(inside_span.getBioSeq(), seq);
-		result = DasServerUtils.specifiedInsideSpan(inside_span, result);
+		result = Das2ServerUtils.specifiedInsideSpan(inside_span, result);
 		assertEquals(138, result.size());
 	}
 

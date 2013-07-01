@@ -47,18 +47,18 @@ public final class IndexingUtils {
 	 * Used to index the symmetries for interval searches.
 	 */
 	public final static class IndexedSyms {
-		final File file;
-		public final int[] min;
-		public final int[] max;
-		public final String ext;
-		private final BitSet forward;
-		public final long[] filePos;
 		private final String typeName;
-		public final IndexWriter iWriter;
-
+		private final BitSet forward;
 		// for each sym, we have an array of ids generated from the group's id2symhash.
 		// Each of these ids is in a byte array instead of a String to save memory
 		private final byte[][][] id;
+		
+		public final File file;
+		public final int[] min;
+		public final int[] max;
+		public final String ext;
+		public final long[] filePos;
+		public final IndexWriter iWriter;
 
 		public IndexedSyms(int resultSize, File file, String typeName, String ext, IndexWriter iWriter) {
 			min = new int[resultSize];
@@ -491,7 +491,7 @@ public final class IndexingUtils {
 	 * @return Byte array of the input stream
 	 * @throws IOException
 	 */
-	static ByteArrayInputStream readAdditionalLinkPSLIndex(
+	public static ByteArrayInputStream readAdditionalLinkPSLIndex(
 			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
 		String secondIndexesFileName = indexesFileName + ".link2.psl";
 

@@ -14,7 +14,7 @@ import org.dom4j.Element;
 import org.hibernate.Session;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.AnnotSecurity;
+import com.affymetrix.genometry.AnnotSecurity;
 
 
 public class GenoPubSecurity implements AnnotSecurity, Serializable {

@@ -9,13 +9,8 @@ import hci.gnomex.utility.PropertyDictionaryHelper;
 import hci.gnomex.utility.QualifiedDataTrack;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.dom4j.Document;
@@ -25,7 +20,7 @@ import org.hibernate.Session;
 
 import com.affymetrix.genometry.genopub.Constants;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.AnnotSecurity;
+import com.affymetrix.genometry.AnnotSecurity;
 
 
 public class GNomExSecurity implements AnnotSecurity, Serializable {

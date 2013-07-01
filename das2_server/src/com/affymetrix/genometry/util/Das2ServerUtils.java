@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.AnnotSecurity;
+import com.affymetrix.genometry.AnnotSecurity;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;

@@ -1,5 +1,6 @@
-package com.affymetrix.genometryImpl;
+package com.affymetrix.genometry;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.util.Map;
 
 /*

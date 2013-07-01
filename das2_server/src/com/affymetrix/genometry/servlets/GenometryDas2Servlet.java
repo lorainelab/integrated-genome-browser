@@ -31,7 +31,7 @@ import javax.xml.transform.TransformerFactory;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 
-import com.affymetrix.genometryImpl.AnnotSecurity;
+import com.affymetrix.genometry.AnnotSecurity;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;

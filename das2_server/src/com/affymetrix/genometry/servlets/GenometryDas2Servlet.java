@@ -40,7 +40,7 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
-import com.affymetrix.genometryImpl.util.Optimize;
+import com.affymetrix.genometry.util.Optimize;
 import com.affymetrix.genometryImpl.util.DasServerUtils;
 
 import org.hibernate.Session;

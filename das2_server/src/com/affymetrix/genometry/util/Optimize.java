@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometry.util;
 
 import java.util.ArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.IntervalSearchSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public abstract class Optimize {
 	private static final boolean DEBUG = false;

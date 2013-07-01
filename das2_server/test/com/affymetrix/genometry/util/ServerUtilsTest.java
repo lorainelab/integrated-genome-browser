@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import com.affymetrix.genometryImpl.util.Optimize;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;

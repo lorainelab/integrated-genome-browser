@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.util.DasServerUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import com.affymetrix.genometryImpl.util.Optimize;
+import com.affymetrix.genometry.util.Optimize;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;

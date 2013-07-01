@@ -10,11 +10,16 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.genometryImpl.symmetry;
+package com.affymetrix.genometry.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
+import com.affymetrix.genometryImpl.symmetry.SearchableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.util.SeqUtils;

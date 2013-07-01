@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
+import com.affymetrix.genometryImpl.util.IndexedSyms;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

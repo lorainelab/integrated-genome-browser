@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.TypedSym;
 import com.affymetrix.genometryImpl.util.DNAUtils;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
+import com.affymetrix.genometryImpl.util.IndexedSyms;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.ArrayList;

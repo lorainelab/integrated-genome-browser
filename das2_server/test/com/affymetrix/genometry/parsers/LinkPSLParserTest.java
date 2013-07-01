@@ -182,7 +182,7 @@ public class LinkPSLParserTest {
 			splittingByChromosome(result, psl.getComparator(seq), seq);
 
 		} catch (Exception ex) {
-			Logger.getLogger(com.affymetrix.genometryImpl.parsers.LinkPSLParserTest.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(LinkPSLParserTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();
 		}
 	}

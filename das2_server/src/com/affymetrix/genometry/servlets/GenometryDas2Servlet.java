@@ -55,7 +55,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometry.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

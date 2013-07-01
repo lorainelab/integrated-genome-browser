@@ -15,17 +15,17 @@ import java.util.Set;
  * Used to index the symmetries for interval searches.
  */
 public final class IndexedSyms {
-	final String typeName;
-	final BitSet forward;
-	// for each sym, we have an array of ids generated from the group's id2symhash.
-	// Each of these ids is in a byte array instead of a String to save memory
-	final byte[][][] id;
 	public final File file;
+	public final String typeName;
+	public final String ext;
+	public final IndexWriter iWriter;
 	public final int[] min;
 	public final int[] max;
-	public final String ext;
+	public final BitSet forward;
 	public final long[] filePos;
-	public final IndexWriter iWriter;
+	// for each sym, we have an array of ids generated from the group's id2symhash.
+	// Each of these ids is in a byte array instead of a String to save memory
+	public final byte[][][] id;
 
 	public IndexedSyms(int resultSize, File file, String typeName, String ext, IndexWriter iWriter) {
 		min = new int[resultSize];
@@ -39,7 +39,7 @@ public final class IndexedSyms {
 		this.ext = ext;
 	}
 
-	void setIDs(AnnotatedSeqGroup group, String symID, int i) {
+	public void setIDs(AnnotatedSeqGroup group, String symID, int i) {
 		if (symID == null) {
 			// no IDs
 			this.id[i] = null;
@@ -59,7 +59,7 @@ public final class IndexedSyms {
 		}
 	}
 
-	SimpleSymWithProps convertToSymWithProps(int i, BioSeq seq, String type) {
+	public SimpleSymWithProps convertToSymWithProps(int i, BioSeq seq, String type) {
 		SimpleSymWithProps sym = new SimpleSymWithProps();
 		String id = this.id[i] == null ? "" : new String(this.id[i][0]);
 		sym.setID(id);

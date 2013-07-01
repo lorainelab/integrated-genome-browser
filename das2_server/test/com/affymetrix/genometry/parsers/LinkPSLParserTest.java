@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometry.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexedSyms;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;

@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
  */
 public class BioSeq implements SearchableCharIterator {
 	private Map<String, RootSeqSymmetry> type_id2sym = null;   // lazy instantiation of type ids to container annotations
+	private List<RootSeqSymmetry> annots;
 	private AnnotatedSeqGroup seq_group;
-	private List<SeqSymmetry> annots;
 	private String version;
 	private SearchableCharIterator residues_provider;
 	// GAH 8-14-2002: need a residues field in case residues need to be cached
@@ -185,7 +185,7 @@ public class BioSeq implements SearchableCharIterator {
 		return 0;
 	}
 
-	public /*@Nullable*/ SeqSymmetry getAnnotation(int index) {
+	public /*@Nullable*/ RootSeqSymmetry getAnnotation(int index) {
 		if (null != annots && index < annots.size())
 			return annots.get(index);
 		return null;
@@ -254,9 +254,9 @@ public class BioSeq implements SearchableCharIterator {
 			}
 			type_id2sym.put(symID, (RootSeqSymmetry) sym);
 			if (annots == null) {
-				annots = new ArrayList<SeqSymmetry>();
+				annots = new ArrayList<RootSeqSymmetry>();
 			}
-			annots.add(sym);
+			annots.add((RootSeqSymmetry) sym);
 			return;
 		}
 		String type = determineMethod(sym);
@@ -290,7 +290,7 @@ public class BioSeq implements SearchableCharIterator {
 			container.addSpan(span);
 			type_id2sym.put(type, container);
 			if (annots == null) {
-				annots = new ArrayList<SeqSymmetry>();
+				annots = new ArrayList<RootSeqSymmetry>();
 			}
 			annots.add(container);	// Can't be a duplicate; the container object was just created.
 		}

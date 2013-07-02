@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;

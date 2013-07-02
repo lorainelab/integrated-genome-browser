@@ -2,7 +2,7 @@
 package com.affymetrix.genometry;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.IndexedSyms;
+import com.affymetrix.genometry.util.IndexedSyms;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

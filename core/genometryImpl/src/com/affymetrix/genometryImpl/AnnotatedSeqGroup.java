@@ -287,7 +287,7 @@ public class AnnotatedSeqGroup {
 	/**
 	 * Adds the BioSeq to the group.
 	 */
-	final public void addSeq(BioSeq seq) {
+	private void addSeq(BioSeq seq) {
 		String seqID = seq.getID();
 		final BioSeq oldseq = id2seq.get(seqID.toLowerCase());
 		if (oldseq == null) {

@@ -365,7 +365,7 @@ public class AnnotatedSeqGroup {
 	/**
 	 * @return 
 	 */
-	final public Set<SeqSymmetry> findSyms(Pattern regex) {
+	public Set<SeqSymmetry> findSyms(Pattern regex) {
 		return findSyms(regex, -1);
 	}
 
@@ -453,7 +453,7 @@ public class AnnotatedSeqGroup {
 	 *  list of all matching symmetries for a given ID by calling findSyms(String).
 	 *  Neither argument should be null.
 	 */
-	final public void addToIndex(String id, SeqSymmetry sym) {
+	public void addToIndex(String id, SeqSymmetry sym) {
 		if (id == null || sym == null) {
 			throw new NullPointerException();
 		}

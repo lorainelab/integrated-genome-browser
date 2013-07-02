@@ -421,10 +421,6 @@ public class AnnotatedSeqGroup {
 		}
 		return Collections.<SeqSymmetry>unmodifiableSet(sym_list);
 	}
-
-	public String getUniqueID(){
-		return UNKNOWN_ID + unknown_id_no++;
-	}
 	
 	final public Set<String> find(Pattern regex, int limit){
 		
@@ -463,62 +459,6 @@ public class AnnotatedSeqGroup {
 		}
 		this.putSeqInList(id.toLowerCase(), sym);
 	}
-
-	public Set<String> getSymmetryIDs(String symID) {
-		return Collections.<String>emptySet();
-	}
-
-	/**
-	 * Get unique id for id/trackName combination.
-	 * Note this does not auto-increment, in order for the name to be reproducible if we need to load from the same combination again.
-	 * @param id
-	 * @param trackName
-	 * @return unique but reproducible ID
-	 */
-	public static String getUniqueGraphTrackID(String id, String trackName) {
-		if (trackName == null || trackName.length() == 0) {
-			trackName = "_EMPTY";
-		}
-		return id + "_TRACK_" + trackName;
-	}
-
-	/**
-	 *  Returns input id if no GraphSyms on any seq in the given seq group
-	 *  are already using that id.
-	 *  Otherwise uses id to build a new unique id.
-	 *  The id returned is unique for GraphSyms on all seqs in the given group.
-	 */
-	public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
-		String result = id;
-		for (BioSeq seq : seq_group.getSeqList()) {
-			result = getUniqueGraphID(result, seq);
-		}
-		return result;
-	}
-
-	/**
-	 *  Returns input id if no GraphSyms on seq with given id.
-	 *  Otherwise uses id to build a new id that is not used by a GraphSym (or top-level container sym )
-	 *     currently on the seq.
-	 *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
-	 */
-	public static String getUniqueGraphID(String id, BioSeq seq) {
-		if (id == null) {
-			return null;
-		}
-		if (seq == null) {
-			return id;
-		}
-
-		int prevcount = 0;
-		String newid = id;
-		while (seq.getAnnotation(newid) != null) {
-			prevcount++;
-			newid = id + "." + prevcount;
-		}
-		return newid;
-	}
-
 
 	/**
 	 * Function to add a SeqSymmetry to the id2sym_hash (and symid2id_hash).
@@ -571,6 +511,65 @@ public class AnnotatedSeqGroup {
 		}
 	}
 	
+	public Set<String> getSymmetryIDs(String symID) {
+		return Collections.<String>emptySet();
+	}
+
+	public String getUniqueID(){
+		return UNKNOWN_ID + unknown_id_no++;
+	}
+	
+	/**
+	 * Get unique id for id/trackName combination.
+	 * Note this does not auto-increment, in order for the name to be reproducible if we need to load from the same combination again.
+	 * @param id
+	 * @param trackName
+	 * @return unique but reproducible ID
+	 */
+	public static String getUniqueGraphTrackID(String id, String trackName) {
+		if (trackName == null || trackName.length() == 0) {
+			trackName = "_EMPTY";
+		}
+		return id + "_TRACK_" + trackName;
+	}
+
+	/**
+	 *  Returns input id if no GraphSyms on any seq in the given seq group
+	 *  are already using that id.
+	 *  Otherwise uses id to build a new unique id.
+	 *  The id returned is unique for GraphSyms on all seqs in the given group.
+	 */
+	public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
+		String result = id;
+		for (BioSeq seq : seq_group.getSeqList()) {
+			result = getUniqueGraphID(result, seq);
+		}
+		return result;
+	}
+
+	/**
+	 *  Returns input id if no GraphSyms on seq with given id.
+	 *  Otherwise uses id to build a new id that is not used by a GraphSym (or top-level container sym )
+	 *     currently on the seq.
+	 *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
+	 */
+	public static String getUniqueGraphID(String id, BioSeq seq) {
+		if (id == null) {
+			return null;
+		}
+		if (seq == null) {
+			return id;
+		}
+
+		int prevcount = 0;
+		String newid = id;
+		while (seq.getAnnotation(newid) != null) {
+			prevcount++;
+			newid = id + "." + prevcount;
+		}
+		return newid;
+	}
+
 	/**
 	 * Create a temporary shallow-copy genome, to avoid any side-effects.
 	 * @param oldGenome

@@ -1,6 +1,7 @@
 package com.affymetrix.genometry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.Collections;
@@ -75,5 +76,10 @@ public class Das2AnnotatedSeqGroup extends AnnotatedSeqGroup {
 		}
 		type_id2symloader.remove(type);
 		return true;
+	}
+	
+	@Override
+	protected BioSeq createBioSeq(String seqid, String version, int length){
+		return new Das2BioSeq(seqid, version, length);
 	}
 }

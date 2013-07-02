@@ -274,12 +274,16 @@ public class AnnotatedSeqGroup {
 				aseq.setLength(length);
 			}
 		} else {
-			aseq = new BioSeq(seqid, this.getID(), length);
+			aseq = createBioSeq(seqid, this.getID(), length);
 			this.addSeq(aseq);
 		}
 		return aseq;
 	}
 
+	protected BioSeq createBioSeq(String seqid, String version, int length){
+		return new BioSeq(seqid, version, length);
+	}
+	
 	/**
 	 * Adds the BioSeq to the group.
 	 */

@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.io.FileInputStream;
@@ -9,11 +10,11 @@ import java.util.logging.Level;
 import java.util.List;
 import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import org.junit.Before;
@@ -28,13 +29,14 @@ import static org.junit.Assert.*;
  */
 public class SearchUtilsTest {
 	File f = null;
-	AnnotatedSeqGroup group = GenometryModel.getGenometryModel().addSeqGroup("searchGroup");
+	AnnotatedSeqGroup group = new Das2AnnotatedSeqGroup("searchGroup");
 	List<UcscPslSym> syms = null;
 	Pattern regex = Pattern.compile(".*EG510482.*", Pattern.CASE_INSENSITIVE);
 	IndexWriter iWriter = null;
 
 	@Before
 	public void setUp() {
+		GenometryModel.getGenometryModel().addSeqGroup(group);
 		assertNotNull(group);
 		
 		DataInputStream dis = null;

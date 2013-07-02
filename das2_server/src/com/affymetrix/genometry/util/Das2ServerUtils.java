@@ -2,6 +2,7 @@ package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.AnnotSecurity;
 import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
+import com.affymetrix.genometry.Das2BioSeq;
 import com.affymetrix.genometry.comparator.MatchToListComparator;
 import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -407,11 +408,11 @@ public class Das2ServerUtils {
 					genome_types.put(type, new SimpleDas2Type(type, flist, getProperties(genome, annotSecurity, type)));
 		        }
 			}
-			for (String type : aseq.getIndexedTypeList()) {
+			for (String type : ((Das2BioSeq)aseq).getIndexedTypeList()) {
 				if (genome_types.get(type) != null) {
 					continue;
 				}
-				IndexedSyms iSyms = aseq.getIndexedSym(type);
+				IndexedSyms iSyms = ((Das2BioSeq)aseq).getIndexedSym(type);
 				List<String> flist = new ArrayList<String>();
 				flist.addAll(iSyms.iWriter.getFormatPrefList());
 				
@@ -551,9 +552,9 @@ public class Das2ServerUtils {
 					aseq.unloadAnnotation(tannot);
 					tannot = null;
 				} else {
-					IndexedSyms iSyms = aseq.getIndexedSym(type_name);
+					IndexedSyms iSyms = ((Das2BioSeq)aseq).getIndexedSym(type_name);
 					if (iSyms != null) {
-						if (!aseq.removeIndexedSym(type_name)) {
+						if (!((Das2BioSeq)aseq).removeIndexedSym(type_name)) {
 							Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.WARNING, "Unable to remove indexed annotation {0}", type_name);
 						}
 						iSyms = null;
@@ -766,7 +767,7 @@ public class Das2ServerUtils {
 			}
 		} else {
 			Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.FINE, "indexed request for {0}", annot_type);
-			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
+			IndexedSyms iSyms = ((Das2BioSeq)seq).getIndexedSym(annot_type);
 			if (iSyms != null) {
 				return getIndexedOverlappedSymmetries(query_span, iSyms, annot_type, seq.getSeqGroup());
 			}

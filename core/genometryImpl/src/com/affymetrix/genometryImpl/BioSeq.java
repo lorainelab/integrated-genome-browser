@@ -10,13 +10,11 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.TypedSym;
 import com.affymetrix.genometryImpl.util.DNAUtils;
-import com.affymetrix.genometryImpl.util.IndexedSyms;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +26,8 @@ import java.util.regex.Pattern;
 /**
  * @author $Id: BioSeq.java 10552 2012-03-02 18:35:42Z hiralv $
  */
-public final class BioSeq implements SearchableCharIterator {
+public class BioSeq implements SearchableCharIterator {
 	private Map<String, RootSeqSymmetry> type_id2sym = null;   // lazy instantiation of type ids to container annotations
-	private Map<String, IndexedSyms> type_id2indexedsym = null;
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
 	private String version;
@@ -341,40 +338,6 @@ public final class BioSeq implements SearchableCharIterator {
 				container.clear();
 			}
 		}
-	}
-
-	/**
-	 * Add an indexed collection to id2indexedsym.
-	 * @param type ID string.
-	 * @param value indexedSyms to add to the hash.
-	 */
-	public final void addIndexedSyms(String type, IndexedSyms value) {
-		if(type_id2indexedsym == null){
-			type_id2indexedsym = new HashMap<String, IndexedSyms>();
-		}
-		type_id2indexedsym.put(type,value);
-	}
-
-	public final Set<String> getIndexedTypeList() {
-		if(type_id2indexedsym == null){
-			return Collections.<String>emptySet();
-		}
-		return type_id2indexedsym.keySet();
-	}
-
-	public final IndexedSyms getIndexedSym(String type) {
-		if(type_id2indexedsym == null){
-			return null;
-		}
-		return type_id2indexedsym.get(type);
-	}
-	
-	public boolean removeIndexedSym(String type) {
-		if(type_id2indexedsym == null || !type_id2indexedsym.containsKey(type)) {
-			return false;
-		}
-		type_id2indexedsym.remove(type);
-		return true;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.Das2BioSeq;
 import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -121,7 +122,7 @@ public final class IndexingUtils {
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, ext, iWriter);
 
 			// add indexed symmetries to the chromosome (used by types request)
-			originalSeq.addIndexedSyms(returnTypeName, iSyms);
+			((Das2BioSeq)originalSeq).addIndexedSyms(returnTypeName, iSyms);
 
 			// Write the annotations out to a file.
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, tempGenome, iSyms);
@@ -144,8 +145,8 @@ public final class IndexingUtils {
 		// label for breaking out of loop
 		SEARCHSYMS:
 		for (BioSeq seq : genome.getSeqList()) {
-			for (String type : seq.getIndexedTypeList()) {
-				IndexedSyms iSyms = seq.getIndexedSym(type);
+			for (String type : ((Das2BioSeq)seq).getIndexedTypeList()) {
+				IndexedSyms iSyms = ((Das2BioSeq)seq).getIndexedSym(type);
 				if (iSyms == null) {
 					continue;
 				}

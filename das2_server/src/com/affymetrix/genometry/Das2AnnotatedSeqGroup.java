@@ -123,4 +123,13 @@ public class Das2AnnotatedSeqGroup extends AnnotatedSeqGroup {
 		}
 		return symset;
 	}
+	
+	public static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
+		AnnotatedSeqGroup tempGenome = new Das2AnnotatedSeqGroup(oldGenome.getID());
+		tempGenome.setOrganism(oldGenome.getOrganism());
+		for (BioSeq seq : oldGenome.getSeqList()) {
+			tempGenome.addSeq(seq.getID(), seq.getLength());
+		}
+		return tempGenome;
+	}
 }

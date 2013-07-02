@@ -252,7 +252,7 @@ public class Das2ServerUtils {
 		IndexWriter iWriter = ParserController.getIndexWriter(stream_name);
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 		String annotTypeName = ParserController.getAnnotType(annotList, file.getName(), extension, annot_name);
-		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
+		AnnotatedSeqGroup tempGenome = Das2AnnotatedSeqGroup.tempGenome(genome);
 		if (iWriter == null) {
 			loadAnnotFile(file, annotTypeName, annotList, genome, false);
 			getAddedChroms(genome, tempGenome, false);

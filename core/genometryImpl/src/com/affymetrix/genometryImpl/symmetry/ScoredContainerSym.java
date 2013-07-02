@@ -16,6 +16,7 @@ package com.affymetrix.genometryImpl.symmetry;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -288,4 +289,13 @@ public class ScoredContainerSym extends RootSeqSymmetry {
 	public FileTypeCategory getCategory() {
 		return FileTypeCategory.ScoredContainer;
 	}
+
+	@Override
+	public void searchHints(List<String> results, Pattern regex, int limit) { }
+	
+	@Override
+	public void search(List<SeqSymmetry> result, Pattern regex, int limit) { }
+	
+	@Override
+	public void searchProperties(List<SeqSymmetry> results, Pattern regex, int limit) { }
 }

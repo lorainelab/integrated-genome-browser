@@ -60,6 +60,7 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.regex.Pattern;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -1046,10 +1047,10 @@ public class SeqMapView extends JPanel
 	private TierGlyph addAxisTier(int tier_index) {
 		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
 		resultAxisTier.setInfo(new RootSeqSymmetry(){
-			@Override
-			public FileTypeCategory getCategory() {
-				return FileTypeCategory.Axis;
-			}
+			@Override public FileTypeCategory getCategory() { return FileTypeCategory.Axis; }
+			@Override public void searchHints(List<String> results, Pattern regex, int limit) { }
+			@Override public void search(List<SeqSymmetry> result, Pattern regex, int limit) { }
+			@Override public void searchProperties(List<SeqSymmetry> results, Pattern regex, int limit) { }
 		});
 		resultAxisTier.setPacker(null);
 		resultAxisTier.setFixedPixHeight(54);

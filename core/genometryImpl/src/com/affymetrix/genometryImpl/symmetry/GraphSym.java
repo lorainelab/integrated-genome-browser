@@ -16,9 +16,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *  A SeqSymmetry for holding graph data.
@@ -585,6 +587,15 @@ public class GraphSym extends RootSeqSymmetry {
 		return FileTypeCategory.Graph;
 	}
 
+	@Override
+	public void searchHints(List<String> results, Pattern regex, int limit) { }
+	
+	@Override
+	public void search(List<SeqSymmetry> result, Pattern regex, int limit) { }
+	
+	@Override
+	public void searchProperties(List<SeqSymmetry> results, Pattern regex, int limit) { }
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

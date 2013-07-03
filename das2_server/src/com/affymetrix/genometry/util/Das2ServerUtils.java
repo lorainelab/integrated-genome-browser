@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SearchableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
@@ -254,15 +255,16 @@ public class Das2ServerUtils {
 		String annotTypeName = ParserController.getAnnotType(annotList, file.getName(), extension, annot_name);
 		AnnotatedSeqGroup tempGenome = Das2AnnotatedSeqGroup.tempGenome(genome);
 		if (iWriter == null) {
-			loadAnnotFile(file, annotTypeName, annotList, genome, false);
+			List<? extends SeqSymmetry> loadedSyms = loadAnnotFile(file, annotTypeName, annotList, genome, false);
 			getAddedChroms(genome, tempGenome, false);
 			getAlteredChroms(genome, tempGenome, false);
+			addToIndex(loadedSyms, (Das2AnnotatedSeqGroup)genome);
 			// Not yet indexable
 			return;
 		}
 		List<? extends SeqSymmetry> loadedSyms = loadAnnotFile(file, annotTypeName, annotList, tempGenome, true);
 		getAddedChroms(tempGenome, genome, true);
-		getAlteredChroms(tempGenome, genome, true);
+		getAlteredChroms(tempGenome, genome, true);	
 		String returnTypeName = annotTypeName;
 		if (stream_name.endsWith(".link.psl")) {
 			returnTypeName = annotTypeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
@@ -272,6 +274,22 @@ public class Das2ServerUtils {
 		createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
 		
 		IndexingUtils.determineIndexes(genome, tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName, extension);
+	}
+	
+	private static void addToIndex(List<? extends SeqSymmetry> syms, Das2AnnotatedSeqGroup genome) {
+		String key;
+		for (SeqSymmetry sym : syms) {
+			key = sym.getID();
+			if (key != null && key.length() > 0) {
+				genome.addToIndex(sym.getID(), sym);
+			}
+			if (sym instanceof SupportsGeneName) {
+				key = ((SupportsGeneName) sym).getGeneName();
+				if (key != null && key.length() > 0) {
+					genome.addToIndex(sym.getID(), sym);
+				}
+			}
+		}
 	}
 	
 	private static boolean isGenoPubSequenceFile(File current_file) {

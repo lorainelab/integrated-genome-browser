@@ -16,8 +16,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -588,13 +588,13 @@ public class GraphSym extends RootSeqSymmetry {
 	}
 
 	@Override
-	public void searchHints(List<String> results, Pattern regex, int limit) { }
+	public void searchHints(Set<String> results, Pattern regex, int limit) { }
 	
 	@Override
-	public void search(List<SeqSymmetry> result, Pattern regex, int limit) { }
+	public void search(Set<SeqSymmetry> result, Pattern regex, int limit) { }
 	
 	@Override
-	public void searchProperties(List<SeqSymmetry> results, Pattern regex, int limit) { }
+	public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) { }
 	
 	@Override
 	public int hashCode() {

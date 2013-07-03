@@ -87,7 +87,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	}
 	
 	@Override
-	public void searchHints(List<String> results, Pattern regex, int limit) {	
+	public void searchHints(Set<String> results, Pattern regex, int limit) {	
 		final Matcher matcher = regex.matcher("");
 		int size = Math.min(limit, id2sym_hash.size());
 		int count = results.size();
@@ -106,7 +106,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	}
 	
 	@Override
-	public void search(List<SeqSymmetry> results, Pattern regex, int limit) {
+	public void search(Set<SeqSymmetry> results, Pattern regex, int limit) {
 		int size;
 		int count;
 		if(limit > 0){
@@ -136,7 +136,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	}
 	
 	@Override
-	public void searchProperties(List<SeqSymmetry> results, Pattern regex, int limit) {
+	public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) {
 		int size;
 		int count;
 		if(limit > 0){

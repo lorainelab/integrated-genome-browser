@@ -611,6 +611,24 @@ public class BioSeq implements SearchableCharIterator {
 		return residues_provider.indexOf(str, fromIndex);
 	}
 	
+	public void searchHints(Set<String> results, Pattern regex, int limit){
+		for(RootSeqSymmetry rootSym : annots){
+			rootSym.searchHints(results, regex, limit);
+		}
+	}
+	
+	public void search(Set<SeqSymmetry> syms, Pattern regex, int limit){
+		for(RootSeqSymmetry rootSym : annots){
+			rootSym.search(syms, regex, limit);
+		}
+	}
+	
+	public void searchProperties(Set<SeqSymmetry> syms, Pattern regex, int limit){
+		for(RootSeqSymmetry rootSym : annots){
+			rootSym.searchProperties(syms, regex, limit);
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return this.getID();

@@ -3,6 +3,7 @@ package com.affymetrix.genometry;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometry.util.IndexedSyms;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,11 @@ public class Das2BioSeq extends BioSeq {
 	
 	public Das2BioSeq(String seqid, String seqversion, int length) {
 		super(seqid, seqversion, length);
+	}
+	
+	@Override
+	public synchronized void addAnnotation(SeqSymmetry sym, String ext, boolean index) {
+		super.addAnnotation(sym, ext, false);
 	}
 	
 	/**

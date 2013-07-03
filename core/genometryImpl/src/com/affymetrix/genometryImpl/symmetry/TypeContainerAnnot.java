@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSym   {
 	private static final String[] PROPERTIES_TO_SEARCH = new String[]{"id", "gene name", "description"};
 	private static final FileTypeCategory DEFAULT_CATEGORY = FileTypeCategory.Annotation;
-	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
+	private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	private final String ext;
 	private final boolean index;
 	private final String type;
@@ -88,7 +88,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	
 	@Override
 	public void search(Set<SeqSymmetry> results, String id) { 
-		if (id == null) {
+		if (id2sym_hash == null || id == null) {
 			return;
 		}
 		Set<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
@@ -98,7 +98,10 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	}
 	
 	@Override
-	public void searchHints(Set<String> results, Pattern regex, int limit) {	
+	public void searchHints(Set<String> results, Pattern regex, int limit) {
+		if (id2sym_hash == null || regex == null) {
+			return;
+		}
 		final Matcher matcher = regex.matcher("");
 		int size = Math.min(limit, id2sym_hash.size());
 		int count = results.size();
@@ -118,6 +121,9 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	
 	@Override
 	public void search(Set<SeqSymmetry> results, Pattern regex, int limit) {
+		if (id2sym_hash == null || regex == null) {
+			return;
+		}
 		int size;
 		int count;
 		if(limit > 0){
@@ -148,6 +154,9 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	
 	@Override
 	public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) {
+		if (id2sym_hash == null || regex == null) {
+			return;
+		}
 		int size;
 		int count;
 		if(limit > 0){
@@ -193,5 +202,11 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void clear(){
+		super.clear();
+		id2sym_hash = null;
 	}
 }

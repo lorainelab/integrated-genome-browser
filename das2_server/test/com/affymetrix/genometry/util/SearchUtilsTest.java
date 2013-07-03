@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SearchUtils;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -29,7 +28,7 @@ import static org.junit.Assert.*;
  */
 public class SearchUtilsTest {
 	File f = null;
-	AnnotatedSeqGroup group = new Das2AnnotatedSeqGroup("searchGroup");
+	Das2AnnotatedSeqGroup group = new Das2AnnotatedSeqGroup("searchGroup");
 	List<UcscPslSym> syms = null;
 	Pattern regex = Pattern.compile(".*EG510482.*", Pattern.CASE_INSENSITIVE);
 	IndexWriter iWriter = null;
@@ -51,7 +50,9 @@ public class SearchUtilsTest {
 			assertEquals(46, syms.size());
 			assertEquals(5,group.getSeqCount());
 			assertEquals("5", group.getSeq(0).getID());
-
+			for(SeqSymmetry sym : syms){
+				group.addToIndex(sym.getID(), sym);
+			}
 		} catch (Exception ex) {
 			Logger.getLogger(SearchUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();
@@ -62,7 +63,7 @@ public class SearchUtilsTest {
 
 	@Test
 	public void testLocalSearch() {
-		List<SeqSymmetry> foundSyms = SearchUtils.findLocalSyms(group, null, regex, false);
+		Set<SeqSymmetry> foundSyms = group.findSyms(regex);
 		assertEquals(46, foundSyms.size());
 	}
 

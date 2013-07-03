@@ -71,7 +71,7 @@ public class LinkPSLParserTest {
 		}
 	}
 
-	private void writeAnnotation(List result, AnnotatedSeqGroup group, BioSeq seq, String consensusType) throws IOException {
+	private void writeAnnotation(List result, Das2AnnotatedSeqGroup group, BioSeq seq, String consensusType) throws IOException {
 		assertNotNull(result);
 		assertEquals(2103, result.size()); // all types of symmetries
 		Set<SeqSymmetry> consensusSyms = group.findSyms(Pattern.compile(".*"));

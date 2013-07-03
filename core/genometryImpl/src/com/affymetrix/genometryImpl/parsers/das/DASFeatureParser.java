@@ -249,7 +249,7 @@ public final class DASFeatureParser implements Parser {
 		if (annotateSeq) {
 			sequence.addAnnotation(groupSymmetry);
 		}
-		seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
+//		seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
 		groupMap.put(groupSymmetry.getID(), groupSymmetry);
 
 		return groupSymmetry;

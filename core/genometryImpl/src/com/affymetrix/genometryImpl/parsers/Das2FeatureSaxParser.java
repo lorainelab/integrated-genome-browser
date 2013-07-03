@@ -542,9 +542,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					result_syms.add(featsym);
 					if (add_to_sym_hash) {
 						//	    System.out.println("adding to sym hash: " + featsym.getName() + ", " + featsym.getID());
-						seqgroup.addToIndex(featsym.getID(), featsym);
+//						seqgroup.addToIndex(featsym.getID(), featsym);
 						if (featsym.getName() != null) {
-							seqgroup.addToIndex(featsym.getName(), featsym);
+//							seqgroup.addToIndex(featsym.getName(), featsym);
 						}
 					}
 					if (add_annots_to_seq) {

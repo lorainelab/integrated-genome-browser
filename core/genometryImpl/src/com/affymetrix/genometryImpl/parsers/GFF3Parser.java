@@ -289,11 +289,11 @@ public final class GFF3Parser implements Parser {
 			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 			String id = sym.getID();
 			if (id != null && !"-".equals(id) && id.length() != 0) {
-				seq_group.addToIndex(id, sym);
+//				seq_group.addToIndex(id, sym);
 			} else {
 				id = seq_group.getUniqueID();
 				sym.setID(id);
-				seq_group.addToIndex(id, sym);
+//				seq_group.addToIndex(id, sym);
 			}
 			// gff3 display bug. hiralv 08-16-10
 			if(sym.getFeatureType().equals("TF_binding_site")){

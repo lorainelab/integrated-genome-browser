@@ -861,7 +861,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			} else {
 				seq.addAnnotation(sym);
 			}
-			annGroup.addToIndex(sym.getID(), sym);
+//			annGroup.addToIndex(sym.getID(), sym);
 		}
 	}
 
@@ -875,7 +875,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 				seq.addAnnotation(sym);
 			}
 			if (!in_bottom_of_link_psl) {
-				annGroup.addToIndex(sym.getID(), sym);
+//				annGroup.addToIndex(sym.getID(), sym);
 			}
 		}
 	}

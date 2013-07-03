@@ -130,7 +130,7 @@ public final class CytobandParser implements AnnotationWriter, Parser  {
 				}
 				parent_sym.addChild(sym);
 				if (annot_name != null && annot_name.length() != 0) {
-					seq_group.addToIndex(annot_name, sym);
+//					seq_group.addToIndex(annot_name, sym);
 				}
 			}
 			results.add(sym);

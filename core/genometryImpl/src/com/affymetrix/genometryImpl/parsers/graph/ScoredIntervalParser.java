@@ -178,7 +178,7 @@ public final class ScoredIntervalParser implements GraphParser {
 					else { child = new IndexedSingletonSym(min, max, aseq); }
 					child.setID(annot_id);
 					isyms.add(child);
-					seq_group.addToIndex(annot_id, child);
+//					seq_group.addToIndex(annot_id, child);
 				}
 				else { // not sin1 or sin2, must be sin3
 					score_offset = 1;

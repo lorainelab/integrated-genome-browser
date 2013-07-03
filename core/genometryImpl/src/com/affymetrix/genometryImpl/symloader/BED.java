@@ -444,10 +444,10 @@ public class BED extends SymLoader implements LineProcessor {
 			this.annotationParsed(bedline_sym);
 		}
 		if (annot_name != null) {
-			group.addToIndex(annot_name, bedline_sym);
+//			group.addToIndex(annot_name, bedline_sym);
 		}
 		if (detailSymbol != null){
-			group.addToIndex(detailSymbol, bedline_sym);
+//			group.addToIndex(detailSymbol, bedline_sym);
 		}
 		return true;
 	}

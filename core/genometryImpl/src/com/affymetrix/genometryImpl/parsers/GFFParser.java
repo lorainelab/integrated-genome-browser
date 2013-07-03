@@ -498,12 +498,12 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 				if (index_id != null) {
 					groupsym.setProperty("id", index_id);
 					if (seq_group != null) {
-						seq_group.addToIndex(index_id, groupsym);
+//						seq_group.addToIndex(index_id, groupsym);
 					}
 				} else {
 					groupsym.setProperty("id", group_id);
 					if (seq_group != null) {
-						seq_group.addToIndex(group_id, groupsym);
+//						seq_group.addToIndex(group_id, groupsym);
 					}
 				}
 				group_hash.put(group_id, groupsym);

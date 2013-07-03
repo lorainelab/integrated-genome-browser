@@ -155,10 +155,10 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser  {
 						tmin, tmax, cmin, cmax, emins, emaxs);
 
 				if (geneName.length() != 0) {
-					seq_group.addToIndex(geneName, sym);
+//					seq_group.addToIndex(geneName, sym);
 				}
 				if (name.length() != 0) {
-					seq_group.addToIndex(name, sym);
+//					seq_group.addToIndex(name, sym);
 				}
 
 				results.add(sym);

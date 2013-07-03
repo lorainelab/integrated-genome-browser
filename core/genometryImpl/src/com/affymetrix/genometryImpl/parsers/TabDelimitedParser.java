@@ -192,7 +192,7 @@ public class TabDelimitedParser implements Parser {
 						results.add(parent);
 						if (annotateSeq) {
 							seq.addAnnotation(parent);
-							seq_group.addToIndex(parent.getID(), parent);
+//							seq_group.addToIndex(parent.getID(), parent);
 						}
 					} else {
 						MutableSeqSpan pspan = (MutableSeqSpan) parent.getSpan(seq);
@@ -204,7 +204,7 @@ public class TabDelimitedParser implements Parser {
 					results.add(child);
 					if (annotateSeq) {
 						seq.addAnnotation(child);
-						seq_group.addToIndex(child.getID(), child);
+//						seq_group.addToIndex(child.getID(), child);
 					}
 				}
 			}

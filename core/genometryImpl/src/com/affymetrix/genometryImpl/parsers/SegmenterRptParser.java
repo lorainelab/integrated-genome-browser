@@ -235,7 +235,7 @@ public final class SegmenterRptParser implements Parser {
 				sym.setProperty(HEADER_PROP_KEY_NAME, headerMap);
 
 				seq.addAnnotation(sym);
-				seq_group.addToIndex(id, sym);
+//				seq_group.addToIndex(id, sym);
 
 				line = br.readLine();
 			}

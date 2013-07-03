@@ -395,7 +395,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 			} else {
 				seq.addAnnotation(sym);
 			}
-			annGroup.addToIndex(sym.getID(), sym);
+//			annGroup.addToIndex(sym.getID(), sym);
 		}
 	}
 
@@ -409,7 +409,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 				seq.addAnnotation(sym);
 			}
 			if (!in_bottom_of_link_psl) {
-				annGroup.addToIndex(sym.getID(), sym);
+//				annGroup.addToIndex(sym.getID(), sym);
 			}
 		}
 	}

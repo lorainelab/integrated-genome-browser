@@ -128,7 +128,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
 						tmin, tmax, cmin, cmax, emins, emaxs);
 
 				if (seq_group != null) {
-					seq_group.addToIndex(name, sym);
+//					seq_group.addToIndex(name, sym);
 				}
 				results.add(sym);
 

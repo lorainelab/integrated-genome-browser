@@ -81,7 +81,7 @@ public class SearchUtilsTest {
 			assertEquals(0, foundSyms.size());
 
 			// Need to index information
-			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
+			AnnotatedSeqGroup tempGroup = Das2AnnotatedSeqGroup.tempGenome(group);
 			assertEquals(group.getSeqCount(), tempGroup.getSeqCount());
 			
 			List loadedSyms = Das2ServerUtils.loadAnnotFile(f, "indexPSL", null, tempGroup, true);

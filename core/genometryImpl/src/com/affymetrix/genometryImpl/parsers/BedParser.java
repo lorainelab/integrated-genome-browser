@@ -338,7 +338,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			this.annotationParsed(bedline_sym);
 		}
 		if (annot_name != null) {
-			seq_group.addToIndex(annot_name, bedline_sym);
+//			seq_group.addToIndex(annot_name, bedline_sym);
 		} 
 	}
 

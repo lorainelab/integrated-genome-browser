@@ -259,7 +259,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 					container_sym.addChild(psym);
 					results.add(psym);
 					if (populate_id_hash) {
-						group.addToIndex(psym.getID(), psym);
+//						group.addToIndex(psym.getID(), psym);
 					}
 				}
 				if (annotate_seq) {

@@ -123,7 +123,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 						queryseq.addAnnotation(query_parent_sym);
 						query2sym.put(qname, query_parent_sym);
 					}
-					query_group.addToIndex(sym.getID(), sym);
+//					query_group.addToIndex(sym.getID(), sym);
 					query_parent_sym.addChild(sym);
 				}
 
@@ -139,7 +139,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 						target2sym.put(tname, target_parent_sym);
 					}
 					target_parent_sym.addChild(sym);
-					target_group.addToIndex(sym.getID(), sym);
+//					target_group.addToIndex(sym.getID(), sym);
 				}
 			}
 		}

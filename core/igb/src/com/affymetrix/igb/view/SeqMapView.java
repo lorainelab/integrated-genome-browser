@@ -1005,7 +1005,9 @@ public class SeqMapView extends JPanel
 			if (DEBUG_TIERS) {
 				System.out.println("removing tier from map: " + tg.getAnnotStyle().getTrackName());
 			}
-			seqmap.removeTier(tg);
+			tg.removeAllChildren();
+			tg.setScene(null);
+			//seqmap.removeTier(tg);
 		}
 		return temp_tiers;
 	}

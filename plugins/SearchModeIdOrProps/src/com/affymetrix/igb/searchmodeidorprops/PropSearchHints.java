@@ -2,7 +2,7 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.util.SearchUtils;
+import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.Set;
 import java.util.regex.Pattern;

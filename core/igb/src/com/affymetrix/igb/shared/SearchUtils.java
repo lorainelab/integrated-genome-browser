@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.igb.shared;
 
 import java.util.*;
 import java.util.regex.*;

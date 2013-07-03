@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import com.affymetrix.genometry.Das2BioSeq;
 import com.affymetrix.genometry.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -218,7 +219,7 @@ public final class IndexingUtils {
 				"name arg: {0},  regex to use for pattern-matching: {1}", new Object[]{name, name_regex});
 
 		name_pattern = Pattern.compile(name_regex, Pattern.CASE_INSENSITIVE);
-		result = genome.findSyms(name_pattern);
+		result = ((Das2AnnotatedSeqGroup)genome).findSyms(name_pattern);
 
 		Logger.getLogger(IndexingUtils.class.getName()).log(Level.INFO,
 				"non-indexed regex matches: {0}", result.size());

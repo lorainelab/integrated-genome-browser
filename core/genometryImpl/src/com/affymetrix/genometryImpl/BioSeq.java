@@ -609,26 +609,26 @@ public class BioSeq implements SearchableCharIterator {
 	}
 	
 	public void search(Set<SeqSymmetry> results, String id) { 
-		for(RootSeqSymmetry rootSym : annots){
-			rootSym.search(results, id);
+		for(int i=0; i<getAnnotationCount(); i++){
+			getAnnotation(i).search(results, id);
 		}
 	}
 	
 	public void searchHints(Set<String> results, Pattern regex, int limit){
-		for(RootSeqSymmetry rootSym : annots){
-			rootSym.searchHints(results, regex, limit);
+		for(int i=0; i<getAnnotationCount(); i++){
+			getAnnotation(i).searchHints(results, regex, limit);
 		}
 	}
 	
 	public void search(Set<SeqSymmetry> syms, Pattern regex, int limit){
-		for(RootSeqSymmetry rootSym : annots){
-			rootSym.search(syms, regex, limit);
+		for(int i=0; i<getAnnotationCount(); i++){
+			getAnnotation(i).search(syms, regex, limit);
 		}
 	}
 	
 	public void searchProperties(Set<SeqSymmetry> syms, Pattern regex, int limit){
-		for(RootSeqSymmetry rootSym : annots){
-			rootSym.searchProperties(syms, regex, limit);
+		for(int i=0; i<getAnnotationCount(); i++){
+			getAnnotation(i).searchProperties(syms, regex, limit);
 		}
 	}
 	

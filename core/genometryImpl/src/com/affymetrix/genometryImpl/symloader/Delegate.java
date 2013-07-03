@@ -109,7 +109,7 @@ public class Delegate extends QuickLoadSymLoader {
 		if(!(sym instanceof RootSeqSymmetry)){
 			if(operator.getOutputCategory() == FileTypeCategory.Alignment ||
 					operator.getOutputCategory() == FileTypeCategory.Annotation){
-				TypeContainerAnnot container = new TypeContainerAnnot(uri.toString(), EXT);
+				TypeContainerAnnot container = new TypeContainerAnnot(uri.toString(), EXT, false);
 				for(int i=0; i<sym.getChildCount(); i++){
 					container.addChild(sym.getChild(i));
 				}

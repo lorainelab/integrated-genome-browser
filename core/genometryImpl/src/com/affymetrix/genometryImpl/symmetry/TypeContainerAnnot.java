@@ -36,16 +36,16 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	private final String type;
 	
 	public TypeContainerAnnot(String type) {
-		this(type,"");
+		this(type,"",false);
 	}
 
-	public TypeContainerAnnot(String type, String ext) {
+	public TypeContainerAnnot(String type, String ext, boolean index) {
 		super();
 		this.setProperty("method", type);
 		this.setProperty(CONTAINER_PROP, Boolean.TRUE);
 		this.type   = type;
 		this.ext    = ext;
-		this.index  = false;
+		this.index  = index;
 		id2sym_hash = !index ? null : new TreeMap<String,Set<SeqSymmetry>>() ;
 	}
 

@@ -347,7 +347,7 @@ public abstract class SymLoader {
 
 		BioSeq seq = span.getBioSeq();
 		for (SeqSymmetry feat : filteredFeats) {
-			seq.addAnnotation(feat, feature.getExtension());
+			seq.addAnnotation(feat, feature.getExtension(), true);
 		}
 		
 	}

@@ -236,10 +236,10 @@ public class BioSeq implements SearchableCharIterator {
 	 *  </pre>
 	 */
 	public synchronized void addAnnotation(SeqSymmetry sym) {
-		addAnnotation(sym,"");
+		addAnnotation(sym,"", false);
 	}
 
-	public synchronized void addAnnotation(SeqSymmetry sym, String ext) {
+	public synchronized void addAnnotation(SeqSymmetry sym, String ext, boolean index) {
  		if (sym instanceof RootSeqSymmetry) {
 			String symID = sym.getID();
 			if (symID == null) {
@@ -262,7 +262,7 @@ public class BioSeq implements SearchableCharIterator {
 		String type = determineMethod(sym);
 		if (type != null)  {
 			// add as child to the top-level container
-			addAnnotation(sym, type, ext); // side-effect calls notifyModified()
+			addAnnotation(sym, type, ext, index); // side-effect calls notifyModified()
 			return;
 		}
 		else  {
@@ -278,13 +278,13 @@ public class BioSeq implements SearchableCharIterator {
 	 *     for the given type.  Creates new top-level container
 	 *     if doesn't yet exist.
 	 */
-	private synchronized void addAnnotation(SeqSymmetry sym, String type, String ext) {
+	private synchronized void addAnnotation(SeqSymmetry sym, String type, String ext, boolean index) {
 		if (type_id2sym == null) {
 			type_id2sym = new LinkedHashMap<String, RootSeqSymmetry>();
 		}
 		RootSeqSymmetry container = type_id2sym.get(type);
 		if (container == null) {
-			container = new TypeContainerAnnot(type, ext);
+			container = new TypeContainerAnnot(type, ext, index);
 			((TypeContainerAnnot) container).setProperty("method", type);
 			SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
 			container.addSpan(span);

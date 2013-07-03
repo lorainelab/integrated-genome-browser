@@ -49,7 +49,7 @@ public class FindMateOperator extends AbstractAnnotationTransformer {
 	 */
 	private SeqSymmetry findMate(TypeContainerAnnot t, BioSeq aseq) {
 		Map<String, List<SeqSymmetry>> map = new HashMap<String, List<SeqSymmetry>>(1000);
-		TypeContainerAnnot result = new TypeContainerAnnot(t.getType()+"bampair", "bampair");
+		TypeContainerAnnot result = new TypeContainerAnnot(t.getType()+"bampair", "bampair", false);
 		SeqSymmetry child;
 		for (int i = 0; i < t.getChildCount(); i++) {
 			child = t.getChild(i);

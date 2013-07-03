@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -28,7 +29,6 @@ public class AnnotatedSeqGroup {
 	final private Map<String, BioSeq> id2seq;
 	private List<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
-	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	private HashMap<String, Set<String>> uri2Seqs = new HashMap<String, Set<String>>();
 	
@@ -41,7 +41,6 @@ public class AnnotatedSeqGroup {
 		id2seq = Collections.<String, BioSeq>synchronizedMap(new LinkedHashMap<String, BioSeq>());
 		id2seq_dirty_bit = false;
 		seqlist = new ArrayList<BioSeq>();
-		id2sym_hash = new TreeMap<String,Set<SeqSymmetry>>();
 	}
 
 	final public String getID() {
@@ -301,213 +300,33 @@ public class AnnotatedSeqGroup {
 					this.getID() + ", but seq with same id is already in group");
 		}
 	}
-
-	final public Set<SeqSymmetry> findInSymProp(Pattern regex) {
-		return findInSymProp(regex, -1);
-	}
-
-	/**
-	 * 
-	 * @param regex
-	 * @param limit -1 for no limit
-	 * @return set of SeqSymmetries matching the pattern with any of it's properties.
-	 */
-	final public Set<SeqSymmetry> findInSymProp(Pattern regex, int limit) {
-		int size;
-		int count;
-		final Set<SeqSymmetry> symset;
-		if(limit > 0){
-			size = Math.min(limit,id2sym_hash.size());
-			count = 0;
-			symset = new HashSet<SeqSymmetry>(size);
-		}else{
-			size = -1;
-			count = Integer.MIN_VALUE;
-			symset = new HashSet<SeqSymmetry>();
-		}
-		
-		final Matcher matcher = regex.matcher("");
-		SymWithProps swp;
-		String match;
-		Thread current_thread = Thread.currentThread();
-		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
-			if(current_thread.isInterrupted())
-				break;
-			
-			for (SeqSymmetry seq : ent.getValue()) {
-				if(current_thread.isInterrupted())
-					break;
-				
-				if (seq instanceof SymWithProps) {
-					swp = (SymWithProps) seq;
-
-					// Iterate through each properties.
-					for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
-						if(current_thread.isInterrupted() || count > size)
-							break;
-						
-						if (prop.getValue() != null) {
-							match = prop.getValue().toString();
-							matcher.reset(match);
-							if (matcher.matches()) {
-								symset.add(seq);
-								count++;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return symset;
-	}
-	
-	/**
-	 * @return 
-	 */
-	public Set<SeqSymmetry> findSyms(Pattern regex) {
-		return findSyms(regex, -1);
-	}
-
-	/**
-	 * @param regex
-	 * @param limit -1 for no limit.
-	 * @return set of SeqSymmetries matching the pattern.
-	 */
-	public Set<SeqSymmetry> findSyms(Pattern regex, int limit) {
-		int size;
-		int count;
-		final Set<SeqSymmetry> symset;
-		if(limit > 0){
-			size = Math.min(limit,id2sym_hash.size());
-			count = 0;
-			symset = new HashSet<SeqSymmetry>(size);
-		}else{
-			size = -1;
-			count = Integer.MIN_VALUE;
-			symset = new HashSet<SeqSymmetry>();
-		}
-		
-		final Matcher matcher = regex.matcher("");
-		Thread current_thread = Thread.currentThread();
-		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
-			if (current_thread.isInterrupted() || count > size) {
-				break;
-			}
-
-			String seid = ent.getKey();
-			Set<SeqSymmetry> val = ent.getValue();
-			if (seid != null && val != null) {
-				matcher.reset(seid);
-				if (matcher.matches()) {
-					symset.addAll(val);
-					count++;
-				}
-			}
-		}
-		return symset;
-	}
 	
 	/** Finds all symmetries with the given case-insensitive ID.
 	 *  @return a non-null List, possibly an empty one.
 	 */
 	final public Set<SeqSymmetry> findSyms(String id) {
-		if (id == null) {
-			return Collections.<SeqSymmetry>emptySet();
+		Set<SeqSymmetry> results = new HashSet<SeqSymmetry>();
+		for(BioSeq seq : getSeqList()){
+			seq.search(results, id);
 		}
-		Set<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
-		if (sym_list == null) {
-			return Collections.<SeqSymmetry>emptySet();
-		}
-		return Collections.<SeqSymmetry>unmodifiableSet(sym_list);
+		return results;
 	}
 	
-	final public Set<String> find(Pattern regex, int limit){
-		
-		if(id2sym_hash.isEmpty()){
-			return Collections.<String>emptySet();
-		}
-	
-		int size = Math.min(limit,id2sym_hash.size());
-		Set<String> syms = new HashSet<String>(size);
-		final Matcher matcher = regex.matcher("");
-	
-		int count = 0;
-		for (String key : id2sym_hash.keySet()) {
-			matcher.reset(key);
-			if (matcher.matches()) {
-				syms.add(key);
-				
-				count++;
-				if(count > size){
-					break;
-				}
-			}
-		}
-		
-		return syms;
-	}
-	
-	/**
-	 *  Associates a symmetry with a case-insensitive ID.  You can later retrieve the
-	 *  list of all matching symmetries for a given ID by calling findSyms(String).
-	 *  Neither argument should be null.
-	 */
-	public void addToIndex(String id, SeqSymmetry sym) {
-		if (id == null || sym == null) {
-			throw new NullPointerException();
-		}
-		this.putSeqInList(id.toLowerCase(), sym);
-	}
-
-	/**
-	 * Function to add a SeqSymmetry to the id2sym_hash (and symid2id_hash).
-	 * @param id ID string (lower-cased).
-	 * @param sym SeqSymmetry to add to the hash.
-	 */
-	protected void putSeqInList(String id, SeqSymmetry sym) {
-		Set<SeqSymmetry> seq_list = id2sym_hash.get(id);
-		if (seq_list == null) {
-			seq_list = new LinkedHashSet<SeqSymmetry>();
-			id2sym_hash.put(id,seq_list);
-		}
-		seq_list.add(sym);
-	}
-
-	/**
-	 * Remove symmetry from seq group, if it exists.
-	 * @param sym
-	 */
-	final public void removeSymmetry(SeqSymmetry sym) {
-		if (sym == null) {
-			return;
-		}
-
-		for(int i=0; i<sym.getChildCount(); i++){
-			removeSymmetry(sym.getChild(i));
-		}
-		
-		if(sym.getID() == null)
-			return;
-
-		String lcSymID = sym.getID().toLowerCase();
-		removeSymmetry(lcSymID, sym);
-		
-		if(sym instanceof SupportsGeneName){
-			lcSymID = ((SupportsGeneName)sym).getGeneName();
-			if(lcSymID != null){
-				removeSymmetry(lcSymID.toLowerCase(), sym);
-			}
+	public void searchHints(Set<String> results, Pattern regex, int limit){
+		for(BioSeq seq : getSeqList()){
+			seq.searchHints(results, regex, limit);
 		}
 	}
 	
-	protected void removeSymmetry(String lcSymID, SeqSymmetry sym){
-		Set<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
-		if (symList != null && symList.contains(sym)) {
-			symList.remove(sym);
-			if (symList.isEmpty()) {
-				id2sym_hash.remove(lcSymID);
-			}
+	public void search(Set<SeqSymmetry> syms, Pattern regex, int limit){
+		for(BioSeq seq : getSeqList()){
+			seq.search(syms, regex, limit);
+		}
+	}
+	
+	public void searchProperties(Set<SeqSymmetry> syms, Pattern regex, int limit){
+		for(BioSeq seq : getSeqList()){
+			seq.searchProperties(syms, regex, limit);
 		}
 	}
 	

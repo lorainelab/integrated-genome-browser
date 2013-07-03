@@ -72,9 +72,6 @@ public final class DASFeatureParser implements Parser {
 		}
 
 		if(Thread.currentThread().isInterrupted()){
-			for(SeqSymmetry sym : groupMap.values()){
-				seqGroup.removeSymmetry(sym);
-			}
 			return Collections.<DASSymmetry>emptyList();
 		}
 		

@@ -14,6 +14,7 @@ import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -92,8 +93,12 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
 			regexText = ".*" + regexText + ".*";
 		}
 		Pattern regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
-
-		return GenometryModel.getGenometryModel().getSelectedSeqGroup().find(regex, 20);
+		
+		Set<String> results = new HashSet<String>();
+		
+		GenometryModel.getGenometryModel().getSelectedSeqGroup().searchHints(results, regex, 20);
+		
+		return results;
 	}
 	
 	private int getRemoteServerCount() {

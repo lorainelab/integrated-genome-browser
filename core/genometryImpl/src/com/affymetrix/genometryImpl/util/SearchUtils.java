@@ -10,8 +10,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -23,37 +21,47 @@ public final class SearchUtils {
 	 */
 	public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
 
-		Set<SeqSymmetry> syms = null;
-		if(search_props)
-			syms = new HashSet<SeqSymmetry>(group.findInSymProp(regex));
-		else
-			syms = new HashSet<SeqSymmetry>(group.findSyms(regex));
-
-		List<BioSeq> chrs;
-		if (chrFilter != null) {
-			chrs = new ArrayList<BioSeq>();
-			chrs.add(chrFilter);
+		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
+		if (search_props) {
+			if (chrFilter == null) {
+				group.searchProperties(syms, regex, -1);
+			} else {
+				chrFilter.searchProperties(syms, regex, -1);
+			}
 		} else {
-			chrs = group.getSeqList();
-		}
-		
-		Matcher match = regex.matcher("");
-		SymWithProps sym = null;
-		Thread current_thread = Thread.currentThread();
-		
-		for (BioSeq chr : chrs) {
-			if(current_thread.isInterrupted())
-				break;
-			
-			int annotCount = chr.getAnnotationCount();
-			for (int i=0;i<annotCount;i++) {
-				sym = (SymWithProps)chr.getAnnotation(i);
-				findIDsInSym(syms, sym, match);
-				
-				if(current_thread.isInterrupted())
-					break;
+			if (chrFilter == null) {
+				group.search(syms, regex, -1);
+			} else {
+				chrFilter.search(syms, regex, -1);
 			}
 		}
+
+//		List<BioSeq> chrs;
+//		if (chrFilter != null) {
+//			chrs = new ArrayList<BioSeq>();
+//			chrs.add(chrFilter);
+//		} else {
+//			chrs = group.getSeqList();
+//		}
+//		
+//		Matcher match = regex.matcher("");
+//		SymWithProps sym = null;
+//		Thread current_thread = Thread.currentThread();
+//		
+//		for (BioSeq chr : chrs) {
+//			if(current_thread.isInterrupted())
+//				break;
+//			
+//			int annotCount = chr.getAnnotationCount();
+//			for (int i=0;i<annotCount;i++) {
+//				sym = (SymWithProps)chr.getAnnotation(i);
+//				findIDsInSym(syms, sym, match);
+//				
+//				if(current_thread.isInterrupted())
+//					break;
+//			}
+//		}
+		
 		return new ArrayList<SeqSymmetry>(syms);
 	}
 
@@ -93,12 +101,12 @@ public final class SearchUtils {
 
 	public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
 		String[] props_to_search;
-		Set<SeqSymmetry> syms = null;
+		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
 		if (search_props) {
-			syms = new HashSet<SeqSymmetry>(group.findInSymProp(regex, limit));
+			group.searchProperties(syms, regex, limit);
 			props_to_search = new String[]{"id", "gene name", "description"};
 		} else {
-			syms = new HashSet<SeqSymmetry>(group.findSyms(regex, limit));
+			group.search(syms, regex, -1);
 			props_to_search = new String[]{"id"};
 		}
 

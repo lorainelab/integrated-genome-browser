@@ -25,6 +25,13 @@ public class Das2BioSeq extends BioSeq {
 		super.addAnnotation(sym, ext, false);
 	}
 	
+	@Override
+	protected synchronized void removeAnnotation(SeqSymmetry annot, boolean clearContainer) {
+		if (annot != null) {
+			((Das2AnnotatedSeqGroup)this.getSeqGroup()).removeFromIndex(annot);
+		}
+	}
+	
 	/**
 	 * Add an indexed collection to id2indexedsym.
 	 * @param type ID string.

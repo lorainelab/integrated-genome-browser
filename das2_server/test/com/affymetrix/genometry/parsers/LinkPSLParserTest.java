@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
+import com.affymetrix.genometry.Das2AnnotatedSeqGroup;
 import com.affymetrix.genometry.util.Das2ServerUtils;
 import com.affymetrix.genometry.util.Optimize;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -45,7 +46,7 @@ public class LinkPSLParserTest {
 			istr = new DataInputStream(new FileInputStream(filename));
 			GZIPInputStream gzstr = new GZIPInputStream(istr);
 
-			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+			Das2AnnotatedSeqGroup group = new Das2AnnotatedSeqGroup("Test Group");
 
 			BioSeq seq = group.addSeq("chr1",1);
 
@@ -54,8 +55,12 @@ public class LinkPSLParserTest {
 			parser.enableSharedQueryTarget(true);
 			parser.setCreateContainerAnnot(true);
 
-			List result = parser.parse(gzstr, type, null, group, null, false, true, false);
-
+			List<UcscPslSym> result = parser.parse(gzstr, type, null, group, null, false, true, false);
+			for(UcscPslSym sym : result){
+				if(group.getSeq(sym.getTargetSeq().getID()) != null){
+					group.addToIndex(sym.getID(), sym);
+				}
+			}
 			writeAnnotation(result, group, seq, consensusType);
 
 		} catch (Exception ex) {

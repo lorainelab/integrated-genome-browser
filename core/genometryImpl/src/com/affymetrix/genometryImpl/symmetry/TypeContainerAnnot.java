@@ -87,6 +87,17 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	}
 	
 	@Override
+	public void search(Set<SeqSymmetry> results, String id) { 
+		if (id == null) {
+			return;
+		}
+		Set<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
+		if (sym_list != null) {
+			results.addAll(sym_list);
+		}
+	}
+	
+	@Override
 	public void searchHints(Set<String> results, Pattern regex, int limit) {	
 		final Matcher matcher = regex.matcher("");
 		int size = Math.min(limit, id2sym_hash.size());

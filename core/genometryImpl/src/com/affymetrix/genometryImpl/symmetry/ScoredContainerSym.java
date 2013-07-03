@@ -291,6 +291,9 @@ public class ScoredContainerSym extends RootSeqSymmetry {
 	}
 
 	@Override
+	public void search(Set<SeqSymmetry> results, String id) { }
+	
+	@Override
 	public void searchHints(Set<String> results, Pattern regex, int limit) { }
 	
 	@Override

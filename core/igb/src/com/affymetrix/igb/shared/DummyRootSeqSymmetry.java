@@ -12,6 +12,7 @@ public class DummyRootSeqSymmetry extends RootSeqSymmetry {
 		this.category = category;
 	}
 	@Override public FileTypeCategory getCategory() { return category; }
+	@Override public void search(Set<SeqSymmetry> results, String id) { }
 	@Override public void searchHints(Set<String> results, Pattern regex, int limit) { }
 	@Override public void search(Set<SeqSymmetry> result, Pattern regex, int limit) { }
 	@Override public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) { }

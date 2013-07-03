@@ -312,10 +312,7 @@ public class BioSeq implements SearchableCharIterator {
 		removeAnnotation(annot, false);
 	}
 
-	private synchronized void removeAnnotation(SeqSymmetry annot, boolean clearContainer) {
-		if (annot != null) {
-			this.getSeqGroup().removeSymmetry(annot);
-		}
+	protected synchronized void removeAnnotation(SeqSymmetry annot, boolean clearContainer) {
 		if (null != annots) {
 			annots.remove(annot);
 		}
@@ -609,6 +606,12 @@ public class BioSeq implements SearchableCharIterator {
 			return this.getResidues().indexOf(str, fromIndex);
 		}
 		return residues_provider.indexOf(str, fromIndex);
+	}
+	
+	public void search(Set<SeqSymmetry> results, String id) { 
+		for(RootSeqSymmetry rootSym : annots){
+			rootSym.search(results, id);
+		}
 	}
 	
 	public void searchHints(Set<String> results, Pattern regex, int limit){

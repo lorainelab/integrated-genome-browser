@@ -6,8 +6,6 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.awt.Color;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  *
@@ -45,7 +43,7 @@ public class Score extends ColorProvider {
 	public Color getColor(SeqSymmetry sym){
 		if(sym instanceof Scored) {
 			float score = ((Scored) sym).getScore();
-			if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
+			if (score != Float.NEGATIVE_INFINITY) {
 				return getScoreColor(score);
 			}
 		}

@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.swing.DragDropTree;
+import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
@@ -133,7 +133,11 @@ public final class BookmarkManagerView {
 	 */
 	private BookmarkManagerView(IGBService igbService) {
 		this.igbService = igbService;
-		tree = new DragDropTree();
+		tree = new JTree();
+		tree.setDragEnabled(true);
+        tree.setDropMode(DropMode.ON_OR_INSERT);
+        tree.setTransferHandler(new TreeTransferHandler());
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 

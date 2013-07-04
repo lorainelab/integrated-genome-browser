@@ -385,18 +385,18 @@ public class CyGradientTrackRenderer extends JComponent implements TrackRenderer
 
 			g2.setFont(TITLE_FONT);
 
-			final int titleWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "Legend Name");
-			g2.setColor(Color.black);
-			g2.drawString("Legend Name", (iconWidth / 2) - (titleWidth / 2), iconHeight - 5);
+//			final int titleWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "Legend");
+//			g2.setColor(Color.black);
+//			g2.drawString("Legend", (iconWidth / 2) - (titleWidth / 2), iconHeight - 5);
 
 			Polygon p = new Polygon();
 			p.addPoint(iconWidth, iconHeight - 9);
 			p.addPoint(iconWidth - 15, iconHeight - 15);
 			p.addPoint(iconWidth - 15, iconHeight - 9);
 			g2.fillPolygon(p);
-			g2.drawLine(0, iconHeight - 9, (iconWidth / 2) - (titleWidth / 2) - 3, iconHeight - 9);
-			g2.drawLine((iconWidth / 2) + (titleWidth / 2) + 3, iconHeight - 9, iconWidth,
-			            iconHeight - 9);
+//			g2.drawLine(0, iconHeight - 9, (iconWidth / 2) - (titleWidth / 2) - 3, iconHeight - 9);
+//			g2.drawLine((iconWidth / 2) + (titleWidth / 2) + 3, iconHeight - 9, iconWidth,
+//			            iconHeight - 9);
 		} else {
 			g2.drawString(minStr, 0, iconHeight);
 			strWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), maxStr);

@@ -114,7 +114,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		tree.setEditable(true);
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
-
+		tree.setScrollsOnExpand(true);
+		
 		TreeMouseListener tree_mouse_listener = new TreeMouseListener();
 		tree.addMouseListener(tree_mouse_listener);
 		tree.addMouseMotionListener(tree_mouse_listener);

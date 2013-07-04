@@ -4,6 +4,10 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 /**
  *
@@ -33,6 +37,19 @@ public class MinMaxDialog extends javax.swing.JDialog {
 
 	private Float min, defaultMin;
 	private Float max, defaultMax;
+	private final NumericFilter numericFilter = new NumericFilter(){
+		@Override
+		protected void valueUpdated() {
+			float min, max;
+			try {
+				min = Float.valueOf(minTextField.getText());
+				max = Float.valueOf(maxTextField.getText());
+				okButton.setEnabled(max > min);
+			} catch (NumberFormatException e) {
+				okButton.setEnabled(false);
+			}
+		}
+	};
 	
 	private String attrName;
 
@@ -73,9 +90,11 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		maxLabel = new javax.swing.JLabel();
 		minTextField = new javax.swing.JTextField();
 		minTextField.setFont(TEXTBOX_FONT);
+		((AbstractDocument)minTextField.getDocument()).setDocumentFilter(numericFilter);
 		
 		maxTextField = new javax.swing.JTextField();
 		maxTextField.setFont(TEXTBOX_FONT);
+		((AbstractDocument)maxTextField.getDocument()).setDocumentFilter(numericFilter);
 		
 		okButton = new javax.swing.JButton();
 		cancelButton = new javax.swing.JButton();
@@ -237,7 +256,37 @@ public class MinMaxDialog extends javax.swing.JDialog {
 	private javax.swing.JPanel titlePanel;
 	
 	private JButton restoreButton;
-
 	// End of variables declaration
+	
+	private static abstract class NumericFilter extends DocumentFilter {
+		
+		@Override
+		public void insertString(DocumentFilter.FilterBypass fb, int offset,
+				String text, AttributeSet attr) throws BadLocationException {
+			fb.insertString(offset, text.replaceAll(getRegex(), ""), attr);
+			valueUpdated();
+		}
+
+		// no need to override remove(): inherited version allows all removals  
+		@Override
+		public void replace(DocumentFilter.FilterBypass fb, int offset, int length,
+				String text, AttributeSet attr) throws BadLocationException {
+			fb.replace(offset, length, text.replaceAll(getRegex(), ""), attr);
+			valueUpdated();
+		}
+	
+		@Override
+		public void remove(FilterBypass fb, int offset, int length) throws
+                       BadLocationException {
+			super.remove(fb, offset, length);
+			valueUpdated();
+		}
+		
+		protected String getRegex() {
+			return "[^0-9\\.\\-]";
+		}
+		
+		protected abstract void valueUpdated();
+	}
 }
 

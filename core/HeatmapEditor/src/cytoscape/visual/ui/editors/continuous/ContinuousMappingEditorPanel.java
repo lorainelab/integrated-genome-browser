@@ -188,7 +188,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		});
 
 		// New in 2.6
-		minMaxButton.setText("Min/Max");
+		minMaxButton.setText("Set Range");
 		minMaxButton.setPreferredSize(new Dimension(100, 10));
 		minMaxButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
 		minMaxButton.addActionListener(new java.awt.event.ActionListener() {

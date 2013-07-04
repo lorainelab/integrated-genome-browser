@@ -59,11 +59,13 @@ public class CyGradientTrackRenderer extends JComponent implements TrackRenderer
 	 * @param g
 	 *            DOCUMENT ME!
 	 */
+	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		paintComponent(g);
 	}
 
+	@Override
 	protected void paintComponent(Graphics gfx) {
 		Graphics2D g = (Graphics2D) gfx;
 
@@ -102,10 +104,11 @@ public class CyGradientTrackRenderer extends JComponent implements TrackRenderer
 				String valueString;
 				float value = model.getVirtualValue(thumb.getPosition());
 
-				if ((Math.abs(minValue) < 3) || (Math.abs(maxValue) < 3))
+				if ((Math.abs(minValue) < 3) || (Math.abs(maxValue) < 3)) {
 					valueString = String.format("%.4f", value);
-				else
+				} else {
 					valueString = String.format("%.2f", value);
+				}
 
 				final int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(),
 				                                                          valueString);
@@ -183,9 +186,7 @@ public class CyGradientTrackRenderer extends JComponent implements TrackRenderer
 
 		g.setFont(TITLE_FONT);
 
-		String legendName = "Legend Name";
-		if (legendName == null)
-			legendName = "(none)";
+		String legendName = "Range";
 		final int titleWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), legendName);
 		g.setColor(Color.black);
 		g.drawString(legendName, ((int) rect.getBounds2D().getWidth() / 2) - (titleWidth / 2),

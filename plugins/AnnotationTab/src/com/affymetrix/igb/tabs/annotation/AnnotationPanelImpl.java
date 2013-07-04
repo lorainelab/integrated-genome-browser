@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tabs.annotation;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -370,9 +371,10 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	
 	private Set<String> getFields(ITrackStyleExtended style) {
 		Set<String> fields = new TreeSet<String>();
-		SeqSymmetry sym = GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
-		if (sym != null) {
-			if (sym.getChildCount() > 0) {
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		if (seq != null) {
+			SeqSymmetry sym = seq.getAnnotation(style.getMethodName());
+			if (sym != null && sym.getChildCount() > 0) {
 				SeqSymmetry child = sym.getChild(0);
 				SeqSymmetry original = getMostOriginalSymmetry(child);
 				if (original instanceof SymWithProps) {

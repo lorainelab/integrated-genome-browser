@@ -35,7 +35,6 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;

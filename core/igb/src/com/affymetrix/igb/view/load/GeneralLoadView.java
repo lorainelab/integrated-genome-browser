@@ -567,15 +567,14 @@ public final class GeneralLoadView {
 			@Override
 			protected Void runInBackground() {
 				if (!feature.getMethods().isEmpty()) {
-					for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
-						for (String method : feature.getMethods()) {
+					for (String method : feature.getMethods()) {
+						for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
 							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
-							
-							if(GraphSymUtils.isAGraphExtension(feature.getExtension())){
-								DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
-							}else{
-								DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
-							}
+						}
+						if(GraphSymUtils.isAGraphExtension(feature.getExtension())){
+							DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
+						}else{
+							DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
 						}
 					}
 				}

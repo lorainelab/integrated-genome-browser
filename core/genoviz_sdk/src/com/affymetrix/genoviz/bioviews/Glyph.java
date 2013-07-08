@@ -431,10 +431,6 @@ public abstract class Glyph implements GlyphI  {
 		children = new ArrayList<GlyphI>();
 	}
 
-	public void clearChildren() {
-		children = new ArrayList<GlyphI>();
-	}
-
 	public void setParent(GlyphI glyph)  {
 		parent = glyph;
 		if (glyph != null) {setScene(glyph.getScene());}

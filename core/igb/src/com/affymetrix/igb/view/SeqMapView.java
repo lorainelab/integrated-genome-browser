@@ -694,41 +694,6 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 	}
 
-	/**
-	 * Clears the graphs, and reclaims some memory.
-	 */
-	public final void clearGraphs() {
-		if (aseq != null) {
-			if (IGBConstants.GENOME_SEQ_ID.equals(aseq.getID())) {
-				// clear graphs for all sequences in the genome
-				for (BioSeq seq : aseq.getSeqGroup().getSeqList()) {
-					removeGraphsFromSeq(seqmap, seq);
-				}
-			}
-			removeGraphsFromSeq(seqmap, aseq);
-		} else {
-			System.err.println("Please select a chromosome!");
-		}
-
-		//Make sure the graph is un-selected in the genometry model, to allow GC
-		gmodel.clearSelectedSymmetries(this);
-		setAnnotatedSeq(aseq, false, true);
-	}
-
-	private static void removeGraphsFromSeq(AffyTieredMap map, BioSeq mseq) {
-		int acount = mseq.getAnnotationCount();
-		for (int i = acount - 1; i >= 0; i--) {
-			SeqSymmetry annot = mseq.getAnnotation(i);
-			if (annot instanceof GraphSym) {
-				GlyphI glyph = map.getItem(annot);
-				if (glyph != null) {
-					map.removeItem(glyph);
-				}
-				mseq.unloadAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
-			}
-		}
-	}
-
 	public void dataRemoved() {
 		setAnnotatedSeq(aseq);
 		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());

@@ -185,7 +185,7 @@ public class TrackView {
 						if(glyph instanceof GraphGlyph){
 							GraphGlyph.split((GraphGlyph)glyph);
 						}
-						map.removeItem(glyph);
+						//map.removeItem(glyph);
 					}
 				}
 				seq.unloadAnnotation(sym);

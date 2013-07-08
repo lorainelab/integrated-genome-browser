@@ -114,6 +114,8 @@ public interface GlyphI extends NeoConstants  {
 	 */
 	public void removeAllChildren();
 
+	public void resetChildren();
+
 	/**
 	 * Gets the entire collection of this glyph's children.
 	 *

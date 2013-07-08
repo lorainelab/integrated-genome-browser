@@ -1,36 +1,24 @@
 /**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
+ * 
+* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * 
+* The license is also available at http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb.glyph;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.*;
-import java.io.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import javax.swing.*;
 
-import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -38,517 +26,190 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.Application;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
-import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 
-import java.awt.geom.Rectangle2D;
-
-
 /**
- *  This class provides a popup menu for a SeqMapView to allow certain graph manipulations.
- *  It is mostly an obsolete class, since most of the manipulations are now done without
- *  using pop-up menus.
+ * This class provides a popup menu for a SeqMapView to allow certain graph
+ * manipulations. It is mostly an obsolete class, since most of the
+ * manipulations are now done without using pop-up menus.
  *
  * @version $Id: GraphSelectionManager.java 8192 2011-05-25 17:25:14Z hiralv $
  */
-public final class GraphSelectionManager
-  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
-  ContextualPopupListener, TierLabelManager.PopupListener {
-  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-  final static boolean DEBUG = false;
+public final class GraphSelectionManager implements MouseListener, 
+		MouseMotionListener, NeoGlyphDragListener {
 
-  private static final int max_label_length = 50;
+	final static boolean DEBUG = false;
 
-  private static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
+	private GraphGlyph graph_to_scale = null;
 
-  private GraphGlyph current_graph = null;
-  private GraphGlyph graph_to_scale = null;
-  //   second_curent_graph is
-  //   the graph selected just _before_ the current_graph in a multi-select
-  //   (this is usually the previous current_graph if multi-selection is happening,
-  //    but null if no multi-select)
-  private GraphGlyph second_current_graph = null;
+	boolean scaling_graph = false;
+	private double start_graph_height;
+	private double start_mouse_ycoord;
+	private GlyphDragger dragger;
+	private SeqMapView gviewer;
 
-  // The current_source will be the AffyTieredMap of the SeqMapView
-  //  final NeoAbstractWidget current_source;
-  private NeoAbstractWidget current_source;
+	public GraphSelectionManager(SeqMapView smv) {
+		gviewer = smv;
+	}
 
-  boolean scaling_graph = false;
-  private double start_graph_height;
-  private double start_mouse_ycoord;
+	/**
+	 * Does nothing. Formerly this was used to bring-up a pop-up menu, but that
+	 * could cause conflicts with the other pop-up menu which is opened by the
+	 * SeqMapViewMouseListener. Thus now instead of opening our own pop-up, we
+	 * use the routine {@link #popupNotify(JPopupMenu, List, SeqSymmetry)}
+	 * provided by the interface ContextualPopupListener to add to the pop-up
+	 * menu which the SeqMapView itself constructs.
+	 */
+	public void mouseClicked(MouseEvent evt) {
+	}
 
-  private JPopupMenu popup;
-  private JLabel graph_info;
-  private JLabel graph_info2;
+	public void mouseEntered(MouseEvent evt) {
+	}
 
-  private final JMenu decor = new JMenu("Decorations");
-  private final JMenu combine = new JMenu("Combine 2 Graphs");
+	public void mouseExited(MouseEvent evt) {
+	}
 
-  private JMenuItem adjust_false_positive;
-  private JMenuItem change_color;
-  private JMenuItem show_label;
-  private JMenuItem show_axis;
-  private JMenuItem show_bounds;
-  private JMenuItem show_graph;
-  private JMenuItem thresh_graph;
-  private JMenuItem pickle_thresh;
-  private JMenuItem faster_draw_toggle;
-  private JMenuItem delete_graph;
-  private JMenuItem to_front;
-  private JMenuItem to_back;
-  private JMenuItem toggle_floating;
-  private JMenuItem save_graph;
-
-  private GlyphDragger dragger;
-  private SeqMapView gviewer;
-  private JFrame frm;
-
-  public GraphSelectionManager(SeqMapView smv) {
-    this();
-    gviewer = smv;
-    current_source = gviewer.getSeqMap();
-    frm = Application.getSingleton().getFrame();
-  }
-  
-  private GraphSelectionManager() {
-    popup = new JPopupMenu();
-
-    graph_info = new JLabel("");
-    graph_info2 = new JLabel("");
-
-    thresh_graph = new JMenuItem("Toggle Threshold");
-    change_color = new JMenuItem("Change Color");
-    show_label = new JMenuItem("Toggle Label");
-    show_bounds = new JMenuItem("Toggle Bounds");
-    show_graph = new JMenuItem("Toggle Graph");
-    show_axis = new JMenuItem("Toggle Y-axis");
-    adjust_false_positive = new JMenuItem("Adjust Threshold By % FP");
-    pickle_thresh = new JMenuItem("Snapshot Thresholded Regions");
-    faster_draw_toggle = new JMenuItem("Toggle Faster MinMaxAvg Draw");
-    delete_graph = new JMenuItem("Delete Graph");
-    to_front = new JMenuItem("Move To Front");
-    to_back = new JMenuItem("Move To Back");
-    toggle_floating = new JMenuItem("toggle floating");
-    save_graph = new JMenuItem("Save Graph to File");
-
-    popup.add(graph_info);
-    popup.add(graph_info2);
-
-    popup.add(combine);
-
-    decor.add(show_label);
-    decor.add(show_axis);
-    decor.add(show_bounds);
-    decor.add(show_graph);
-
-    //thresh.add(thresh_graph);
-    //thresh.add(tweak_thresh);
-    //thresh.add(adjust_false_positive);
-    //thresh.add(pickle_thresh);
-
-    adjust_false_positive.addActionListener(this);
-    faster_draw_toggle.addActionListener(this);
-    thresh_graph.addActionListener(this);
-    pickle_thresh.addActionListener(this);
-    change_color.addActionListener(this);
-    show_label.addActionListener(this);
-    show_axis.addActionListener(this);
-    show_bounds.addActionListener(this);
-    show_graph.addActionListener(this);
-    delete_graph.addActionListener(this);
-    to_front.addActionListener(this);
-    to_back.addActionListener(this);
-    toggle_floating.addActionListener(this);
-    save_graph.addActionListener(this);
-  }
-
-	public void actionPerformed(ActionEvent evt) {
-		if (current_graph == null) {
-			return;
-		}
-		Object src = evt.getSource();
-		if (src == change_color) {
-			Color col = JColorChooser.showDialog(frm,
-					"Graph Color Chooser", current_graph.getColor());
-			if (col != null) {
-				current_graph.setColor(col);
-				// if graph is in a tier, change foreground color of tier also
-				//   (which in turn triggers change in color for TierLabelGlyph...)
-				if (current_graph.getParent() instanceof TierGlyph) {
-					current_graph.getParent().setForegroundColor(col);
+	public void mousePressed(MouseEvent evt) {
+		if (evt instanceof NeoMouseEvent) {
+			NeoMouseEvent nevt = (NeoMouseEvent) evt;
+			List<GlyphI> selected = nevt.getItems();
+			for (int i = selected.size() - 1; i >= 0; i--) {
+				GlyphI gl = selected.get(i);
+				// only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
+				if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
+					GraphGlyph gr = (GraphGlyph) gl;
+					if (nevt.isShiftDown() || nevt.isAltDown()) {
+						scaleGraph(gr, nevt);
+						break;
+					} else {
+						dragGraph(gr, nevt);
+						break;
+					}
+				} else if (gl.getParent() instanceof GraphGlyph) {
+					if (DEBUG) {
+						System.out.println("hit child of graph...");
+					}
 				}
 			}
-		} else if (src == show_bounds) {
-			current_graph.setShowBounds(!current_graph.getShowBounds());
-		/*} else if (src == show_graph) {
-			current_graph.setShowGraph(!current_graph.getShowGraph()); */
-		} else if (src == show_label) {
-			current_graph.setShowLabel(!current_graph.getShowLabel());
-		} else if (src == show_axis) {
-			current_graph.setShowAxis(!current_graph.getShowAxis());
-		} else if (src == delete_graph) {
-			deleteGraph(current_source, current_graph);
-			current_graph = null;  // for garbage collection, and other reasons
-		} // NOT YET WORKING --
-		// need to put graph's parent PixelFloaterGlyphs in their own parent PixelFloaterGlyph,
-		//   rather than have them as siblings of tiers -- otherwise, when moved to back, will
-		//   end up _behind_ all the tiers, and since tiers fill in their backgrounds, the graphs
-		//   will effectively disapear!
-		else if (src == to_back) {
-			current_source.toBackOfSiblings(current_graph);
-			GlyphI parent = current_graph.getParent();
-			if ((parent != null) && (!(parent instanceof TierGlyph))) {
-				current_source.toBackOfSiblings(parent);
-			}
-		} else if (src == toggle_floating) {
-			if (DEBUG) {
-				System.out.println("selected toggle floating, currently floating: "
-						+ !(current_graph.getParent() instanceof TierGlyph));
-			}
-			//        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
-			// toggle_floating is currently unused, so don't worry that the code is commented out
-		} else if (src == save_graph) {
-			saveGraph(current_graph);
 		}
-
-		current_source.updateWidget();
 	}
 
+	// only used for graph scaling (not for graph dragging)
+	public void mouseReleased(MouseEvent evt) {
+		if (evt instanceof NeoMouseEvent) {
+			NeoMouseEvent nevt = (NeoMouseEvent) evt;
+			scaling_graph = false;
+			graph_to_scale = null;
+			((Component) nevt.getSource()).removeMouseMotionListener(this);
+		}
+	}
 
-  /** Deletes a graph from a widget, and tries to make sure the GraphSym can
-   *  be garbage collected.  If the graph happens to occupy a
-   *  tier in the source which is a tier map, then delete the tier as well.
-   *  If the graph's symmetry is in a mutalbe bio seq, remove it from there.
-   */
-  void deleteGraph(NeoAbstractWidget source, GraphGlyph gl) {
-    source.removeItem(gl);
-    // clean-up references to the graph, allowing garbage-collection, etc.
-    gmodel.clearSelectedSymmetries(this);
+	public void mouseMoved(MouseEvent evt) {
+	}
 
-    Object info = gl.getInfo();
-    GraphSym gsym = null;
-    if (info instanceof GraphSym) {
-      gsym = (GraphSym) info;
-      BioSeq aseq = gsym.getGraphSeq();
-      if (aseq != null) {
-        aseq.unloadAnnotation(gsym);
-      }
-    }
+	// only used for graph scaling
+	//   (not for graph dragging or thresholding, those are managed by a GlyphDragger)
+	public void mouseDragged(MouseEvent evt) {
+		if (!(evt instanceof NeoMouseEvent)) {
+			return;
+		}
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+		NeoAbstractWidget widg = (NeoAbstractWidget) nevt.getSource();
+		if (scaling_graph) {
+			Rectangle2D.Double bbox = graph_to_scale.getCoordBox();
+			double coord_diff = start_mouse_ycoord - nevt.getCoordY();
+			//      System.out.println(coord_diff);
+			double graph_center = bbox.y + (bbox.height / 2);
+			double new_graph_height = start_graph_height + coord_diff;
+			if (new_graph_height >= 0) {
+				graph_to_scale.setCoords(bbox.x, graph_center - (new_graph_height / 2),
+						bbox.width, new_graph_height);
+				widg.updateWidget();
+			}
+		}
+	}
 
-    // if this is not a floating graph, get rid of the tier it was in
-    if (source instanceof AffyTieredMap &&
-      ! GraphGlyphUtils.hasFloatingAncestor(gl) ) {
+	//  public void dragGraph(GraphGlyph gl, NeoMouseEvent nevt) {
+	public void dragGraph(GlyphI gl, NeoMouseEvent nevt) {
+		NeoWidget widg = (NeoWidget) nevt.getSource();
+		if (widg instanceof NeoMap) {
+			((NeoMap) widg).toFront(gl);
+		} else {
+			// toFront() is specific to NeoMap, try toFrontOfSiblings() instead
+			widg.toFrontOfSiblings(gl);
+		}
 
-      AffyTieredMap map = (AffyTieredMap) source;
-      GlyphI parentgl = gl.getParent();
-      parentgl.removeChild(gl);
-      if (parentgl instanceof TierGlyph) {
-        map.removeTier((TierGlyph)parentgl);
-        map.packTiers(false, true, false);
-        map.stretchToFit(false, false);
-      }
-    }
-  }
+		dragger = new GlyphDragger((NeoAbstractWidget) nevt.getSource());
+		dragger.setUseCopy(false);
 
-  static JFileChooser graph_file_chooser = null;
+		LinearTransform trans = new LinearTransform();
+		LinearTransform vtrans = widg.getView().getTransform();
+		//    gl.getGlobalChildTransform(widg.getView(), trans);
+		if (gl instanceof ThreshGlyph) {
+			gl.getParent().getGlobalTransform(widg.getView(), trans);
+		} else {
+			gl.getGlobalTransform(widg.getView(), trans);
+		}
 
-  /** Returns a file chooser that forces the user to use the 'gr' file extension. */
-  static JFileChooser getFileChooser() {
-    if (graph_file_chooser == null) {
-      graph_file_chooser = UniFileChooser.getFileChooser("Graph File", "gr");
-      graph_file_chooser.setCurrentDirectory(output_file_tracker.getFile());
-    }
-    return graph_file_chooser;
-  }
+		trans.setTransform(vtrans.getScaleX(), 0, 0, trans.getScaleY(), vtrans.getTranslateX(), trans.getTranslateY());
+		dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 
-  public void saveGraph(GraphGlyph graph) {
-    Object info = graph.getInfo();
-    if (info instanceof GraphSym) {
-      FileOutputStream ostr = null;
-      try {
-        GraphSym gsym = (GraphSym)info;
-        JFileChooser chooser = getFileChooser();
-        int option = chooser.showSaveDialog(frm);
-        if (option == JFileChooser.APPROVE_OPTION) {
-          output_file_tracker.setFile(chooser.getCurrentDirectory());
-          File fil = chooser.getSelectedFile();
-          GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getName());
-        }
-      }
-      catch (Exception ex) {
-         ErrorHandler.errorPanel("Error saving graph", ex);
-      } finally {
-				GeneralUtils.safeClose(ostr);
-      }
-    }
-    else {
-      ErrorHandler.errorPanel("Can't Save", "Graph does not have associated GraphSym data model");
-    }
-  }
+		dragger.addGlyphDragListener(this);
+		dragger.addGlyphDragListener(gviewer.getMouseListener());
+		dragger.startDrag(gl, nevt, trans, false);
 
+	}
 
-  /**
-   *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
-   *  that could cause conflicts with the other pop-up menu which is opened
-   *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
-   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, List, SeqSymmetry)}
-   *  provided by the interface ContextualPopupListener to add to the pop-up
-   *  menu which the SeqMapView itself constructs.
-   */
-  public void mouseClicked(MouseEvent evt) {}
-
-  public void mouseEntered(MouseEvent evt) { }
-  public void mouseExited(MouseEvent evt) { }
-
-  public void mousePressed(MouseEvent evt) {
-    if (evt instanceof NeoMouseEvent) {
-      NeoMouseEvent nevt = (NeoMouseEvent)evt;
-      List<GlyphI> selected = nevt.getItems();
-      for (int i=selected.size()-1; i >=0; i--) {
-        GlyphI gl = selected.get(i);
-        // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
-        if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
-        	GraphGlyph gr = (GraphGlyph)gl;
-          if (nevt.isShiftDown() || nevt.isAltDown()) {
-            scaleGraph(gr, nevt);
-            break;
-          }
-          else {
-            dragGraph(gr, nevt);
-            break;
-          }
-        }
-        else if (gl.getParent() instanceof GraphGlyph) {
-          if (DEBUG) System.out.println("hit child of graph...");
-        }
-      }
-    }
-  }
-
-  // only used for graph scaling (not for graph dragging)
-  public void mouseReleased(MouseEvent evt) {
-    if (evt instanceof NeoMouseEvent) {
-      NeoMouseEvent nevt = (NeoMouseEvent)evt;
-      scaling_graph = false;
-      graph_to_scale = null;
-      ((Component)nevt.getSource()).removeMouseMotionListener(this);
-    }
-  }
-
-  public void mouseMoved(MouseEvent evt) { }
-
-  // only used for graph scaling
-  //   (not for graph dragging or thresholding, those are managed by a GlyphDragger)
-  public void mouseDragged(MouseEvent evt) {
-    if (! (evt instanceof NeoMouseEvent)) { return; }
-    NeoMouseEvent nevt = (NeoMouseEvent)evt;
-    NeoAbstractWidget widg = (NeoAbstractWidget)nevt.getSource();
-    if (scaling_graph)  {
-      Rectangle2D.Double bbox = graph_to_scale.getCoordBox();
-      double coord_diff = start_mouse_ycoord - nevt.getCoordY();
-      //      System.out.println(coord_diff);
-      double graph_center = bbox.y + (bbox.height/2);
-      double new_graph_height = start_graph_height + coord_diff;
-      if (new_graph_height >= 0) {
-        graph_to_scale.setCoords(bbox.x, graph_center - (new_graph_height/2),
-                                 bbox.width, new_graph_height);
-        widg.updateWidget();
-      }
-    }
-  }
-
-  //  public void dragGraph(GraphGlyph gl, NeoMouseEvent nevt) {
-  public void dragGraph(GlyphI gl, NeoMouseEvent nevt) {
-    NeoWidget widg = (NeoWidget)nevt.getSource();
-	  if (widg instanceof NeoMap) {
-		  ((NeoMap) widg).toFront(gl);
-	  } else {
-		  // toFront() is specific to NeoMap, try toFrontOfSiblings() instead
-		  widg.toFrontOfSiblings(gl);
-	  }
-
-    dragger = new GlyphDragger((NeoAbstractWidget)nevt.getSource());
-    dragger.setUseCopy(false);
-
-    LinearTransform trans = new LinearTransform();
-    LinearTransform vtrans = widg.getView().getTransform();
-    //    gl.getGlobalChildTransform(widg.getView(), trans);
-    if (gl instanceof ThreshGlyph) {
-      gl.getParent().getGlobalTransform(widg.getView(), trans);
-    }
-    else {
-      gl.getGlobalTransform(widg.getView(), trans);
-    }
-
-    trans.setTransform(vtrans.getScaleX(),0,0,trans.getScaleY(),vtrans.getTranslateX(),trans.getTranslateY());
-	dragger.setConstraint(NeoConstants.HORIZONTAL, true);
-
-    dragger.addGlyphDragListener(this);
-	dragger.addGlyphDragListener(gviewer.getMouseListener());
-    dragger.startDrag(gl, nevt, trans, false);
-
-  }
-
-  public void scaleGraph(GraphGlyph gl, NeoMouseEvent nevt) {
+	public void scaleGraph(GraphGlyph gl, NeoMouseEvent nevt) {
 
 // The mouse motion listener is added here, and removed in heardGlpyhDrag()
-    ((Component)nevt.getSource()).addMouseMotionListener(this);
-    if (DEBUG) System.out.println("trying to scale graph");
-    scaling_graph = true;
-    graph_to_scale = gl;
-    start_mouse_ycoord = nevt.getCoordY();
-    start_graph_height = gl.getCoordBox().height;
-  }
-
-  public void heardGlyphDrag(NeoGlyphDragEvent evt) {
-    int id = evt.getID();
-    Object src = evt.getSource();
-    if (id == NeoGlyphDragEvent.DRAG_IN_PROGRESS) {
-      GlyphI gl = evt.getGlyph();
-      if (gl.getParent() instanceof GraphGlyph && src instanceof NeoWidget) {
-        NeoWidget widg = (NeoWidget)src;
-        ViewI view = widg.getView();
-        GlyphI threshgl = gl;
-        GraphGlyph graphgl = (GraphGlyph)threshgl.getParent();
-        Rectangle2D.Double tbox = threshgl.getCoordBox();
-        float new_threshold = graphgl.getGraphValue(view, tbox.y);
-        if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
-          graphgl.setMinScoreThreshold(new_threshold);
-        } else {
-          graphgl.setMaxScoreThreshold(new_threshold);
-        }
-      }
-    }
-    else if (id == NeoGlyphDragEvent.DRAG_ENDED) {
-      dragger.removeGlyphDragListener(this);
-
-      GlyphI gl = evt.getGlyph();
-      if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
-		  if(((GraphGlyph)gl).getAnnotStyle().getFloatTier()){
-			gviewer.getFloaterGlyph().checkBounds(gl, ((AffyTieredMap) src).getView());
-		  }
-      }
-    }
-    // otherwise it must be DRAG_STARTED event, which can be ignored
-    //   since this class called dragger.dragStart to begin with...
-  }
-
-
-  /** Make a simple lable for a graph glyph, no longer than max_label_length. */
-  private String getGraphLabel(GraphGlyph gg) {
-    if (gg==null) {return "";}
-    String result = gg.getLabel();
-    if (result == null) {result = "No label";}
-    if (result.length() > max_label_length) {
-      result = result.substring(0, max_label_length);
-    }
-    return result;
-  }
-
-  public void popupNotify(JPopupMenu the_popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
-    
-    if (current_source == null) {
-      // if there is no NeoAbstractWidget set for the current_source, then we cannot convert
-      // selected symmetries into GlyphI's, so there is no point in adding items to
-      // a popup menu.
-      return;
-    }
-    
-    final List<GraphGlyph> selected_graph_glyphs = new ArrayList<GraphGlyph>(0);
-    current_graph = null;
-    second_current_graph = null;
-
-    // convert the selected syms to a list of selected graph glyphs
-    Iterator<SeqSymmetry> iter = selected_syms.iterator();
-    while (iter.hasNext()) {
-      SeqSymmetry sym = iter.next();
-      GlyphI g = current_source.<GlyphI>getItem(sym);
-      if (g instanceof GraphGlyph) {
-        selected_graph_glyphs.add((GraphGlyph)g);
-      }
-    }
-
-    if (selected_graph_glyphs.size() >= 2) {
-	  JMenu combine = new JMenu("Combine Graphs");
-      current_graph = selected_graph_glyphs.get(0);
-      second_current_graph = selected_graph_glyphs.get(1);
-
-      combine.setEnabled(true);
-      JLabel graph_info_A = new JLabel("A: "+getGraphLabel(current_graph));
-      JLabel graph_info_B = new JLabel("B: "+getGraphLabel(second_current_graph));
-
-      combine.add(graph_info_A);
-      combine.add(graph_info_B);
-      combine.add(new JSeparator());
-	  TreeSet<Operator> operators = new TreeSet<Operator>(
-			new Comparator<Operator>() {
-
-			@Override
-			public int compare(Operator o1, Operator o2) {
-				return o1.getDisplay().compareTo(o2.getDisplay());
-			}
-	 });
-	 operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
-	 for (final Operator operator : operators) {
-	 	if (AbstractGraphOperator.isGraphOperator(operator)){
-			JMenuItem menuItem = new JMenuItem(operator.getDisplay());
-			menuItem.addActionListener(new TrackOperationAction(operator.newInstance()));
-	 		combine.add(menuItem);	
+		((Component) nevt.getSource()).addMouseMotionListener(this);
+		if (DEBUG) {
+			System.out.println("trying to scale graph");
 		}
-	 }
-	  the_popup.add(combine);
-    } 
-
-    
-  }
-
-    public void popupNotify(JPopupMenu popup, TierLabelManager handler) {
-      // This class was orignially written to implement ContextualPopupListener
-      // for left-click on the tier handles.
-      // This routine adapts it to also work as a TierLabelManager.PopupListener
-      // for left-click on the TierLabelGlyph's
-
-      List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
-      if (labels.size() == 0 || !areAllGraphs(labels)) {
-        return;
-      }
-      List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
-
-		List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>(graph_glyphs.size());
-		for (GraphGlyph glyph : graph_glyphs) {
-			graph_syms.add((GraphSym) glyph.getInfo()); // It will be a GraphSym object
-		}
-		GraphSym primary_sym = null;
-		if (!graph_syms.isEmpty()) {
-			primary_sym = (GraphSym)graph_syms.get(0);
-		}
-
-      this.popupNotify(popup, graph_syms, primary_sym);
-    }
-
-    private boolean areAllGraphs(List<TierLabelGlyph> labels) {
-		for (TierLabelGlyph tlg : labels) {
-			if (!tlg.getReferenceTier().getAnnotStyle().isGraphTier()) {
-				return false;
-			}
-		}
-		return true;
+		scaling_graph = true;
+		graph_to_scale = gl;
+		start_mouse_ycoord = nevt.getCoordY();
+		start_graph_height = gl.getCoordBox().height;
 	}
-}
 
+	public void heardGlyphDrag(NeoGlyphDragEvent evt) {
+		int id = evt.getID();
+		Object src = evt.getSource();
+		if (id == NeoGlyphDragEvent.DRAG_IN_PROGRESS) {
+			GlyphI gl = evt.getGlyph();
+			if (gl.getParent() instanceof GraphGlyph && src instanceof NeoWidget) {
+				NeoWidget widg = (NeoWidget) src;
+				ViewI view = widg.getView();
+				GlyphI threshgl = gl;
+				GraphGlyph graphgl = (GraphGlyph) threshgl.getParent();
+				Rectangle2D.Double tbox = threshgl.getCoordBox();
+				float new_threshold = graphgl.getGraphValue(view, tbox.y);
+				if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
+					graphgl.setMinScoreThreshold(new_threshold);
+				} else {
+					graphgl.setMaxScoreThreshold(new_threshold);
+				}
+			}
+		} else if (id == NeoGlyphDragEvent.DRAG_ENDED) {
+			dragger.removeGlyphDragListener(this);
+
+			GlyphI gl = evt.getGlyph();
+			if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
+				if (((GraphGlyph) gl).getAnnotStyle().getFloatTier()) {
+					gviewer.getFloaterGlyph().checkBounds(gl, ((AffyTieredMap) src).getView());
+				}
+			}
+		}
+		// otherwise it must be DRAG_STARTED event, which can be ignored
+		//   since this class called dragger.dragStart to begin with...
+	}
+
+}

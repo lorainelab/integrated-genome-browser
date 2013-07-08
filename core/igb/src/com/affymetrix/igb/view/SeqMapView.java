@@ -397,7 +397,6 @@ public class SeqMapView extends JPanel
 			// one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
 			//tier_manager.addPopupListener(new GraphSelectionManager(this));
 			//tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
-			tier_manager.addPopupListener(gsm);
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
 		}

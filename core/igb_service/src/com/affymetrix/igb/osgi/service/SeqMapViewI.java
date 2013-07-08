@@ -27,7 +27,7 @@ public interface SeqMapViewI {
 
 	public NeoMap getSeqMap();
 
-	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym);
+//	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym);
 
 	/**
 	 * Gets the view seq.
@@ -118,4 +118,6 @@ public interface SeqMapViewI {
 	public List<SeqSymmetry> getSelectedSyms();
 
 	public SeqSymmetry getSeqSymmetry();
+	
+	public <G extends GlyphI> G getItemFromTier(Object datamodel);
 }

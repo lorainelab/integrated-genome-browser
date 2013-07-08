@@ -1007,7 +1007,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	@Override
+	@Override @SuppressWarnings("unchecked")
 	public <G extends GlyphI> G getItemFromTier(Object datamodel){
 		return seqmap.getItemFromTier(datamodel);
 	}

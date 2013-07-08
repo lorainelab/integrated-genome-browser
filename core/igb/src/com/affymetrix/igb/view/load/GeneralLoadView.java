@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -43,6 +44,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -571,15 +573,8 @@ public final class GeneralLoadView {
 						for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
 							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
 						}
-						if(GraphSymUtils.isAGraphExtension(feature.getExtension())){
-							DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
-						}else{
-							DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
-						}
 					}
 				}
-
-				feature.clear();
 				return null;
 			}
 
@@ -602,13 +597,41 @@ public final class GeneralLoadView {
 				}
 								
 				if (refresh) {
+					if (!feature.getMethods().isEmpty()) {
+						for (String method : feature.getMethods()) {
+							removeTier(method);
+						}
+					}  else {
+						removeTier(feature.getURI().toString());
+					}
+					feature.clear();
+					
 					// Refresh
 					refreshTreeViewAndRestore();
 					refreshDataManagementView();
-					gviewer.dataRemoved();
+					//gviewer.dataRemoved();
+					gviewer.getSeqMap().repackTheTiers(true, true, true);
 				}
 				
 				((AffyLabelledTierMap)gviewer.getSeqMap()).fireTierOrderChanged();
+			}
+				
+			private void removeTier(String method) {
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+				TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
+				if(tier != null){
+					gviewer.getSeqMap().removeTier(tier);
+				}
+				tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
+				if(tier != null){
+					gviewer.getSeqMap().removeTier(tier);
+				}
+				
+				if(GraphSymUtils.isAGraphExtension(feature.getExtension())){
+					DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
+				}else{
+					DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
+				}
 			}
 		};
 

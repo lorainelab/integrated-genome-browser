@@ -327,7 +327,8 @@ public class AffyTieredMap extends NeoMap {
 	 * Given a TierGlyph, remove it from ourself.
 	 */
 	public void removeTier(TierGlyph toRemove) {
-		this.removeItem(toRemove);
+		super.removeItem(toRemove);
+		toRemove.removeAllChildren();
 		tiers.remove(toRemove);
 	}
 

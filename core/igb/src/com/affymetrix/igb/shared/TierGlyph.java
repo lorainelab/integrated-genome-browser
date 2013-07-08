@@ -41,4 +41,8 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	public boolean toolBarHit(Rectangle2D.Double hitrect, ViewI view);
 	
 	public List<GlyphI> pickTraversal(Rectangle2D.Double coordrect, ViewI view);
+	
+	public <G extends GlyphI> G getItem(Object datamodel);
+	
+	public void setDataModelFromOriginalSym(GlyphI glyph, Object datamodel);
 }

@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -34,6 +35,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -64,6 +66,10 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
 	 */
 	private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+	
+	//TODO: This should maybe be Map<Object,List<GlyphI>>
+	protected Map<Object,Object> model_hash = new HashMap<Object,Object>();
+	
 	/*
 	 * other_fill_color is derived from fill_color whenever setFillColor() is called.
 	 * if there are any "middle" glyphs, then background is drawn with other_fill_color and
@@ -323,7 +329,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		throw new RuntimeException("AbstractViewModeGlyph.addChild(glyph, position) not allowed, "
 				+ "use AbstractViewModeGlyph.addChild(glyph) instead");
 	}
-	
+		
 	/**
 	 * Remove all children of the glyph,
 	 * including those added with addMiddleGlyph(GlyphI).
@@ -338,6 +344,14 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		//     clearing middle_glyphs.  These glyphs never have setScene() called on them,
 		//     so it is not necessary to call setScene(null) on them.
 		middle_glyphs.clear();
+		model_hash.clear();
+	}
+		
+	@Override
+	public void resetChildren() {
+		super.resetChildren();
+		middle_glyphs.clear();
+		model_hash.clear();
 	}
 	
 	@Override
@@ -716,4 +730,41 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	protected void setMaxExpandDepth(int max) {
 		expand_packer.setMaxSlots(max);
 	}
+	
+	@Override @SuppressWarnings("unchecked")
+	public <G extends GlyphI> G getItem(Object datamodel) {
+		Object result = model_hash.get(datamodel);
+		if (result instanceof GlyphI) {
+			return (G)result;
+		}
+		if (result instanceof List && ((List)result).size() > 0) {
+			List<G> vec = (List<G>)result;
+			return vec.get(vec.size()-1);
+		}
+		return null;
+	}
+		
+	@Override @SuppressWarnings("unchecked")
+	public void setDataModelFromOriginalSym(GlyphI glyph, Object datamodel) {
+		if (datamodel instanceof DerivedSeqSymmetry) {
+			setDataModelFromOriginalSym(glyph, ((DerivedSeqSymmetry) datamodel).getOriginalSymmetry());
+			return;
+		} 
+		
+		Object previous = model_hash.get(datamodel);
+		if (previous == null) {
+			model_hash.put(datamodel, glyph);
+		} else {
+			if (previous instanceof List) {
+				((List<GlyphI>) previous).add(glyph);
+			} else {
+				List<GlyphI> glyphs = new ArrayList<GlyphI>();
+				glyphs.add((GlyphI) previous);
+				glyphs.add(glyph);
+				model_hash.put(datamodel, glyphs);
+			}
+		}
+		glyph.setInfo(datamodel);
+	}
+
 }

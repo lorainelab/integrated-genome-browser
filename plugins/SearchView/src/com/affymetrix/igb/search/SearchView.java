@@ -487,7 +487,7 @@ public final class SearchView extends IGBTabPanel implements
 				return;
 			}
 
-			if (igbService.getSeqMap().getItem(sym) == null) {
+			if (igbService.getSeqMapView().getItemFromTier(sym) == null) {
 				if (group == null) {
 					return;
 				}

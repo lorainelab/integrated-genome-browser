@@ -39,13 +39,14 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 	}
 		
 	@Override
-	protected void addTopChild(GlyphI the_tier, SeqMapViewExtendedI gviewer, 
-			boolean parent_and_child, SeqSymmetry pinsym, ITrackStyleExtended the_style, 
-			boolean labelInSouth, SeqSpan pspan, SeqSymmetry psym, BioSeq annotseq, 
-			BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type) 
-			throws IllegalAccessException, InstantiationException {
+	protected void addTopChild(GlyphI glyph, SeqMapViewExtendedI gviewer, 
+			boolean parent_and_child, SeqSymmetry pinsym, TierGlyph the_tier, 
+			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan, 
+			SeqSymmetry psym, BioSeq annotseq, BioSeq coordseq, int child_height, 
+			DIRECTION_TYPE direction_type) throws IllegalAccessException, InstantiationException {
+		
 		Color color = getSymColor(pinsym, the_style, pspan.isForward(), direction_type, the_style.getColorProvider());
-		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, pinsym, labelInSouth, pspan, psym, gviewer, child_height, direction_type, color, annotseq);
+		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_tier, the_style, pinsym, labelInSouth, pspan, psym, gviewer, child_height, direction_type, color, annotseq);
 		
 		List<SeqSymmetry> children = new ArrayList<SeqSymmetry>();
 		int childCount = pinsym.getChildCount();
@@ -55,7 +56,7 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 			pspan = gviewer.getViewSeqSpan(sym);
 			children.add(sym);
 			
-			super.addTopChild(pglyph, gviewer, true, insym, the_style, labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
+			super.addTopChild(pglyph, gviewer, true, insym, the_tier, the_style, labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
 		}
 		
 		PairRelationSeqSymmetry pairRelation = PairRelationSeqSymmetry.findRelation(children, annotseq);
@@ -75,7 +76,7 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 			}
 		}
 		
-		the_tier.addChild(pglyph);
+		glyph.addChild(pglyph);
 	}
 	
 	private static class PairRelationSeqSymmetry extends SimpleSeqSymmetry {

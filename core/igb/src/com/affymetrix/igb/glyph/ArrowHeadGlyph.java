@@ -174,7 +174,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 					cglyph.setForward(cspan.isForward());
 					cglyph.setColor(pglyph.getColor());
 					pglyph.addChild(cglyph);
-					gviewer.setDataModelFromOriginalSym(cglyph, child);
+					//gviewer.setDataModelFromOriginalSym(cglyph, child);
 				}
 			}
 		}

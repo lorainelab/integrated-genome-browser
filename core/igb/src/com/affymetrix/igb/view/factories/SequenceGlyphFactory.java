@@ -36,7 +36,7 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 					childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
 					childGlyph.setColor(style.getForeground());
 					residueGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
-					smv.setDataModelFromOriginalSym(childGlyph, childSym);
+					tierGlyph.setDataModelFromOriginalSym(childGlyph, childSym);
 					childGlyph.addChild(residueGlyph);
 					tierGlyph.addChild(childGlyph);
 				}

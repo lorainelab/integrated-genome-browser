@@ -157,7 +157,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 		pglyph.setCoords(pspan.getMin(), parent_y, pspan.getLength(), parent_height);
 		//System.out.println("PARENT: "+pglyph.getCoordBox().y+", "+pglyph.getCoordBox().height);
 		pglyph.setColor(consensus_color);
-		gviewer.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
+		the_tier.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
 		int childCount = transformed_consensus_sym.getChildCount();
 		java.util.List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
@@ -172,7 +172,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 				cglyph.setCoords(cspan.getMin(), child_y + child_height / 4, cspan.getLength(), child_height / 2);
 				cglyph.setColor(consensus_color);
 				pglyph.addChild(cglyph);
-				gviewer.setDataModelFromOriginalSym(cglyph, child);
+				the_tier.setDataModelFromOriginalSym(cglyph, child);
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
@@ -273,22 +273,22 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 			SeqSymmetry sym = consensus_seq.getAnnotation(i);
 			// probe sets and poly-A sites (and everything else) all get sent
 			// to handleConsensusAnnotations, because the first few steps are the same
-			handleConsensusAnnotations(gviewer, sym, consensus_sym, parent_glyph,
+			handleConsensusAnnotations(gviewer, tier, sym, consensus_sym, parent_glyph,
 					y, height);
 		}
 	}
 
-	private void handleConsensusAnnotations(SeqMapViewExtendedI gviewer, SeqSymmetry sym_with_probesets, SeqSymmetry consensus_sym,
+	private void handleConsensusAnnotations(SeqMapViewExtendedI gviewer, TierGlyph the_tier, SeqSymmetry sym_with_probesets, SeqSymmetry consensus_sym,
 			GlyphI parent_glyph, double y, double height) {
 		// Iterate until reaching depth=2 which represents a probeset (depth=2) containing probes (depth=1)
 		int depth = SeqUtils.getDepth(sym_with_probesets);
 		if (depth == 2) {
-			drawConsensusAnnotation(gviewer, sym_with_probesets, consensus_sym, parent_glyph, y, height);
+			drawConsensusAnnotation(gviewer, the_tier, sym_with_probesets, consensus_sym, parent_glyph, y, height);
 		} else {
 			int child_count = sym_with_probesets.getChildCount();
 			for (int i = 0; i < child_count; i++) {
 				SeqSymmetry child = sym_with_probesets.getChild(i);
-				handleConsensusAnnotations(gviewer, child, consensus_sym, parent_glyph, y, height);
+				handleConsensusAnnotations(gviewer, the_tier, child, consensus_sym, parent_glyph, y, height);
 			}
 		}
 	}
@@ -303,7 +303,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 	 *    it is not likely that things would go well, so the method prints an error
 	 *    and returns.
 	 */
-	private void drawConsensusAnnotation(SeqMapViewExtendedI gviewer, SeqSymmetry probeset, SeqSymmetry consensus_sym,
+	private void drawConsensusAnnotation(SeqMapViewExtendedI gviewer, TierGlyph the_tier, SeqSymmetry probeset, SeqSymmetry consensus_sym,
 			GlyphI parent_glyph, double y, double height) {
 		if (DEBUG) {
 			int consensus_depth = SeqUtils.getDepth(consensus_sym);
@@ -318,15 +318,16 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 		// Note that the transformation generates a probeset_sym of depth 3
 
 		if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
-			drawPolyA(gviewer, probeset_sym, parent_glyph, y, height, poly_a_site_color);
+			drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_site_color);
 		} else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
-			drawPolyA(gviewer, probeset_sym, parent_glyph, y, height, poly_a_stack_color);
+			drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_stack_color);
 		} else {
-			drawProbeSetGlyph(gviewer, probeset_sym, parent_glyph, y, height);
+			drawProbeSetGlyph(gviewer, the_tier, probeset_sym, parent_glyph, y, height);
 		}
 	}
 
-	private void drawPolyA(SeqMapViewExtendedI gviewer, DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
+	private void drawPolyA(SeqMapViewExtendedI gviewer, TierGlyph the_tier, 
+			DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
 			double consensus_exon_y, double consensus_exon_height, Color color) {
 		// The depth coming in should be 3
 		SeqSymmetry transformed_sym = gviewer.transformForViewSeq(poly_A_sym, gviewer.getAnnotatedSeq());
@@ -353,7 +354,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 		polyA_glyph_rect.setColor(color);
 		polyA_glyph_rect.setCoords(span.getMin(), y, span.getLength(), height);
 		consensus_glyph.addChild(polyA_glyph_rect);
-		gviewer.setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
+		the_tier.setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
 	}
 
 	/**
@@ -365,7 +366,8 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 	 *                   this third level will be ignored.
 	 *                   This should NOT already have been mapped onto SeqMapView.getAnnotatedSeq().
 	 */
-	private void drawProbeSetGlyph(SeqMapViewExtendedI gviewer, DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
+	private void drawProbeSetGlyph(SeqMapViewExtendedI gviewer, TierGlyph the_tier, 
+			DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
 			double consensus_exon_y, double consensus_exon_height) {
 		// The depth coming in should be 3
 		SeqSymmetry transformed_probeset_sym = gviewer.transformForViewSeq(probeset_sym, gviewer.getAnnotatedSeq());
@@ -394,30 +396,33 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 			probeset_glyph.setColor(probeset_color);
 
 			parent_glyph.addChild(probeset_glyph);
-			gviewer.setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
-			addProbesToProbeset(gviewer, probeset_glyph, transformed_probeset_sym,
+			the_tier.setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
+			addProbesToProbeset(gviewer, the_tier, probeset_glyph, transformed_probeset_sym,
 					probe_y, probe_height, probeset_color);
 		} else {
-			addProbesToProbeset(gviewer, parent_glyph, transformed_probeset_sym,
+			addProbesToProbeset(gviewer, the_tier, parent_glyph, transformed_probeset_sym,
 					probe_y, probe_height, probeset_color);
 		}
 	}
 
-	private void addProbesToProbeset(SeqMapViewExtendedI gviewer, GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym,
+	private void addProbesToProbeset(SeqMapViewExtendedI gviewer, TierGlyph the_tier, 
+			GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym,
 			double probe_y, double probe_height, Color probeset_color) {
 		int num_probes = transformed_probeset_sym.getChildCount();
 		for (int i = 0; i < num_probes; i++) {
 			SeqSymmetry probe_sym = transformed_probeset_sym.getChild(i);
-			GlyphI probe_glyph = drawProbeGlyph(gviewer, probe_sym, probe_y, probe_height, probeset_color);
+			GlyphI probe_glyph = drawProbeGlyph(gviewer, the_tier, 
+					probe_sym, probe_y, probe_height, probeset_color);
 			if (probe_glyph == null) {
 				continue;
 			}
 			probeset_glyph.addChild(probe_glyph);
-			gviewer.setDataModelFromOriginalSym(probe_glyph, probe_sym);
+			the_tier.setDataModelFromOriginalSym(probe_glyph, probe_sym);
 		}
 	}
 
-	private GlyphI drawProbeGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry probe_sym, double probe_y, double probe_height, Color c) {
+	private GlyphI drawProbeGlyph(SeqMapViewExtendedI gviewer, TierGlyph the_tier, 
+			SeqSymmetry probe_sym, double probe_y, double probe_height, Color c) {
 		BioSeq viewSeq = gviewer.getViewSeq();
 		SeqSpan probe_span = probe_sym.getSpan(viewSeq);
 		if (probe_span == null) {
@@ -442,7 +447,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
 				GlyphI probe_part_glyph = drawProbeSegmentGlyph(probe_part_span, probe_y, probe_height, c);
 				probe_glyph.addChild(probe_part_glyph);
-				gviewer.setDataModelFromOriginalSym(probe_part_glyph, probe_part_sym);
+				the_tier.setDataModelFromOriginalSym(probe_part_glyph, probe_part_sym);
 			}
 		} else {
 			probe_glyph = drawProbeSegmentGlyph(probe_sym.getSpan(viewSeq), probe_y, probe_height, c);

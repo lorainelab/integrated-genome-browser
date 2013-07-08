@@ -149,7 +149,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			return null;
 		}
 		graphGlyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), gstate.getTierStyle().getHeight());
-		smv.setDataModelFromOriginalSym(graphGlyph, graf); // has side-effect of graph_glyph.setInfo(graf)
+//		smv.setDataModelFromOriginalSym(graphGlyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		//if (/*gstate.getComboStyle() == null && */ gstate.getTierStyle().getFloatGraph()) {
@@ -207,6 +207,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 					}
 					graphGlyph.setDirection(direction);
 					TierGlyph result = smv.getTrack(style, direction);
+					result.setDataModelFromOriginalSym(graphGlyph, graf);
 					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					result.addChild(graphGlyph);
 					result.setTierType(TierGlyph.TierType.GRAPH);

@@ -147,7 +147,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 			DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
 			
-			addTopChild(the_tier, gviewer, parent_and_child, insym, the_style, labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
+			addTopChild(the_tier, gviewer, parent_and_child, insym, the_tier, the_style, labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
 		} catch (InstantiationException ie) {
 			System.err.println("AnnotationGlyphFactory.addToTier: " + ie);
 		}
@@ -157,32 +157,32 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	
-	protected void addTopChild(GlyphI the_tier, SeqMapViewExtendedI gviewer, 
-			boolean parent_and_child, SeqSymmetry insym, ITrackStyleExtended the_style, 
-			boolean labelInSouth, SeqSpan pspan, SeqSymmetry sym, BioSeq annotseq, 
-			BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type) 
-			throws IllegalAccessException, InstantiationException {
+	protected void addTopChild(GlyphI pglyph, SeqMapViewExtendedI gviewer, 
+			boolean parent_and_child, SeqSymmetry insym, TierGlyph the_tier, 
+			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan, 
+			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height, 
+			DIRECTION_TYPE direction_type) throws IllegalAccessException, InstantiationException {
 		
-		the_tier.addChild(determinePGlyph(gviewer, parent_and_child, insym, the_style,
+		pglyph.addChild(determinePGlyph(gviewer, parent_and_child, insym, the_tier, the_style,
 				labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type));
 	}
 	
 	protected GlyphI determinePGlyph(SeqMapViewExtendedI gviewer,
-			boolean parent_and_child, SeqSymmetry insym,
+			boolean parent_and_child, SeqSymmetry insym, TierGlyph the_tier, 
 			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan,
 			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height, DIRECTION_TYPE direction_type)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph;
 		Color color = getSymColor(insym, the_style, pspan.isForward(), direction_type, the_style.getColorProvider());
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_tier, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
-			addChildren(gviewer, insym, sym, pspan, the_style, annotseq, pglyph, coordseq, child_height, color);
-			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, child_height /*the_style.getHeight() */);
+			addChildren(gviewer, insym, sym, pspan, the_tier, the_style, annotseq, pglyph, coordseq, child_height, color);
+			handleInsertionGlyphs(gviewer, the_tier, insym, annotseq, pglyph, child_height /*the_style.getHeight() */);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_tier, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
 			GlyphI alignResidueGlyph = getAlignedResiduesGlyph(insym, annotseq, true);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -193,7 +193,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	protected static GlyphI determineGlyph(
-			Class<?> glyphClass, Class<?> labelledGlyphClass,
+			Class<?> glyphClass, Class<?> labelledGlyphClass, TierGlyph the_tier,
 			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer, 
 			int child_height, DIRECTION_TYPE direction_type, Color color, BioSeq annotseq) 
@@ -231,7 +231,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		if(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH){
 			pglyph.setDirection(pspan.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
 		}
-		gviewer.setDataModelFromOriginalSym(pglyph, sym);
+		the_tier.setDataModelFromOriginalSym(pglyph, sym);
 		if(the_style.getFilter() != null){
 			pglyph.setVisibility(the_style.getFilter().filterSymmetry(annotseq, sym));
 		}
@@ -262,8 +262,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	private void addChildren(SeqMapViewExtendedI gviewer, 
-			SeqSymmetry insym, SeqSymmetry sym, SeqSpan pspan, ITrackStyleExtended the_style, BioSeq annotseq,
-			GlyphI pglyph, BioSeq coordseq, int child_height, Color child_color)
+			SeqSymmetry insym, SeqSymmetry sym, SeqSpan pspan, TierGlyph the_tier, 
+			ITrackStyleExtended the_style, BioSeq annotseq, GlyphI pglyph, 
+			BioSeq coordseq, int child_height, Color child_color)
 			throws InstantiationException, IllegalAccessException {
 		SeqSpan cdsSpan = null;
 		SeqSymmetry cds_sym = null;
@@ -302,7 +303,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				}
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
-				gviewer.setDataModelFromOriginalSym(cglyph, child);
+				the_tier.setDataModelFromOriginalSym(cglyph, child);
 				pglyph.addChild(cglyph);
 				
 //				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
@@ -312,7 +313,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				GlyphI alignResidueGlyph = getAlignedResiduesGlyph(child, annotseq, true);
 				if(alignResidueGlyph != null){
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-					gviewer.setDataModelFromOriginalSym(alignResidueGlyph, child);
+					the_tier.setDataModelFromOriginalSym(alignResidueGlyph, child);
 					pglyph.addChild(alignResidueGlyph);
 				}
 				
@@ -327,7 +328,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				codon_glyph_processor.processGlyph(cglyph, child, annotseq);
 				
 				if(!cds){
-					handleCDSSpan(gviewer, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
+					handleCDSSpan(gviewer, the_tier, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
 				}
 			}
 		}
@@ -377,7 +378,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		return color;
 	}
 
-	private GlyphI handleCDSSpan(SeqMapViewExtendedI gviewer,
+	private GlyphI handleCDSSpan(SeqMapViewExtendedI gviewer, TierGlyph the_tier,
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
 			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
 			Color child_color, double thick_height, GlyphI pglyph)
@@ -397,7 +398,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				}
 				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
 				cds_glyph.setColor(child_color); // CDS same color as exon
-				gviewer.setDataModelFromOriginalSym(cds_glyph, child);
+				the_tier.setDataModelFromOriginalSym(cds_glyph, child);
 				pglyph.addChild(cds_glyph);
 				codon_glyph_processor.processGlyph(cds_glyph, cds_sym_2, annotseq);
 				return cds_glyph;
@@ -406,7 +407,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		return null;
 	}
 
-	private void handleInsertionGlyphs(SeqMapViewExtendedI gviewer, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, double height)
+	private void handleInsertionGlyphs(SeqMapViewExtendedI gviewer, TierGlyph the_tier, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, double height)
 			throws IllegalAccessException, InstantiationException {
 		
 		if (!(sym instanceof BAMSym)) {
@@ -449,7 +450,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			isg.setColor(color);
 
 			pglyph.addChild(isg);
-			gviewer.setDataModelFromOriginalSym(isg, childsym);
+			the_tier.setDataModelFromOriginalSym(isg, childsym);
 		}
 	}
 

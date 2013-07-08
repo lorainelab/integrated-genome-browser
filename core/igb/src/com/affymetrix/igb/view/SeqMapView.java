@@ -807,7 +807,7 @@ public class SeqMapView extends JPanel
 			while (iter.hasNext()) {
 				SeqSymmetry old_selected_sym = iter.next();
 
-				GlyphI gl = seqmap.<GlyphI>getItem(old_selected_sym);
+				GlyphI gl = seqmap.<GlyphI>getItemFromTier(old_selected_sym);
 				if (gl != null) {
 					seqmap.select(gl);
 				}
@@ -943,7 +943,7 @@ public class SeqMapView extends JPanel
 		while (sym_iter.hasNext()) {
 			SeqSymmetry old_selected_sym = sym_iter.next();
 
-			GlyphI gl = seqmap.<GlyphI>getItem(old_selected_sym);
+			GlyphI gl = seqmap.<GlyphI>getItemFromTier(old_selected_sym);
 			if (gl != null) {
 				seqmap.select(gl);
 			}
@@ -1007,6 +1007,11 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	@Override
+	public <G extends GlyphI> G getItemFromTier(Object datamodel){
+		return seqmap.getItemFromTier(datamodel);
+	}
+	
 	/**
 	 * Set up a tier with fixed pixel height and place axis in it.
 	 */
@@ -1217,10 +1222,10 @@ public class SeqMapView extends JPanel
 		return seqmap;
 	}
 
-	@Override
-	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
-		seqmap.setDataModelFromOriginalSym(g, sym);
-	}
+//	@Override
+//	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
+//		seqmap.setDataModelFromOriginalSym(g, sym);
+//	}
 
 	@Override
 	public final void selectAllGraphs() {
@@ -1282,7 +1287,7 @@ public class SeqMapView extends JPanel
 
 		for (SeqSymmetry sym : sym_list) {
 			// currently assuming 1-to-1 mapping of sym to glyph
-			GlyphI gl = seqmap.<GlyphI>getItem(sym);
+			GlyphI gl = seqmap.<GlyphI>getItemFromTier(sym);
 			if (gl != null) {
 				seqmap.select(gl);
 			}

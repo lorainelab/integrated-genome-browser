@@ -336,6 +336,18 @@ public class AffyTieredMap extends NeoMap {
 		this.stretchToFit(fitx, fity, true);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <G extends GlyphI> G getItemFromTier(Object datamodel) {
+		Object result = null;
+		for(TierGlyph tier : tiers){
+			result = tier.getItem(datamodel);
+			if(result != null){
+				break;
+			}
+		}
+		return (G)result;
+	}
+	
 	protected void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
 		super.stretchToFit(fitx, fity);
 		if (packTiers) {

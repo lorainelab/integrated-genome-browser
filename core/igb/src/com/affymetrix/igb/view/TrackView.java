@@ -180,7 +180,7 @@ public class TrackView {
 			SeqSymmetry sym = seq.getAnnotation(method);
 			if (sym != null) {
 				if(sym instanceof GraphSym){
-					GlyphI glyph = map.getItem(sym);
+					GlyphI glyph = map.getItemFromTier(sym);
 					if(glyph != null){
 						if(glyph instanceof GraphGlyph){
 							GraphGlyph.split((GraphGlyph)glyph);

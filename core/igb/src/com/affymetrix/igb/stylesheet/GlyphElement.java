@@ -357,7 +357,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   private static void indexGlyph(PropertyMap pm, SeqMapViewExtendedI gviewer, GlyphI gl, SeqSymmetry insym) {
     if (! "false".equals(pm.getProperty(PROP_KEY_INDEXED))) {
       // This will call GlyphI.setInfo() as a side-effect.
-      gviewer.setDataModelFromOriginalSym(gl, insym);
+//      gviewer.setDataModelFromOriginalSym(gl, insym);
     } else {
       // Even if we don't add the glyph to the map's data model,
       // it is still important to call GlyphI.setInfo() so that slicing will work.

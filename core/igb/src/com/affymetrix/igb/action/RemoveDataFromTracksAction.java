@@ -58,10 +58,6 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 			}
 			
 			for (ITrackStyleExtended style : allStyles) {
-//				String method = style.getMethodName();
-//				if (method != null) {
-//					TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
-//				}
 				GeneralLoadView.getLoadView().clearTrack(style);
 			}
 		}

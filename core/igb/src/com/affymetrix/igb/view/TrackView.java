@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -18,14 +17,12 @@ import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.view.factories.AbstractTierGlyph;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
@@ -161,19 +158,6 @@ public class TrackView {
 		}
 	}
 		
-	public void delete(AffyTieredMap map, String method, ITrackStyleExtended style){
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		GenericFeature feature = style.getFeature();
-		
-		// If genome is selected then delete all syms on the all seqs.
-		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
-			GeneralLoadView.getLoadView().removeFeature(feature, true);
-			return;
-		}
-
-		deleteSymsOnSeq(map, method, seq, feature);
-	}
-	
 	public void deleteSymsOnSeq(AffyTieredMap map, String method, BioSeq seq, GenericFeature feature){
 		
 		if (seq != null) {

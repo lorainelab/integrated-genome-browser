@@ -16,6 +16,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.affymetrix.igb.shared.StyledGlyph;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -57,12 +58,13 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 			}
 			
 			for (ITrackStyleExtended style : allStyles) {
-				String method = style.getMethodName();
-				if (method != null) {
-					TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
-				}
+//				String method = style.getMethodName();
+//				if (method != null) {
+//					TrackView.getInstance().delete(getSeqMapView().getSeqMap(), method, style);
+//				}
+				GeneralLoadView.getLoadView().clearTrack(style);
 			}
 		}
-		getSeqMapView().dataRemoved();	// refresh
+		//getSeqMapView().dataRemoved();	// refresh
 	}
 }

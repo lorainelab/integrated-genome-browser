@@ -558,7 +558,47 @@ public final class GeneralLoadView {
 	public void removeFeature(final GenericFeature feature, final boolean refresh) {
 		removeFeature(feature, refresh, true);
 	}
+	
+	public void clearTrack(final ITrackStyleExtended style){
+		final String method = style.getMethodName();
+		if (method != null) {
+			final BioSeq bioseq = GenometryModel.getGenometryModel().getSelectedSeq();
+			final GenericFeature feature = style.getFeature();
+		
+			// If genome is selected then delete all syms on the all seqs.
+			if(IGBConstants.GENOME_SEQ_ID.equals(bioseq.getID())){
+				removeFeature(feature, true);
+				return;
+			}
+			
+			CThreadWorker<Void, Void> clear = new CThreadWorker<Void, Void>("Clearing track  " + style.getTrackName()) {
 
+				@Override
+				protected Void runInBackground() {
+					TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
+					return null;
+				}
+
+				@Override
+				protected void finished() {
+					TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
+					if(tier != null){
+						tier.removeAllChildren();
+					}
+					tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
+					if(tier != null){
+						tier.removeAllChildren();
+					}
+					TrackView.getInstance().addTierFor(style, gviewer);
+					gviewer.getSeqMap().repackTheTiers(true, true, true);
+				}
+				
+			};
+			
+			CThreadHolder.getInstance().execute(feature, clear);
+		}
+	}
+	
 	void removeFeature(final GenericFeature feature, final boolean refresh, final boolean removeLocal) {
 		if (feature == null) {
 			return;

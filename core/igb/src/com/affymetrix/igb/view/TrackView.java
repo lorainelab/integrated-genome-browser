@@ -250,7 +250,7 @@ public class TrackView {
 		}
 	}
 
-	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
+	public void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
 		if(!style.isGraphTier()){
 			TierGlyph.Direction direction = style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH;
 			//rootSym = (category == FileTypeCategory.ScoredContainer) ? new ScoredContainerSym() : new TypeContainerAnnot(style.getMethodName());

@@ -156,7 +156,6 @@ public interface IGBService {
 	 * @param panel the IGBTabPanel
 	 */
 	public void selectTab(IGBTabPanel panel);
-	public void deleteGraph(GraphSym gsym);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
 	// for plugins

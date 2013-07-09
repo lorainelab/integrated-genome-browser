@@ -295,11 +295,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		((IGB) IGB.getSingleton()).getWindowService().selectTab(panel);
 	}
 
-	public void deleteGraph(GraphSym gsym) {
-		TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
-		((SeqMapView) getSeqMapView()).dataRemoved();	// refresh
-	}
-
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
 		AffyTieredMap map = (AffyTieredMap) getSeqMap();

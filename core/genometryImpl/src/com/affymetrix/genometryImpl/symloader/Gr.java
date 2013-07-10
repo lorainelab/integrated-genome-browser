@@ -55,6 +55,10 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 //		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 
+	public Gr(){
+		super(null, null, null);
+	}
+	
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri, featureName, seq_group);
 	}

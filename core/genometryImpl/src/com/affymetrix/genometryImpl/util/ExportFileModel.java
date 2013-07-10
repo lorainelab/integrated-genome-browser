@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.symloader.BedGraph;
 import com.affymetrix.genometryImpl.symloader.Fasta;
+import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ExportFileModel {
 				
 		List<Class<? extends AnnotationWriter>> graphList = new ArrayList<Class<? extends AnnotationWriter>>();
 		graphList.add(BedGraph.class);
+		graphList.add(Gr.class);
 		annotationWriters.put(FileTypeCategory.Graph, graphList);
 		
 		List<Class<? extends AnnotationWriter>> sequenceList = new ArrayList<Class<? extends AnnotationWriter>>();

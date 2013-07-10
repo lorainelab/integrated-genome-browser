@@ -1011,14 +1011,9 @@ public class SeqMapView extends JPanel
 		axis_glyph.setHitable(true);
 		axis_glyph.setFont(axisFont);
 
-		Color axis_bg = CoordinateStyle.coordinate_annot_style.getBackground();
-		Color axis_fg = CoordinateStyle.coordinate_annot_style.getForeground();
-
-		axis_glyph.setBackgroundColor(axis_bg);
-		resultAxisTier.setBackgroundColor(axis_bg);
-		resultAxisTier.setFillColor(axis_bg);
-		axis_glyph.setForegroundColor(axis_fg);
-		resultAxisTier.setForegroundColor(axis_fg);
+		axis_glyph.setBackgroundColor(resultAxisTier.getBackgroundColor());
+		axis_glyph.setForegroundColor(resultAxisTier.getForegroundColor());
+	
 		setAxisFormatFromPrefs(axis_glyph);
 		addCytobandGlyph(resultAxisTier, tier_index);
 		resultAxisTier.addChild(axis_glyph);
@@ -1031,7 +1026,7 @@ public class SeqMapView extends JPanel
 			seqmap.addTier(resultAxisTier, false);
 		}
 
-		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis_glyph);
+		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_glyph);
 
 		resultAxisTier.addChild(seq_glyph);
 		resultAxisTier.setCoords(0, 0, seqmap.getScene().getCoordBox().getWidth(), 54);

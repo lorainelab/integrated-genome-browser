@@ -225,7 +225,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 	}
 
 
-	public static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
+	public static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, AxisGlyph axis) {
 		CharSeqGlyph seq_glyph = new CharSeqGlyph();
 		//seq_glyph.setForegroundColor(axis_fg);
 		seq_glyph.setForegroundColor(Color.BLACK);

@@ -647,7 +647,7 @@ public class SeqMapView extends JPanel
 	/**
 	 * Sets the axis label format from the value in the persistent preferences.
 	 */
-	public static void setAxisFormatFromPrefs(AxisGlyph axis) {
+	private static void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
 		String axis_format = PreferenceUtils.getTopNode().get(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT, CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
 		if (CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {

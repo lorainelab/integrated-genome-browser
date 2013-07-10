@@ -17,13 +17,11 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.ColorUtils;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start

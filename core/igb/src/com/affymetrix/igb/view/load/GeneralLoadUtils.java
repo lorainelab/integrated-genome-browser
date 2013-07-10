@@ -832,17 +832,6 @@ public final class GeneralLoadUtils {
 				}
 				
 				GeneralLoadView.getLoadView().refreshDataManagementView();
-								
-				if (this.isCancelled()) {
-					return;
-				}
-
-				try {
-					Map<String, List<? extends SeqSymmetry>> result = get();
-				} catch (Exception ex) {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-							Level.SEVERE, "Unable to get refresh action result.", ex);
-				}
 			}
 		};
 

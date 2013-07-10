@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.SeqSymIdComparator;
+import com.affymetrix.genometryImpl.comparator.SortIgnoreCase;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
@@ -693,7 +694,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			public void run() {
 				List<String> speciesList_ = new ArrayList<String>();
 				speciesList_.addAll(GeneralLoadUtils.getSpecies2Generic().keySet());
-				Collections.sort(speciesList_);
+				Collections.sort(speciesList_, new SortIgnoreCase());
 				final List<String> speciesList = new CopyOnWriteArrayList<String>(speciesList_);
 		
 				speciesCB.removeItemListener(SeqGroupView.this);

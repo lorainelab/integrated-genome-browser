@@ -2,8 +2,6 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.action.HideAction;
-import com.affymetrix.igb.action.ShowAllAction;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -102,34 +100,6 @@ final public class MouseShortCut implements MouseListener{
 			return;
 		}
 		
-		//AffyTieredMap
-		if(e.getSource() instanceof AffyTieredMap){
-
-			List<TierLabelGlyph> tier_Labels = smv.getTierManager().getSelectedTierLabels();
-			if(tier_Labels.size() == 1){
-				if(tier_Labels.get(0).getReferenceTier() == smv.getAxisTier()){
-					ShowAllAction.getAction().actionPerformed(null);
-					return;
-				}
-			}
-			
-			if(e.isAltDown()){
-				//alt is pressed.
-				return;
-			}
-
-			if(e.isShiftDown()){
-				//Hide tiers if shift is pressed.
-				HideAction.getAction().actionPerformed(null);
-				return;
-			}
-
-			//Collapse or Expand
-			smv.getTierManager().toggleTierCollapsed(tier_Labels);
-			popup.refreshMap(true, true);
-			return;
-		}
-
 	}
 
 }

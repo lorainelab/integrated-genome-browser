@@ -264,33 +264,30 @@ public class DasServerType implements ServerTypeI {
 	 * @param span containing the ranges for which you want annotations.
 	 */
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
-		try{ 
-		feature.addLoadingSpanRequest(span);	// this span is requested to be loaded.
-		
-		String segment = getSegment(span, feature);
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) {
+		try {
+			feature.addLoadingSpanRequest(span);	// this span is requested to be loaded.
 
-		QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
-		builder.add("segment", segment);
-		builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+			String segment = getSegment(span, feature);
 
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.typeObj.toString(), feature.featureName, "das1", feature.featureProps);
-		style.setFeature(feature);
+			QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
+			builder.add("segment", segment);
+			builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 
-		// TODO - probably not necessary
-		//style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, "das1");
-		//style.setFeature(feature);
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.typeObj.toString(), feature.featureName, "das1", feature.featureProps);
+			style.setFeature(feature);
 
-		URI uri = builder.build();
-		if (DEBUG) System.out.println("Loading DAS feature " + feature.featureName + " with uri " + uri);
-		List<DASSymmetry> dassyms = parseData(uri);
-		
-		if (Thread.currentThread().isInterrupted()) {
-			dassyms = null;
-			return Collections.<SeqSymmetry>emptyList();
-		}
-	
-		return SymLoader.splitFilterAndAddAnnotation(span, dassyms, feature);
+			// TODO - probably not necessary
+			//style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, "das1");
+			//style.setFeature(feature);
+
+			URI uri = builder.build();
+			if (DEBUG) {
+				System.out.println("Loading DAS feature " + feature.featureName + " with uri " + uri);
+			}
+			List<DASSymmetry> dassyms = parseData(uri);
+
+			return SymLoader.splitFilterAndAddAnnotation(span, dassyms, feature);
 		} finally {
 			if (Thread.currentThread().isInterrupted()) {
 				feature.removeCurrentRequest(span);

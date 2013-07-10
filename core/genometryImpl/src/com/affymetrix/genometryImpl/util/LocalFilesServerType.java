@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,7 +97,7 @@ public class LocalFilesServerType implements ServerTypeI {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature)
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature)
 			throws Exception {
 		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
 	}

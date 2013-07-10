@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -97,10 +98,10 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	/**
 	 * @param span span containing the range for which you want annotations.
 	 * @param feature the generic feature that is to be loaded from the server.
-	 * @return List<? extends SeqSymmetry> list of data that were loaded.
+	 * @return Map<String, <? extends SeqSymmetry>> list of data that were loaded.
 	 * @throws IOException
 	 */
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception;
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception;
 	/**
 	 * if user authorization is optional for this ServerType
 	 * @return if user authorization is optional for this ServerType

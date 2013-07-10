@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
@@ -74,8 +75,10 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 	protected RootSeqSymmetry loadRegion(SeqSpan span) {
 		RootSeqSymmetry detailSym = new TypeContainerAnnot(style.getMethodName());
 	
-		for (SeqSymmetry sym : loadData(span)) {
-			detailSym.addChild(sym);
+		for (Entry<String, List<? extends SeqSymmetry>> entry : loadData(span).entrySet()) {
+			for(SeqSymmetry sym : entry.getValue()){
+				detailSym.addChild(sym);
+			}
 		}
 
 		return detailSym;

@@ -349,7 +349,7 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception {
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception {
 		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
 	}
 

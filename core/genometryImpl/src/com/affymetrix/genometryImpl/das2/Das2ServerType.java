@@ -267,19 +267,19 @@ public class Das2ServerType implements ServerTypeI {
 	 * This is done in a multi-threaded fashion so that the UI doesn't lock up.
 	 */
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) {
 		final Das2Type dtype = (Das2Type) feature.typeObj;
 		final Das2Region region = ((Das2VersionedSource) feature.gVersion.versionSourceObj).getSegment(span.getBioSeq());
 
 		if (dtype == null || region == null) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.emptyMap();
 		}
 		
 		return loadSpan(feature, span, region, dtype);
 	}
 
 
-    private List<? extends SeqSymmetry>  loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
+    private Map<String, List<? extends SeqSymmetry>> loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
 		feature.addLoadingSpanRequest(span);	// this span is requested to be loaded.
 		
         String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
@@ -307,7 +307,7 @@ public class Das2ServerType implements ServerTypeI {
 			}
 		}
 		
-		return Collections.<SeqSymmetry>emptyList();
+		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
     }
 
    private String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
@@ -351,7 +351,7 @@ public class Das2ServerType implements ServerTypeI {
 	  return track2Results;
  }
 
-    private List<? extends SeqSymmetry> LoadFeaturesFromQuery(
+    private Map<String, List<? extends SeqSymmetry>> LoadFeaturesFromQuery(
             GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
 
         /**
@@ -364,7 +364,7 @@ public class Das2ServerType implements ServerTypeI {
 		Thread thread = Thread.currentThread();
 		
 		if(thread.isInterrupted()){
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 		
         try {
@@ -374,7 +374,7 @@ public class Das2ServerType implements ServerTypeI {
                 istr = LocalUrlCacher.getInputStream(feature_query);
                 if (istr == null) {
                     System.out.println("Server couldn't be accessed with query " + feature_query);
-                    return Collections.<SeqSymmetry>emptyList();
+                    return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
                 }
                 // for now, assume that when caching, content type returned is same as content type requested
                 content_subtype = format;
@@ -394,7 +394,7 @@ public class Das2ServerType implements ServerTypeI {
 
                 if (response_code >= 400 && response_code < 600) {
                     System.out.println("Server returned error code, aborting response parsing!");
-                    return Collections.<SeqSymmetry>emptyList();
+                    return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
                 }
                 String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
@@ -419,7 +419,7 @@ public class Das2ServerType implements ServerTypeI {
 			if (fileTypeHandler == null) {
 				Logger.getLogger(SymLoader.class.getName()).log(
 					Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			}
 			else {
 				// Create an AnnotStyle so that we can automatically set the
@@ -453,14 +453,14 @@ public class Das2ServerType implements ServerTypeI {
 
 			if(thread.isInterrupted()){
 				feats = null;
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			}
 			
             return SymLoader.splitFilterAndAddAnnotation(span, feats, feature);
 			
         } catch (Exception ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		} finally {
             GeneralUtils.safeClose(bis);
             GeneralUtils.safeClose(istr);

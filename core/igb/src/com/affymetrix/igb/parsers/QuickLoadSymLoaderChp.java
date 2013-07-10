@@ -2,16 +2,20 @@ package com.affymetrix.igb.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * This is an extension of the QuickLoadSymLoader class, specifically for chp files.
@@ -26,11 +30,10 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 		}
 	}
 	
-	protected List<? extends SeqSymmetry> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+	protected Map<String, List<? extends SeqSymmetry>> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
 		throws OutOfMemoryError, Exception {
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
-		addMethodsToFeature(feature, QuickLoadSymLoaderChp.this.getGenome());
-		return QuickLoadSymLoaderChp.this.getGenome();
+		return addMethodsToFeature(feature, QuickLoadSymLoaderChp.this.getGenome());
 	}
 
 	protected void addAllSymmetries(final GenericFeature feature, List<? extends SeqSymmetry> results)
@@ -40,17 +43,20 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 	}
 
 	//Only used for "chp"
-	private static void addMethodsToFeature(GenericFeature feature, List<? extends SeqSymmetry> results) {
+	private static Map<String, List<? extends SeqSymmetry>> addMethodsToFeature(
+			GenericFeature feature, List<? extends SeqSymmetry> results) {
 		if(results == null)
-			return;
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		
-		String method;
-		for (SeqSymmetry sym : results) {
-			method = BioSeq.determineMethod(sym);
-			if (method != null) {
-				feature.addMethod(method);
+		Map<String, List<SeqSymmetry>> syms = SymLoader.splitResultsByTracks(results);
+		Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
+		for (Entry<String, List<SeqSymmetry>> entry : syms.entrySet()) {
+			if (entry.getKey() != null) {
+				feature.addMethod(entry.getKey());
+				added.put(entry.getKey(), entry.getValue());
 			}
 		}
+		return added;
 	}
 	
 	/**

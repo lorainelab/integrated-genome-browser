@@ -297,9 +297,9 @@ public abstract class SymLoader {
 	  return seq2Results;
   }
 
-	public static List<? extends SeqSymmetry> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature){
+	public static Map<String, List<? extends SeqSymmetry>> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature){
 		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
-		List<SeqSymmetry> added = new ArrayList<SeqSymmetry>();
+		Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
 		SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
 		filter.setParam(feature.getRequestSym());
 		
@@ -313,11 +313,13 @@ public abstract class SymLoader {
 				continue;
 			}
 			
-			added.addAll(filteredFeats);
-			SymLoader.addAnnotations(filteredFeats, span, feature.getURI(), feature);
 			// Some format do not annotate. So it might not have method name. e.g bgn
 			if (entry.getKey() != null) {
 				feature.addMethod(entry.getKey());
+				addAnnotations(filteredFeats, span, feature.getURI(), feature);
+				added.put(entry.getKey(), filteredFeats);
+			} else {
+				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, "No method name in loaded syms for "+feature.featureName);
 			}
 		}
 

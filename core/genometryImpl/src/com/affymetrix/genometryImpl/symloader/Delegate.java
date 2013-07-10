@@ -21,7 +21,9 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -130,12 +132,12 @@ public class Delegate extends QuickLoadSymLoader {
     }
 	
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, Exception {
 		boolean notUpdatable = false;
 
 		if (dps == null || dps.isEmpty()) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 
 		List<SeqSymmetry> requests = new ArrayList<SeqSymmetry>();
@@ -151,7 +153,7 @@ public class Delegate extends QuickLoadSymLoader {
 					Thread.sleep(500);
 				} catch (InterruptedException ex) {
 					Logger.getLogger(Delegate.class.getName()).log(Level.WARNING, "Thread interruped cancelling loading");
-					return Collections.<SeqSymmetry>emptyList();
+					return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 				}
 			}
 			requests.add(dp.feature.getRequestSym());
@@ -165,19 +167,19 @@ public class Delegate extends QuickLoadSymLoader {
 			operator = null;
 			strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
 			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 		
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(overlapSpan);
 		requests.add(query_sym);
 		
-		List<SeqSymmetry> loaded = new ArrayList<SeqSymmetry>();
+		Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
 		List<SeqSpan> operlapSpans = new ArrayList<SeqSpan>();
 		SeqUtils.convertSymToSpanList(SeqUtils.intersection(requests, overlapSpan.getBioSeq()), operlapSpans);
 		
 		for(SeqSpan span : operlapSpans){
-			loaded.addAll(super.loadFeatures(span, feature));
+			loaded.putAll(super.loadFeatures(span, feature));
 			
 			if(Thread.currentThread().isInterrupted()){
 				break;
@@ -188,9 +190,13 @@ public class Delegate extends QuickLoadSymLoader {
 	}
 	
 	@Override
-	protected List<? extends SeqSymmetry> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+	protected Map<String, List<? extends SeqSymmetry>> addSymmtries(
+			final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+		Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
+		added.put(uri.toString(), results);
+		
 		if (results == null || results.isEmpty()) {
-			return  Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 		
 		if (results.get(0) instanceof GraphSym) {
@@ -212,10 +218,9 @@ public class Delegate extends QuickLoadSymLoader {
 				}
 			}
 			
-			return results;
+			return added;
 		}
 
-		
 		BioSeq seq = span.getBioSeq();
 		if(seq.getAnnotation(uri.toString()) != null){
 			//TODO: Check for other top level glyphs.
@@ -228,7 +233,8 @@ public class Delegate extends QuickLoadSymLoader {
 		}
 		
 		feature.addMethod(uri.toString());
-		return results;
+		
+		return added;
 	}
 
 	private void addWholeGraph(GraphSym graphSym, GenericFeature feature) {

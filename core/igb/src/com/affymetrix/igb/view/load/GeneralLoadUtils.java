@@ -796,10 +796,11 @@ public final class GeneralLoadUtils {
 		}
 
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
-		final CThreadWorker<List<SeqSymmetry>, Object> worker = new CThreadWorker<List<SeqSymmetry>, Object>("Loading feature " + feature.featureName, Thread.MIN_PRIORITY) {
+		final CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object> worker 
+				= new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>("Loading feature " + feature.featureName, Thread.MIN_PRIORITY) {
 			
 			@Override
-			protected List<SeqSymmetry> runInBackground() {
+			protected Map<String, List<? extends SeqSymmetry>> runInBackground() {
 				try {
 					return loadFeaturesForSym(feature, optimized_sym);
 				} catch(RuntimeException re) {
@@ -809,7 +810,7 @@ public final class GeneralLoadUtils {
 						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
 					}
 				}
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			}
 
 			@Override
@@ -837,7 +838,7 @@ public final class GeneralLoadUtils {
 				}
 
 				try {
-					List<SeqSymmetry> result = get();
+					Map<String, List<? extends SeqSymmetry>> result = get();
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 							Level.SEVERE, "Unable to get refresh action result.", ex);
@@ -849,24 +850,25 @@ public final class GeneralLoadUtils {
 	}
 
 	//TO DO: Make this private again.
-	public static List<SeqSymmetry> loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception{
+	public static Map<String, List<? extends SeqSymmetry>> loadFeaturesForSym(
+			GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception{
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
-		List<SeqSymmetry> loaded = new ArrayList<SeqSymmetry>();
+		Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
 		SeqUtils.convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
 		if (feature.gVersion.gServer.serverType == null) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 		Thread thread = Thread.currentThread();
 		
 		for (SeqSpan optimized_span : optimized_spans) {
-			List<? extends SeqSymmetry> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
+			Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
 			// If thread was interruped then it might return null. 
 			// So avoid null pointer exception, check it here.
 			if(results != null && !results.isEmpty()){
-				loaded.addAll(results);
+				loaded.putAll(results);
 			}
 			
 			if (thread.isInterrupted()) {

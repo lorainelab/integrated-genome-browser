@@ -96,7 +96,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		return friendlyName;
 	}
 
-	public List<? extends SeqSymmetry> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, Exception {
 		try {
 			init();
@@ -104,7 +104,7 @@ public class QuickLoadSymLoader extends SymLoader {
 			
 			if (this.symL != null && this.symL.isResidueLoader()) {
 				loadResiduesThread(feature, overlapSpan);
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			} else {
 				return loadSymmetriesThread(feature, overlapSpan);
 			}
@@ -120,11 +120,11 @@ public class QuickLoadSymLoader extends SymLoader {
 		}
 	}
 
-	protected List<? extends SeqSymmetry> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+	protected Map<String, List<? extends SeqSymmetry>> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
 			throws OutOfMemoryError, Exception {
 		//Do not not anything in case of genome. Just refresh.
 		if (Constants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 		return loadAndAddSymmetries(feature, overlapSpan);
 	}
@@ -136,11 +136,11 @@ public class QuickLoadSymLoader extends SymLoader {
 	 * @throws IOException
 	 * @throws OutOfMemoryError
 	 */
-	private List<? extends SeqSymmetry> loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
+	private Map<String, List<? extends SeqSymmetry>> loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
 			throws Exception, OutOfMemoryError {
 
 		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 
 		setStyle(feature);
@@ -156,7 +156,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
 		if (Thread.currentThread().isInterrupted()) {
 			results = null;
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 
 //		boolean ret = false;
@@ -164,7 +164,7 @@ public class QuickLoadSymLoader extends SymLoader {
 			return addSymmtries(span, results, feature);
 		}
 
-		return Collections.<SeqSymmetry>emptyList();
+		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 	}
 
 	public void loadAndAddAllSymmetries(final GenericFeature feature)
@@ -216,7 +216,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		//style.setFeature(feature);
 	}
 
-	protected List<? extends SeqSymmetry> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+	protected Map<String, List<? extends SeqSymmetry>> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
 		results = SeqUtils.filterForOverlappingSymmetries(span, results);
 		return SymLoader.splitFilterAndAddAnnotation(span, results, feature);
 	}

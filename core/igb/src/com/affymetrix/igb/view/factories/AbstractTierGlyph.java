@@ -108,16 +108,16 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		return (RootSeqSymmetry) this.getInfo();
 	}
 	
-	protected List<SeqSymmetry> loadData(SeqSpan span) {
+	protected Map<String, List<? extends SeqSymmetry>> loadData(SeqSpan span) {
 		try {
 			GenericFeature feature = style.getFeature();
 			if(feature == null){
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			}
 			
 			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
 			if (optimized_sym == null) {
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			}
 			
 			Application.getSingleton().addNotLockedUpMsg("Loading "+getAnnotStyle().getTrackName());
@@ -127,7 +127,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			Logger.getLogger(AbstractTierGlyph.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		return Collections.<SeqSymmetry>emptyList();
+		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 	}
 	
 	public void initUnloaded() {

@@ -217,7 +217,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span,
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span,
 			GenericFeature feature) throws Exception {
 		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
 	}

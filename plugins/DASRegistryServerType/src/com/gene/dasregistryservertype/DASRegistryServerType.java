@@ -519,18 +519,14 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
-		List<? extends SeqSymmetry> syms = null;
+	public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) {
 		try {
-			syms = super.loadFeatures(span, feature);
+			return super.loadFeatures(span, feature);
 		}
 		catch (Exception x) {
 			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load " + feature.featureName + ", " + x.getMessage());
 		}
-		if (syms == null) {
-			syms = new ArrayList<SeqSymmetry>();
-		}
-		return syms;
+		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 	}
 
 	// http://www.petefreitag.com/item/445.cfm

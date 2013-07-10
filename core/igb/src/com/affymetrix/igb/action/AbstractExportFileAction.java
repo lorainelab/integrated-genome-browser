@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
 
@@ -29,12 +30,14 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import javax.swing.filechooser.FileFilter;
 
 public abstract class AbstractExportFileAction
 extends GenericAction implements SymSelectionListener {
 	private static final long serialVersionUID = 1l;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final ExportFileModel model;
+	private final Map<FileTypeCategory, FileFilter> preferredFilters;
 	
 	protected AbstractExportFileAction(
 			String text,
@@ -45,6 +48,7 @@ extends GenericAction implements SymSelectionListener {
 			boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 		model = new ExportFileModel();
+		preferredFilters = new HashMap<FileTypeCategory, FileFilter>();
 	}
 
 	/**
@@ -85,7 +89,18 @@ extends GenericAction implements SymSelectionListener {
 			for (UniFileFilter filter : filter2writers.keySet()) {
 				chooser.addChoosableFileFilter(filter);
 			}
-			chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
+			FileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
+			if(preferredFilter == null){
+				chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
+			} else {
+				for(FileFilter filter : chooser.getChoosableFileFilters()){
+					if(filter.hashCode() == preferredFilter.hashCode()){
+						chooser.setFileFilter(filter);
+						break;
+					}
+				}
+			}
+			
 			int option = chooser.showSaveDialog(null);
 			if (option == JFileChooser.APPROVE_OPTION) {
 				FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
@@ -94,7 +109,9 @@ extends GenericAction implements SymSelectionListener {
 				try {
 					File fil = chooser.getSelectedFile();
 					dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-					exportFile(filter2writers.get(chooser.getFileFilter()), dos, aseq, atier);
+					FileFilter selectedFilter = chooser.getFileFilter();
+					preferredFilters.put(rootSym.getCategory(), selectedFilter);
+					exportFile(filter2writers.get(selectedFilter), dos, aseq, atier);
 				} catch (Exception ex) {
 					ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
 				} finally {

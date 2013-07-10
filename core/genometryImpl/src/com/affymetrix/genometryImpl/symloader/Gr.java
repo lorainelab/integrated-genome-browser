@@ -164,12 +164,8 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos) throws IOException {
 		int total_points = graf.getPointCount();
 		for (int i = 0; i < total_points; i++) {
-			int w = graf.getGraphWidthCoord(i);
-			int j = 0;
-			do{
-				dos.writeBytes("" + graf.getGraphXCoord(i) + (j++) + "\t" +
-						graf.getGraphYCoordString(i) + "\n");
-			}while(j < w);
+			dos.writeBytes("" + graf.getGraphXCoord(i) + "\t" +
+					graf.getGraphYCoordString(i) + "\n");
 		}
 	}
 	

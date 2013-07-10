@@ -474,7 +474,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 				smv.setZoomSpotX(cbox.x + cbox.width);
 				smv.setZoomSpotY(cbox.y + cbox.height);
 				
-				if (!startedInAxisTier() && rubber_band_start != null) {
+				if (rubber_band_start != null) {
 					// started outside axis tier: user is trying to select glyphs
 					List<GlyphI> glyphs = doTheSelection(cbox);
 					showSelection(glyphs, rubber_band_start);
@@ -483,49 +483,6 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
 			rubber_band_start = null; // for garbage collection
 		}
-	}
-
-	// did the most recent drag start in the axis tier?
-	private boolean startedInAxisTier() {
-		GlyphI axis_tier = smv.getAxisTier();
-		if (axis_tier == null){
-			return false;
-		}
-		boolean started_in_axis_tier = (rubber_band_start != null)
-				&& (axis_tier != null)
-				&& axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
-		return started_in_axis_tier;
-	}
-
-	// This is called ONLY at the end of a rubber-band drag.
-	private List<GlyphI> doTheSelection(List<GlyphI> glyphs) {
-		// Remove any children of the axis tier (like contigs) from the selections.
-		// Selecting contigs is something you usually do not want to do.  It is
-		// much more likely that if someone dragged across the axis, they want to
-		// select glyphs in tiers above and below but not IN the axis.
-		ListIterator<GlyphI> li = glyphs.listIterator();
-		while (li.hasNext()) {
-			GlyphI g = li.next();
-			if (isInAxisTier(g)) {
-				li.remove();
-			}
-		}
-		// Now correct for the fact that we might be zoomed way-out.  In that case
-		// select only the parent glyphs (RNA's), not all the little children (Exons).
-		Point2D.Double zoom_point = new Point2D.Double(0, 0); // dummy variable, value not used
-		List<GlyphI> corrected = new ArrayList<GlyphI>(glyphs.size());
-		for (int i = 0; i < glyphs.size(); i++) {
-			GlyphI g = glyphs.get(i);
-			GlyphI zc = map.zoomCorrectedGlyphChoice(g, zoom_point);
-			if (!corrected.contains(zc)) {
-				corrected.add(zc);
-			}
-		}
-		glyphs = corrected;
-		
-		glyphs = new ArrayList<GlyphI>(SeqMapView.getParents(glyphs));
-		
-		return glyphs;
 	}
 
 	public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect){	
@@ -579,22 +536,6 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		}
 	}
 	
-	private boolean isInAxisTier(GlyphI g) {
-		if (smv.getAxisTier() == null) {
-			return false;
-		}
-
-		TierGlyph axis_tier = smv.getAxisTier();
-		GlyphI p = g;
-		while (p != null) {
-			if (p == axis_tier) {
-				return true;
-			}
-			p = p.getParent();
-		}
-		return false;
-	}
-
 	private static void toggleSelections(NeoMap map, Collection<GlyphI> glyphs) {
 		List<GlyphI> current_selections = map.getSelected();
 		Iterator<GlyphI> iter = glyphs.iterator();

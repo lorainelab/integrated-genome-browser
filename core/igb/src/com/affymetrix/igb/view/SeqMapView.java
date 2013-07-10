@@ -425,7 +425,7 @@ public class SeqMapView extends JPanel
 
 		// A "Smart" rubber band is necessary becaus we don't want our attempts
 		// to drag the graph handles to also cause rubber-banding
-		RubberBand srb = new RubberBand(seqmap);
+		RubberBand srb = new SeqMapViewRubberBand(seqmap);
 		seqmap.setRubberBand(srb);
 		seqmap.addRubberBandListener(mouse_listener);
 		srb.setColor(new Color(100, 100, 255));
@@ -2593,4 +2593,16 @@ public class SeqMapView extends JPanel
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
 	}
 	
+	private class SeqMapViewRubberBand extends RubberBand {
+		public SeqMapViewRubberBand(Component c) {
+			super(c);
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) { 
+			if (axis_tier != null && !axis_tier.inside(e.getX(), e.getY())) {
+				heardEvent(e); 
+			}
+		}
+	}
 }

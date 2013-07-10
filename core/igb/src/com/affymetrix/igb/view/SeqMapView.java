@@ -136,27 +136,6 @@ public class SeqMapView extends JPanel
 	// mapping of annotated seq to virtual "view" seq
 	protected MutableSeqSymmetry seq2viewSym;
 	protected SeqSymmetry[] transform_path;
-	public static final String PREF_COORDINATE_LABEL_FORMAT = "Coordinate label format";
-	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT}
-	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
-	 */
-	public static final String VALUE_COORDINATE_LABEL_FORMAT_COMMA = "COMMA";
-	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
-	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
-	 */
-	public static final String VALUE_COORDINATE_LABEL_FORMAT_FULL = "FULL";
-	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
-	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
-	 */
-	public static final String VALUE_COORDINATE_LABEL_FORMAT_ABBREV = "ABBREV";
-	/**
-	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
-	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
-	 */
-	public static final String VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
 	public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
 	public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
 	/**
@@ -266,7 +245,7 @@ public class SeqMapView extends JPanel
 				return;
 			}
 
-			if (pce.getKey().equals(PREF_COORDINATE_LABEL_FORMAT)) {
+			if (pce.getKey().equals(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT)) {
 				AxisGlyph ag = getAxisGlyph();
 				if (ag != null) {
 					setAxisFormatFromPrefs(ag);
@@ -670,12 +649,12 @@ public class SeqMapView extends JPanel
 	 */
 	public static void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
-		String axis_format = PreferenceUtils.getTopNode().get(PREF_COORDINATE_LABEL_FORMAT, VALUE_COORDINATE_LABEL_FORMAT_COMMA);
-		if (VALUE_COORDINATE_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
+		String axis_format = PreferenceUtils.getTopNode().get(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT, CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
+		if (CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.COMMA);
-		} else if (VALUE_COORDINATE_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
+		} else if (CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.FULL);
-		} else if (VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
+		} else if (CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.NO_LABELS);
 		} else {
 			axis.setLabelFormat(AxisGlyph.ABBREV);

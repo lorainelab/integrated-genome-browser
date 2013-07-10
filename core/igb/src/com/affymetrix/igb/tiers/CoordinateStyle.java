@@ -6,6 +6,28 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 
 public final class CoordinateStyle {
+	/**
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
+	 */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_FULL = "FULL";
+	/**
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT}
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
+	 */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_COMMA = "COMMA";
+	/**
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
+	 */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_ABBREV = "ABBREV";
+	public static final String PREF_COORDINATE_LABEL_FORMAT = "Coordinate label format";
+	/**
+	 * One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMAT},
+	 * {@link #PREF_COORDINATE_LABEL_FORMAT}.
+	 */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
+	
 	public static final String PREF_COORDINATE_COLOR = "Coordinate color";
 	public static final String PREF_COORDINATE_BACKGROUND = "Coordinate background";
 	public static final String PREF_COORDINATE_NAME = "Coordinate name";
@@ -74,7 +96,7 @@ public final class CoordinateStyle {
 			setForeground(default_coordinate_color);
 			setBackground(default_coordinate_background);
 			Application igb = Application.getSingleton();
-			PreferenceUtils.getTopNode().put(SeqMapView.PREF_COORDINATE_LABEL_FORMAT, SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
+			PreferenceUtils.getTopNode().put(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT, CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
 			SeqMapView.setAxisFormatFromPrefs(igb.getMapView().getAxisGlyph());
 		}
 	};

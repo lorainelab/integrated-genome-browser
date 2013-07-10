@@ -6,6 +6,7 @@ import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.shared.CodonGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.tiers.AccordionTierResizer;
+import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.OrfAnalyzer;
@@ -18,10 +19,10 @@ import com.affymetrix.igb.view.SeqMapView;
 public class OtherOptionsView extends IPrefEditorComponent {
 
 	private static final long serialVersionUID = 1L;
-	String default_label_format = SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
-	String[] label_format_options = new String[]{SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_FULL,
-		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA,
-		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_ABBREV};
+	String default_label_format = CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
+	String[] label_format_options = new String[]{CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_FULL,
+		CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA,
+		CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_ABBREV};
 
 
 	/** Creates new form OtherOptions */
@@ -44,7 +45,7 @@ public class OtherOptionsView extends IPrefEditorComponent {
         coordinatePanel = new javax.swing.JPanel();
         numFormatLabel = new javax.swing.JLabel();
         coordinates_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),
-            SeqMapView.PREF_COORDINATE_LABEL_FORMAT,
+            CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT,
             label_format_options,
             default_label_format)
         ;

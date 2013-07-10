@@ -137,7 +137,7 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="coordinates_label_format_CB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),&#xa;    SeqMapView.PREF_COORDINATE_LABEL_FORMAT,&#xa;    label_format_options,&#xa;    default_label_format)&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),&#xa;    CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT,&#xa;    label_format_options,&#xa;    default_label_format)&#xa;"/>
           </AuxValues>
         </Component>
       </SubComponents>

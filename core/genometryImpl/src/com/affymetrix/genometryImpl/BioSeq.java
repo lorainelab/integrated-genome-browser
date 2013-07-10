@@ -196,14 +196,14 @@ public class BioSeq implements SearchableCharIterator {
 	 *     either a TypeContainerAnnot or a GraphSym, or a ScoredContainerSym,
 	 *     so GraphSyms can be retrieved with graph id given as type
 	 */
-	public SymWithProps getAnnotation(String type) {
+	public RootSeqSymmetry getAnnotation(String type) {
 		if (type_id2sym == null) {
 			return null; }
 		return type_id2sym.get(type);
 	}
 
-	public List<SymWithProps> getAnnotations(Pattern regex) {
-		List<SymWithProps> results = new ArrayList<SymWithProps>();
+	public List<RootSeqSymmetry> getAnnotations(Pattern regex) {
+		List<RootSeqSymmetry> results = new ArrayList<RootSeqSymmetry>();
 		if (type_id2sym != null)  {
 			Matcher match = regex.matcher("");
 			for (Map.Entry<String, RootSeqSymmetry> entry : type_id2sym.entrySet()) {

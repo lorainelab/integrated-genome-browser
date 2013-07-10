@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
@@ -43,7 +44,7 @@ public abstract class CytobandGlyph {
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
 	public static Glyph makeCytobandGlyph(BioSeq sma, GlyphI axis_tier, int tier_index, SeqMapView smv) {
-		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
+		List<RootSeqSymmetry> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
 		if (cyto_tiers.isEmpty()) {
 			return null;
 		}

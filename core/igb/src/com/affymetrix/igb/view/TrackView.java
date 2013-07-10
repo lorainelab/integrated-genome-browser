@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -126,7 +125,7 @@ public class TrackView {
 		// For example, accessing methods for the first time on a LazyChpSym can cause it to dynamically add
 		//      probeset annotation tracks
 		for (int i = 0; i < seq.getAnnotationCount(); i++) {
-			SeqSymmetry annotSym = seq.getAnnotation(i);
+			RootSeqSymmetry annotSym = seq.getAnnotation(i);
 			// skip over any cytoband data.  It is shown in a different way
 			if (annotSym instanceof TypeContainerAnnot) {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
@@ -134,11 +133,8 @@ public class TrackView {
 					continue;
 				}
 			}
-			if (annotSym instanceof SymWithProps) {
-				addAnnotationGlyphs(smv, (SymWithProps)annotSym, seq);
-			}
+			addAnnotationGlyphs(smv, annotSym, seq);
 		}
-		
 	}
 
 	void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
@@ -147,12 +143,11 @@ public class TrackView {
 		}
 	}
 	
-	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym, BioSeq seq) {
+	private void addAnnotationGlyphs(SeqMapView smv, RootSeqSymmetry annotSym, BioSeq seq) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		String meth = BioSeq.determineMethod(annotSym);
-
-		if (meth != null && annotSym instanceof RootSeqSymmetry) {
-			MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)annotSym).getCategory());
+		if (meth != null) {
+			MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 			factory.createGlyphs(annotSym, style, smv, seq);
 		}

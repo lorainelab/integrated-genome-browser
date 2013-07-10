@@ -2,10 +2,9 @@ package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
@@ -15,7 +14,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 			
 	@Override
-	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
+	public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
 		if (sym != null) {
 			TierGlyph tierGlyph = smv.getTrack(style, TierGlyph.Direction.NONE);
 			tierGlyph.setTierType(TierGlyph.TierType.SEQUENCE);

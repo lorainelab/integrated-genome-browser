@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import java.awt.Color;
@@ -500,7 +499,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	@Override
-	public void createGlyphs(SymWithProps sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
+	public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
 		if (sym != null) {
 			int glyph_depth = style.getGlyphDepth();
 			TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;

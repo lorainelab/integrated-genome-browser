@@ -79,23 +79,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private SymmetryFilterI filter = null;
 	
 	public void restoreToDefault() {
-		Map<String, String> properties = null;
 		if(this.getFeature() != null){
-			properties = this.getFeature().featureProps;
+			initStyle(IGBStateProvider.getDefaultInstance(), this.getFeature().featureProps);
 		}
-		
-		initStyle(IGBStateProvider.getDefaultInstance(), properties);
-		
-		if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-			this.setForeground(CoordinateStyle.default_coordinate_color);
-			this.setBackground(CoordinateStyle.default_coordinate_background);
-			Application igb = Application.getSingleton();
-			PreferenceUtils.getTopNode().put(SeqMapView.PREF_COORDINATE_LABEL_FORMAT, SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
-			SeqMapView.setAxisFormatFromPrefs(igb.getMapView().getAxisGlyph());
-		}
-		if (!track_name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-			this.setTrackName(original_track_name);
-		}
+		this.setTrackName(original_track_name);
 		
 		if (node != null) {
 			try {			

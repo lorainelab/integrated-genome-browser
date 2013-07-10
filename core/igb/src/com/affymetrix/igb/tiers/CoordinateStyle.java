@@ -1,6 +1,8 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 
 public final class CoordinateStyle {
@@ -65,6 +67,15 @@ public final class CoordinateStyle {
 		@Override
 		public Color getLabelBackground() {
 			return getBackground();
+		}
+		
+		@Override
+		public void restoreToDefault() {
+			setForeground(default_coordinate_color);
+			setBackground(default_coordinate_background);
+			Application igb = Application.getSingleton();
+			PreferenceUtils.getTopNode().put(SeqMapView.PREF_COORDINATE_LABEL_FORMAT, SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
+			SeqMapView.setAxisFormatFromPrefs(igb.getMapView().getAxisGlyph());
 		}
 	};
 }

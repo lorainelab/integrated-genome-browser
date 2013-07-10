@@ -200,6 +200,7 @@ public class SeqMapView extends JPanel
 //	JMenuItem viewParentinSequenceViewer = empty_menu_item;
 	// for right-click on background
 	private final SeqMapViewMouseListener mouse_listener;
+	private AxisGlyph axis_glyph = null;
 	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private SeqSpan clampedRegion = null; //Span representing clamped region
@@ -1027,21 +1028,21 @@ public class SeqMapView extends JPanel
 		resultAxisTier.setPacker(null);
 		resultAxisTier.setFixedPixHeight(54);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
-		AxisGlyph axis = seqmap.addAxis(27);
-		axis.setHitable(true);
-		axis.setFont(axisFont);
+		axis_glyph = seqmap.addAxis(27);
+		axis_glyph.setHitable(true);
+		axis_glyph.setFont(axisFont);
 
 		Color axis_bg = CoordinateStyle.coordinate_annot_style.getBackground();
 		Color axis_fg = CoordinateStyle.coordinate_annot_style.getForeground();
 
-		axis.setBackgroundColor(axis_bg);
+		axis_glyph.setBackgroundColor(axis_bg);
 		resultAxisTier.setBackgroundColor(axis_bg);
 		resultAxisTier.setFillColor(axis_bg);
-		axis.setForegroundColor(axis_fg);
+		axis_glyph.setForegroundColor(axis_fg);
 		resultAxisTier.setForegroundColor(axis_fg);
-		setAxisFormatFromPrefs(axis);
+		setAxisFormatFromPrefs(axis_glyph);
 		addCytobandGlyph(resultAxisTier, tier_index);
-		resultAxisTier.addChild(axis);
+		resultAxisTier.addChild(axis_glyph);
 
 		// it is important to set the colors before adding the tier
 		// to the map, else the label tier colors won't match
@@ -1051,7 +1052,7 @@ public class SeqMapView extends JPanel
 			seqmap.addTier(resultAxisTier, false);
 		}
 
-		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);
+		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis_glyph);
 
 		resultAxisTier.addChild(seq_glyph);
 		resultAxisTier.setCoords(0, 0, seqmap.getScene().getCoordBox().getWidth(), 54);
@@ -2403,17 +2404,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public final AxisGlyph getAxisGlyph() {
-		if (axis_tier == null) {
-			return null;
-		}
-
-		AxisGlyph ag = null;
-		for (GlyphI child : axis_tier.getChildren()) {
-			if (child instanceof AxisGlyph) {
-				ag = (AxisGlyph) child;
-			}
-		}
-		return ag;
+		return axis_glyph;
 	}
 
 	@Override

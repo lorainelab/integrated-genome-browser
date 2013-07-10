@@ -46,6 +46,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import java.util.Collections;
 
 /**
  * This uses the DAS Registry to find features for the selected species (and version if possible)

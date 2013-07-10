@@ -77,7 +77,8 @@ public class SymLoaderTabix extends SymLoader {
 		for (String seqID : tabixLineReader.getSequenceNames()) {
 			BioSeq seq = group.getSeq(seqID);
 			if (seq == null) {
-				int length = 1000000000;
+				//int length = 1000000000;
+				int length = 200000000;
 				seq = group.addSeq(seqID, length);
 				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
 						"Sequence not found. Adding {0} with default length {1}",

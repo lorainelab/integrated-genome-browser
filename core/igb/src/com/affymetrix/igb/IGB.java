@@ -261,7 +261,7 @@ public final class IGB extends Application
 			/* This method is used to convert the given file path from relative to absolute.
 			 */
 			private URI relativeToAbsolute(String path) throws URISyntaxException {
-				if (!(path.startsWith("file:") && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:")))) {
+				if (!(path.startsWith("file:")) && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:"))) {
 					return getAbsoluteFile(path).toURI();
 				}
 				return new URI(path);

@@ -137,6 +137,7 @@ Triticum aestivum	Common wheat	T_aestivum
 Trypanosoma brucei	Protozoan parasites	T_brucei
 Tupaia belangeri	Northern tree shrew	T_belangeri		Tupaia_belangeri
 Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus
+Vaccinium corymbosum	blueberry	V_corymbosum
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos
 Vitis vinifera	Common grape vine	V_vinifera
 Volvox carteri	Volvox	V. carteri	V_carteri

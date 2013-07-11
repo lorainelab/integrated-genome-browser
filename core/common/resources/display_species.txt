@@ -20,6 +20,7 @@ D_melanogaster.png
 M_musculus.png
 H_sapiens.png
 A_thaliana.png
+V_corymbosum.png
 E_coli_K12-MG1655.png
 O_sativa_japonica.png
 S_pombe.png

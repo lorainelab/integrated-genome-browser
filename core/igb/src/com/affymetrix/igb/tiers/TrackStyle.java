@@ -351,12 +351,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setDirectionType(prev_direction_type);
 			}
 		}
-		String color_by_rgb_string = (String) props.get(PROP_COLOR_BY_RGB);
-		if (color_by_rgb_string != null && !"".equals(color_by_rgb_string)){
-			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
-				this.color_provider = new RGB();
-			} 
-		}
+//		String color_by_rgb_string = (String) props.get(PROP_COLOR_BY_RGB);
+//		if (color_by_rgb_string != null && !"".equals(color_by_rgb_string)){
+//			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
+//				this.color_provider = new RGB();
+//			} 
+//		}
 		String nameSizeString = (String) props.get(PROP_NAME_SIZE);
 		if (nameSizeString != null && !"".equals(nameSizeString)) {
 			float prev_font_size = track_name_size;

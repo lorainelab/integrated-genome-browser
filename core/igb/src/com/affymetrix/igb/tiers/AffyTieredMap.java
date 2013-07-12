@@ -607,6 +607,13 @@ public class AffyTieredMap extends NeoMap {
 		return axis;
 	}
 
+	public AxisGlyph getAxis() {
+		if(axes.isEmpty()){
+			return null;
+		}
+		return axes.get(0);
+	}
+	
 	/**
 	 * Tries to determine the glyph you really wanted to choose
 	 * based on the one you clicked on.

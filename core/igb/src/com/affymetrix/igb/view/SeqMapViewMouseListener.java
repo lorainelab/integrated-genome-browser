@@ -366,7 +366,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 				}
 				if (toggle_event && glyph.isSelected()) {
 					map.deselect(glyph);
-				} else if (glyph != smv.getAxisGlyph() && glyph != smv.getSequnceGlyph()) {
+				} else if (!glyph.supportsSubSelection()) {
 					map.select(glyph);
 				}
 			}
@@ -374,7 +374,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 			//      if (toggle_event && map.getSelected().contains(topgl)) {
 			if (toggle_event && topgl.isSelected()) {
 				map.deselect(topgl);
-			} else if (topgl != smv.getAxisGlyph() && topgl != smv.getSequnceGlyph()) {
+			} else if (!topgl.supportsSubSelection()) {
 				map.select(topgl);
 			}
 
@@ -612,16 +612,17 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		int min = Math.min(select_start, select_end);
 		int max = Math.max(select_start, select_end);
 
-		if (sub_sel_glyph == smv.getSequnceGlyph()) {
-			//Add one for interbase ???
-			SeqSymmetry new_region = new SingletonSeqSymmetry(min, max + 1, smv.getAnnotatedSeq());
-			smv.setSelectedRegion(new_region, true);
-		} else if (sub_sel_glyph == smv.getAxisGlyph()) {
+		// First check if it is axis glyph
+		if (sub_sel_glyph == smv.getSeqMap().getAxis()) {
 			map.deselect(sub_sel_glyph);
 			if (max > min) {
 				smv.zoomTo(min, max);
 			}
-		}
+		} else { // If it is not axis glyph then assume it to be sequence glyph
+			//Add one for interbase ???
+			SeqSymmetry new_region = new SingletonSeqSymmetry(min, max + 1, smv.getAnnotatedSeq());
+			smv.setSelectedRegion(new_region, true);
+		} 
 		shouldSubSelect = false;
 	}
 

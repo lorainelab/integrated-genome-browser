@@ -132,7 +132,6 @@ public class SymLoaderTabix extends SymLoader {
 		if(startEnd == null){
 			return new ArrayList<SeqSymmetry>();
 		}
-		System.out.println("***** " + startEnd[0] + ":" + startEnd[1]);
 		return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
     }
 

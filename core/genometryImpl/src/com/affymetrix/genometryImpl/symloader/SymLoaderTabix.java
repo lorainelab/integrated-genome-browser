@@ -80,9 +80,9 @@ public class SymLoaderTabix extends SymLoader {
 				//int length = 1000000000;
 				int length = 200000000;
 				seq = group.addSeq(seqID, length);
-				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
-						"Sequence not found. Adding {0} with default length {1}",
-						new Object[]{seqID,length});
+//				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
+//						"Sequence not found. Adding {0} with default length {1}",
+//						new Object[]{seqID,length});
 			}
 			seqs.put(seq, seqID);
 		}

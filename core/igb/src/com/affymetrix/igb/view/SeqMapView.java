@@ -179,7 +179,6 @@ public class SeqMapView extends JPanel
 //	JMenuItem viewParentinSequenceViewer = empty_menu_item;
 	// for right-click on background
 	private final SeqMapViewMouseListener mouse_listener;
-	private AxisGlyph axis_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private SeqSpan clampedRegion = null; //Span representing clamped region
 	protected TierLabelManager tier_manager;
@@ -245,7 +244,7 @@ public class SeqMapView extends JPanel
 			}
 
 			if (pce.getKey().equals(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT)) {
-				AxisGlyph ag = getAxisGlyph();
+				AxisGlyph ag = seqmap.getAxis();
 				if (ag != null) {
 					setAxisFormatFromPrefs(ag);
 				}
@@ -1006,7 +1005,7 @@ public class SeqMapView extends JPanel
 		resultAxisTier.setPacker(null);
 		resultAxisTier.setFixedPixHeight(54);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
-		axis_glyph = seqmap.addAxis(27);
+		AxisGlyph axis_glyph = seqmap.addAxis(27);
 		axis_glyph.setHitable(true);
 		axis_glyph.setFont(axisFont);
 
@@ -2370,10 +2369,6 @@ public class SeqMapView extends JPanel
 
 	public final boolean getShowPropertiesTooltip() {
 		return show_prop_tooltip;
-	}
-
-	public final AxisGlyph getAxisGlyph() {
-		return axis_glyph;
 	}
 
 	@Override

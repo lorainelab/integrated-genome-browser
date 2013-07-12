@@ -56,11 +56,10 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import java.util.regex.Pattern;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -645,7 +644,7 @@ public class SeqMapView extends JPanel
 	/**
 	 * Sets the axis label format from the value in the persistent preferences.
 	 */
-	private static void setAxisFormatFromPrefs(AxisGlyph axis) {
+	public static void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
 		String axis_format = PreferenceUtils.getTopNode().get(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT, CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
 		if (CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
@@ -963,7 +962,7 @@ public class SeqMapView extends JPanel
 		hairline = new UnibrowHairline(seqmap);
 		//hairline.getShadow().setLabeled(hairline_is_labeled);
 		addPreviousTierGlyphs(seqmap, temp_tiers);
-		axis_tier = addAxisTier(axis_index);
+		axis_tier = AxisGlyphFactory.addAxisTier(this, axis_index);
 		addAnnotationTracks();
 		hideEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
 	}
@@ -990,56 +989,10 @@ public class SeqMapView extends JPanel
 		return (G)seqmap.getItemFromTier(datamodel);
 	}
 	
-	/**
-	 * Set up a tier with fixed pixel height and place axis in it.
-	 */
-	private TierGlyph addAxisTier(int tier_index) {
-		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
-		resultAxisTier.setInfo(new RootSeqSymmetry(){
-			@Override public FileTypeCategory getCategory() { return FileTypeCategory.Axis; }
-			@Override public void search(Set<SeqSymmetry> results, String id) { }
-			@Override public void searchHints(Set<String> results, Pattern regex, int limit) { }
-			@Override public void search(Set<SeqSymmetry> result, Pattern regex, int limit) { }
-			@Override public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) { }
-		});
-		resultAxisTier.setPacker(null);
-		resultAxisTier.setFixedPixHeight(54);
-		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
-		AxisGlyph axis_glyph = seqmap.addAxis(27);
-		axis_glyph.setHitable(true);
-		axis_glyph.setFont(axisFont);
-
-		axis_glyph.setBackgroundColor(resultAxisTier.getBackgroundColor());
-		axis_glyph.setForegroundColor(resultAxisTier.getForegroundColor());
-	
-		setAxisFormatFromPrefs(axis_glyph);
-		addCytobandGlyph(resultAxisTier, tier_index);
-		resultAxisTier.addChild(axis_glyph);
-
-		// it is important to set the colors before adding the tier
-		// to the map, else the label tier colors won't match
-		if (seqmap.getTiers().size() >= tier_index) {
-			seqmap.addTier(resultAxisTier, tier_index);
-		} else {
-			seqmap.addTier(resultAxisTier, false);
-		}
-
-		CharSeqGlyph seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_glyph);
-		resultAxisTier.addChild(seq_glyph);
-		
-		resultAxisTier.setCoords(0, 0, seqmap.getScene().getCoordBox().getWidth(), 54);
-		
-		return resultAxisTier;
+	public boolean shouldAddCytobandGlyph() {
+		return true;
 	}
 	
-	protected void addCytobandGlyph(TransformTierGlyph resultAxisTier, int tier_index) {
-		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, tier_index, this);
-		if (cytoband_glyph != null) {
-			resultAxisTier.addChild(cytoband_glyph);
-			//resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
-		}
-	}
-
 	private void shrinkWrap() {
 		/*
 		 * Shrink wrapping is a little more complicated than one might expect,

@@ -338,6 +338,11 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 
 	@Override
+	public boolean shouldAddCytobandGlyph() {
+		return false;
+	}
+	
+	@Override
 	protected void clear() {
 		stopSlicingThread();
 		super.clear();
@@ -393,8 +398,4 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		// No right click menu in slice view
 	}
 	
-	@Override
-	protected void addCytobandGlyph(TransformTierGlyph resultAxisTier, int tier_index) {
-		// No cytobands for slice view
-	}
 }

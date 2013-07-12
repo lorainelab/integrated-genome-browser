@@ -25,21 +25,13 @@ import java.util.regex.Pattern;
  * @author hiralv
  */
 public class AxisGlyphFactory extends MapTierGlyphFactoryA {
-	public static final Font axisFont = NeoConstants.default_bold_font;
+	private static final int TIER_SIZE = 54;
+	private static final int AXIS_SIZE = 27;
+	private static final Font axisFont = NeoConstants.default_bold_font;
 	
 	public static TierGlyph addAxisTier(SeqMapView smv, int tier_index){
-		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
-		resultAxisTier.setInfo(new RootSeqSymmetry(){
-			@Override public FileTypeCategory getCategory() { return FileTypeCategory.Axis; }
-			@Override public void search(Set<SeqSymmetry> results, String id) { }
-			@Override public void searchHints(Set<String> results, Pattern regex, int limit) { }
-			@Override public void search(Set<SeqSymmetry> result, Pattern regex, int limit) { }
-			@Override public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) { }
-		});
-		resultAxisTier.setPacker(null);
-		resultAxisTier.setFixedPixHeight(54);
-		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
-		AxisGlyph axis_glyph = smv.getSeqMap().addAxis(27);
+		TransformTierGlyph resultAxisTier = getAxisTier();
+		AxisGlyph axis_glyph = smv.getSeqMap().addAxis(AXIS_SIZE);
 		axis_glyph.setHitable(true);
 		axis_glyph.setFont(axisFont);
 
@@ -66,7 +58,7 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 		CharSeqGlyph seq_glyph = CharSeqGlyph.initSeqGlyph(smv.getViewSeq(), axis_glyph);
 		resultAxisTier.addChild(seq_glyph);
 		
-		resultAxisTier.setCoords(0, 0, smv.getSeqMap().getScene().getCoordBox().getWidth(), 54);
+		resultAxisTier.setCoords(0, 0, smv.getSeqMap().getScene().getCoordBox().getWidth(), TIER_SIZE);
 		
 		return resultAxisTier;
 	}
@@ -81,4 +73,18 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 		return "axis";
 	}
 	
+	private static TransformTierGlyph getAxisTier(){
+		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
+		resultAxisTier.setInfo(new RootSeqSymmetry(){
+			@Override public FileTypeCategory getCategory() { return FileTypeCategory.Axis; }
+			@Override public void search(Set<SeqSymmetry> results, String id) { }
+			@Override public void searchHints(Set<String> results, Pattern regex, int limit) { }
+			@Override public void search(Set<SeqSymmetry> result, Pattern regex, int limit) { }
+			@Override public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) { }
+		});
+		resultAxisTier.setPacker(null);
+		resultAxisTier.setFixedPixHeight(TIER_SIZE);
+		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
+		return resultAxisTier;
+	}
 }

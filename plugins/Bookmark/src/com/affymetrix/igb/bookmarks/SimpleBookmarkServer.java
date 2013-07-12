@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
  *  ignores all other input, returns no output, and closes the connection.
  */
 public final class SimpleBookmarkServer {
-	public static final String http_response ="\nAccess-Control-Allow-Origin: \nHTTP/1.1 204 No Content\n\n";
+	public static final String http_response ="\nHTTP/1.1 204 No Content\nAccess-Control-Allow-Origin: *\n";
 	private static final int NO_PORT = -1;
 	public static final int default_server_port = 7085;
 	private static final int ports_to_try = 5;

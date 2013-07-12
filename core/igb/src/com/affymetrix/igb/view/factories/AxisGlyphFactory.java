@@ -40,7 +40,7 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 	
 		SeqMapView.setAxisFormatFromPrefs(axis_glyph);
 		if(smv.shouldAddCytobandGlyph()){
-			GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(smv.getAnnotatedSeq(), resultAxisTier, tier_index, smv);
+			GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(smv, resultAxisTier);
 			if (cytoband_glyph != null) {
 				resultAxisTier.addChild(cytoband_glyph);
 			}

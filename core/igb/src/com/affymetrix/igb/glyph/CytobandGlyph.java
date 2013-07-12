@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.affymetrix.igb.glyph;
 
 import java.awt.Font;
@@ -43,7 +38,8 @@ public abstract class CytobandGlyph {
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	public static Glyph makeCytobandGlyph(BioSeq sma, GlyphI axis_tier, int tier_index, SeqMapView smv) {
+	public static Glyph makeCytobandGlyph(SeqMapView smv, GlyphI axis_tier) {
+		BioSeq sma = smv.getAnnotatedSeq();
 		List<RootSeqSymmetry> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
 		if (cyto_tiers.isEmpty()) {
 			return null;
@@ -101,13 +97,8 @@ public abstract class CytobandGlyph {
 		String meth = BioSeq.determineMethod(cyto_annots);
 		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		TransformTierGlyph cytobandTier = new TransformTierGlyph(style);
-		
-		if (smv.getSeqMap().getTiers().size() >= tier_index) {
-			smv.getSeqMap().addTier(cytobandTier, tier_index);
-		} else {
-			smv.getSeqMap().addTier(cytobandTier, false);
-		}
-		
+		smv.getSeqMap().addTier(cytobandTier, false);
+
 		InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph() {
 			@Override
 			public void setVisibility(boolean isVisible) {

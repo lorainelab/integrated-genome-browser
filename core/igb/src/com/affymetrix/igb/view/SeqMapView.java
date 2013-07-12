@@ -180,7 +180,6 @@ public class SeqMapView extends JPanel
 	// for right-click on background
 	private final SeqMapViewMouseListener mouse_listener;
 	private AxisGlyph axis_glyph = null;
-	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private SeqSpan clampedRegion = null; //Span representing clamped region
 	protected TierLabelManager tier_manager;
@@ -1026,9 +1025,9 @@ public class SeqMapView extends JPanel
 			seqmap.addTier(resultAxisTier, false);
 		}
 
-		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_glyph);
-
+		CharSeqGlyph seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_glyph);
 		resultAxisTier.addChild(seq_glyph);
+		
 		resultAxisTier.setCoords(0, 0, seqmap.getScene().getCoordBox().getWidth(), 54);
 		
 		return resultAxisTier;
@@ -1279,7 +1278,7 @@ public class SeqMapView extends JPanel
 		sym_used_for_title = null;
 		tier_used_in_selection_info = null;
 		seqmap.clearSelected();
-		setSelectedRegion(null, false);
+		setSelectedRegion(null, null, false);
 		//  clear match_glyphs?
 	}
 
@@ -1299,7 +1298,7 @@ public class SeqMapView extends JPanel
 	}
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
-	public final void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
+	public final void setSelectedRegion(SeqSymmetry region_sym, GlyphI seq_glyph, boolean update_widget) {
 		seq_selected_sym = region_sym;
 		// Note: SUBSELECT_SEQUENCE might possibly be set to false in the AltSpliceView
 		if (subselectSequence && seq_glyph != null) {
@@ -1308,7 +1307,7 @@ public class SeqMapView extends JPanel
 			} else {
 				SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
 				// corrected for interbase coords
-				seq_glyph.select(seq_region.getMin(), seq_region.getMax() - 1);
+				seqmap.select(seq_glyph, seq_region.getMin(), seq_region.getMax() - 1);
 				setSelectionStatus(SeqUtils.spanToString(seq_region));
 			}
 			if (update_widget) {
@@ -2371,10 +2370,6 @@ public class SeqMapView extends JPanel
 
 	public final boolean getShowPropertiesTooltip() {
 		return show_prop_tooltip;
-	}
-
-	public final GlyphI getSequnceGlyph() {
-		return seq_glyph;
 	}
 
 	public final AxisGlyph getAxisGlyph() {

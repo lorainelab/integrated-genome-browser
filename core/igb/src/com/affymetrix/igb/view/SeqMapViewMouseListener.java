@@ -621,7 +621,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		} else { // If it is not axis glyph then assume it to be sequence glyph
 			//Add one for interbase ???
 			SeqSymmetry new_region = new SingletonSeqSymmetry(min, max + 1, smv.getAnnotatedSeq());
-			smv.setSelectedRegion(new_region, true);
+			smv.setSelectedRegion(new_region, sub_sel_glyph, true);
 		} 
 		shouldSubSelect = false;
 	}

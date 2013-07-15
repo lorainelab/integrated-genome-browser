@@ -237,11 +237,13 @@ public class TrackView {
 			if(tgfor.getChildCount() == 0){
 				((AbstractTierGlyph)tgfor).initUnloaded();
 			}
+			tgfor.pack(gviewer.getSeqMap().getView());
 			if (style.getSeparate()) {
 				TierGlyph tgrev = gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
 				if(tgrev.getChildCount() == 0){
 					((AbstractTierGlyph)tgrev).initUnloaded();
 				}
+				tgrev.pack(gviewer.getSeqMap().getView());
 			}
 		}else {
 			//rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
@@ -249,6 +251,7 @@ public class TrackView {
 			if(tg.getChildCount() == 0 && !style.getFloatTier() && !style.getJoin()){
 				((AbstractTierGlyph)tg).initUnloaded();
 			}
+			tg.pack(gviewer.getSeqMap().getView());
 		}
 	}
 }

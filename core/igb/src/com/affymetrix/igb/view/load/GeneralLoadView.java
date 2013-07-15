@@ -534,7 +534,7 @@ public final class GeneralLoadView {
 
 					public void actionPerformed(ActionEvent e) {
 						refreshDataManagementTable(GeneralLoadUtils.getVisibleFeatures());
-						gviewer.getSeqMap().packTiers(true, true, true);
+						gviewer.getSeqMap().packTiers(false, true, true);
 						gviewer.getSeqMap().stretchToFit(false, true);
 						gviewer.getSeqMap().updateWidget();
 						TierPrefsView.getSingleton().refreshList();

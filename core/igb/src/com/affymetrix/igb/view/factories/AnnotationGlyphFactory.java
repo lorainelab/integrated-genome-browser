@@ -506,10 +506,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			TierGlyph ftier = gviewer.getTrack(style, useDirection);
 			ftier.setTierType(TierGlyph.TierType.ANNOTATION);
 			ftier.setInfo(sym);
-			TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
-			rtier.setTierType(TierGlyph.TierType.ANNOTATION);
-			rtier.setInfo(sym);
 			if (style.getSeparate()) {
+				TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+				rtier.setTierType(TierGlyph.TierType.ANNOTATION);
+				rtier.setInfo(sym);
+			
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);
 				doMiddlegroundShading(rtier, gviewer, seq);
 			} else {

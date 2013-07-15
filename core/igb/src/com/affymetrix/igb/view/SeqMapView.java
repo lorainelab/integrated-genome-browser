@@ -238,10 +238,6 @@ public class SeqMapView extends JPanel
 				return;
 			}
 			
-			if (axis_tier == null) {
-				return;
-			}
-
 			if (pce.getKey().equals(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT)) {
 				AxisGlyph ag = seqmap.getAxis();
 				if (ag != null) {

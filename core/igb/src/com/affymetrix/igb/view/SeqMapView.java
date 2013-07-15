@@ -1496,25 +1496,14 @@ public class SeqMapView extends JPanel
 			match_query_count += query_glyphs.get(i).getChildCount();
 		}
 
-		if (match_query_count <= max_for_matching) {
-			ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
-//			target_glyphs.add(seqmap.getScene().getGlyph());
-			
+		if (match_query_count <= max_for_matching) {			
 			Rectangle2D.Double coordrect = new Rectangle2D.Double(query_glyphs.get(0).getCoordBox().x, 0, 0, seqmap.getScene().getCoordBox().height);
 			for(GlyphI glyph : query_glyphs){
 				Rectangle2D.Double.union(coordrect, glyph.getCoordBox(), coordrect);
 			}
 			
-			for (TierGlyph tg : seqmap.getTiers()) {
-				// Do not perform selection on axis tier childrens
-				if(tg == getAxisTier()){
-					continue;
-				}
-				
-				if (tg.isVisible()) {
-					target_glyphs.addAll(tg.pickTraversal(coordrect, seqmap.getView()));
-				}
-			}
+			List<GlyphI> target_glyphs = doTheSelection(coordrect);
+//			target_glyphs.add(seqmap.getScene().getGlyph());
 			
 			if(target_glyphs.isEmpty()){
 				return;
@@ -1548,6 +1537,23 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect){	
+		List<GlyphI> glyphs = new ArrayList<GlyphI>();
+		
+		for (TierGlyph tg : seqmap.getTiers()) {
+			// Do not perform selection on axis tier childrens
+			if(tg == getAxisTier()){
+				continue;
+			}
+			//First check of tier glyph intersects
+			if (tg.isVisible() && tg.intersects(coordrect, seqmap.getView())) {
+				glyphs.addAll(tg.pickTraversal(coordrect, seqmap.getView()));
+			}
+		}
+		
+		return glyphs;
+	}
+		
 	public final void adjustEdgeMatching(int bases) {
 		getEdgeMatcher().setFuzziness(bases);
 		if (show_edge_matches) {

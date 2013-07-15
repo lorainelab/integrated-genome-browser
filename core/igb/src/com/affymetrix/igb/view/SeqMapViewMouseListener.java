@@ -476,30 +476,13 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 				
 				if (rubber_band_start != null) {
 					// started outside axis tier: user is trying to select glyphs
-					List<GlyphI> glyphs = doTheSelection(cbox);
+					List<GlyphI> glyphs = smv.doTheSelection(cbox);
 					showSelection(glyphs, rubber_band_start);
 				}
 			}
 
 			rubber_band_start = null; // for garbage collection
 		}
-	}
-
-	public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect){	
-		List<GlyphI> glyphs = new ArrayList<GlyphI>();
-		
-		for (TierGlyph tg : map.getTiers()) {
-			// Do not perform selection on axis tier childrens
-			if(tg == smv.getAxisTier()){
-				continue;
-			}
-			//First check of tier glyph intersects
-			if (tg.isVisible() && tg.intersects(coordrect, map.getView())) {
-				glyphs.addAll(tg.pickTraversal(coordrect, map.getView()));
-			}
-		}
-		
-		return glyphs;
 	}
 	
 	private void showSelection(List<GlyphI> glyphs, MouseEvent evt){

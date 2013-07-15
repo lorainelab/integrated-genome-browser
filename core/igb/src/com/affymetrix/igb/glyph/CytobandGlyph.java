@@ -24,8 +24,8 @@ import com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
 
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.factories.TransformTierGlyph;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.TierGlyph;
 
 public abstract class CytobandGlyph {
 	public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
@@ -38,7 +38,7 @@ public abstract class CytobandGlyph {
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	public static Glyph makeCytobandGlyph(SeqMapView smv, GlyphI axis_tier) {
+	public static Glyph makeCytobandGlyph(SeqMapViewExtendedI smv, TierGlyph axis_tier) {
 		BioSeq sma = smv.getAnnotatedSeq();
 		List<RootSeqSymmetry> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
 		if (cyto_tiers.isEmpty()) {
@@ -85,7 +85,8 @@ public abstract class CytobandGlyph {
 				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
 			}
 			efg.setColor(cyto_sym.getColor());
-			smv.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
+			//smv.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
+			axis_tier.setDataModelFromOriginalSym(efg, cyto_sym);
 
 			if (q <= centromerePoint) {
 				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, axis_tier, efg);
@@ -96,8 +97,8 @@ public abstract class CytobandGlyph {
 
 		String meth = BioSeq.determineMethod(cyto_annots);
 		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-		TransformTierGlyph cytobandTier = new TransformTierGlyph(style);
-		smv.getSeqMap().addTier(cytobandTier, false);
+//		TransformTierGlyph cytobandTier = new TransformTierGlyph(style);
+//		smv.getSeqMap().addTier(cytobandTier, false);
 
 		InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph() {
 			@Override

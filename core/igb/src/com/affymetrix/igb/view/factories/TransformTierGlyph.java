@@ -49,7 +49,7 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
 	//   (since packing is done based on tier's children)
 	if(this.getPacker() != null){
 		Rectangle2D.Double newbox = new Rectangle2D.Double();
-		newbox.setRect(getCoordBox());
+	   	newbox.setRect(getCoordBox());
 		LinearTransform.transform(tier_transform, newbox, newbox);
 		setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
 	}  
@@ -84,7 +84,7 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
    getCoordBox().y += diffy;
    tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
 		   tier_transform.getScaleY(), tier_transform.getTranslateX(),
-		   tier_transform.getTranslateY() + diffy);
+		   getCoordBox().y);
   }
 
   public final void setFixedPixHeight(int pix_height) {

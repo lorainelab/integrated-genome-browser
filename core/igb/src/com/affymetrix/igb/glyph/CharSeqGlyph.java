@@ -266,18 +266,16 @@ public final class CharSeqGlyph extends SequenceGlyph
 						text = text.substring(3);
 					}
 					((LabelledRectGlyph) cgl).setText(text);
-					cgl.setColor(axis.getForegroundColor());
 				} else if (viewSeq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
 					cgl = new LabelledRectGlyph();
 					String text = childsym.getID();
 					if (text != null) {
 						((LabelledRectGlyph) cgl).setText(text);
 					}
-					cgl.setColor(axis.getForegroundColor());
 				} else {
 					cgl = new OutlineRectGlyph();
-					cgl.setColor(axis.getForegroundColor());
 				}
+				cgl.setColor(c1);
 			}
 			cgl.setHitable(false);
 			cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);

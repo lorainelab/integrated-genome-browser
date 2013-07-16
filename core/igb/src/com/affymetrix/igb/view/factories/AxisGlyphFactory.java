@@ -7,16 +7,20 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -65,7 +69,58 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 		
 	@Override
 	public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		DefaultTierGlyph resultAxisTier = (DefaultTierGlyph)smv.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
+		resultAxisTier.setInfo(new RootSeqSymmetry(){
+			@Override public FileTypeCategory getCategory() { return FileTypeCategory.Axis; }
+			@Override public void search(Set<SeqSymmetry> results, String id) { }
+			@Override public void searchHints(Set<String> results, Pattern regex, int limit) { }
+			@Override public void search(Set<SeqSymmetry> result, Pattern regex, int limit) { }
+			@Override public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) { }
+		});
+		resultAxisTier.setPacker(new PackerI(){
+			
+			@Override
+			public Rectangle pack(GlyphI parent_glyph, GlyphI child_glyph, ViewI view) {
+				parent_glyph.setCoords(parent_glyph.getCoordBox().x, 
+						parent_glyph.getCoordBox().y, view.getScene().getCoordBox().getWidth(), TIER_SIZE);
+				return null;
+			}
+
+			@Override
+			public Rectangle pack(GlyphI parent_glyph, ViewI view) {
+				parent_glyph.setCoords(parent_glyph.getCoordBox().x, 
+						parent_glyph.getCoordBox().y, view.getScene().getCoordBox().getWidth(), TIER_SIZE);
+				return null;
+			}
+			
+		});
+		resultAxisTier.setHeightFixed(true);
+		resultAxisTier.setFixedPixHeight(TIER_SIZE);
+		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
+		resultAxisTier.setTierType(TierGlyph.TierType.NONE);
+		
+		//if(smv.shouldAddCytobandGlyph()){
+			GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(smv, resultAxisTier);
+			if (cytoband_glyph != null) {
+				resultAxisTier.addChild(cytoband_glyph);
+			}
+		//}
+		
+		AxisGlyph axis_glyph = smv.getSeqMap().addAxis(AXIS_SIZE);
+		axis_glyph.setHitable(true);
+		axis_glyph.setFont(axisFont);
+
+		axis_glyph.setBackgroundColor(resultAxisTier.getBackgroundColor());
+		axis_glyph.setForegroundColor(resultAxisTier.getForegroundColor());
+	
+		SeqMapView.setAxisFormatFromPrefs(axis_glyph);
+		resultAxisTier.addChild(axis_glyph);
+
+		CharSeqGlyph seq_glyph = CharSeqGlyph.initSeqGlyph(smv.getViewSeq(), axis_glyph);
+		resultAxisTier.addChild(seq_glyph);
+	
+//		resultAxisTier.setCoords(resultAxisTier.getCoordBox().x, 
+//				resultAxisTier.getCoordBox().y, seq.getLength(), TIER_SIZE);
 	}
 
 	@Override

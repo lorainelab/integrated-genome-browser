@@ -1,5 +1,6 @@
 package com.affymetrix.igb.glyph;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -89,9 +90,9 @@ public abstract class CytobandGlyph {
 			axis_tier.setDataModelFromOriginalSym(efg, cyto_sym);
 
 			if (q <= centromerePoint) {
-				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, axis_tier, efg);
+				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, efg, axis_tier.getBackgroundColor());
 			} else {
-				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, axis_tier, efg);
+				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, efg, axis_tier.getBackgroundColor());
 			}
 		}
 
@@ -149,9 +150,9 @@ public abstract class CytobandGlyph {
 	}
 
 	private static RoundRectMaskGlyph createSingleCytobandGlyph(
-			RoundRectMaskGlyph cytobandGlyph, GlyphI axis_tier, GlyphI efg) {
+			RoundRectMaskGlyph cytobandGlyph, GlyphI efg, Color bg) {
 		if (cytobandGlyph == null) {
-			cytobandGlyph = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
+			cytobandGlyph = new RoundRectMaskGlyph(bg);
 			//cytobandGlyph.setColor(Color.GRAY);
 			cytobandGlyph.setCoordBox(efg.getCoordBox());
 		}

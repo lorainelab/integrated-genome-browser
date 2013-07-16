@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils;
-import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
@@ -30,6 +29,7 @@ import com.affymetrix.igb.shared.GraphCollapsedPacker;
 import com.affymetrix.igb.shared.GraphFasterExpandPacker;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
+import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -83,13 +83,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	protected CollapsePacker collapse_packer = new CollapsePacker();
 	protected GraphFasterExpandPacker graph_expand_packer = new GraphFasterExpandPacker();
 	protected GraphCollapsedPacker graph_collapse_packer = new GraphCollapsedPacker();
-	protected TierType tierType;
+	protected TierType tierType = TierType.NONE;
 		
 	public AbstractTierGlyph(ITrackStyleExtended style){
 		setHitable(false);
 		setSpacer(spacer);
 		setStyle(style);
-		setTierType(TierType.NONE);
 	}
 	
 	private void setSpacer(double spacer) {
@@ -170,6 +169,21 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	@Override
 	public final void setTierType(TierType method){
 		this.tierType = method;
+		if(this.tierType == TierType.GRAPH || this.style.isGraphTier()){
+			if (style.getCollapsed()) {
+				setPacker(graph_collapse_packer);
+			} else {
+				setPacker(graph_expand_packer);
+			}
+		} else if (this.tierType == TierType.SEQUENCE) {
+			setPacker(collapse_packer);
+		} else if (this.tierType == TierType.ANNOTATION) {
+			if (style.getCollapsed()) {
+				setPacker(collapse_packer);
+			} else {
+				setPacker(expand_packer);
+			}
+		}
 		if(tierType == TierType.SEQUENCE){
 			style.setSeparable(false);
 			style.setSeparate(false);
@@ -205,21 +219,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 
 		//If any visibilty bug occurs, fix here. -HV 22/03/2012
 		setVisibility(style.getShow());
-		if(this.tierType == TierType.GRAPH || this.style.isGraphTier()){
-			if (style.getCollapsed()) {
-				setPacker(graph_collapse_packer);
-			} else {
-				setPacker(graph_expand_packer);
-			}
-		} else if (this.tierType == TierType.SEQUENCE) {
-			setPacker(collapse_packer);
-		} else {
-			if (style.getCollapsed()) {
-				setPacker(collapse_packer);
-			} else {
-				setPacker(expand_packer);
-			}
-		}
+		setTierType(this.tierType);
 		setMaxExpandDepth(style.getMaxDepth());
 	}
 		

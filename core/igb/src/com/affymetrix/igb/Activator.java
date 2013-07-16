@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -47,13 +46,13 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.UpdateStatusAlert;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
 import com.affymetrix.igb.view.factories.PairedReadGlyphFactory;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 
 /**
@@ -386,6 +385,10 @@ public class Activator implements BundleActivator {
 		PairedReadGlyphFactory pairedreadGlyphFactory = new PairedReadGlyphFactory();
 		bundleContext.registerService(MapTierGlyphFactoryI.class, pairedreadGlyphFactory, null);
 
+		// Add Axis factory
+		AxisGlyphFactory axisGlyphFactory = new AxisGlyphFactory();
+		bundleContext.registerService(MapTierGlyphFactoryI.class, axisGlyphFactory, null);
+		
 		// Set Default factory
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, annotationGlyphFactory);
@@ -395,6 +398,7 @@ public class Activator implements BundleActivator {
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSetGlyphFactory);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredMinMaxAvg);
 		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.PairedRead, pairedreadGlyphFactory);
+		MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Axis, axisGlyphFactory);
 	}
 
 	private void addGenericActionListener() {

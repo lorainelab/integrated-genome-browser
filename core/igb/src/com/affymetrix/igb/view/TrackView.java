@@ -58,14 +58,12 @@ public class TrackView {
 		if (style == null || tier_direction == null) {
 			return null;
 		}
-		Map<ITrackStyleExtended, TierGlyph> style2track = null;
+		Map<ITrackStyleExtended, TierGlyph> style2track;
 		if (style.isGraphTier()) {
 			style2track = gstyle2track;
-		}
-		else if (tier_direction == TierGlyph.Direction.REVERSE) {
+		} else if (tier_direction == TierGlyph.Direction.REVERSE) {
 			style2track = style2reverseTierGlyph;
-		}
-		else if (tier_direction == TierGlyph.Direction.FORWARD || tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.NONE) {
+		} else {
 			style2track = style2forwardTierGlyph;
 		}
 		return style2track.get(style);
@@ -80,7 +78,7 @@ public class TrackView {
 	 */
 	TierGlyph getTrack(SeqMapView smv, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		AffyTieredMap seqmap = smv.getSeqMap();
-		TierGlyph tierGlyph = null;
+		TierGlyph tierGlyph;
 		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
 			tierGlyph = new DefaultTierGlyph(style);
@@ -92,8 +90,7 @@ public class TrackView {
 			}
 			else if (tier_direction == TierGlyph.Direction.REVERSE) {
 				style2reverseTierGlyph.put(style, tierGlyph);
-			}
-			else if (tier_direction == TierGlyph.Direction.FORWARD || tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.NONE) {
+			}else {
 				style2forwardTierGlyph.put(style, tierGlyph);
 			}
 			if (seqmap.getTierIndex(tierGlyph) == -1) {

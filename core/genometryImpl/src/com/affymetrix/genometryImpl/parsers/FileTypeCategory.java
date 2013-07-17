@@ -4,6 +4,7 @@ public enum FileTypeCategory {
 	Axis(false),
 	Annotation(true),
 	Alignment(true),
+/*	Cytoband(true), */
 	Graph(false),
 	Sequence(false),
 	Mismatch(false),

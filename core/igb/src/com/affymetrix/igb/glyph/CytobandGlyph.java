@@ -50,6 +50,10 @@ public abstract class CytobandGlyph {
 			return null;
 		}
 
+		return makeCytobandGlyph((RootSeqSymmetry)cyto_annots, smv, sma, axis_tier);
+	}
+
+	public static Glyph makeCytobandGlyph(RootSeqSymmetry cyto_annots, SeqMapViewExtendedI smv, BioSeq sma, TierGlyph axis_tier) {
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;
@@ -148,7 +152,7 @@ public abstract class CytobandGlyph {
 
 		return cytoband_glyph;
 	}
-
+	
 	private static RoundRectMaskGlyph createSingleCytobandGlyph(
 			RoundRectMaskGlyph cytobandGlyph, GlyphI efg, Color bg) {
 		if (cytobandGlyph == null) {

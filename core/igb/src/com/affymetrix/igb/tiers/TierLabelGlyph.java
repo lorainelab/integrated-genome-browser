@@ -195,7 +195,8 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 		
-		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed() && IGBStateProvider.getShowLockIcon()){
+		if(reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph)reftier).isHeightFixed() 
+				&& IGBStateProvider.getShowLockIcon() && reftier.getDirection() != TierGlyph.Direction.AXIS){
 			drawLock(g, pixelbox.x, pixelbox.y, fgcolor, bgcolor);
 		}
 		super.draw(view);

@@ -80,7 +80,7 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 		
 	@Override
 	public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
-		DefaultTierGlyph resultAxisTier = (DefaultTierGlyph)smv.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
+		DefaultTierGlyph resultAxisTier = (DefaultTierGlyph)smv.getTrack(style, StyledGlyph.Direction.AXIS);
 		resultAxisTier.setInfo(new RootSeqSymmetry(){
 			@Override public FileTypeCategory getCategory() { return FileTypeCategory.Axis; }
 			@Override public void search(Set<SeqSymmetry> results, String id) { }

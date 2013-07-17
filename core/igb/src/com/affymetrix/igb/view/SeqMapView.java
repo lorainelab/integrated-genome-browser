@@ -56,7 +56,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -934,9 +933,9 @@ public class SeqMapView extends JPanel
 	private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
 		List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
 		for (int i = 0; i < cur_tiers.size(); i++) {
-			if (i == axis_index) {
-				continue;
-			}
+//			if (i == axis_index) {
+//				continue;
+//			}
 			TierGlyph tg = cur_tiers.get(i);
 			temp_tiers.add(tg);
 			if (DEBUG_TIERS) {
@@ -958,7 +957,13 @@ public class SeqMapView extends JPanel
 		hairline = new UnibrowHairline(seqmap);
 		//hairline.getShadow().setLabeled(hairline_is_labeled);
 		addPreviousTierGlyphs(seqmap, temp_tiers);
-		axis_tier = AxisGlyphFactory.addAxisTier(this, axis_index);
+//		axis_tier = AxisGlyphFactory.addAxisTier(this, axis_index);
+		
+		// Since axis has to added only one, add it here instead of annotation track.
+		axis_tier = this.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
+		MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.Axis);
+		factory.createGlyphs(null, CoordinateStyle.coordinate_annot_style, this, aseq);
+		
 		addAnnotationTracks();
 		hideEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
 	}
@@ -1049,7 +1054,7 @@ public class SeqMapView extends JPanel
 		TrackView.getInstance().addTracks(this, aseq);
 		if (aseq.getComposition() != null) {
 			handleCompositionSequence();
-		}
+		} 
 		addDependentAndEmptyTrack();
 	}
 

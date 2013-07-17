@@ -7,14 +7,15 @@
 <server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="0" default="true" mirror="http://bioviz.org/quickload/"/>
 <server type="quickload" name="Pollen" url="http://www.igbquickload.org/pollen" order="1" default="true"/>
 <server type="quickload" name="Cytokinin" url="http://www.igbquickload.org/cyto" order="2" default="true"/>
-<server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="3" default="true"/>
-<server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="4" default="true"/>
-<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="5" default="true"/>
-<server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="6" enabled="false" default="true"/>
-<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="7" enabled="false" default="true"/>
-<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="8" default="true"/>
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="9" default="true"/>
-<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="10" default="true"/>
+<server type="quickload" name="Blueberry" url="http://www.igbquickload.org/blueberry" order="3" default="true"/>
+<server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="4" default="true"/>
+<server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="5" default="true"/>
+<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="6" default="true"/>
+<server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="7" enabled="false" default="true"/>
+<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="8" enabled="false" default="true"/>
+<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="9" default="true"/>
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="10" default="true"/>
+<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="11" default="true"/>
 
 <!-- caching of slow servers (e.g., UCSC and Ensembl) -->
 

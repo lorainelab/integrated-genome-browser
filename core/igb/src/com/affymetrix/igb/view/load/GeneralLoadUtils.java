@@ -51,6 +51,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -710,6 +711,14 @@ public final class GeneralLoadUtils {
 					List<BioSeq> groupChrList = new ArrayList<BioSeq>(gmodel.getSelectedSeqGroup().getSeqList().size());
 					groupChrList.addAll(gmodel.getSelectedSeqGroup().getSeqList());
 					List<BioSeq> chrList = feature.symL.getChromosomeList();
+					Collections.sort(chrList, 
+							new Comparator<BioSeq>(){
+								@Override
+								public int compare(BioSeq s1, BioSeq s2) {
+									return s1.getID().compareToIgnoreCase(s2.getID());
+								}
+							}
+					);
 					final BioSeq current_seq = gmodel.getSelectedSeq();
 					Thread thread = Thread.currentThread();
 

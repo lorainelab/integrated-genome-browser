@@ -990,6 +990,7 @@ public class SeqMapView extends JPanel
 		return (G)seqmap.getItemFromTier(datamodel);
 	}
 	
+	@Override
 	public boolean shouldAddCytobandGlyph() {
 		return true;
 	}

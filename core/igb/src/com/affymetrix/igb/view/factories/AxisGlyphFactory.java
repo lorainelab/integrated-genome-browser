@@ -110,12 +110,12 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
 		resultAxisTier.setTierType(TierGlyph.TierType.NONE);
 		
-		//if(smv.shouldAddCytobandGlyph()){
+		if(smv.shouldAddCytobandGlyph()){
 			GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(smv, resultAxisTier);
 			if (cytoband_glyph != null) {
 				resultAxisTier.addChild(cytoband_glyph);
 			}
-		//}
+		}
 		
 		AxisGlyph axis_glyph = smv.getSeqMap().addAxis(AXIS_SIZE);
 		axis_glyph.setHitable(true);
@@ -129,9 +129,6 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 
 		CharSeqGlyph seq_glyph = CharSeqGlyph.initSeqGlyph(smv.getViewSeq(), axis_glyph);
 		resultAxisTier.addChild(seq_glyph);
-	
-//		resultAxisTier.setCoords(resultAxisTier.getCoordBox().x, 
-//				resultAxisTier.getCoordBox().y, seq.getLength(), TIER_SIZE);
 	}
 
 	@Override

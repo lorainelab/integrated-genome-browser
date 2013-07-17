@@ -37,7 +37,7 @@ import org.broad.tribble.readers.TabixReader;
  */
 public class SymLoaderTabix extends SymLoader {
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
-	private final TabixLineReader tabixLineReader;
+	private final TabixReader tabixReader;
 	private final LineProcessor lineProcessor;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -55,9 +55,8 @@ public class SymLoaderTabix extends SymLoader {
 			uriString = uri.getPath();
 		}
 		this.lineProcessor = lineProcessor;
-		this.tabixLineReader = new TabixLineReader(uriString);
-		
-		if (tabixLineReader == null) {
+		this.tabixReader = new TabixReader(uriString);
+		if (tabixReader == null) {
 			throw new IllegalStateException("tabix file does not exist or was not read");
 		}
 	}
@@ -74,7 +73,7 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		
 		lineProcessor.init(uri);
-		for (String seqID : tabixLineReader.getSequenceNames()) {
+		for (String seqID : tabixReader.mChr2tid.keySet()) {
 			BioSeq seq = group.getSeq(seqID);
 			if (seq == null) {
 				//int length = 1000000000;
@@ -124,10 +123,10 @@ public class SymLoaderTabix extends SymLoader {
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception  {
 		init();
 		String seqID = seqs.get(overlapSpan.getBioSeq());
-		final LineReader lineReader = tabixLineReader.query(seqID, (overlapSpan.getStart() + 1), + overlapSpan.getEnd());
-		if (lineReader == null) {
+		if (!tabixReader.mChr2tid.containsKey(seqID)) {
 			return new ArrayList<SeqSymmetry>();
 		}
+		final LineReader lineReader = new TabixIteratorLineReader(tabixReader.query(tabixReader.mChr2tid.get(seqID), overlapSpan.getStart(), overlapSpan.getEnd()));
 		long[] startEnd = getStartEnd(lineReader);
 		if(startEnd == null){
 			return new ArrayList<SeqSymmetry>();
@@ -226,110 +225,6 @@ public class SymLoaderTabix extends SymLoader {
 								new Object[]{sym.featureName});
 		}
 		return sym;
-	}
-	
-	
-	/**
-	* @author Jim Robinson
-	*/
-	public final class TabixLineReader implements LineReader {
-		// the reader
-
-		private final TabixReader reader;
-		// where we got the file from
-		private final String source;
-
-		/**
-		 * create a tabix line reader given an input source
-		 *
-		 * @param source
-		 */
-		public TabixLineReader(String source) {
-			this.source = source;
-			try {
-				reader = new TabixReader(source);
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new TribbleException.TabixReaderFailure("Unable to generate TabixReader given the input source ", source, e);
-			}
-		}
-
-		/**
-		 * read a line from the reader
-		 *
-		 * @return a string, representing a line of text
-		 * @throws IOException an exception, thrown when we are unable to read a
-		 * line from the underlying tabix reader
-		 */
-		public String readLine() throws IOException {
-			return reader.readLine();
-		}
-
-		public LineReader iterate() throws IOException {
-			return this;
-			//throw new UnsupportedOperationException("Unable iterate with TABIX, you must query the file");
-		}
-
-		/**
-		 * TABIX does not support mark/reset. Throws
-		 * UnsupportedOperationException.
-		 */
-		public void mark() {
-			throw new UnsupportedOperationException("Unable to mark/reset position in a TABIX line reader");
-		}
-
-		/**
-		 * TABIX does not support mark/reset. Returns false always.
-		 *
-		 * @return false.
-		 */
-		public boolean markSupported() {
-			return false;
-		}
-
-		/**
-		 * TABIX does not support mark/reset. Throws
-		 * UnsupportedOperationException.
-		 */
-		public void reset() {
-			throw new UnsupportedOperationException("Unable to mark/reset position in a TABIX line reader");
-		}
-
-		public LineReader query(String chr, int start, int end) {
-			List<String> mp = getSequenceNames();
-			if (mp == null) {
-				throw new TribbleException.TabixReaderFailure("Unable to find contig named " + chr + " in the tabix index", source);
-			}
-			if (!mp.contains(chr)) {
-				return null;
-			}
-
-			return new TabixIteratorLineReader(reader.query(reader.mChr2tid.get(chr), start - 1, end));
-		}
-
-		/**
-		 * close the TabixReader and any underlying files it has open
-		 */
-		public void close() {
-			try {
-				reader.close();
-			} catch (Exception e) {
-				throw new TribbleException("Unable to close file source " + source, e);
-			}
-		}
-
-		public List<String> getSequenceNames() {
-			return new ArrayList<String>(reader.mChr2tid.keySet());
-		}
-
-		/**
-		 * get a list of the contig strings in this index
-		 *
-		 * @return a List<String> with the current indexed contig names
-		 */
-		public List<String> getContigNames() {
-			return new ArrayList<String>(reader.mChr2tid.keySet());
-		}
 	}
 }
 

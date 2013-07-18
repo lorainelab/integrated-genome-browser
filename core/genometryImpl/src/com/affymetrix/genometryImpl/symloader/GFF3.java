@@ -152,8 +152,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parser.parse(it, uri.toString(), seq, group, false, merge_cds);
-		return parser.symlist;
+		return parser.parse(it, uri.toString(), seq, group, false, merge_cds);
 	}
 
 	@Override

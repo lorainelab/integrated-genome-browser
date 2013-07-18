@@ -288,6 +288,14 @@ public class QuickLoadSymLoader extends SymLoader {
 		return "";
 	}
 
+	@Override
+	public boolean isMultiThreadOK(){
+		if(symL != null){
+			return symL.isMultiThreadOK();
+		}
+		return false;
+	}
+	
 	public SymLoader getSymLoader() {
 		init();
 		return symL;

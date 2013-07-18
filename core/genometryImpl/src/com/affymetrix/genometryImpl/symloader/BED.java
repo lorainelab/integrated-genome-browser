@@ -869,4 +869,9 @@ public class BED extends SymLoader implements LineProcessor {
 	public boolean processInfoLine(String line, List<String> infoLines) {
 		return false; // not used yet
 	}
+
+	@Override
+	public boolean isMultiThreadOK() {
+		return true;
+	}
 }

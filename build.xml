@@ -66,7 +66,7 @@
 		<property name="icons"				 value="${jar_extensions}/icons" />
 		
 		<!-- list the libraries to copy -->
-		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1"/>
+		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1,commons-pool-1.6"/>
 		
 		<property name="osgi.impl"   value="${osgi.impl.dir}${osgi.impl.file}"/>
 		<property name="javadoc.src.path"   value="${common}/src:${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />

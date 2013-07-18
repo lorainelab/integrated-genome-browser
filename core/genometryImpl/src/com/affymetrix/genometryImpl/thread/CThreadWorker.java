@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.thread;
 
-import java.util.concurrent.ExecutorService;
 import javax.swing.SwingWorker;
 
 /**
@@ -11,7 +10,6 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	private static final boolean DEBUG = false;
 	private final String message;
 	private final int priority;
-	private ExecutorService internalExecutor;
 	
 	public CThreadWorker(String msg){
 		this(msg, Thread.NORM_PRIORITY);
@@ -61,7 +59,6 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		T t;
 		try {
 			t = runInBackground();
-			//TODO : If executor is not null then wait for internal executor???
 		}
 		catch (Exception x) {
 			throw (x);
@@ -79,19 +76,11 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	protected boolean showCancelConfirmation(){
 		return true;
 	}
-
-	// TODO: Probably allow more executors???
-	protected void setInternalExecutor(ExecutorService internalExecutor) {
-		this.internalExecutor = internalExecutor;
-	}
 	
 	public boolean cancelThread(boolean b){
 		boolean confirm = showCancelConfirmation();
 		if(confirm){
 			this.cancel(b);
-			if(internalExecutor != null){
-				internalExecutor.shutdownNow();
-			}
 		}
 		return confirm;
 	}

@@ -1,15 +1,9 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
-import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
+import java.net.URI;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -17,15 +11,19 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.color.RGB;
+import com.affymetrix.genometryImpl.Scored;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
+import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import java.net.URI;
-import java.util.Map.Entry;
 
 import org.broad.tribble.readers.LineReader;
 
@@ -45,8 +43,6 @@ public class BED extends SymLoader implements LineProcessor {
 	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern tab_regex = Pattern.compile("\\t");
 	private static final Pattern comma_regex = Pattern.compile(",");
-	private final List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	private final Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<BioSeq, Map<String, SeqSymmetry>>();
 	private boolean annotate_seq = true;
 	private boolean create_container_annot = false;
 	private String default_type = null;
@@ -161,11 +157,10 @@ public class BED extends SymLoader implements LineProcessor {
 			bis = new BufferedInputStream(istr);
 		}
 		DataInputStream dis = new DataInputStream(bis);
-		parse(dis, isSorted, min, max);
-		return symlist;
+		return parse(dis, isSorted, min, max);
 	}
 
-	private void parse(DataInputStream dis, boolean isSorted, int min, int max)
+	private List<SeqSymmetry> parse(DataInputStream dis, boolean isSorted, int min, int max)
 			throws IOException {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -198,12 +193,13 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 		};
 
-		parse(it, isSorted, min, max);
+		return parse(it, isSorted, min, max);
 	}
-
-	private void parse(Iterator<String> it, boolean isSorted, int min, int max) {
-		seq2types.clear();
-		symlist.clear();
+	
+	private List<SeqSymmetry> parse(Iterator<String> it, boolean isSorted, int min, int max) {
+		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+		Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<BioSeq, Map<String, SeqSymmetry>>();
+		
 		String line;
 		String type = default_type;
 		String bedType = null;
@@ -234,11 +230,12 @@ public class BED extends SymLoader implements LineProcessor {
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				if (!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted) {
+				if (!parseLine(line, gmodel, type, use_item_rgb, min, max, symlist, seq2types) && isSorted) {
 					break;
 				}
 			}
 		}
+		return symlist;
 	}
 
 	@Override
@@ -268,11 +265,13 @@ public class BED extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parse(it, true, 0, Integer.MAX_VALUE);
-		return symlist;
+		return parse(it, true, 0, Integer.MAX_VALUE);
 	}
 
-	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum) {
+	private boolean parseLine(String line, GenometryModel gmodel, String type, 
+			boolean use_item_rgb, int minimum, int maximum, List<SeqSymmetry> symlist, 
+			Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
+		
 //		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
 		String[] fields = tab_regex.split(line);
 		if (fields.length == 1) {
@@ -441,7 +440,7 @@ public class BED extends SymLoader implements LineProcessor {
 		}
 		symlist.add(bedline_sym);
 		if (annotate_seq) {
-			this.annotationParsed(bedline_sym);
+			this.annotationParsed(bedline_sym, seq2types);
 		}
 		if (annot_name != null) {
 //			group.addToIndex(annot_name, bedline_sym);
@@ -469,7 +468,7 @@ public class BED extends SymLoader implements LineProcessor {
 		return annot_name;
 	}
 
-	private void annotationParsed(SeqSymmetry bedline_sym) {
+	private void annotationParsed(SeqSymmetry bedline_sym, Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
 		BioSeq seq = bedline_sym.getSpan(0).getBioSeq();
 		if (create_container_annot) {
 			String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);

@@ -59,9 +59,7 @@ public final class GFF3Parser implements Parser {
 	private static final boolean use_track_lines = true;
 	private final TrackLineParser track_line_parser = new TrackLineParser();
 	private static final Set<String> IGNORABLE_TYPES;
-	private static final Set<String> seenTypes = Collections.<String>synchronizedSet(new HashSet<String>());
-	private final Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
-	public final List<GFF3Sym> symlist = new ArrayList<GFF3Sym>();
+//	private static final Set<String> seenTypes = Collections.<String>synchronizedSet(new HashSet<String>());
 	
 	//override the source in the GFF line and use default source
 	boolean useDefaultSource = true;
@@ -74,8 +72,6 @@ public final class GFF3Parser implements Parser {
 
 		IGNORABLE_TYPES = Collections.<String>unmodifiableSet(types);
 	}
-	/** Contains a list of parent ids which have been ignored */
-	private final Set<String> bad_parents = new HashSet<String>();
 
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
@@ -87,12 +83,10 @@ public final class GFF3Parser implements Parser {
 
 		// Note that the parse(BufferedReader) method will call br.close(), so
 		// don't worry about it.
-		parse(br, default_source, seq, seq_group, annot_seq, merge_cds);
-
-		return symlist;
+		return parse(br, default_source, seq, seq_group, annot_seq, merge_cds);
 	}
 
-	public void parse(BufferedReader br, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
+	public List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
 			throws IOException {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -125,16 +119,19 @@ public final class GFF3Parser implements Parser {
 			}
 		};
 
-		parse(it, default_source, seq, seq_group, annot_seq, merge_cds);
+		return parse(it, default_source, seq, seq_group, annot_seq, merge_cds);
 	}
 
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public void parse(Iterator<String> it, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
+	public List<? extends SeqSymmetry> parse(Iterator<String> it, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
 			throws IOException {
-		symlist.clear();
+		List<GFF3Sym> symlist = new ArrayList<GFF3Sym>();
+		Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
+		/** Contains a list of parent ids which have been ignored */
+		Set<String> bad_parents = new HashSet<String>();
 		
 		if (DEBUG) {
 			System.out.println("starting GFF3 parse.");
@@ -221,11 +218,11 @@ public final class GFF3Parser implements Parser {
 				if (ids.length > 0) {
 					bad_parents.add(ids[0]);
 				}
-				synchronized (seenTypes) {
-					if (seenTypes.add(feature_type.toLowerCase())) {
-						System.out.println("Ignoring GFF3 type '" + feature_type + "'");
-					}
-				}
+//				synchronized (seenTypes) {
+//					if (seenTypes.add(feature_type.toLowerCase())) {
+//						System.out.println("Ignoring GFF3 type '" + feature_type + "'");
+//					}
+//				}
 				continue;
 			}
 
@@ -267,11 +264,15 @@ public final class GFF3Parser implements Parser {
 			}
 		}
 
-		addToParent(all_syms, symlist, id2sym, seq, seq_group, annot_seq, merge_cds);
+		addToParent(all_syms, symlist, id2sym, bad_parents, seq, seq_group, annot_seq, merge_cds);
 
-		System.out.print("Finished parsing GFF3.");
-		System.out.print("  line count: " + line_count);
-		System.out.println("  result count: " + symlist.size());
+		if(DEBUG){
+			System.out.print("Finished parsing GFF3.");
+			System.out.print("  line count: " + line_count);
+			System.out.println("  result count: " + symlist.size());
+		}
+		
+		return symlist;
 	}
 
 	/**
@@ -283,7 +284,7 @@ public final class GFF3Parser implements Parser {
 	 * @param id2sym	Map of ids to symmetries.
 	 * @throws IOException
 	 */
-	private void addToParent(List<GFF3Sym> all_syms, List<GFF3Sym> results, Map<String, GFF3Sym> id2sym, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds) throws IOException {
+	private void addToParent(List<GFF3Sym> all_syms, List<GFF3Sym> results, Map<String, GFF3Sym> id2sym, Set<String> bad_parents, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds) throws IOException {
 //		Map<String, GFF3Sym> moreCdsSpans = new HashMap<String, GFF3Sym>();
 		for (GFF3Sym sym : all_syms) {
 			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
@@ -324,13 +325,13 @@ public final class GFF3Parser implements Parser {
 							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "No parent found with ID: {0}", parent_id);
 							bad_parents.add(parent_id);
 						}
-						addBadParent(sym);
+						addBadParent(sym, bad_parents);
 					} else if (parent_sym == sym) {
 						if (!bad_parents.contains(parent_id)) {
 							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Parent and child are the same for ID: {0}", parent_id);
 							bad_parents.add(parent_id);
 						}
-						addBadParent(sym);
+						addBadParent(sym, bad_parents);
 					} else {
 						parent_sym.addChild(sym);
 //						if (parent_sym.getCdsSpans().size() > 1) {
@@ -404,7 +405,7 @@ public final class GFF3Parser implements Parser {
 //		}
 //	}
 
-	private void addBadParent(GFF3Sym sym) {
+	private void addBadParent(GFF3Sym sym, Set<String> bad_parents) {
 		String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
 		if (ids.length > 0) {
 			bad_parents.add(ids[0]);
@@ -449,9 +450,7 @@ public final class GFF3Parser implements Parser {
 	}
 	
 	public void clear(){
-		id2sym.clear();
-		seenTypes.clear();
-		symlist.clear();
-		IGNORABLE_TYPES.clear();
+//		seenTypes.clear();
+//		IGNORABLE_TYPES.clear();
 	}
 }

@@ -754,7 +754,12 @@ public final class GeneralLoadUtils {
 
 			@Override
 			protected void process(List<BioSeq> seqs) {
-				gviewer.setAnnotatedSeq(seqs.get(0), true, true);
+				BioSeq selectedSeq = gmodel.getSelectedSeq();
+				BioSeq seq = seqs.get(0);
+				// If user has switched sequence then do not process it
+				if(selectedSeq == seq){
+					gviewer.setAnnotatedSeq(seq, true, true);
+				}
 			}
 
 			@Override

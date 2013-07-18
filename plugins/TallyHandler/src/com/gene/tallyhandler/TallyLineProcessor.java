@@ -126,4 +126,9 @@ public class TallyLineProcessor implements LineProcessor {
 	public boolean processInfoLine(String line, List<String> infoLines) {
 		return false;
 	}
+
+	@Override
+	public boolean isMultiThreadOK() {
+		return true;
+	}
 }

@@ -145,28 +145,24 @@ public class QuickLoadSymLoader extends SymLoader {
 
 		setStyle(feature);
 
-		List<? extends SeqSymmetry> results;
-
 		// short-circuit if there's a failure... which may not even be signaled in the code
 		if (!this.isInitialized) {
 			this.init();
 		}
-
-		results = this.getRegion(span);
-
+		
+		List<? extends SeqSymmetry> results = getRegion(span);
+			
 		if (Thread.currentThread().isInterrupted()) {
-			results = null;
 			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
 
-//		boolean ret = false;
 		if (results != null) {
 			return addSymmtries(span, results, feature);
 		}
 
-		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
+		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();	
 	}
-
+	
 	public void loadAndAddAllSymmetries(final GenericFeature feature)
 			throws OutOfMemoryError {
 

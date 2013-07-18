@@ -695,4 +695,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 	public boolean processInfoLine(String line, List<String> infoLines) {
 		return false; // not used yet
 	}
+	
+	@Override
+	public boolean isMultiThreadOK() {
+		return true;
+	}
 }

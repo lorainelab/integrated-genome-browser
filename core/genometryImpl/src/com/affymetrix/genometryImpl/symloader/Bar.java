@@ -102,4 +102,9 @@ public final class Bar extends SymLoader {
 			GeneralUtils.safeClose(bis);
 		}
 	}
+	
+	@Override
+	public boolean isMultiThreadOK() {
+		return true;
+	}
 }

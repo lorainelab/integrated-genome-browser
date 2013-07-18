@@ -29,9 +29,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
 
 /**
@@ -97,8 +95,6 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern comma_regex = Pattern.compile(",");
 
-	private List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	private Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
 	private boolean annotate_seq = true;
 	private boolean create_container_annot = false;
 	private String default_type = null;
@@ -113,16 +109,6 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			System.out.println("BED parser called, annotate seq: " + annot_seq +
 					", create_container_annot: " + create_container);
 		}
-		/*
-		 *  seq2types is hash for making container syms (if create_container_annot == true)
-		 *  each entry in hash is: BioSeq ==> type2psym hash
-		 *     Each type2csym is hash where each entry is "type" ==> container_sym
-		 *  so two-step process to find container sym for a particular type on a particular seq:
-		 *    Map type2csym = (Map)seq2types.get(seq);
-		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
-		 */
-		seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
-		symlist = new ArrayList<SeqSymmetry>();
 		annotate_seq = annot_seq;
 		this.create_container_annot = create_container;
 		default_type = stream_name;
@@ -138,15 +124,24 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			bis = new BufferedInputStream(istr);
 		}
 		DataInputStream dis = new DataInputStream(bis);
-		parse(dis, gmodel, group, default_type);
-		return symlist;
+		return parse(dis, gmodel, group, default_type);
 	}
 
-	private void parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
+	private List<SeqSymmetry> parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
 		throws IOException  {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
 		}
+		/*
+		 *  seq2types is hash for making container syms (if create_container_annot == true)
+		 *  each entry in hash is: BioSeq ==> type2psym hash
+		 *     Each type2csym is hash where each entry is "type" ==> container_sym
+		 *  so two-step process to find container sym for a particular type on a particular seq:
+		 *    Map type2csym = (Map)seq2types.get(seq);
+		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
+		 */
+		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+		Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
 		String line;
 		String type = default_type;
 		String bedType = null;
@@ -175,13 +170,16 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				parseLine(line, seq_group, gmodel, type, use_item_rgb, bedType);
+				parseLine(line, seq_group, gmodel, type, use_item_rgb, bedType, symlist, seq2types);
 			}
 		}
+		return symlist;
 	}
 
 
-	private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb, String bedType)
+	private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, 
+			String type, boolean use_item_rgb, String bedType, 
+			List<SeqSymmetry> symlist, Map<BioSeq,Map<String,SeqSymmetry>> seq2types)
 			throws NumberFormatException, IOException {
 		boolean bedDetail = "bedDetail".equals(bedType);
 		String detailId = null;
@@ -335,7 +333,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		}
 		symlist.add(bedline_sym);
 		if (annotate_seq) {
-			this.annotationParsed(bedline_sym);
+			this.annotationParsed(bedline_sym, seq2types);
 		}
 		if (annot_name != null) {
 //			seq_group.addToIndex(annot_name, bedline_sym);
@@ -360,7 +358,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		return annot_name;
 	}
 
-	private void annotationParsed(SeqSymmetry bedline_sym) {
+	private void annotationParsed(SeqSymmetry bedline_sym, Map<BioSeq,Map<String,SeqSymmetry>> seq2types) {
 		BioSeq seq = bedline_sym.getSpan(0).getBioSeq();
 		if (create_container_annot) {
 			String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);

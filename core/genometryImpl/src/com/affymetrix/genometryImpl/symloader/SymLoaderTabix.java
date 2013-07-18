@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,7 +24,10 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
-import org.broad.tribble.TribbleException;
+
+import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
+
 import org.broad.tribble.readers.LineReader;
 import org.broad.tribble.readers.TabixIteratorLineReader;
 import org.broad.tribble.readers.TabixReader;
@@ -36,9 +38,10 @@ import org.broad.tribble.readers.TabixReader;
  * from the Broad Institute
  */
 public class SymLoaderTabix extends SymLoader {
+	private static final int MAX_ACTIVE_POOL_OBJECTS = 8;
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
-	private final TabixReader tabixReader;
 	private final LineProcessor lineProcessor;
+	private final GenericObjectPool<TabixReader> pool;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -48,15 +51,21 @@ public class SymLoaderTabix extends SymLoader {
 		strategyList.add(LoadStrategy.GENOME);
 	}
 	
-	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor) throws Exception {
+	public SymLoaderTabix(final URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor) throws Exception {
 		super(uri, featureName, group);
-		String uriString = uri.toString();
-		if (uriString.startsWith(FILE_PREFIX)) {
-			uriString = uri.getPath();
-		}
 		this.lineProcessor = lineProcessor;
-		this.tabixReader = new TabixReader(uriString);
-		if (tabixReader == null) {
+		this.pool = new GenericObjectPool<TabixReader>(new TabixReaderPoolableObjectFactory());
+		// Always have minimum one reader in pool
+		this.pool.setMinIdle(1);
+		// Set maximum number of object to be created
+		this.pool.setMaxActive(MAX_ACTIVE_POOL_OBJECTS);
+		// Make sure object is not null
+		this.pool.setTestOnBorrow(true);
+		this.pool.setTestOnReturn(true);
+		this.pool.setTestWhileIdle(true);
+		
+		// Test if it's working
+		if (pool.borrowObject() == null) {
 			throw new IllegalStateException("tabix file does not exist or was not read");
 		}
 	}
@@ -67,25 +76,32 @@ public class SymLoaderTabix extends SymLoader {
 	}
 
 	@Override
-	public void init() throws Exception  {
-		if (this.isInitialized){
+	public void init() throws Exception {
+		if (this.isInitialized) {
 			return;
 		}
-		
+
 		lineProcessor.init(uri);
-		for (String seqID : tabixReader.mChr2tid.keySet()) {
-			BioSeq seq = group.getSeq(seqID);
-			if (seq == null) {
-				//int length = 1000000000;
-				int length = 200000000;
-				seq = group.addSeq(seqID, length);
+		TabixReader tabixReader = pool.borrowObject();
+		try {
+			for (String seqID : tabixReader.mChr2tid.keySet()) {
+				BioSeq seq = group.getSeq(seqID);
+				if (seq == null) {
+					//int length = 1000000000;
+					int length = 200000000;
+					seq = group.addSeq(seqID, length);
 //				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
 //						"Sequence not found. Adding {0} with default length {1}",
 //						new Object[]{seqID,length});
+				}
+				seqs.put(seq, seqID);
 			}
-			seqs.put(seq, seqID);
+			this.isInitialized = true;
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			pool.returnObject(tabixReader);
 		}
-		this.isInitialized = true;
 	}
 
 	public LineProcessor getLineProcessor() {
@@ -120,19 +136,27 @@ public class SymLoaderTabix extends SymLoader {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception  {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
 		init();
 		String seqID = seqs.get(overlapSpan.getBioSeq());
-		if (!tabixReader.mChr2tid.containsKey(seqID)) {
-			return new ArrayList<SeqSymmetry>();
+		TabixReader tabixReader = pool.borrowObject();
+		try {
+			if (!tabixReader.mChr2tid.containsKey(seqID)) {
+				return new ArrayList<SeqSymmetry>();
+			}
+//			System.out.println("Total :" + (pool.getNumActive() + pool.getNumIdle()));
+			final LineReader lineReader = new TabixIteratorLineReader(tabixReader.query(tabixReader.mChr2tid.get(seqID), overlapSpan.getStart(), overlapSpan.getEnd()));
+			long[] startEnd = getStartEnd(lineReader);
+			if (startEnd == null) {
+				return new ArrayList<SeqSymmetry>();
+			}
+			return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			pool.returnObject(tabixReader);
 		}
-		final LineReader lineReader = new TabixIteratorLineReader(tabixReader.query(tabixReader.mChr2tid.get(seqID), overlapSpan.getStart(), overlapSpan.getEnd()));
-		long[] startEnd = getStartEnd(lineReader);
-		if(startEnd == null){
-			return new ArrayList<SeqSymmetry>();
-		}
-		return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
-    }
+	}
 
 	private long[] getStartEnd(LineReader lineReader) {
 		long[] startEnd = new long[2];
@@ -225,6 +249,27 @@ public class SymLoaderTabix extends SymLoader {
 								new Object[]{sym.featureName});
 		}
 		return sym;
+	}
+	
+	@Override
+	public boolean isMultiThreadOK(){
+		return lineProcessor.isMultiThreadOK();
+	}
+	
+	private class TabixReaderPoolableObjectFactory extends BasePoolableObjectFactory<TabixReader> {
+		@Override
+		public TabixReader makeObject() throws Exception {
+			String uriString = uri.toString();
+			if (uriString.startsWith(FILE_PREFIX)) {
+				uriString = uri.getPath();
+			}
+			return new TabixReader(uriString);			
+		}
+		
+		@Override
+		public boolean validateObject(TabixReader tabixReader){
+			return tabixReader != null;
+		}
 	}
 }
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.net.URL;
 
 import net.sf.samtools.util.BlockCompressedInputStream;
 
@@ -205,7 +205,7 @@ public class SymLoaderTabix extends SymLoader {
             	return false; // ftp not supported by BlockCompressedInputStream
             }
             else if (path.startsWith("http:") || path.startsWith("https:")) {
-                is = new BlockCompressedInputStream(new URL(path + ".tbi"));
+                is = new BlockCompressedInputStream(LocalUrlCacher.getInputStream(new URL(path + ".tbi")));
             }
             else {
                 is = new BlockCompressedInputStream(new File(URLDecoder.decode(path, GeneralUtils.UTF8) + ".tbi"));
@@ -219,13 +219,7 @@ public class SymLoaderTabix extends SymLoader {
             return false;
         }
         finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-            }
+			GeneralUtils.safeClose(is);
         }
     }
 

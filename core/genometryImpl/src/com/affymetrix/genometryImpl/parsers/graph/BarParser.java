@@ -487,9 +487,10 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 					handle3ValPerPoint(total_points, dis, seq, min, max, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
 				}
 			}
-			long t1 = tim.read();
-			Logger.getLogger(BarParser.class.getName()).log(
-							Level.FINE, "bar load time: {0}", t1 / 1000f);
+			if (DEBUG) {
+				long t1 = tim.read();
+				Logger.getLogger(BarParser.class.getName()).log(Level.FINE, "bar load time: {0}", t1 / 1000f);
+			}
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(dis);

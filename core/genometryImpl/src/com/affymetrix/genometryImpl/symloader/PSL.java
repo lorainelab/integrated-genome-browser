@@ -1121,4 +1121,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	public boolean processInfoLine(String line, List<String> infoLines) {
 		return false; // not used yet
 	}
+	
+	@Override
+	public boolean isMultiThreadOK() {
+		return true;
+	}
 }

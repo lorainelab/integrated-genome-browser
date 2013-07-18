@@ -54,4 +54,10 @@ public interface LineProcessor {
 	 * @return - true if this line was an info line, false otherwise
 	 */
 	public boolean processInfoLine(String line, List<String> infoLines);
+	
+	/**
+	 * Tells if it is okay to load data on multiple threads.
+	 * @return 
+	 */
+	public boolean isMultiThreadOK();
 }

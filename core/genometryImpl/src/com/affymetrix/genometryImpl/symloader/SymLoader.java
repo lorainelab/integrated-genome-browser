@@ -394,4 +394,12 @@ public abstract class SymLoader {
 	}
 	
 	public void clear(){}
+	
+	/**
+	 * Tells if it is okay to load data on multiple threads.
+	 * @return 
+	 */
+	public boolean isMultiThreadOK(){
+		return false;
+	}
 }

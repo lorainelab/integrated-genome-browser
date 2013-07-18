@@ -85,13 +85,14 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		this.internalExecutor = internalExecutor;
 	}
 	
-	public void cancelThread(boolean b){
-		if(!showCancelConfirmation()){
-			return;
+	public boolean cancelThread(boolean b){
+		boolean confirm = showCancelConfirmation();
+		if(confirm){
+			this.cancel(b);
+			if(internalExecutor != null){
+				internalExecutor.shutdownNow();
+			}
 		}
-		this.cancel(b);
-		if(internalExecutor != null){
-			internalExecutor.shutdownNow();
-		}
+		return confirm;
 	}
 }

@@ -726,12 +726,13 @@ public final class GeneralLoadUtils {
 					if(!feature.symL.isMultiThreadOK()){
 						return singleThreadedLoad(chrList);
 					}
-					return singleThreadedLoad(chrList);
+					return multiThreadedLoad(chrList);
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) feature.symL).logException(ex);
+					return null;
+				} finally {
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "{0} loaded in {1} secs", new Object[]{feature.featureName, (double)timer.read()/1000f});
 				}
-				timer.print();
-				return null;
 			}
 
 			protected Void singleThreadedLoad(List<BioSeq> chrList) throws Exception {

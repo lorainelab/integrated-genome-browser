@@ -60,6 +60,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -72,6 +75,7 @@ import java.util.zip.ZipInputStream;
 public final class GeneralLoadUtils {
 
 	private static final boolean DEBUG = false;
+	private static final int MAX_INTERNAL_THREAD = 8;
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**
 	 * using negative start coord for virtual genome chrom because (at least for
@@ -703,55 +707,104 @@ public final class GeneralLoadUtils {
 
 	static void iterateSeqList(final GenericFeature feature) {
 
-		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(MessageFormat.format(IGBConstants.BUNDLE.getString("loadFeature"), feature.featureName)) {
-
+		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(
+				MessageFormat.format(IGBConstants.BUNDLE.getString("loadFeature"), feature.featureName)) {
+			
 			@Override
 			protected Void runInBackground() {
-				try {
-//					List<BioSeq> groupChrList = new ArrayList<BioSeq>(gmodel.getSelectedSeqGroup().getSeqList().size());
-//					groupChrList.addAll(gmodel.getSelectedSeqGroup().getSeqList());
+				Timer timer = new Timer();
+				timer.start();
+				try {	
 					List<BioSeq> chrList = feature.symL.getChromosomeList();
-					Collections.sort(chrList, 
-							new Comparator<BioSeq>(){
+					Collections.sort(chrList,
+							new Comparator<BioSeq>() {
 								@Override
 								public int compare(BioSeq s1, BioSeq s2) {
 									return s1.getID().compareToIgnoreCase(s2.getID());
 								}
-							}
-					);
-					final BioSeq current_seq = gmodel.getSelectedSeq();
-					Thread thread = Thread.currentThread();
-
-					if (current_seq != null) {
-						loadOnSequence(current_seq);
-						publish(current_seq);
+							});
+					if(!feature.symL.isMultiThreadOK()){
+						return singleThreadedLoad(chrList);
 					}
-
-					for (BioSeq seq : chrList) {
-						if (seq == current_seq) {
-							continue;
-						}
-
-						if (thread.isInterrupted()) {
-							break;
-						}
-//						// Remove it from group list
-//						groupChrList.remove(seq);
-						
-						loadOnSequence(seq);
-					}
-					
-					// Iterate through all remaining list and mark them loaded
-//					for (BioSeq seq : groupChrList) {
-//						feature.addLoadedSpanRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
-//					}
-					
+					return singleThreadedLoad(chrList);
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) feature.symL).logException(ex);
 				}
+				timer.print();
 				return null;
 			}
 
+			protected Void singleThreadedLoad(List<BioSeq> chrList) throws Exception {
+				final BioSeq current_seq = gmodel.getSelectedSeq();
+			
+				if (current_seq != null) {
+					loadOnSequence(current_seq);
+					publish(current_seq);
+				}
+
+				for (final BioSeq seq : chrList) {
+					if (seq == current_seq) {
+						continue;
+					}
+					if (Thread.currentThread().isInterrupted()) {
+						break;
+					}
+					loadOnSequence(seq);
+				}
+				return null;
+			}
+		
+			ExecutorService internalExecutor;
+			protected Void multiThreadedLoad(List<BioSeq> chrList) throws Exception {
+				internalExecutor = Executors.newFixedThreadPool(MAX_INTERNAL_THREAD);
+				
+				final BioSeq current_seq = gmodel.getSelectedSeq();
+				
+				if (current_seq != null) {
+					internalExecutor.submit(new Runnable() {
+						@Override
+						public void run() {
+							loadOnSequence(current_seq);
+							publish(current_seq);
+						}
+					});
+				}
+
+				for (final BioSeq seq : chrList) {
+					if (seq == current_seq) {
+						continue;
+					}
+
+					if (Thread.currentThread().isInterrupted()) {
+						break;
+					}
+
+					internalExecutor.submit(new Runnable() {
+						@Override
+						public void run() {
+							loadOnSequence(seq);
+						}
+					});
+				}
+				internalExecutor.shutdown();
+				try {
+					internalExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+				} catch (InterruptedException ex) {
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.WARNING, "Internal executor exception", ex);
+				}
+
+				return null;
+			}
+			
+			@Override
+			public boolean cancelThread(boolean b){
+				boolean confirm = super.cancelThread(b);
+				if(confirm && internalExecutor != null){
+					internalExecutor.shutdownNow();
+				}
+				return confirm;
+			}
+			
 			@Override
 			protected void process(List<BioSeq> seqs) {
 				BioSeq selectedSeq = gmodel.getSelectedSeq();

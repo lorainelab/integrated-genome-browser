@@ -731,7 +731,7 @@ public final class GeneralLoadUtils {
 					((QuickLoadSymLoader) feature.symL).logException(ex);
 					return null;
 				} finally {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "{0} loaded in {1} secs", new Object[]{feature.featureName, (double)timer.read()/1000f});
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Loaded {0} in {1} secs", new Object[]{feature.featureName, (double)timer.read()/1000f});
 				}
 			}
 

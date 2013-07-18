@@ -291,7 +291,7 @@ public final class GenericFeature {
 		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
 
-	public boolean isLoaded(SeqSpan span){
+	public synchronized boolean isLoaded(SeqSpan span){
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 
@@ -302,7 +302,7 @@ public final class GenericFeature {
 		return true;
 	}
 	
-	public boolean isLoading(SeqSpan span){
+	public synchronized boolean isLoading(SeqSpan span){
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 
@@ -317,7 +317,7 @@ public final class GenericFeature {
 	 * Split the requested span into spans that still need to be loaded.
 	 * Note we can't filter inside spans (in general) until after the data is returned.
 	 */
-	public SeqSymmetry optimizeRequest(SeqSpan span) {
+	public synchronized SeqSymmetry optimizeRequest(SeqSpan span) {
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 
@@ -333,14 +333,14 @@ public final class GenericFeature {
 	 * This span is now considered loaded.
 	 * @param span
 	 */
-	public void addLoadedSpanRequest(SeqSpan span) {
+	public synchronized void addLoadedSpanRequest(SeqSpan span) {
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 		requestSym.addChild(query_sym);
 		removeCurrentRequest(span);
 	}
 
-	public final void removeCurrentRequest(SeqSpan span) {
+	public synchronized final void removeCurrentRequest(SeqSpan span) {
 		for (int i = 0; i < currentRequestSym.getChildCount(); i++) {
 			SeqSymmetry sym = currentRequestSym.getChild(i);
 			if (span == sym.getSpan(span.getBioSeq())) {
@@ -349,13 +349,13 @@ public final class GenericFeature {
 		}
 	}
 
-	public void addLoadingSpanRequest(SeqSpan span) {
+	public synchronized void addLoadingSpanRequest(SeqSpan span) {
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 		currentRequestSym.addChild(query_sym);
 	}
 
-	public MutableSeqSymmetry getRequestSym() {
+	public synchronized MutableSeqSymmetry getRequestSym() {
 		return requestSym;
 	}
 

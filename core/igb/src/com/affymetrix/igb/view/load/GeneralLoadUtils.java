@@ -723,10 +723,10 @@ public final class GeneralLoadUtils {
 									return s1.getID().compareToIgnoreCase(s2.getID());
 								}
 							});
-					if(!feature.symL.isMultiThreadOK()){
-						return singleThreadedLoad(chrList);
+					if(feature.symL.isMultiThreadOK()){
+						return multiThreadedLoad(chrList);
 					}
-					return multiThreadedLoad(chrList);
+					return singleThreadedLoad(chrList);
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) feature.symL).logException(ex);
 					return null;

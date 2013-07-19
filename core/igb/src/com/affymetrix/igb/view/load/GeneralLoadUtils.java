@@ -17,11 +17,14 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
@@ -37,6 +40,8 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -909,26 +914,32 @@ public final class GeneralLoadUtils {
 	//TO DO: Make this private again.
 	public static Map<String, List<? extends SeqSymmetry>> loadFeaturesForSym(
 			GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception{
-		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
-		List<SeqSpan> spans = new ArrayList<SeqSpan>();
-		Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
-		SeqUtils.convertSymToSpanList(optimized_sym, spans);
-		optimized_spans.addAll(spans);
 		if (feature.gVersion.gServer.serverType == null) {
 			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
-		Thread thread = Thread.currentThread();
+		
+		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
+		SeqUtils.convertSymToSpanList(optimized_sym, optimized_spans);
+		Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
 		
 		for (SeqSpan optimized_span : optimized_spans) {
 			Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
 			// If thread was interruped then it might return null. 
 			// So avoid null pointer exception, check it here.
-			if(results != null && !results.isEmpty()){
-				loaded.putAll(results);
+			if(results != null){
+				for(Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()){
+					if(!loaded.containsKey(entry.getKey())){
+						loaded.put(entry.getKey(), entry.getValue());
+					} else {
+						@SuppressWarnings("unchecked")
+						List<SeqSymmetry> syms = (List<SeqSymmetry>)loaded.get(entry.getKey());
+						syms.addAll(entry.getValue());
+					}
+				}
 			}
 			
-			if (thread.isInterrupted()) {
+			if (Thread.currentThread().isInterrupted()) {
 				break;
 			}
 		}

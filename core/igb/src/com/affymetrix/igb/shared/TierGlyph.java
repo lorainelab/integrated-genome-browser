@@ -1,5 +1,6 @@
  package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -21,6 +22,8 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	public void setStyle(ITrackStyleExtended annotStyle);
 	
 	public void setDirection(Direction direction);
+	
+	public void addMiddleGlyphs(BioSeq seq);
 	
 	public void addMiddleGlyph(GlyphI mglyph);
 	

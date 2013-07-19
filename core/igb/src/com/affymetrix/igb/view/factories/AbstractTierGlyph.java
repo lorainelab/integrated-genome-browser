@@ -130,9 +130,15 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	public void initUnloaded() {
+		addMiddleGlyphs(GenometryModel.getGenometryModel().getSelectedSeq());
+		Glyph glyph = new FillRectGlyph();
+		glyph.setCoords(0, 0, 0, getChildHeight());
+		addChild(glyph);
+	}
+	
+	@Override
+	public void addMiddleGlyphs(BioSeq seq){
 		Glyph glyph;
-
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();
 		SeqSymmetry sym = new SimpleMutableSeqSymmetry();
 	
 		if(style.getFeature() != null){
@@ -160,10 +166,6 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 			glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
 			addMiddleGlyph(glyph);
 		}
-		
-		glyph = new FillRectGlyph();
-		glyph.setCoords(0, 0, 0, getChildHeight());
-		addChild(glyph);
 	}
 	
 	@Override

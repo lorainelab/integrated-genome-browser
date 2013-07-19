@@ -63,7 +63,7 @@ public class SymLoaderTabix extends SymLoader {
 		this.pool.setMaxActive(MAX_ACTIVE_POOL_OBJECTS);
 	
 		// Test if it's working
-		if (poolFactory.validateObject(pool.borrowObject())) {
+		if (!poolFactory.validateObject(pool.borrowObject())) {
 			throw new IllegalStateException("tabix file does not exist or was not read");
 		}
 		

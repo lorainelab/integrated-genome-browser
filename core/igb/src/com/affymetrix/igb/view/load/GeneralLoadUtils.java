@@ -1214,12 +1214,6 @@ public final class GeneralLoadUtils {
 
 		if (gFeature != null) {
 			addFeature(gFeature);
-			
-			if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
-					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/){
-				Application.infoPanel(GenericFeature.howtoloadmsg, 
-				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
-			}
 		}
 	}
 	
@@ -1300,6 +1294,11 @@ public final class GeneralLoadUtils {
 					gmodel.setSelectedSeq(gmodel.getSelectedSeq());
 				}
 				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
+				if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
+						 gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
+					Application.infoPanel(GenericFeature.howtoloadmsg,
+							GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+				}
 			}
 		};
 		CThreadHolder.getInstance().execute(gFeature, worker);

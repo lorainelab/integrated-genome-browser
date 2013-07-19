@@ -26,6 +26,7 @@ import java.net.URL;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
 import org.broad.tribble.readers.LineReader;
@@ -54,20 +55,22 @@ public class SymLoaderTabix extends SymLoader {
 	public SymLoaderTabix(final URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor) throws Exception {
 		super(uri, featureName, group);
 		this.lineProcessor = lineProcessor;
-		this.pool = new GenericObjectPool<TabixReader>(new TabixReaderPoolableObjectFactory());
+		PoolableObjectFactory poolFactory = new TabixReaderPoolableObjectFactory();
+		this.pool = new GenericObjectPool<TabixReader>(poolFactory);
 		// Always have minimum one reader in pool
 		this.pool.setMinIdle(1);
 		// Set maximum number of object to be created
 		this.pool.setMaxActive(MAX_ACTIVE_POOL_OBJECTS);
+	
+		// Test if it's working
+		if (poolFactory.validateObject(pool.borrowObject())) {
+			throw new IllegalStateException("tabix file does not exist or was not read");
+		}
+		
 		// Make sure object is not null
 		this.pool.setTestOnBorrow(true);
 		this.pool.setTestOnReturn(true);
 		this.pool.setTestWhileIdle(true);
-		
-		// Test if it's working
-		if (pool.borrowObject() == null) {
-			throw new IllegalStateException("tabix file does not exist or was not read");
-		}
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
@@ -249,6 +250,14 @@ public class TrackView {
 				((AbstractTierGlyph)tg).initUnloaded();
 			}
 			tg.pack(gviewer.getSeqMap().getView());
+		}
+	}
+	
+	private void addDummyChild(TierGlyph tierGlyph){
+		if(tierGlyph.getChildCount() == 0){
+			GlyphI glyph = new FillRectGlyph();
+			glyph.setCoords(0, 0, 0, tierGlyph.getChildHeight());
+			tierGlyph.addChild(glyph);
 		}
 	}
 }

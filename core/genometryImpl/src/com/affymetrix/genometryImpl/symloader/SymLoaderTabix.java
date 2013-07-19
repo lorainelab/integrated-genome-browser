@@ -39,7 +39,7 @@ import org.broad.tribble.readers.TabixReader;
  * from the Broad Institute
  */
 public class SymLoaderTabix extends SymLoader {
-	private static final int MAX_ACTIVE_POOL_OBJECTS = 8;
+	private static final int MAX_ACTIVE_POOL_OBJECTS = Runtime.getRuntime().availableProcessors() + 1;
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 	private final LineProcessor lineProcessor;
 	private final GenericObjectPool<TabixReader> pool;

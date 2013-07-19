@@ -75,7 +75,7 @@ import java.util.zip.ZipInputStream;
 public final class GeneralLoadUtils {
 
 	private static final boolean DEBUG = false;
-	private static final int MAX_INTERNAL_THREAD = 8;
+	private static final int MAX_INTERNAL_THREAD = Runtime.getRuntime().availableProcessors() + 1;
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**
 	 * using negative start coord for virtual genome chrom because (at least for

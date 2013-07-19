@@ -55,7 +55,7 @@ public class SymLoaderTabix extends SymLoader {
 	public SymLoaderTabix(final URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor) throws Exception {
 		super(uri, featureName, group);
 		this.lineProcessor = lineProcessor;
-		PoolableObjectFactory poolFactory = new TabixReaderPoolableObjectFactory();
+		PoolableObjectFactory<TabixReader> poolFactory = new TabixReaderPoolableObjectFactory();
 		this.pool = new GenericObjectPool<TabixReader>(poolFactory);
 		// Always have minimum one reader in pool
 		this.pool.setMinIdle(1);

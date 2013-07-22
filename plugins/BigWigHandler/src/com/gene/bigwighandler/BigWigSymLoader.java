@@ -77,15 +77,9 @@ public class BigWigSymLoader extends SymLoader {
 			if (pos > -1) {
 				cleanSeqID = seqID.substring(0, pos);
 			}
-			String realSeqId = SynonymLookup.getChromosomeLookup().getPreferredName(cleanSeqID);
-			realSeq2Seq.put(realSeqId, seqID);
-			BioSeq seq = seqMap.get(realSeqId);
-			if (seq == null) {
-				chromosomeList.add(group.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString()));
-			}
-			else {
-				chromosomeList.add(seq);
-			}
+			BioSeq seq = group.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString());
+			chromosomeList.add(seq);
+			realSeq2Seq.put(seq.getID(), seqID);
 		}
 		this.isInitialized = true;
 	}

@@ -344,11 +344,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
 			throws InstantiationException, IllegalAccessException{
 		
-		if (cspan.getLength() == 0) 
+		if (cspan.getLength() == 0) {
 			return new DeletionGlyph();
-		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
-				(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH))
+		}else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
+			(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH)) {
 			return new PointedGlyph();
+		}
 			
 		return (GlyphI) child_glyph_class.newInstance();
 	}
@@ -414,8 +415,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		}
 
 		BAMSym inssym = (BAMSym)sym;
-		if(inssym.getInsChildCount() == 0)
+		if(inssym.getInsChildCount() == 0) {
 			return;
+		}
 
 		BioSeq coordseq = gviewer.getViewSeq();
 		SeqSymmetry psym = inssym;
@@ -451,51 +453,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			pglyph.addChild(isg);
 			the_tier.setDataModelFromOriginalSym(isg, childsym);
 		}
-	}
-
-	//Note : Use this code to add cds start and end glyph - HV 07/09/11
-	@SuppressWarnings("unused")
-	private static void addCdsColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
-		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
-				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {
-			return;
-		}
-
-		if (cdsSpan.isForward()) {
-			if (SeqUtils.contains(cspan, cdsSpan)) {
-				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), start_color);
-				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
-			} else {
-				//First
-				if (cdsSpan.getEnd() >= cspan.getEnd()) {
-					addColorDirection(pglyph, cdsSpan.getStart(), Math.min(cdsSpan.getLength(), 3), start_color);
-				} else {
-					addColorDirection(pglyph, Math.max(cdsSpan.getStart(), cdsSpan.getEnd() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
-				}
-			}
-		} else {
-			if (SeqUtils.contains(cspan, cdsSpan)) {
-				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
-				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
-			} else {
-				//First
-				if (cdsSpan.getStart() >= cspan.getStart()) {
-					addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
-				} else {
-					addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
-				}
-			}
-		}
-		
-	}
-	
-	//TODO : Use height from style
-	private static void addColorDirection(GlyphI pglyph, double start, double length, Color color){
-		FillRectGlyph gl = new FillRectGlyph();
-		gl.setHitable(false);
-		gl.setColor(color);
-		gl.setCoords(start, 0, length, 25);
-		pglyph.addChild(gl);
 	}
 
 	@Override

@@ -356,6 +356,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	@Override
+	public void clearMiddleGlyphs(){
+		middle_glyphs.clear();
+	}
+			
+	@Override
 	public List<GlyphI> pickTraversal(Rectangle2D.Double coordrect, ViewI view) {
 		List<GlyphI> pickList = new ArrayList<GlyphI>();
 		GlyphI child, temp = new Glyph() {};

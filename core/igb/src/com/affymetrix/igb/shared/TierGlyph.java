@@ -27,6 +27,8 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	
 	public void addMiddleGlyph(GlyphI mglyph);
 	
+	public void clearMiddleGlyphs();
+	
 	public List<SeqSymmetry> getSelected();
 
 	public int getActualSlots();

@@ -53,24 +53,24 @@ public class TreeTransferHandler extends TransferHandler {
                 return false;
             }
         }
-        // Do not allow MOVE-action drops if a non-leaf node is
-        // selected unless all of its children are also selected.
-        int action = support.getDropAction();
-        if(action == MOVE) {
-            return haveCompleteNode(tree);
-        }
-        // Do not allow a non-leaf node to be copied to a level
-        // which is less than its source level.
-        TreePath dest = dl.getPath();
-        DefaultMutableTreeNode target =
-            (DefaultMutableTreeNode)dest.getLastPathComponent();
-        TreePath path = tree.getPathForRow(selRows[0]);
-        DefaultMutableTreeNode firstNode =
-            (DefaultMutableTreeNode)path.getLastPathComponent();
-        if(firstNode.getChildCount() > 0 &&
-               target.getLevel() < firstNode.getLevel()) {
-            return false;
-        }
+//        // Do not allow MOVE-action drops if a non-leaf node is
+//        // selected unless all of its children are also selected.
+//        int action = support.getDropAction();
+//        if(action == MOVE) {
+//            return haveCompleteNode(tree);
+//        }
+//        // Do not allow a non-leaf node to be copied to a level
+//        // which is less than its source level.
+//        TreePath dest = dl.getPath();
+//        DefaultMutableTreeNode target =
+//            (DefaultMutableTreeNode)dest.getLastPathComponent();
+//        TreePath path = tree.getPathForRow(selRows[0]);
+//        DefaultMutableTreeNode firstNode =
+//            (DefaultMutableTreeNode)path.getLastPathComponent();
+//        if(firstNode.getChildCount() > 0 &&
+//               target.getLevel() < firstNode.getLevel()) {
+//            return false;
+//        }
         return true;
     }
 

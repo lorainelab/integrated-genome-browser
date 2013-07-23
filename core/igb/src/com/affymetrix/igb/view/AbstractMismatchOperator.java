@@ -66,4 +66,13 @@ public abstract class AbstractMismatchOperator extends AbstractAnnotationTransfo
 
 		return new int[]{start, end};
 	}
+	
+	@Override
+	public Operator newInstance(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
+	}
 }

@@ -254,7 +254,9 @@ public class TrackView {
 	}
 	
 	private void addDummyChild(TierGlyph tierGlyph){
-		if(tierGlyph.getChildCount() == 0){
+		if(tierGlyph.getChildCount() == 0 
+				&& !tierGlyph.getAnnotStyle().getFloatTier() 
+				&& !tierGlyph.getAnnotStyle().getJoin()){
 			GlyphI glyph = new FillRectGlyph();
 			glyph.setCoords(0, 0, 0, tierGlyph.getChildHeight());
 			tierGlyph.addChild(glyph);

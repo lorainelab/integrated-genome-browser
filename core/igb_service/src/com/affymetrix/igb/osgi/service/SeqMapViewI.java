@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
+import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
@@ -57,6 +58,13 @@ public interface SeqMapViewI {
 	 */
 	public SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare);
 
+	/**
+	 * Returns a transformed copy of the given symmetry based on
+	 * {@link #getTransformPath()} in result.  If no transform is necessary, simply
+	 * returns the original symmetry.
+	 */
+	public SeqSymmetry transformForViewSeq(SeqSymmetry insym, MutableSeqSymmetry result, BioSeq seq_to_compare);
+	
 	/**
 	 *  Returns the series of transformations that can be used to map
 	 *  a SeqSymmetry from {@link #getAnnotatedSeq()} to

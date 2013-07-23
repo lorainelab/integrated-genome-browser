@@ -1146,6 +1146,15 @@ public class SeqMapView extends JPanel
 	}
 
 	@Override
+	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym, MutableSeqSymmetry result, BioSeq seq_to_compare) {
+		if (seq_to_compare != getViewSeq()) {
+			SeqUtils.transformSymmetry(result, getTransformPath());
+			return result;
+		}
+		return insym;
+	}
+	
+	@Override
 	public final AffyTieredMap getSeqMap() {
 		return seqmap;
 	}

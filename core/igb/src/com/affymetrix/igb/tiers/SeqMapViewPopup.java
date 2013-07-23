@@ -33,6 +33,8 @@ import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
@@ -139,22 +141,28 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		for (Operator operator : operators) {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator, true)) {
 				String title = operator.getDisplay();
+				Operator newOperator = operator.newInstance();
+				if(newOperator == null){
+					Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, "Could not create instance for operator {0}", title);
+					continue;
+				}
+				
 				Map<String, Class<?>> params = operator instanceof IParameters? ((IParameters)operator).getParametersType() : null;
 				if (null != params && 0 < params.size()) {
 					JMenu operatorSMI = new JMenu(title);
 					
 					JMenuItem operatorMI = new JMenuItem("Use Default");
-					operatorMI.addActionListener(new TrackOperationAction(operator.newInstance()));
+					operatorMI.addActionListener(new TrackOperationAction(newOperator));
 					operatorSMI.add(operatorMI);
 					
 					operatorMI = new JMenuItem("Configure...");
-					operatorMI.addActionListener(new TrackOperationWithParametersAction(operator.newInstance()));
+					operatorMI.addActionListener(new TrackOperationWithParametersAction(newOperator));
 					operatorSMI.add(operatorMI);
 					
 					operationsMenu.add(operatorSMI);
 				} else {
 					JMenuItem operatorMI = new JMenuItem(title);
-					operatorMI.addActionListener(new TrackOperationAction(operator.newInstance()));
+					operatorMI.addActionListener(new TrackOperationAction(newOperator));
 					operationsMenu.add(operatorMI);
 				}
 			}

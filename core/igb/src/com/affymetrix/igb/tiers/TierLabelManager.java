@@ -705,6 +705,13 @@ public final class TierLabelManager implements PropertyHolder {
 				props = ((SymWithProps) original_sym).cloneProperties();
 			}
 		}
+		if (props == null && sym instanceof CdsSeqSymmetry) {
+			SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
+			if (property_sym instanceof SymWithProps) {
+				props = ((SymWithProps) property_sym).cloneProperties();
+			}
+		}
+		
 		if (props == null) {
 			// make an empty hashtable if sym has no properties...
 			props = new HashMap<String, Object>();

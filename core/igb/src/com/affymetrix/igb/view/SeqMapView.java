@@ -1810,6 +1810,17 @@ public class SeqMapView extends JPanel
 						sym_used_for_title = original;
 					}
 				}
+				if (id == null && sym instanceof CdsSeqSymmetry) {
+					SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
+					if (property_sym instanceof SymWithProps) {
+						id = (String) ((SymWithProps) property_sym).getProperty("gene name");
+						sym_used_for_title = sym;
+					}
+					if (id == null && property_sym instanceof SymWithProps) {
+						id = (String) ((SymWithProps) property_sym).getProperty("id");
+						sym_used_for_title = sym;
+					}
+				}
 				if (id == null && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
 					SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
 					id = SeqUtils.spanToString(seq_region);

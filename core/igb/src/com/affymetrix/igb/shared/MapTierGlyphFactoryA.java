@@ -3,13 +3,16 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -41,7 +44,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 	}
 	
 	protected static void doMiddlegroundShading(TierGlyph tierGlyph, SeqMapViewExtendedI gviewer, BioSeq seq) {
-		
+		tierGlyph.clearMiddleGlyphs();
 		GenericFeature feature = tierGlyph.getAnnotStyle().getFeature();
 		if (feature != null) {
 			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
@@ -112,6 +115,11 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 		System.out.println();
 		isg.setResidueMask(seqArr);
 		}*/
+	}
+	
+	@Override
+	public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq){
+		
 	}
 	
 	protected static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {

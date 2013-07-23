@@ -16,6 +16,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  * Factory to create a specific type of ViewModeGlyph. MapViewGlyphFactoryI
@@ -39,6 +40,14 @@ public interface MapTierGlyphFactoryI  {
 	 * @return the ViewModeGlyph
 	 */
 	public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq);
+	/**
+	 * Create glyph for given syms
+	 * @param syms
+	 * @param style
+	 * @param gviewer
+	 * @param seq 
+	 */
+	public void createGlyphs(RootSeqSymmetry rootSym, java.util.List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq);
 	/**
 	 * unique identifier
 	 * @return name of the factory

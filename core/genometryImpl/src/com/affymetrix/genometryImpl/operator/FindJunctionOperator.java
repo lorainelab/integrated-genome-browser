@@ -97,7 +97,8 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	
 	@Override
 	public java.util.Map<String, Class<?>> getParameters() {
-		return properties;
+		//return properties;
+		return null;
 	}
 	
     @Override

@@ -529,6 +529,30 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	@Override
+	public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq){
+		TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+		TierGlyph ftier = gviewer.getTrack(style, useDirection);
+		ftier.setTierType(TierGlyph.TierType.ANNOTATION);
+		ftier.setInfo(rootSym);
+		
+		TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+		rtier.setTierType(TierGlyph.TierType.ANNOTATION);
+		ftier.setInfo(rootSym);
+		
+		addToTier(gviewer, syms, ftier, style.getSeparate() ? rtier : ftier);
+		doMiddlegroundShading(ftier, gviewer, seq);
+		doMiddlegroundShading(rtier, gviewer, seq);
+	}
+	
+	private void addToTier(SeqMapViewExtendedI gviewer, List<? extends SeqSymmetry> insyms,
+			TierGlyph forward_tier, TierGlyph reverse_tier){
+		for(SeqSymmetry insym : insyms){
+			int depth = SeqUtils.getDepthFor(insym);
+			addToTier(gviewer, insym, forward_tier, reverse_tier, (depth >= 2));
+		}
+	}
+	
+	@Override
 	public String getName() {
 		return "annotation/alignment";
 	}

@@ -174,7 +174,12 @@ public class TreeTransferHandler extends TransferHandler {
 			} else if (parentRow == selectedRow) {
 				model.insertNodeInto(dragNode, rootNode, rootNode.getChildCount());
 			} else if (dl.getChildIndex() > 0) {
-				model.insertNodeInto(dragNode, parentNode, dl.getChildIndex());
+				// Special condition when child is moved to last position.
+				if(dl.getChildIndex() >= parentNode.getChildCount()){
+					model.insertNodeInto(dragNode, parentNode, dl.getChildIndex() - 1);
+				} else {
+					model.insertNodeInto(dragNode, parentNode, dl.getChildIndex());
+				}
 			} else {
 				model.insertNodeInto(dragNode, parentNode, 0);
 			}

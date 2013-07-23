@@ -327,7 +327,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				codon_glyph_processor.processGlyph(cglyph, child, annotseq);
 				
 				if(!cds){
-					handleCDSSpan(gviewer, the_tier, cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
+					handleCDSSpan(gviewer, the_tier, cdsSpan, cspan, cds_sym, child, insym, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
 				}
 			}
 		}
@@ -380,14 +380,17 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
 	private GlyphI handleCDSSpan(SeqMapViewExtendedI gviewer, TierGlyph the_tier,
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
-			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
+			SeqSymmetry child, SeqSymmetry insym, BioSeq annotseq, boolean same_seq,
 			Color child_color, double thick_height, GlyphI pglyph)
 			throws IllegalAccessException, InstantiationException {
 		if (SeqUtils.overlap(cdsSpan, cspan)) {
-			SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
+			CdsSeqSymmetry cds_sym_2 = new CdsSeqSymmetry();
+			SeqUtils.intersection(cds_sym, child, cds_sym_2, annotseq);
 			if (!same_seq) {
-				cds_sym_2 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
+				cds_sym_2 = (CdsSeqSymmetry)gviewer.transformForViewSeq(cds_sym_2, new CdsSeqSymmetry(), annotseq);
 			}
+			cds_sym_2.setPropertySymmetry(insym);
+			
 			SeqSpan cds_span = gviewer.getViewSeqSpan(cds_sym_2);
 			if (cds_span != null) {
 				GlyphI cds_glyph;
@@ -398,7 +401,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				}
 				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
 				cds_glyph.setColor(child_color); // CDS same color as exon
-				the_tier.setDataModelFromOriginalSym(cds_glyph, child);
+				the_tier.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
 				pglyph.addChild(cds_glyph);
 				codon_glyph_processor.processGlyph(cds_glyph, cds_sym_2, annotseq);
 				return cds_glyph;

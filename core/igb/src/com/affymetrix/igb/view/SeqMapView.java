@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -2484,6 +2485,16 @@ public class SeqMapView extends JPanel
 			}
 			if (props.containsKey("type")) {
 				props.remove("type");
+			}
+		}
+		if(sym instanceof SupportsCdsSpan){
+			span = ((SupportsCdsSpan)sym).getCdsSpan();
+			if (span != null){
+				props.put("cds start",
+					NumberFormat.getIntegerInstance().format(span.getStart()));
+				props.put("cds end",
+					NumberFormat.getIntegerInstance().format(span.getEnd()));
+			
 			}
 		}
 		return props;

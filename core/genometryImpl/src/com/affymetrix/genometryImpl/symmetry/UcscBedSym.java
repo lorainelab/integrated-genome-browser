@@ -239,10 +239,11 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 		tprops.put("name", name);
 		tprops.put("seq id", seq.getID());
 		tprops.put("forward", forward);
-		if (hasCdsSpan) {
-			tprops.put("cds min", Integer.valueOf(cdsMin));
-			tprops.put("cds max", Integer.valueOf(cdsMax));
-		} if (score != Float.NEGATIVE_INFINITY) {
+//		if (hasCdsSpan) {
+//			tprops.put("cds min", Integer.valueOf(cdsMin));
+//			tprops.put("cds max", Integer.valueOf(cdsMax));
+//		} 
+		if (score != Float.NEGATIVE_INFINITY) {
 			tprops.put("score", new Float(score));
 		}
 		if (props != null) {

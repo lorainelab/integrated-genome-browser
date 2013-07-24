@@ -187,8 +187,8 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithC
 		tprops.put("gene name", geneName);
 		tprops.put("seq id", seq.getID());
 		tprops.put("forward", forward);
-		tprops.put("cds min", Integer.valueOf(cdsMin));
-		tprops.put("cds max", Integer.valueOf(cdsMax));
+//		tprops.put("cds min", Integer.valueOf(cdsMin));
+//		tprops.put("cds max", Integer.valueOf(cdsMax));
 		if (props != null) {
 			tprops.putAll(props);
 		}

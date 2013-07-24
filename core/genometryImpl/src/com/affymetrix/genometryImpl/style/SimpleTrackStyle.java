@@ -23,7 +23,7 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 	
 	/** for height on the reverse strand. To help with track resizing. */
 	private double reverseHeight;
-	private float track_name_size;
+	private float track_name_size = 12;
 	private Color label_foreGround = null;
 	private Color label_backGround = null;
 	private int directionType;

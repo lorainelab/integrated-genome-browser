@@ -31,7 +31,9 @@ public interface PropertyHandler {
 		"# query inserts",
 		"seq id",
 		"cds min",
+		"cds start",
 		"cds max",
+		"cds end",
 		"loadmode",
 		"feature url"
 	};

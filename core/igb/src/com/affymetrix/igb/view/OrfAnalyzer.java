@@ -176,6 +176,7 @@ public final class OrfAnalyzer extends JComponent
 		//forSts.setLabelForeground(bgcol);
 		forSts.setTrackName("Stop Codons");
 		fortier = new TransformTierGlyph(forSts);
+		fortier.setTierType(TierGlyph.TierType.ANNOTATION);
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(bgcol);
 		fortier.setBackgroundColor(bgcol);
@@ -195,6 +196,7 @@ public final class OrfAnalyzer extends JComponent
 		//revSts.setLabelForeground(bgcol);
 		revSts.setTrackName("Stop Codons");
 		revtier = new TransformTierGlyph(revSts);
+		revtier.setTierType(TierGlyph.TierType.ANNOTATION);
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);
 		revtier.setBackgroundColor(bgcol);

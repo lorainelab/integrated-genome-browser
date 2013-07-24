@@ -495,7 +495,9 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			} else if (sym instanceof Scored) {
 				
 				Float score = ((Scored) sym).getScore();
-				if(score == Math.round(score)) {
+				if (Float.compare(score, Scored.UNKNOWN_SCORE) == 0){
+					out.write('.');
+				} else if(score == Math.round(score)) {
 					out.write(Integer.toString(score.intValue()).getBytes());
 				} else {
 					out.write(Float.toString(score).getBytes());

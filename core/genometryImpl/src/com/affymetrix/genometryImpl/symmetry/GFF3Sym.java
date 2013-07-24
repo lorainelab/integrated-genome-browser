@@ -361,7 +361,6 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 	
 	@Override
 	public void addChild(SeqSymmetry sym) {
-		super.addChild(sym);
 		if(isCdsSym(sym)){
 			for (int i = 0; i < sym.getSpanCount(); i++) {
 				SeqSpan span = sym.getSpan(i);
@@ -371,6 +370,8 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 					SeqUtils.encompass(span, cdsSpan, cdsSpan);
 				}
 			}
+		} else {
+			super.addChild(sym);
 		}
 	}
 	

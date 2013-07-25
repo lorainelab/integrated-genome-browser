@@ -2487,6 +2487,9 @@ public class SeqMapView extends JPanel
 				props.remove("type");
 			}
 		}
+		if(sym instanceof CdsSeqSymmetry) {
+			sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
+		}
 		if(sym instanceof SupportsCdsSpan){
 			span = ((SupportsCdsSpan)sym).getCdsSpan();
 			if (span != null){

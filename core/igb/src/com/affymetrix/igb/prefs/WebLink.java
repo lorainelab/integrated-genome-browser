@@ -179,6 +179,7 @@ public final class WebLink {
 
 		results.addAll(webLinks);
 		
+		Collections.sort(results, webLinkComp);
 		return results;
 	}
 

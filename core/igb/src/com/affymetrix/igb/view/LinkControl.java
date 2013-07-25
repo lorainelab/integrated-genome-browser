@@ -2,18 +2,22 @@ package com.affymetrix.igb.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.prefs.WebLink;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
 
 final class LinkControl implements ContextualPopupListener {
 
@@ -103,11 +107,11 @@ final class LinkControl implements ContextualPopupListener {
 
 				mi = makeMenuItem(name, url);
 
-				if (!isInternetReachable()) {
-					name += " (No Internet)";
-					mi = makeMenuItem(name, url);
-					mi.setEnabled(false);
-				}
+//				if (!isInternetReachable()) {
+//					name += " (No Internet)";
+//					mi = makeMenuItem(name, url);
+//					mi.setEnabled(false);
+//				}
 
 				//mi.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
 				popup.add(mi);
@@ -115,13 +119,13 @@ final class LinkControl implements ContextualPopupListener {
 		} else {
 			name = "Get More Info";
 			JMenu linkMenu = new JMenu(name);
-			linkMenu.getPopupMenu().setBorder(popup.getBorder());
-			//linkMenu.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
-			if (!isInternetReachable()) {
-				name += " (No Internet)";
-				linkMenu = new JMenu(name);
-				linkMenu.setEnabled(false);
-			}
+//			linkMenu.getPopupMenu().setBorder(popup.getBorder());
+//			//linkMenu.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
+//			if (!isInternetReachable()) {
+//				name += " (No Internet)";
+//				linkMenu = new JMenu(name);
+//				linkMenu.setEnabled(false);
+//			}
 			popup.add(linkMenu);
 
 			for (WebLink webLink : results) {
@@ -149,23 +153,23 @@ final class LinkControl implements ContextualPopupListener {
 		return linkMI;
 	}
 
-	private static boolean isInternetReachable() {
-		try {
-			//make a URL to a known source
-			URL url = new URL("http://bioviz.org/igb/");
-
-			//open a connection to that source
-			HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
-
-			//trying to retrieve data from the source. If there
-			//is no connection, this line will fail
-			/*Object objData = */ urlConnect.getContent();
-
-		} catch (UnknownHostException e) {
-			return false;
-		} catch (IOException e) {
-			return false;
-		}
-		return true;
-	}
+//	private static boolean isInternetReachable() {
+//		try {
+//			//make a URL to a known source
+//			URL url = new URL("http://bioviz.org/igb/");
+//
+//			//open a connection to that source
+//			HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+//
+//			//trying to retrieve data from the source. If there
+//			//is no connection, this line will fail
+//			/*Object objData = */ urlConnect.getContent();
+//
+//		} catch (UnknownHostException e) {
+//			return false;
+//		} catch (IOException e) {
+//			return false;
+//		}
+//		return true;
+//	}
 }

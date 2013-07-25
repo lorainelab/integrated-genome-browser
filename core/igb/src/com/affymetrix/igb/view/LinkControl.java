@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -35,9 +34,9 @@ final class LinkControl implements ContextualPopupListener {
 			}
 		}
 
-		generateMenuItemsFromWebLinks(primary_sym, menu_items);
+//		generateMenuItemsFromWebLinks(primary_sym, menu_items);
 
-		makeMenuItemsFromMap(popup, menu_items);
+		makeMenuItemsFromMap(primary_sym, popup);
 
 	}
 
@@ -72,31 +71,32 @@ final class LinkControl implements ContextualPopupListener {
 		}
 	}
 
-	private void generateMenuItemsFromWebLinks(SeqSymmetry primary_sym, Map<String, String> menu_items) {
-		// by using a Map to hold the urls, any duplicated urls will be filtered-out.
-		for (WebLink webLink : WebLink.getWebLinks(primary_sym)) {
-			// Generally, just let any link replace an existing link that has the same URL.
-			// But, if the new one has no name, and the old one does, then keep the old one.
-			String new_name = webLink.getName();
-			String url = webLink.getURLForSym(primary_sym);
-			String old_name = menu_items.get(url);
-			if (old_name == null || "".equals(old_name)) {
-				menu_items.put(url, new_name);
-			}
-		}
-	}
+//	private void generateMenuItemsFromWebLinks(SeqSymmetry primary_sym, Map<String, String> menu_items) {
+//		// by using a Map to hold the urls, any duplicated urls will be filtered-out.
+//		for (WebLink webLink : WebLink.getWebLinks(primary_sym)) {
+//			// Generally, just let any link replace an existing link that has the same URL.
+//			// But, if the new one has no name, and the old one does, then keep the old one.
+//			String new_name = webLink.getName();
+//			String url = webLink.getURLForSym(primary_sym);
+//			String old_name = menu_items.get(url);
+//			if (old_name == null || "".equals(old_name)) {
+//				menu_items.put(url, new_name);
+//			}
+//		}
+//	}
 
-	private static void makeMenuItemsFromMap(JPopupMenu popup, Map<String, String> urls) {
-		if (urls.isEmpty()) {
+	private static void makeMenuItemsFromMap(SeqSymmetry primary_sym, JPopupMenu popup) {
+		List<WebLink> results = WebLink.getWebLinks(primary_sym);
+		if (results.isEmpty()) {
 			return;
 		}
 
 		String name, url;
 		JMenuItem mi;
-		if (urls.size() == 1) {
-			for (Map.Entry<String, String> entry : urls.entrySet()) {
-				url = entry.getKey();
-				name = entry.getValue();
+		if (results.size() == 1) {
+			for (WebLink webLink : results) {
+				url = webLink.getURLForSym(primary_sym);
+				name = webLink.getName();
 				if (name == null || name.equals(url)) {
 					name = "Get More Info";
 				}
@@ -124,9 +124,9 @@ final class LinkControl implements ContextualPopupListener {
 			}
 			popup.add(linkMenu);
 
-			for (Map.Entry<String, String> entry : urls.entrySet()) {
-				url = entry.getKey();
-				name = entry.getValue();
+			for (WebLink webLink : results) {
+				url = webLink.getURLForSym(primary_sym);
+				name = webLink.getName();
 				if (name == null || name.equals(url)) {
 					name = "Unnamed link to web";
 				}

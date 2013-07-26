@@ -34,10 +34,9 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.weblink.WebLink;
 
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.prefs.WebLinkList;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 
 /**

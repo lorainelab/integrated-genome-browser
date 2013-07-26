@@ -12,6 +12,9 @@ import java.util.logging.Logger;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.weblink.WebLinkList;
+import com.affymetrix.genometryImpl.weblink.WebLink;
+
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 
 /**

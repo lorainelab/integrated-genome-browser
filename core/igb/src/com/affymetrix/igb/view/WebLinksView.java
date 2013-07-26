@@ -3,16 +3,16 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.genometryImpl.weblink.WebLink;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.StyledJTable;
-import com.affymetrix.igb.prefs.WebLink.RegexType;
+import com.affymetrix.genometryImpl.weblink.WebLink.RegexType;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.FileTracker;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.prefs.WebLinkList;
+import com.affymetrix.genometryImpl.weblink.WebLinkList;
 
 import java.util.List;
 import java.awt.*;

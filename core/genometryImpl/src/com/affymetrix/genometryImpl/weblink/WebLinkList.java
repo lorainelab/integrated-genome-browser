@@ -1,4 +1,4 @@
-package com.affymetrix.igb.prefs;
+package com.affymetrix.genometryImpl.weblink;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -14,7 +14,8 @@ import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.genometryImpl.weblink.WebLink;
+
 import com.affymetrix.igb.prefs.WebLinkUtils;
 
 final class LinkControl implements ContextualPopupListener {

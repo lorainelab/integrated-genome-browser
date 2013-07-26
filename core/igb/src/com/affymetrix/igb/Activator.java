@@ -41,7 +41,7 @@ import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.PrefsLoader;
-import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.UpdateStatusAlert;
@@ -489,7 +489,7 @@ public class Activator implements BundleActivator {
 			new IWindowRoutine() {
 				@Override
 				public void stop() {
-					WebLink.autoSave();
+					WebLinkUtils.autoSave();
 					((IGB)Application.getSingleton()).saveToolBar();
 				}
 				@Override

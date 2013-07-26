@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.prefs.WebLink.RegexType;
+import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.FileTracker;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -341,7 +342,7 @@ public final class WebLinksView {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
 			File fil = chooser.getSelectedFile();
 			try {
-				WebLink.importWebLinks(fil);
+				WebLinkUtils.importWebLinks(fil);
 			} catch (FileNotFoundException fe) {
 				ErrorHandler.errorPanel("Importing web links: File Not Found "
 						+ fil.getAbsolutePath(), fe, Level.SEVERE);
@@ -374,7 +375,7 @@ public final class WebLinksView {
 				if (!full_path.endsWith(".xml")) {
 					fil = new File(full_path + ".xml");
 				}
-				WebLink.exportWebLinks(fil, false);
+				WebLinkUtils.exportWebLinks(fil, false);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
 			}

@@ -45,7 +45,6 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -60,6 +59,7 @@ import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.affymetrix.igb.prefs.WebLinkUtils;
 import static com.affymetrix.igb.IGBConstants.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -274,7 +274,7 @@ public final class IGB extends Application
 			}
 		});
 				
-		WebLink.autoLoad();
+		WebLinkUtils.autoLoad();
 
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
 		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);

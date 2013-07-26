@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.prefs.WebLinkList;
 
 /**
  *Class for parsing preferences for IGB.
@@ -158,7 +159,8 @@ public final class XmlPrefsParser {
 		}
 
 		if (isWebLinkXML) {
-			WebLink.sortList();
+			WebLinkList.getServerList().sortList();
+			WebLinkList.getLocalList().sortList();
 		}
 	}
 
@@ -249,7 +251,7 @@ public final class XmlPrefsParser {
 		} catch (PatternSyntaxException pse) {
 			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
 		}
-		WebLink.addWebLink(link);
+		WebLinkList.getWebLinkList(type).addWebLink(link);
 	}
 
 	private static Map<String, Object> getAttributeMap(Element el) {

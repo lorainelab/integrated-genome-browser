@@ -27,36 +27,36 @@ public class WebLinkList {
 	
 	private static final boolean DEBUG = false;
 	
-	private final String type;
+	private final String name;
 	private final boolean allowDuplicates;
 	private final List<WebLink> weblink_list;
 	
-	public static WebLinkList getWebLinkListForType(String type){
-		if(SERVER_WEBLINK_LIST.getType().equalsIgnoreCase(type)){
+	public static WebLinkList getWebLinkList(String type){
+		if(SERVER_WEBLINK_LIST.getName().equalsIgnoreCase(type)){
 			return SERVER_WEBLINK_LIST;
 		}
 		return LOCAL_WEBLINK_LIST;
 	}
 	
-	public static WebLinkList getServerWebLinkList(){
+	public static WebLinkList getServerList(){
 		return SERVER_WEBLINK_LIST;
 	}
 	
-	public static WebLinkList getLocalWebLinkList(){
+	public static WebLinkList getLocalList(){
 		return LOCAL_WEBLINK_LIST;
 	}
 	
-	private WebLinkList(String type, boolean allowDuplicates){
-		this.type = type;
+	private WebLinkList(String name, boolean allowDuplicates){
+		this.name = name;
 		this.allowDuplicates = allowDuplicates;
 		this.weblink_list	 = new ArrayList<WebLink>();
 	}
 	
-	public String getType(){
-		return type;
+	public String getName(){
+		return name;
 	}
 	
-	public List<WebLink> getWebList() {
+	public List<WebLink> getWebLinkList() {
 		return weblink_list;
 	}
 	

@@ -104,7 +104,7 @@ public class WebLinkUtils {
 			bw.write("<prefs>");
 			bw.write(separator);
 
-			for (WebLink link : WebLink.getLocalWebList()) {
+			for (WebLink link : WebLinkList.getLocalList().getWebLinkList()) {
 				String xml = link.toXML();
 				bw.write(xml);
 				bw.write(separator);

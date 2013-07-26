@@ -8,14 +8,10 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 
 /**
@@ -56,186 +52,6 @@ public final class WebLink {
 		setRegex(regex);
 		setUrl(url);
 		setRegexType(regexType);
-	}
-
-	/** Used to compute the hashCode and in the equals() method. */
-	private String toComparisonString() {
-		// Do NOT consider the "name" in tests of equality.
-		// We do not want to allow two links that are identical except for name.
-		// This is important in allowing users to over-ride the default links.
-		return original_regex + ", " + url.toString() + ", " + id_field_name;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof WebLink)) {
-			return false;
-		}
-		WebLink w = (WebLink) o;
-		return toComparisonString().equals(w.toComparisonString());
-	}
-
-	@Override
-	public int hashCode() {
-		return toComparisonString().hashCode();
-	}
-
-	public static void addWebLink(WebLink wl) {
-		if (wl.getName() == null || wl.getName().trim().length() == 0) {
-			return;
-		}
-
-		if (!wl.getType().equals(LOCAL)) {
-			if (!isContained(server_weblink_list, wl)) {
-				server_weblink_list.add(wl);
-			}
-		} else {
-			local_weblink_list.add(wl);
-		}
-	}
-
-	public static void sortList() {
-		Collections.sort(server_weblink_list, webLinkComp);
-		Collections.sort(local_weblink_list, webLinkComp);
-	}
-
-	private static boolean isContained(List<WebLink> list, WebLink link) {
-		for (WebLink l : list) {
-			if (l.getName().equals(link.getName())
-					&& l.getUrl().equals(link.getUrl())
-					&& l.getRegex().equals(link.getRegex())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
-
-		private String sortString(WebLink wl) {
-			return wl.name + ", " + wl.original_regex + ", " + wl.url.toString() + ", " + wl.id_field_name;
-		}
-
-		public int compare(WebLink o1, WebLink o2) {
-			return (sortString(o1).compareTo(sortString(o2)));
-		}
-	};
-
-	/**
-	 *  Remove a WebLink from the static list.
-	 */
-	public static void removeLocalWebLink(WebLink link) {
-		Iterator<WebLink> it = local_weblink_list.iterator();
-		while (it.hasNext()) {
-			WebLink item = it.next();
-			if (link == item) {
-				it.remove();
-			}
-		}
-	}
-
-	/** Get all web-link patterns for the given method name.
-	 *  These can come from regular-expression matching from the semi-obsolete
-	 *  XML-based preferences file, or from UCSC-style track lines in the
-	 *  input files.  It is entirely possible that some of the WebLinks in the
-	 *  array will have the same regular expression or point to the same URL.
-	 *  You may want to filter-out such duplicate results.
-	 */
-	public static List<WebLink> getWebLinks(SeqSymmetry sym) {
-		// Most links come from matching the tier name (i.e. method)
-		// to a regular expression.
-		String method = BioSeq.determineMethod(sym);
-		if (method == null) { // rarely happens, but can
-			return Collections.<WebLink>emptyList();
-		}
-
-		List<WebLink> results = new ArrayList<WebLink>();
-
-		// If the method name has already been used, then the annotStyle must have already been created
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-		String style_url = style.getUrl();
-		if (style_url != null && style_url.length() > 0) {
-			WebLink link = new WebLink("Track Line URL", null, style_url, RegexType.TYPE);
-			results.add(link);
-		}
-
-		if (DEBUG) {
-			System.out.println("method is : " + method);
-			System.out.println("ID is : " + sym.getID());
-		}
-
-		Set<WebLink> webLinks = new HashSet<WebLink>();
-		webLinks.addAll(getWebLink(sym, method));
-
-	//	if (webLinks.isEmpty()) {
-			if (style.getFeature() != null) {
-				webLinks.addAll(getWebLink(sym, style.getFeature().featureName));
-			}
-	//	}
-
-		results.addAll(webLinks);
-		
-		Collections.sort(results, webLinkComp);
-		return results;
-	}
-
-	private static List<WebLink> getWebLink(SeqSymmetry sym, String method) {
-		List<WebLink> results = new ArrayList<WebLink>();
-		List<WebLink> temp = new ArrayList<WebLink>();
-		temp.addAll(server_weblink_list);
-		temp.addAll(local_weblink_list);
-
-		for (WebLink link : temp) {
-			if (link.url == null) {
-				continue;
-			}
-			if (link.getSpeciesName().length() > 0) {
-				String current_version = GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
-				String current_species = SpeciesLookup.getSpeciesName(current_version);
-				boolean isSynonym = SpeciesLookup.isSynonym(current_species, link.getSpeciesName());
-				if (!isSynonym) {
-					continue;
-				}
-			}
-			if (link.getIDField() != null) {
-				// Allow matching of arbitrary id_field
-
-				if (!(sym instanceof SymWithProps)) {
-					continue;
-				}
-				String property = (String) ((SymWithProps) sym).getProperty(link.getIDField());
-				if (property != null && link.matches(property)) {
-					if (DEBUG) {
-						System.out.println("link " + link + " matches property:" + property);
-					}
-					results.add(link);
-				}
-				continue;
-			}
-
-			if (link.regexType == RegexType.TYPE && link.matches(method)) {
-				if (DEBUG) {
-					System.out.println("link " + link + " matches method.");
-				}
-				results.add(link);
-			} else if (link.regexType == RegexType.ID && link.matches(sym.getID())) {
-				if (DEBUG) {
-					System.out.println("link " + link + " matches ID.");
-				}
-				results.add(link);
-			}
-		}
-
-		return results;
-	}
-
-	public static List<WebLink> getServerWebList() {
-		return server_weblink_list;
-	}
-
-	public static List<WebLink> getLocalWebList() {
-		return local_weblink_list;
 	}
 
 	public String getName() {
@@ -439,6 +255,28 @@ public final class WebLink {
 		return sb.toString();
 	}
 
+	/** Used to compute the hashCode and in the equals() method. */
+	private String toComparisonString() {
+		// Do NOT consider the "name" in tests of equality.
+		// We do not want to allow two links that are identical except for name.
+		// This is important in allowing users to over-ride the default links.
+		return original_regex + ", " + url.toString() + ", " + id_field_name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof WebLink)) {
+			return false;
+		}
+		WebLink w = (WebLink) o;
+		return toComparisonString().equals(w.toComparisonString());
+	}
+
+	@Override
+	public int hashCode() {
+		return toComparisonString().hashCode();
+	}
+	
 	private static String escapeXML(String s) {
 		if (s == null) {
 			return null;

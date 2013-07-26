@@ -2,10 +2,7 @@ package com.affymetrix.igb.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +15,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.prefs.WebLinkList;
 
 final class LinkControl implements ContextualPopupListener {
 
@@ -90,7 +88,9 @@ final class LinkControl implements ContextualPopupListener {
 //	}
 
 	private static void makeMenuItemsFromMap(SeqSymmetry primary_sym, JPopupMenu popup) {
-		List<WebLink> results = WebLink.getWebLinks(primary_sym);
+		List<WebLink> results = new ArrayList<WebLink>();
+		results.addAll(WebLinkList.getServerList().getWebLinks(primary_sym));
+		results.addAll(WebLinkList.getLocalList().getWebLinks(primary_sym));
 		if (results.isEmpty()) {
 			return;
 		}

@@ -12,6 +12,7 @@ import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.FileTracker;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.prefs.WebLinkList;
 
 import java.util.List;
 import java.awt.*;
@@ -90,8 +91,8 @@ public final class WebLinksView {
 		ListSelectionListener serverListener = new ServerListSelectionListener(serverTable);
 		ListSelectionListener localListener = new LocalListSelectionListener(localTable);
 
-		initTable(serverTable, WebLink.getServerWebList(), serverListener);
-		initTable(localTable, WebLink.getLocalWebList(), localListener);
+		initTable(serverTable, WebLinkList.getServerList().getWebLinkList(), serverListener);
+		initTable(localTable, WebLinkList.getLocalList().getWebLinkList(), localListener);
 
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
@@ -144,7 +145,7 @@ public final class WebLinksView {
 				}
 
 				for (WebLink l : links) {
-					WebLink.removeLocalWebLink(l);
+					WebLinkList.getLocalList().removeWebLink(l);
 				}
 
 			}
@@ -175,7 +176,7 @@ public final class WebLinksView {
 		link.setUrl(BUNDLE.getString("default_url"));
 		link.setRegex(BUNDLE.getString("default_regex"));
 		link.setType(WebLink.LOCAL);
-		WebLink.addWebLink(link);
+		WebLinkList.getLocalList().addWebLink(link);
 
 		refreshList();
 
@@ -201,7 +202,7 @@ public final class WebLinksView {
 	}
 
 	private void refreshList() {
-		localModel.setLinks(WebLink.getLocalWebList());
+		localModel.setLinks(WebLinkList.getLocalList().getWebLinkList());
 		localModel.fireTableDataChanged();
 	}
 
@@ -496,7 +497,7 @@ public final class WebLinksView {
 
 				previousSelectedRow = localTable.getSelectedRow();
 
-				setLinks(WebLink.getLocalWebList());
+				setLinks(WebLinkList.getLocalList().getWebLinkList());
 				fireTableCellUpdated(row, col);
 
 				resetRow(previousSelectedRow);

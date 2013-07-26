@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.prefs.WebLinkList;
+import com.affymetrix.igb.prefs.WebLinkUtils;
 
 final class LinkControl implements ContextualPopupListener {
 
@@ -89,8 +89,8 @@ final class LinkControl implements ContextualPopupListener {
 
 	private static void makeMenuItemsFromMap(SeqSymmetry primary_sym, JPopupMenu popup) {
 		List<WebLink> results = new ArrayList<WebLink>();
-		results.addAll(WebLinkList.getServerList().getWebLinks(primary_sym));
-		results.addAll(WebLinkList.getLocalList().getWebLinks(primary_sym));
+		results.addAll(WebLinkUtils.getServerList().getWebLinks(primary_sym));
+		results.addAll(WebLinkUtils.getLocalList().getWebLinks(primary_sym));
 		if (results.isEmpty()) {
 			return;
 		}

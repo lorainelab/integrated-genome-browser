@@ -893,6 +893,24 @@ public final class GeneralLoadUtils {
 
 				if (aseq != null) {
 					gviewer.setAnnotatedSeq(aseq, true, true);
+//					if (this.isCancelled()) {
+//						return;
+//					}
+//					try {
+//						Map<String, List<? extends SeqSymmetry>> results = get();
+//						for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
+//							RootSeqSymmetry annotSym = aseq.getAnnotation(entry.getKey());
+//							if (entry.getKey() != null && annotSym != null) {
+//								MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
+//								ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(entry.getKey());
+//								factory.createGlyphs(annotSym, entry.getValue(), style, gviewer, aseq);
+//							}
+//						}
+//						gviewer.getSeqMap().repackTheTiers(true, true, true);
+//					} catch (Exception ex) {
+//						Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+//								Level.SEVERE, "Unable to get refresh action result.", ex);
+//					}
 				} else if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 					// This can happen when loading a brand-new genome
 					aseq = gmodel.getSelectedSeqGroup().getSeq(0);

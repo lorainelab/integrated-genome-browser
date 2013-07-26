@@ -21,6 +21,8 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 public class WebLinkUtils {
 	private static final String separator = System.getProperty("line.separator");
 	private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
+	static final WebLinkList LOCAL_WEBLINK_LIST = new WebLinkList("local", true);
+	static final WebLinkList SERVER_WEBLINK_LIST = new WebLinkList("default", false);
 	
 	/**
 	 *  Returns the file that is used to store the user-edited web links.
@@ -104,7 +106,7 @@ public class WebLinkUtils {
 			bw.write("<prefs>");
 			bw.write(separator);
 
-			for (WebLink link : WebLinkList.getLocalList().getWebLinkList()) {
+			for (WebLink link : getLocalList().getWebLinkList()) {
 				String xml = link.toXML();
 				bw.write(xml);
 				bw.write(separator);
@@ -117,6 +119,21 @@ public class WebLinkUtils {
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(fw);
 		}
+	}
+
+	public static WebLinkList getServerList() {
+		return SERVER_WEBLINK_LIST;
+	}
+
+	public static WebLinkList getLocalList() {
+		return LOCAL_WEBLINK_LIST;
+	}
+
+	public static WebLinkList getWebLinkList(String type) {
+		if (SERVER_WEBLINK_LIST.getName().equalsIgnoreCase(type)) {
+			return SERVER_WEBLINK_LIST;
+		}
+		return LOCAL_WEBLINK_LIST;
 	}
 
 }

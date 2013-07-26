@@ -91,8 +91,8 @@ public final class WebLinksView {
 		ListSelectionListener serverListener = new ServerListSelectionListener(serverTable);
 		ListSelectionListener localListener = new LocalListSelectionListener(localTable);
 
-		initTable(serverTable, WebLinkList.getServerList().getWebLinkList(), serverListener);
-		initTable(localTable, WebLinkList.getLocalList().getWebLinkList(), localListener);
+		initTable(serverTable, WebLinkUtils.getServerList().getWebLinkList(), serverListener);
+		initTable(localTable, WebLinkUtils.getLocalList().getWebLinkList(), localListener);
 
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
@@ -145,7 +145,7 @@ public final class WebLinksView {
 				}
 
 				for (WebLink l : links) {
-					WebLinkList.getLocalList().removeWebLink(l);
+					WebLinkUtils.getLocalList().removeWebLink(l);
 				}
 
 			}
@@ -176,7 +176,7 @@ public final class WebLinksView {
 		link.setUrl(BUNDLE.getString("default_url"));
 		link.setRegex(BUNDLE.getString("default_regex"));
 		link.setType(WebLink.LOCAL);
-		WebLinkList.getLocalList().addWebLink(link);
+		WebLinkUtils.getLocalList().addWebLink(link);
 
 		refreshList();
 
@@ -202,7 +202,7 @@ public final class WebLinksView {
 	}
 
 	private void refreshList() {
-		localModel.setLinks(WebLinkList.getLocalList().getWebLinkList());
+		localModel.setLinks(WebLinkUtils.getLocalList().getWebLinkList());
 		localModel.fireTableDataChanged();
 	}
 
@@ -497,7 +497,7 @@ public final class WebLinksView {
 
 				previousSelectedRow = localTable.getSelectedRow();
 
-				setLinks(WebLinkList.getLocalList().getWebLinkList());
+				setLinks(WebLinkUtils.getLocalList().getWebLinkList());
 				fireTableCellUpdated(row, col);
 
 				resetRow(previousSelectedRow);

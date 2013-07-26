@@ -22,31 +22,13 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
  */
 public class WebLinkList {
 	
-	private static final WebLinkList SERVER_WEBLINK_LIST = new WebLinkList("default", false);
-	private static final WebLinkList LOCAL_WEBLINK_LIST = new WebLinkList("local", true);
-	
 	private static final boolean DEBUG = false;
 	
 	private final String name;
 	private final boolean allowDuplicates;
 	private final List<WebLink> weblink_list;
 	
-	public static WebLinkList getWebLinkList(String type){
-		if(SERVER_WEBLINK_LIST.getName().equalsIgnoreCase(type)){
-			return SERVER_WEBLINK_LIST;
-		}
-		return LOCAL_WEBLINK_LIST;
-	}
-	
-	public static WebLinkList getServerList(){
-		return SERVER_WEBLINK_LIST;
-	}
-	
-	public static WebLinkList getLocalList(){
-		return LOCAL_WEBLINK_LIST;
-	}
-	
-	private WebLinkList(String name, boolean allowDuplicates){
+	public WebLinkList(String name, boolean allowDuplicates){
 		this.name = name;
 		this.allowDuplicates = allowDuplicates;
 		this.weblink_list	 = new ArrayList<WebLink>();

@@ -31,6 +31,12 @@ public class WebLinkList {
 	private final boolean allowDuplicates;
 	private final List<WebLink> weblink_list;
 	
+	public static WebLinkList getWebLinkListForType(String type){
+		if(SERVER_WEBLINK_LIST.getType().equalsIgnoreCase(type)){
+			return SERVER_WEBLINK_LIST;
+		}
+		return LOCAL_WEBLINK_LIST;
+	}
 	
 	public static WebLinkList getServerWebLinkList(){
 		return SERVER_WEBLINK_LIST;
@@ -44,6 +50,10 @@ public class WebLinkList {
 		this.type = type;
 		this.allowDuplicates = allowDuplicates;
 		this.weblink_list	 = new ArrayList<WebLink>();
+	}
+	
+	public String getType(){
+		return type;
 	}
 	
 	public List<WebLink> getWebList() {

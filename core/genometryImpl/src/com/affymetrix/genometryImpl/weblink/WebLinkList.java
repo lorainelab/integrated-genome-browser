@@ -68,7 +68,7 @@ public class WebLinkList {
 	}
 	
 	public void sortList() {
-		Collections.sort(weblink_list, webLinkComp);
+		Collections.sort(weblink_list);
 	}
 	
 	
@@ -113,13 +113,12 @@ public class WebLinkList {
 
 		results.addAll(webLinks);
 		
-		Collections.sort(results, webLinkComp);
+		Collections.sort(results);
 		return results;
 	}
 
 	private List<WebLink> getWebLink(SeqSymmetry sym, String method) {
 		List<WebLink> results = new ArrayList<WebLink>();
-		List<WebLink> temp = new ArrayList<WebLink>();
 
 		for (WebLink link : weblink_list) {
 			if (link.getUrl() == null) {
@@ -177,14 +176,4 @@ public class WebLinkList {
 		return false;
 	}
 	
-	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
-
-		private String sortString(WebLink wl) {
-			return wl.getName() + ", " + wl.getRegex() + ", " + wl.getUrl() + ", " + wl.getIDField();
-		}
-
-		public int compare(WebLink o1, WebLink o2) {
-			return (sortString(o1).compareTo(sortString(o2)));
-		}
-	};
 }

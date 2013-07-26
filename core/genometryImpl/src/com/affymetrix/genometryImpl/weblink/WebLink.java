@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.weblink;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -18,15 +17,15 @@ import com.affymetrix.genometryImpl.GenometryModel;
  *
  * @version $Id: WebLink.java 11425 2012-05-04 15:54:04Z lfrohman $
  */
-public final class WebLink {
+public final class WebLink implements Comparable<WebLink> {
 	private static final String separator = System.getProperty("line.separator");
+	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
+	private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
 	
 	// TYPE is feature name, ID is annotation ID
 	public enum RegexType {
-
 		TYPE, ID
 	};
-	private static final boolean DEBUG = false;
 	private String url = null;
 	private String name = "";
 	private String species = "";
@@ -34,15 +33,10 @@ public final class WebLink {
 	private String original_regex = null;
 	private String type = null; // server or local source
 	private RegexType regexType = RegexType.TYPE;	// matching on type or id
-	
 	private Pattern pattern = null;
-	private static final List<WebLink> local_weblink_list = new ArrayList<WebLink>();
-	private static final List<WebLink> server_weblink_list = new ArrayList<WebLink>();
 	
 	public static final String LOCAL = "local";
-	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
-	private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
-
+	
 	public WebLink() {
 	}
 
@@ -277,6 +271,15 @@ public final class WebLink {
 		return toComparisonString().hashCode();
 	}
 	
+	@Override
+	public int compareTo(WebLink link){
+		return (sortString(this).compareTo(sortString(link)));
+	}
+	
+	private static String sortString(WebLink wl) {
+		return wl.getName() + ", " + wl.getRegex() + ", " + wl.getUrl() + ", " + wl.getIDField();
+	}
+
 	private static String escapeXML(String s) {
 		if (s == null) {
 			return null;

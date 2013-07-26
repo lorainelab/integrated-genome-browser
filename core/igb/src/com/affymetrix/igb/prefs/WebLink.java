@@ -434,7 +434,8 @@ public final class WebLink {
 					append("\"").append(separator);
 		}
 		sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator);
-		sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator).append("/>");
+		sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator);
+		sb.append("/>");
 		return sb.toString();
 	}
 

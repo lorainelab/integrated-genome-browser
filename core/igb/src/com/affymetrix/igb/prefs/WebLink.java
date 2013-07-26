@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 
 /**
@@ -51,7 +50,7 @@ public final class WebLink {
 	public WebLink() {
 	}
 
-	private WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
+	WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
 		this();
 		setName(name);
 		setRegex(regex);
@@ -335,7 +334,7 @@ public final class WebLink {
 		return this.regexType;
 	}
 
-	private boolean matches(String s) {
+	public boolean matches(String s) {
 		return (pattern == null
 				|| pattern.matcher(s).matches());
 	}

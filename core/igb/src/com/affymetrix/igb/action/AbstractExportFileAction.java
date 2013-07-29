@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -30,14 +31,13 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import javax.swing.filechooser.FileFilter;
 
 public abstract class AbstractExportFileAction
 extends GenericAction implements SymSelectionListener {
 	private static final long serialVersionUID = 1l;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final ExportFileModel model;
-	private final Map<FileTypeCategory, FileFilter> preferredFilters;
+	private final Map<FileTypeCategory, UniFileFilter> preferredFilters;
 	
 	protected AbstractExportFileAction(
 			String text,
@@ -48,7 +48,7 @@ extends GenericAction implements SymSelectionListener {
 			boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 		model = new ExportFileModel();
-		preferredFilters = new HashMap<FileTypeCategory, FileFilter>();
+		preferredFilters = new HashMap<FileTypeCategory, UniFileFilter>();
 	}
 
 	/**
@@ -89,12 +89,12 @@ extends GenericAction implements SymSelectionListener {
 			for (UniFileFilter filter : filter2writers.keySet()) {
 				chooser.addChoosableFileFilter(filter);
 			}
-			FileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
+			UniFileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
 			if(preferredFilter == null){
 				chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
 			} else {
 				for(FileFilter filter : chooser.getChoosableFileFilters()){
-					if(filter.hashCode() == preferredFilter.hashCode()){
+					if(((UniFileFilter)filter).getDescription().equals(preferredFilter.getDescription())){
 						chooser.setFileFilter(filter);
 						break;
 					}
@@ -109,7 +109,7 @@ extends GenericAction implements SymSelectionListener {
 				try {
 					File fil = chooser.getSelectedFile();
 					dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-					FileFilter selectedFilter = chooser.getFileFilter();
+					UniFileFilter selectedFilter = (UniFileFilter)chooser.getFileFilter();
 					preferredFilters.put(rootSym.getCategory(), selectedFilter);
 					exportFile(filter2writers.get(selectedFilter), dos, aseq, atier);
 				} catch (Exception ex) {

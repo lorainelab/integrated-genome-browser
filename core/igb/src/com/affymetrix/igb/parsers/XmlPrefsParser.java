@@ -28,7 +28,6 @@ import org.xml.sax.SAXException;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
-import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.prefs.WebLinkUtils.WeblinkElementHandler;
 import com.affymetrix.igb.general.ServerList.RepositoryElementHandler;
 import com.affymetrix.igb.general.ServerList.ServerElementHandler;
@@ -134,15 +133,13 @@ public final class XmlPrefsParser {
 		Node child;
 		String name;
 		Element el;
-		boolean isWebLinkXML = false;
-
+		
 		for (int i = 0; i < children.getLength(); i++) {
 			child = children.item(i);
 			name = child.getNodeName();
 			if (child instanceof Element) {
 				el = (Element) child;
 				if (name.equalsIgnoreCase("annotation_url")) {
-					isWebLinkXML = true;
 					(new WeblinkElementHandler()).processElement(el);
 				} else if (name.equalsIgnoreCase("server")) {
 					(new ServerElementHandler()).processElement(el);
@@ -150,11 +147,6 @@ public final class XmlPrefsParser {
 					(new RepositoryElementHandler()).processElement(el);
 				}
 			}
-		}
-
-		if (isWebLinkXML) {
-			WebLinkUtils.getServerList().sortList();
-			WebLinkUtils.getLocalList().sortList();
 		}
 	}
 	

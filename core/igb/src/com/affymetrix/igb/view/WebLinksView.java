@@ -420,6 +420,7 @@ public final class WebLinksView {
 		}
 
 		public void setLinks(List<WebLink> webLinks) {
+			Collections.sort(webLinks);
 			this.webLinks = webLinks;
 		}
 

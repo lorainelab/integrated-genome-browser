@@ -66,12 +66,7 @@ public class WebLinkList {
 			}
 		}
 	}
-	
-	public void sortList() {
-		Collections.sort(weblink_list);
-	}
-	
-	
+		
 	/** Get all web-link patterns for the given method name.
 	 *  These can come from regular-expression matching from the semi-obsolete
 	 *  XML-based preferences file, or from UCSC-style track lines in the

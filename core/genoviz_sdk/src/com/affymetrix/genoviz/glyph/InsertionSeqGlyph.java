@@ -47,4 +47,9 @@ public class InsertionSeqGlyph extends SequenceGlyph {
 		super.setColor(c);
 		bgcolor = c.darker();
 	}
+	
+	@Override
+	public boolean supportsSubSelection(){
+		return false;
+	}
 }

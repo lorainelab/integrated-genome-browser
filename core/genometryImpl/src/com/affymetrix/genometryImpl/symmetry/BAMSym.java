@@ -121,6 +121,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			tprops.put("id", name);
 			tprops.put("residues", getResidues());
 			tprops.put("forward", this.isForward());
+			tprops.put("feature_type", "insertion"); 
 			return tprops;
 		}
 	}

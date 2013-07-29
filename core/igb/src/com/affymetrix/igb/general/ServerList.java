@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.igb.parsers.XmlPrefsParser;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,13 +31,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import org.w3c.dom.Element;
 
 /**
  *
  * @version $Id: ServerList.java 11173 2012-04-19 13:52:00Z imnick $
  */
 public final class ServerList {
-
+	private static final boolean DEBUG = false;
 	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
 	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
@@ -538,5 +540,64 @@ public final class ServerList {
 			}
 		}
 		return null;
+	}
+	
+	private static void processServer(Element el, ServerList serverList, ServerTypeI server_type) {
+		String server_name = el.getAttribute("name");
+		String server_url = el.getAttribute("url");
+		String mirror_url = el.getAttribute("mirror"); //qlmirror
+		String en = el.getAttribute("enabled");
+		String orderString = el.getAttribute("order");
+		Integer order = orderString == null || orderString.isEmpty() ? 0 : Integer.valueOf(orderString);
+		Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
+		String pr = el.getAttribute("primary");
+		Boolean primary = pr == null || pr.isEmpty() ? false : Boolean.valueOf(pr);
+		String d = el.getAttribute("default");
+		Boolean isDefault = d == null || d.isEmpty() ? false : Boolean.valueOf(d);
+		
+		if (DEBUG) {
+			System.out.println("XmlPrefsParser adding " + server_type 
+					+ " server: " + server_name + ",  " + server_url + " mirror: " + mirror_url
+					+ ", enabled: " + enabled + "default: " + isDefault);
+		}
+		serverList.addServer(server_type, server_name, server_url, 
+				enabled, primary, order.intValue(), isDefault, mirror_url); //qlmirror
+	}
+
+	
+	public static class ServerElementHandler implements XmlPrefsParser.ElementHandler {
+
+		@Override
+		public void processElement(Element el) {
+			processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
+		}
+
+		@Override
+		public String getElementTag() {
+			return ServerList.getServerInstance().getTextName();
+		}
+	
+		private static ServerTypeI getServerType(String type) {
+			for (ServerTypeI t : ServerUtils.getServerTypes()) {
+				if (type.equalsIgnoreCase(t.getName())) {
+					return t;
+				}
+			}
+			return ServerTypeI.DEFAULT;
+		}
+	}
+	
+	public static class RepositoryElementHandler implements XmlPrefsParser.ElementHandler {
+
+		@Override
+		public void processElement(Element el) {
+			processServer(el, ServerList.getRepositoryInstance(), null);
+		}
+
+		@Override
+		public String getElementTag() {
+			return ServerList.getRepositoryInstance().getTextName();
+		}
+		
 	}
 }

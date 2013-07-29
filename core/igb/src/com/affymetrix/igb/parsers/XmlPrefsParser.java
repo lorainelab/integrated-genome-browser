@@ -14,17 +14,12 @@ package com.affymetrix.igb.parsers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.PatternSyntaxException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -32,12 +27,11 @@ import org.xml.sax.SAXException;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.weblink.WebLink;
 
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.WebLinkUtils;
+import com.affymetrix.igb.prefs.WebLinkUtils.WeblinkElementHandler;
+import com.affymetrix.igb.general.ServerList.RepositoryElementHandler;
+import com.affymetrix.igb.general.ServerList.ServerElementHandler;
 
 /**
  *Class for parsing preferences for IGB.
@@ -149,11 +143,11 @@ public final class XmlPrefsParser {
 				el = (Element) child;
 				if (name.equalsIgnoreCase("annotation_url")) {
 					isWebLinkXML = true;
-					processLinkUrl(el);
+					(new WeblinkElementHandler()).processElement(el);
 				} else if (name.equalsIgnoreCase("server")) {
-					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
+					(new ServerElementHandler()).processElement(el);
 				} else if (name.equalsIgnoreCase("repository")) {
-					processServer(el, ServerList.getRepositoryInstance(), null);
+					(new RepositoryElementHandler()).processElement(el);
 				}
 			}
 		}
@@ -163,107 +157,9 @@ public final class XmlPrefsParser {
 			WebLinkUtils.getLocalList().sortList();
 		}
 	}
-
-	private static void processServer(Element el, ServerList serverList, ServerTypeI server_type) {
-		String server_name = el.getAttribute("name");
-		String server_url = el.getAttribute("url");
-		String mirror_url = el.getAttribute("mirror"); //qlmirror
-		String en = el.getAttribute("enabled");
-		String orderString = el.getAttribute("order");
-		Integer order = orderString == null || orderString.isEmpty() ? 0 : Integer.valueOf(orderString);
-		Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
-		String pr = el.getAttribute("primary");
-		Boolean primary = pr == null || pr.isEmpty() ? false : Boolean.valueOf(pr);
-		String d = el.getAttribute("default");
-		Boolean isDefault = d == null || d.isEmpty() ? false : Boolean.valueOf(d);
-		
-		if (DEBUG) {
-			System.out.println("XmlPrefsParser adding " + server_type 
-					+ " server: " + server_name + ",  " + server_url + " mirror: " + mirror_url
-					+ ", enabled: " + enabled + "default: " + isDefault);
-		}
-		serverList.addServer(server_type, server_name, server_url, 
-				enabled, primary, order.intValue(), isDefault, mirror_url); //qlmirror
-	}
-
-	private static ServerTypeI getServerType(String type) {
-		for (ServerTypeI t : ServerUtils.getServerTypes()) {
-			if (type.equalsIgnoreCase(t.getName())) {
-				return t;
-			}
-		}
-		return ServerTypeI.DEFAULT;
-	}
-
-	/**
-	 *  Sets up a regular-expression matching between a method name or id and a url,
-	 *  which can be used, for example, in SeqMapView to "get more info" about
-	 *  an item.
-	 *  For example:
-	 *  <p>
-	 *  <code>&gt;annotation_url annot_type_regex="google" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
-	 * <code>&gt;annotation_url annot_id_regex="^AT*" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
-	 *  <p>
-	 *  Note that the url can contain "$$" which will later be substituted with the
-	 *  "id" of the annotation to form a link.
-	 *  By default, match is case-insensitive;  use match_case="true" if you want
-	 *  to require an exact match.
-	 */
-	private static void processLinkUrl(Element el) {
-		Map<String, Object> attmap = XmlPrefsParser.getAttributeMap(el);
-		String url = (String)attmap.get("url");
-		if (url == null || url.trim().length() == 0) {
-			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
-			return;
-		}
-
-		WebLink.RegexType type_regex = WebLink.RegexType.TYPE;
-		String annot_regex_string = (String)attmap.get("annot_type_regex");
-		if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
-			type_regex = WebLink.RegexType.ID;
-			annot_regex_string = (String)attmap.get("annot_id_regex");
-		}
-		if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
-			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
-			return;
-		}
-
-		String name = (String)attmap.get("name");
-		String species = (String)attmap.get("species");
-		String IDField = (String)attmap.get("id_field");
-		String type = (String)attmap.get("type");
-		if (type == null) {
-			type = WebLink.LOCAL;
-		}
-		WebLink link = new WebLink();
-		link.setRegexType(type_regex);
-		link.setName(name);
-		link.setIDField(IDField);
-		link.setUrl(url);
-		link.setType(type);
-		link.setSpeciesName(species);	
-		try {
-			if ("false".equalsIgnoreCase((String)attmap.get("match_case"))) {
-				link.setRegex("(?-i)" + annot_regex_string);
-			} else {
-				link.setRegex(annot_regex_string);
-			}
-		} catch (PatternSyntaxException pse) {
-			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
-		}
-		WebLinkUtils.getWebLinkList(type).addWebLink(link);
-	}
-
-	private static Map<String, Object> getAttributeMap(Element el) {
-		HashMap<String, Object> amap = new HashMap<String, Object>();
-		NamedNodeMap atts = el.getAttributes();
-		int attcount = atts.getLength();
-		for (int i = 0; i < attcount; i++) {
-			Attr att = (Attr) atts.item(i);
-			String tag = att.getName();
-			String val = att.getValue();
-			amap.put(tag, val);
-		}
-		return amap;
+	
+	public static interface ElementHandler {
+		public void processElement(Element el);
+		public String getElementTag();
 	}
 }

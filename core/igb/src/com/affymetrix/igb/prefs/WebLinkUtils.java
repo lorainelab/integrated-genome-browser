@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.PatternSyntaxException;
+import org.w3c.dom.Element;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -123,7 +125,7 @@ public class WebLinkUtils {
 			GeneralUtils.safeClose(fw);
 		}
 	}
-
+	
 	public static WebLinkList getServerList() {
 		return SERVER_WEBLINK_LIST;
 	}
@@ -139,4 +141,69 @@ public class WebLinkUtils {
 		return LOCAL_WEBLINK_LIST;
 	}
 
+	public static class WeblinkElementHandler implements XmlPrefsParser.ElementHandler {
+
+		/**
+		 * Sets up a regular-expression matching between a method name or id and
+		 * a url, which can be used, for example, in SeqMapView to "get more
+		 * info" about an item. For example: <p>
+		 * <code>&gt;annotation_url annot_type_regex="google" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
+		 * <code>&gt;annotation_url annot_id_regex="^AT*" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
+		 * <p> Note that the url can contain "$$" which will later be
+		 * substituted with the "id" of the annotation to form a link. By
+		 * default, match is case-insensitive; use match_case="true" if you want
+		 * to require an exact match.
+		 */
+		@Override
+		public void processElement(Element el) {
+
+			String url = el.getAttribute("url");
+			if (url == null || url.trim().length() == 0) {
+				System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
+				return;
+			}
+
+			WebLink.RegexType type_regex = WebLink.RegexType.TYPE;
+			String annot_regex_string = el.getAttribute("annot_type_regex");
+			if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
+				type_regex = WebLink.RegexType.ID;
+				annot_regex_string = el.getAttribute("annot_id_regex");
+			}
+			if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
+				System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
+				return;
+			}
+
+			String name = el.getAttribute("name");
+			String species = el.getAttribute("species");
+			String IDField = el.getAttribute("id_field");
+			String type = el.getAttribute("type");
+			if (type == null) {
+				type = WebLink.LOCAL;
+			}
+			WebLink link = new WebLink();
+			link.setRegexType(type_regex);
+			link.setName(name);
+			link.setIDField(IDField);
+			link.setUrl(url);
+			link.setType(type);
+			link.setSpeciesName(species);
+			try {
+				if ("false".equalsIgnoreCase(el.getAttribute("match_case"))) {
+					link.setRegex("(?-i)" + annot_regex_string);
+				} else {
+					link.setRegex(annot_regex_string);
+				}
+			} catch (PatternSyntaxException pse) {
+				System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
+			}
+			WebLinkUtils.getWebLinkList(type).addWebLink(link);
+		}
+
+		@Override
+		public String getElementTag() {
+			return "annotation_url";
+		}
+	
+	}
 }

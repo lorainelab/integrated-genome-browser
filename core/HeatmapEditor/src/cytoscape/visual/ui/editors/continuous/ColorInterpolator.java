@@ -37,8 +37,11 @@ public abstract class ColorInterpolator {
 		if (lowerDomain == upperDomain) {
 			return lowerRange;
 		}
-		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
-		return getRangeValue(frac, lowerRange, upperRange);
+//		This does not work with negative values		
+//		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
+//		return getRangeValue(frac, lowerRange, upperRange);
+		double frac = (domainValue - Math.abs(lowerDomain)) / (upperDomain - lowerDomain);
+		return getRangeValue(Math.abs(frac), lowerRange, upperRange);
 	}
     
 	protected abstract Color getRangeValue(double frac, Color lowerColor, Color upperColor);

@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometryImpl.symmetry.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -24,7 +25,10 @@ final class LinkControl implements ContextualPopupListener {
 		if (primary_sym == null || selected_syms.size() != 1) {
 			return;
 		}
-
+		if(primary_sym instanceof CdsSeqSymmetry) {
+			primary_sym = ((CdsSeqSymmetry) primary_sym).getPropertySymmetry();
+		}
+		
 		Map<String, String> menu_items = new LinkedHashMap<String, String>(); // map of menu url->name, or url -> url if there is no name
 
 		// DAS files can contain links for each individual feature.

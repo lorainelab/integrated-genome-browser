@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
@@ -75,6 +76,10 @@ public class WebLinkList {
 	 *  You may want to filter-out such duplicate results.
 	 */
 	public List<WebLink> getWebLinks(SeqSymmetry sym) {
+		if(sym instanceof CdsSeqSymmetry) {
+			sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
+		}
+		
 		// Most links come from matching the tier name (i.e. method)
 		// to a regular expression.
 		String method = BioSeq.determineMethod(sym);

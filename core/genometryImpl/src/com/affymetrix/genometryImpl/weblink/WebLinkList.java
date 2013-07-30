@@ -127,7 +127,7 @@ public class WebLinkList {
 					continue;
 				}
 			}
-			if (link.getIDField() != null) {
+			if (link.getIDField() != null && link.getIDField().trim().length() > 0) {
 				// Allow matching of arbitrary id_field
 
 				if (!(sym instanceof SymWithProps)) {

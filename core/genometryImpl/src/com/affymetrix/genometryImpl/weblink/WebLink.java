@@ -213,8 +213,10 @@ public final class WebLink implements Comparable<WebLink> {
 		}
 
 		if (field_value == null) {
-			Logger.getLogger(WebLink.class.getName()).log(Level.WARNING,
-					"Selected item has no value for property ''{0}'' which is needed to construct the web link.", id_field_name);
+			if(id_field_name != null && id_field_name.trim().length() > 0){
+				Logger.getLogger(WebLink.class.getName()).log(Level.WARNING,
+						"Selected item has no value for property ''{0}'' which is needed to construct the web link.", id_field_name);
+			}
 			return replacePlaceholderWithId(getUrl(), "");
 		}
 		return replacePlaceholderWithId(getUrl(), field_value.toString());

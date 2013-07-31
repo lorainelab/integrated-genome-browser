@@ -307,9 +307,18 @@ public final class BookmarkManagerView {
 		if (selectionPaths == null) {
 			return;
 		}
+		int total = 0;
+		for (TreePath path : selectionPaths) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			if(node.isLeaf()){
+				total += 1;
+			}else{
+				total += node.getChildCount();
+			}
+		}
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
 		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", "BookmarkManagerView_showDialog", false);
-		String message = "Delete these " + selectionPaths.length + " selected items?";
+		String message = "Delete these " + total + " selected items?";
 		Object[] params = {message, checkbox};
 		doNotShowWarning = checkbox.isSelected();
 		if (!doNotShowWarning) {

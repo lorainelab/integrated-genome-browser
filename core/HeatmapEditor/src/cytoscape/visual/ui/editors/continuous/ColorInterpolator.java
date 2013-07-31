@@ -11,11 +11,13 @@ public abstract class ColorInterpolator {
 	
 	public Color[] getColorRange(int range){	
 		Color[] colors = new Color[range];
-		float factor = (virtualRange.getVirtualMaximum() - virtualRange.getVirtualMinimum())/range;
-		int i=0;
-		for(float p=virtualRange.getVirtualMinimum(); p<virtualRange.getVirtualMaximum(); p+=factor){
+		float factor = (virtualRange.getVirtualMaximum() - virtualRange.getVirtualMinimum())/(range-2);
+		int i=1;
+		for(float p=virtualRange.getVirtualMinimum()+factor; p<virtualRange.getVirtualMaximum(); p+=factor){
 			colors[i++] = getColor(p);
 		}
+		colors[0] = virtualRange.getBelowColor();
+		colors[range-1] = virtualRange.getAboveColor();
 		return colors;
 	}
 	
@@ -28,6 +30,8 @@ public abstract class ColorInterpolator {
 						positions[i], colors[i], position);
 			}
 		}
+		
+		//This should never happen
 		if (position <= positions[0]) {
 			return virtualRange.getBelowColor();
 		}
@@ -37,12 +41,9 @@ public abstract class ColorInterpolator {
 	private Color getRangeValue(float lowerDomain, Color lowerRange, float upperDomain, Color upperRange, float domainValue) {
 		if (lowerDomain == upperDomain) {
 			return lowerRange;
-		}
-//		This does not work with negative values		
-//		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
-//		return getRangeValue(frac, lowerRange, upperRange);
-		double frac = (domainValue - Math.abs(lowerDomain)) / (upperDomain - lowerDomain);
-		return getRangeValue(Math.abs(frac), lowerRange, upperRange);
+		}	
+		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
+		return getRangeValue(frac, lowerRange, upperRange);
 	}
     
 	protected abstract Color getRangeValue(double frac, Color lowerColor, Color upperColor);

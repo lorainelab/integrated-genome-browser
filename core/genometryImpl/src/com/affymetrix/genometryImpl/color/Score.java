@@ -57,8 +57,8 @@ public class Score extends ColorProvider {
 			score = max_score_color;
 		}
 
-		int index = (int) (((score - min_score_color) / range) * 255);
+		int index = (int) (((score - Math.abs(min_score_color)) / range) * 255);
 
-		return custom_heatmap.get().getColors()[index];
+		return custom_heatmap.get().getColors()[Math.abs(index)];
 	}
 }

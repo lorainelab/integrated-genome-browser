@@ -387,7 +387,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			CdsSeqSymmetry cds_sym_2 = new CdsSeqSymmetry();
 			SeqUtils.intersection(cds_sym, child, cds_sym_2, annotseq);
 			if (!same_seq) {
-				cds_sym_2 = (CdsSeqSymmetry)gviewer.transformForViewSeq(cds_sym_2, new CdsSeqSymmetry(), annotseq);
+				//cds_sym_2 = (CdsSeqSymmetry)gviewer.transformForViewSeq(cds_sym_2, new CdsSeqSymmetry(), annotseq);
+				SeqUtils.transformSymmetry(cds_sym_2, gviewer.getTransformPath());
 			}
 			cds_sym_2.setPropertySymmetry(insym);
 			

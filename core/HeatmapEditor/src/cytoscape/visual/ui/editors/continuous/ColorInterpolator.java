@@ -12,8 +12,9 @@ public abstract class ColorInterpolator {
 	public Color[] getColorRange(int range){	
 		Color[] colors = new Color[range];
 		float factor = (virtualRange.getVirtualMaximum() - virtualRange.getVirtualMinimum())/range;
-		for(int i=0; i<range; i++){
-			colors[i] = getColor(i*factor);
+		int i=0;
+		for(float p=virtualRange.getVirtualMinimum(); p<virtualRange.getVirtualMaximum(); p+=factor){
+			colors[i++] = getColor(p);
 		}
 		return colors;
 	}

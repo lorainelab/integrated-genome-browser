@@ -1,8 +1,9 @@
 package cytoscape.visual.ui.editors.continuous;
 
 import java.awt.Color;
-
+import java.util.List;
 import org.jdesktop.swingx.multislider.DefaultMultiThumbModel;
+import org.jdesktop.swingx.multislider.Thumb;
 
 public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implements VirtualRange {
 	public static final Color DEFAULT_BELOW_COLOR = Color.black;
@@ -108,9 +109,10 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 	@Override
 	public float[] getVirtualValues(){
 		float[] values = new float[this.getThumbCount() + 2];
+		List<Thumb<Color>> sortedThumbs = this.getSortedThumbs();
 		values[0] = this.getVirtualMinimum();
 		for(int i=0; i<this.getThumbCount(); i++){
-			values[i+1] = getVirtualValue(this.getThumbAt(i).getPosition());
+			values[i+1] = getVirtualValue(sortedThumbs.get(i).getPosition());
 		}
 		values[values.length - 1] = this.getVirtualMaximum();
 		return values;
@@ -119,9 +121,10 @@ public class MultiColorThumbModel extends DefaultMultiThumbModel<Color> implemen
 	@Override
 	public Color[] getColors(){
 		Color[] colors = new Color[this.getThumbCount() + 2];
+		List<Thumb<Color>> sortedThumbs = this.getSortedThumbs();
 		colors[0] = this.getBelowColor();
 		for(int i=0; i<this.getThumbCount(); i++){
-			colors[i+1] = this.getThumbAt(i).getObject();
+			colors[i+1] = sortedThumbs.get(i).getObject();
 		}
 		colors[colors.length - 1] = this.getAboveColor();
 		return colors;

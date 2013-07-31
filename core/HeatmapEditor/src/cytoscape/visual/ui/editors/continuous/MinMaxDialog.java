@@ -1,6 +1,5 @@
 package cytoscape.visual.ui.editors.continuous;
 
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
@@ -15,7 +14,7 @@ import javax.swing.text.DocumentFilter;
  */
 public class MinMaxDialog extends javax.swing.JDialog {
 	
-	private static final Font TEXTBOX_FONT = new java.awt.Font("SansSerif", 1, 10);
+//	private static final Font TEXTBOX_FONT = new java.awt.Font("SansSerif", 1, 10);
 	
 	private static final long serialVersionUID = 7350824820761046009L;
 	
@@ -89,11 +88,11 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		minLabel = new javax.swing.JLabel();
 		maxLabel = new javax.swing.JLabel();
 		minTextField = new javax.swing.JTextField();
-		minTextField.setFont(TEXTBOX_FONT);
+//		minTextField.setFont(TEXTBOX_FONT);
 		((AbstractDocument)minTextField.getDocument()).setDocumentFilter(numericFilter);
 		
 		maxTextField = new javax.swing.JTextField();
-		maxTextField.setFont(TEXTBOX_FONT);
+//		maxTextField.setFont(TEXTBOX_FONT);
 		((AbstractDocument)maxTextField.getDocument()).setDocumentFilter(numericFilter);
 		
 		okButton = new javax.swing.JButton();
@@ -108,10 +107,10 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		setAlwaysOnTop(true);
 		setResizable(false);
 
-		minLabel.setFont(new java.awt.Font("SansSerif", 1, 12));
+//		minLabel.setFont(new java.awt.Font("SansSerif", 1, 12));
 		minLabel.setText("Min");
 
-		maxLabel.setFont(new java.awt.Font("SansSerif", 1, 12));
+//		maxLabel.setFont(new java.awt.Font("SansSerif", 1, 12));
 		maxLabel.setText("Max");
 
 		okButton.setText("OK");
@@ -141,7 +140,7 @@ public class MinMaxDialog extends javax.swing.JDialog {
 
 		titlePanel.setBackground(new java.awt.Color(255, 255, 255));
 
-		titleLabel.setFont(new java.awt.Font("SansSerif", 1, 14));
+//		titleLabel.setFont(new java.awt.Font("SansSerif", 1, 14));
 		titleLabel.setText("Set Value Range");
 
 		org.jdesktop.layout.GroupLayout titlePanelLayout = new org.jdesktop.layout.GroupLayout(titlePanel);

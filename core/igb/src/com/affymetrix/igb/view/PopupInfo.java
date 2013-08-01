@@ -141,6 +141,11 @@ public class PopupInfo extends JWindow {
 		}
 	}
 	
+	private void flashMessage(String str) {
+		message.setText(str);
+		flashTimer.start();
+	}
+	
 	private static String getFormattedTitle(String[][] properties){
 		StringBuilder props = new StringBuilder();
 		props.append("<html>");
@@ -280,6 +285,14 @@ public class PopupInfo extends JWindow {
 			Toolkit.getDefaultToolkit().addAWTEventListener(opacityController, AWTEvent.MOUSE_EVENT_MASK);
 		}
 	}
+	
+	Timer flashTimer = new Timer(1000, new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			flashTimer.stop();
+			message.setText(null);
+		}
+	});
 	
 	Timer timer = new Timer(100, new ActionListener(){
 

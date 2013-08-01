@@ -151,7 +151,7 @@ public class PopupInfo extends JWindow {
 	private static String getFormattedTitle(String[][] properties){
 		StringBuilder props = new StringBuilder();
 		props.append("<html>");
-		props.append("<div align='center'> <b> ").append(getSortString(properties[0][1])).append(" </b> </div>");
+		props.append("<div align='center'> <b> ").append(getSortString(properties[0][1], 10)).append(" </b> </div>");
 		props.append("</html>");
 		return props.toString();
 	}
@@ -165,7 +165,7 @@ public class PopupInfo extends JWindow {
 			StringBuilder prop = new StringBuilder();
 			prop.append(properties[i][0]).append(" : ").append(properties[i][1]);
 			
-			props.append(sorten ? getSortString(prop.toString()) : prop.toString());
+			props.append(sorten ? getSortString(prop.toString(), 30) : prop.toString());
 			if(i != properties.length - 1) {
 				props.append("\n");
 			}
@@ -173,18 +173,17 @@ public class PopupInfo extends JWindow {
 		return props.toString();
 	}
 	
-	private static String getSortString(Object str){
-		if(str == null){
+	private static String getSortString(String string, int length){
+		if(string == null){
 			return "";
 		}
 		
-		String string = str.toString();
 		int strlen = string.length();
-		if (strlen < 30) {
+		if (strlen < length) {
 			return string;
 		}
 		
-		return " ..." + string.substring(strlen - 25, strlen);
+		return " ..." + string.substring(strlen - length, strlen);
 	}
 	
 	private Point determineBestLocation(Point currentPoint){

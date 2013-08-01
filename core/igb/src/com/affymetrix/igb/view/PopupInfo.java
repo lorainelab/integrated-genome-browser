@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -220,6 +221,8 @@ public class PopupInfo extends JWindow {
 		setForeground(backgroundColor);
 		Opacity.INSTANCE.set(PopupInfo.this, 0.5f);
 		
+		title.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		title.setAlignmentY(JComponent.CENTER_ALIGNMENT);
 		title.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		tooltip.setBackground(backgroundColor);
@@ -245,12 +248,17 @@ public class PopupInfo extends JWindow {
 		button_box.setBackground(backgroundColor);
 		button_box.setForeground(backgroundColor);
 		button_box.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		button_box.add(title);
-		Component glue = Box.createHorizontalGlue();
-		glue.setBackground(backgroundColor);
-		glue.setForeground(backgroundColor);
+		Component glueLeft = Box.createHorizontalGlue();
+		glueLeft.setBackground(backgroundColor);
+		glueLeft.setForeground(backgroundColor);
+		Component glueRight = Box.createHorizontalGlue();
+		glueRight.setBackground(backgroundColor);
+		glueRight.setForeground(backgroundColor);
+
 		button_box.add(copyButton);
-		button_box.add(glue);
+		button_box.add(glueLeft);
+		button_box.add(title);
+		button_box.add(glueRight);
 		button_box.add(button);
 		button_box.addMouseListener(move);
 		button_box.addMouseMotionListener(move);

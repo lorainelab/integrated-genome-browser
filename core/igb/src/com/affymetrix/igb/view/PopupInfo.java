@@ -51,6 +51,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			GeneralUtils.copyToClipboard(convertPropsToString(properties, false));
+			flashMessage("copied");
 		}
 	};
 	

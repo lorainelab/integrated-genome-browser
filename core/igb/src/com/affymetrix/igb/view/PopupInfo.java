@@ -49,7 +49,7 @@ public class PopupInfo extends JWindow {
 	private AbstractAction copyAction = new AbstractAction("c",CommonUtils.getInstance().getIcon("/toolbarButtonGraphics/general/Copy16.gif")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
-			GeneralUtils.copyToClipboard(tooltip.getText());
+			GeneralUtils.copyToClipboard(convertPropsToString(properties, false));
 		}
 	};
 	
@@ -124,7 +124,7 @@ public class PopupInfo extends JWindow {
 		this.properties	= properties;
 		if(properties != null && properties.length > 1){
 			//title.setText(getFormattedTitle(properties));
-			tooltip.setText(convertPropsToString(properties));
+			tooltip.setText(convertPropsToString(properties, true));
 			pack();
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));
@@ -151,16 +151,14 @@ public class PopupInfo extends JWindow {
 	/**
 	 * Converts given properties into string.
 	 */
-	private static String convertPropsToString(String[][] properties) {
+	private static String convertPropsToString(String[][] properties, boolean sorten) {
 		StringBuilder props = new StringBuilder();
 		for (int i = 0; i < properties.length; i++) {
 			props.append(properties[i][0]);
 			props.append(" : ");
-			
+			props.append(sorten ? getSortString(properties[i][1]) : properties[i][1]);
 			if(i != properties.length - 1) {
-				props.append(getSortString(properties[i][1]) + "\n");
-			} else  {
-				props.append(getSortString(properties[i][1]));
+				props.append("\n");
 			}
 		}
 		return props.toString();

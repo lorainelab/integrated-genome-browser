@@ -39,7 +39,7 @@ import javax.swing.Timer;
 public class PopupInfo extends JWindow {
 	
 	private static final Color backgroundColor = new Color(253, 254, 196);
-	private final JLabel title;
+	private final JLabel message;
 	private final JTextPane tooltip;
 	private final JButton button;
 	private final boolean isPinned;
@@ -76,7 +76,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
-			newWindow.title.setText(title.getText());
+			newWindow.message.setText(message.getText());
 			newWindow.tooltip.setText(tooltip.getText());
 			newWindow.setButtonAction(newWindow.closeAction);
 		
@@ -99,7 +99,7 @@ public class PopupInfo extends JWindow {
 	private PopupInfo(Window owner, boolean isPinned){
 		super(owner);
 		
-		title = new JLabel();
+		message = new JLabel();
 		tooltip = new JTextPane();
 		button = new JButton();
 		this.isPinned = isPinned;
@@ -221,9 +221,9 @@ public class PopupInfo extends JWindow {
 		setForeground(backgroundColor);
 		Opacity.INSTANCE.set(PopupInfo.this, 0.5f);
 		
-		title.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-		title.setAlignmentY(JComponent.CENTER_ALIGNMENT);
-		title.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		message.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		message.setAlignmentY(JComponent.CENTER_ALIGNMENT);
+		message.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		tooltip.setBackground(backgroundColor);
 		tooltip.setEditable(false);
@@ -257,7 +257,7 @@ public class PopupInfo extends JWindow {
 
 		button_box.add(copyButton);
 		button_box.add(glueLeft);
-		button_box.add(title);
+		button_box.add(message);
 		button_box.add(glueRight);
 		button_box.add(button);
 		button_box.addMouseListener(move);

@@ -37,9 +37,11 @@ public interface PropertyHandler {
 		"loadmode",
 		"feature url"
 	};
-
+			
 	public static String[] tooltip_order = new String[]{
 		"id",
+		"gene name",
+		"description",
 		"start",
 		"end",
 		"length",

@@ -77,6 +77,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
+			newWindow.properties = properties;
 			newWindow.message.setText(message.getText());
 			newWindow.tooltip.setText(tooltip.getText());
 			newWindow.setButtonAction(newWindow.closeAction);

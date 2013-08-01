@@ -162,9 +162,10 @@ public class PopupInfo extends JWindow {
 	private static String convertPropsToString(String[][] properties, boolean sorten) {
 		StringBuilder props = new StringBuilder();
 		for (int i = 0; i < properties.length; i++) {
-			props.append(properties[i][0]);
-			props.append(" : ");
-			props.append(sorten ? getSortString(properties[i][1]) : properties[i][1]);
+			StringBuilder prop = new StringBuilder();
+			prop.append(properties[i][0]).append(" : ").append(properties[i][1]);
+			
+			props.append(sorten ? getSortString(prop.toString()) : prop.toString());
 			if(i != properties.length - 1) {
 				props.append("\n");
 			}

@@ -2258,9 +2258,10 @@ public class SeqMapView extends JPanel
 		// Check if tooltip has changed from current tooltip.
 		if ((toolTipSym == null && sym != null) 
 				|| (toolTipSym != null && sym == null)
-				|| toolTipSym != sym){
+				|| toolTipSym != sym
+				|| x != -1) {
 			toolTipSym = sym;
-			String toolTip = null;
+//			String toolTip = null;
 			String[][] properties = null;
 			if(toolTipSym != null && propertyHandler != null){
 				if(toolTipSym instanceof GraphSym){
@@ -2268,7 +2269,7 @@ public class SeqMapView extends JPanel
 				} else {
 					properties = propertyHandler.getPropertiesRow(toolTipSym, this);
 				}
-				toolTip = convertPropsToString(properties);
+//				toolTip = convertPropsToString(properties);
 			}
 //			seqmap.getNeoCanvas().setToolTipText(toolTip);
 			Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());

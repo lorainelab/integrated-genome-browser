@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
@@ -39,6 +40,7 @@ import javax.swing.Timer;
 public class PopupInfo extends JWindow {
 	
 	private static final Color backgroundColor = new Color(253, 254, 196);
+	private static final int minHeight = 100;
 	private final JLabel message;
 	private final JTextPane tooltip;
 	private final JButton button;
@@ -93,7 +95,7 @@ public class PopupInfo extends JWindow {
 			setVisible(false);
 		}
 	};
-	
+
 	public PopupInfo(Window owner){
 		this(owner, false);
 	}
@@ -162,10 +164,8 @@ public class PopupInfo extends JWindow {
 	private static String convertPropsToString(String[][] properties, boolean sorten) {
 		StringBuilder props = new StringBuilder();
 		for (int i = 0; i < properties.length; i++) {
-			StringBuilder prop = new StringBuilder();
-			prop.append(properties[i][0]).append(" : ").append(properties[i][1]);
-			
-			props.append(sorten ? getSortString(prop.toString(), 30) : prop.toString());
+			props.append(properties[i][0]).append(" : ");
+			props.append(sorten ? getSortString(properties[i][1], 30) : properties[i][1]);
 			if(i != properties.length - 1) {
 				props.append("\n");
 			}
@@ -238,6 +238,17 @@ public class PopupInfo extends JWindow {
 				BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 		
+		JPanel noWrapPanel = new JPanel( new BorderLayout() );
+		noWrapPanel.setBackground(backgroundColor);
+		noWrapPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		noWrapPanel.add(tooltip);
+		
+		JScrollPane scrollPane = new JScrollPane(noWrapPanel);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		scrollPane.setBackground(backgroundColor);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		
 		button.setMargin(new Insets(0,0,0,0));
 		button.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		
@@ -269,13 +280,13 @@ public class PopupInfo extends JWindow {
 		button_box.add(button);
 		button_box.addMouseListener(move);
 		button_box.addMouseMotionListener(move);
-			
+		
 		Box component_box = new Box(BoxLayout.Y_AXIS);
 		component_box.setBackground(backgroundColor);
 		component_box.setForeground(backgroundColor);
 		component_box.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		component_box.add(button_box);
-		component_box.add(tooltip);
+		component_box.add(scrollPane);
 		
 		addMouseListener(resize);
 		addMouseMotionListener(resize);
@@ -358,7 +369,6 @@ public class PopupInfo extends JWindow {
 	MouseAdapter resize = new MouseAdapter() {
 		Point sp;
 		int	compStartHeight, compStartWidth;
-		int minHeight = 100;
 		
 		@Override
 		public void mouseMoved(MouseEvent e) {

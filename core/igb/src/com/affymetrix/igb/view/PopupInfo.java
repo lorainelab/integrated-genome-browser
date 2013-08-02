@@ -49,7 +49,7 @@ public class PopupInfo extends JWindow {
 	}	
 	private static final Color backgroundColor = new Color(253, 254, 196);
 	private static final int minHeight = 100;
-	private static final int maxWidth = 300;
+	private static final int maxWidth  = 300;
 	private final JLabel message;
 	private final JTextPane tooltip;
 	private final JButton button, moreLess;
@@ -90,7 +90,6 @@ public class PopupInfo extends JWindow {
 		public void actionPerformed(ActionEvent ae) {
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
 			newWindow.properties = properties;
-			newWindow.message.setText(message.getText());
 			newWindow.tooltip.setText(tooltip.getText());
 			newWindow.moreLess.setAction(moreLess.getAction());
 			newWindow.tooltip.setCaretPosition(0);

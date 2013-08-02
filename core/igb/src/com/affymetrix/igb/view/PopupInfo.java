@@ -55,6 +55,7 @@ public class PopupInfo extends JWindow {
 	private final JButton button, moreLess;
 	private final boolean isPinned;
 	private boolean preferredLocationSet;
+	private int preferredWidth;
 	private Point lastPoint;
 	private String[][] properties;
 	
@@ -91,9 +92,12 @@ public class PopupInfo extends JWindow {
 			newWindow.properties = properties;
 			newWindow.message.setText(message.getText());
 			newWindow.tooltip.setText(tooltip.getText());
+			newWindow.moreLess.setAction(moreLess.getAction());
+			newWindow.tooltip.setCaretPosition(0);
 			newWindow.setButtonAction(newWindow.closeAction);
 		
 			newWindow.pack();
+			newWindow.setSize(getSize());
 			newWindow.setLocation(getLocationOnScreen());
 			newWindow.setVisible(true);
 			Opacity.INSTANCE.set(newWindow, 1.0f);
@@ -117,6 +121,9 @@ public class PopupInfo extends JWindow {
 					if(getSize().width > maxWidth){
 						setSize(maxWidth, getSize().height);
 					}
+					if(preferredWidth > 0){
+						setSize(preferredWidth, getSize().height);
+					}
 					int change = prevSize.height - getSize().height;
 					setLocation(getLocation().x, getLocation().y + change);
 					setVisible(true);
@@ -137,6 +144,9 @@ public class PopupInfo extends JWindow {
 					if(getSize().width > maxWidth){
 						setSize(maxWidth, getSize().height);
 					}
+					if(preferredWidth > 0){
+						setSize(preferredWidth, getSize().height);
+					}
 					int change = prevSize.height - getSize().height;
 					setLocation(getLocation().x, getLocation().y + change);
 					setVisible(true);
@@ -156,8 +166,9 @@ public class PopupInfo extends JWindow {
 		tooltip  = new JTextPane();
 		button   = new JButton();
 		moreLess = new JButton();
-		
-		this.isPinned = isPinned;
+	
+		this.isPinned  = isPinned;
+		preferredWidth = -1;
 		setButtonAction(stickAction);
 		init();
 	}
@@ -177,6 +188,7 @@ public class PopupInfo extends JWindow {
 		if(!getOwner().isActive() /*|| !getOwner().isFocused()*/){
 			return;
 		}
+		
 		this.properties	= properties;
 		if(properties != null && properties.length > 1){
 			//title.setText(getFormattedTitle(properties));
@@ -189,12 +201,18 @@ public class PopupInfo extends JWindow {
 				if(getSize().width > maxWidth){
 					setSize(maxWidth, getSize().height);
 				}
+				if(preferredWidth > 0){
+					setSize(preferredWidth, getSize().height);
+				}
 				tooltip.setCaretPosition(0);
 				setVisible(wasVisible);
 			} else {
 				pack();
 				if(getSize().width > maxWidth){
 					setSize(maxWidth, getSize().height);
+				}
+				if(preferredWidth > 0){
+					setSize(preferredWidth, getSize().height);
 				}
 			}
 			if(!preferredLocationSet){
@@ -484,6 +502,7 @@ public class PopupInfo extends JWindow {
 				int nextWidth = compStartWidth + p.x - sp.x;
 				if (nextWidth > minHeight) {
 					setSize(nextWidth, compHeight);
+					preferredWidth = nextWidth;
 					setVisible(true);
 				}
 			} else {

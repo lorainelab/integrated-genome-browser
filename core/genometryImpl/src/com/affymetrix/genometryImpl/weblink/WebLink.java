@@ -203,7 +203,7 @@ public final class WebLink implements Comparable<WebLink> {
 		// Currently this just replaces any "$$" with the ID, but it could
 		// do something more sophisticated later, like replace "$$" with
 		// some other sym property.
-		if (id_field_name == null) {
+		if (id_field_name == null || id_field_name.trim().length() <= 0) {
 			return replacePlaceholderWithId(getUrl(), sym.getID());
 		}
 
@@ -241,7 +241,7 @@ public final class WebLink implements Comparable<WebLink> {
 		sb.append(" name=\"").append(escapeXML(name)).
 				append("\"").append(separator).append(" species=\"").
 				append(escapeXML(species)).append("\"").append(separator);
-		if (this.id_field_name != null) {
+		if (this.id_field_name != null && id_field_name.trim().length() > 0) {
 			sb.append(" id_field=\"").append(escapeXML(id_field_name)).
 					append("\"").append(separator);
 		}

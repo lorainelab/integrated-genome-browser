@@ -2,11 +2,13 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -16,7 +18,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -38,12 +42,16 @@ import javax.swing.Timer;
  * @author hiralv
  */
 public class PopupInfo extends JWindow {
-	
+	private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<TextAttribute, Object>();
+	static {
+		textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+		textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);
+	}	
 	private static final Color backgroundColor = new Color(253, 254, 196);
 	private static final int minHeight = 100;
 	private final JLabel message;
 	private final JTextPane tooltip;
-	private final JButton button;
+	private final JButton button, moreLess;
 	private final boolean isPinned;
 	private boolean preferredLocationSet;
 	private Point lastPoint;
@@ -96,6 +104,40 @@ public class PopupInfo extends JWindow {
 		}
 	};
 
+	private AbstractAction moreAction = new AbstractAction("More >>") {
+		@Override
+		public void actionPerformed(final ActionEvent ae) {
+			ThreadUtils.runOnEventQueue(new Runnable() {
+				public void run() {
+					setVisible(false);
+					Dimension prevSize = getSize();
+					moreLess.setAction(lessAction);
+					pack();
+					int change = prevSize.height - getSize().height;
+					setLocation(getLocation().x, getLocation().y + change);
+					setVisible(true);
+				}
+			});
+		}
+	};
+	
+	private AbstractAction lessAction = new AbstractAction("Less <<"){
+		@Override
+		public void actionPerformed(final ActionEvent ae) {
+			ThreadUtils.runOnEventQueue(new Runnable() {
+				public void run() {
+					setVisible(false);
+					Dimension prevSize = getSize();
+					moreLess.setAction(moreAction);
+					setSize(getSize().width, minHeight);
+					int change = prevSize.height - getSize().height;
+					setLocation(getLocation().x, getLocation().y + change);
+					setVisible(true);
+				}
+			});
+		}
+	};
+	
 	public PopupInfo(Window owner){
 		this(owner, false);
 	}
@@ -103,9 +145,11 @@ public class PopupInfo extends JWindow {
 	private PopupInfo(Window owner, boolean isPinned){
 		super(owner);
 		
-		message = new JLabel();
-		tooltip = new JTextPane();
-		button = new JButton();
+		message  = new JLabel();
+		tooltip  = new JTextPane();
+		button   = new JButton();
+		moreLess = new JButton();
+		
 		this.isPinned = isPinned;
 		setButtonAction(stickAction);
 		init();
@@ -130,7 +174,16 @@ public class PopupInfo extends JWindow {
 		if(properties != null && properties.length > 1){
 			//title.setText(getFormattedTitle(properties));
 			tooltip.setText(convertPropsToString(properties, true));
-			pack();
+			if(moreLess.getAction() == moreAction){
+				boolean wasVisible = isVisible();
+				setVisible(false);
+				pack();
+				setSize(getSize().width, minHeight);
+				tooltip.setCaretPosition(0);
+				setVisible(wasVisible);
+			} else {
+				pack();
+			}
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));
 				setVisible(true);
@@ -281,12 +334,30 @@ public class PopupInfo extends JWindow {
 		button_box.addMouseListener(move);
 		button_box.addMouseMotionListener(move);
 		
+		JPanel bottom_box = new JPanel();
+		BoxLayout bottom_box_layout = new BoxLayout(bottom_box, BoxLayout.X_AXIS);
+		bottom_box.setLayout(bottom_box_layout);
+		bottom_box.setBackground(backgroundColor);
+		bottom_box.setForeground(backgroundColor);
+		bottom_box.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		Component glue = Box.createHorizontalGlue();
+		glue.setBackground(backgroundColor);
+		glue.setForeground(backgroundColor);
+		bottom_box.add(glue);
+		
+		moreLess.setFont(moreLess.getFont().deriveFont(textAttrMap));
+		moreLess.setAction(moreAction);
+		moreLess.setMargin(new Insets(0,0,0,0));
+		moreLess.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		bottom_box.add(moreLess);
+		
 		Box component_box = new Box(BoxLayout.Y_AXIS);
 		component_box.setBackground(backgroundColor);
 		component_box.setForeground(backgroundColor);
 		component_box.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		component_box.add(button_box);
 		component_box.add(scrollPane);
+		component_box.add(bottom_box);
 		
 		addMouseListener(resize);
 		addMouseMotionListener(resize);

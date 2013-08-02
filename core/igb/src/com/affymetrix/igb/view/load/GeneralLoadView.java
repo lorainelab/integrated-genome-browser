@@ -620,7 +620,8 @@ public final class GeneralLoadView {
 
 			@Override
 			protected void finished() {
-				if (removeLocal) {
+				boolean refSeq = feature.gVersion.gServer.serverType.equals(ServerTypeI.LocalFiles) && feature.symL.isResidueLoader();
+				if (removeLocal || refSeq) {
 					// If feature is local then remove it from server.
 					GenericVersion version = feature.gVersion;
 					if (version.gServer.serverType.equals(ServerTypeI.LocalFiles)) {

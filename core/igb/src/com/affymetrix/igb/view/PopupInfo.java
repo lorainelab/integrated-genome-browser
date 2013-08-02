@@ -49,6 +49,7 @@ public class PopupInfo extends JWindow {
 	}	
 	private static final Color backgroundColor = new Color(253, 254, 196);
 	private static final int minHeight = 100;
+	private static final int maxWidth = 300;
 	private final JLabel message;
 	private final JTextPane tooltip;
 	private final JButton button, moreLess;
@@ -113,6 +114,9 @@ public class PopupInfo extends JWindow {
 					Dimension prevSize = getSize();
 					moreLess.setAction(lessAction);
 					pack();
+					if(getSize().width > maxWidth){
+						setSize(maxWidth, getSize().height);
+					}
 					int change = prevSize.height - getSize().height;
 					setLocation(getLocation().x, getLocation().y + change);
 					setVisible(true);
@@ -130,6 +134,9 @@ public class PopupInfo extends JWindow {
 					Dimension prevSize = getSize();
 					moreLess.setAction(moreAction);
 					setSize(getSize().width, minHeight);
+					if(getSize().width > maxWidth){
+						setSize(maxWidth, getSize().height);
+					}
 					int change = prevSize.height - getSize().height;
 					setLocation(getLocation().x, getLocation().y + change);
 					setVisible(true);
@@ -173,16 +180,22 @@ public class PopupInfo extends JWindow {
 		this.properties	= properties;
 		if(properties != null && properties.length > 1){
 			//title.setText(getFormattedTitle(properties));
-			tooltip.setText(convertPropsToString(properties, true));
+			tooltip.setText(convertPropsToString(properties, false));
 			if(moreLess.getAction() == moreAction){
 				boolean wasVisible = isVisible();
 				setVisible(false);
 				pack();
 				setSize(getSize().width, minHeight);
+				if(getSize().width > maxWidth){
+					setSize(maxWidth, getSize().height);
+				}
 				tooltip.setCaretPosition(0);
 				setVisible(wasVisible);
 			} else {
 				pack();
+				if(getSize().width > maxWidth){
+					setSize(maxWidth, getSize().height);
+				}
 			}
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));

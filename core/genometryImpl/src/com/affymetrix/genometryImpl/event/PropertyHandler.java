@@ -42,12 +42,29 @@ public interface PropertyHandler {
 		"id",
 		"gene name",
 		"description",
+		"name",
+		"chromosome",
 		"start",
 		"end",
 		"length",
 		"strand",
-		"residues",
-		"feature type"
+		"min score",
+		"max score",
+		"type",
+		"same orientation",
+		"query length",
+		"# matches",
+		"# target inserts",
+		"# target bases inserted",
+		"# query bases inserted",
+		"# query inserts",
+		"seq id",
+		"cds min",
+		"cds start",
+		"cds max",
+		"cds end",
+		"loadmode",
+		"feature url"
 	};
 		
 	public static String[] graph_tooltip_order = new String[]{

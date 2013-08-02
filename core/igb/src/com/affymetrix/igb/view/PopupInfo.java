@@ -118,12 +118,7 @@ public class PopupInfo extends JWindow {
 					Dimension prevSize = getSize();
 					moreLess.setAction(lessAction);
 					pack();
-					if(getSize().width > maxWidth){
-						setSize(maxWidth, getSize().height);
-					}
-					if(preferredWidth > 0){
-						setSize(preferredWidth, getSize().height);
-					}
+					setWidth();
 					int change = prevSize.height - getSize().height;
 					setLocation(getLocation().x, getLocation().y + change);
 					setVisible(true);
@@ -141,12 +136,7 @@ public class PopupInfo extends JWindow {
 					Dimension prevSize = getSize();
 					moreLess.setAction(moreAction);
 					setSize(getSize().width, minHeight);
-					if(getSize().width > maxWidth){
-						setSize(maxWidth, getSize().height);
-					}
-					if(preferredWidth > 0){
-						setSize(preferredWidth, getSize().height);
-					}
+					setWidth();
 					int change = prevSize.height - getSize().height;
 					setLocation(getLocation().x, getLocation().y + change);
 					setVisible(true);
@@ -198,22 +188,12 @@ public class PopupInfo extends JWindow {
 				setVisible(false);
 				pack();
 				setSize(getSize().width, minHeight);
-				if(getSize().width > maxWidth){
-					setSize(maxWidth, getSize().height);
-				}
-				if(preferredWidth > 0){
-					setSize(preferredWidth, getSize().height);
-				}
+				setWidth();
 				tooltip.setCaretPosition(0);
 				setVisible(wasVisible);
 			} else {
 				pack();
-				if(getSize().width > maxWidth){
-					setSize(maxWidth, getSize().height);
-				}
-				if(preferredWidth > 0){
-					setSize(preferredWidth, getSize().height);
-				}
+				setWidth();
 			}
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));
@@ -226,6 +206,15 @@ public class PopupInfo extends JWindow {
 		} else{
 			//title.setText(null);
 			tooltip.setText(null);
+		}
+	}
+	
+	private void setWidth() {
+		if (getSize().width > maxWidth) {
+			setSize(maxWidth, getSize().height);
+		}
+		if (preferredWidth > 0) {
+			setSize(preferredWidth, getSize().height);
 		}
 	}
 	

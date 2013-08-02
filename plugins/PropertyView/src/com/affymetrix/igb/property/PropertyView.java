@@ -205,7 +205,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		Map<String, Object> props = propertyHolder.determineProps(sym);
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]), tooltip_order, "", true);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), tooltip_order, "", false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -217,7 +217,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]), graph_tooltip_order, "", true);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), graph_tooltip_order, "", false);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -108,7 +108,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 
-	private AbstractAction moreAction = new AbstractAction("More >>") {
+	private AbstractAction moreAction = new AbstractAction("More \u00BB") {
 		@Override
 		public void actionPerformed(final ActionEvent ae) {
 			ThreadUtils.runOnEventQueue(new Runnable() {
@@ -126,7 +126,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
-	private AbstractAction lessAction = new AbstractAction("Less <<"){
+	private AbstractAction lessAction = new AbstractAction("Less \u00AB"){
 		@Override
 		public void actionPerformed(final ActionEvent ae) {
 			ThreadUtils.runOnEventQueue(new Runnable() {

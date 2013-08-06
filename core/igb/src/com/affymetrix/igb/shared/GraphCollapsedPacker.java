@@ -22,6 +22,7 @@ public class GraphCollapsedPacker extends CollapsedTierPacker {
 		}
 		Collections.sort(parent.getChildren(), comparator);
 		Collections.reverse(parent.getChildren());
+		maxHeight = 0;
 		return super.pack(parent, view);
 	}
 	

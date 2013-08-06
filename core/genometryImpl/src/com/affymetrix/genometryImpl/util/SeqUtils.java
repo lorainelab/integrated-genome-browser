@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
@@ -15,6 +16,8 @@ import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
@@ -1426,4 +1429,33 @@ public static boolean areResiduesComplete(String residues) {
 		return false;
 	}
 
+	public static SeqSymmetry convert(SeqSymmetry sym, BioSeq aseq, BioSeq cseq){
+		String method = BioSeq.determineMethod(sym);
+		if(method == null){
+			return null;
+		}
+		SimpleSymWithPropsWithCdsSpan resultsym = new SimpleSymWithPropsWithCdsSpan(sym.getChildCount());
+		resultsym.setProperty("method", method);
+		
+		SeqSpan span = sym.getSpan(aseq);
+		if(span != null) {
+			resultsym.addSpan(new SimpleSeqSpan(span.getStart(), span.getEnd(), cseq));
+		}
+		
+		if(sym instanceof SupportsCdsSpan && ((SupportsCdsSpan)sym).hasCdsSpan()){
+			span = ((SupportsCdsSpan)sym).getCdsSpan();
+			resultsym.setCdsSpan(new SimpleSeqSpan(span.getStart(), span.getEnd(), cseq));
+		}
+		
+		for(int i=0; i<sym.getChildCount(); i++){
+			span = sym.getChild(i).getSpan(aseq);
+			if(span != null) {
+				SimpleSymWithProps childsym = new SimpleSymWithProps();
+				childsym.addSpan(new SimpleSeqSpan(span.getStart(), span.getEnd(), cseq));
+				resultsym.addChild(childsym);
+			}
+		}
+		
+		return resultsym;
+	}
 }

@@ -24,17 +24,18 @@ public abstract class ColorInterpolator {
 	public Color getColor(float position) {
 		float[] positions = virtualRange.getVirtualValues();
 		Color[] colors = virtualRange.getColors();
-		for (int i = 1; i < positions.length; i++) {
+		
+		if (position <= positions[1]) {
+			return virtualRange.getBelowColor();
+		}
+		
+		for (int i = 1; i < positions.length - 1; i++) {
 			if (positions[i] > position && position > positions[i - 1]) {
 				return getRangeValue(positions[i - 1], colors[i - 1],
 						positions[i], colors[i], position);
 			}
 		}
 		
-		//This should never happen
-		if (position <= positions[0]) {
-			return virtualRange.getBelowColor();
-		}
 		return virtualRange.getAboveColor();
 	}
 

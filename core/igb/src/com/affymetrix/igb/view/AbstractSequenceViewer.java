@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.datamodel.NASequence;
@@ -59,7 +60,8 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 public abstract class AbstractSequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
-
+	private static final String PREF_COLOR_SCHEME = "Sequenceviewer Color Scheme";
+	
 	private SeqMapView seqmapview;
 	DecimalFormat comma_format = new DecimalFormat("#,###.###");
 	private NeoSeq seqview;
@@ -80,7 +82,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private boolean showcDNASwitch = false;
 	private String[] buttonText = new String[]{"Show cDNA", "Show Genomic"};
 	private String[] multipleSelection = new String[]{"Concatenate", "Show Genomic"};
-	private boolean colorSwitch = false;
+	private boolean colorSwitch = (Boolean)PreferenceUtils.load(PreferenceUtils.getTopNode(), PREF_COLOR_SCHEME, false);
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	private boolean toggle_Reverse_Complement = false;;
@@ -931,12 +933,14 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			if (mi.getState()) {
 				colorSwitch = false;
+				PreferenceUtils.save(PreferenceUtils.getTopNode(), PREF_COLOR_SCHEME, colorSwitch);
 				this.colorSwitching();
 			}
 		} else if (theItem == colorScheme2) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			if (mi.getState()) {
 				colorSwitch = true;
+				PreferenceUtils.save(PreferenceUtils.getTopNode(), PREF_COLOR_SCHEME, colorSwitch);
 				this.colorSwitching();
 			}
 		}

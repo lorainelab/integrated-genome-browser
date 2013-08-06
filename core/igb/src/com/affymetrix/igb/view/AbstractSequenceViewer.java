@@ -21,6 +21,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Translatable;
@@ -58,7 +60,8 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 public abstract class AbstractSequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
-
+	private static final String PREF_COLOR_SCHEME = "Sequenceviewer Color Scheme";
+	
 	private SeqMapView seqmapview;
 	DecimalFormat comma_format = new DecimalFormat("#,###.###");
 	private NeoSeq seqview;
@@ -77,7 +80,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private int cdsMin = -1;
 	private String title = null;
 	private boolean showcDNASwitch = false;
-	private boolean colorSwitch = false;
+	private boolean colorSwitch = PreferenceUtils.getTopNode().getBoolean(PREF_COLOR_SCHEME, false);
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	private boolean toggle_Reverse_Complement = false;;
@@ -911,12 +914,14 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			if (mi.getState()) {
 				colorSwitch = false;
+				PreferenceUtils.getTopNode().putBoolean(PREF_COLOR_SCHEME, colorSwitch);
 				this.colorSwitching();
 			}
 		} else if (theItem == colorScheme2) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			if (mi.getState()) {
 				colorSwitch = true;
+				PreferenceUtils.getTopNode().putBoolean(PREF_COLOR_SCHEME, colorSwitch);
 				this.colorSwitching();
 			}
 		}

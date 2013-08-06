@@ -2120,7 +2120,7 @@ public class SeqMapView extends JPanel
 		for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
 			if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
 				for (GlyphI child : tierGlyph.getChildren()) {
-					child.setSelected(false);
+					seqmap.deselect(child);
 				}
 			}
 		}

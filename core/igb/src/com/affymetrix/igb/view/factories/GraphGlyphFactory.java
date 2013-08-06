@@ -197,6 +197,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (graphGlyph != null) {				
 				if (style.getFloatTier()) {
+					graphGlyph.setInfo(sym);
 					smv.getFloaterGlyph().addChild(graphGlyph);
 					smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap().getView());
 //					smv.addToPixelFloaterGlyph(graphGlyph);

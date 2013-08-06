@@ -83,10 +83,10 @@ public final class GlyphEdgeMatcher {
 //			return;
 //		}
 		if ((target instanceof TransientGlyph) || (query instanceof TransientGlyph)
-				|| target.isOverlapped()|| query.isOverlapped()) {
+				|| target.isOverlapped() /*|| query.isOverlapped()*/) {
 			return;
 		}
-				
+			
 		// pre-emptively eliminate non 1D overlappers...
 		Rectangle2D.Double qbox = query.getCoordBox();
 		Rectangle2D.Double tbox = target.getCoordBox();

@@ -289,7 +289,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
 			if(topgl.isOverlapped()){
 				isSlopRowSelection = true;
-				topgl = null;
+//				topgl = null;
 			}
 		}
 

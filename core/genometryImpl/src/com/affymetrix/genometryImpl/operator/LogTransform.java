@@ -3,13 +3,13 @@ package com.affymetrix.genometryImpl.operator;
 
 public final class LogTransform extends AbstractLogTransform implements Operator{
 	private static final String BASE_NAME = "log";
+	private static final String PARAMETER_NAME = "base";
+	
 	double LN_BASE;
 	float LOG_1;
 
 	public LogTransform() {
 		this(0.0);
-		paramPrompt = "Base";
-		parameterized = true;
 	}
 	
 	public LogTransform(Double base) {
@@ -18,6 +18,11 @@ public final class LogTransform extends AbstractLogTransform implements Operator
 		LOG_1 = (float)(Math.log(1)/LN_BASE);
 	}
 
+	@Override
+	protected String getParameterName(){
+		return PARAMETER_NAME;
+	}
+	
 	@Override
 	protected String getBaseName() {
 		return BASE_NAME;

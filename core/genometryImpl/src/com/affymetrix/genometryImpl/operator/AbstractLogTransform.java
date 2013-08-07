@@ -12,7 +12,6 @@ public abstract class AbstractLogTransform extends AbstractMathTransform {
 	public AbstractLogTransform(Double base) {
 		super();
 		this.base = base;
-		paramPrompt = null;
 		name = getBaseName() + "_" + base;
 		parameterized = false;
 	}
@@ -23,8 +22,7 @@ public abstract class AbstractLogTransform extends AbstractMathTransform {
 	public String getDisplay() {
 		if (base == Math.E) {
 			return GenometryConstants.BUNDLE.getString("operator_" + getBaseName() + "_ln");
-		}
-		else {
+		} else {
 			return GenometryConstants.BUNDLE.getString("operator_" + getBaseName()) + (base == 0 ? "" : " " + DF.format(base));
 		}
 	}

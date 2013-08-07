@@ -13,17 +13,20 @@ import java.util.Map;
 public abstract class AbstractMathTransform extends AbstractFloatTransformer implements Operator, IParameters{
 
 	protected static final DecimalFormat DF = new DecimalFormat("#,##0.##");
-	double base;
-	protected String paramPrompt;
+	
+	private String paramPrompt;
+	protected double base;
 	protected String name;
 	protected boolean parameterized;
 	
 	public AbstractMathTransform() {
 		super();
-		paramPrompt = "Value";
+		paramPrompt = getParameterName();
 		name = getBaseName();
 		parameterized = true;
 	}
+	
+	protected abstract String getParameterName();
 	
 	protected abstract String getBaseName();
 	

@@ -8,11 +8,11 @@ package com.affymetrix.genometryImpl.operator;
 public class DivideMathTransform extends AbstractMathTransform {
 	
 	private static final String BASE_NAME = "divide";
+	private static final String PARAMETER_NAME = "divide by";
 	
-	public DivideMathTransform(){
-		super();
-		paramPrompt = "divide by";
-		parameterized = true;
+	@Override
+	protected String getParameterName(){
+		return PARAMETER_NAME;
 	}
 	
 	@Override

@@ -7,11 +7,11 @@ package com.affymetrix.genometryImpl.operator;
 public class MultiplyMathTransform extends AbstractMathTransform {
 	
 	private static final String BASE_NAME = "multiply";
+	private static final String PARAMETER_NAME = "multiply by";
 	
-	public MultiplyMathTransform(){
-		super();
-		paramPrompt = "multiply by";
-		parameterized = true;
+	@Override
+	protected String getParameterName(){
+		return PARAMETER_NAME;
 	}
 	
 	@Override

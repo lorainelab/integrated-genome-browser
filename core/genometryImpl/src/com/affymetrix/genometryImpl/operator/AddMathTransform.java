@@ -7,11 +7,11 @@ package com.affymetrix.genometryImpl.operator;
 public class AddMathTransform extends AbstractMathTransform {
 	
 	private static final String BASE_NAME = "add";
+	private static final String PARAMETER_NAME = "base";
 	
-	public AddMathTransform(){
-		super();
-		paramPrompt = "add";
-		parameterized = true;
+	@Override
+	protected String getParameterName(){
+		return PARAMETER_NAME;
 	}
 	
 	@Override

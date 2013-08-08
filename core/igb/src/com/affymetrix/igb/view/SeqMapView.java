@@ -2640,7 +2640,20 @@ public class SeqMapView extends JPanel
 			((MutableSeqSymmetry)sym).addSpan(span);
 		}
 	}
-		
+	
+	public void removeSym(SeqSymmetry sym){
+		GlyphI glyph = getSeqMap().getItemFromTier(sym);
+		// If it inner child then remove it parent sym too.
+		if(!(glyph.getParent() instanceof TierGlyph)){
+			SeqSymmetry parentSym = (SeqSymmetry)glyph.getParent().getInfo();
+			if(parentSym instanceof MutableSeqSymmetry){
+				((MutableSeqSymmetry)parentSym).removeChild(sym);
+			}
+		}
+		getSeqMap().removeItem(glyph);
+		getSeqMap().updateWidget();
+	}
+	
 	private class SeqMapViewRubberBand extends RubberBand {
 		public SeqMapViewRubberBand(Component c) {
 			super(c);

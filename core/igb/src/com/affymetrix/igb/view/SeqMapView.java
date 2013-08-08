@@ -2561,7 +2561,8 @@ public class SeqMapView extends JPanel
 		int min = Math.min(start, end);
 		int max = Math.max(start, end);
 		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
-
+		updateSpan(glyph, sym);
+				
 		if (sym instanceof CdsSeqSymmetry) {
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
@@ -2571,6 +2572,7 @@ public class SeqMapView extends JPanel
 				coordBox = glyph.getCoordBox();
 				start = (int) coordBox.x;
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+				updateSpan(glyph, child);
 			}
 
 			child = parentSym.getChild(parentSym.getChildCount() - 1);
@@ -2579,6 +2581,7 @@ public class SeqMapView extends JPanel
 				coordBox = glyph.getCoordBox();
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+				updateSpan(glyph, child);
 			}
 		}
 		getSeqMap().updateWidget();
@@ -2592,7 +2595,8 @@ public class SeqMapView extends JPanel
 		int min = Math.min(start, end);
 		int max = Math.max(start, end);
 		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
-
+		updateSpan(glyph, sym);
+		
 		if (sym instanceof CdsSeqSymmetry) {
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
@@ -2602,6 +2606,7 @@ public class SeqMapView extends JPanel
 				coordBox = glyph.getCoordBox();
 				start = (int) coordBox.x;
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+				updateSpan(glyph, child);
 			}
 
 			child = parentSym.getChild(parentSym.getChildCount() - 1);
@@ -2610,10 +2615,20 @@ public class SeqMapView extends JPanel
 				coordBox = glyph.getCoordBox();
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+				updateSpan(glyph, child);
 			}
 		}
 
 		getSeqMap().updateWidget();
+	}
+	
+	private void updateSpan(GlyphI glyph, SeqSymmetry sym){
+		if(sym instanceof MutableSeqSymmetry){
+			SeqSpan span = sym.getSpan(getAnnotatedSeq());
+			((MutableSeqSymmetry)sym).removeSpan(span);
+			span = new SimpleSeqSpan((int)glyph.getCoordBox().x, (int)(glyph.getCoordBox().x + glyph.getCoordBox().width), getAnnotatedSeq());
+			((MutableSeqSymmetry)sym).addSpan(span);
+		}
 	}
 	
 	private class SeqMapViewRubberBand extends RubberBand {

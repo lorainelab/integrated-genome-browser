@@ -91,7 +91,11 @@ public class PopupInfo extends JWindow {
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
 			newWindow.properties = properties;
 			newWindow.tooltip.setText(tooltip.getText());
-			newWindow.moreLess.setAction(moreLess.getAction());
+			if(moreLess.getAction() == moreAction){
+				newWindow.moreLess.setAction(newWindow.moreAction);
+			} else {
+				newWindow.moreLess.setAction(newWindow.lessAction);
+			}
 			newWindow.tooltip.setCaretPosition(0);
 			newWindow.setButtonAction(newWindow.closeAction);
 		

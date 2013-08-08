@@ -2553,6 +2553,69 @@ public class SeqMapView extends JPanel
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
 	}
 	
+	public void updateStart(int start, SeqSymmetry sym) {
+		GlyphI glyph = getSeqMap().getItemFromTier(sym);
+		Rectangle2D.Double coordBox = glyph.getCoordBox();
+
+		int end = (int) (coordBox.x + coordBox.width);
+		int min = Math.min(start, end);
+		int max = Math.max(start, end);
+		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
+
+		if (sym instanceof CdsSeqSymmetry) {
+			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
+			SeqSymmetry child = parentSym.getChild(0);
+			glyph = getSeqMap().getItemFromTier(child);
+
+			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+				coordBox = glyph.getCoordBox();
+				start = (int) coordBox.x;
+				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+			}
+
+			child = parentSym.getChild(parentSym.getChildCount() - 1);
+			glyph = getSeqMap().getItemFromTier(child);
+			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+				coordBox = glyph.getCoordBox();
+				end = (int) (coordBox.x + coordBox.width);
+				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+			}
+		}
+		getSeqMap().updateWidget();
+	}
+	
+	public void updateEnd(int end, SeqSymmetry sym) {
+		GlyphI glyph = getSeqMap().getItemFromTier(sym);
+		Rectangle2D.Double coordBox = glyph.getCoordBox();
+		int start = (int) coordBox.x;
+
+		int min = Math.min(start, end);
+		int max = Math.max(start, end);
+		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
+
+		if (sym instanceof CdsSeqSymmetry) {
+			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
+			SeqSymmetry child = parentSym.getChild(0);
+			glyph = getSeqMap().getItemFromTier(child);
+
+			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+				coordBox = glyph.getCoordBox();
+				start = (int) coordBox.x;
+				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+			}
+
+			child = parentSym.getChild(parentSym.getChildCount() - 1);
+			glyph = getSeqMap().getItemFromTier(child);
+			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+				coordBox = glyph.getCoordBox();
+				end = (int) (coordBox.x + coordBox.width);
+				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+			}
+		}
+
+		getSeqMap().updateWidget();
+	}
+	
 	private class SeqMapViewRubberBand extends RubberBand {
 		public SeqMapViewRubberBand(Component c) {
 			super(c);

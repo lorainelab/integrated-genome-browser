@@ -90,15 +90,15 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 
 	public boolean isIntegral() { return true; }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + end;
-		result = prime * result + ((seq == null) ? 0 : seq.hashCode());
-		result = prime * result + start;
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + end;
+//		result = prime * result + ((seq == null) ? 0 : seq.hashCode());
+//		result = prime * result + start;
+//		return result;
+//	}
 
 	@Override
 	public boolean equals(Object obj) {

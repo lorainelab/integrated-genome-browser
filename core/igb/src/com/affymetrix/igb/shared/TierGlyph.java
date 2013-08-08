@@ -49,5 +49,7 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 	
 	public <G extends GlyphI> G getItem(Object datamodel);
 	
+	public boolean reomveItem(GlyphI glyph);
+	
 	public void setDataModelFromOriginalSym(GlyphI glyph, Object datamodel);
 }

@@ -749,7 +749,25 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		}
 		return null;
 	}
-		
+	
+	@Override @SuppressWarnings("unchecked")
+	public boolean reomveItem(GlyphI glyph){
+		Object datamodel = glyph.getInfo();
+		if(datamodel != null){
+			Object result = model_hash.get(datamodel);
+			if(result == glyph){
+				model_hash.remove(datamodel);
+				return true;
+			}
+			
+			if (result instanceof List && ((List)result).size() > 0) {
+				List vec = (List)result;
+				return vec.remove(glyph);
+			}
+		}
+		return false;
+	}
+	
 	@Override @SuppressWarnings("unchecked")
 	public void setDataModelFromOriginalSym(GlyphI glyph, Object datamodel) {
 		if (datamodel instanceof DerivedSeqSymmetry) {

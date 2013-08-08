@@ -307,7 +307,16 @@ public class AffyTieredMap extends NeoMap {
 
 	@Override
 	public void removeItem(GlyphI gl) {
-		super.removeItem(gl);
+		scene.removeGlyph(gl);
+		glyph_hash.remove(gl);
+		selected.remove(gl);
+		
+		for(TierGlyph tier : tiers){
+			if(tier.reomveItem(gl)){
+				break;
+			}
+		}
+		
 		if (gl.getChildren() != null) {
 			List<GlyphI> children = gl.getChildren();
 			int childCount = children.size();

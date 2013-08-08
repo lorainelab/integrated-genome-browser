@@ -2556,7 +2556,6 @@ public class SeqMapView extends JPanel
 	public void updateStart(int start, SeqSymmetry sym) {
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
 		Rectangle2D.Double coordBox = glyph.getCoordBox();
-
 		int end = (int) (coordBox.x + coordBox.width);
 		int min = Math.min(start, end);
 		int max = Math.max(start, end);
@@ -2569,6 +2568,12 @@ public class SeqMapView extends JPanel
 			glyph = getSeqMap().getItemFromTier(child);
 
 			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+				if(parentSym instanceof SimpleSymWithPropsWithCdsSpan) {
+					SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)parentSym).getCdsSpan();
+					cdsSpan = new SimpleSeqSpan(start, cdsSpan.getEnd(), cdsSpan.getBioSeq());
+					((SimpleSymWithPropsWithCdsSpan)parentSym).setCdsSpan(cdsSpan);
+				}
+					
 				coordBox = glyph.getCoordBox();
 				start = (int) coordBox.x;
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
@@ -2591,7 +2596,6 @@ public class SeqMapView extends JPanel
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
 		Rectangle2D.Double coordBox = glyph.getCoordBox();
 		int start = (int) coordBox.x;
-
 		int min = Math.min(start, end);
 		int max = Math.max(start, end);
 		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
@@ -2612,6 +2616,12 @@ public class SeqMapView extends JPanel
 			child = parentSym.getChild(parentSym.getChildCount() - 1);
 			glyph = getSeqMap().getItemFromTier(child);
 			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+				if(parentSym instanceof SimpleSymWithPropsWithCdsSpan) {
+					SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)parentSym).getCdsSpan();
+					cdsSpan = new SimpleSeqSpan(cdsSpan.getStart(), end, cdsSpan.getBioSeq());
+					((SimpleSymWithPropsWithCdsSpan)parentSym).setCdsSpan(cdsSpan);
+				}
+								
 				coordBox = glyph.getCoordBox();
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
@@ -2630,7 +2640,7 @@ public class SeqMapView extends JPanel
 			((MutableSeqSymmetry)sym).addSpan(span);
 		}
 	}
-	
+		
 	private class SeqMapViewRubberBand extends RubberBand {
 		public SeqMapViewRubberBand(Component c) {
 			super(c);

@@ -1,8 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.igb.IGB;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -14,7 +12,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id: ClampViewAction.java 11335 2012-05-01 18:00:52Z anuj4159 $
  */
-public class ClampViewAction extends GenericAction {
+public class ClampViewAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1l;
 	private static final ClampViewAction ACTION = new ClampViewAction();
 
@@ -34,7 +32,7 @@ public class ClampViewAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		IGB.getSingleton().getMapView().toggleClamp();
+		getSeqMapView().toggleClamp();
 	}
 
 	@Override

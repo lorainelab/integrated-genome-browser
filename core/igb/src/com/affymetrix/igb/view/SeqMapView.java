@@ -1479,19 +1479,24 @@ public class SeqMapView extends JPanel
 	public void clamp(boolean clamp) {
 		if (clamp) {
 			Rectangle2D.Double vbox = seqmap.getViewBounds();
-			seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
-			clampedRegion = new SimpleSeqSpan((int) (vbox.x), (int) (vbox.x + vbox.width), viewseq);
+			clamp((int) (vbox.x), (int) (vbox.x + vbox.width));
 		} else {
 			if (viewseq != null) {
-				int min = viewseq.getMin();
-				int max = viewseq.getMax();
-				seqmap.setMapRange(min, max);
-				clampedRegion = null;
+				clamp(viewseq.getMin(), viewseq.getMax());
 			}
 		}
 		ClampViewAction.getAction().putValue(Action.SELECTED_KEY, clampedRegion != null);
 	}
 
+	protected void clamp(int start, int end){
+		if(viewseq != null && viewseq.getMin() == start && viewseq.getMax() == end){
+			clampedRegion = null;
+		} else {
+			clampedRegion = new SimpleSeqSpan(start, end, viewseq);
+		}
+		seqmap.setMapRange(start, end);
+	}
+	
 	/**
 	 * Do edge matching. If query_glyphs is empty, clear all edges.
 	 *

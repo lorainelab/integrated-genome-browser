@@ -199,7 +199,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 			setVisibleMinY(point_min_ycoord);
 		}
 
-		if(isUninitializedMaxY() && point_max_ycoord > 0){
+		if(isUninitializedMaxY() && point_max_ycoord > point_min_ycoord){
 			setVisibleMaxY(point_max_ycoord);
 		}
 		

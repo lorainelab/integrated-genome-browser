@@ -26,4 +26,25 @@ public abstract class AbstractLogTransform extends AbstractMathTransform {
 			return GenometryConstants.BUNDLE.getString("operator_" + getBaseName()) + (base == 0 ? "" : " " + DF.format(base));
 		}
 	}
+	
+	@Override
+	public boolean setParameterValue(String key, Object value) {
+		if (parameterized && value != null) {
+			if ("e".equals(value.toString().trim().toLowerCase())) {
+				base = Math.E;
+				return true;
+			}
+		}
+		return super.setParameterValue(key, value);
+	}
+	
+	@Override
+	protected boolean allowZero(){
+		return false;
+	}
+	
+	@Override
+	protected boolean allowNegative(){
+		return false;
+	}
 }

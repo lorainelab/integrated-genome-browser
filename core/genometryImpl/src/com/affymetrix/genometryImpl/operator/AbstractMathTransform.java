@@ -75,20 +75,18 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 	@Override
 	public boolean setParameterValue(String key, Object value) {
 		if (parameterized && value != null) {
-			if ("e".equals(value.toString().trim().toLowerCase())) {
-				base = Math.E;
-			}
-			else {
-				try {
-					base = Double.parseDouble(value.toString());
-					if (base <= 0) {
-						return false;
-					}
-				}
-				catch (Exception x) {
+			try {
+				base = Double.parseDouble(value.toString());
+				if (!allowNegative() && base < 0) {
 					return false;
 				}
+				if (!allowZero() && base == 0) {
+					return false;
+				}
+			} catch (Exception x) {
+				return false;
 			}
+
 		}
 		return true;
 	}
@@ -103,5 +101,13 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 		} catch (Exception ex) {
 		}
 		return null;
+	}
+	
+	protected boolean allowZero(){
+		return true;
+	}
+	
+	protected boolean allowNegative(){
+		return true;
 	}
 }

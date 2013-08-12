@@ -68,7 +68,9 @@ public final class MismatchPileupType extends FillBarGraphType {
 		MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
 		Color saveColor = g.getColor();
 
-		final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
+//		final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
+		final int width = curr_x_plus_width.x;
+		
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		// need to draw coverage first, then mismatches so that the mismatches are not covered up
 		g.setColor(MATCH_COLOR);

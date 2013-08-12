@@ -169,18 +169,14 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		}
 
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
-		Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
-
-		List<GlyphI> glyphs = new ArrayList<GlyphI>();
-		GlyphI topgl = null;
-		if (!nevt.getItems().isEmpty()) {
-			topgl = nevt.getItems().get(nevt.getItems().size() - 1);
-			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
-			glyphs.add(topgl);
+		Rectangle2D.Double cbox = new Rectangle2D.Double(nevt.getCoordX(), nevt.getCoordY(), 1, 1);
+		List<GlyphI> glyphs = smv.doTheSelection(cbox);
+		
+		if (!glyphs.isEmpty()) {
 			if (evt.getSource() == map) {
 				smv.getSeqMap().setCursor(SeqMapView.openHandCursor);
 			}
-			smv.setToolTip(evt, glyphs);
+			smv.setToolTip(evt, glyphs.get(glyphs.size() - 1));
 			return;
 		}
 
@@ -191,7 +187,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		}
 
 		if(!isShowingGraphToolTip){
-			smv.setToolTip(evt, glyphs);	// empty tooltip
+			smv.setToolTip(evt, null);	// empty tooltip
 		}
 	}
 

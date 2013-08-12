@@ -2213,23 +2213,20 @@ public class SeqMapView extends JPanel
 	 *
 	 * @param glyphs
 	 */
-	public final void setToolTip(MouseEvent evt, List<GlyphI> glyphs) {
+	public final void setToolTip(MouseEvent evt, GlyphI glyph) {
 		if (!show_prop_tooltip) {
 			return;
 		}
 
-		if (!glyphs.isEmpty()) {
-			List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
-			if (!sym.isEmpty()) {
-				setToolTip(evt, sym.get(0), -1);
-				return;
-			} 
+		if (glyph != null && glyph.getInfo() instanceof SeqSymmetry) {
+			setToolTip(evt, (SeqSymmetry)glyph.getInfo(), -1);
 //			else if (glyphs.get(0) instanceof TierLabelGlyph) {
 //				Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
 //				toolTip = convertPropsToString(properties);
 //			} 
+		} else {
+			setToolTip(evt, null, -1);
 		}
-		setToolTip(evt, null, -1);
 	}
 
 	/**

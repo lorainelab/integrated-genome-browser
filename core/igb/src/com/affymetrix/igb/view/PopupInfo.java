@@ -206,7 +206,9 @@ public class PopupInfo extends JWindow {
 					timer.start();
 				}
 			}
-		} else{
+		} else if (isVisible() && preferredLocationSet){
+			// Do Nothing 
+		} else {
 			//title.setText(null);
 			tooltip.setText(null);
 		}

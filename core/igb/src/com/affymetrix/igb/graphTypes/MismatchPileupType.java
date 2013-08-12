@@ -2,7 +2,6 @@ package com.affymetrix.igb.graphTypes;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -62,7 +61,9 @@ public final class MismatchPileupType extends MismatchGraphType {
 		MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
 		Color saveColor = g.getColor();
 
-		final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
+//		final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
+		final int width = curr_x_plus_width.x;
+		
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		// need to draw coverage first, then mismatches so that the mismatches are not covered up
 		g.setColor(MATCH_COLOR);

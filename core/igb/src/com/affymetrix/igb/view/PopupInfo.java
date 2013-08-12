@@ -182,8 +182,8 @@ public class PopupInfo extends JWindow {
 			return;
 		}
 		
-		this.properties	= properties;
 		if(properties != null && properties.length > 1){
+			this.properties	= properties;
 			//title.setText(getFormattedTitle(properties));
 			tooltip.setText(convertPropsToString(properties, false));
 			if(moreLess.getAction() == moreAction){
@@ -209,6 +209,7 @@ public class PopupInfo extends JWindow {
 		} else if (isVisible() && preferredLocationSet){
 			// Do Nothing 
 		} else {
+			this.properties	= properties;
 			//title.setText(null);
 			tooltip.setText(null);
 		}

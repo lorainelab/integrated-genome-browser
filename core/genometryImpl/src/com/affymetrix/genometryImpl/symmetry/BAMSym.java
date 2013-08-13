@@ -3,19 +3,19 @@ package com.affymetrix.genometryImpl.symmetry;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 
 /**
  *
  * @author hiralv
  */
-public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCharIterator{
+public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, SearchableCharIterator {
 	public static final int NO_MAPQ = 255;
 	
 	private final int[] iblockMins, iblockMaxs;
@@ -37,7 +37,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, 
 			int mapq, boolean forward, int[] blockMins, int[] blockMaxs,
 			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
-		super(type, seq, txMin, txMax, name, Scored.UNKNOWN_SCORE, forward, 0, 0, blockMins, blockMaxs);
+		super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
 		this.iblockMins = iblockMins;
 		this.iblockMaxs = iblockMaxs;
 		this.cigar = cigar;
@@ -84,7 +84,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	class BamChildSingletonSeqSym extends BedChildSingletonSeqSym implements SymWithResidues {
+	class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithResidues {
 
 		public BamChildSingletonSeqSym(int start, int end, BioSeq seq) {
 			super(start, end, seq);
@@ -98,10 +98,17 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			return interpretCigar(start, end, false);
 		}
 
+		// For the web links to be constructed properly, this class must implement getID(),
+		// or must NOT implement SymWithProps.
+		@Override public String getID() {return BAMSym.this.getID();}
+		@Override public Object getProperty(String key) {return BAMSym.this.getProperty(key);}
+		@Override public boolean setProperty(String key, Object val) {return false; }
+		@Override public Map<String,Object> getProperties() {return cloneProperties();}
+		
 		@Override
 		public Map<String,Object> cloneProperties() {
 			HashMap<String,Object> tprops = new HashMap<String,Object>();
-			tprops.putAll(super.cloneProperties());
+			tprops.putAll(BAMSym.this.cloneProperties());
 			tprops.put("id", name);
 			tprops.put("residues", getResidues());
 			tprops.put("forward", this.isForward());
@@ -109,7 +116,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		}
 	}
 
-	class BamInsChildSingletonSeqSym extends BedChildSingletonSeqSym implements SymWithResidues {
+	class BamInsChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithResidues {
 		final int index;
 		public BamInsChildSingletonSeqSym(int start, int end, int index, BioSeq seq) {
 			super(start, end, seq);
@@ -124,15 +131,17 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			return interpretCigar(this.getMin(), this.getMax(), true);
 		}
 
-		@Override
-		public Map<String,Object> getProperties() {
-			return cloneProperties();
-		}
-
+		// For the web links to be constructed properly, this class must implement getID(),
+		// or must NOT implement SymWithProps.
+		@Override public String getID() {return BAMSym.this.getID();}
+		@Override public Object getProperty(String key) {return BAMSym.this.getProperty(key);}
+		@Override public boolean setProperty(String key, Object val) {return false; }
+		@Override public Map<String,Object> getProperties() {return cloneProperties();}
+		
 		@Override
 		public Map<String,Object> cloneProperties() {
 			HashMap<String,Object> tprops = new HashMap<String,Object>();
-			tprops.putAll(super.cloneProperties());
+			tprops.putAll(BAMSym.this.cloneProperties());
 			tprops.put("id", name);
 			tprops.put("residues", getResidues());
 			tprops.put("forward", this.isForward());

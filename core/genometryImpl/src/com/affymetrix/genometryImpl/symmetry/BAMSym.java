@@ -8,6 +8,7 @@ import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 
 /**
@@ -26,17 +27,17 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 	//Residues residues;
 	private String insResidues;
 
-	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
-			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs,
-			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
-		this(type, seq, txMin, txMax, name, score, NO_MAPQ, forward, cdsMin, cdsMax, 
-				blockMins, blockMaxs, iblockMins, iblockMaxs, cigar, residues);
+	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name,
+			boolean forward, int[] blockMins, int[] blockMaxs, int iblockMins[], 
+			int[] iblockMaxs, Cigar cigar, String residues) {
+		this(type, seq, txMin, txMax, name, NO_MAPQ, forward, blockMins, 
+				blockMaxs, iblockMins, iblockMaxs, cigar, residues);
 	}
 
-	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
-			int mapq, boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs,
+	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, 
+			int mapq, boolean forward, int[] blockMins, int[] blockMaxs,
 			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
-		super(type,seq,txMin,txMax,name,score,forward,cdsMin,cdsMax,blockMins,blockMaxs);
+		super(type, seq, txMin, txMax, name, Scored.UNKNOWN_SCORE, forward, 0, 0, blockMins, blockMaxs);
 		this.iblockMins = iblockMins;
 		this.iblockMaxs = iblockMaxs;
 		this.cigar = cigar;
@@ -73,13 +74,6 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		else {
 			return new BamChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
 		}
-	}
-
-	@Override
-	public Map<String,Object> cloneProperties() {
-		Map<String,Object> props = super.cloneProperties();
-		props.put("mapq", mapq);
-		return props;
 	}
 	
 	public String substring(int start, int end) {
@@ -193,7 +187,8 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			props = new HashMap<String, Object>();
 		}
 		props.put("residues", getResidues().replaceAll("-", ""));
-
+		props.put("mapq", mapq);
+		
 		return super.cloneProperties();
 	}
 

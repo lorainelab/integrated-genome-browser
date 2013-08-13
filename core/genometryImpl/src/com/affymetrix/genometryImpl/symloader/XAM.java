@@ -179,9 +179,8 @@ public abstract class XAM extends SymLoader {
 		}
 
 		SymWithProps sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
-				Scored.UNKNOWN_SCORE, sr.getMappingQuality(), span.isForward(), 
-				0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar(), 
-				includeResidues?sr.getReadString():null);
+				sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, 
+				iblockMins, iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null);
 		sym.setProperty("id", sr.getReadName());
 		sym.setProperty("method", meth);
 		if(includeNH && sr.getAttribute("NH")!= null){

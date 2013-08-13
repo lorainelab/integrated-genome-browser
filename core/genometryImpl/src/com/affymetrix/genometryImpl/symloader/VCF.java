@@ -489,7 +489,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 			String repeated = getMultiple('_', ref.length() - 1);
 			residuesStr = alt + repeated;
 		}
-		BAMSym residueSym = new BAMSym(nameType, seq, start, end, id, (float)0.0, true, 0, 0, new int[]{start}, new int[]{end}, iblockMins, iblockMaxs, cigar, residuesStr);
+		BAMSym residueSym = new BAMSym(nameType, seq, start, end, id, true, new int[]{start}, new int[]{end}, iblockMins, iblockMaxs, cigar, residuesStr);
 		if (cigar != null ) {
 			residueSym.setProperty(BAM.CIGARPROP, cigar);
 		}

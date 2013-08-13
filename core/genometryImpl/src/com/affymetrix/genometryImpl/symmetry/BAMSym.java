@@ -15,11 +15,13 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
  * @author hiralv
  */
 public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCharIterator{
-
+	public static final int NO_MAPQ = 255;
+	
 	private final int[] iblockMins, iblockMaxs;
 	private final Cigar cigar;
 	private final int min;
 	private final String residues;
+	private final int mapq;
 	
 	//Residues residues;
 	private String insResidues;
@@ -27,14 +29,26 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
 			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs,
 			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
+		this(type, seq, txMin, txMax, name, score, NO_MAPQ, forward, cdsMin, cdsMax, 
+				blockMins, blockMaxs, iblockMins, iblockMaxs, cigar, residues);
+	}
+
+	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
+			int mapq, boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs,
+			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
 		super(type,seq,txMin,txMax,name,score,forward,cdsMin,cdsMax,blockMins,blockMaxs);
 		this.iblockMins = iblockMins;
 		this.iblockMaxs = iblockMaxs;
 		this.cigar = cigar;
 		this.residues = residues;
-		this.min = Math.min(txMin, txMax);
+		this.min  = Math.min(txMin, txMax);
+		this.mapq = mapq;
 	}
-
+	
+	public int getMapq() {
+		return mapq;
+	}
+	
 	public int getInsChildCount() {
 		if (iblockMins == null)  { return 0; }
 		else  { return iblockMins.length; }
@@ -61,6 +75,13 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		}
 	}
 
+	@Override
+	public Map<String,Object> cloneProperties() {
+		Map<String,Object> props = super.cloneProperties();
+		props.put("mapq", mapq);
+		return props;
+	}
+	
 	public String substring(int start, int end) {
 		return getResidues(start, end);
 	}

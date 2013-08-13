@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
@@ -178,7 +179,9 @@ public abstract class XAM extends SymLoader {
 		}
 
 		SymWithProps sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
-				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null);
+				Scored.UNKNOWN_SCORE, sr.getMappingQuality(), span.isForward(), 
+				0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar(), 
+				includeResidues?sr.getReadString():null);
 		sym.setProperty("id", sr.getReadName());
 		sym.setProperty("method", meth);
 		if(includeNH && sr.getAttribute("NH")!= null){

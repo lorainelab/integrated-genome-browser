@@ -167,7 +167,39 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		if (!(evt instanceof NeoMouseEvent) || !smv.getShowPropertiesTooltip()) {
 			return;
 		}
+		
+		optimziedTooltip(evt);
+	}
 
+	private void oldToolTip(MouseEvent evt){
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+		Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
+		
+		List<GlyphI> hits = nevt.getItems();
+		int hcount = hits.size();
+		
+		if (!nevt.getItems().isEmpty()) {
+			GlyphI topgl = nevt.getItems().get(hcount - 1);
+			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
+			if (evt.getSource() == map) {
+				smv.getSeqMap().setCursor(SeqMapView.openHandCursor);
+			}
+			smv.setToolTip(evt, topgl);
+			return;
+		}
+		
+		boolean isShowingGraphToolTip = showGraphProperties(true, evt);
+
+		if (smv.getSeqMap().getCursor() != smv.getMapMode().defCursor && evt.getSource() == map) {
+			smv.getSeqMap().setCursor(smv.getMapMode().defCursor);
+		}
+
+		if(!isShowingGraphToolTip){
+			smv.setToolTip(evt, null);	// empty tooltip
+		}
+	}
+	
+	private void optimziedTooltip(MouseEvent evt){
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
 		Rectangle2D.Double cbox = new Rectangle2D.Double(nevt.getCoordX(), nevt.getCoordY(), 1, 1);
 		List<GlyphI> glyphs = smv.doTheSelection(cbox);
@@ -190,7 +222,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 			smv.setToolTip(evt, null);	// empty tooltip
 		}
 	}
-
+	
 	// show properites in tool tip or display in selection info tab table
 	private boolean showGraphProperties(boolean isToolTip, MouseEvent evt) {
 		// Do we intersect any graph glyphs?

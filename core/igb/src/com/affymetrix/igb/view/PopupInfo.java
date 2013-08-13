@@ -167,7 +167,7 @@ public class PopupInfo extends JWindow {
 	}
 	
 	public void setToolTip(Point point, String[][] properties){
-		if(isVisible() && !preferredLocationSet){
+		if(isVisible() && properties == null && !preferredLocationSet){
 			setVisible(false);
 			Opacity.INSTANCE.set(PopupInfo.this, 0.5f);
 		}

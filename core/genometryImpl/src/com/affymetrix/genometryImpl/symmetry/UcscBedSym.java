@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
@@ -68,19 +67,10 @@ import java.util.*;
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  * </pre>
  */
-public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, TypedSym, SymWithProps, Scored  {
-	BioSeq seq; // "chrom"
-	int txMin; // "chromStart"
-	int txMax; // "chromEnd"
-	String name; // "name"
+public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, SymSpanWithCds, Scored  {
 	float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
-	boolean forward; // "strand"
 	int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
 	int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
-	int[] blockMins; // "blockStarts" + "txMin"
-	int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
-	String type;
-	Map<String,Object> props;
 	boolean hasCdsSpan = false;
 	
 	/**
@@ -95,23 +85,12 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 	 */
 	public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
 			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
-		this.type = type;
-		this.seq = seq;  // replace chrom name-string with reference to chrom BioSeq
-		this.txMin = txMin;
-		this.txMax = txMax;
-		this.name = name;
+		super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
 		this.score = score;
-		this.forward = forward;
 		this.cdsMin = cdsMin;
 		this.cdsMax = cdsMax;
 		hasCdsSpan = ((cdsMin != Integer.MIN_VALUE) && (cdsMax != Integer.MIN_VALUE) && (cdsMin != cdsMax));
-		
-		this.blockMins = blockMins;
-		this.blockMaxs = blockMaxs;
 	}
-
-	public String getName() { return name; }
-	public String getType() { return type; }
 
 	@Override
 	public boolean isCdsStartStopSame(){
@@ -129,58 +108,8 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 		if (forward) { return new SimpleSeqSpan(cdsMin, cdsMax, seq); }
 		else { return new SimpleSeqSpan(cdsMax, cdsMin, seq); }
 	}
-
-	public String getID() { return name; }
-	public SeqSpan getSpan(BioSeq bs) {
-		if (bs.equals(this.seq)) { return this; }
-		else { return null; }
-	}
-
-	public SeqSpan getSpan(int index) {
-		if (index == 0) { return this; }
-		else { return null; }
-	}
-
-	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
-		if (bs.equals(this.seq)) {
-			if (forward) {
-				span.set(txMin, txMax, seq);
-			}
-			else {
-				span.set(txMax, txMin, seq);
-			}
-			return true;
-		}
-		else { return false; }
-	}
-
-	public boolean getSpan(int index, MutableSeqSpan span) {
-		if (index == 0) {
-			if (forward) {
-				span.set(txMin, txMax, seq);
-			}
-			else {
-				span.set(txMax, txMin, seq);
-			}
-			return true;
-		}
-		else { return false; }
-	}
-
-	/** Always returns 1. */
-	public int getSpanCount() { return 1; }
-
-	/** Returns null if index is not 1. */
-	public BioSeq getSpanSeq(int index) {
-		if (index == 0) { return seq; }
-		else { return null; }
-	}
-
-	public int getChildCount() {
-		if (blockMins == null)  { return 0; }
-		else  { return blockMins.length; }
-	}
-
+	
+	@Override
 	public SeqSymmetry getChild(int index) {
 		if (blockMins == null || (blockMins.length <= index)) { return null; }
 		if (forward) {
@@ -211,34 +140,11 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 		public float getScore() {return UcscBedSym.this.getScore(); }
 	}
 
-	// SeqSpan implementation
-	public int getStart() { return (forward ? txMin : txMax); }
-	public int getEnd() { return (forward ? txMax : txMin); }
-	public int getMin() { return txMin; }
-	public int getMax() { return txMax; }
-	public int getLength() { return (txMax - txMin); }
-	public boolean isForward() { return forward; }
-	public BioSeq getBioSeq() { return seq; }
-	public double getStartDouble() { return getStart(); }
-	public double getEndDouble() { return getEnd(); }
-	public double getMaxDouble() { return getMax(); }
-	public double getMinDouble() { return getMin(); }
-	public double getLengthDouble() { return getLength(); }
-	public boolean isIntegral() { return true; }
-
 	public float getScore() { return score; }
 
-	public Map<String,Object> getProperties() {
-		return cloneProperties();
-	}
-
+	@Override
 	public Map<String,Object> cloneProperties() {
-		HashMap<String,Object> tprops = new HashMap<String,Object>();
-		tprops.put("id", name);
-		tprops.put("type", type);
-		tprops.put("name", name);
-		tprops.put("seq id", seq.getID());
-		tprops.put("forward", forward);
+		Map<String,Object> tprops = super.cloneProperties();
 //		if (hasCdsSpan) {
 //			tprops.put("cds min", Integer.valueOf(cdsMin));
 //			tprops.put("cds max", Integer.valueOf(cdsMax));
@@ -246,35 +152,17 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 		if (score != Float.NEGATIVE_INFINITY) {
 			tprops.put("score", new Float(score));
 		}
-		if (props != null) {
-			tprops.putAll(props);
-		}
 		return tprops;
 	}
 
+	@Override
 	public Object getProperty(String key) {
 		// test for standard gene sym  props
-		if (key.equals("id")) { return name; }
-		else if (key.equals("type")) { return getType(); }
-		else if (key.equals("method"))  { return getType(); }
-		else if (key.equals("name")) { return name; }
-		else if (key.equals("seq id")) { return seq.getID(); }
-		else if (key.equals("forward")) { return forward; }
-		else if (hasCdsSpan && key.equals("cds min")) { return Integer.valueOf(cdsMin); }
+		if (hasCdsSpan && key.equals("cds min")) { return Integer.valueOf(cdsMin); }
 		else if (hasCdsSpan && key.equals("cds max")) { return Integer.valueOf(cdsMax); }
 		else if (key.equals("score") && (score != Float.NEGATIVE_INFINITY)) { return new Float(score); }
-		else if (props != null)  {
-			return props.get(key);
-		}
-		else  { return null; }
-	}
-
-	public boolean setProperty(String name, Object val) {
-		if (props == null) {
-			props = new Hashtable<String,Object>();
-		}
-		props.put(name, val);
-		return true;
+		
+		return super.getProperty(key);
 	}
 
 	protected String getScoreString(){
@@ -335,14 +223,6 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, SymSpanWithCds, Typ
 				}
 			}
 		}
-	}
-
-	public int[] getBlockMins() {
-		return blockMins;
-	}
-
-	public int[] getBlockMaxs() {
-		return blockMaxs;
 	}
 
 	@Override

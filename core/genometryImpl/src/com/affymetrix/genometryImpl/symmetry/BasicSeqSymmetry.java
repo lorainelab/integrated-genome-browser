@@ -131,10 +131,6 @@ public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProp
 		tprops.put("name", name);
 		tprops.put("seq id", seq.getID());
 		tprops.put("forward", forward);
-//		if (hasCdsSpan) {
-//			tprops.put("cds min", Integer.valueOf(cdsMin));
-//			tprops.put("cds max", Integer.valueOf(cdsMax));
-//		} 
 		if (props != null) {
 			tprops.putAll(props);
 		}

@@ -50,7 +50,7 @@ public class Score extends ColorProvider {
 		return null;
 	}
 
-	private Color getScoreColor(float score) {
+	protected Color getScoreColor(float score) {
 		if (score < min_score_color) {
 			score = min_score_color;
 		} else if (score >= max_score_color) {

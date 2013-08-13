@@ -338,6 +338,7 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ColorProviderI.class);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.RGB(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Score(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.MapqScore(), null);
 		//bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Strand(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);

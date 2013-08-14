@@ -7,11 +7,13 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -103,6 +105,9 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 			if (bioSeqResidue != null) {
 				csg.setResidueMask(bioSeqResidue);
 			}
+		}
+		if(sym instanceof SymWithBaseQuality){
+			csg.setBaseQuality(((SymWithBaseQuality)sym).getBaseQuality());
 		}
 		return csg;
 			

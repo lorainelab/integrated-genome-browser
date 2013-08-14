@@ -59,4 +59,9 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 			g.fillRect(x + offset, y, intPixelsPerBase, height);
 		}
 	}
+	
+	String baseQuality;
+	public void setBaseQuality(String baseQuality) {
+		this.baseQuality = baseQuality;
+	}
 }

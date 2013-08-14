@@ -99,12 +99,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		
 		@Override
 		public String getResidues() {
-			return BAMSym.this.interpretCigar(this.getMin(), this.getMax(), false);
+			return BAMSym.this.getResidues(this.getMin(), this.getMax(), false);
 		}
 
 		@Override
 		public String getResidues(int start, int end) {
-			return BAMSym.this.interpretCigar(start, end, false);
+			return BAMSym.this.getResidues(start, end, false);
 		}
 		
 		@Override
@@ -149,7 +149,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		
 		@Override
 		public String getResidues() {
-			return BAMSym.this.interpretCigar(this.getMin(), this.getMax(), true);
+			return BAMSym.this.getResidues(this.getMin(), this.getMax(), true);
 		}
 
 		@Override
@@ -192,7 +192,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	@Override
 	public String getResidues(int start, int end){
 		if(residues != null){
-			return interpretCigar(start, end, false);
+			return getResidues(start, end, false);
 		}
 		return getEmptyString('-', end - start);
 	}
@@ -261,7 +261,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		return cigar;
 	}
 
-	private String interpretCigar(int start, int end, boolean isIns) {
+	private String getResidues(int start, int end, boolean isIns) {
 		return interpretCigar(residues, start, end, isIns, DELETION_CHAR, N_CHAR, PADDING_CHAR, ERROR_CHAR);
 	}
 

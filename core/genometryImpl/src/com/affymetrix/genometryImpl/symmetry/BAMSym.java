@@ -99,22 +99,22 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		
 		@Override
 		public String getResidues() {
-			return interpretCigar(this.getMin(), this.getMax(), false);
+			return BAMSym.this.interpretCigar(this.getMin(), this.getMax(), false);
 		}
 
 		@Override
 		public String getResidues(int start, int end) {
-			return interpretCigar(start, end, false);
+			return BAMSym.this.interpretCigar(start, end, false);
 		}
 		
 		@Override
 		public String getBaseQuality() {
-			return getBaseQuality(this.getMin(), this.getMax(), false);
+			return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), false);
 		}
 	
 		@Override
 		public String getBaseQuality(int start, int end) {
-			return getBaseQuality(start, end, false);
+			return BAMSym.this.getBaseQuality(start, end, false);
 		}
 		
 		// For the web links to be constructed properly, this class must implement getID(),
@@ -149,7 +149,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		
 		@Override
 		public String getResidues() {
-			return interpretCigar(this.getMin(), this.getMax(), true);
+			return BAMSym.this.interpretCigar(this.getMin(), this.getMax(), true);
 		}
 
 		@Override
@@ -159,7 +159,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	
 		@Override
 		public String getBaseQuality(int start, int end) {
-			return getBaseQuality(this.getMin(), this.getMax(), true);
+			return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), true);
 		}
 	
 		// For the web links to be constructed properly, this class must implement getID(),

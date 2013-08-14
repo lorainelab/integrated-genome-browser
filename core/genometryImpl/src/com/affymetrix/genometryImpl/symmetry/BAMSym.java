@@ -18,6 +18,11 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, SearchableCharIterator {
 	public static final int NO_MAPQ = 255;
 	
+	private static final char DELETION_CHAR = '_';
+	private static final char N_CHAR = '-';
+	private static final char PADDING_CHAR = '*';
+	private static final char ERROR_CHAR = '.';
+	
 	private final int[] iblockMins, iblockMaxs;
 	private final Cigar cigar;
 	private final int min;
@@ -214,7 +219,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 	}
 
 	private String interpretCigar(int start, int end, boolean isIns) {
-		if (cigar == null || cigar.numCigarElements() == 0 || residues == null) {
+		return interpretCigar(residues, start, end, isIns, DELETION_CHAR, N_CHAR, PADDING_CHAR, ERROR_CHAR);
+	}
+
+	private String interpretCigar(String str, int start, int end, boolean isIns,
+			char D, char N, char P, char E) {
+		if (cigar == null || cigar.numCigarElements() == 0 || str == null) {
 			return "";
 		}
 		start = Math.max(start, txMin);
@@ -244,7 +254,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 
 				if (cel.getOperator() == CigarOperator.INSERTION) {
 					if (isIns && currentPos == start) {
-						return residues.substring(stringPtr, stringPtr + celLength);
+						return str.substring(stringPtr, stringPtr + celLength);
 					} else {
 						stringPtr += celLength;
 						continue;
@@ -255,21 +265,20 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
 					continue;				// hard clip can be ignored
 				} else if (cel.getOperator() == CigarOperator.DELETION) {
-					Arrays.fill(tempArr, '_');		// print deletion as '_'
+					Arrays.fill(tempArr, D);		// print deletion as '_'
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.M) {
-					tempArr = residues.substring(stringPtr, stringPtr + celLength).toCharArray();
+					tempArr = str.substring(stringPtr, stringPtr + celLength).toCharArray();
 					stringPtr += celLength;	// print matches
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.N) {
-					Arrays.fill(tempArr, '-');
+					Arrays.fill(tempArr, N);
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
-					Arrays.fill(tempArr, '*');		// print padding as '*'
+					Arrays.fill(tempArr, P);		// print padding as '*'
 					stringPtr += celLength;
 					currentPos += celLength;
 				}
-
 
 				if (currentPos > start) {
 					int tempOffset = Math.max(tempArr.length - (currentPos - start), 0);
@@ -282,7 +291,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 				ex.printStackTrace();
 				if ((end - start) - stringPtr > 0) {
 					tempArr = new char[(end - start) - stringPtr];
-					Arrays.fill(tempArr, '.');
+					Arrays.fill(tempArr, E);
 					System.arraycopy(tempArr, 0, sb, 0, tempArr.length);
 				}
 			}
@@ -290,5 +299,4 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 
 		return String.valueOf(sb);
 	}
-
 }

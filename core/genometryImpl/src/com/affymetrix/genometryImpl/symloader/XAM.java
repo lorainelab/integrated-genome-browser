@@ -179,8 +179,8 @@ public abstract class XAM extends SymLoader {
 		}
 
 		SymWithProps sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
-				sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, 
-				iblockMins, iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null);
+				sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, iblockMins, 
+				iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null, sr.getBaseQualityString());
 		sym.setProperty("id", sr.getReadName());
 		sym.setProperty("method", meth);
 		if(includeNH && sr.getAttribute("NH")!= null){
@@ -190,7 +190,6 @@ public abstract class XAM extends SymLoader {
 	}
 
 	private static void addAllSAMRecordProperties(SymWithProps sym, SAMRecord sr){
-		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);
 		}

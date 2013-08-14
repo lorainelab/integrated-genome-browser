@@ -27,6 +27,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 	private final Cigar cigar;
 	private final int min;
 	private final String residues;
+	private final String baseQuality;
 	private final int mapq;
 	
 	//Residues residues;
@@ -36,17 +37,18 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 			boolean forward, int[] blockMins, int[] blockMaxs, int iblockMins[], 
 			int[] iblockMaxs, Cigar cigar, String residues) {
 		this(type, seq, txMin, txMax, name, NO_MAPQ, forward, blockMins, 
-				blockMaxs, iblockMins, iblockMaxs, cigar, residues);
+				blockMaxs, iblockMins, iblockMaxs, cigar, residues, null);
 	}
 
 	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, 
 			int mapq, boolean forward, int[] blockMins, int[] blockMaxs,
-			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
+			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues, String baseQuality){
 		super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
 		this.iblockMins = iblockMins;
 		this.iblockMaxs = iblockMaxs;
 		this.cigar = cigar;
 		this.residues = residues;
+		this.baseQuality = baseQuality;
 		this.min  = Math.min(txMin, txMax);
 		this.mapq = mapq;
 	}

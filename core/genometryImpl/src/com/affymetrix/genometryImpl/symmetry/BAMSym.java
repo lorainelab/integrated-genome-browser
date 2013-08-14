@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
  *
  * @author hiralv
  */
-public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, SearchableCharIterator {
+public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, SearchableCharIterator {
 	public static final int NO_MAPQ = 255;
 	
 	private static final char DELETION_CHAR = '_';
@@ -91,20 +91,32 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithResidues {
+	class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
 
 		public BamChildSingletonSeqSym(int start, int end, BioSeq seq) {
 			super(start, end, seq);
 		}
 		
+		@Override
 		public String getResidues() {
 			return interpretCigar(this.getMin(), this.getMax(), false);
 		}
 
+		@Override
 		public String getResidues(int start, int end) {
 			return interpretCigar(start, end, false);
 		}
-
+		
+		@Override
+		public String getBaseQuality() {
+			return getBaseQuality(this.getMin(), this.getMax(), false);
+		}
+	
+		@Override
+		public String getBaseQuality(int start, int end) {
+			return getBaseQuality(start, end, false);
+		}
+		
 		// For the web links to be constructed properly, this class must implement getID(),
 		// or must NOT implement SymWithProps.
 		@Override public String getID() {return BAMSym.this.getID();}
@@ -123,21 +135,33 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 		}
 	}
 
-	class BamInsChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithResidues {
+	class BamInsChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
 		final int index;
 		public BamInsChildSingletonSeqSym(int start, int end, int index, BioSeq seq) {
 			super(start, end, seq);
 			this.index = index;
 		}
 
+		@Override
 		public String getResidues(int start, int end) {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}
 		
+		@Override
 		public String getResidues() {
 			return interpretCigar(this.getMin(), this.getMax(), true);
 		}
 
+		@Override
+		public String getBaseQuality() {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+	
+		@Override
+		public String getBaseQuality(int start, int end) {
+			return getBaseQuality(this.getMin(), this.getMax(), true);
+		}
+	
 		// For the web links to be constructed properly, this class must implement getID(),
 		// or must NOT implement SymWithProps.
 		@Override public String getID() {return BAMSym.this.getID();}
@@ -157,24 +181,41 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 		}
 	}
 
+	@Override
 	public String getResidues(){
 		if(residues != null){
 			return residues;
 		}
-		return getEmptyString(txMax - txMin);
+		return getEmptyString('-', txMax - txMin);
 	}
 
+	@Override
 	public String getResidues(int start, int end){
 		if(residues != null){
-			
 			return interpretCigar(start, end, false);
 		}
-		return getEmptyString(end - start);
+		return getEmptyString('-', end - start);
 	}
 
-	private static String getEmptyString(int length){
+	@Override
+	public String getBaseQuality() {
+		if(baseQuality != null){
+			return baseQuality;
+		}
+		return getEmptyString('*', txMax - txMin);
+	}
+	
+	@Override
+	public String getBaseQuality(int start, int end) {
+		if(baseQuality != null){
+			return getBaseQuality(start, end, false);
+		}
+		return getEmptyString('*', end - start);
+	}
+		
+	private static String getEmptyString(char ch, int length){
 		char[] tempArr = new char[length];
-		Arrays.fill(tempArr, '-');
+		Arrays.fill(tempArr, ch);
 
 		return new String(tempArr);
 	}
@@ -224,6 +265,10 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithResidues, Searcha
 		return interpretCigar(residues, start, end, isIns, DELETION_CHAR, N_CHAR, PADDING_CHAR, ERROR_CHAR);
 	}
 
+	private String getBaseQuality(int start, int end, boolean isIns) {
+		return interpretCigar(baseQuality, start, end, isIns, ERROR_CHAR, ERROR_CHAR, ERROR_CHAR, ERROR_CHAR);
+	}
+	
 	private String interpretCigar(String str, int start, int end, boolean isIns,
 			char D, char N, char P, char E) {
 		if (cigar == null || cigar.numCigarElements() == 0 || str == null) {

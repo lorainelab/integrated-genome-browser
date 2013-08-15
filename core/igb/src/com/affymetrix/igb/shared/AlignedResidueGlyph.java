@@ -1,10 +1,16 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Graphics;
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.BitSet;
 
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 
@@ -20,10 +26,14 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *
  */
 public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
+	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
+	private static final Map<Float, AlphaComposite> alphaCompositeCache = new WeakHashMap<Float, AlphaComposite>();
+	
+	private static int minQ = 5;
+	private static int maxQ = 40;
 	//By default mask the residues.
 	private boolean defaultShowMask = true;
-	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
-
+	private SearchableCharIterator qualCharIter;
 
 	public void setDefaultShowMask(boolean show){
 		defaultShowMask = show;
@@ -46,13 +56,29 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 	protected void drawResidueRectangles(ViewI view, double pixelsPerBase, 
 			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
 		
-		Graphics g = view.getGraphics();
+		Graphics2D g = view.getGraphics();
+		Composite dac = g.getComposite();
+		byte[] quals = qualCharIter.substring(seqBegIndex, seqEndIndex).getBytes();
+		
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
+		float alpha;
 		for (int j = 0; j < charArray.length; j++) {
 
 			if(getShowMask() && !residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
+			
+			alpha = getAlpha(quals[j]);
+			
+			if (alpha < 1.0f) {
+				AlphaComposite ac = alphaCompositeCache.get(alpha);
+				if (ac == null) {
+					ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+					alphaCompositeCache.put(alpha, ac);
+				}
+				g.setComposite(ac);	
+			} 
+			
 			g.setColor(helper.determineResidueColor(charArray[j]));
 
 			//Create a colored rectangle.
@@ -60,11 +86,28 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 			int offset = (int) (j * pixelsPerBase);
 			//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
 			g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
+			
+			g.setComposite(dac);
 		}
 	}
 	
-	String baseQuality;
 	public void setBaseQuality(String baseQuality) {
-		this.baseQuality = baseQuality;
+		qualCharIter = new ImprovedStringCharIter(baseQuality);
+	}
+	
+	private float getAlpha(byte qual){
+		qual -= 33;
+		float alpha;
+				
+		if (qual < minQ) {
+			alpha = 0.1f;
+		} else {
+			alpha = Math.max(0.1f, Math.min(1.0f, 0.1f + 0.9f * (qual - minQ) / (maxQ - minQ)));
+		}
+		
+		// Round alpha to nearest 0.1
+		alpha = ((int) (alpha * 10 + 0.5f)) / 10.0f;
+		
+		return alpha;
 	}
 }

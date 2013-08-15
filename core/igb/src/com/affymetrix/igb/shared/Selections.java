@@ -1,5 +1,11 @@
 package com.affymetrix.igb.shared;
 
+import java.util.EventListener;
+import java.util.EventObject;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.event.EventListenerList;
+
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -10,17 +16,15 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
+
 import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-import java.util.EventListener;
-import java.util.EventObject;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import javax.swing.event.EventListenerList;
 
 /**
  *
@@ -241,7 +245,8 @@ public abstract class Selections {
 	
 	public static boolean isAnyLocked(){
 		for (StyledGlyph glyph : allGlyphs) {
-			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
+			if(glyph.getAnnotStyle() != CoordinateStyle.coordinate_annot_style && 
+					glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
 				return true;
 			}
 		}
@@ -250,7 +255,8 @@ public abstract class Selections {
 	
 	public static boolean isAnyLockable(){
 		for (StyledGlyph glyph : allGlyphs) {
-			if(glyph instanceof TierGlyph && ((TierGlyph)glyph).getTierType() == TierGlyph.TierType.ANNOTATION){
+			if(glyph.getAnnotStyle() != CoordinateStyle.coordinate_annot_style && 
+					glyph instanceof TierGlyph && ((TierGlyph)glyph).getTierType() == TierGlyph.TierType.ANNOTATION){
 				return true;
 			}
 		}
@@ -263,7 +269,8 @@ public abstract class Selections {
 	
 	public static int getLockedHeight(){
 		for (StyledGlyph glyph : allGlyphs) {
-			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
+			if(glyph.getAnnotStyle() != CoordinateStyle.coordinate_annot_style && 
+					glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
 				return ((DefaultTierGlyph)glyph).getFixedPixHeight();
 			}
 		}
@@ -292,7 +299,8 @@ public abstract class Selections {
 		int no_of_locked = 0;
 		for (TierGlyph tier : smv.getSeqMap().getTiers()) {
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			if(style.getShow() && tier instanceof DefaultTierGlyph && ((DefaultTierGlyph)tier).isHeightFixed()){
+			if(style != CoordinateStyle.coordinate_annot_style && style.getShow() 
+					&& tier instanceof DefaultTierGlyph && ((DefaultTierGlyph)tier).isHeightFixed()){
 				no_of_locked++;
 			}
 		}

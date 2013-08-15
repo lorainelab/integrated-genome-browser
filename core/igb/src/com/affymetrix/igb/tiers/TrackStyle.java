@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 
 import com.affymetrix.genometryImpl.color.ColorProviderI;
-import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -17,6 +16,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
@@ -54,6 +54,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double y = default_y;
 	private Color start_color = default_start;
 	private Color end_color = default_end;
+	private boolean showResidueMask = default_showResidueMask;
+	private boolean shadeBasedOnQualityScore = default_shadeBasedOnQualityScore;
 	private String url = null;
 	private String file_type = null;
 	private String unique_name;
@@ -1009,6 +1011,28 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			setProperty(entry.getKey(), entry.getValue());
 		}
 	}
+
+	@Override
+	public boolean getShowResidueMask(){
+		return showResidueMask;
+	}
+	
+	@Override
+	public void setShowResidueMask(boolean showResidueMask){
+		this.showResidueMask = showResidueMask;
+		save(PREF_SHOW_RESIDUE_MASK, showResidueMask);
+	}
+	
+	@Override
+	public boolean getShadeBasedOnQualityScore(){
+		return shadeBasedOnQualityScore;
+	}
+	
+	@Override
+	public void setShadeBasedOnQualityScore(boolean shadeBasedOnQualityScore){
+		this.shadeBasedOnQualityScore = shadeBasedOnQualityScore;
+		save(PREF_SHADE_BASED_ON_QUALITY_SCORE, shadeBasedOnQualityScore);
+	}
 	
 	public void setProperty(String key, Object value){
 		if (PROP_COLOR.equals(key) && value instanceof Color){
@@ -1049,6 +1073,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			this.setForwardColor((Color)value);
 		} else if (PROP_END_COLOR.equals(key) && value instanceof Color){
 			this.setReverseColor((Color)value);
+		} else if (PREF_SHOW_RESIDUE_MASK.equals(key) && value instanceof Boolean) {
+			this.setShowResidueMask((Boolean)value);
+		} else if (PREF_SHADE_BASED_ON_QUALITY_SCORE.equals(key) && value instanceof Boolean) {
+			this.setShadeBasedOnQualityScore((Boolean)value);
 		}
 	}
 }

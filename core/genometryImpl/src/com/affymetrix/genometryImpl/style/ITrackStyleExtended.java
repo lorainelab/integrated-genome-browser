@@ -87,4 +87,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	public ColorProviderI getColorProvider();
 	public void setFilter(SymmetryFilterI filter);
 	public SymmetryFilterI getFilter();
+	public boolean getShowResidueMask();
+	public void setShowResidueMask(boolean showResidueMask);
+	public boolean getShadeBasedOnQualityScore();
+	public void setShadeBasedOnQualityScore(boolean shadeBasedOnQualityScore);
+	
 }

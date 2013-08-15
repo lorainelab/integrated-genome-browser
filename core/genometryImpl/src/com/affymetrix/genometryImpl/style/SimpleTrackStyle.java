@@ -252,4 +252,27 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
 	public SymmetryFilterI getFilter(){
 		return filter;
 	}
+	
+	private boolean showResidueMask;
+	@Override
+	public boolean getShowResidueMask(){
+		return showResidueMask;
+	}
+	
+	@Override
+	public void setShowResidueMask(boolean showResidueMask){
+		this.showResidueMask = showResidueMask;
+	}
+	
+	private boolean shadeBasedOnQualityScore;
+	@Override
+	public boolean getShadeBasedOnQualityScore(){
+		return shadeBasedOnQualityScore;
+	}
+	
+	@Override
+	public void setShadeBasedOnQualityScore(boolean shadeBasedOnQualityScore){
+		this.shadeBasedOnQualityScore = shadeBasedOnQualityScore;
+	}
+	
 }

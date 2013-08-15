@@ -64,12 +64,14 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	}
 
 	@Override
-	protected void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
+	protected void drawResidueRectangles(ViewI view, double pixelsPerBase, 
+			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
+		
 		if (codeSize == 0) {
 			return;
 		}
-
+		
+		Graphics g = view.getGraphics();
 		Color bgColor = getParent().getBackgroundColor();
 		Color altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));
 		g.setColor(altColor);
@@ -81,11 +83,11 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			startOffset = 3 - mod;
 		}
 		else {
-			g.fillRect(x, y, intPixelsPerBase * (6 - mod), height);
+			g.fillRect(getPixelBox().x, getPixelBox().y, intPixelsPerBase * (6 - mod), getPixelBox().height);
 			startOffset = 9 - mod;
 		}
 		for (int j = startOffset; j < charArray.length; j += 6) {
-			g.fillRect(x + (int) (j * pixelsPerBase), y, intPixelsPerBase * Math.min(charArray.length - j, 3), height);
+			g.fillRect(getPixelBox().x + (int) (j * pixelsPerBase), getPixelBox().y, intPixelsPerBase * Math.min(charArray.length - j, 3), getPixelBox().height);
 		}
 	}
 

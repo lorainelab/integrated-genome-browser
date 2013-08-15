@@ -5,6 +5,7 @@ import java.util.BitSet;
 
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genoviz.bioviews.ViewI;
 
 
 /**
@@ -42,12 +43,14 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 	}
 
 	@Override
-	protected void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
+	protected void drawResidueRectangles(ViewI view, double pixelsPerBase, 
+			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
+		
+		Graphics g = view.getGraphics();
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
 
-			if(show_mask && !residueMask.get(j)) {
+			if(getShowMask() && !residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
 			g.setColor(helper.determineResidueColor(charArray[j]));
@@ -56,7 +59,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
 			int offset = (int) (j * pixelsPerBase);
 			//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-			g.fillRect(x + offset, y, intPixelsPerBase, height);
+			g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
 		}
 	}
 	

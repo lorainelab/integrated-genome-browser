@@ -162,9 +162,8 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 				return;
 			}
 			int seq_pixel_offset = getPixelBox().x;
-			String str = chariter.substring(seq_beg_index, seq_end_index);
 			Graphics g = view.getGraphics();
-			drawHorizontalResidues(g, pixel_width_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
+			drawHorizontalResidues(view, pixel_width_per_base, seq_beg_index, seq_end_index, seq_pixel_offset);
 		}
 	}
 
@@ -173,27 +172,28 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	 *
 	 * <p> We are showing letters regardless of the height constraints on the glyph.
 	 */
-	private void drawHorizontalResidues(Graphics g,
+	private void drawHorizontalResidues(ViewI view,
 			double pixelsPerBase,
-			String residueStr,
 			int seqBegIndex,
 			int seqEndIndex,
 			int pixelStart) {
-		char[] charArray = residueStr.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), getPixelBox().x, getPixelBox().y, getPixelBox().height, getShowMask());
-		drawResidueStrings(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), pixelStart, getShowMask());
+		char[] charArray = chariter.substring(seqBegIndex, seqEndIndex).toCharArray();
+		BitSet bitSet = residueMask.get(seqBegIndex,seqEndIndex);
+		drawResidueRectangles(view, pixelsPerBase, charArray, seqBegIndex, seqEndIndex, bitSet);
+		drawResidueStrings(view, pixelsPerBase, charArray, seqBegIndex, bitSet, pixelStart, getShowMask());
 	}
 
 	protected abstract void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask);
+			ViewI view, double pixelsPerBase, char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask);
 
 	protected Color getResidueStringsColor(){
 		return Color.BLACK;
 	}
 	
 	private void drawResidueStrings(
-			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int pixelStart, boolean show_mask) {
+			ViewI view, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int pixelStart, boolean show_mask) {
 		if (this.font_width <= pixelsPerBase) {
+			Graphics g = view.getGraphics();
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getResidueStringsColor());

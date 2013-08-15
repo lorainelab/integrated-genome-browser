@@ -120,6 +120,14 @@ public abstract class GenericAction extends AbstractAction {
 		return false;
 	}
 
+	public void setSelected(boolean selected){
+		putValue(SELECTED_KEY, selected);
+	}
+	
+	public boolean isSelected(){
+		return (Boolean)getValue(SELECTED_KEY);
+	}
+	
 	/**
 	 * @return true if this action should appear with a checkbox in the menu.
 	 */

@@ -29,12 +29,13 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
 	private static final Map<Float, AlphaComposite> alphaCompositeCache = new WeakHashMap<Float, AlphaComposite>();
 	
-	private static int minQ = 5;
+	private static int minQ = 0;
 	private static int maxQ = 40;
 	//By default mask the residues.
 	private boolean defaultShowMask = true;
+	private boolean useBaseQuality = false;
 	private SearchableCharIterator qualCharIter;
-
+	
 	public void setDefaultShowMask(boolean show){
 		defaultShowMask = show;
 	}
@@ -68,16 +69,18 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 				continue;	// skip drawing of this residue
 			}
 			
-			alpha = getAlpha(quals[j]);
-			
-			if (alpha < 1.0f) {
-				AlphaComposite ac = alphaCompositeCache.get(alpha);
-				if (ac == null) {
-					ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-					alphaCompositeCache.put(alpha, ac);
+			if (useBaseQuality) {
+				alpha = getAlpha(quals[j]);
+
+				if (alpha < 1.0f) {
+					AlphaComposite ac = alphaCompositeCache.get(alpha);
+					if (ac == null) {
+						ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+						alphaCompositeCache.put(alpha, ac);
+					}
+					g.setComposite(ac);
 				}
-				g.setComposite(ac);	
-			} 
+			}
 			
 			g.setColor(helper.determineResidueColor(charArray[j]));
 
@@ -87,12 +90,18 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 			//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
 			g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
 			
-			g.setComposite(dac);
+			if (useBaseQuality) {
+				g.setComposite(dac);
+			}
 		}
 	}
 	
 	public void setBaseQuality(String baseQuality) {
 		qualCharIter = new ImprovedStringCharIter(baseQuality);
+	}
+	
+	public void setUseBaseQuality(boolean useBaseQuality){
+		this.useBaseQuality = useBaseQuality;
 	}
 	
 	private float getAlpha(byte qual){

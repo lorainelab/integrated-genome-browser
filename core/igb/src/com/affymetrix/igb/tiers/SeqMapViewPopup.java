@@ -12,6 +12,9 @@ package com.affymetrix.igb.tiers;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 import javax.swing.*;
@@ -32,9 +35,6 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
@@ -264,34 +264,35 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		int num_selections = labels.size();
 		boolean any_are_collapsed = false;
 		boolean any_are_expanded = false;
-		boolean any_are_separate_tiers = false;
-		boolean any_are_single_tier = false;
 		boolean coordinates_track_selected = false;
 		boolean containHiddenTiers = false;
-		boolean any_lockable = false;
-		boolean any_locked = false;
+//		boolean any_are_separate_tiers = false;
+//		boolean any_are_single_tier = false;
+//		boolean any_lockable = false;
+//		boolean any_locked = false;
 		
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
 			ITrackStyleExtended astyle = glyph.getAnnotStyle();
-			if (!astyle.isGraphTier()) {
-				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
-				any_are_single_tier = 
-						any_are_single_tier || (!astyle.getSeparate() && 
-						MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory()));
-			} 
-		
+			
 			if (astyle.getExpandable()) {
 				any_are_collapsed = any_are_collapsed || astyle.getCollapsed();
 				any_are_expanded = any_are_expanded || !astyle.getCollapsed();
 			}
-			String name = label.getReferenceTier().getAnnotStyle().getTrackName();
-			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			
+			if (astyle == CoordinateStyle.coordinate_annot_style) {
 				coordinates_track_selected = true;
 			}
 			
-			any_lockable = any_lockable || glyph.getTierType() == TierGlyph.TierType.ANNOTATION;
-			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
+//			if (!astyle.isGraphTier()) {
+//				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
+//				any_are_single_tier = 
+//						any_are_single_tier || (!astyle.getSeparate() && 
+//						MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory()));
+//			} 
+		
+//			any_lockable = any_lockable || glyph.getTierType() == TierGlyph.TierType.ANNOTATION;
+//			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
 		}
 
 		int no_of_locked = 0;

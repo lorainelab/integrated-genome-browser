@@ -32,7 +32,7 @@ public class ClampViewAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		getSeqMapView().toggleClamp();
+		getSeqMapView().toggleHorizontalClamp();
 	}
 
 	@Override

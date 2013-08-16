@@ -179,7 +179,7 @@ public class SeqMapView extends JPanel
 	// for right-click on background
 	private final SeqMapViewMouseListener mouse_listener;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
-	private SeqSpan clampedRegion = null; //Span representing clamped region
+	private SeqSpan horizontalClampedRegion = null; //Span representing clamped region
 	protected TierLabelManager tier_manager;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
@@ -822,8 +822,8 @@ public class SeqMapView extends JPanel
 
 		// Ignore preserve_view if seq has changed
 		if ((preserve_view_x || preserve_view_y) && same_seq) {
-			if (clampedRegion != null) {
-				seqmap.setMapRange(clampedRegion.getStart(), clampedRegion.getEnd());
+			if (horizontalClampedRegion != null) {
+				seqmap.setMapRange(horizontalClampedRegion.getStart(), horizontalClampedRegion.getEnd());
 			}
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 
@@ -853,8 +853,8 @@ public class SeqMapView extends JPanel
 			postSelections();
 			int[] range = seqmap.getVisibleRange();
 			setZoomSpotX(0.5 * (range[0] + range[1]));
-			if (clampedRegion != null) {
-				clamp(false);
+			if (horizontalClampedRegion != null) {
+				horizontalClamp(false);
 			}
 		}
 
@@ -1469,30 +1469,30 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public final void toggleClamp() {
-		clamp(clampedRegion == null);
+	public final void toggleHorizontalClamp() {
+		horizontalClamp(horizontalClampedRegion == null);
 		seqmap.repackTheTiers(true, false);
 		//seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
 		//seqmap.updateWidget();
 	}
 
-	public void clamp(boolean clamp) {
+	public void horizontalClamp(boolean clamp) {
 		if (clamp) {
 			Rectangle2D.Double vbox = seqmap.getViewBounds();
-			clamp((int) (vbox.x), (int) (vbox.x + vbox.width));
+			horizontalClamp((int) (vbox.x), (int) (vbox.x + vbox.width));
 		} else {
 			if (viewseq != null) {
-				clamp(viewseq.getMin(), viewseq.getMax());
+				horizontalClamp(viewseq.getMin(), viewseq.getMax());
 			}
 		}
-		ClampViewAction.getAction().putValue(Action.SELECTED_KEY, clampedRegion != null);
+		ClampViewAction.getAction().putValue(Action.SELECTED_KEY, horizontalClampedRegion != null);
 	}
 
-	protected void clamp(int start, int end){
+	protected void horizontalClamp(int start, int end){
 		if(viewseq != null && viewseq.getMin() == start && viewseq.getMax() == end){
-			clampedRegion = null;
+			horizontalClampedRegion = null;
 		} else {
-			clampedRegion = new SimpleSeqSpan(start, end, viewseq);
+			horizontalClampedRegion = new SimpleSeqSpan(start, end, viewseq);
 		}
 		seqmap.setMapRange(start, end);
 	}

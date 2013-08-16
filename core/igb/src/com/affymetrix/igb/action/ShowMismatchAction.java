@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import static com.affymetrix.igb.shared.Selections.*;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -20,7 +21,7 @@ public class ShowMismatchAction extends SeqMapViewActionA {
 	}
 	
 	private ShowMismatchAction() {
-		super("Show Mismatch Only", null, null);
+		super(BUNDLE.getString("useResidueMask"), null, null);
 		this.setSelected(true);
 	}
 	

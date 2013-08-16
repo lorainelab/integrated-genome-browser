@@ -24,8 +24,10 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGB;
@@ -47,7 +49,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return gviewer.getTierManager().getSelectedTiers();
 		}
     }
-
+	
 	private static final boolean DEBUG = false;
 	private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
 	private final SeqMapView gviewer;
@@ -266,10 +268,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		boolean any_are_expanded = false;
 		boolean coordinates_track_selected = false;
 		boolean containHiddenTiers = false;
+		boolean any_alignment = false;
+		boolean any_show_residue_mask = false;
+		boolean any_shade_based_on_quality = false;
 //		boolean any_are_separate_tiers = false;
 //		boolean any_are_single_tier = false;
 //		boolean any_lockable = false;
 //		boolean any_locked = false;
+		int no_of_locked = 0;
 		
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
@@ -280,8 +286,22 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				any_are_expanded = any_are_expanded || !astyle.getCollapsed();
 			}
 			
+			if(astyle.getShow() && glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
+				no_of_locked++;
+			}
+			
+			if(((RootSeqSymmetry)glyph.getInfo()).getCategory() == FileTypeCategory.Alignment){
+				any_alignment = true;
+				any_show_residue_mask = any_show_residue_mask || astyle.getShowResidueMask();
+				any_shade_based_on_quality = any_shade_based_on_quality || astyle.getShadeBasedOnQualityScore();
+			}
+			
 			if (astyle == CoordinateStyle.coordinate_annot_style) {
 				coordinates_track_selected = true;
+			}
+			
+			if (!astyle.getShow()) {
+				containHiddenTiers = true;
 			}
 			
 //			if (!astyle.isGraphTier()) {
@@ -295,17 +315,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
 		}
 
-		int no_of_locked = 0;
-		for (TierLabelGlyph label : handler.getAllTierLabels()) {
-			TierGlyph tier = (TierGlyph) label.getInfo();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (!style.getShow()) {
-				containHiddenTiers = true;
-			}
-			if(style.getShow() && tier instanceof DefaultTierGlyph && ((DefaultTierGlyph)tier).isHeightFixed()){
-				no_of_locked++;
-			}
-		}
 		
 		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
 		
@@ -368,6 +377,20 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		customize.setIcon(null);
 		customize.setText("Customize...");
 		popup.add(customize);
+		
+		popup.add(new JSeparator());
+		JCheckBoxMenuItem showResidueMask = new JCheckBoxMenuItem(ShowMismatchAction.getAction());
+		showResidueMask.setEnabled(any_alignment);
+		if(any_alignment){
+			showResidueMask.setSelected(any_show_residue_mask);
+		}
+		popup.add(showResidueMask);
+		JCheckBoxMenuItem useBaseQuality = new JCheckBoxMenuItem(ShadeUsingBaseQualityAction.getAction());
+		useBaseQuality.setEnabled(any_alignment);
+		if(any_alignment){
+			useBaseQuality.setSelected(any_shade_based_on_quality);
+		}
+		popup.add(useBaseQuality);
 //		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
 //		expand.setEnabled(any_are_collapsed);
 //		popup.add(expand);

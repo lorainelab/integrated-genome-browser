@@ -182,8 +182,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_tier, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
-			GlyphI alignResidueGlyph = getAlignedResiduesGlyph(insym, annotseq, true);
+			AlignedResidueGlyph alignResidueGlyph = getAlignedResiduesGlyph(insym, annotseq, true);
 			if(alignResidueGlyph != null){
+				alignResidueGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), child_height);
+				alignResidueGlyph.setBackgroundColor(color);
+				alignResidueGlyph.setDefaultShowMask(the_style.getShowResidueMask());
+				alignResidueGlyph.setUseBaseQuality(the_style.getShadeBasedOnQualityScore());
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
 				pglyph.addChild(alignResidueGlyph);
 			}
@@ -309,9 +313,13 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 //					addCdsColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
 //				}
 				
-				GlyphI alignResidueGlyph = getAlignedResiduesGlyph(child, annotseq, true);
+				AlignedResidueGlyph alignResidueGlyph = getAlignedResiduesGlyph(child, annotseq, true);
 				if(alignResidueGlyph != null){
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
+					alignResidueGlyph.setBackgroundColor(child_color);
+					alignResidueGlyph.setDefaultShowMask(the_style.getShowResidueMask());
+					alignResidueGlyph.setUseBaseQuality(the_style.getShadeBasedOnQualityScore());
+					
 					the_tier.setDataModelFromOriginalSym(alignResidueGlyph, child);
 					pglyph.addChild(alignResidueGlyph);
 				}

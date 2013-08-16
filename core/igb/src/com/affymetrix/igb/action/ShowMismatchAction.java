@@ -21,6 +21,7 @@ public class ShowMismatchAction extends SeqMapViewActionA {
 	
 	private ShowMismatchAction() {
 		super("Show Mismatch Only", null, null);
+		this.setSelected(true);
 	}
 	
 	@Override
@@ -33,5 +34,13 @@ public class ShowMismatchAction extends SeqMapViewActionA {
 		}
 		refreshMap(false, false);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+	
+	public void setSelected(boolean selected){
+		putValue(SELECTED_KEY, selected);
+	}
+	
+	public boolean isSelected(){
+		return (Boolean)getValue(SELECTED_KEY);
 	}
 }

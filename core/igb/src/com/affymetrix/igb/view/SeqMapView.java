@@ -484,7 +484,7 @@ public class SeqMapView extends JPanel
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
-		this.addPopupListener(new ReadAlignmentView());
+//		this.addPopupListener(new ReadAlignmentView());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 		

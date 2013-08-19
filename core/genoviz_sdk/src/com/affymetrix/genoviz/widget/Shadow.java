@@ -412,7 +412,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	}
 
 	public final void setShowHairline(boolean bool){
-		this.tg.setVisibility(bool);
+//		this.tg.setVisibility(bool);
+		this.vGlyph.setVisibility(bool);
 	}
 
 	public final boolean getShowHairLine(){

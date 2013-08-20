@@ -78,7 +78,8 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	protected Color other_fill_color = null;
 	
 	protected String label = null;
-	private double spacer = 2;
+	private double spacer = 5;
+	private double spacing = 5;
 	protected FasterExpandPacker expand_packer = new FasterExpandPacker();
 	protected CollapsePacker collapse_packer = new CollapsePacker();
 	protected GraphFasterExpandPacker graph_expand_packer = new GraphFasterExpandPacker();
@@ -88,6 +89,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	public AbstractTierGlyph(ITrackStyleExtended style){
 		setHitable(false);
 		setSpacer(spacer);
+		setSpacing(spacing);
 		setStyle(style);
 	}
 	
@@ -96,7 +98,13 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
 		((PaddedPackerI) expand_packer).setParentSpacer(spacer);
 	}
-		
+	
+	private void setSpacing(double spacing){
+		this.spacing = spacing;
+		((PaddedPackerI) collapse_packer).setSpacing(spacing);
+		((PaddedPackerI) expand_packer).setSpacing(spacing);
+	}
+	
 	protected void updateParent(TierGlyph vmg){
 		//Do Nothing
 	}

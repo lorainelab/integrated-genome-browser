@@ -10,6 +10,7 @@ Bundle-Category: IGBTabPanel-com.affymetrix.igb.search.SearchView
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.span,
+ com.affymetrix.genometryImpl.style,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.general,
  com.affymetrix.genometryImpl.event,

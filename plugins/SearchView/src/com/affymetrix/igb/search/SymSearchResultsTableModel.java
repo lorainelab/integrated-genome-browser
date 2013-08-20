@@ -6,6 +6,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
@@ -19,18 +20,18 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
 	
 	private final String[] column_names = {
 		SearchView.BUNDLE.getString("searchTableID"),
-		SearchView.BUNDLE.getString("searchTableTier"),
 		SearchView.BUNDLE.getString("searchTableGeneName"),
 		SearchView.BUNDLE.getString("searchTableDescription"),
+		SearchView.BUNDLE.getString("searchTableTier"),
 		SearchView.BUNDLE.getString("searchTableStart"),
 		SearchView.BUNDLE.getString("searchTableEnd"),
 		SearchView.BUNDLE.getString("searchTableChromosome"),
 		SearchView.BUNDLE.getString("searchTableStrand")
 	};
 	private static final int ID_COLUMN = 0;
-	private static final int TIER_COLUMN = 1;
-	private static final int GENE_NAME_COLUMN = 2;
-	private static final int DESCRIPTION_COLUMN = 3;
+	private static final int GENE_NAME_COLUMN = 1;
+	private static final int DESCRIPTION_COLUMN = 2;
+	private static final int TIER_COLUMN = 3;
 	private static final int START_COLUMN = 4;
 	private static final int END_COLUMN = 5;
 	private static final int CHROM_COLUMN = 6;
@@ -49,8 +50,6 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
 		switch (col) {
 			case ID_COLUMN:
 				return sym.getID();
-			case TIER_COLUMN:
-				return BioSeq.determineMethod(sym);
 			case GENE_NAME_COLUMN:
 				if (sym instanceof SimpleDas2Feature) {
 					String geneName = ((SimpleDas2Feature)sym).getName();
@@ -65,6 +64,12 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
 				if (sym instanceof SymWithProps) {
 					String description = (String)((SymWithProps)sym).getProperty("description");
 					return description == null ? "" : description;
+				}
+				return "";
+			case TIER_COLUMN:
+				String method = BioSeq.determineMethod(sym);
+				if(method != null){
+					return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).getTrackName();
 				}
 				return "";
 			case START_COLUMN:

@@ -2664,7 +2664,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 	
-	public void removeSym(SeqSymmetry sym){
+	public GlyphI removeSym(SeqSymmetry sym){
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
 		// If it inner child then remove it parent sym too.
 		if(!(glyph.getParent() instanceof TierGlyph)){
@@ -2675,6 +2675,7 @@ public class SeqMapView extends JPanel
 		}
 		getSeqMap().removeItem(glyph);
 		getSeqMap().updateWidget();
+		return glyph;
 	}
 	
 	private class SeqMapViewRubberBand extends RubberBand {

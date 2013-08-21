@@ -10,6 +10,7 @@ import net.sf.samtools.CigarOperator;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import java.util.BitSet;
 
 /**
  *
@@ -29,6 +30,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	private final String residues;
 	private final String baseQuality;
 	private final int mapq;
+	private BitSet residueMask;
 	
 	//Residues residues;
 	private String insResidues;
@@ -92,7 +94,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	}
 
 	class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
-
+		private BitSet residueMask;
+		
 		public BamChildSingletonSeqSym(int start, int end, BioSeq seq) {
 			super(start, end, seq);
 		}
@@ -117,6 +120,16 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 			return BAMSym.this.getBaseQuality(start, end, false);
 		}
 		
+		@Override
+		public BitSet getResidueMask(){
+			return residueMask;
+		}
+	
+		@Override
+		public void setResidueMask(BitSet bitset){
+			this.residueMask = bitset;
+		}
+	
 		// For the web links to be constructed properly, this class must implement getID(),
 		// or must NOT implement SymWithProps.
 		@Override public String getID() {return BAMSym.this.getID();}
@@ -136,6 +149,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	}
 
 	class BamInsChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
+		private BitSet residueMask;
 		final int index;
 		public BamInsChildSingletonSeqSym(int start, int end, int index, BioSeq seq) {
 			super(start, end, seq);
@@ -152,6 +166,16 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 			return BAMSym.this.getResidues(this.getMin(), this.getMax(), true);
 		}
 
+		@Override
+		public BitSet getResidueMask(){
+			return residueMask;
+		}
+	
+		@Override
+		public void setResidueMask(BitSet bitset){
+			this.residueMask = bitset;
+		}
+	
 		@Override
 		public String getBaseQuality() {
 			throw new UnsupportedOperationException("Not supported yet.");
@@ -212,7 +236,17 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		}
 		return getEmptyString('*', end - start);
 	}
-		
+	
+	@Override
+	public BitSet getResidueMask(){
+		return residueMask;
+	}
+	
+	@Override
+	public void setResidueMask(BitSet bitset){
+		this.residueMask = bitset;
+	}
+	
 	private static String getEmptyString(char ch, int length){
 		char[] tempArr = new char[length];
 		Arrays.fill(tempArr, ch);

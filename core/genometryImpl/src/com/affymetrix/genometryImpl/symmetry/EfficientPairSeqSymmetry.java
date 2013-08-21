@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,8 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 	private final BioSeq seqA, seqB;
 	private final String residues;
 	private final boolean isProbe;
-
+	private BitSet residueMask;
+	
 	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB, String residues) {
 		this(startA, endA, seqA, startB, endB, seqB, residues, false);
 	}
@@ -138,6 +140,14 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 
 	public String getResidues() {
 		return residues;
+	}
+	
+	public BitSet getResidueMask(){
+		return residueMask;
+	}
+	
+	public void setResidueMask(BitSet bitset){
+		this.residueMask = bitset;
 	}
 	
 	public String getResidues(int start, int end) {

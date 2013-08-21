@@ -11,6 +11,8 @@ import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -55,7 +57,12 @@ public class FilterAction extends RepackTiersAction {
 		if(filter != null){
 			BioSeq annotseq = getSeqMapView().getAnnotatedSeq();
 			for(GlyphI glyph : tg.getChildren()){
-				glyph.setVisibility(filter.filterSymmetry(annotseq, (SeqSymmetry)glyph.getInfo()));
+				if(glyph.getInfo() != null){
+					glyph.setVisibility(filter.filterSymmetry(annotseq, (SeqSymmetry)glyph.getInfo()));
+				} else {
+					// Should not ever happen
+					Logger.getLogger(FilterAction.class.getName()).log(Level.WARNING, "Found a glyph with null info at location {0}", glyph.getCoordBox());
+				}
 			}
 		} else {
 			for(GlyphI glyph : tg.getChildren()){

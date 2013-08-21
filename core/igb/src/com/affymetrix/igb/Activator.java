@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
@@ -149,6 +150,7 @@ public class Activator implements BundleActivator {
         }
 		initOperators(bundleContext);
 		initColorProvider(bundleContext);
+		initFilter(bundleContext);
 	}
 
 	@Override
@@ -342,6 +344,12 @@ public class Activator implements BundleActivator {
 		//bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Strand(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
+	}
+	
+	private void initFilter(final BundleContext bundleContext) {
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, SymmetryFilterI.class);
+		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.NoIntronFilter(), null);
+		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.UniqueLocationFilter(), null);
 	}
 	
 	private void initMapViewGlyphFactorys(final BundleContext bundleContext) {

@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.color;
 
-import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.Scored;
+import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -16,7 +16,8 @@ public class Score extends ColorProvider {
 	private final static String HEATMAP = "heatmap";
 	public final static float DEFAULT_MIN_SCORE = 1.0f;
 	public final static float DEFAULT_MAX_SCORE = 1000.0f;
-	public final static HeatMap DEFAULT_HEATMAP = HeatMap.StandardHeatMap.BLACK_WHITE.getHeatMap();
+	public final static HeatMap DEFAULT_HEATMAP = new HeatMapExtended("DEFAULT_SCORE_HEATMAP", 
+			null, HeatMapExtended.DEFAULT_VALUES, HeatMapExtended.DEFAULT_COLORS);
 		
 	private float min_score_color  = DEFAULT_MIN_SCORE;
 	private float max_score_color  = DEFAULT_MAX_SCORE;

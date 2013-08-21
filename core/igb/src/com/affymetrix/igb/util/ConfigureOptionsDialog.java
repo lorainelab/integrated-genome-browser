@@ -189,8 +189,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 						positions = ((HeatMapExtended) hm).getValues();
 						colorRanges = ((HeatMapExtended) hm).getRangeColors();
 					} else {
-						positions = HeatMapExtended.DEFAULT_VALUES;
-						colorRanges = HeatMapExtended.DEFAULT_COLORS;
+						HeatMapExtended hme = (HeatMapExtended)cp.getParameterValue(label);
+						positions = hme.getValues();
+						colorRanges = hme.getColors();
 					}
 					editor.setVirtualRange(positions, colorRanges);
 

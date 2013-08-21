@@ -31,6 +31,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	private final String baseQuality;
 	private final int mapq;
 	private BitSet residueMask;
+	private SeqSymmetry children[];
+	private SeqSymmetry insChildren[];
 	
 	//Residues residues;
 	private String insResidues;
@@ -65,24 +67,40 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	}
 
 	public SeqSymmetry getInsChild(int index) {
-		if (iblockMins == null || (iblockMins.length <= index)) { return null; }
-		if (forward) {
-			return new BamInsChildSingletonSeqSym(iblockMins[index], iblockMaxs[index], index, seq);
+		if (iblockMins == null || (iblockMins.length <= index)) { 
+			return null; 
 		}
-		else {
-			return new BamInsChildSingletonSeqSym(iblockMaxs[index], iblockMins[index], index, seq);
+		if (insChildren == null) {
+			insChildren = new SeqSymmetry[iblockMins.length];
 		}
+		
+		if (insChildren[index] == null) {
+			if (forward) {
+				insChildren[index] = new BamInsChildSingletonSeqSym(iblockMins[index], iblockMaxs[index], index, seq);
+			} else {
+				insChildren[index] = new BamInsChildSingletonSeqSym(iblockMaxs[index], iblockMins[index], index, seq);
+			}
+		}
+		return insChildren[index];
 	}
 
 	@Override
 	public SeqSymmetry getChild(int index) {
-		if (blockMins == null || (blockMins.length <= index)) { return null; }
-		if (forward) {
-			return new BamChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
+		if (blockMins == null || (blockMins.length <= index)) {
+			return null;
 		}
-		else {
-			return new BamChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
+		if (children == null) {
+			children = new SeqSymmetry[blockMins.length];
 		}
+
+		if (children[index] == null) {
+			if (forward) {
+				children[index] = new BamChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
+			} else {
+				children[index] = new BamChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
+			}
+		}
+		return children[index];
 	}
 	
 	public String substring(int start, int end) {

@@ -2589,7 +2589,7 @@ public class SeqMapView extends JPanel
 			}
 			
 			if(checkCdsStart){
-				updateCdsStart(cdsStart, parentSym);
+				updateCdsStart(cdsStart, parentSym, false);
 			}
 		}
 		getSeqMap().updateWidget();
@@ -2626,14 +2626,14 @@ public class SeqMapView extends JPanel
 				updateSpan(glyph, child);
 				
 				//Update cds end
-				updateCdsEnd(cdsEnd, parentSym);
+				updateCdsEnd(cdsEnd, parentSym, false);
 			}
 		}
 
 		getSeqMap().updateWidget();
 	}
 	
-	public void updateCdsStart(int start, SeqSymmetry sym) {
+	public void updateCdsStart(int start, SeqSymmetry sym, boolean select) {
 		if(sym instanceof SimpleSymWithPropsWithCdsSpan) {
 			SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)sym).getCdsSpan();
 			cdsSpan = new SimpleSeqSpan(start, cdsSpan.getEnd(), cdsSpan.getBioSeq());
@@ -2642,9 +2642,14 @@ public class SeqMapView extends JPanel
 		removeSym(sym);
 		(new AnnotationGlyphFactory()).createGlyph(sym, this);
 		getSeqMap().repackTheTiers(true, true);
+		if(select){
+			List<SeqSymmetry> selections = new ArrayList<SeqSymmetry>();
+			selections.add(sym);
+			this.select(selections, true);
+		}
 	}
 	
-	public void updateCdsEnd(int end, SeqSymmetry sym) {
+	public void updateCdsEnd(int end, SeqSymmetry sym, boolean select) {
 		if(sym instanceof SimpleSymWithPropsWithCdsSpan) {
 			SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)sym).getCdsSpan();
 			cdsSpan = new SimpleSeqSpan(cdsSpan.getStart(), end, cdsSpan.getBioSeq());
@@ -2653,6 +2658,11 @@ public class SeqMapView extends JPanel
 		removeSym(sym);
 		(new AnnotationGlyphFactory()).createGlyph(sym, this);
 		getSeqMap().repackTheTiers(true, true);
+		if(select){
+			List<SeqSymmetry> selections = new ArrayList<SeqSymmetry>();
+			selections.add(sym);
+			this.select(selections, true);
+		}
 	}
 	
 	private void updateSpan(GlyphI glyph, SeqSymmetry sym){

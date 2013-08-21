@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
-import java.awt.Color;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -84,13 +84,14 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 		if (!(sym instanceof SymWithResidues)) {
 			return null;
 		}
-		
+				
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
 			return null;
 		}
 
-		String residueStr = ((SymWithResidues) sym).getResidues();
+		SymWithResidues swr = (SymWithResidues)sym;
+		String residueStr = swr.getResidues();
 
 		if (residueStr == null || residueStr.length() == 0) {
 			return null;
@@ -101,10 +102,13 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 		csg.setHitable(false);
 		csg.setDefaultShowMask(false);
 		if(setMask){
-			String bioSeqResidue = annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length());
-			if (bioSeqResidue != null) {
-				csg.setResidueMask(bioSeqResidue);
+			BitSet residueMask = swr.getResidueMask();
+			if(residueMask == null && annotseq.isAvailable(span.getMin(), span.getMin() + residueStr.length())) {
+				String bioSeqResidue = annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length());
+				residueMask = getResidueMask(residueStr, bioSeqResidue);
+				swr.setResidueMask(residueMask);
 			}
+			csg.setResidueMask(residueMask);
 		}
 		if(sym instanceof SymWithBaseQuality){
 			csg.setBaseQuality(((SymWithBaseQuality)sym).getBaseQuality());
@@ -125,6 +129,22 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 	@Override
 	public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq){
 		
+	}
+	
+	private static BitSet getResidueMask(String residues, String mask) {
+		if (residues != null && mask != null) {
+			BitSet residueMask = new BitSet();
+			char[] residuesArr = mask.toLowerCase().toCharArray();
+			char[] displayResArr = residues.toLowerCase().toCharArray();
+			int minResLen = Math.min(residuesArr.length, displayResArr.length);
+			
+			// determine which residues disagree with the reference sequence
+			for(int i=0;i<minResLen;i++) {
+				residueMask.set(i, displayResArr[i] != residuesArr[i]);
+			}
+			return residueMask;
+		}
+		return null;
 	}
 	
 	protected static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {

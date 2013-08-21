@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -14,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * This class is used to filter the given symmetry based on its span length 
  * with the threshold value of the filter this is used in FindJunctionOperator class
  */
-public class ChildThresholdFilter implements SymmetryFilterI{
+public class ChildThresholdFilter extends AbstractFilter{
 
     int threshold;
     

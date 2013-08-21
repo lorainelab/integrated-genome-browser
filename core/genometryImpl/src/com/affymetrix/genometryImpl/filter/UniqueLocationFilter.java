@@ -1,14 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 /**
  *
@@ -17,11 +11,11 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
  * This class is used to filter out the non-unique BAM symmetries
  * 
  */
-public class UniqueLocationFilter implements SymmetryFilterI{
+public class UniqueLocationFilter extends AbstractFilter {
 
     @Override
     public String getName() {
-        return null;
+        return "Bam Unique Location";
     }
 
 	@Override

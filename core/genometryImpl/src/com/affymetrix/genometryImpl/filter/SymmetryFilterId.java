@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public class SymmetryFilterId implements SymmetryFilterI {
+public class SymmetryFilterId extends AbstractFilter {
 	private Object param;
 	private Pattern regex;
 	private String match;

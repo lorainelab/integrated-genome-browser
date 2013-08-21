@@ -12,7 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
-public class SymmetryFilterProps implements SymmetryFilterI {
+public class SymmetryFilterProps extends AbstractFilter{
 	private Object param;
 	private Pattern regex;
 	private SymWithProps swp;

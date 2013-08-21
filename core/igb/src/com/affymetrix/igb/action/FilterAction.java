@@ -1,16 +1,15 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import java.awt.event.ActionEvent;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,41 +17,45 @@ import java.util.logging.Logger;
  *
  * @author hiralv
  */
-public class FilterAction extends RepackTiersAction {
+public class FilterAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private final SymmetryFilterI filter;
-
-	public FilterAction(SymmetryFilterI filter, String name) {
-		super(name,
-				"16x16/actions/hide.png",
-				"22x22/actions/hide.png");
-		this.filter = filter;
-		this.ordinal = -6008400;
+	private static final FilterAction ACTION = new FilterAction();
+		
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
-
-	private void filter(List<TierLabelGlyph> tiers) {
-		for (TierLabelGlyph g : tiers) {
-			if (g.getInfo() instanceof TierGlyph) {
-				TierGlyph tier = (TierGlyph) g.getInfo();
-				applyFilter(tier);
-			}
-		}
-		repack(true, false);
+	
+	public static FilterAction getAction() {
+		return ACTION;
+	}
+	
+	public FilterAction() {
+		super("Filter...", "16x16/actions/hide.png", "22x22/actions/hide.png");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		filter(getTierManager().getSelectedTierLabels());
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
+		SymmetryFilterI filter = style.getFilter();
+		
+		ConfigureOptionsDialog<SymmetryFilterI> filterDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter");
+		filterDialog.setTitle("Filter");
+		filterDialog.setLocationRelativeTo(getSeqMapView());
+		filterDialog.setInitialValue(filter);
+		filter = filterDialog.showDialog();
+		for (TierGlyph tier : getTierManager().getSelectedTiers()) {
+			applyFilter(filter, tier);
+		}
+		getSeqMapView().getSeqMap().repackTheTiers(true, true);
 	}
 
 	@Override
 	public boolean isEnabled(){
 		return Selections.allGlyphs.size() > 0;
 	}
-	
-	private void applyFilter(TierGlyph tg) {
+		
+	private void applyFilter(SymmetryFilterI filter, TierGlyph tg) {
 		tg.getAnnotStyle().setFilter(filter);
 		if(filter != null){
 			BioSeq annotseq = getSeqMapView().getAnnotatedSeq();

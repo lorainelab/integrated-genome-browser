@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -519,6 +520,23 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			int depth = SeqUtils.getDepthFor(insym);
 			addToTier(gviewer, insym, forward_tier, reverse_tier, (depth >= 2));
 		}
+	}
+	
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
+		String method = BioSeq.determineMethod(sym);
+		if(method == null){
+			return;
+		}
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+		TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+		TierGlyph ftier = gviewer.getTrack(style, useDirection);
+		ftier.setTierType(TierGlyph.TierType.ANNOTATION);
+		
+		TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+		rtier.setTierType(TierGlyph.TierType.ANNOTATION);
+		
+		int depth = SeqUtils.getDepthFor(sym);
+		addToTier(gviewer, sym, ftier, rtier, (depth >= 2));
 	}
 	
 	@Override

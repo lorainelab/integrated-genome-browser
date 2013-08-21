@@ -8,9 +8,6 @@ import java.awt.Color;
  */
 public class HeatMapExtended extends HeatMap {
 	
-	public static float[] DEFAULT_VALUES = new float[]{1,150,850,1000};
-	public static Color[] DEFAULT_COLORS = new Color[]{Color.BLACK, Color.BLACK, Color.WHITE, Color.WHITE};
-	
 	private float[] values;
 	private Color[] rangeColors;
 	

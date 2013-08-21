@@ -16,8 +16,10 @@ public class Score extends ColorProvider {
 	private final static String HEATMAP = "heatmap";
 	public final static float DEFAULT_MIN_SCORE = 1.0f;
 	public final static float DEFAULT_MAX_SCORE = 1000.0f;
+	public static float[] DEFAULT_VALUES = new float[]{1,150,850,1000};
+	public static Color[] DEFAULT_COLORS = new Color[]{Color.BLACK, Color.BLACK, Color.WHITE, Color.WHITE};
 	public final static HeatMap DEFAULT_HEATMAP = new HeatMapExtended("DEFAULT_SCORE_HEATMAP", 
-			null, HeatMapExtended.DEFAULT_VALUES, HeatMapExtended.DEFAULT_COLORS);
+			null, DEFAULT_VALUES, DEFAULT_COLORS);
 		
 	private float min_score_color  = DEFAULT_MIN_SCORE;
 	private float max_score_color  = DEFAULT_MAX_SCORE;

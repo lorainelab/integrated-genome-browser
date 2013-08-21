@@ -2569,14 +2569,10 @@ public class SeqMapView extends JPanel
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
 			glyph = getSeqMap().getItemFromTier(child);
-
+			boolean checkCdsStart = false;
+			int cdsStart = start;
 			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
-				if(parentSym instanceof SimpleSymWithPropsWithCdsSpan) {
-					SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)parentSym).getCdsSpan();
-					cdsSpan = new SimpleSeqSpan(start, cdsSpan.getEnd(), cdsSpan.getBioSeq());
-					((SimpleSymWithPropsWithCdsSpan)parentSym).setCdsSpan(cdsSpan);
-				}
-					
+				checkCdsStart = true;		
 				coordBox = glyph.getCoordBox();
 				start = (int) coordBox.x;
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
@@ -2590,6 +2586,10 @@ public class SeqMapView extends JPanel
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
 				updateSpan(glyph, child);
+			}
+			
+			if(checkCdsStart){
+				updateCdsStart(cdsStart, parentSym);
 			}
 		}
 		getSeqMap().updateWidget();
@@ -2619,16 +2619,14 @@ public class SeqMapView extends JPanel
 			child = parentSym.getChild(parentSym.getChildCount() - 1);
 			glyph = getSeqMap().getItemFromTier(child);
 			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
-				if(parentSym instanceof SimpleSymWithPropsWithCdsSpan) {
-					SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)parentSym).getCdsSpan();
-					cdsSpan = new SimpleSeqSpan(cdsSpan.getStart(), end, cdsSpan.getBioSeq());
-					((SimpleSymWithPropsWithCdsSpan)parentSym).setCdsSpan(cdsSpan);
-				}
-								
+				int cdsEnd = end;
 				coordBox = glyph.getCoordBox();
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
 				updateSpan(glyph, child);
+				
+				//Update cds end
+				updateCdsEnd(cdsEnd, parentSym);
 			}
 		}
 

@@ -28,7 +28,8 @@ import com.affymetrix.genoviz.util.NeoConstants;
 public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	protected SearchableCharIterator chariter;
 	private int residue_length = 0;
-	private final BitSet residueMask = new BitSet();
+//	private final BitSet residueMask = new BitSet();
+	private BitSet residueMask;
 	private static final Font mono_default_font = NeoConstants.default_bold_font;
 		
 	//public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
@@ -68,44 +69,48 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 
 	protected abstract boolean getShowMask();
 
-	/**
-	 * If this is set, we will only display residues that disagree with the residue mask.
-	 * This is useful for BAM visualization.
-	 * @param residues
-	 */
-	public void setResidueMask(String residues) {
-		if (residues != null && chariter != null) {
-			int minResLen = Math.min(residues.length(), residue_length);
-			char[] residuesArr = residues.toLowerCase().toCharArray();
-			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
-
-			// determine which residues disagree with the reference sequence
-			for(int i=0;i<minResLen;i++) {
-				residueMask.set(i, displayResArr[i] != residuesArr[i]);
-			}
-//			if (residueMask.isEmpty()) {
-//				// Save space and time if all residues match the reference sequence.
-//				residue_length = 0;
-//				chariter = null;
+//	/**
+//	 * If this is set, we will only display residues that disagree with the residue mask.
+//	 * This is useful for BAM visualization.
+//	 * @param residues
+//	 */
+//	public void setResidueMask(String residues) {
+//		if (residues != null && chariter != null) {
+//			int minResLen = Math.min(residues.length(), residue_length);
+//			char[] residuesArr = residues.toLowerCase().toCharArray();
+//			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
+//
+//			// determine which residues disagree with the reference sequence
+//			for(int i=0;i<minResLen;i++) {
+//				residueMask.set(i, displayResArr[i] != residuesArr[i]);
 //			}
-		}
-	}
-
-	public void setResidueMask(byte[] SEQ) {
-		char[] seqArr = new String(SEQ).toLowerCase().toCharArray();
-		char[] displayResArr = chariter.substring(0, Math.min(seqArr.length, residue_length)).toLowerCase().toCharArray();
-		boolean setRes = false;
-		for (int i = 0; i < displayResArr.length; i++) {
-			setRes = (SEQ[i] != '=') && (displayResArr[i] != seqArr[i]);
-			residueMask.set(i, setRes);
-		}
-//		if (residueMask.isEmpty()) {
-//			// Save space and time if all residues match the reference sequence.
-//			residue_length = 0;
-//			chariter = null;
+////			if (residueMask.isEmpty()) {
+////				// Save space and time if all residues match the reference sequence.
+////				residue_length = 0;
+////				chariter = null;
+////			}
 //		}
-	}
+//	}
+//
+//	public void setResidueMask(byte[] SEQ) {
+//		char[] seqArr = new String(SEQ).toLowerCase().toCharArray();
+//		char[] displayResArr = chariter.substring(0, Math.min(seqArr.length, residue_length)).toLowerCase().toCharArray();
+//		boolean setRes = false;
+//		for (int i = 0; i < displayResArr.length; i++) {
+//			setRes = (SEQ[i] != '=') && (displayResArr[i] != seqArr[i]);
+//			residueMask.set(i, setRes);
+//		}
+////		if (residueMask.isEmpty()) {
+////			// Save space and time if all residues match the reference sequence.
+////			residue_length = 0;
+////			chariter = null;
+////		}
+//	}
 
+	public void setResidueMask(BitSet residueMask) {
+		this.residueMask = residueMask;
+	}
+	
 	public void setResiduesProvider(SearchableCharIterator iter, int seqlength) {
 		chariter = iter;
 		residue_length = seqlength;
@@ -118,7 +123,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	// Essentially the same as SequenceGlyph.drawHorizontal
 	@Override
 	public void draw(ViewI view) {
-		if (isOverlapped() || (residueMask.isEmpty() && getShowMask())) {
+		if (isOverlapped() || ((residueMask != null && residueMask.isEmpty()) && getShowMask())) {
 			return;	// don't draw residues
 		}
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
@@ -134,7 +139,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 		}
 
 		double pixel_width_per_base = (view.getTransform()).getScaleX();
-		if (residueMask.isEmpty() && pixel_width_per_base < 1) {
+		if ((residueMask != null && residueMask.isEmpty()) && pixel_width_per_base < 1) {
 			return;	// If we're drawing all the residues, return if there's less than one pixel per base
 		}
 		if (pixel_width_per_base < 0.2) {
@@ -178,7 +183,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 			int seqEndIndex,
 			int pixelStart) {
 		char[] charArray = chariter.substring(seqBegIndex, seqEndIndex).toCharArray();
-		BitSet bitSet = residueMask.get(seqBegIndex,seqEndIndex);
+		BitSet bitSet = residueMask == null ? null : residueMask.get(seqBegIndex,seqEndIndex);
 		drawResidueRectangles(view, pixelsPerBase, charArray, seqBegIndex, seqEndIndex, bitSet);
 		drawResidueStrings(view, pixelsPerBase, charArray, seqBegIndex, bitSet, pixelStart, getShowMask());
 	}
@@ -201,7 +206,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 			int pixelOffset = (int) (pixelsPerBase - this.font_width);
 			pixelOffset = pixelOffset > 2 ? pixelOffset/2 : pixelOffset;
 			for (int i = 0; i < charArray.length; i++) {
-				if(show_mask && !residueMask.get(i)) {
+				if(show_mask && residueMask != null && !residueMask.get(i)) {
 					continue;	// skip drawing of this residue
 				}
 				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);

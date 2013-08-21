@@ -65,7 +65,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 		float alpha;
 		for (int j = 0; j < charArray.length; j++) {
 
-			if(getShowMask() && !residueMask.get(j)) {
+			if(getShowMask() && residueMask != null && !residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
 			

@@ -60,6 +60,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -2632,6 +2633,28 @@ public class SeqMapView extends JPanel
 		}
 
 		getSeqMap().updateWidget();
+	}
+	
+	public void updateCdsStart(int start, SeqSymmetry sym) {
+		if(sym instanceof SimpleSymWithPropsWithCdsSpan) {
+			SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)sym).getCdsSpan();
+			cdsSpan = new SimpleSeqSpan(start, cdsSpan.getEnd(), cdsSpan.getBioSeq());
+			((SimpleSymWithPropsWithCdsSpan)sym).setCdsSpan(cdsSpan);
+		}
+		removeSym(sym);
+		(new AnnotationGlyphFactory()).createGlyph(sym, this);
+		getSeqMap().repackTheTiers(true, true);
+	}
+	
+	public void updateCdsEnd(int end, SeqSymmetry sym) {
+		if(sym instanceof SimpleSymWithPropsWithCdsSpan) {
+			SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan)sym).getCdsSpan();
+			cdsSpan = new SimpleSeqSpan(cdsSpan.getStart(), end, cdsSpan.getBioSeq());
+			((SimpleSymWithPropsWithCdsSpan)sym).setCdsSpan(cdsSpan);
+		}
+		removeSym(sym);
+		(new AnnotationGlyphFactory()).createGlyph(sym, this);
+		getSeqMap().repackTheTiers(true, true);
 	}
 	
 	private void updateSpan(GlyphI glyph, SeqSymmetry sym){

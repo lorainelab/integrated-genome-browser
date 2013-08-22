@@ -2,6 +2,7 @@ package com.affymetrix.igb.search;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.SwingConstants;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -13,8 +14,10 @@ import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 
 public class SymSearchResultsTableModel extends SearchResultsTableModel {
 	private static final long serialVersionUID = 1L;
-	private final int[] colWidth = {};
-	private final int[] colAlign = {};
+	private final int[] colWidth = {15, 15, 30, 20, 10, 10, 8, 6};
+	private final int[] colAlign = {SwingConstants.LEFT, SwingConstants.LEFT, 
+		SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.RIGHT, 
+		SwingConstants.RIGHT, SwingConstants.CENTER, SwingConstants.CENTER};
 	
 	protected final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 	

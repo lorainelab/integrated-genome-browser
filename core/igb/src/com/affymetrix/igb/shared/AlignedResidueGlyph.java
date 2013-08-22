@@ -50,7 +50,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 //		}
 		return defaultShowMask;
 	}
-
+	
 	@Override
 	protected void drawResidueRectangles(ViewI view, double pixelsPerBase, 
 			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
@@ -63,7 +63,24 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 		float alpha;
 		for (int j = 0; j < charArray.length; j++) {
 
-			if(getShowMask() && residueMask != null && !residueMask.get(j)) {
+			if (getShowMask() && residueMask != null && !residueMask.get(j)) {
+				if (useBaseQuality) {
+					alpha = 1.0f - getAlpha(quals[j]);
+
+					if (alpha < 1.0f) {
+						AlphaComposite ac = alphaCompositeCache.get(alpha);
+						if (ac == null) {
+							ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+							alphaCompositeCache.put(alpha, ac);
+						}
+						g.setComposite(ac);
+					}
+					g.setColor(this.getBackgroundColor());
+					int offset = (int) (j * pixelsPerBase);
+					//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
+					g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
+					g.setComposite(dac);
+				}
 				continue;	// skip drawing of this residue
 			}
 			

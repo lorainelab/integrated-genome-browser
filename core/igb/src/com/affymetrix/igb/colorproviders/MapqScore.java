@@ -33,6 +33,8 @@ public class MapqScore extends ColorProvider {
 	private float min_score_color  = DEFAULT_MIN_SCORE;
 	private float max_score_color  = DEFAULT_MAX_SCORE;
 	private float range			   = max_score_color - min_score_color;
+	private Color botton_color		= DEFAULT_COLORS[0];
+	private Color top_color			= DEFAULT_COLORS[DEFAULT_COLORS.length - 1];
 	
 	private Parameter<HeatMap> custom_heatmap = new Parameter<HeatMap>(DEFAULT_HEATMAP){
 		@Override
@@ -42,6 +44,8 @@ public class MapqScore extends ColorProvider {
 			min_score_color = heatmap.getValues()[0];
 			max_score_color = heatmap.getValues()[heatmap.getValues().length - 1];
 			range = max_score_color - min_score_color;
+			botton_color	= heatmap.getRangeColors()[0];
+			top_color		= heatmap.getRangeColors()[heatmap.getValues().length - 1];
 			return true;
 		}
 	};
@@ -63,13 +67,13 @@ public class MapqScore extends ColorProvider {
 	}
 
 	protected Color getScoreColor(float score) {
-		if (score <= min_score_color) {
-			score = min_score_color;
-		} else if (score >= max_score_color) {
-			score = max_score_color;
+		if (score < min_score_color) {
+			return botton_color;
+		} else if (score > max_score_color) {
+			return top_color;
 		}
 
-		int index = (int) (((score - min_score_color) / range) * 255);
+		int index = (int) (((score - min_score_color) / range) * HeatMap.BINS);
 
 		return custom_heatmap.get().getColors()[index];
 	}

@@ -14,10 +14,10 @@ import java.awt.Color;
 public class MapqScore extends ColorProvider {
 	
 	private final static String HEATMAP = "heatmap";
-	public final static float DEFAULT_MIN_SCORE = 0.0f;
-	public final static float DEFAULT_MAX_SCORE = 255.0f;
-	public static float[] DEFAULT_VALUES = new float[]{0,50,200,255};
-	public static Color[] DEFAULT_COLORS = new Color[]{Color.BLACK, Color.BLACK, Color.WHITE, Color.WHITE};
+	public final static float DEFAULT_MIN_SCORE = 1.0f;
+	public final static float DEFAULT_MAX_SCORE = 254.0f;
+	public static final float[] DEFAULT_VALUES = new float[]{0,50,200,254};
+	public static final Color[] DEFAULT_COLORS = new Color[]{Color.BLACK, Color.BLACK, Color.RED, Color.RED};
 	public final static HeatMap DEFAULT_HEATMAP = new HeatMapExtended(
 			"DEFAULT_MAPQSCORE_HEATMAP", null, DEFAULT_VALUES, DEFAULT_COLORS);
 		

@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.color.Score;
+import com.affymetrix.igb.colorproviders.Score;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;

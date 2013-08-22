@@ -339,8 +339,8 @@ public class Activator implements BundleActivator {
 	private void initColorProvider(final BundleContext bundleContext) {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ColorProviderI.class);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.RGB(), null);
-		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Score(), null);
-		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.MapqScore(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Score(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.MapqScore(), null);
 		//bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Strand(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
@@ -350,6 +350,7 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, SymmetryFilterI.class);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.NoIntronFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.UniqueLocationFilter(), null);
+		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MismatchFilter(), null);
 	}
 	
 	private void initMapViewGlyphFactorys(final BundleContext bundleContext) {

@@ -53,6 +53,8 @@ import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.jidesoft.hints.ListDataIntelliHints;
+import java.awt.Component;
+import javax.swing.table.TableCellRenderer;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
@@ -471,9 +473,15 @@ public final class SearchView extends IGBTabPanel implements
 			DefaultTableCellRenderer dtcr = model.getColumnRenderer(i);
 			dtcr.setHorizontalAlignment(colAlign);
 			column.setCellRenderer(dtcr);
+			
+			if(column.getHeaderRenderer() == null){
+				column.setHeaderRenderer(new HeaderRenderer(colAlign));
+			} else if(column.getHeaderRenderer() instanceof DefaultTableCellRenderer){
+				((DefaultTableCellRenderer)column.getHeaderRenderer()).setHorizontalAlignment(colAlign);
+			}
 		}
 	}
-
+	
 	public void zoomToSym(SeqSymmetry sym, List<SeqSymmetry> altSymList) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
@@ -668,6 +676,22 @@ public final class SearchView extends IGBTabPanel implements
 			sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getID());
 		} else {
 			sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
+		}
+	}
+	
+	private static class HeaderRenderer implements TableCellRenderer {
+		final int horAlignment;
+		public HeaderRenderer(int horizontalAlignment) {
+			horAlignment = horizontalAlignment;
+		}
+
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int col) {
+			Component c = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(table, value,
+					isSelected, hasFocus, row, col);
+			JLabel label = (JLabel) c;
+			label.setHorizontalAlignment(horAlignment);
+			return label;
 		}
 	}
 }

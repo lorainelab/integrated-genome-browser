@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.BitSet;
 
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -70,6 +68,11 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 			}
 			
 			if (useBaseQuality) {
+				g.setColor(this.getBackgroundColor());
+				int offset = (int) (j * pixelsPerBase);
+				//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
+				g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
+			
 				alpha = getAlpha(quals[j]);
 
 				if (alpha < 1.0f) {

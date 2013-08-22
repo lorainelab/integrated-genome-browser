@@ -35,29 +35,30 @@ public class UcscPslSym
 
 	private String type;
 	private int matches;
-	private int mismatches;
-	private int repmatches; // should be derivable w/o residues
-	private int ncount;
-	private int qNumInsert;  // should be derivable w/o residues
-	private int qBaseInsert; // should be derivable w/o residues
-	private int tNumInsert;  // should be derivable w/o residues
-	private int tBaseInsert; // should be derivable w/o residues
-	protected boolean same_orientation;
+	private final int mismatches;
+	private final int repmatches; // should be derivable w/o residues
+	private final int ncount;
+	private final int qNumInsert;  // should be derivable w/o residues
+	private final int qBaseInsert; // should be derivable w/o residues
+	private final int tNumInsert;  // should be derivable w/o residues
+	private final int tBaseInsert; // should be derivable w/o residues
+	protected final boolean same_orientation;
 	private boolean overlapping_query_coords = false;
 
-	protected BioSeq queryseq;
-	private int qmin;
-	private int qmax;
-	protected BioSeq targetseq;
-	private int tmin;
-	private int tmax;
-	private String[] target_res_arr;
-	protected int[] blockSizes;
-	protected int[] qmins;
-	protected int[] tmins;
+	protected final BioSeq queryseq;
+	private final int qmin;
+	private final int qmax;
+	protected final BioSeq targetseq;
+	private final int tmin;
+	private final int tmax;
+	private final String[] target_res_arr;
+	protected final int[] blockSizes;
+	protected final int[] qmins;
+	protected final int[] tmins;
 	private Map<String,Object> props;
-	private boolean isProbe;
-
+	private final boolean isProbe;
+	private SeqSymmetry children[];
+	
 	public UcscPslSym(String type,
 			int matches,
 			int mismatches,
@@ -227,25 +228,35 @@ public class UcscPslSym
 	public int getChildCount() { return blockSizes.length; }
 
 	public SeqSymmetry getChild(int i) {
-		if (same_orientation) {
-			if(isProbe){
-				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-						tmins[i], tmins[i]+blockSizes[i], targetseq, isProbe);
-			}else{
-				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-						tmins[i], tmins[i]+blockSizes[i], targetseq, getChildResidue(i));
-			}
-			
+		if (qmins == null || (qmins.length <= i)) {
+			return null;
 		}
-		else {
-			if(isProbe){
-				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq, 
-						tmins[i]+blockSizes[i], tmins[i], targetseq, isProbe);
-			}else{
-				return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq, 
-						tmins[i]+blockSizes[i], tmins[i], targetseq, getChildResidue(i));
+		
+		if (children == null) {
+			children = new SeqSymmetry[qmins.length];
+		}
+
+		if (children[i] == null) {
+			if (same_orientation) {
+				if (isProbe) {
+					children[i] = new EfficientPairSeqSymmetry(qmins[i], qmins[i] + blockSizes[i], queryseq,
+							tmins[i], tmins[i] + blockSizes[i], targetseq, isProbe);
+				} else {
+					children[i] = new EfficientPairSeqSymmetry(qmins[i], qmins[i] + blockSizes[i], queryseq,
+							tmins[i], tmins[i] + blockSizes[i], targetseq, getChildResidue(i));
+				}
+
+			} else {
+				if (isProbe) {
+					children[i] = new EfficientPairSeqSymmetry(qmins[i], qmins[i] + blockSizes[i], queryseq,
+							tmins[i] + blockSizes[i], tmins[i], targetseq, isProbe);
+				} else {
+					children[i] = new EfficientPairSeqSymmetry(qmins[i], qmins[i] + blockSizes[i], queryseq,
+							tmins[i] + blockSizes[i], tmins[i], targetseq, getChildResidue(i));
+				}
 			}
 		}
+		return children[i];
 	}
 
 	private String getChildResidue(int i){

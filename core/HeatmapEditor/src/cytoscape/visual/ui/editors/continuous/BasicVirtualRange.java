@@ -8,9 +8,7 @@ import java.awt.Color;
  */
 public class BasicVirtualRange implements VirtualRange {
 	
-	private Color belowColor, aboveColor;
 	private Color colors[];
-	private float minVirtualValue, maxVirtualValue;
 	private float values[];
 	
 	public BasicVirtualRange(float[] values, Color[] colors){
@@ -27,30 +25,26 @@ public class BasicVirtualRange implements VirtualRange {
 		
 		this.values = values;
 		this.colors = colors;
-		this.minVirtualValue = values[0];
-		this.maxVirtualValue = values[values.length - 1];
-		this.belowColor = colors[0];
-		this.aboveColor = colors[colors.length - 1];
 	}
 	
 	@Override
 	public Color getAboveColor(){
-		return aboveColor;
+		return colors[colors.length - 1];
 	}
 
 	@Override
 	public Color getBelowColor(){
-		return belowColor;
+		return colors[0];
 	}
 
 	@Override
 	public float getVirtualMaximum() {
-		return maxVirtualValue;
+		return values[values.length - 1];
 	}
 
 	@Override
 	public float getVirtualMinimum() {
-		return minVirtualValue;
+		return values[0];
 	}
 	
 	@Override

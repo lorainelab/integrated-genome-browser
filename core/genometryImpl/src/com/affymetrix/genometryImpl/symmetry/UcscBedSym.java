@@ -72,6 +72,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 	int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
 	int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
 	boolean hasCdsSpan = false;
+	private SeqSymmetry children[];
 	
 	/**
 	 *  Constructs a SeqSymmetry optimized for BED-file format.
@@ -111,18 +112,21 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 	
 	@Override
 	public SeqSymmetry getChild(int index) {
-		if (blockMins == null || (blockMins.length <= index)) { return null; }
-		if (forward) {
-			// blockMins are in seq coordinates, NOT relative to txMin
-			//    (transforming blockStarts in BED format to blockMins in seq coordinates
-			//       is handled by BedParser)
-			//      return new SingletonSeqSymmetry(blockMins[index],
-			//      				      blockMins[index] + blockSizes[index], seq);
-			return new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
+		if (blockMins == null || (blockMins.length <= index)) {
+			return null;
 		}
-		else {
-			return new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
+		if (children == null) {
+			children = new SeqSymmetry[blockMins.length];
 		}
+
+		if (children[index] == null) {
+			if (forward) {
+				children[index] = new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
+			} else {
+				children[index] = new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
+			}
+		}
+		return children[index];
 	}
 
 	protected class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {

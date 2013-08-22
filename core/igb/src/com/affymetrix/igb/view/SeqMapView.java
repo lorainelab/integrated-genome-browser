@@ -61,6 +61,7 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import java.beans.PropertyChangeListener;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -1932,7 +1933,7 @@ public class SeqMapView extends JPanel
 	 * handled by showPopup(), which calls this method.
 	 */
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
-		List<GlyphI> selected_glyphs = seqmap.getSelected();
+		final List<GlyphI> selected_glyphs = seqmap.getSelected();
 		
 		Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 		if(selected_glyphs.size() == 1){
@@ -1942,7 +1943,7 @@ public class SeqMapView extends JPanel
 			Border colorBorder = BorderFactory.createLineBorder(Color.BLACK);
 			popup.setBorder(BorderFactory.createCompoundBorder(colorBorder, emptyBorder));
 		}
-		
+				
 		JMenuItem select_parent_action = new JMenuItem(SelectParentAction.getAction());
 		select_parent_action.setIcon(null);
 		JMenuItem zoom_on_selected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());
@@ -1962,7 +1963,7 @@ public class SeqMapView extends JPanel
 //		if (!selected_glyphs.isEmpty()) {
 //			popup.add(zoomtoMI);
 //		}
-		List<SeqSymmetry> selected_syms = getSelectedSyms();
+		final List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 
 			//popup.add(SelectParentAction.getAction());
@@ -1976,6 +1977,17 @@ public class SeqMapView extends JPanel
 			//popup.add(new JMenuItem(viewGenomicSequenceInSeqViewerAction));
 			popup.add(view_read_sequence_action);
 			//popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
+			
+//			JMenuItem delete_sym_action = new JMenuItem(new AbstractAction("Delete Sym"){
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					for (SeqSymmetry sym : selected_syms) {
+//						removeSym(sym);
+//						aseq.removeAnnotation(sym);
+//					}
+//				}
+//			});
+//			popup.add(delete_sym_action);
 		}
 
 		for (ContextualPopupListener listener : popup_listeners) {

@@ -52,6 +52,11 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 	}
 	
 	@Override
+	protected boolean shouldSkip() {
+		return super.shouldSkip() && !useBaseQuality;
+	}
+	
+	@Override
 	protected void drawResidueRectangles(ViewI view, double pixelsPerBase, 
 			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
 		

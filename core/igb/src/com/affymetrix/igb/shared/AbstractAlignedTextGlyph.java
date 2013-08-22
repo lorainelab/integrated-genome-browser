@@ -29,7 +29,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	protected SearchableCharIterator chariter;
 	private int residue_length = 0;
 //	private final BitSet residueMask = new BitSet();
-	private BitSet residueMask;
+	protected BitSet residueMask;
 	private static final Font mono_default_font = NeoConstants.default_bold_font;
 		
 	//public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
@@ -119,11 +119,15 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 	public SearchableCharIterator getResiduesProvider() {
 		return chariter;
 	}
-
+	
+	protected boolean shouldSkip() {
+		return residueMask != null && residueMask.isEmpty();
+	}
+	
 	// Essentially the same as SequenceGlyph.drawHorizontal
 	@Override
 	public void draw(ViewI view) {
-		if (isOverlapped() || ((residueMask != null && residueMask.isEmpty()) && getShowMask())) {
+		if (isOverlapped() || (shouldSkip() && getShowMask())) {
 			return;	// don't draw residues
 		}
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
@@ -139,9 +143,9 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 		}
 
 		double pixel_width_per_base = (view.getTransform()).getScaleX();
-		if ((residueMask != null && residueMask.isEmpty()) && pixel_width_per_base < 1) {
-			return;	// If we're drawing all the residues, return if there's less than one pixel per base
-		}
+//		if ((residueMask != null && residueMask.isEmpty()) && pixel_width_per_base < 1) {
+//			return;	// If we're drawing all the residues, return if there's less than one pixel per base
+//		}
 		if (pixel_width_per_base < 0.2) {
 			return;	// If we're masking the residues, draw up to 5 residues at one pixel.
 		}

@@ -2576,7 +2576,7 @@ public class SeqMapView extends JPanel
 		int max = Math.max(start, end);
 		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
 		updateSpan(glyph, sym);
-				
+		
 		if (sym instanceof CdsSeqSymmetry) {
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
@@ -2681,7 +2681,11 @@ public class SeqMapView extends JPanel
 		if(sym instanceof MutableSeqSymmetry){
 			SeqSpan span = sym.getSpan(getAnnotatedSeq());
 			((MutableSeqSymmetry)sym).removeSpan(span);
-			span = new SimpleSeqSpan((int)glyph.getCoordBox().x, (int)(glyph.getCoordBox().x + glyph.getCoordBox().width), getAnnotatedSeq());
+			if(span.isForward()){
+				span = new SimpleSeqSpan((int)glyph.getCoordBox().x, (int)(glyph.getCoordBox().x + glyph.getCoordBox().width), getAnnotatedSeq());
+			}else{
+				span = new SimpleSeqSpan((int)(glyph.getCoordBox().x + glyph.getCoordBox().width), (int)glyph.getCoordBox().x, getAnnotatedSeq());
+			}
 			((MutableSeqSymmetry)sym).addSpan(span);
 		}
 	}

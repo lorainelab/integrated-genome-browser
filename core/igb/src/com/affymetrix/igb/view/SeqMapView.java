@@ -2570,6 +2570,7 @@ public class SeqMapView extends JPanel
 	
 	public void updateStart(int start, SeqSymmetry sym) {
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
+		Rectangle2D.Double originalCoordBox = glyph.getCoordBox();
 		Rectangle2D.Double coordBox = glyph.getCoordBox();
 		int end = (int) (coordBox.x + coordBox.width);
 		int min = Math.min(start, end);
@@ -2581,11 +2582,11 @@ public class SeqMapView extends JPanel
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
 			glyph = getSeqMap().getItemFromTier(child);
+			coordBox = glyph.getCoordBox();
 			boolean checkCdsStart = false;
 			int cdsStart = start;
-			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
-				checkCdsStart = true;		
-				coordBox = glyph.getCoordBox();
+			if (child != null && coordBox.intersects(originalCoordBox)) {
+				checkCdsStart = true;
 				start = (int) coordBox.x;
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
 				updateSpan(glyph, child);
@@ -2593,8 +2594,8 @@ public class SeqMapView extends JPanel
 
 			child = parentSym.getChild(parentSym.getChildCount() - 1);
 			glyph = getSeqMap().getItemFromTier(child);
-			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
-				coordBox = glyph.getCoordBox();
+			coordBox = glyph.getCoordBox();
+			if (child != null && coordBox.intersects(originalCoordBox)) {
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
 				updateSpan(glyph, child);
@@ -2609,6 +2610,7 @@ public class SeqMapView extends JPanel
 	
 	public void updateEnd(int end, SeqSymmetry sym) {
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
+		Rectangle2D.Double originalCoordBox = glyph.getCoordBox();
 		Rectangle2D.Double coordBox = glyph.getCoordBox();
 		int start = (int) coordBox.x;
 		int min = Math.min(start, end);
@@ -2620,9 +2622,9 @@ public class SeqMapView extends JPanel
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
 			glyph = getSeqMap().getItemFromTier(child);
-
-			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
-				coordBox = glyph.getCoordBox();
+			coordBox = glyph.getCoordBox();
+			
+			if (child != null && coordBox.intersects(originalCoordBox)) {	
 				start = (int) coordBox.x;
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
 				updateSpan(glyph, child);
@@ -2630,9 +2632,9 @@ public class SeqMapView extends JPanel
 
 			child = parentSym.getChild(parentSym.getChildCount() - 1);
 			glyph = getSeqMap().getItemFromTier(child);
-			if (child != null && glyph.getCoordBox().intersects(coordBox)) {
+			coordBox = glyph.getCoordBox();
+			if (child != null && coordBox.intersects(originalCoordBox)) {
 				int cdsEnd = end;
-				coordBox = glyph.getCoordBox();
 				end = (int) (coordBox.x + coordBox.width);
 				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
 				updateSpan(glyph, child);

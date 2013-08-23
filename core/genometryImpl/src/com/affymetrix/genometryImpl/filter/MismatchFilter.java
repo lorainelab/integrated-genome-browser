@@ -13,7 +13,7 @@ public class MismatchFilter extends AbstractFilter {
 	
 	@Override
     public String getName() {
-        return "Mismatch Filter";
+        return "Mismatch";
     }
 
 	@Override
@@ -33,30 +33,27 @@ public class MismatchFilter extends AbstractFilter {
 
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
+		boolean filter = true;
 		int child_count = ss.getChildCount();
 		if (child_count > 0) {
 			SeqSymmetry child;
 			for (int i = 0; i < child_count; i++) {
 				child = ss.getChild(i);
 				if (child instanceof SymWithResidues) {
-					if(filter((SymWithResidues)child)){
-						return true;
-					}
+					filter &= filter((SymWithResidues)child);
 				}
 			}
 		} else if (ss instanceof SymWithResidues) {
-			return filter((SymWithResidues)ss);
+			filter &= filter((SymWithResidues)ss);
 		}
-		return false;
+		return filter;
     }
   
 	private boolean filter(SymWithResidues swr) {
 		BitSet bitSet = swr.getResidueMask();
-		if (bitSet == null) {
-			return true;
-		} else if (bitSet != null && bitSet.cardinality() > 0) {
-			return true;
+		if (bitSet != null && bitSet.cardinality() > 0) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 }

@@ -162,9 +162,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan, 
 			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq, int child_height, 
 			DIRECTION_TYPE direction_type) throws IllegalAccessException, InstantiationException {
-		
-		pglyph.addChild(determinePGlyph(gviewer, parent_and_child, insym, the_tier, the_style,
-				labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type));
+		GlyphI glyph = determinePGlyph(gviewer, parent_and_child, insym, the_tier, the_style,
+				labelInSouth, pspan, sym, annotseq, coordseq, child_height, direction_type);
+		if(the_style.getFilter() != null){
+			glyph.setVisibility(the_style.getFilter().filterSymmetry(annotseq, sym));
+		}
+		pglyph.addChild(glyph);
 	}
 	
 	protected GlyphI determinePGlyph(SeqMapViewExtendedI gviewer,
@@ -235,11 +238,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		if(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH){
 			pglyph.setDirection(pspan.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
 		}
-		the_tier.setDataModelFromOriginalSym(pglyph, sym);
-		if(the_style.getFilter() != null){
-			pglyph.setVisibility(the_style.getFilter().filterSymmetry(annotseq, sym));
-		}
-		
+		the_tier.setDataModelFromOriginalSym(pglyph, sym);		
 		return pglyph;
 	}
 

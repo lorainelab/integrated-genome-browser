@@ -33,6 +33,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	private BitSet residueMask;
 	private SeqSymmetry children[];
 	private SeqSymmetry insChildren[];
+	private Integer averageQualityScore;
 	
 	//Residues residues;
 	private String insResidues;
@@ -113,6 +114,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
 	class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
 		private BitSet residueMask;
+		private Integer averageQualityScore;
 		
 		public BamChildSingletonSeqSym(int start, int end, BioSeq seq) {
 			super(start, end, seq);
@@ -136,6 +138,14 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		@Override
 		public String getBaseQuality(int start, int end) {
 			return BAMSym.this.getBaseQuality(start, end, false);
+		}
+		
+		@Override
+		public int getAverageQuality() {
+			if(averageQualityScore == null){
+				averageQualityScore = BAMSym.this.getAverageQuality(getBaseQuality());
+			}
+			return averageQualityScore;
 		}
 		
 		@Override
@@ -168,6 +178,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
 	class BamInsChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
 		private BitSet residueMask;
+		private Integer averageQualityScore;
 		final int index;
 		public BamInsChildSingletonSeqSym(int start, int end, int index, BioSeq seq) {
 			super(start, end, seq);
@@ -204,6 +215,14 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 			return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), true);
 		}
 	
+		@Override
+		public int getAverageQuality() {
+			if(averageQualityScore == null){
+				averageQualityScore = BAMSym.this.getAverageQuality(getBaseQuality());
+			}
+			return averageQualityScore;
+		}
+		
 		// For the web links to be constructed properly, this class must implement getID(),
 		// or must NOT implement SymWithProps.
 		@Override public String getID() {return BAMSym.this.getID();}
@@ -253,6 +272,29 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 			return getBaseQuality(start, end, false);
 		}
 		return getEmptyString('*', end - start);
+	}
+	
+	@Override
+	public int getAverageQuality() {
+		if(averageQualityScore == null){
+			if(blockMins != null && blockMins.length > 0) {
+				int quality = 0;
+				averageQualityScore = new Integer(quality);
+				for(int i=0; i<blockMins.length; i++){
+					quality = getAverageQuality(((SymWithBaseQuality)this.getChild(i)).getBaseQuality());
+					// If any child has score of -1 then set overall score to -1
+					if(quality == -1){
+						averageQualityScore = -1;
+						break;
+					}
+					averageQualityScore += quality;
+				}
+				averageQualityScore = averageQualityScore/blockMins.length;
+			} else {
+				averageQualityScore = getAverageQuality(getBaseQuality());
+			}
+		}
+		return averageQualityScore;
 	}
 	
 	@Override
@@ -397,5 +439,17 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		}
 
 		return String.valueOf(sb);
+	}
+	
+	private int getAverageQuality(String qualityStr) {
+		if (qualityStr != null) {
+			int quality = 0;
+			byte[] quals = qualityStr.getBytes();
+			for(int i=0; i<quals.length; i++){
+				quality += (quals[i] - 33);
+			}
+			return quality/quals.length;
+		}
+		return -1;
 	}
 }

@@ -22,6 +22,7 @@ import javax.swing.border.Border;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.filter.NoIntronFilter;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -441,6 +442,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		set_color_by.setIcon(null);
 		popup.add(set_color_by);
 			
+		JMenuItem filter_action = new JRPMenuItemTLP(FilterAction.getAction());
+		filter_action.setIcon(null);
+		popup.add(filter_action);
+		
 		popup.add(new JSeparator());
 				
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
@@ -465,7 +470,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		delete_track.setEnabled(num_selections > 0 && !coordinates_track_selected);
 		delete_track.setIcon(null);
 		popup.add(delete_track);
-		
+				
 	//	if (tierGlyph != null) {
 	//		// Check whether this selection is a graph or an annotation
 	//		ITrackStyleExtended style = tierGlyph.getAnnotStyle();

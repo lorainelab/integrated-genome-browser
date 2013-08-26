@@ -26,7 +26,7 @@ public class SymmetryFilterIntersecting extends AbstractFilter{
 		return getName();
 	}
 	
-	public boolean setParam(Object param) {
+	public boolean setParameterValue(String key, Object param) {
 		this.param = param;
 		if(!(param instanceof SeqSymmetry)){
 			return false;
@@ -36,7 +36,7 @@ public class SymmetryFilterIntersecting extends AbstractFilter{
 		return true;
 	}
 
-	public Object getParam() {
+	public Object getParameterValue(String key) {
 		return param;
 	}
 

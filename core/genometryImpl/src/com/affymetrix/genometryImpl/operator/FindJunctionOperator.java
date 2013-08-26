@@ -198,7 +198,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         List<Integer> childIntronIndices = new ArrayList<Integer>();
         int childCount = sym.getChildCount();
 		int flanksLength[] = new int[2];
-        childThresholdFilter.setParam(threshold);
+        childThresholdFilter.setParameterValue(null, threshold);
         for(int i=0;i<childCount - 1;i++){
             if(childThresholdFilter.filterSymmetry(bioseq, sym.getChild(i)) && childThresholdFilter.filterSymmetry(bioseq, sym.getChild(i+1))){
                 childIntronIndices.add(i);

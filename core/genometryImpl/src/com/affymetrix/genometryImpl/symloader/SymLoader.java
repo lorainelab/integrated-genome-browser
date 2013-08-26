@@ -301,7 +301,7 @@ public abstract class SymLoader {
 		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
 		Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
 		SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
-		filter.setParam(feature.getRequestSym());
+		filter.setParameterValue(null, feature.getRequestSym());
 		
 		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
 			if (entry.getValue().isEmpty()) {

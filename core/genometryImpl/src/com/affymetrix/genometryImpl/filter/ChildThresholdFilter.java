@@ -25,13 +25,13 @@ public class ChildThresholdFilter extends AbstractFilter{
 	}
 	
     @Override
-    public boolean setParam(Object o) {
+    public boolean setParameterValue(String key, Object o) {
         threshold = (Integer)o;
         return true;
     }
 
     @Override
-    public Object getParam() {
+    public Object getParameterValue(String key) {
         return threshold;
     }
 

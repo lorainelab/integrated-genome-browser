@@ -66,7 +66,7 @@ public class FilterOperator implements Operator, IParameters {
 	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (parms.size() == 1 && parms.get(filter.getName()) instanceof String) {
-			filter.setParam(parms.get(filter.getName()));
+			filter.setParameterValue(null, parms.get(filter.getName()));
 			return true;
 		}
 		return false;

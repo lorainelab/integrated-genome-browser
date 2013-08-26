@@ -48,15 +48,15 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 
 	@Override
 	public String checkInput(String search_text, BioSeq vseq, String seq) {
-		return filter.setParam(search_text) ? null : "Error setting param " + search_text;
+		return filter.setParameterValue(null, search_text) ? null : "Error setting param " + search_text;
 	}
 
 	@Override
 	public List<SeqSymmetry> search(String search_text, BioSeq chrFilter,
 			IStatus statusHolder, boolean option) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		if (!search_text.equals(filter.getParam())) {
-			throw new IllegalStateException("filter value changed from " + filter.getParam() + " to " + search_text);
+		if (!search_text.equals(filter.getParameterValue(null))) {
+			throw new IllegalStateException("filter value changed from " + filter.getParameterValue(null) + " to " + search_text);
 		}
 		List<Glyph> glyphs = igbService.getAllTierGlyphs();
 		for (Glyph selectedTierGlyph : glyphs) {
@@ -89,8 +89,8 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	
 	@Override
 	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot trackSym) {
-		if (!search_text.equals(filter.getParam())) {
-			throw new IllegalStateException("filter value changed from " + filter.getParam() + " to " + search_text);
+		if (!search_text.equals(filter.getParameterValue(null))) {
+			throw new IllegalStateException("filter value changed from " + filter.getParameterValue(null) + " to " + search_text);
 		}
 		List<SeqSymmetry> results = searchSym(trackSym);
 		return results;

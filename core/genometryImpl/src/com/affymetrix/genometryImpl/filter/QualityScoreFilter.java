@@ -21,12 +21,12 @@ public class QualityScoreFilter extends AbstractFilter {
 	}
 	
     @Override
-    public boolean setParam(Object o) {
+    public boolean setParameterValue(String key, Object o) {
         return false;
     }
 
     @Override
-    public Object getParam() {
+    public Object getParameterValue(String key) {
         return null;
     }
 

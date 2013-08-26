@@ -24,12 +24,12 @@ public class SymmetryFilterId extends AbstractFilter {
 	}
 	
 	@Override
-	public Object getParam() {
+	public Object getParameterValue(String key) {
 		return param;
 	}
 
 	@Override
-	public boolean setParam(Object param) {
+	public boolean setParameterValue(String key, Object param) {
 		this.param = param;
 		if (param.getClass() != String.class) {
 			return false;

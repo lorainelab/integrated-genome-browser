@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.filter;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,14 +7,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
-
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 public class SymmetryFilterProps extends AbstractFilter{
 	private Object param;
 	private Pattern regex;
-	private SymWithProps swp;
 	private String match;
 
 	@Override
@@ -55,10 +53,8 @@ public class SymmetryFilterProps extends AbstractFilter{
 			}
 		}
 		if (sym instanceof SymWithProps && !passes) {
-			swp = (SymWithProps) sym;
-
 			// Iterate through each properties.
-			for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
+			for (Map.Entry<String, Object> prop : ((SymWithProps) sym).getProperties().entrySet()) {
 				if (prop.getValue() != null) {
 					match = ArrayUtils.toString(prop.getValue());
 					matcher.reset(match);

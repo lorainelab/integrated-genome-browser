@@ -148,7 +148,7 @@ public final class BAM extends XAM {
 		Object compressedInputStreamValue = privateCompressedInputStreamField.get(mReaderValue);
 		Field privateBlockAddressField = compressedInputStreamValue.getClass().getDeclaredField("mBlockAddress");
 		privateBlockAddressField.setAccessible(true);
-		long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue)).longValue();
+                    long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue)).longValue();
 		Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
 		privateCurrentOffsetField.setAccessible(true);
 		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue)).intValue();;
@@ -363,6 +363,7 @@ public final class BAM extends XAM {
 	}
 
 	//Can be used later. Do not remove.
+	//Moving to a new plugin project BAMIndexer -KTS
 	@SuppressWarnings("unused")
 	static private File createIndexFile(File bamfile) throws IOException{
 		File indexfile = File.createTempFile(bamfile.getName(), ".bai");

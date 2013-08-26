@@ -40,7 +40,7 @@
 		<copy file="${bundle.dir}/log4j-1.2.11.bnd.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/picard.bnd.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/sam--igbext.bnd.jar" todir="temp/bundle" />
-		<copy file="${bundle.dir}/tribble.bnd.jar" todir="temp/bundle" />
+		<copy file="${bundle.dir}/tribble--igbext.bnd.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/common.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/genometry.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/genoviz.jar" todir="temp/bundle" />

@@ -199,11 +199,14 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				&& IGBStateProvider.getShowLockIcon() && reftier.getDirection() != TierGlyph.Direction.AXIS){
 			drawLock(g, pixelbox.x, pixelbox.y, fgcolor, bgcolor);
 		}
+		if(trackStyle.getFilter() != null) {
+			drawFilter(g, pixelbox.x + 20, pixelbox.y + 4, fgcolor, bgcolor);
+		}
 		super.draw(view);
 	}
 	
-	int[] mark_x = new int[4];
-	int[] mark_y = new int[4];
+	static int[] mark_x = new int[4];
+	static int[] mark_y = new int[4];
 	/*
 	 * Draw a badge for igb track.
 	 */
@@ -390,5 +393,25 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		g.drawRect(x + 5, y + 10, 10, 10);
 		g.drawArc(x + 8, y + 4, 4, 12, 0, 180);
 		g.drawRect(x + 9, y + 15, 2, 4);
+	}
+	
+	protected static void drawFilter(final Graphics2D g, int x, int y, Color fgcolor, Color bgcolor) {
+		mark_x[0] = x;
+		mark_x[1] = x + 15;
+		mark_x[2] = (mark_x[0] + mark_x[1])/2;
+	
+		mark_y[0] = y;
+		mark_y[1] = y;
+		mark_y[2] = y + 10;
+		
+		g.setColor(fgcolor);
+		g.fillPolygon(mark_x, mark_y, 3);
+		g.setColor(fgcolor.darker());
+		g.drawPolygon(mark_x, mark_y, 3);
+		
+		g.setColor(fgcolor);
+		g.fillRect(mark_x[2] - 2, mark_y[2] - 4, 4, 10);
+		g.setColor(fgcolor.darker());
+		g.drawRect(mark_x[2] - 2, mark_y[2] - 4, 4, 10);
 	}
 }

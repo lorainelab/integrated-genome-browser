@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package bamindexer;
+package com.affymetrix.igb.bookmarks;
 
-import static bamindexer.BAMIndexer.CAT;
-import static bamindexer.BAMIndexer.DEBUG;
+import static com.affymetrix.igb.bookmarks.BAMIndexer.CAT;
+import static com.affymetrix.igb.bookmarks.BAMIndexer.DEBUG;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package bamindexer;
+package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -26,8 +26,6 @@ import net.sf.picard.sam.BuildBamIndex;
 import net.sf.picard.sam.SortSam;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
-import org.apache.commons.io.FilenameUtils;
-import com.affymetrix.genometryImpl.event.GenericAction;
 
 /**
  *
@@ -149,6 +147,7 @@ public class BAMIndexer {
         return arr;
     }
 
+	@SuppressWarnings("unchecked")
     public static <T> T[] CAT(T elem1, T elem2) {
         T[] arr = (T[]) Array.newInstance(elem1.getClass(), 2);
         arr[0] = elem1;
@@ -222,7 +221,7 @@ public class BAMIndexer {
      return foos;
      }*/
     public static void main(String[] args) throws Exception {
-        boolean unitTest = true;
+        boolean unitTest = false;
         if (unitTest) {
             new BAMIndexer(new File("/Users/ktsuttle/Workspace/BAMIndexer/test/untitled folder/aligned.sorted.bam"));
         } else {
@@ -394,7 +393,7 @@ public class BAMIndexer {
             if (option.get(opt.SortType) == null) {
                 int dialog = JOptionPane.showConfirmDialog(mainGUI, "BAM file \"" + bamFile.getName() + "\" does not appear to be sorted.\nIndex files can be created for sorted files only.\nWould you like to create a new, coordinate sorted copy of the file? \n Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size.", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
 
-                String fileName = FilenameUtils.removeExtension(bamFile.getAbsolutePath());
+                String fileName = removeExtension(bamFile.getAbsolutePath());
                 String nameFlag = ".sorted";
 
                 //if(fileName.endsWith(nameFlag)){ //if the file name ends with sorted do not trust it. Remove it!
@@ -433,6 +432,12 @@ public class BAMIndexer {
         return null;
     }
 
+	public static String removeExtension(String txt) {
+		int index = txt.lastIndexOf(".");
+		if (index != -1)  return txt.substring(0,index);
+		return txt;
+	}
+		
     void cancel() {
         System.exit(1);
     }

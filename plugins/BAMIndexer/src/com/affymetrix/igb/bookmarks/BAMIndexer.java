@@ -236,7 +236,7 @@ public class BAMIndexer {
     }
 
     BAMIndexer() throws Exception {
-        this(null);
+        this((List<File>)null);
     }
     private BAMIndexerProgress mainGUI = null;
 

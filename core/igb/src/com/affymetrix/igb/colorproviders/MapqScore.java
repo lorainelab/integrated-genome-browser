@@ -2,6 +2,7 @@ package com.affymetrix.igb.colorproviders;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.general.Parameter;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
@@ -66,6 +67,11 @@ public class MapqScore extends ColorProvider {
 		return null;
 	}
 
+	@Override
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory) {
+		return fileTypeCategory == FileTypeCategory.Alignment;
+	}
+	
 	protected Color getScoreColor(float score) {
 		if (score < min_score_color) {
 			return botton_color;

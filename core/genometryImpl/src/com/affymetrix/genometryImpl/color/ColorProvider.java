@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.color;
 
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.Parameters;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import java.util.Map;
 
 /**
@@ -43,6 +44,13 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 	@Override
 	public String getDisplay(){
 		return getClass().getSimpleName();
+	}
+	
+	@Override
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory) {
+		return fileTypeCategory == FileTypeCategory.Annotation 
+				|| fileTypeCategory == FileTypeCategory.Alignment
+				|| fileTypeCategory == FileTypeCategory.ProbeSet;
 	}
 	
 	@Override

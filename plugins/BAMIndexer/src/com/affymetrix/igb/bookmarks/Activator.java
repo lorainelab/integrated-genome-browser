@@ -22,12 +22,12 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception{
 		
 		// assuming last file menu item is Exit, leave it there
-		JRPMenu file_menu = igbService.getMenu("file");
+		JRPMenu file_menu = igbService.getMenu("tools");
 		final int index = file_menu.getItemCount() - 1;
 		file_menu.insertSeparator(index);
 	
 		return new ServiceRegistration[] {
-			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("BAMIndexer", BAMIndexer.getAction()), "file", index), null),
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("BAMIndexer", BAMIndexer.getAction()), "tools", index), null),
 		};
 	}
 }

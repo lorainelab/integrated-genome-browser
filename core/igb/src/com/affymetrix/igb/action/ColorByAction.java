@@ -2,10 +2,13 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
+import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.TierGlyph;
 
 /**
  *
@@ -30,10 +33,22 @@ public class ColorByAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
+		
+		final TierGlyph tg = getTierManager().getSelectedTiers().get(0);
+		ITrackStyleExtended style = tg.getAnnotStyle();
 		ColorProviderI cp = style.getColorProvider();
 		
-		ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<ColorProviderI>(ColorProviderI.class, "Color By");
+		ConfigureOptionsDialog.Filter<ColorProviderI> configureFilter = new ConfigureOptionsDialog.Filter<ColorProviderI>() {
+			@Override
+			public boolean shouldInclude(ColorProviderI colorProvider) {
+				if(colorProvider instanceof SupportsFileTypeCategory) {
+					return ((SupportsFileTypeCategory)colorProvider).isFileTypeCategorySupported(tg.getFileTypeCategory());
+				}
+				return true;
+			}
+		};
+		
+		ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<ColorProviderI>(ColorProviderI.class, "Color By", configureFilter);
 		colorByDialog.setTitle("Color By");
 		colorByDialog.setLocationRelativeTo(getSeqMapView());
 		colorByDialog.setInitialValue(cp);

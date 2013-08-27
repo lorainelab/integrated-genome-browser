@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
+import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -36,10 +37,22 @@ public class FilterAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		ITrackStyleExtended style = getTierManager().getSelectedTiers().get(0).getAnnotStyle();
+		
+		final TierGlyph tg = getTierManager().getSelectedTiers().get(0);
+		ITrackStyleExtended style = tg.getAnnotStyle();
 		SymmetryFilterI filter = style.getFilter();
 		
-		ConfigureOptionsDialog<SymmetryFilterI> filterDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter");
+		ConfigureOptionsDialog.Filter<SymmetryFilterI> configureFilter = new ConfigureOptionsDialog.Filter<SymmetryFilterI>() {
+			@Override
+			public boolean shouldInclude(SymmetryFilterI symmetryFilter) {
+				if(symmetryFilter instanceof SupportsFileTypeCategory) {
+					return ((SupportsFileTypeCategory)symmetryFilter).isFileTypeCategorySupported(tg.getFileTypeCategory());
+				}
+				return true;
+			}
+		};
+		
+		ConfigureOptionsDialog<SymmetryFilterI> filterDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", configureFilter);
 		filterDialog.setTitle("Filter");
 		filterDialog.setLocationRelativeTo(getSeqMapView());
 		filterDialog.setInitialValue(filter);

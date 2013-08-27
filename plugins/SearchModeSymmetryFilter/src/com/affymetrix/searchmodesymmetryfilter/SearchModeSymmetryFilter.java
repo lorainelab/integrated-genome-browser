@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.filter.AbstractFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
@@ -48,7 +49,12 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 
 	@Override
 	public String checkInput(String search_text, BioSeq vseq, String seq) {
-		return filter.setParameterValue(null, search_text) ? null : "Error setting param " + search_text;
+		if(filter instanceof AbstractFilter) {
+			AbstractFilter absFilter = (AbstractFilter)filter;
+			return absFilter.setParameterValue(absFilter.getParametersType().entrySet().iterator().next().getKey(), search_text) ? 
+					null : "Error setting param " + search_text;
+		}
+		return "Current filter does not accept any parameters";
 	}
 
 	@Override

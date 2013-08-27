@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -11,9 +12,16 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * with the threshold value of the filter this is used in FindJunctionOperator class
  */
 public class ChildThresholdFilter extends AbstractFilter{
-
-    int threshold;
-    
+	private final static String THRESHOLD = "threshold";
+	private final static int DEFAULT_THRESHOLD = 5;
+	
+    private Parameter<Integer> threshold = new Parameter<Integer>(DEFAULT_THRESHOLD);
+	
+	public ChildThresholdFilter(){
+		super();
+		parameters.addParameter(THRESHOLD, Integer.class, threshold);
+	}
+	
     @Override
     public String getName() {
         return null;
@@ -25,22 +33,12 @@ public class ChildThresholdFilter extends AbstractFilter{
 	}
 	
     @Override
-    public boolean setParameterValue(String key, Object o) {
-        threshold = (Integer)o;
-        return true;
-    }
-
-    @Override
-    public Object getParameterValue(String key) {
-        return threshold;
-    }
-
-    @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
 		SeqSpan span = ss.getSpan(bioseq);
-        if((span.getMax() - span.getMin()) < threshold)
+        if((span.getMax() - span.getMin()) < threshold.get()){
             return false;
-        else
+		} else {
             return true;
+		}
     }
 }

@@ -55,7 +55,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	public static final boolean default_topHatStyleFlanking = false;
 	
 	private static final SymmetryFilterI noIntronFilter = new NoIntronFilter();
-    private static final SymmetryFilterI childThresholdFilter = new ChildThresholdFilter();
+    private static final ChildThresholdFilter childThresholdFilter = new ChildThresholdFilter();
     private static final SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
     
     private int threshold;
@@ -198,7 +198,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         List<Integer> childIntronIndices = new ArrayList<Integer>();
         int childCount = sym.getChildCount();
 		int flanksLength[] = new int[2];
-        childThresholdFilter.setParameterValue(null, threshold);
+        childThresholdFilter.setParameterValue(childThresholdFilter.getParametersType().entrySet().iterator().next().getKey(), threshold);
         for(int i=0;i<childCount - 1;i++){
             if(childThresholdFilter.filterSymmetry(bioseq, sym.getChild(i)) && childThresholdFilter.filterSymmetry(bioseq, sym.getChild(i+1))){
                 childIntronIndices.add(i);

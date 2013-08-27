@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.filter.AbstractFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -65,9 +66,9 @@ public class FilterOperator implements Operator, IParameters {
 
 	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
-		if (parms.size() == 1 && parms.get(filter.getName()) instanceof String) {
-			filter.setParameterValue(null, parms.get(filter.getName()));
-			return true;
+		if(filter instanceof AbstractFilter) {
+			AbstractFilter absFilter = (AbstractFilter)filter;
+			return absFilter.setParametersValue(parms);
 		}
 		return false;
 	}

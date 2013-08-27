@@ -15,7 +15,7 @@ public class UniqueLocationFilter extends AbstractFilter {
 
     @Override
     public String getName() {
-        return "Bam Unique Location";
+        return "Single Mapper";
     }
 
 	@Override
@@ -23,16 +23,6 @@ public class UniqueLocationFilter extends AbstractFilter {
 		return getName();
 	}
 	
-    @Override
-    public boolean setParameterValue(String key, Object o) {
-        return false;
-    }
-
-    @Override
-    public Object getParameterValue(String key) {
-        return null;
-    }
-
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
         if (!(ss instanceof BAMSym)) {

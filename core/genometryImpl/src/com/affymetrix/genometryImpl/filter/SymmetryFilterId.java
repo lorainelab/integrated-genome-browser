@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.Parameter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -9,10 +10,27 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class SymmetryFilterId extends AbstractFilter {
-	private Object param;
+	private final static String REGEX = "regex";
+	private final static String DEFAULT_REGEX = "*";
+	
+    private Parameter<String> regexString = new Parameter<String>(DEFAULT_REGEX) {
+		
+		@Override
+		public boolean set(Object e){
+			super.set(e);
+			regex = getRegex((String)e);
+			return regex != null;
+		}
+	};
+	
 	private Pattern regex;
 	private String match;
 
+	public SymmetryFilterId(){
+		super();
+		parameters.addParameter(REGEX, String.class, regexString);
+	}
+	
 	@Override
 	public String getName() {
 		return "id";
@@ -23,21 +41,6 @@ public class SymmetryFilterId extends AbstractFilter {
 		return getName();
 	}
 	
-	@Override
-	public Object getParameterValue(String key) {
-		return param;
-	}
-
-	@Override
-	public boolean setParameterValue(String key, Object param) {
-		this.param = param;
-		if (param.getClass() != String.class) {
-			return false;
-		}
-		regex = getRegex((String)param);
-		return regex != null;
-	}
-
 	@Override
 	public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym) {
 		boolean passes = false;

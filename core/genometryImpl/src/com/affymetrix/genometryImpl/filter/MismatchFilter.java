@@ -22,16 +22,6 @@ public class MismatchFilter extends AbstractFilter {
 	}
 	
     @Override
-    public boolean setParameterValue(String key, Object o) {
-        return false;
-    }
-
-    @Override
-    public Object getParameterValue(String key) {
-        return null;
-    }
-
-    @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
 		boolean filter = true;
 		int child_count = ss.getChildCount();

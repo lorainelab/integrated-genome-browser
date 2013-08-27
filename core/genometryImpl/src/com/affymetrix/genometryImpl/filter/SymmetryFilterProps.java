@@ -8,14 +8,32 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 public class SymmetryFilterProps extends AbstractFilter{
-	private Object param;
+	private final static String REGEX = "regex";
+	private final static String DEFAULT_REGEX = "*";
+	
+    private Parameter<String> regexString = new Parameter<String>(DEFAULT_REGEX) {
+		
+		@Override
+		public boolean set(Object e){
+			super.set(e);
+			regex = getRegex((String)e);
+			return regex != null;
+		}
+	};
+	
 	private Pattern regex;
 	private String match;
 
+	public SymmetryFilterProps(){
+		super();
+		parameters.addParameter(REGEX, String.class, regexString);
+	}
+	
 	@Override
 	public String getName() {
 		return "properties";
@@ -26,21 +44,6 @@ public class SymmetryFilterProps extends AbstractFilter{
 		return getName();
 	}
 	
-	@Override
-	public Object getParameterValue(String key) {
-		return param;
-	}
-
-	@Override
-	public boolean setParameterValue(String key, Object param) {
-		this.param = param;
-		if (param.getClass() != String.class) {
-			return false;
-		}
-		regex = getRegex((String)param);
-		return regex != null;
-	}
-
 	@Override
 	public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym) {
 		boolean passes = false;

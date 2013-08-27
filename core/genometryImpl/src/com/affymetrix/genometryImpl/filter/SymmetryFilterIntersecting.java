@@ -2,6 +2,7 @@
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -13,9 +14,17 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
  * @author hiralv
  */
 public class SymmetryFilterIntersecting extends AbstractFilter{
-	private Object param;
-	private SeqSymmetry original_sym;
 	private final MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
+	
+	private final static String SEQSYMMETRY = "seqsymmetry";
+	private final static SeqSymmetry DEFAULT_SEQSYMMETRY = null;
+	
+    private Parameter<SeqSymmetry> original_sym = new Parameter<SeqSymmetry>(DEFAULT_SEQSYMMETRY);
+			
+	public SymmetryFilterIntersecting(){
+		super();
+		parameters.addParameter(SEQSYMMETRY, SeqSymmetry.class, original_sym);
+	}
 	
 	public String getName() {
 		return "existing";
@@ -26,20 +35,6 @@ public class SymmetryFilterIntersecting extends AbstractFilter{
 		return getName();
 	}
 	
-	public boolean setParameterValue(String key, Object param) {
-		this.param = param;
-		if(!(param instanceof SeqSymmetry)){
-			return false;
-		}
-		
-		original_sym = (SeqSymmetry)param;
-		return true;
-	}
-
-	public Object getParameterValue(String key) {
-		return param;
-	}
-
 	public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym) {
 		/**
 		* Since GraphSym is only SeqSymmetry containing all points.
@@ -53,7 +48,7 @@ public class SymmetryFilterIntersecting extends AbstractFilter{
 		
 		dummySym.clear();
 		
-		return !SeqUtils.intersection(sym, original_sym, dummySym, seq);
+		return !SeqUtils.intersection(sym, original_sym.get(), dummySym, seq);
 	}
 	
 }

@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import java.util.BitSet;
@@ -19,6 +20,11 @@ public class MismatchFilter extends AbstractFilter {
 	@Override
 	public String getDisplay() {
 		return getName();
+	}
+	
+	@Override
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){
+		return fileTypeCategory == FileTypeCategory.Alignment;
 	}
 	
     @Override

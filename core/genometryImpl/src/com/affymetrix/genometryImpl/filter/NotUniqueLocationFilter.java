@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
@@ -18,6 +19,11 @@ public class NotUniqueLocationFilter extends AbstractFilter {
 	@Override
 	public String getDisplay() {
 		return getName();
+	}
+	
+	@Override
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){
+		return fileTypeCategory == FileTypeCategory.Alignment;
 	}
 	
     @Override

@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.Parameters;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import java.util.Map;
 
 /**
@@ -33,6 +34,11 @@ public abstract class AbstractFilter implements SymmetryFilterI, IParameters {
 	@Override
 	public Object getParameterValue(String key) {
 		return parameters.getParameterValue(key);
+	}
+	
+	@Override
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){
+		return true;
 	}
 	
 	@Override

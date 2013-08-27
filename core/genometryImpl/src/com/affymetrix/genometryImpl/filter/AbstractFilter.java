@@ -37,8 +37,10 @@ public abstract class AbstractFilter implements SymmetryFilterI, IParameters {
 	}
 	
 	@Override
-	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){
-		return true;
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory) {
+		return fileTypeCategory == FileTypeCategory.Annotation 
+				|| fileTypeCategory == FileTypeCategory.Alignment
+				|| fileTypeCategory == FileTypeCategory.ProbeSet;
 	}
 	
 	@Override

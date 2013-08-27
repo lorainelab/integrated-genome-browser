@@ -57,11 +57,15 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	 * Creates the reusable dialog.
 	 */
 	public ConfigureOptionsDialog(Class clazz, String label) {
-		super((Frame) null, true);
-		init(clazz, label);
+		this(clazz, label, null);
 	}
 
-	private void init(Class clazz, String label) throws SecurityException {
+	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter) {
+		super((Frame) null, true);
+		init(clazz, label, filter);
+	}
+	
+	private void init(Class clazz, String label, Filter<T> filter) throws SecurityException {
 		JPanel pan = new JPanel();
 		pan.setLayout(new BorderLayout());
 
@@ -79,12 +83,17 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		comboBox = new JComboBox();
-		TreeSet<T> colorProviders = new TreeSet<T>(new IDComparator());
-		colorProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
 		name2CP = new HashMap<String, T>();
 
 		comboBox.addItem("None");
-		for (T cp : colorProviders) {
+		TreeSet<T> tProviders = new TreeSet<T>(new IDComparator());
+		tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
+		for (T cp : tProviders) {
+			if(filter != null){
+				if(!filter.shouldInclude(cp)){
+					continue;
+				}
+			}
 			name2CP.put(cp.getDisplay(), cp);
 			comboBox.addItem(cp.getDisplay());
 		}
@@ -314,5 +323,13 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	
 	public Object getValue(){
 		return optionPane.getValue();
+	}
+
+	/**
+	 * Interface to filter out available 
+	 * @param <T> 
+	 */
+	public static interface Filter<T> {
+		public boolean shouldInclude(T t);
 	}
 }

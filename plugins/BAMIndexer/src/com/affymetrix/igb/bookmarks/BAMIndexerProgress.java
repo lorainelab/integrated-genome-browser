@@ -85,6 +85,12 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     public BAMIndexerProgress() throws Exception {
         this(null, null);
     }
+	
+	public void cancel(){
+		this.updateTitle("Canceled. You may now close the window.");
+		this.updateStatus("canceled");
+		this.jButton1.setText("Close");
+	}
 
     /**
      * Creates new form BAMIndexerFrame

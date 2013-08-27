@@ -37,6 +37,7 @@ public class LoadSessionAction extends GenericAction {
 		this.igbService = igbService;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		JFileChooser chooser = PreferenceUtils.getJFileChooser();

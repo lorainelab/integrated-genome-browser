@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * This class is used to filter the given symmetry based on its span length 
  * with the threshold value of the filter this is used in FindJunctionOperator class
  */
-public class ChildThresholdFilter extends AbstractFilter{
+public class ChildThresholdFilter extends SymmetryFilter{
 	private final static String THRESHOLD = "threshold";
 	private final static int DEFAULT_THRESHOLD = 5;
 	

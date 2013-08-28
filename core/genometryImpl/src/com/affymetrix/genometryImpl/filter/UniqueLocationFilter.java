@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * This class is used to filter out the non-unique BAM symmetries
  * 
  */
-public class UniqueLocationFilter extends AbstractFilter {
+public class UniqueLocationFilter extends SymmetryFilter {
 
     @Override
     public String getName() {

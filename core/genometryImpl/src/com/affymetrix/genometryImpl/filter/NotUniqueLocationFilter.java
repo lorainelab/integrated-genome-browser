@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  *
  * @author hiralv
  */
-public class NotUniqueLocationFilter extends AbstractFilter {
+public class NotUniqueLocationFilter extends SymmetryFilter {
 
     @Override
     public String getName() {

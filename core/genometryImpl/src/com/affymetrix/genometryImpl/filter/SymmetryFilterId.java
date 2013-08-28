@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public class SymmetryFilterId extends AbstractFilter {
+public class SymmetryFilterId extends SymmetryFilter {
 	private final static String REGEX = "regex";
 	private final static String DEFAULT_REGEX = "*";
 	

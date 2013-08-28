@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
-public class SymmetryFilterProps extends AbstractFilter{
+public class SymmetryFilterProps extends SymmetryFilter{
 	private final static String REGEX = "regex";
 	private final static String DEFAULT_REGEX = "*";
 	

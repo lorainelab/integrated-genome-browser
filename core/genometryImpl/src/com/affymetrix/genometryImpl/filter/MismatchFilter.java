@@ -10,7 +10,7 @@ import java.util.BitSet;
  *
  * @author hiralv
  */
-public class MismatchFilter extends AbstractFilter {
+public class MismatchFilter extends SymmetryFilter {
 	
 	@Override
     public String getName() {

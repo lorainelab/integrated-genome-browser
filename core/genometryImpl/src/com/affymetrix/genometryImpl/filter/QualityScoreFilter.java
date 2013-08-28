@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
  *
  * @author hiralv
  */
-public class QualityScoreFilter extends AbstractFilter {
+public class QualityScoreFilter extends SymmetryFilter {
 	private final static String AVG_QUALITY_SCORE = "average_quality";
 	private final static int DEFAULT_AVG_QUALITY_SCORE = 30;
 	

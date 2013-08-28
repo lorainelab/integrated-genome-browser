@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
  * Filters out symmetry that intersects with provided symmetry as parameter.
  * @author hiralv
  */
-public class SymmetryFilterIntersecting extends AbstractFilter{
+public class SymmetryFilterIntersecting extends SymmetryFilter{
 	private final MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
 	
 	private final static String SEQSYMMETRY = "seqsymmetry";

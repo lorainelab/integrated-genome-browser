@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.filter.AbstractFilter;
+import com.affymetrix.genometryImpl.filter.SymmetryFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
@@ -49,8 +49,8 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 
 	@Override
 	public String checkInput(String search_text, BioSeq vseq, String seq) {
-		if(filter instanceof AbstractFilter) {
-			AbstractFilter absFilter = (AbstractFilter)filter;
+		if(filter instanceof SymmetryFilter) {
+			SymmetryFilter absFilter = (SymmetryFilter)filter;
 			return absFilter.setParameterValue(absFilter.getParametersType().entrySet().iterator().next().getKey(), search_text) ? 
 					null : "Error setting param " + search_text;
 		}
@@ -61,10 +61,10 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	public List<SeqSymmetry> search(String search_text, BioSeq chrFilter,
 			IStatus statusHolder, boolean option) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		if (filter instanceof AbstractFilter && 
-				!search_text.equals(((AbstractFilter)filter).getParameterValue(((AbstractFilter)filter).getParametersType().entrySet().iterator().next().getKey()))) {
+		if (filter instanceof SymmetryFilter && 
+				!search_text.equals(((SymmetryFilter)filter).getParameterValue(((SymmetryFilter)filter).getParametersType().entrySet().iterator().next().getKey()))) {
 			throw new IllegalStateException("filter value changed from " + 
-					((AbstractFilter)filter).getParameterValue(((AbstractFilter)filter).getParametersType().entrySet().iterator().next().getKey()) + " to " + search_text);
+					((SymmetryFilter)filter).getParameterValue(((SymmetryFilter)filter).getParametersType().entrySet().iterator().next().getKey()) + " to " + search_text);
 		}
 		List<Glyph> glyphs = igbService.getAllTierGlyphs();
 		for (Glyph selectedTierGlyph : glyphs) {
@@ -97,10 +97,10 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	
 	@Override
 	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot trackSym) {
-		if (filter instanceof AbstractFilter && 
-				!search_text.equals(((AbstractFilter)filter).getParameterValue(((AbstractFilter)filter).getParametersType().entrySet().iterator().next().getKey()))) {
+		if (filter instanceof SymmetryFilter && 
+				!search_text.equals(((SymmetryFilter)filter).getParameterValue(((SymmetryFilter)filter).getParametersType().entrySet().iterator().next().getKey()))) {
 			throw new IllegalStateException("filter value changed from " + 
-					((AbstractFilter)filter).getParameterValue(((AbstractFilter)filter).getParametersType().entrySet().iterator().next().getKey()) + " to " + search_text);
+					((SymmetryFilter)filter).getParameterValue(((SymmetryFilter)filter).getParametersType().entrySet().iterator().next().getKey()) + " to " + search_text);
 		}
 		List<SeqSymmetry> results = searchSym(trackSym);
 		return results;

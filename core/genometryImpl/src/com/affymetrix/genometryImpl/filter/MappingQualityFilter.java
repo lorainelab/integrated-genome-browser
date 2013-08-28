@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  *
  * @author hiralv
  */
-public class MappingQualityFilter extends AbstractFilter {
+public class MappingQualityFilter extends SymmetryFilter {
 	private final static String MIN_QUALITY_SCORE = "minimum_quality";
 	private final static int DEFAULT_MIN_QUALITY_SCORE = 30;
 	

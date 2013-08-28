@@ -61,7 +61,6 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
-import java.beans.PropertyChangeListener;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -2578,6 +2577,24 @@ public class SeqMapView extends JPanel
 		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
 		updateSpan(glyph, sym);
 		
+		for(int i=0; i<sym.getChildCount(); i++){
+			SeqSymmetry child = sym.getChild(i);
+			glyph = getSeqMap().getItemFromTier(child);
+			coordBox = glyph.getCoordBox();
+			if (child != null && start > coordBox.x) {
+				end = (int) (coordBox.x + coordBox.width);
+				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+				updateSpan(glyph, child);
+			}
+		}
+		
+		if (sym instanceof SimpleSymWithPropsWithCdsSpan){
+			SeqSpan span = ((SimpleSymWithPropsWithCdsSpan)sym).getCdsSpan();
+			if(start > span.getMin()){
+				updateCdsStart(start, sym, false);
+			}
+		} 
+		
 		if (sym instanceof CdsSeqSymmetry) {
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
 			SeqSymmetry child = parentSym.getChild(0);
@@ -2617,6 +2634,24 @@ public class SeqMapView extends JPanel
 		int max = Math.max(start, end);
 		glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
 		updateSpan(glyph, sym);
+		
+		for(int i=0; i<sym.getChildCount(); i++){
+			SeqSymmetry child = sym.getChild(i);
+			glyph = getSeqMap().getItemFromTier(child);
+			coordBox = glyph.getCoordBox();
+			if (child != null && coordBox.x + coordBox.width > end) {
+				start = (int) coordBox.x;
+				glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
+				updateSpan(glyph, child);
+			}
+		}
+		
+		if (sym instanceof SimpleSymWithPropsWithCdsSpan){
+			SeqSpan span = ((SimpleSymWithPropsWithCdsSpan)sym).getCdsSpan();
+			if(end < span.getMax()){
+				updateCdsEnd(end, sym, false);
+			}
+		} 
 		
 		if (sym instanceof CdsSeqSymmetry) {
 			SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();

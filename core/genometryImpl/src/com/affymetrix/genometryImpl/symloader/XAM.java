@@ -137,7 +137,7 @@ public abstract class XAM extends SymLoader {
 	 * @return SimpleSymWithProps
 	 */
 	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth) {
-		SymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, meth, true, false);
+		SymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, meth, true, true);
 		addAllSAMRecordProperties(sym, sr);
 		return sym;
 	}

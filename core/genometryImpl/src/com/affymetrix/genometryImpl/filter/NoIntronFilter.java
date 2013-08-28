@@ -11,13 +11,8 @@ public class NoIntronFilter extends AbstractFilter {
 
     @Override
     public String getName() {
-        return "No Intron";
+        return "no_intron";
     }
-
-	@Override
-	public String getDisplay() {
-		return getName();
-	}
 	
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {

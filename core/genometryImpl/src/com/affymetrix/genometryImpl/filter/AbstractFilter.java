@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.filter;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.Parameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -34,6 +35,11 @@ public abstract class AbstractFilter implements SymmetryFilterI, IParameters {
 	@Override
 	public Object getParameterValue(String key) {
 		return parameters.getParameterValue(key);
+	}
+	
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("filter_" + getName());
 	}
 	
 	@Override

@@ -16,14 +16,9 @@ public class UniqueLocationFilter extends AbstractFilter {
 
     @Override
     public String getName() {
-        return "Single Mapper";
+        return "single_mapper";
     }
 
-	@Override
-	public String getDisplay() {
-		return getName();
-	}
-	
 	@Override
 	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){
 		return fileTypeCategory == FileTypeCategory.Alignment;

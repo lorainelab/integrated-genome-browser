@@ -14,13 +14,8 @@ public class MismatchFilter extends AbstractFilter {
 	
 	@Override
     public String getName() {
-        return "Mismatch";
+        return "mismatch";
     }
-
-	@Override
-	public String getDisplay() {
-		return getName();
-	}
 	
 	@Override
 	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){

@@ -23,13 +23,8 @@ public class MappingQualityFilter extends AbstractFilter {
 	
 	@Override
     public String getName() {
-        return "Mapping Quality Score";
+        return "mapping_quality_score";
     }
-
-	@Override
-	public String getDisplay() {
-		return getName();
-	}
 	
 	@Override
 	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){

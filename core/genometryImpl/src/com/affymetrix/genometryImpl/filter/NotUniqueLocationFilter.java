@@ -13,13 +13,8 @@ public class NotUniqueLocationFilter extends AbstractFilter {
 
     @Override
     public String getName() {
-        return "Multi Mapper";
+        return "multi_mapper";
     }
-
-	@Override
-	public String getDisplay() {
-		return getName();
-	}
 	
 	@Override
 	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){

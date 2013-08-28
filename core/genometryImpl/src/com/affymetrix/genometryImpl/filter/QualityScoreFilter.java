@@ -23,13 +23,8 @@ public class QualityScoreFilter extends AbstractFilter {
 	
 	@Override
     public String getName() {
-        return "Average Quality Score";
+        return "quality_score";
     }
-
-	@Override
-	public String getDisplay() {
-		return getName();
-	}
 	
 	@Override
 	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory){

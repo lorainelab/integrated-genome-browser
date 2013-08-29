@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NCBIBlast
 Bundle-SymbolicName: com.affymetrix.igb.NCBIBlast
-Bundle-Version: 7.0.3
+Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.bookmarks.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-Bookmarks
-Import-Package: com.affymetrix.common;version="[7.0.3,7.0.3]",
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.event,

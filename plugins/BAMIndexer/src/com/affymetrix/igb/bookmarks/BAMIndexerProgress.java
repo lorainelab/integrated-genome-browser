@@ -65,7 +65,7 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
         }
         if (jProgressBar1.getValue() >= this.max) {
 			this.jButton1.setText("Close");  
-            this.updateProgressBarMessage("");
+            this.updateProgressBarMessage("No Errors");
 			this.updateTitle("Completed");
 			this.updateStatus("OK to close");
 			          
@@ -85,7 +85,6 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
 
     public void updateStatus(Object... args) {
         String message = DEBUG(args).trim();
-        jProgressBar1.setString(message);
         this.jLabel2.setText(message);
     }
 

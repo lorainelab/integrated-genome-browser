@@ -263,9 +263,10 @@ public class BAMIndexer {
 	 return foos;
 	 }*/
 	public static void main(String[] args) throws Exception {
-		boolean unitTest=false;
-		if(args!=null && args.length>=1 && args[0].equalsIgnoreCase("test"))
-			unitTest=true;
+		boolean unitTest = false;
+		if (args != null && args.length >= 1 && args[0].equalsIgnoreCase("test")) {
+			unitTest = true;
+		}
 		if (unitTest) {
 			new BAMIndexer(new File("/Users/ktsuttle/Workspace/BAMIndexer/test/untitled folder/aligned.sorted.bam"));
 		} else {
@@ -282,8 +283,8 @@ public class BAMIndexer {
 
 	public static int getERRORcount(boolean reset) {
 		int tmp = ERRORcount;
-		if(reset){
-		ERRORcount = 0;
+		if (reset) {
+			ERRORcount = 0;
 		}
 		return tmp;
 	}
@@ -474,9 +475,14 @@ public class BAMIndexer {
 					sortedFile.delete();
 				}
 				DEBUG("Creating new sorted BAM file -> ", sortedFile.getName());
-				String[] sortCommand = new String[]{"INPUT=" + bamFile.getAbsolutePath(), "OUTPUT=" + sortedFile.getAbsolutePath(), "SORT_ORDER=" + "coordinate"};
-				SortSam sortSam = new SortSam();
-				sortSam.instanceMain(sortCommand);
+				try {
+					String[] sortCommand = new String[]{"INPUT=" + bamFile.getAbsolutePath(), "OUTPUT=" + sortedFile.getAbsolutePath(), "SORT_ORDER=" + "coordinate"};
+					SortSam sortSam = new SortSam();
+					sortSam.instanceMain(sortCommand);
+				} catch (Exception e) {
+					ERROR(mainGUI, "Error while sorting " + bamFile.getName(), e);
+					continue;
+				}
 
 			}
 
@@ -486,19 +492,25 @@ public class BAMIndexer {
 			//create index
 			File unindexedFile = (sortedFile == null) ? bamFile : sortedFile;
 			//FINALLY! do the index build
-			String[] indexCommand = new String[]{"INPUT=" + unindexedFile.getAbsolutePath(), "OUTPUT=" + indexFile.getAbsolutePath(), "QUIET=" + !Debug};
-			BuildBamIndex buildIndex = new BuildBamIndex();
-			buildIndex.instanceMain(indexCommand);
+			try {
+				String[] indexCommand = new String[]{"INPUT=" + unindexedFile.getAbsolutePath(), "OUTPUT=" + indexFile.getAbsolutePath(), "QUIET=" + !Debug};
+				BuildBamIndex buildIndex = new BuildBamIndex();
+				buildIndex.instanceMain(indexCommand);
+			} catch (Exception e) {
+				ERROR(mainGUI, "Error while indexing " + unindexedFile.getName(), e);
+				continue;
+			}
+
 			mainGUI.finishedTask();
 			if (cancelOperations) {
 				mainGUI.cancel();
 				return bamFiles;
 			}
 		}
-		
-		
-		int errors=getERRORcount();
-		if (errors!=0) {
+
+
+		int errors = getERRORcount();
+		if (errors != 0) {
 			this.mainGUI.updateProgressBarMessage("There were " + errors + "errors.");
 			this.mainGUI.updateStatus("check the console for errors");
 		}

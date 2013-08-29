@@ -4,6 +4,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.action.ShowConsoleAction;
 import static com.affymetrix.igb.bookmarks.BAMIndexer.CAT;
 import static com.affymetrix.igb.bookmarks.BAMIndexer.DEBUG;
 import java.util.Arrays;
@@ -183,7 +184,7 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
 		if (message.equalsIgnoreCase("close")) {
             this.dispose();
         } else if (message.equalsIgnoreCase("log")){
-		
+			ShowConsoleAction.getAction().actionPerformed(evt);
 		}else{
             backend.cancel();
             this.dispose();

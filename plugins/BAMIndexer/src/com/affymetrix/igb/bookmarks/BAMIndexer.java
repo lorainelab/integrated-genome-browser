@@ -39,6 +39,7 @@ public class BAMIndexer {
 	static boolean Debug = true;
 	static int printTabs = 0;
 	public static StringBuilder sb = new StringBuilder();
+	private static int ERRORcount;
 
 	public static String DEBUG(Object... args) {
 		if (!Debug) {
@@ -46,7 +47,43 @@ public class BAMIndexer {
 		}
 		return SystemIO(System.err, args);
 	}
-	private boolean cancelOperations=false;
+	private boolean cancelOperations = false;
+	private int errorCount;
+
+	private EnumMap<opt, Object> checkSortFlag(File bamFile, EnumMap<opt, Object> option) {
+		if (option.get(opt.SortType) != null) {
+			return option;
+		}
+		mainGUI.updateStatus("Checking sort type...");
+		DEBUG(TAB.RIGHT, "Header");
+		//TODO check for sorted flag. see http://gatkforums.broadinstitute.org/discussion/1317/collected-faqs-about-bam-files
+		SAMFileReader sfReader = new SAMFileReader(bamFile);
+		SAMFileHeader sfHeader = sfReader.getFileHeader();
+		Set<Map.Entry<String, String>> attributes = sfHeader.getAttributes();
+		String sortType = null;
+		for (Map.Entry<String, String> attr : attributes) {
+			if (attr.getKey().equalsIgnoreCase("SO")) {
+				sortType = attr.getValue();
+				break;
+			}
+		}
+		DEBUG(TAB.ONCE, "SO:", sortType);
+		option.put(opt.SortType, sortType);
+
+		if (sortType == null || sortType.isEmpty() || !sortType.equalsIgnoreCase("coordinate")) {
+			int dialog = JOptionPane.showConfirmDialog(mainGUI, "BAM file \"" + bamFile.getName() + "\" does not appear to be coordinate sorted.\nIndex files can be created for sorted files only.\nWould you like to create a new, coordinate sorted copy of the file? \n Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size.", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+
+			if (dialog == JOptionPane.YES_OPTION) {
+				option.put(opt.DoSort, true);
+			} else if (dialog == JOptionPane.CANCEL_OPTION) {
+				throw new CancellationException("User canceled");
+			}
+
+		} else {
+			option.put(opt.DoSort, false); //nothing needs to be sorted
+		}
+		return option;
+	}
 
 	static class BAMIndexAction extends GenericAction {
 
@@ -226,7 +263,9 @@ public class BAMIndexer {
 	 return foos;
 	 }*/
 	public static void main(String[] args) throws Exception {
-		boolean unitTest = false;
+		boolean unitTest=false;
+		if(args!=null && args.length>=1 && args[0].equalsIgnoreCase("test"))
+			unitTest=true;
 		if (unitTest) {
 			new BAMIndexer(new File("/Users/ktsuttle/Workspace/BAMIndexer/test/untitled folder/aligned.sorted.bam"));
 		} else {
@@ -238,6 +277,19 @@ public class BAMIndexer {
 		ErrorHandler.errorPanel(message, e, Level.SEVERE);
 		Logger.getLogger(BAMIndexer.class.getName()).log(Level.WARNING, message, e);
 		JOptionPane.showMessageDialog(panel, message + "\n" + e.getLocalizedMessage());
+		ERRORcount++;
+	}
+
+	public static int getERRORcount(boolean reset) {
+		int tmp = ERRORcount;
+		if(reset){
+		ERRORcount = 0;
+		}
+		return tmp;
+	}
+
+	public static int getERRORcount() {
+		return getERRORcount(false);
 	}
 
 	BAMIndexer() throws Exception {
@@ -279,7 +331,7 @@ public class BAMIndexer {
 			ERROR(mainGUI, "Canceled BAMIndexer operations ", e);
 		}
 
-		mainGUI.updateTitle("BAMIndexer complete!");
+		mainGUI.isDone(true); //force done messages
 	}
 
 	/**
@@ -296,17 +348,21 @@ public class BAMIndexer {
 	 * @throws Exception
 	 */
 	public List<File> createIndexFiles(List<File> bamFiles) throws Exception {
-		//if their is no work to be done then exit out quick
+		//if theres no work to be done then exit out quick
 		if (bamFiles == null || bamFiles.isEmpty()) {
 			return bamFiles;
 		}
+
+		//////////////////////
+		//INIT
 		//create options hash map so we can ask all the questions to the user before doing indexes
 		HashMap<String, EnumMap<opt, Object>> options = new HashMap<String, EnumMap<opt, Object>>();
 		EnumMap<opt, Object> option = null; //option map per file
-
+		// location for our .bai file
 		File indexFile = null; //index output file object
 
-
+		/////////////////////
+		//First loop to check all the files before processing
 		//go ahead and check all the files before doing any operations
 		//this way the user can make all decisions before running the batch
 		mainGUI.updateTitle("Checking files...");
@@ -314,37 +370,49 @@ public class BAMIndexer {
 		for (File bamFile : bamFiles) {
 			mainGUI.updateStatus(bamFile.getName());
 
-			//save previous options
-			if (option != null) {
+			//save options from last iteration (last file)
+			if (option != null) { //skip the first iteration
 				options.put(bamFile.getName(), option);
 			}
 			option = new EnumMap<opt, Object>(opt.class);
 
 			//default options
-			option.put(opt.DoesIndexExist, false);
-			option.put(opt.Skip, false);
-			option.put(opt.SortType, null);
+			option.put(opt.DoesIndexExist, false); //boolean
+			option.put(opt.Skip, false); //boolean
+			option.put(opt.SortType, null); //set to null or a string
+			option.put(opt.DoSort, false); //boolean
 
 			//attempt to create a tmp file object
 			try {
 				//create index file object holder
-				indexFile = new File(bamFile.getAbsolutePath() + ".bai");
+				indexFile = new File(bamFile.getAbsolutePath() + ".bai"); //ex: fileName.bam.bai
 			} catch (Exception e) {
 				ERROR(mainGUI, "Unable to create index file. Check logger for error thrown", e);
 				option.put(opt.Skip, true);
 				continue;
 			}
-			//save the index file to the options
-			option.put(opt.Index, indexFile);
+			option.put(opt.Index, indexFile.getAbsolutePath()); //save the index file to the options
 
+			//Now see if we have a file named fileName.bai NOTE: not official ext but accepted in the community
+			File altIndexName = new File(removeExtension(bamFile.getAbsolutePath()) + ".bai");
+			if (altIndexName.exists()) {
+				if (!indexFile.exists()) {
+					JOptionPane.showMessageDialog(mainGUI, ""
+							+ "Index file \"" + altIndexName.getName() + "\" exists. Renaming to " + indexFile.getName());
+					option.put(opt.DoesIndexExist, true);
+					altIndexName.renameTo(indexFile);
+				} else {
+					JOptionPane.showMessageDialog(mainGUI, ""
+							+ "Index file \"" + altIndexName.getName() + "\" and " + indexFile.getName() + " exists. This indexing utility will use " + indexFile.getName());
+				}
+			}
 
 			//See if the file exists and if the user wants to over write it
-			if (indexFile.exists()) {
+			if (indexFile.exists()) { //check to see if fileName.bam.bai exists
 				int dialog = JOptionPane.showConfirmDialog(mainGUI, "Index file \"" + indexFile.getName() + "\" exists.\n Would you like to overwrite it?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
 				if (dialog == JOptionPane.NO_OPTION) {
 					//user does not want to overwrite this file. Keep the file on disk and set output as null
 					ErrorHandler.errorPanel("Unable to create \"" + indexFile.getName() + "\" because user does not wish to overwrite the current file on disk");
-					option.put(opt.Skip, true);
 					option.put(opt.DoesIndexExist, true);
 					continue;
 				} else if (dialog == JOptionPane.YES_OPTION) {
@@ -355,40 +423,31 @@ public class BAMIndexer {
 				}
 			}
 
-			DEBUG(TAB.RIGHT, "Header");
-			//TODO check for sorted flag. see http://gatkforums.broadinstitute.org/discussion/1317/collected-faqs-about-bam-files
-			SAMFileReader sfReader = new SAMFileReader(bamFile);
-			SAMFileHeader sfHeader = sfReader.getFileHeader();
-			Set<Map.Entry<String, String>> attributes = sfHeader.getAttributes();
-			String sortType = null;
-			for (Map.Entry<String, String> attr : attributes) {
-				if (attr.getKey().equalsIgnoreCase("SO")) {
-					sortType = attr.getValue();
-					break;
-				}
-			}
-			DEBUG(TAB.ONCE, "SO:", sortType);
-			option.put(opt.SortType, sortType);
+
+
+			checkSortFlag(bamFile, option);
 			//do not do work yet. Save it for the next iteration
 			//option is saved into options on the next iteration or after the loop on the last one
 			//it is done this way so that we can use continue safely within the loop.
 			mainGUI.finishedTask();
-			if(cancelOperations){
+			if (cancelOperations) {
 				mainGUI.cancel();
 				return bamFiles;
 			}
 		} //END FOR
 		options.put(bamFiles.get(bamFiles.size() - 1).getName(), option); //save last options
 
-
-		mainGUI.updateTitle("Processing Files...");
+		//////////////
+		//Second loop that actually does all the processing
+		mainGUI.updateTitle("Processing Files... ");
+		mainGUI.updateProgressBarMessage("You may leave this window running unattended");
 		mainGUI.setNewTasks(bamFiles.size());
 		//File operations will be done in this loop
 		for (File bamFile : bamFiles) {
 			mainGUI.updateStatus(bamFile.getName());
 			//load options back
 			option = options.get(bamFile.getName());
-			indexFile = (File) option.get(opt.Index);
+			indexFile = new File((String) option.get(opt.Index));
 
 			//if we should skip it then do so
 			if ((Boolean) option.get(opt.Skip)) {
@@ -398,8 +457,9 @@ public class BAMIndexer {
 
 			//Sort the file if needed
 			File sortedFile = null;
-			if (option.get(opt.SortType) == null) {
-				int dialog = JOptionPane.showConfirmDialog(mainGUI, "BAM file \"" + bamFile.getName() + "\" does not appear to be sorted.\nIndex files can be created for sorted files only.\nWould you like to create a new, coordinate sorted copy of the file? \n Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size.", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+			String sortType = (String) option.get(opt.SortType);
+			if (sortType == null && (Boolean) option.get(opt.DoSort)) {
+
 
 				String fileName = removeExtension(bamFile.getAbsolutePath());
 				String nameFlag = ".sorted";
@@ -413,15 +473,11 @@ public class BAMIndexer {
 				if (sortedFile.exists()) {
 					sortedFile.delete();
 				}
+				DEBUG("Creating new sorted BAM file -> ", sortedFile.getName());
+				String[] sortCommand = new String[]{"INPUT=" + bamFile.getAbsolutePath(), "OUTPUT=" + sortedFile.getAbsolutePath(), "SORT_ORDER=" + "coordinate"};
+				SortSam sortSam = new SortSam();
+				sortSam.instanceMain(sortCommand);
 
-				if (dialog == JOptionPane.YES_OPTION) {
-					DEBUG("Creating new sorted BAM file -> ", sortedFile.getName());
-					String[] sortCommand = new String[]{"INPUT=" + bamFile.getAbsolutePath(), "OUTPUT=" + sortedFile.getAbsolutePath(), "SORT_ORDER=" + "coordinate"};
-					SortSam sortSam = new SortSam();
-					sortSam.instanceMain(sortCommand);
-				} else if (dialog == JOptionPane.CANCEL_OPTION) {
-					throw new CancellationException("User canceled");
-				}
 			}
 
 			//Some simple debug output
@@ -434,13 +490,18 @@ public class BAMIndexer {
 			BuildBamIndex buildIndex = new BuildBamIndex();
 			buildIndex.instanceMain(indexCommand);
 			mainGUI.finishedTask();
-			if(cancelOperations){
+			if (cancelOperations) {
 				mainGUI.cancel();
 				return bamFiles;
 			}
 		}
-
-
+		
+		
+		int errors=getERRORcount();
+		if (errors!=0) {
+			this.mainGUI.updateProgressBarMessage("There were " + errors + "errors.");
+			this.mainGUI.updateStatus("check the console for errors");
+		}
 		return null;
 	}
 
@@ -453,8 +514,10 @@ public class BAMIndexer {
 	}
 
 	void cancel() {
-		this.cancelOperations=true;
+		this.cancelOperations = true;
 		mainGUI.setTitle("Canceling Operations after current file");
+
+
 	}
 
 	enum TAB {
@@ -464,6 +527,6 @@ public class BAMIndexer {
 
 	enum opt {
 
-		DoesIndexExist, Skip, SortType, Index
+		DoesIndexExist, Skip, SortType, Index, DoSort
 	}
 }

@@ -39,7 +39,7 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
             jProgressBar1.setIndeterminate(false);
         }
         jProgressBar1.setValue((int) newValue);
-        checkIsDone();
+        isDone(false);
 
     }
 
@@ -58,17 +58,27 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
         return answer;
     }
 
-    public boolean checkIsDone() {
+    public boolean isDone(boolean force) {
         if (jProgressBar1.getValue() >= sum(jobs, 0, iCompleteJobs)) {
             iCompleteJobs++;
         }
         if (jProgressBar1.getValue() >= this.max) {
-            jButton1.setText("Close");
-            jProgressBar1.setString("Complete");
-            jLabel2.setText("Complete");
+			this.jButton1.setText("Close");  
+            this.updateProgressBarMessage("");
+			this.updateTitle("Completed");
+			this.updateStatus("OK to close");
+			          
             this.repaint();
             return true;
         }
+		if(force){
+            jButton1.setText("Log");
+            this.updateProgressBarMessage("Errors exist!");
+			this.updateTitle("inComplete with errors");
+            this.updateStatus("Check the log");
+            this.repaint();
+            return true;
+		}
         return false;
     }
 
@@ -90,6 +100,7 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
 		this.updateTitle("Canceled. You may now close the window.");
 		this.updateStatus("canceled");
 		this.jButton1.setText("Close");
+		this.updateProgressBarMessage("");
 	}
 
     /**
@@ -131,6 +142,9 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jProgressBar1.setString("");
+        jProgressBar1.setStringPainted(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -165,10 +179,12 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (((JButton) evt.getSource()).getText().equalsIgnoreCase("close")) {
-            System.exit(0);
-        } else {
-            
+        String message = ((JButton) evt.getSource()).getText();
+		if (message.equalsIgnoreCase("close")) {
+            this.dispose();
+        } else if (message.equalsIgnoreCase("log")){
+		
+		}else{
             backend.cancel();
             this.dispose();
         }
@@ -238,4 +254,10 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
+
+	void updateProgressBarMessage(String message) {
+		this.jProgressBar1.setStringPainted(true);
+		this.jProgressBar1.setString(message);
+	}
+
 }

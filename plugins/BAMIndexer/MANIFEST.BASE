@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: BAMIndexer
 Bundle-SymbolicName: com.affymetrix.igb.BAMIndexer
 Bundle-Version: @appVersion@
-Bundle-Activator: com.affymetrix.igb.bookmarks.Activator
+Bundle-Activator: com.affymetrix.igb.bamindexer.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-Bookmarks
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",

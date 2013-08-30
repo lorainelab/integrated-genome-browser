@@ -119,6 +119,11 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 				g.setComposite(dac);
 			}
 		}
+		
+		if (useBaseQuality) {
+			g.setColor(this.getForegroundColor());
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
+		}
 	}
 	
 	public void setBaseQuality(String baseQuality) {

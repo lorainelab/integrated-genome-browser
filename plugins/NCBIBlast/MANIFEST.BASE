@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: NCBIBlast
 Bundle-SymbolicName: com.affymetrix.igb.NCBIBlast
 Bundle-Version: @appVersion@
-Bundle-Activator: com.affymetrix.igb.bookmarks.Activator
+Bundle-Activator: apollo.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-Bookmarks
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",

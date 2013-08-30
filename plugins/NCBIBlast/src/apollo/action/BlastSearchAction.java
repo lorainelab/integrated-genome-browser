@@ -41,7 +41,7 @@ public class BlastSearchAction extends GenericAction {
 
 	private final SeqMapViewI smv;
 	private BlastSearchAction(SeqMapViewI smv) {
-		super("NCBI Blast Search", null, null);
+		super("BLASTX nr protein database", null, null);
 		this.smv = smv;
 	}
 

@@ -276,6 +276,13 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 				selectedCP = cp;
 				if (cp instanceof IParameters) {
 					initParamPanel((IParameters) cp);
+				} else {
+					paramsPanel.removeAll();
+					ThreadUtils.runOnEventQueue(new Runnable() {
+						public void run() {
+							pack();
+						}
+					});
 				}
 			}
 		});

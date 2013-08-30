@@ -45,6 +45,7 @@
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
 		<property name="IGBScript"           value="${basedir}/plugins/IGBScript" />
 		<property name="BAMIndexer"			 value="${basedir}/plugins/BAMIndexer"/>
+		<property name="NCBIBlast"			 value="${basedir}/plugins/NCBIBlast" />
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
 
 		<!-- directory paths -->

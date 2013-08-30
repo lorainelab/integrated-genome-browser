@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
@@ -60,7 +61,9 @@ public class BlastSearchAction extends GenericAction {
 						Sequence seq = new Sequence(aseq.getID(), residues);
 						
 						RemoteBlastNCBI blast = new RemoteBlastNCBI(RemoteBlastNCBI.BlastType.blastn, new RemoteBlastNCBI.BlastOptions());
-						blast.runAnalysis(sf, seq, 1, 1);
+						String url = blast.runAnalysis(sf, seq, 1);
+						
+						GeneralUtils.browse(url);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}

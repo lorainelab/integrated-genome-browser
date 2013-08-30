@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;

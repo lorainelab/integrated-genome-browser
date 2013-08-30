@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class ImportPreferencesAction extends GenericAction {

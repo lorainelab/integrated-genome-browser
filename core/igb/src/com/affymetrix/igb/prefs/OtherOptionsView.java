@@ -1,5 +1,6 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;

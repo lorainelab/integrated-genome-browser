@@ -4,6 +4,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;

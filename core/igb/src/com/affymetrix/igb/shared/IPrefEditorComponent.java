@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.prefs;
+package com.affymetrix.igb.shared;
 
 import javax.swing.JPanel;
 

@@ -5,6 +5,8 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.shared.IPrefEditorComponent;
+
 /**
  *
  * @author lorainelab

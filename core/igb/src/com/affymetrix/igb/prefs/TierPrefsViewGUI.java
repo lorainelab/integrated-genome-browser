@@ -1,5 +1,6 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import java.awt.event.*;
 import javax.swing.event.ListSelectionEvent;
 

@@ -39,7 +39,7 @@ import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLinkUtils;

@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class PreferencesHelpTabAction extends HelpActionA {

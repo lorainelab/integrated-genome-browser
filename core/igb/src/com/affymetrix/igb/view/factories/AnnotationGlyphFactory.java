@@ -190,6 +190,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), child_height);
 				alignResidueGlyph.setBackgroundColor(Color.WHITE);
+				alignResidueGlyph.setForegroundColor(pglyph.getForegroundColor());
 				alignResidueGlyph.setDefaultShowMask(the_style.getShowResidueMask());
 				alignResidueGlyph.setUseBaseQuality(the_style.getShadeBasedOnQualityScore());
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -317,9 +318,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				if(alignResidueGlyph != null){
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 					alignResidueGlyph.setBackgroundColor(Color.WHITE);
+					alignResidueGlyph.setForegroundColor(pglyph.getForegroundColor());
 					alignResidueGlyph.setDefaultShowMask(the_style.getShowResidueMask());
 					alignResidueGlyph.setUseBaseQuality(the_style.getShadeBasedOnQualityScore());
-					
 					the_tier.setDataModelFromOriginalSym(alignResidueGlyph, child);
 					pglyph.addChild(alignResidueGlyph);
 				}

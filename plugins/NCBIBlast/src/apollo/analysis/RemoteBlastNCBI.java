@@ -223,6 +223,12 @@ public class RemoteBlastNCBI {
 		this.opts = opts;
 	}
 
+	public String runAnalysis(StrandedFeatureSetI sf, SequenceI seq, int strand) throws Exception {
+		RemoteBlastNCBI.BlastRequest req = sendRequest(seq, strand);
+		URL getUrl = new URL(createGetUrl(req, false, false));
+		return getUrl.toString();
+	}
+	
 	/**
 	 * Run BLAST analysis.
 	 *
@@ -298,9 +304,15 @@ public class RemoteBlastNCBI {
 	}
 
 	private String createGetUrl(RemoteBlastNCBI.BlastRequest req, boolean getText) {
+		return createGetUrl(req, true, getText);
+	}
+
+	private String createGetUrl(RemoteBlastNCBI.BlastRequest req, boolean setRequestFormat, boolean getText) {
 		StringBuffer getBuf = new StringBuffer(BLAST_URL);
 		getBuf.append("RID=" + req.rid + "&");
-		getBuf.append("FORMAT_TYPE=" + (getText ? "Text&" : "XML&"));
+		if(setRequestFormat){
+			getBuf.append("FORMAT_TYPE=" + (getText ? "Text&" : "XML&"));
+		}
 		getBuf.append("CMD=Get");
 		return getBuf.toString();
 	}

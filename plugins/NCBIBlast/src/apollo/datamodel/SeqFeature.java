@@ -116,11 +116,18 @@ public class SeqFeature implements SeqFeatureI {
 	}
 
 	public double getScore() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return score;
 	}
 
 	public double getScore(String score) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		if(scores == null){
+			return 0;
+		}
+		Score s = scores.get("score");
+		if(s == null) {
+			return 0;
+		}
+		return s.getValue();
 	}
 
 	public Hashtable getScores() {
@@ -131,9 +138,9 @@ public class SeqFeature implements SeqFeatureI {
 	private double score;
 	public void setScore(double score) {
 		if (scores == null) {
-			scores = new HashMap();
+			scores = new HashMap<String, Score>();
 		}
-		Score s = (Score) scores.get("score");
+		Score s = scores.get("score");
 		if (s == null) {
 			s = new Score("score", score);
 			scores.put("score", s);
@@ -146,7 +153,7 @@ public class SeqFeature implements SeqFeatureI {
 
 	public void addScore(Score s) {
 		if (scores == null) {
-			scores = new HashMap();
+			scores = new HashMap<String, Score>();
 		}
 		if (!scores.containsValue(s)) {
 			scores.put(s.getName(), s);
@@ -155,7 +162,7 @@ public class SeqFeature implements SeqFeatureI {
 
   public void addScore(double score) {
 		if (scores == null) {
-			scores = new HashMap();
+			scores = new HashMap<String, Score>();
 		}
 		String name = scores.size() == 0 ? "score" : "score" + scores.size() + 1;
 

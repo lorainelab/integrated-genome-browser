@@ -8,7 +8,6 @@ import com.affymetrix.igb.shared.IPrefEditorComponent;
  * @author hiralv
  */
 public class RemoteBlastOptions extends IPrefEditorComponent implements BlastOptionsI {
-	private static final String PREF_BLAST_TYPE = "Blast type";
 	
 	/**
 	 * Creates new form RemoteBlastOptions

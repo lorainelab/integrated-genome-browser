@@ -80,6 +80,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="blastn"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(RemoteBlastNCBI.BlastType.blastn.toString(), &#xa;            RemoteBlastNCBI.BlastType.blastn.toString(), BlastOptionsI.PREF_BLAST_TYPE, &#xa;            RemoteBlastNCBI.BlastType.blastn.toString())"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="blastxRadioButton">
           <Properties>
@@ -88,6 +91,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="blastx"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(RemoteBlastNCBI.BlastType.blastx.toString(), &#xa;            RemoteBlastNCBI.BlastType.blastx.toString(), BlastOptionsI.PREF_BLAST_TYPE, &#xa;            RemoteBlastNCBI.BlastType.blastx.toString())"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="tblastxRadioButton">
           <Properties>
@@ -96,6 +102,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="tblastx"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(RemoteBlastNCBI.BlastType.tblastx.toString(), &#xa;            RemoteBlastNCBI.BlastType.tblastx.toString(), BlastOptionsI.PREF_BLAST_TYPE, &#xa;            RemoteBlastNCBI.BlastType.tblastx.toString())"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

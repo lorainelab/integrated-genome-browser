@@ -1,6 +1,6 @@
 package apollo.analysis;
 
-import apollo.action.BlastSearchAction;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 
 /**
@@ -8,14 +8,21 @@ import com.affymetrix.igb.shared.IPrefEditorComponent;
  * @author hiralv
  */
 public class RemoteBlastOptions extends IPrefEditorComponent implements BlastOptionsI {
-
+	private static final String PREF_BLAST_TYPE = "Blast type";
+	
 	/**
 	 * Creates new form RemoteBlastOptions
 	 */
-	public RemoteBlastOptions(RemoteBlastNCBI.BlastType type) {
+	public RemoteBlastOptions() {
 		setName("Blast");
 		setToolTipText("Edit blast options");
-		initComponents();
+		initComponents();	
+		RemoteBlastNCBI.BlastType type = RemoteBlastNCBI.BlastType.valueOf(
+											PreferenceUtils.load(
+												PreferenceUtils.getTopNode(), 
+												BlastOptionsI.PREF_BLAST_TYPE, 
+												BlastOptionsI.DEFAULT_BLAST_TYPE.toString())
+										.toString());
 		setBlastType(type);
 	}
 	
@@ -57,9 +64,15 @@ public class RemoteBlastOptions extends IPrefEditorComponent implements BlastOpt
 
         blastTypeGroup = new javax.swing.ButtonGroup();
         blastTypePanel = new javax.swing.JPanel();
-        blastnRadioButton = new javax.swing.JRadioButton();
-        blastxRadioButton = new javax.swing.JRadioButton();
-        tblastxRadioButton = new javax.swing.JRadioButton();
+        blastnRadioButton = PreferenceUtils.createRadioButton(RemoteBlastNCBI.BlastType.blastn.toString(),
+            RemoteBlastNCBI.BlastType.blastn.toString(), BlastOptionsI.PREF_BLAST_TYPE,
+            RemoteBlastNCBI.BlastType.blastn.toString());
+        blastxRadioButton = PreferenceUtils.createRadioButton(RemoteBlastNCBI.BlastType.blastx.toString(),
+            RemoteBlastNCBI.BlastType.blastx.toString(), BlastOptionsI.PREF_BLAST_TYPE,
+            RemoteBlastNCBI.BlastType.blastx.toString());
+        tblastxRadioButton = PreferenceUtils.createRadioButton(RemoteBlastNCBI.BlastType.tblastx.toString(),
+            RemoteBlastNCBI.BlastType.tblastx.toString(), BlastOptionsI.PREF_BLAST_TYPE,
+            RemoteBlastNCBI.BlastType.tblastx.toString());
 
         blastTypePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Blast Type"));
 

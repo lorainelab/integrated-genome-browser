@@ -1,6 +1,7 @@
 package apollo;
 
 import apollo.action.BlastSearchAction;
+import apollo.analysis.BlastOptionsI;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -15,8 +16,8 @@ import javax.swing.JPopupMenu;
  */
 public class NCBIPopupListener implements ContextualPopupListener {
 
-	public NCBIPopupListener(SeqMapViewI smv){
-		BlastSearchAction.init(smv);
+	public NCBIPopupListener(SeqMapViewI smv, BlastOptionsI blastOptions){
+		BlastSearchAction.init(smv, blastOptions);
 	}
 
 	@Override

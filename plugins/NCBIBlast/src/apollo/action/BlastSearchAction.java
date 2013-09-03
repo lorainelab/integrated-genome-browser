@@ -1,5 +1,6 @@
 package apollo.action;
 
+import apollo.analysis.BlastOptionsI;
 import apollo.analysis.RemoteBlastNCBI;
 import apollo.datamodel.Sequence;
 import apollo.datamodel.StrandedFeatureSet;
@@ -32,8 +33,8 @@ public class BlastSearchAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static BlastSearchAction ACTION;;
 
-	public static void init(SeqMapViewI smv){
-		ACTION = new BlastSearchAction(smv);
+	public static void init(SeqMapViewI smv, BlastOptionsI blastOptions){
+		ACTION = new BlastSearchAction(smv, blastOptions);
 	}
 
 	public static BlastSearchAction getAction() {
@@ -41,9 +42,11 @@ public class BlastSearchAction extends GenericAction {
 	}
 
 	private final SeqMapViewI smv;
-	private BlastSearchAction(SeqMapViewI smv) {
+	private final BlastOptionsI blastOptions;
+	private BlastSearchAction(SeqMapViewI smv, BlastOptionsI blastOptions) {
 		super("BLASTX nr protein database", null, null);
 		this.smv = smv;
+		this.blastOptions = blastOptions;
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class BlastSearchAction extends GenericAction {
 						StrandedFeatureSetI sf = new StrandedFeatureSet();
 						Sequence seq = new Sequence(aseq.getID(), residues);
 						
-						RemoteBlastNCBI blast = new RemoteBlastNCBI(RemoteBlastNCBI.BlastType.blastn, new RemoteBlastNCBI.BlastOptions());
+						RemoteBlastNCBI blast = new RemoteBlastNCBI(blastOptions.getBlastType(), new RemoteBlastNCBI.BlastOptions());
 						String url = blast.runAnalysis(sf, seq, 1);
 						
 						GeneralUtils.browse(url);

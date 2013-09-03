@@ -26,7 +26,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		
 		return new ServiceRegistration[] {
 			bundleContext.registerService(ContextualPopupListener.class, new NCBIPopupListener(igbService.getSeqMapView(), blastOptions), null),
-			bundleContext.registerService(IPrefEditorComponent.class, (IPrefEditorComponent)blastOptions, null)
+//			bundleContext.registerService(IPrefEditorComponent.class, (IPrefEditorComponent)blastOptions, null)
 		};
 	}
 	

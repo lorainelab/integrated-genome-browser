@@ -63,10 +63,10 @@ public class BlastSearchAction extends GenericAction {
 	private final SeqMapViewI smv;
 	private final BlastOptionsI blastOptions;
 	private BlastSearchAction(SeqMapViewI smv, BlastOptionsI blastOptions) {
-		super("BLAST nr protein database", null, null);
+		super("BLASTN nr protein database", null, null);
 		this.smv = smv;
 		this.blastOptions = blastOptions;
-		PreferenceUtils.getTopNode().addPreferenceChangeListener(pcl);
+//		PreferenceUtils.getTopNode().addPreferenceChangeListener(pcl);
 	}
 
 	@Override

@@ -17,12 +17,15 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  *
@@ -41,12 +44,29 @@ public class BlastSearchAction extends GenericAction {
 		return ACTION;
 	}
 
+	private PreferenceChangeListener pcl = new PreferenceChangeListener(){
+		@Override
+			public void preferenceChange(PreferenceChangeEvent evt) {
+				if (evt.getNode().equals(PreferenceUtils.getTopNode()) && evt.getKey().equals(BlastOptionsI.PREF_BLAST_TYPE)) {
+					String newValue = evt.getNewValue();
+					if(RemoteBlastNCBI.BlastType.blastx.toString().equalsIgnoreCase(newValue)){
+						putValue(GenericAction.NAME, "BLASTX nr protein database");
+					} else if (RemoteBlastNCBI.BlastType.tblastx.toString().equalsIgnoreCase(newValue)) {
+						putValue(GenericAction.NAME, "TBLASTX nr protein database");
+					} else {
+						putValue(GenericAction.NAME, "BLASTN nr protein database");
+					}
+				}
+			}
+	};
+	
 	private final SeqMapViewI smv;
 	private final BlastOptionsI blastOptions;
 	private BlastSearchAction(SeqMapViewI smv, BlastOptionsI blastOptions) {
-		super("BLASTX nr protein database", null, null);
+		super("BLAST nr protein database", null, null);
 		this.smv = smv;
 		this.blastOptions = blastOptions;
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(pcl);
 	}
 
 	@Override

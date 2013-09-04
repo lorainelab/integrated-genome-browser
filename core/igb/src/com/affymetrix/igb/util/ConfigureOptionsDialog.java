@@ -61,11 +61,15 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	}
 
 	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter) {
-		super((Frame) null, true);
-		init(clazz, label, filter);
+		this(clazz, label, null, true);
 	}
 	
-	private void init(Class clazz, String label, Filter<T> filter) throws SecurityException {
+	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, boolean includeNone) {
+		super((Frame) null, true);
+		init(clazz, label, filter, includeNone);
+	}
+	
+	private void init(Class clazz, String label, Filter<T> filter, boolean includeNone) throws SecurityException {
 		JPanel pan = new JPanel();
 		pan.setLayout(new BorderLayout());
 
@@ -85,7 +89,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		comboBox = new JComboBox();
 		name2CP = new HashMap<String, T>();
 
-		comboBox.addItem("None");
+		if(includeNone){
+			comboBox.addItem("None");
+		}
 		TreeSet<T> tProviders = new TreeSet<T>(new IDComparator());
 		tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
 		for (T cp : tProviders) {
@@ -97,7 +103,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 			name2CP.put(cp.getDisplay(), cp);
 			comboBox.addItem(cp.getDisplay());
 		}
-		comboBox.setSelectedItem("None");
+		if(includeNone){
+			comboBox.setSelectedItem("None");
+		}
 
 		JPanel optionsBox = new JPanel();
 		optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));

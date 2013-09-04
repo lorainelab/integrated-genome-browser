@@ -105,8 +105,6 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		}
 		if(includeNone){
 			comboBox.setSelectedItem("None");
-		}else if (comboBox.getItemCount() > 0){
-			comboBox.setSelectedIndex(0);
 		}
 
 		JPanel optionsBox = new JPanel();
@@ -272,7 +270,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 			}
 		});
 	}
-
+	
 	private void addListeners() {
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -283,17 +281,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 				} else if (cp != null) {
 					cp = (T) cp.newInstance();
 				}
-				selectedCP = cp;
-				if (cp instanceof IParameters) {
-					initParamPanel((IParameters) cp);
-				} else {
-					paramsPanel.removeAll();
-					ThreadUtils.runOnEventQueue(new Runnable() {
-						public void run() {
-							pack();
-						}
-					});
-				}
+				setSelected(cp);
 			}
 		});
 
@@ -320,6 +308,20 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		comboBox.setEnabled(b);
 	}
 	
+	private void setSelected(T cp) {
+		selectedCP = cp;
+		if (cp instanceof IParameters) {
+			initParamPanel((IParameters) cp);
+		} else {
+			paramsPanel.removeAll();
+			ThreadUtils.runOnEventQueue(new Runnable() {
+				public void run() {
+					pack();
+				}
+			});
+		}
+	}
+		
 	public void setInitialValue(T cp) {
 		if (cp == null) {
 			comboBox.setSelectedItem("None");
@@ -327,13 +329,15 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 			comboBox.setSelectedItem(cp.getDisplay());
 		}
 		returnValue = cp;
-		selectedCP = cp;
-		if (cp instanceof IParameters) {
-			initParamPanel((IParameters) cp);
-		}
+		setSelected(cp);
 	}
 
 	public T showDialog() {
+		//If initial value was not set, then set it here
+		if(selectedCP == null && comboBox.getItemCount() > 0){
+			T cp = name2CP.get(comboBox.getItemAt(0).toString());
+			setSelected(cp);
+		}
 		setVisible(true);
 		return returnValue;
 	}

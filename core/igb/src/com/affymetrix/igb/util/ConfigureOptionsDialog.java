@@ -105,6 +105,8 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		}
 		if(includeNone){
 			comboBox.setSelectedItem("None");
+		}else if (comboBox.getItemCount() > 0){
+			comboBox.setSelectedIndex(0);
 		}
 
 		JPanel optionsBox = new JPanel();

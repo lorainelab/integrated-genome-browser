@@ -270,11 +270,11 @@ public class Delegate extends QuickLoadSymLoader {
 			if(direction == null){
 				return seq.getAnnotation(name);
 			}else{
-				return getChilds(seq, name, direction.booleanValue());
+				return getChildren(seq, name, direction.booleanValue());
 			}
 		}
 		
-		private SeqSymmetry getChilds(BioSeq seq, String name, boolean isForward) {
+		private SeqSymmetry getChildren(BioSeq seq, String name, boolean isForward) {
 			SeqSymmetry parentSym = seq.getAnnotation(name);
 			TypeContainerAnnot tca = new TypeContainerAnnot(name);
 			
@@ -284,13 +284,11 @@ public class Delegate extends QuickLoadSymLoader {
 				sym = parentSym.getChild(i);
 				span = sym.getSpan(seq);
 
-				if (span == null || span.getLength() == 0) {
+				if (span == null || span.getLength() == 0 || span.isForward() != isForward) {
 					continue;
 				}
 
-				if (span.isForward() == isForward) {
-					tca.addChild(sym);
-				}
+				tca.addChild(sym);				
 			}
 			
 			return tca;

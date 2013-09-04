@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.filter;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,12 +45,19 @@ public class ChainFilter implements SymmetryFilterI {
 	}
 
 	@Override
-	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
 	public SymmetryFilterI newInstance() {
+		ChainFilter newInstance = new ChainFilter();
+		List<SymmetryFilterI> newInstanceFilters = new ArrayList<SymmetryFilterI>();
+		for(SymmetryFilterI filter : filters){
+			newInstanceFilters.add(filter.newInstance());
+		}
+		newInstance.setFilter(newInstanceFilters);
+		
+		return newInstance;
+	}
+	
+	@Override
+	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

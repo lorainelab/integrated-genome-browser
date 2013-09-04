@@ -1,16 +1,17 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.filter.ChainFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.IParameters;
+import com.affymetrix.igb.util.ConfigureOptionsDialog.Filter;
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
 
 /**
  *
  * @author hiralv
  */
 public class ConfigureFilters extends javax.swing.JPanel {
+	private Filter<SymmetryFilterI> optionFilter;
 			
 	/**
 	 * Creates new form Filter
@@ -19,6 +20,40 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		initComponents();
 	}
 
+	public void setFilter(SymmetryFilterI filter){
+		if(filter instanceof ChainFilter){
+			ChainFilter chainFilter = (ChainFilter)filter;
+			for(SymmetryFilterI f : chainFilter.getFilters()){
+				((DefaultListModel)filterList.getModel()).addElement(new FilterWrapper(f));
+			}
+		} else if (filter != null){
+			((DefaultListModel)filterList.getModel()).addElement(new FilterWrapper(filter));
+		}
+	}
+	
+	public SymmetryFilterI getFilter() {
+		int size = filterList.getModel().getSize();
+		if (size == 0) {
+			return null;
+		} else if (size == 1) {
+			FilterWrapper filterWrapper = (FilterWrapper)filterList.getModel().getElementAt(0);
+			return filterWrapper.filter;
+		} else {
+			ChainFilter filter = new ChainFilter();
+			java.util.List<SymmetryFilterI> filters = new java.util.ArrayList<SymmetryFilterI>(size);
+			for (int i = 0; i < filterList.getModel().getSize(); i++) {
+				FilterWrapper filterWrapper = (FilterWrapper)filterList.getModel().getElementAt(i);
+				filters.add(filterWrapper.filter);
+			}
+			filter.setFilter(filters);
+			return filter;
+		}
+	}
+	
+	public void setOptionsFilter(ConfigureOptionsDialog.Filter<SymmetryFilterI> optionFilter){
+		this.optionFilter = optionFilter;
+	}
+	
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,7 +70,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
         editButton = new javax.swing.JButton();
 
         filterList.setModel(new DefaultListModel());
-        filterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        filterList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         filterList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 filterListValueChanged(evt);
@@ -95,7 +130,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter");
+        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", optionFilter, false);
 		optionDialog.setTitle("Add filter");
 		optionDialog.setLocationRelativeTo(this);
 		SymmetryFilterI selectedFilter = optionDialog.showDialog();
@@ -113,11 +148,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		FilterWrapper selectedFilterWrapper = (FilterWrapper)filterList.getSelectedValue();
 		SymmetryFilterI selectedFilter = selectedFilterWrapper.filter;
 		SymmetryFilterI selectedClone = selectedFilter.newInstance();
-		for (String key : ((IParameters) selectedFilter).getParametersType().keySet()) {
-			((IParameters) selectedClone).setParameterValue(key, ((IParameters) selectedFilter).getParameterValue(key));
-		}
-
-
+	
 		ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter");
 		optionDialog.setTitle("Edit filter");
 		optionDialog.setLocationRelativeTo(this);
@@ -126,7 +157,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		optionDialog.setVisible(true);
 		Object value = optionDialog.getValue();
 
-		if (value != null && (Integer) value == JOptionPane.OK_OPTION) {
+		if (value != null && (Integer) value == javax.swing.JOptionPane.OK_OPTION) {
 			for (String key : ((IParameters) selectedClone).getParametersType().keySet()) {
 				((IParameters) selectedFilter).setParameterValue(key, ((IParameters) selectedClone).getParameterValue(key));
 			}

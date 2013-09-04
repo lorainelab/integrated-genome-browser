@@ -52,7 +52,13 @@ public abstract class SymmetryFilter implements SymmetryFilterI, IParameters {
 	@Override
 	public SymmetryFilterI newInstance(){
 		try {
-			return getClass().getConstructor().newInstance();
+			SymmetryFilterI newInstance = getClass().getConstructor().newInstance();
+			if(newInstance instanceof IParameters) {
+				for (String key : getParametersType().keySet()) {
+					((IParameters) newInstance).setParameterValue(key, getParameterValue(key));
+				}
+			}
+			return newInstance;
 		} catch (Exception ex) {
 		}
 		return null;

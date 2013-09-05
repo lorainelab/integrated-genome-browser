@@ -135,18 +135,11 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", optionFilter, false);
-		optionDialog.setTitle("Add filter");
-		optionDialog.setLocationRelativeTo(this);
-		SymmetryFilterI selectedFilter = optionDialog.showDialog();
-		if(selectedFilter != null){
-			((DefaultListModel)filterList.getModel()).addElement(new FilterWrapper(selectedFilter));
-		}
+		addNew();
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-		int selected = filterList.getSelectedIndex();
-		((DefaultListModel)filterList.getModel()).removeElementAt(selected);
+		removeSelected();
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
@@ -163,7 +156,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
     private void filterListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filterListMouseClicked
         if (evt.getClickCount() == 2 && isFilterEditable((FilterWrapper) filterList.getSelectedValue())) {
-            beginEditing();
+			beginEditing();
         }
     }//GEN-LAST:event_filterListMouseClicked
 
@@ -178,6 +171,21 @@ public class ConfigureFilters extends javax.swing.JPanel {
 			return true;
 		}
 		return false;
+	}
+	
+	private void addNew(){
+		ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", optionFilter, false);
+		optionDialog.setTitle("Add filter");
+		optionDialog.setLocationRelativeTo(this);
+		SymmetryFilterI selectedFilter = optionDialog.showDialog();
+		if(selectedFilter != null){
+			((DefaultListModel)filterList.getModel()).addElement(new FilterWrapper(selectedFilter));
+		}
+	}
+	
+	private void removeSelected(){
+		int selected = filterList.getSelectedIndex();
+		((DefaultListModel)filterList.getModel()).removeElementAt(selected);
 	}
 	
 	private void beginEditing(){

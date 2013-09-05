@@ -9,17 +9,10 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.util.ConfigureFilters;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -58,42 +51,15 @@ public class FilterAction extends SeqMapViewActionA {
 				return true;
 			}
 		};
-		
-		final ConfigureFilters configurefilters = new ConfigureFilters();
-		configurefilters.setOptionsFilter(optionFilter);
-		if(filter != null){
-			configurefilters.setFilter(filter.newInstance());
+		ConfigureOptionsDialog<SymmetryFilterI> filterDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", optionFilter);
+		filterDialog.setTitle("Filter");
+		filterDialog.setLocationRelativeTo(getSeqMapView());
+		filterDialog.setInitialValue(filter);
+		filter = filterDialog.showDialog();
+		for (TierGlyph tier : getTierManager().getSelectedTiers()) {
+			applyFilter(filter, tier);
 		}
-		
-		JOptionPane optionPane = new JOptionPane(configurefilters, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-		optionPane.setIcon(new ImageIcon(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)));
-		
-		optionPane.addPropertyChangeListener("value", new PropertyChangeListener(){
-
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(!(evt.getNewValue() instanceof Integer) && (Integer)evt.getNewValue() == JOptionPane.OK_OPTION){
-					applyFilter(configurefilters.getFilter(), tg);
-					getSeqMapView().getSeqMap().repackTheTiers(true, true);
-				}
-			}
-			
-		});
-		
-		JDialog dialog = optionPane.createDialog("Add/Remove/Edit Filters");
-		dialog.setModal(false);
-		dialog.setVisible(true);
-		
-		
-//		ConfigureOptionsDialog<SymmetryFilterI> filterDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", configureFilter);
-//		filterDialog.setTitle("Filter");
-//		filterDialog.setLocationRelativeTo(getSeqMapView());
-//		filterDialog.setInitialValue(filter);
-//		filter = filterDialog.showDialog();
-//		for (TierGlyph tier : getTierManager().getSelectedTiers()) {
-//			applyFilter(filter, tier);
-//		}
-//		getSeqMapView().getSeqMap().repackTheTiers(true, true);
+		getSeqMapView().getSeqMap().repackTheTiers(true, true);
 	}
 
 	@Override

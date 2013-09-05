@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.filter.ChainFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.igb.util.ConfigureOptionsDialog.Filter;
-import javax.swing.DefaultListModel;
 
 /**
  *
@@ -24,10 +23,10 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		if(filter instanceof ChainFilter){
 			ChainFilter chainFilter = (ChainFilter)filter;
 			for(SymmetryFilterI f : chainFilter.getFilters()){
-				((DefaultListModel)filterList.getModel()).addElement(f);
+				((javax.swing.DefaultListModel)filterList.getModel()).addElement(f);
 			}
 		} else if (filter != null){
-			((DefaultListModel)filterList.getModel()).addElement(filter);
+			((javax.swing.DefaultListModel)filterList.getModel()).addElement(filter);
 		}
 	}
 	
@@ -67,7 +66,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
         removeButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
 
-        filterList.setModel(new DefaultListModel());
+        filterList.setModel(new javax.swing.DefaultListModel());
         filterList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         filterList.setCellRenderer(new FilterListCellRenderer());
         filterList.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -174,13 +173,13 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		optionDialog.setLocationRelativeTo(this);
 		SymmetryFilterI selectedFilter = optionDialog.showDialog();
 		if(selectedFilter != null){
-			((DefaultListModel)filterList.getModel()).addElement(selectedFilter);
+			((javax.swing.DefaultListModel)filterList.getModel()).addElement(selectedFilter);
 		}
 	}
 	
 	private void removeSelected(){
 		int selected = filterList.getSelectedIndex();
-		((DefaultListModel)filterList.getModel()).removeElementAt(selected);
+		((javax.swing.DefaultListModel)filterList.getModel()).removeElementAt(selected);
 	}
 	
 	private void beginEditing(){
@@ -202,19 +201,42 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		}
 	}
 		
-	private static class FilterListCellRenderer extends javax.swing.DefaultListCellRenderer {
+	private static class FilterListCellRenderer implements javax.swing.ListCellRenderer {
+		private static final javax.swing.DefaultListCellRenderer filterRenderer, parameterRenderer;
+		private static final java.util.Map<java.awt.font.TextAttribute, Object> filterAttrMap, parameterAttrMap;
+		static {
+			filterRenderer = new javax.swing.DefaultListCellRenderer();
+			parameterRenderer = new javax.swing.DefaultListCellRenderer();
+			
+			filterAttrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+			filterAttrMap.put(java.awt.font.TextAttribute.WEIGHT, java.awt.font.TextAttribute.WEIGHT_BOLD);
+			
+			parameterAttrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+			parameterAttrMap.put(java.awt.font.TextAttribute.POSTURE, java.awt.font.TextAttribute.POSTURE_OBLIQUE);
+		}
+		
 		@Override
 		public java.awt.Component getListCellRendererComponent(javax.swing.JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			SymmetryFilterI filter = (SymmetryFilterI)value;
-			StringBuilder sb = new StringBuilder();
-			sb.append(filter.getDisplay());
+			javax.swing.Box panel = new javax.swing.Box(javax.swing.BoxLayout.LINE_AXIS);
+			
+			javax.swing.JLabel comp = (javax.swing.JLabel)filterRenderer.getListCellRendererComponent(list, filter.getDisplay(), index, isSelected, cellHasFocus);
+			comp.setFont(comp.getFont().deriveFont(filterAttrMap));
+			panel.add(comp);
+			
 			if(filter instanceof IParameters && ((IParameters)filter).getParametersType() != null 
 				&& !((IParameters)filter).getParametersType().isEmpty()) {
-				sb.append("  (").append(((IParameters)filter).getPrintableString()).append(")");
-			}		
-			java.awt.Component comp = super.getListCellRendererComponent(list, sb.toString(), index, isSelected, cellHasFocus);
-			return comp;
+				StringBuilder sb = new StringBuilder();
+				sb.append("  ");
+				sb.append("(").append(((IParameters)filter).getPrintableString()).append(")");
+				
+				javax.swing.JLabel paramComp = (javax.swing.JLabel)parameterRenderer.getListCellRendererComponent(list, sb.toString(), index, isSelected, cellHasFocus);
+				paramComp.setFont(paramComp.getFont().deriveFont(parameterAttrMap));
+				panel.add(paramComp);
+			}	
+			
+			return panel;
 		}
 	}
 	

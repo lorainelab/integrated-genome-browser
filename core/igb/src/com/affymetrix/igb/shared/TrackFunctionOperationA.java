@@ -65,6 +65,12 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 
 	protected String getMethod(List<? extends GlyphI> vgs, boolean append_symbol) {
 		StringBuilder meth = new StringBuilder();
+		for (GlyphI gl : vgs) {
+			if(((StyledGlyph)gl).getAnnotStyle().getFilter() != null){
+				meth.append("Filtered ");
+				break;
+			}
+		}
 		meth.append(getOperator().getDisplay()).append("- ");
 		boolean started = false;
 		for (GlyphI gl : vgs) {

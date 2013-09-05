@@ -652,7 +652,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			} else {
 				serverNameString = "<b>" + gServer.serverName + "</b>";
 			}
-			serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.getName() + ")";
+			serverNameString = "<html>" + serverNameString + " <i>(" + gServer.serverType.getName() + ")</i>";
 			
 			if(DEBUG){
 				serverNameString = serverNameString + " [" + leafCount(node) + "]";

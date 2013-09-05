@@ -91,4 +91,11 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		}
 		return null;
 	}
+	
+	@Override
+	public String getPrintableString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getParamPrompt()).append(":").append(getParameterValue(getParamPrompt()));
+		return sb.toString();
+	}
 }

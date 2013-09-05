@@ -84,6 +84,11 @@ public class FilterOperator implements Operator, IParameters {
 	}
 	
 	@Override
+	public String getPrintableString() {
+		return "";
+	}
+	
+	@Override
 	public boolean supportsTwoTrack() {
 		return false;
 	}

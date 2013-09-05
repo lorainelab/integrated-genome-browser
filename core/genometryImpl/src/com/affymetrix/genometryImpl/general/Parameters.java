@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.general;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -47,5 +48,19 @@ public class Parameters implements IParameters {
 	@Override
 	public Object getParameterValue(String key) {
 		return PARAMETERS_VALUE.get(key).get();
+	}
+	
+	@Override
+	public String getPrintableString() {
+		return toString();
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for(Entry<String, Parameter> entry : PARAMETERS_VALUE.entrySet()){
+			sb.append(entry.getKey()).append(":").append(entry.getValue().toString()).append(",");
+		}
+		return sb.toString();
 	}
 }

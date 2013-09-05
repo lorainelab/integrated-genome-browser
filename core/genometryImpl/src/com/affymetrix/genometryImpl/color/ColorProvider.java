@@ -61,4 +61,9 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 		}
 		return null;
 	}
+	
+	@Override
+	public String getPrintableString() {
+		return parameters.getPrintableString();
+	}
 }

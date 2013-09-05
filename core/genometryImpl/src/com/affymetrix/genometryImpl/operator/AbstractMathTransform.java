@@ -103,6 +103,13 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 		return null;
 	}
 	
+	@Override
+	public String getPrintableString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getParamPrompt()).append(":").append(getParameterValue(getParamPrompt()));
+		return sb.toString();
+	}
+	
 	protected boolean allowZero(){
 		return true;
 	}

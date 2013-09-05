@@ -63,4 +63,9 @@ public abstract class SymmetryFilter implements SymmetryFilterI, IParameters {
 		}
 		return null;
 	}
+	
+	@Override
+	public String getPrintableString() {
+		return parameters.getPrintableString();
+	}
 }

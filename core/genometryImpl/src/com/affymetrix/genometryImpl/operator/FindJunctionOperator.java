@@ -191,6 +191,11 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 		return null;
 	}
 	
+	@Override
+	public String getPrintableString() {
+		return "";
+	}
+	
     /* This method splits the given Sym into introns and filters out the qualified Introns
 	 * and adds the qualified introns into map using addtoMap method
 	 */

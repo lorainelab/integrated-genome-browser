@@ -26,4 +26,12 @@ public class Parameter<E> {
 	public void reset(){
 		e = default_value;
 	}
+	
+	@Override
+	public String toString(){
+		if(e == null){
+			return "";
+		}
+		return e.toString();
+	}
 }

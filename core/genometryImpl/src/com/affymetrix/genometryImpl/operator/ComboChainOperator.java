@@ -132,6 +132,11 @@ public class ComboChainOperator implements Operator, IParameters {
 	}
 	
 	@Override
+	public String getPrintableString() {
+		return "";
+	}
+	
+	@Override
 	public FileTypeCategory getOutputCategory() {
 		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();
 	}

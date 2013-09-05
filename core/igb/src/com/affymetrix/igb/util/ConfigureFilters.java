@@ -185,7 +185,13 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		
 		@Override
 		public String toString(){
-			return filter.getDisplay();
+			StringBuilder sb = new StringBuilder();
+			sb.append(filter.getDisplay());
+			if(filter instanceof IParameters && ((IParameters)filter).getParametersType() != null 
+				&& !((IParameters)filter).getParametersType().isEmpty()) {
+				sb.append("  (").append(((IParameters)filter).getPrintableString()).append(")");
+			}
+			return sb.toString();
 		}
 	}
 	

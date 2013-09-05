@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.general;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -56,11 +57,19 @@ public class Parameters implements IParameters {
 	}
 	
 	@Override
-	public String toString(){
-		StringBuilder sb = new StringBuilder();
-		for(Entry<String, Parameter> entry : PARAMETERS_VALUE.entrySet()){
-			sb.append(entry.getKey()).append(":").append(entry.getValue().toString()).append(",");
+	public String toString() {
+		if (!PARAMETERS_VALUE.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			Iterator<Entry<String, Parameter>> iterator = PARAMETERS_VALUE.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry<String, Parameter> entry = iterator.next();
+				sb.append(entry.getKey()).append(":").append(entry.getValue().toString());
+				if (iterator.hasNext()) {
+					sb.append(",");
+				}
+			}
+			return sb.toString();
 		}
-		return sb.toString();
+		return "";
 	}
 }

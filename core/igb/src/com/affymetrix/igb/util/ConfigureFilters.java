@@ -180,6 +180,11 @@ public class ConfigureFilters extends javax.swing.JPanel {
 	private void removeSelected(){
 		int selected = filterList.getSelectedIndex();
 		((javax.swing.DefaultListModel)filterList.getModel()).removeElementAt(selected);
+		if(selected - 1 >= 0){
+			filterList.setSelectedIndex(selected - 1);
+		} else if (filterList.getModel().getSize() >= 0) { //If first element is deleted then selected one below it
+			filterList.setSelectedIndex(0);
+		}
 	}
 	
 	private void beginEditing(){

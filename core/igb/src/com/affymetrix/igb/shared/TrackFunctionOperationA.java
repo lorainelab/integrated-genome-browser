@@ -51,7 +51,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 			}
 			
 			dps.add(new DelegateParent(vg.getAnnotStyle().getMethodName(), 
-					isForward(vg), vg.getAnnotStyle().getFeature()));
+					isForward(vg), vg.getAnnotStyle().getFeature(), vg.getAnnotStyle().getFilter()));
 			
 		}
 

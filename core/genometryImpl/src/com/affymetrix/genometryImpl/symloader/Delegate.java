@@ -4,6 +4,7 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -259,11 +260,13 @@ public class Delegate extends QuickLoadSymLoader {
 		String name;
 		Boolean direction;
 		GenericFeature feature;
+		SymmetryFilterI filter;
 		
-		public DelegateParent(String name, Boolean direction, GenericFeature feature){
+		public DelegateParent(String name, Boolean direction, GenericFeature feature, SymmetryFilterI filter){
 			this.name = name;
 			this.direction = direction;
 			this.feature = feature;
+			this.filter = filter;
 		}
 		
 		SeqSymmetry getSeqSymmetry(BioSeq seq){
@@ -273,7 +276,7 @@ public class Delegate extends QuickLoadSymLoader {
 				return getChildren(seq, name, direction.booleanValue());
 			}
 		}
-		
+				
 		private SeqSymmetry getChildren(BioSeq seq, String name, boolean isForward) {
 			SeqSymmetry parentSym = seq.getAnnotation(name);
 			TypeContainerAnnot tca = new TypeContainerAnnot(name);

@@ -28,6 +28,9 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		} else if (filter != null){
 			((javax.swing.DefaultListModel)filterList.getModel()).addElement(filter);
 		}
+		if (filterList.getModel().getSize() >= 0) {
+			filterList.setSelectedIndex(0);
+		}
 	}
 	
 	public SymmetryFilterI getFilter() {
@@ -174,6 +177,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		SymmetryFilterI selectedFilter = optionDialog.showDialog();
 		if(selectedFilter != null){
 			((javax.swing.DefaultListModel)filterList.getModel()).addElement(selectedFilter);
+			filterList.setSelectedIndex(filterList.getModel().getSize() - 1);
 		}
 	}
 	

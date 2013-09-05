@@ -71,6 +71,11 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
         filterList.setModel(new DefaultListModel());
         filterList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        filterList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                filterListMouseClicked(evt);
+            }
+        });
         filterList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 filterListValueChanged(evt);
@@ -145,6 +150,37 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+		beginEditing();
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void filterListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_filterListValueChanged
+		if (isFilterEditable((FilterWrapper) filterList.getSelectedValue())) {
+			editButton.setEnabled(true);
+		} else {
+			editButton.setEnabled(false);
+		}
+    }//GEN-LAST:event_filterListValueChanged
+
+    private void filterListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filterListMouseClicked
+        if (evt.getClickCount() == 2 && isFilterEditable((FilterWrapper) filterList.getSelectedValue())) {
+            beginEditing();
+        }
+    }//GEN-LAST:event_filterListMouseClicked
+
+	private boolean isFilterEditable(FilterWrapper filterWrapper) {
+		if(filterWrapper == null){
+			return false;
+		}
+		SymmetryFilterI filter = filterWrapper.filter;
+		if (filter instanceof IParameters
+				&& ((IParameters) filter).getParametersType() != null
+				&& !((IParameters) filter).getParametersType().isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	private void beginEditing(){
 		FilterWrapper selectedFilterWrapper = (FilterWrapper)filterList.getSelectedValue();
 		SymmetryFilterI selectedFilter = selectedFilterWrapper.filter;
 		SymmetryFilterI selectedClone = selectedFilter.newInstance();
@@ -162,22 +198,8 @@ public class ConfigureFilters extends javax.swing.JPanel {
 				((IParameters) selectedFilter).setParameterValue(key, ((IParameters) selectedClone).getParameterValue(key));
 			}
 		}
-    }//GEN-LAST:event_editButtonActionPerformed
-
-    private void filterListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_filterListValueChanged
-		FilterWrapper selectedFilterWrapper = (FilterWrapper) filterList.getSelectedValue();
-		if (selectedFilterWrapper != null) {
-			SymmetryFilterI selectedFilter = selectedFilterWrapper.filter;
-			if (selectedFilter instanceof IParameters
-					&& ((IParameters) selectedFilter).getParametersType() != null
-					&& !((IParameters) selectedFilter).getParametersType().isEmpty()) {
-				editButton.setEnabled(true);
-				return;
-			}
-		}
-		editButton.setEnabled(false);
-    }//GEN-LAST:event_filterListValueChanged
-
+	}
+	
 	private static class FilterWrapper {
 	
 		private SymmetryFilterI filter;

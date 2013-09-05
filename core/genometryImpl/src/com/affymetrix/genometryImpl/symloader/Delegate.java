@@ -270,25 +270,31 @@ public class Delegate extends QuickLoadSymLoader {
 		}
 		
 		SeqSymmetry getSeqSymmetry(BioSeq seq){
-			if(direction == null){
-				return seq.getAnnotation(name);
-			}else{
-				return getChildren(seq, name, direction.booleanValue());
-			}
+			return getChildren(seq);
 		}
 				
-		private SeqSymmetry getChildren(BioSeq seq, String name, boolean isForward) {
+		private SeqSymmetry getChildren(BioSeq seq) {
 			SeqSymmetry parentSym = seq.getAnnotation(name);
+			if(direction == null && filter == null){
+				return parentSym;
+			}
+			
 			TypeContainerAnnot tca = new TypeContainerAnnot(name);
 			
 			SeqSymmetry sym;
 			SeqSpan span;
 			for (int i = 0; i < parentSym.getChildCount(); i++) {
 				sym = parentSym.getChild(i);
-				span = sym.getSpan(seq);
-
-				if (span == null || span.getLength() == 0 || span.isForward() != isForward) {
+				
+				if(filter != null && !filter.filterSymmetry(seq, sym)){
 					continue;
+				}
+				
+				if(direction != null) {
+					span = sym.getSpan(seq);
+					if (span == null || span.getLength() == 0 || span.isForward() != direction) {
+						continue;
+					}
 				}
 
 				tca.addChild(sym);				

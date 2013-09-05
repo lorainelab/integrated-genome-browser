@@ -165,15 +165,17 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void filterListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_filterListValueChanged
-        FilterWrapper selectedFilterWrapper = (FilterWrapper)filterList.getSelectedValue();
-		SymmetryFilterI selectedFilter = selectedFilterWrapper.filter;
-		if(selectedFilter instanceof IParameters 
-				&& ((IParameters)selectedFilter).getParametersType() != null 
-				&& !((IParameters)selectedFilter).getParametersType().isEmpty()){
-			editButton.setEnabled(true);
-		} else {
-			editButton.setEnabled(false);
+		FilterWrapper selectedFilterWrapper = (FilterWrapper) filterList.getSelectedValue();
+		if (selectedFilterWrapper != null) {
+			SymmetryFilterI selectedFilter = selectedFilterWrapper.filter;
+			if (selectedFilter instanceof IParameters
+					&& ((IParameters) selectedFilter).getParametersType() != null
+					&& !((IParameters) selectedFilter).getParametersType().isEmpty()) {
+				editButton.setEnabled(true);
+				return;
+			}
 		}
+		editButton.setEnabled(false);
     }//GEN-LAST:event_filterListValueChanged
 
 	private static class FilterWrapper {

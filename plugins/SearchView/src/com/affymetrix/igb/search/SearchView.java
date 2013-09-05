@@ -680,6 +680,13 @@ public final class SearchView extends IGBTabPanel implements
 	}
 	
 	private static class HeaderRenderer implements TableCellRenderer {
+		private static final java.util.Map<java.awt.font.TextAttribute, Object> attrMap;
+		static {
+			attrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+			attrMap.put(java.awt.font.TextAttribute.WEIGHT, java.awt.font.TextAttribute.WEIGHT_BOLD);
+			attrMap.put(java.awt.font.TextAttribute.SIZE, 12);
+		}
+		
 		final int horAlignment;
 		public HeaderRenderer(int horizontalAlignment) {
 			horAlignment = horizontalAlignment;
@@ -691,6 +698,8 @@ public final class SearchView extends IGBTabPanel implements
 					isSelected, hasFocus, row, col);
 			JLabel label = (JLabel) c;
 			label.setHorizontalAlignment(horAlignment);
+			label.setFont(label.getFont().deriveFont(attrMap));
+			
 			return label;
 		}
 	}

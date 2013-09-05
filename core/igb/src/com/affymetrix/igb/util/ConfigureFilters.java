@@ -168,7 +168,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 	}
 	
 	private void addNew(){
-		ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", optionFilter, false);
+		ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Show Only", optionFilter, false);
 		optionDialog.setTitle("Add filter");
 		optionDialog.setLocationRelativeTo(this);
 		SymmetryFilterI selectedFilter = optionDialog.showDialog();
@@ -186,7 +186,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		SymmetryFilterI selectedFilter = (SymmetryFilterI)filterList.getSelectedValue();
 		SymmetryFilterI selectedClone = selectedFilter.newInstance();
 	
-		ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter");
+		ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Show Only");
 		optionDialog.setTitle("Edit filter");
 		optionDialog.setLocationRelativeTo(this);
 		optionDialog.setInitialValue(selectedClone);

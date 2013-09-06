@@ -52,19 +52,19 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 	/**
 	 * Creates the reusable dialog.
 	 */
-	public ConfigureOptionsPanel(Class clazz, String label) {
+	public ConfigureOptionsPanel(Class clazz, Object label) {
 		this(clazz, label, null);
 	}
 
-	public ConfigureOptionsPanel(Class clazz, String label, Filter<T> filter) {
+	public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter) {
 		this(clazz, label, filter, true);
 	}
 	
-	public ConfigureOptionsPanel(Class clazz, String label, Filter<T> filter, boolean includeNone) {
+	public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone) {
 		init(clazz, label, filter, includeNone);
 	}
 	
-	private void init(Class clazz, String label, Filter<T> filter, boolean includeNone) throws SecurityException {
+	private void init(Class clazz, Object label, Filter<T> filter, boolean includeNone) throws SecurityException {
 		setLayout(new BorderLayout());
 
 		comboBox = new JComboBox();
@@ -89,7 +89,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
 		JPanel optionsBox = new JPanel();
 		optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
-		optionsBox.add(new JLabel(label+" :  "));
+		if(label instanceof JComponent) {
+			optionsBox.add((JComponent)label);
+		} else if (label instanceof String) {
+			optionsBox.add(new JLabel(label+" :  "));
+		}
 		optionsBox.add(comboBox);
 
 		paramsPanel = new JPanel();

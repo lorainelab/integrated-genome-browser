@@ -3,7 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.filter.ChainFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.IParameters;
-import com.affymetrix.igb.util.ConfigureOptionsDialog.Filter;
+import com.affymetrix.igb.util.ConfigureOptionsPanel.Filter;
 
 /**
  *
@@ -50,7 +50,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		}
 	}
 	
-	public void setOptionsFilter(ConfigureOptionsDialog.Filter<SymmetryFilterI> optionFilter){
+	public void setOptionsFilter(Filter<SymmetryFilterI> optionFilter){
 		this.optionFilter = optionFilter;
 	}
 	

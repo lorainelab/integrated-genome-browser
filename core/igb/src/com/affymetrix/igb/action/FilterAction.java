@@ -10,6 +10,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
+import com.affymetrix.igb.util.ConfigureOptionsPanel;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ public class FilterAction extends SeqMapViewActionA {
 		ITrackStyleExtended style = tg.getAnnotStyle();
 		SymmetryFilterI filter = style.getFilter();
 		
-		ConfigureOptionsDialog.Filter<SymmetryFilterI> optionFilter = new ConfigureOptionsDialog.Filter<SymmetryFilterI>() {
+		ConfigureOptionsPanel.Filter<SymmetryFilterI> optionFilter = new ConfigureOptionsPanel.Filter<SymmetryFilterI>() {
 			@Override
 			public boolean shouldInclude(SymmetryFilterI symmetryFilter) {
 				if(symmetryFilter instanceof SupportsFileTypeCategory) {
@@ -51,6 +52,7 @@ public class FilterAction extends SeqMapViewActionA {
 				return true;
 			}
 		};
+		
 		ConfigureOptionsDialog<SymmetryFilterI> filterDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Filter", optionFilter);
 		filterDialog.setTitle("Filter");
 		filterDialog.setLocationRelativeTo(getSeqMapView());

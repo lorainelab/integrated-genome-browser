@@ -2,13 +2,13 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.util.ConfigureOptionsPanel;
 
 /**
  *
@@ -38,7 +38,7 @@ public class ColorByAction extends SeqMapViewActionA {
 		ITrackStyleExtended style = tg.getAnnotStyle();
 		ColorProviderI cp = style.getColorProvider();
 		
-		ConfigureOptionsDialog.Filter<ColorProviderI> configureFilter = new ConfigureOptionsDialog.Filter<ColorProviderI>() {
+		ConfigureOptionsPanel.Filter<ColorProviderI> configureFilter = new ConfigureOptionsPanel.Filter<ColorProviderI>() {
 			@Override
 			public boolean shouldInclude(ColorProviderI colorProvider) {
 				if(colorProvider instanceof SupportsFileTypeCategory) {

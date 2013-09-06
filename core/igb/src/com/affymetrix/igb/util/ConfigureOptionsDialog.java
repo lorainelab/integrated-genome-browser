@@ -15,6 +15,7 @@ import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,11 +27,13 @@ import java.util.Map.Entry;
 import java.util.TreeSet;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -50,7 +53,6 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	private JComboBox comboBox;
 	private JPanel paramsPanel;
 	private JButton okOption, cancelOption;
-	private Map<String, T> name2CP;
 	private Map<String, Object> paramMap;
 	
 	/**
@@ -61,7 +63,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	}
 
 	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter) {
-		this(clazz, label, null, true);
+		this(clazz, label, filter, true);
 	}
 	
 	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, boolean includeNone) {
@@ -87,10 +89,10 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		comboBox = new JComboBox();
-		name2CP = new HashMap<String, T>();
-
+		comboBox.setRenderer(new IDListCellRenderer());
+		
 		if(includeNone){
-			comboBox.addItem("None");
+			comboBox.addItem(null);
 		}
 		TreeSet<T> tProviders = new TreeSet<T>(new IDComparator());
 		tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
@@ -100,11 +102,10 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 					continue;
 				}
 			}
-			name2CP.put(cp.getDisplay(), cp);
-			comboBox.addItem(cp.getDisplay());
+			comboBox.addItem(cp);
 		}
 		if(includeNone){
-			comboBox.setSelectedItem("None");
+			comboBox.setSelectedItem(null);
 		}
 
 		JPanel optionsBox = new JPanel();
@@ -274,7 +275,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	private void addListeners() {
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				T cp = name2CP.get((String) e.getItem());
+				T cp = (T)comboBox.getSelectedItem();
 				// If a user selects same color provider as initial then reuses the same object
 				if (returnValue != null && cp != null && cp.getName().equals(returnValue.getName())) {
 					cp = returnValue;
@@ -323,19 +324,25 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	}
 		
 	public void setInitialValue(T cp) {
-		if (cp == null) {
-			comboBox.setSelectedItem("None");
-		} else {
-			comboBox.setSelectedItem(cp.getDisplay());
-		}
 		returnValue = cp;
-		setSelected(cp);
+		if(cp == null){
+			comboBox.setSelectedItem(cp);
+		} else {
+			for(int i=0; i<comboBox.getItemCount(); i++){
+				T item = (T)comboBox.getItemAt(i);
+				if(item != null && item.getName().equals(cp.getName())){
+					comboBox.setSelectedItem(item);
+					break;
+				}
+			}
+		}
 	}
 
 	public T showDialog() {
 		//If initial value was not set, then set it here
 		if(selectedCP == null && comboBox.getItemCount() > 0){
-			T cp = name2CP.get(comboBox.getItemAt(0).toString());
+			T cp = (T)comboBox.getItemAt(0);
+			returnValue = cp;
 			setSelected(cp);
 		}
 		setVisible(true);
@@ -352,5 +359,17 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	 */
 	public static interface Filter<T> {
 		public boolean shouldInclude(T t);
+	}
+	
+	private static class IDListCellRenderer extends DefaultListCellRenderer {	
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value,
+								int index, boolean isSelected, boolean cellHasFocus) {
+			if(value == null){
+				return super.getListCellRendererComponent(list, "None", index, isSelected, cellHasFocus);
+			}
+			return super.getListCellRendererComponent(list, ((ID)value).getDisplay(), 
+								index, isSelected, cellHasFocus);
+		}
 	}
 }

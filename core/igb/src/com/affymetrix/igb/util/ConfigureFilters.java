@@ -28,8 +28,11 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		} else if (filter != null){
 			((javax.swing.DefaultListModel)filterList.getModel()).addElement(filter);
 		}
-		if (filterList.getModel().getSize() >= 0) {
+		if (filterList.getModel().getSize() > 0) {
 			filterList.setSelectedIndex(0);
+			removeButton.setEnabled(true);
+		} else {
+			removeButton.setEnabled(false);
 		}
 	}
 	
@@ -92,6 +95,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
         });
 
         removeButton.setText("Remove");
+        removeButton.setEnabled(false);
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeButtonActionPerformed(evt);
@@ -99,6 +103,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
         });
 
         editButton.setText("Edit");
+        editButton.setEnabled(false);
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -178,6 +183,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		if(selectedFilter != null){
 			((javax.swing.DefaultListModel)filterList.getModel()).addElement(selectedFilter);
 			filterList.setSelectedIndex(filterList.getModel().getSize() - 1);
+			removeButton.setEnabled(true);
 		}
 	}
 	
@@ -186,8 +192,10 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		((javax.swing.DefaultListModel)filterList.getModel()).removeElementAt(selected);
 		if(selected - 1 >= 0){
 			filterList.setSelectedIndex(selected - 1);
-		} else if (filterList.getModel().getSize() >= 0) { //If first element is deleted then selected one below it
+		} else if (filterList.getModel().getSize() > 0) { //If first element is deleted then selected one below it
 			filterList.setSelectedIndex(0);
+		} else {
+			removeButton.setEnabled(false);
 		}
 	}
 	

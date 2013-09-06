@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.util.ConfigureOptionsPanel;
+import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 
 /**
  *

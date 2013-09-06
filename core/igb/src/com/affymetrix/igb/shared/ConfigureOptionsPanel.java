@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.general.ID;
@@ -19,7 +19,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import javax.swing.Box;
@@ -48,6 +50,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 	private Map<String, Object> paramMap;
 	private JComboBox comboBox;
 	private JPanel paramsPanel;
+	private List<SelectionChangeListener> tChangeListeners;
 	
 	/**
 	 * Creates the reusable dialog.
@@ -267,6 +270,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 					cp = (T) cp.newInstance();
 				}
 				setSelected(cp);
+				if(tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue){
+					for(SelectionChangeListener tChangeListener : tChangeListeners){
+						tChangeListener.selectionChanged(cp);
+					}
+				}
 			}
 		});
 
@@ -278,6 +286,20 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 			initParamPanel((IParameters) cp);
 		} else {
 			paramsPanel.removeAll();
+		}
+	}
+	
+	public void addTChangeListner(SelectionChangeListener tcl) {
+		if(tChangeListeners == null){
+			tChangeListeners = new ArrayList<SelectionChangeListener>();
+		}
+		tChangeListeners.add(tcl);
+	}
+	
+	public void removeTChangeListner(SelectionChangeListener tcl) {
+		tChangeListeners.remove(tcl);
+		if(tChangeListeners.isEmpty()){
+			tChangeListeners = null;
 		}
 	}
 	
@@ -309,6 +331,14 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 			}
 		}
 		return returnValue;
+	}
+	
+	/**
+	 * Interface to listen to combobox event change
+	 * @param <T> 
+	 */
+	public static interface SelectionChangeListener<T> {
+		public void selectionChanged(T t);
 	}
 	
 	/**

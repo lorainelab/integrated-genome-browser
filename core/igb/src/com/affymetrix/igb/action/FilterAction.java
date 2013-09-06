@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
-import com.affymetrix.igb.util.ConfigureOptionsPanel;
+import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;

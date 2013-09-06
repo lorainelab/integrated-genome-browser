@@ -3,7 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.filter.ChainFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.IParameters;
-import com.affymetrix.igb.util.ConfigureOptionsPanel.Filter;
+import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 
 /**
  *

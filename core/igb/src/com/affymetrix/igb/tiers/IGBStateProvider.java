@@ -20,6 +20,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	private static boolean showIGBTracks = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_IGB_TRACK_MARK, TrackConstants.default_show_igb_track_mark);
 	private static boolean showLockIcon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, TrackConstants.default_show_locked_track_icon);
 	
+	private static boolean showFullFilePathInTrack = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_FULL_FILE_PATH_IN_TRACK, TrackConstants.default_show_full_file_path_in_track);//TK
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
 	private static TrackStyle default_instance = null;
 	
@@ -50,6 +51,12 @@ public final class IGBStateProvider extends DefaultStateProvider {
 				System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
 			}
 			TrackStyle template = getDefaultInstance();
+
+			if(!getShowFullFilePathInTrackMark()){
+				if(track_name!= null)
+				 track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator)+1);
+			}
+			
 			style = new TrackStyle(unique_name, track_name, file_type, template, props);
 			FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
 			if (fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph || fth.getFileTypeCategory() == FileTypeCategory.Mismatch)) {
@@ -106,6 +113,17 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	
 	public static boolean getShowIGBTrackMarkState() {
 		return showIGBTracks;
+	}
+	
+		
+	//TK
+	public static void setShowFullFilePathInTrackMark(boolean b) {
+		showFullFilePathInTrack = b;
+	}
+	
+
+	public static boolean getShowFullFilePathInTrackMark() {
+		return showFullFilePathInTrack;
 	}
 	
 	public static void setShowLockIcon(boolean b){

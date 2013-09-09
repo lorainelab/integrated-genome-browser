@@ -482,20 +482,11 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 	
-	public void zoomToSym(SeqSymmetry sym, List<SeqSymmetry> altSymList) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-
+	private void zoomToSym(SeqSymmetry sym) {
 		if (sym != null) {
-			if (altSymList != null && altSymList.contains(sym)) {
-				if (group == null) {
-					return;
-				}
-				zoomToCoord(sym);
-				return;
-			}
-
 			if (igbService.getSeqMapView().getItemFromTier(sym) == null) {
+				GenometryModel gmodel = GenometryModel.getGenometryModel();
+				AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 				if (group == null) {
 					return;
 				}
@@ -543,7 +534,7 @@ public final class SearchView extends IGBTabPanel implements
 				}
 				else {
 					SeqSymmetry sym = ((SymSearchResultsTableModel)table.getModel()).get(srow);
-					zoomToSym(sym, ((ISearchModeSym)selectedSearchMode).getAltSymList());
+					zoomToSym(sym);
 				}
 			}
 		}

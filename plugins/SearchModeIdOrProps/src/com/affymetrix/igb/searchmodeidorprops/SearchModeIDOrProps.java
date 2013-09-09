@@ -26,7 +26,6 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodeidorprops");
 	private static final int MAX_HITS = 100000;
 	protected static final String FRIENDLY_PATTERN = BUNDLE.getString("friendlyPattern");
-	private List<SeqSymmetry> remoteSymList;
 	protected IGBService igbService;
 	protected static final IStatus DUMMY_STATUS = new IStatus() { public void setStatus(String s){}};
 
@@ -101,8 +100,8 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 
 		String seq = chrFilter == null ? Constants.GENOME_SEQ_ID : chrFilter.getID();
 		List<SeqSymmetry> localSymList = findLocalSyms(search_text, chrFilter, seq, search_props, statusHolder);
-		remoteSymList = null;
-
+		List<SeqSymmetry> remoteSymList = null;
+		
 		// Make sure this search is reasonable to do on a remote server.
 		if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
 			// Not much of a regular expression.  Assume the user wants to match at the start and end
@@ -177,11 +176,6 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingLocal"), friendlySearchStr));
 		List<SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
 		return localSymList;
-	}
-
-	@Override
-	public List<SeqSymmetry> getAltSymList() {
-		return remoteSymList;
 	}
 
 	@Override

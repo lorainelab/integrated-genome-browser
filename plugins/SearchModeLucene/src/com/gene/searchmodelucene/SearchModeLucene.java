@@ -130,8 +130,4 @@ public class SearchModeLucene implements IKeyWordSearch {
 		return syms;
 	}
 
-	@Override
-	public List<SeqSymmetry> getAltSymList() {
-		return null;
-	}
 }

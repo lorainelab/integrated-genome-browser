@@ -29,9 +29,4 @@ public interface ISearchModeSym extends ISearchMode {
 	 * @return a list of the syms found by the search
 	 */
 	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym);
-	/**
-	 * return any alternate symmetries - this is only here to
-	 * be backwardly compatible, return the remote search on DAS2 symmetries
-	 */
-	public List<SeqSymmetry> getAltSymList();
 }

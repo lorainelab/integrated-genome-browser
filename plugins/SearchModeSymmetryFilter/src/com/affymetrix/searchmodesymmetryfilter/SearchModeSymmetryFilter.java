@@ -105,9 +105,4 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 		List<SeqSymmetry> results = searchSym(trackSym);
 		return results;
 	}
-
-	@Override
-	public List<SeqSymmetry> getAltSymList() {
-		return null;
-	}
 }

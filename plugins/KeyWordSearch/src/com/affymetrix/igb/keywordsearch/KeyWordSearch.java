@@ -71,18 +71,6 @@ public class KeyWordSearch implements IKeyWordSearch{
 		return results;
 	}
 	
-	public List<SeqSymmetry> getAltSymList(){
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		for(IKeyWordSearch searchMode : searchModes){
-			List<SeqSymmetry> res = searchMode.getAltSymList();
-			if(res != null && !res.isEmpty()){
-				results.addAll(res);
-			}
-		}
-		return results;
-	}
-	
-	
 	public synchronized void initSearchModes() {
 		searchModes.clear();
 		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(IKeyWordSearch.class).getExtensionPointImpls());

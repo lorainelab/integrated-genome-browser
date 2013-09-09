@@ -272,11 +272,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		boolean any_alignment = false;
 		boolean any_show_residue_mask = false;
 		boolean any_shade_based_on_quality = false;
+		boolean all_same_category = num_selections > 0;
 //		boolean any_are_separate_tiers = false;
 //		boolean any_are_single_tier = false;
 //		boolean any_lockable = false;
 //		boolean any_locked = false;
 		int no_of_locked = 0;
+		FileTypeCategory category = num_selections > 0 ? 
+				((RootSeqSymmetry)labels.get(0).getReferenceTier().getInfo()).getCategory()
+				: null;
 		
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
@@ -289,6 +293,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			
 			if(astyle.getShow() && glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed()){
 				no_of_locked++;
+			}
+			
+			if(((RootSeqSymmetry)glyph.getInfo()).getCategory() != category){
+				all_same_category = false;
 			}
 			
 			if(((RootSeqSymmetry)glyph.getInfo()).getCategory() == FileTypeCategory.Alignment){
@@ -440,10 +448,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			
 		JMenuItem set_color_by = new JRPMenuItemTLP(ColorByAction.getAction());
 		set_color_by.setIcon(null);
+		set_color_by.setEnabled(all_same_category);
 		popup.add(set_color_by);
 			
 		JMenuItem filter_action = new JRPMenuItemTLP(FilterAction.getAction());
 		filter_action.setIcon(null);
+		filter_action.setEnabled(all_same_category);
 		popup.add(filter_action);
 		
 		popup.add(new JSeparator());

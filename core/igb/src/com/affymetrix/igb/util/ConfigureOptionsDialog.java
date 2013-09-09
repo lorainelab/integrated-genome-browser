@@ -86,10 +86,11 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	public T showDialog() {
 		//If initial value was not set, then set it here
 		setVisible(true);
-		return configureOptionPanel.getReturnValue(getValue() instanceof Integer && (Integer)getValue() == JOptionPane.OK_OPTION);
+		return configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer)optionPane.getValue() == JOptionPane.OK_OPTION); 
 	}
 	
 	public Object getValue(){
+		configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer)optionPane.getValue() == JOptionPane.OK_OPTION); 
 		return optionPane.getValue();
 	}
 }

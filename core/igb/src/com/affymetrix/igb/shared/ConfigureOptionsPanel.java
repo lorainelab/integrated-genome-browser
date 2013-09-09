@@ -287,6 +287,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 		} else {
 			paramsPanel.removeAll();
 		}
+		paramsPanel.revalidate();
 	}
 	
 	public void addTChangeListner(SelectionChangeListener tcl) {

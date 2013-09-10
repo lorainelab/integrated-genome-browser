@@ -657,15 +657,14 @@ public final class SearchView extends IGBTabPanel implements
 			return;
 		}
 		
-		searchTF.setText(searchResults.getSearchTerm());
-		
 		clearResults();
-		// Hard code the search mode to 'Keyword'
-		// As currently this only happens when searching from the IGB main panel search box which is a keyword search
-		searchCB.setSelectedItem("Keyword");
-		searchModeAction.actionPerformed(null);
-		setStatus(searchResults.getSearchSummary());
 		
+		searchTF.setText(searchResults.getSearchTerm());
+		sequenceCB.setSelectedItem(searchResults.getSearchFilter());
+		setStatus(searchResults.getSearchSummary());
+		searchCB.setSelectedItem(searchResults.getSearchType());
+		searchModeAction.actionPerformed(null);
+			
 		setModel(new SymSearchResultsTableModel(searchResults.getResults()));
 		select();
 	}

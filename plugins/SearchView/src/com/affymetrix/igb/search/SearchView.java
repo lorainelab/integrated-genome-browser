@@ -127,11 +127,13 @@ public final class SearchView extends IGBTabPanel implements
 					@Override
 					protected SearchResultsTableModel runInBackground() {
 						if (selectedSearchMode instanceof SearchModeResidue) {
-							List<GlyphI> glyphs = ((SearchModeResidue)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							SearchResults<GlyphI> searchResults = ((SearchModeResidue)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							List<GlyphI> glyphs = searchResults != null ? searchResults.getResults() : null;
 							if(isCancelled()){
 								setStatus("Search cancelled");
 								return null;
 							}
+							setStatus(searchResults);
 							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
 						}
 						else {

@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 
 public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -181,7 +182,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 		return false;
 	}
 
-	public List<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
+	public SearchResults<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		if(!option){
 			clearResults();
 		}
@@ -200,7 +201,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 		try {
 			regex = Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
 		} catch (Exception ex) { // should not happen already checked above
-			return null;
+			return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), ex.getLocalizedMessage(), null);
 		}
 
 		statusHolder.setStatus(friendlySearchStr);
@@ -227,8 +228,8 @@ public class SearchModeResidue implements ISearchModeExtended,
 			String rev_searchstring = DNAUtils.reverseComplement(residues);
 			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolors[color]);
 		}
-
-		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchFound"), hit_count1, hit_count2));
+		String statusStr = MessageFormat.format(BUNDLE.getString("searchFound"), hit_count1, hit_count2);
+		statusHolder.setStatus(statusStr);
 		igbService.getSeqMap().updateWidget();
 
 		Collections.sort(glyphs, new Comparator<GlyphI>() {
@@ -237,6 +238,6 @@ public class SearchModeResidue implements ISearchModeExtended,
 			}
 		});
 		color++;
-		return glyphs;
+		return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), statusStr, glyphs);
 	}
 }

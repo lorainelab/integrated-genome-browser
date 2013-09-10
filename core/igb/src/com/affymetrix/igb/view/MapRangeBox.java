@@ -580,7 +580,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		search_listeners.remove(listener);
 	}
 
-	private void fireSearchResult(SearchResults searchResults) {
+	private void fireSearchResult(SearchResults<SeqSymmetry> searchResults) {
 		for (SearchListener listener : search_listeners) {
 			listener.searchResults(searchResults);
 		}

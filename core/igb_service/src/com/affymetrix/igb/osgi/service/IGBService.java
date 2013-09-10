@@ -4,11 +4,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.StatusAlert;
@@ -30,7 +28,6 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -170,9 +167,6 @@ public interface IGBService {
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
-
-	public void addSearchListener(SearchListener listener);
-	public void removeSearchListener(SearchListener listener);
 
 	// Open Uri
 	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean loadAsTrack);

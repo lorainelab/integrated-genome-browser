@@ -46,6 +46,7 @@ import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.UpdateStatusAlert;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 //import com.affymetrix.igb.view.factories.CytoBandGlyphFactory;
@@ -185,6 +186,7 @@ public class Activator implements BundleActivator {
 		initSeqMapViewActions();
 		addShortcuts();
 		addStatusAlertListener(bundleContext);
+		addSearchListener(bundleContext);
 		
 		if(IGB.commandLineBatchFileStr != null && IGB.commandLineBatchFileStr.length() > 0){
 			ScriptExecutor se = new ScriptExecutor();
@@ -587,6 +589,22 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(StatusAlert alert) {	
 					Application.getSingleton().removeStatusAlert(alert);
+				}
+			}
+		);
+	}
+	
+	private void addSearchListener(final BundleContext bundleContext){
+		ExtensionPointHandler<SearchListener> searchExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, SearchListener.class);
+		searchExtensionPoint.addListener(
+			new ExtensionPointListener<SearchListener>() {
+				@Override
+				public void addService(SearchListener searchListener) {
+					Application.getSingleton().getMapView().getMapRangeBox().addSearchListener(searchListener);
+				}
+				@Override
+				public void removeService(SearchListener searchListener) {	
+					Application.getSingleton().getMapView().getMapRangeBox().removeSearchListener(searchListener);
 				}
 			}
 		);

@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SearchListener;
+import com.affymetrix.igb.shared.SearchListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -335,7 +335,6 @@ public final class SearchView extends IGBTabPanel implements
 		clearButton.addActionListener(clearAction);
 		optionCheckBox.addItemListener(itemListener);
 		igbService.addServerInitListener(this);
-		igbService.addSearchListener(this);
 	}
 
 	private void initOptionCheckBox() {
@@ -398,7 +397,10 @@ public final class SearchView extends IGBTabPanel implements
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
 		List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
-		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
+		ExtensionPointHandler<ISearchModeSym> extensionPointHandler = ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class);
+		if(extensionPointHandler != null) {
+			searchModes.addAll(extensionPointHandler.getExtensionPointImpls());
+		}
 		searchModes.add(new SearchModeResidue(igbService));
 		// consistent order for search modes
 		Collections.sort(searchModes,

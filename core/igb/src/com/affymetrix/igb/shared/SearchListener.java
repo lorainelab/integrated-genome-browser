@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.event;
+package com.affymetrix.igb.shared;
 
 import java.util.List;
 

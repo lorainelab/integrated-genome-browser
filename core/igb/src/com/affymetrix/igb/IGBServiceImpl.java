@@ -14,11 +14,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -48,7 +46,6 @@ import com.affymetrix.igb.util.ExportDialog;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -65,10 +62,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionListener;
 import org.osgi.framework.BundleActivator;
@@ -354,17 +349,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
-	}
-
-
-	@Override
-	public void addSearchListener(SearchListener listener) {
-		((SeqMapView)getSeqMapView()).getMapRangeBox().addSearchListener(listener);
-	}
-
-	@Override
-	public void removeSearchListener(SearchListener listener) {
-		((SeqMapView)getSeqMapView()).getMapRangeBox().removeSearchListener(listener);
 	}
 
 	@Override

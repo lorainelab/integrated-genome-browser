@@ -6,15 +6,22 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.window.service.WindowActivator;
+import com.affymetrix.igb.shared.SearchListener;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
-public class Activator extends WindowActivator implements BundleActivator {
+public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+	
+	public Activator(){
+		super(IGBService.class);
+	}
+	
 	@Override
-	protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
-		ExtensionPointHandler<ISearchModeSym> extensionPointSym = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception{
 		final SearchView searchView = new SearchView(igbService);
+		ExtensionPointHandler<ISearchModeSym> extensionPointSym = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
 		extensionPointSym.addListener(new ExtensionPointListener<ISearchModeSym>() {
 			@Override
 			public void removeService(ISearchModeSym searchMode) {
@@ -25,6 +32,10 @@ public class Activator extends WindowActivator implements BundleActivator {
 				searchView.initSearchCB();
 			}
 		});
-		return searchView;
+		
+		return new ServiceRegistration[] {
+			bundleContext.registerService(IGBTabPanel.class, searchView, null),
+			bundleContext.registerService(SearchListener.class, searchView, null),
+		};
 	}
 }

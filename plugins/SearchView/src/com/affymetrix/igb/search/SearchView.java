@@ -147,6 +147,7 @@ public final class SearchView extends IGBTabPanel implements
 								return null;
 							}
 							List<SeqSymmetry> syms = searchResults != null ? searchResults.getResults() : null;
+							setStatus(searchResults);
 							return new SymSearchResultsTableModel(syms);
 						}
 					}
@@ -224,6 +225,8 @@ public final class SearchView extends IGBTabPanel implements
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
 	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView_searchCB");
 	private final JRPCheckBox optionCheckBox = new JRPCheckBox("SearchView_optionCheckBox", "");
+	private final Icon infoIcon = MenuUtil.getIcon("16x16/actions/info.png");
+	private final JRPButton infoButton = new JRPButton("SearchView_infoButton", infoIcon);
 	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("16x16/actions/search.png"));
 	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("16x16/actions/delete.png"));
 	//private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("16x16/actions/stop.png"));
@@ -324,6 +327,11 @@ public final class SearchView extends IGBTabPanel implements
 
 //		bottom_row.add(cancel);
 		bottom_row.add(status_bar);
+		
+		infoButton.setVisible(false);
+		infoButton.setBorder(null);
+		bottom_row.add(infoButton);
+		
 		validate();
 
 		searchTF.setComponentPopupMenu(CCPUtils.getCCPPopup());
@@ -559,6 +567,8 @@ public final class SearchView extends IGBTabPanel implements
 		if (selectedSearchMode != null && selectedSearchMode instanceof SearchModeResidue) {
 			((SearchModeResidue)selectedSearchMode).clear();
 		}
+		infoButton.setVisible(false);
+		infoButton.setAction(null);
 		clearTable();
 	}
 
@@ -611,6 +621,22 @@ public final class SearchView extends IGBTabPanel implements
 		setSequenceCBValue();
 	}
 
+	private void setStatus(final SearchResults searchResults){
+		infoButton.setAction(new AbstractAction(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String message = MessageFormat.format("<html><b>Search Term :</b> {0}<br><b>Search Summary :</b> {1} </html>", 
+						new Object[]{searchResults.getSearchTerm(), searchResults.getSearchSummary()});
+				JOptionPane.showMessageDialog(SearchView.this, message, searchResults.getSearchType(), JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		infoButton.setIcon(infoIcon);
+		infoButton.setBorder(null);
+		
+		infoButton.setVisible(true);
+		setStatus(searchResults.getSearchSummary());
+	}
+	
 	/** Set the text in the status bar in a thread-safe way. */
 	public void setStatus(final String text) {
 		ThreadUtils.runOnEventQueue(new Runnable() {
@@ -661,10 +687,12 @@ public final class SearchView extends IGBTabPanel implements
 		
 		searchTF.setText(searchResults.getSearchTerm());
 		sequenceCB.setSelectedItem(searchResults.getSearchFilter());
-		setStatus(searchResults.getSearchSummary());
+		
 		searchCB.setSelectedItem(searchResults.getSearchType());
 		searchModeAction.actionPerformed(null);
-			
+		
+		setStatus(searchResults);
+		
 		setModel(new SymSearchResultsTableModel(searchResults.getResults()));
 		select();
 	}

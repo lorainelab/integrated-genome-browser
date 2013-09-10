@@ -1,19 +1,18 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -81,7 +80,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
  	}
 
 	@Override
-	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
+	public SearchResults search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		return search(search_text, chrFilter, statusHolder, option, false);
 	}
 

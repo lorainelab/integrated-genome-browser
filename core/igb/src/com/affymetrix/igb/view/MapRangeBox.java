@@ -33,10 +33,10 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.jidesoft.hints.ListDataIntelliHints;
 
@@ -455,14 +455,15 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		for (ISearchModeSym searchMode : modes) {
 			if (searchMode.checkInput(search_term, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
 //				for (TypeContainerAnnot trackSym : trackSyms) {
-					List<SeqSymmetry> searchResults = null;
+					List<SeqSymmetry> res = null;
 					String errorMessage = searchMode.checkInput(search_term, null, null);
 					if (errorMessage == null) {
-						searchResults = searchMode.search(search_term, null, application_statusbar, false);
+						SearchResults searchResults = searchMode.search(search_term, null, application_statusbar, false);
+						res = searchResults != null ? searchResults.getResults() : null;
 					}
-					if (searchResults != null && searchResults.size() > 0) {
-						fireSearchResult(search_text, searchResults);
-						List<SeqSpan> rawSpans = findSpansFromSyms(searchResults);
+					if (res != null && res.size() > 0) {
+						fireSearchResult(search_text, res);
+						List<SeqSpan> rawSpans = findSpansFromSyms(res);
 						if (rawSpans.size() > 0) {
 							zoomToSeqAndSpan(gview, rawSpans.get(0));
 							return rawSpans;

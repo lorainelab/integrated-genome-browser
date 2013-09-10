@@ -21,6 +21,7 @@ import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 
 public abstract class SearchModeIDOrProps implements ISearchModeSym {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodeidorprops");
@@ -93,7 +94,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 		return rows;
 	}	
 
-	protected List<SeqSymmetry> search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
+	protected SearchResults search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		String text = search_text;
@@ -121,10 +122,12 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 			actualChars -= 1;
 		}
 
+		String statusStr;
 		if (remote) {
 			if (actualChars < 3) {
-				ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorShort"), friendlySearchStr));
-				return null;
+				statusStr = MessageFormat.format(BUNDLE.getString("searchErrorShort"), friendlySearchStr);
+				ErrorHandler.errorPanel(statusStr);
+				return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 			}
 
 			//remoteSearches
@@ -137,10 +140,12 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 		}
 
 		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
-			statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchNoResults"), friendlySearchStr));
-			return null;
+			statusStr = MessageFormat.format(BUNDLE.getString("searchNoResults"), friendlySearchStr);
+			statusHolder.setStatus(statusStr);
+			return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 		}
-		String statusStr = MessageFormat.format(BUNDLE.getString("searchLocalResults"), friendlySearchStr,  (localSymList == null ? "0" : "" + localSymList.size()));
+		
+		statusStr = MessageFormat.format(BUNDLE.getString("searchLocalResults"), friendlySearchStr,  (localSymList == null ? "0" : "" + localSymList.size()));
 		if (remote && actualChars >= 3) {
 			statusStr += MessageFormat.format(BUNDLE.getString("searchRemoteResults"), (remoteSymList == null ? "0" : "" + remoteSymList.size()));
 		}
@@ -160,7 +165,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 			}
 		});
 
-		return tableRows;
+		return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, tableRows);
 	}
 
 	protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {

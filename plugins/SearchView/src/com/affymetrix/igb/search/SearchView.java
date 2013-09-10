@@ -52,6 +52,7 @@ import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 import com.jidesoft.hints.ListDataIntelliHints;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
@@ -140,11 +141,12 @@ public final class SearchView extends IGBTabPanel implements
 									search_term = search_term.replace(c, "\\"+c);
 								}
 							}
-							List<SeqSymmetry> syms = ((ISearchModeSym)selectedSearchMode).search(search_term, chrfilter, SearchView.this, optionCheckBox.isSelected());
+							SearchResults searchResults = ((ISearchModeSym)selectedSearchMode).search(search_term, chrfilter, SearchView.this, optionCheckBox.isSelected());
 							if(isCancelled()){
 								setStatus("Search cancelled");
 								return null;
 							}
+							List<SeqSymmetry> syms = searchResults != null ? searchResults.getResults() : null;
 							return new SymSearchResultsTableModel(syms);
 						}
 					}

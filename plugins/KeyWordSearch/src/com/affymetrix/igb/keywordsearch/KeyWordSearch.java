@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,20 +45,21 @@ public class KeyWordSearch implements IKeyWordSearch{
 		return null;
 	}
 	
-	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option){
+	public SearchResults search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option){
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		StringBuilder status = new StringBuilder();
 		StatusHolder sh = new StatusHolder(statusHolder);
 		for(IKeyWordSearch searchMode : searchModes){
 			statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
-			List<SeqSymmetry> res = searchMode.search(search_text, chrFilter, sh, option);
+			SearchResults searchResults = searchMode.search(search_text, chrFilter, sh, option);
+			List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
 			if(res != null && !res.isEmpty()){
 				results.addAll(res);
 			}
 			status.append(searchMode.getName()).append(" :").append(sh.getLastStatus()).append(", ");
 		}
 		statusHolder.setStatus(status.toString());
-		return results;
+		return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
 	}
 	
 	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym){

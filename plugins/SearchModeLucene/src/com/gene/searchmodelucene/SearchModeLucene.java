@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 
 public class SearchModeLucene implements IKeyWordSearch {
 	private static final int SEARCH_ALL_ORDINAL = 1000;
@@ -102,7 +103,7 @@ public class SearchModeLucene implements IKeyWordSearch {
 	}
 
 	@Override
-	public List<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
+	public SearchResults search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		if (search_text != null && !search_text.isEmpty()) {
 			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
@@ -122,12 +123,16 @@ public class SearchModeLucene implements IKeyWordSearch {
 				}
 			}
 		}
+		String statusStr;
 		if (syms.isEmpty()) {
-			statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchNoResults"), search_text));
-			return null;
+			statusStr = MessageFormat.format(BUNDLE.getString("searchNoResults"), search_text);
+			statusHolder.setStatus(statusStr);
+			return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 		}
-		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchResults"), search_text, "" + syms.size()));
-		return syms;
+		statusStr = MessageFormat.format(BUNDLE.getString("searchResults"), search_text, "" + syms.size());
+		statusHolder.setStatus(statusStr);
+		
+		return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
 	}
 
 }

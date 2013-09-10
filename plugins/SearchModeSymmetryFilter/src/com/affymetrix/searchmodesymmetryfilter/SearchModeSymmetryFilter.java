@@ -13,6 +13,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResults;
 
 public class SearchModeSymmetryFilter implements ISearchModeSym {
 	private final int searchAllOrdinal;
@@ -58,8 +59,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 
 	@Override
-	public List<SeqSymmetry> search(String search_text, BioSeq chrFilter,
-			IStatus statusHolder, boolean option) {
+	public SearchResults search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		if (filter instanceof SymmetryFilter && 
 				!search_text.equals(((SymmetryFilter)filter).getParameterValue(((SymmetryFilter)filter).getParametersType().entrySet().iterator().next().getKey()))) {
@@ -76,8 +76,9 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 				}
 			}
 		}
-		statusHolder.setStatus(MessageFormat.format("Searching {0} - found {1} matches", search_text, "" + results.size()));
-		return results;
+		String statusStr = MessageFormat.format("Searching {0} - found {1} matches", search_text, "" + results.size());
+		statusHolder.setStatus(statusStr);
+		return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, results);
 	}
 
 	private List<SeqSymmetry> searchSym(SeqSymmetry sym) {

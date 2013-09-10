@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
-import com.affymetrix.genometryImpl.filter.NoIntronFilter;
+import com.affymetrix.genometryImpl.filter.WithIntronFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
 import com.affymetrix.genometryImpl.general.IParameters;
@@ -54,7 +54,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	public static final boolean default_uniqueness = true;
 	public static final boolean default_topHatStyleFlanking = false;
 	
-	private static final SymmetryFilterI noIntronFilter = new NoIntronFilter();
+	private static final SymmetryFilterI noIntronFilter = new WithIntronFilter();
     private static final ChildThresholdFilter childThresholdFilter = new ChildThresholdFilter();
     private static final SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
     

@@ -127,12 +127,12 @@ public class SearchModeLucene implements IKeyWordSearch {
 		if (syms.isEmpty()) {
 			statusStr = MessageFormat.format(BUNDLE.getString("searchNoResults"), search_text);
 			statusHolder.setStatus(statusStr);
-			return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+			return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 		}
 		statusStr = MessageFormat.format(BUNDLE.getString("searchResults"), search_text, "" + syms.size());
 		statusHolder.setStatus(statusStr);
 		
-		return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
+		return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
 	}
 
 }

@@ -59,7 +59,7 @@ public class KeyWordSearch implements IKeyWordSearch{
 			status.append(searchMode.getName()).append(" :").append(sh.getLastStatus()).append(", ");
 		}
 		statusHolder.setStatus(status.toString());
-		return new SearchResults(null, search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
+		return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
 	}
 	
 	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym){

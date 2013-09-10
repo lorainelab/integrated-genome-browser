@@ -696,7 +696,7 @@ public final class SearchView extends IGBTabPanel implements
 		setStatus(searchResults);
 		
 		setModel(new SymSearchResultsTableModel(searchResults.getResults()));
-		select();
+//		select();
 	}
 	
 	// Set sequence checkbox value as current selected chromosome for residue search mode

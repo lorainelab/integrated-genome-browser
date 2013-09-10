@@ -456,13 +456,14 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			if (searchMode.checkInput(search_term, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
 //				for (TypeContainerAnnot trackSym : trackSyms) {
 					List<SeqSymmetry> res = null;
+					SearchResults searchResults = null;
 					String errorMessage = searchMode.checkInput(search_term, null, null);
 					if (errorMessage == null) {
-						SearchResults searchResults = searchMode.search(search_term, null, application_statusbar, false);
+						searchResults = searchMode.search(search_term, null, application_statusbar, false);
 						res = searchResults != null ? searchResults.getResults() : null;
 					}
-					if (res != null && res.size() > 0) {
-						fireSearchResult(search_text, res);
+					if (searchResults != null && res != null && res.size() > 0) {
+						fireSearchResult(searchResults);
 						List<SeqSpan> rawSpans = findSpansFromSyms(res);
 						if (rawSpans.size() > 0) {
 							zoomToSeqAndSpan(gview, rawSpans.get(0));
@@ -501,7 +502,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			foundSpans = mergedSpans;
 			spanPointer = 0;
 			if (foundSpans.size() > 1) {
-				Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
+//				Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
+				Application.getSingleton().setStatus(null);
 //				NextSearchSpanAction.getAction().setEnabled(true);
 			}
 			else {
@@ -578,9 +580,9 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		search_listeners.remove(listener);
 	}
 
-	private void fireSearchResult(String searchText, List<SeqSymmetry> spanList) {
+	private void fireSearchResult(SearchResults searchResults) {
 		for (SearchListener listener : search_listeners) {
-			listener.searchResults(searchText, spanList);
+			listener.searchResults(searchResults);
 		}
 	}
 	

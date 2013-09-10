@@ -141,7 +141,7 @@ public final class SearchView extends IGBTabPanel implements
 									search_term = search_term.replace(c, "\\"+c);
 								}
 							}
-							SearchResults searchResults = ((ISearchModeSym)selectedSearchMode).search(search_term, chrfilter, SearchView.this, optionCheckBox.isSelected());
+							SearchResults<SeqSymmetry> searchResults = ((ISearchModeSym)selectedSearchMode).search(search_term, chrfilter, SearchView.this, optionCheckBox.isSelected());
 							if(isCancelled()){
 								setStatus("Search cancelled");
 								return null;
@@ -678,7 +678,7 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	@Override
-	public void searchResults(SearchResults searchResults) {
+	public void searchResults(SearchResults<SeqSymmetry> searchResults) {
 		if(searchResults == null){
 			return;
 		}

@@ -456,7 +456,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			if (searchMode.checkInput(search_term, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
 //				for (TypeContainerAnnot trackSym : trackSyms) {
 					List<SeqSymmetry> res = null;
-					SearchResults searchResults = null;
+					SearchResults<SeqSymmetry> searchResults = null;
 					String errorMessage = searchMode.checkInput(search_term, null, null);
 					if (errorMessage == null) {
 						searchResults = searchMode.search(search_term, null, application_statusbar, false);

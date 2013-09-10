@@ -15,7 +15,7 @@ public interface ISearchModeSym extends ISearchMode {
 	 * @param option the value of an option for this mode
 	 * @return a list of the syms found by the search
 	 */
-	public SearchResults search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option);
+	public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option);
 	/**
 	 * perform the search on a single track
 	 * note - returning null means that the implementation could not process

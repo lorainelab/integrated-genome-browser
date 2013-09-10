@@ -2,6 +2,7 @@ package com.affymetrix.igb.searchmodeidorprops;
 
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
@@ -34,7 +35,7 @@ public class SearchModeProps extends SearchModeIDOrProps implements IKeyWordSear
 	}
 
 	@Override
-	public SearchResults search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
+	public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		return search(search_text, chrFilter, statusHolder, option, true);
 	}
 }

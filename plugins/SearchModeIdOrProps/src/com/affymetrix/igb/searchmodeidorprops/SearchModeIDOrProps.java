@@ -94,7 +94,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 		return rows;
 	}	
 
-	protected SearchResults search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
+	protected SearchResults<SeqSymmetry> search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		String text = search_text;
@@ -127,7 +127,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 			if (actualChars < 3) {
 				statusStr = MessageFormat.format(BUNDLE.getString("searchErrorShort"), friendlySearchStr);
 				ErrorHandler.errorPanel(statusStr);
-				return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+				return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 			}
 
 			//remoteSearches
@@ -142,7 +142,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
 			statusStr = MessageFormat.format(BUNDLE.getString("searchNoResults"), friendlySearchStr);
 			statusHolder.setStatus(statusStr);
-			return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+			return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 		}
 		
 		statusStr = MessageFormat.format(BUNDLE.getString("searchLocalResults"), friendlySearchStr,  (localSymList == null ? "0" : "" + localSymList.size()));
@@ -165,7 +165,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 			}
 		});
 
-		return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, tableRows);
+		return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, tableRows);
 	}
 
 	protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {

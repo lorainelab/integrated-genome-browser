@@ -45,13 +45,13 @@ public class KeyWordSearch implements IKeyWordSearch{
 		return null;
 	}
 	
-	public SearchResults search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option){
+	public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option){
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		StringBuilder status = new StringBuilder();
 		StatusHolder sh = new StatusHolder(statusHolder);
 		for(IKeyWordSearch searchMode : searchModes){
 			statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
-			SearchResults searchResults = searchMode.search(search_text, chrFilter, sh, option);
+			SearchResults<SeqSymmetry> searchResults = searchMode.search(search_text, chrFilter, sh, option);
 			List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
 			if(res != null && !res.isEmpty()){
 				results.addAll(res);
@@ -59,7 +59,7 @@ public class KeyWordSearch implements IKeyWordSearch{
 			status.append(searchMode.getName()).append(" :").append(sh.getLastStatus()).append(", ");
 		}
 		statusHolder.setStatus(status.toString());
-		return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
+		return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
 	}
 	
 	public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym){

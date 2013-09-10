@@ -103,7 +103,7 @@ public class SearchModeLucene implements IKeyWordSearch {
 	}
 
 	@Override
-	public SearchResults search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
+	public SearchResults<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		if (search_text != null && !search_text.isEmpty()) {
 			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
@@ -127,12 +127,12 @@ public class SearchModeLucene implements IKeyWordSearch {
 		if (syms.isEmpty()) {
 			statusStr = MessageFormat.format(BUNDLE.getString("searchNoResults"), search_text);
 			statusHolder.setStatus(statusStr);
-			return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+			return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 		}
 		statusStr = MessageFormat.format(BUNDLE.getString("searchResults"), search_text, "" + syms.size());
 		statusHolder.setStatus(statusStr);
 		
-		return new SearchResults(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
+		return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
 	}
 
 }

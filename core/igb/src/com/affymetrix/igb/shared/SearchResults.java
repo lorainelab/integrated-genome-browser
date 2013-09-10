@@ -1,19 +1,18 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import java.util.List;
 
 /**
  *
  * @author hiralv
  */
-public class SearchResults {
+public class SearchResults<T> {
 	
 	private String searchType, searchTerm, searchFilter, searchSummary;
-	private List<SeqSymmetry> searchResults;
+	private List<T> searchResults;
 	
 	public SearchResults(String searchType, String searchTerm, String searchFilter, 
-						 String searchSummary, List<SeqSymmetry> searchResults){
+						 String searchSummary, List<T> searchResults){
 		this.searchType = searchType;
 		this.searchTerm = searchTerm;
 		this.searchFilter = searchFilter;
@@ -57,7 +56,7 @@ public class SearchResults {
 	 * Returns search result
 	 * @return 
 	 */
-	public List<SeqSymmetry> getResults(){
+	public List<T> getResults(){
 		return searchResults;
 	}
 }

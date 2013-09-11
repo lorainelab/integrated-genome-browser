@@ -498,12 +498,4 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void exportScreenshot (File f, String ext, boolean isScript) throws IOException {
 		ExportDialog.exportScreenshot(f, ext, isScript);
 	}
-	
-	public void addStatusAlert(StatusAlert alert){
-		Application.getSingleton().addStatusAlert(alert);
-	}
-	
-	public void removeStatusAlert(StatusAlert alert){
-		Application.getSingleton().removeStatusAlert(alert);
-	}
 }

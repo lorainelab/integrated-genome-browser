@@ -203,6 +203,4 @@ public interface IGBService {
 	public Component determineSlicedComponent();
 	public void setComponent(Component c);
 	public void exportScreenshot(File f, String ext, boolean isScript) throws IOException;
-	public void addStatusAlert(StatusAlert alert);
-	public void removeStatusAlert(StatusAlert alert);
 }

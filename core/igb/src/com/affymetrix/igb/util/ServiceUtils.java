@@ -45,7 +45,7 @@ public final class ServiceUtils {
 		return instance;
 	}
 
-	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url) {
+	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url, boolean showErrorForUnsupported) {
 		GenericFeature feature = null;
 
 		URI uri = URI.create(feature_url);
@@ -68,7 +68,9 @@ public final class ServiceUtils {
 			extension = extension.substring(extension.indexOf('.') + 1);
 
 			if (FileTypeHolder.getInstance().getFileTypeHandler(extension) == null) {
-				ErrorHandler.errorPanel("File type " + extension + " is not supported");
+				if(showErrorForUnsupported) {
+					ErrorHandler.errorPanel("File type " + extension + " is not supported");
+				}
 				Logger.getLogger(ServiceUtils.class.getName()).log(
 						Level.SEVERE, "File type {0} is not supported", extension);
 				return null;

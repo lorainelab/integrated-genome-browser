@@ -438,11 +438,11 @@ public final class BookmarkUnibrowControlServlet {
 		//	return null;
 		//}
 
-		GenericFeature feature = igbService.getFeature(seqGroup, gServer, query_url);
+		GenericFeature feature = igbService.getFeature(seqGroup, gServer, query_url, false);
 
 		if (feature == null) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(
-					Level.SEVERE, "Couldn't find feature for bookmark url {0}", query_url);
+					Level.SEVERE, "Couldn't find feature for bookmark url " + query_url);
 		}
 
 		return feature;

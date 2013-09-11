@@ -228,7 +228,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 			String rev_searchstring = DNAUtils.reverseComplement(residues);
 			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolors[color]);
 		}
-		String statusStr = MessageFormat.format(BUNDLE.getString("searchFound"), hit_count1, hit_count2);
+		String statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"), hit_count1, hit_count2);
 		statusHolder.setStatus(statusStr);
 		igbService.getSeqMap().updateWidget();
 

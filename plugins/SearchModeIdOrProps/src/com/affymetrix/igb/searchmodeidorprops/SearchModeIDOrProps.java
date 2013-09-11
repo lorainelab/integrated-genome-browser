@@ -140,14 +140,19 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 		}
 
 		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
-			statusStr = MessageFormat.format(BUNDLE.getString("searchNoResults"), friendlySearchStr);
+			statusStr = BUNDLE.getString("searchNoResults");
 			statusHolder.setStatus(statusStr);
 			return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
 		}
 		
-		statusStr = MessageFormat.format(BUNDLE.getString("searchLocalResults"), friendlySearchStr,  (localSymList == null ? "0" : "" + localSymList.size()));
+		statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"), 
+					(localSymList == null ? "0" : "" + localSymList.size()), 
+					BUNDLE.getString("forLocalSearch"));
+		
 		if (remote && actualChars >= 3) {
-			statusStr += MessageFormat.format(BUNDLE.getString("searchRemoteResults"), (remoteSymList == null ? "0" : "" + remoteSymList.size()));
+			statusStr += MessageFormat.format(BUNDLE.getString("searchSummary"), 
+						(remoteSymList == null ? "0" : "" + remoteSymList.size()), 
+						BUNDLE.getString("forRemoteSearch"));
 		}
 		statusHolder.setStatus(statusStr);
 

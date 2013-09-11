@@ -636,7 +636,7 @@ public final class SearchView extends IGBTabPanel implements
 		infoButton.setBorder(null);
 		
 		infoButton.setVisible(true);
-		setStatus(searchResults.getSearchSummary());
+		setStatus(searchResults.getSearchSummary()+ " " + BUNDLE.getString("doubleClickToView"));
 	}
 	
 	/** Set the text in the status bar in a thread-safe way. */

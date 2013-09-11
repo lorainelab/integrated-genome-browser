@@ -56,7 +56,7 @@ public class KeyWordSearch implements IKeyWordSearch{
 			if(res != null && !res.isEmpty()){
 				results.addAll(res);
 			}
-			status.append(searchMode.getName()).append(" :").append(sh.getLastStatus()).append(", ");
+			status.append(searchMode.getName()).append(" : ").append(sh.getLastStatus()).append(", ");
 		}
 		statusHolder.setStatus(status.toString());
 		return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);

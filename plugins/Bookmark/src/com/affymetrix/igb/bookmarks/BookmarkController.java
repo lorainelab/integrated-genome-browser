@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
@@ -280,7 +281,8 @@ public abstract class BookmarkController {
 
 			for (GenericVersion version : group.getEnabledVersions()) {
 				for (GenericFeature feature : version.getFeatures()) {
-					if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD) {
+					if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD 
+							&& !Delegate.EXT.equals(feature.getExtension())) {
 						bookmark.add(feature, false);
 					}
 				}

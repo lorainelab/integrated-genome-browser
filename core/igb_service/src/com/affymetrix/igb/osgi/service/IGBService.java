@@ -101,7 +101,7 @@ public interface IGBService {
 	public void doActions(final String batchFileStr);
 	public void runScriptString(String line, String ext);
 	public void performSelection(String selectParam);
-	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url);
+	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url, boolean showErrorForUnsupported);
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();
 	public Color getDefaultForegroundColor();

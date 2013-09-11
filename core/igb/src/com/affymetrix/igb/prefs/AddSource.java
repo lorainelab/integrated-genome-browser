@@ -23,10 +23,14 @@ import java.awt.HeadlessException;
 import java.awt.Component;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.Application;
 import java.awt.Point;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -49,6 +53,34 @@ public class AddSource extends JFrame {
 
 	public AddSource() {
 		initComponents();
+		DocumentListener dl = new MyDocumentListener();
+		nameText.getDocument().addDocumentListener(dl);
+		urlText.getDocument().addDocumentListener(dl);
+		
+	}
+	private void checkFieldsChange(){
+		if(nameText.getText().trim().isEmpty() || urlText.getText().trim().isEmpty()){
+			addServerButton.setEnabled(false);
+			return;
+		}
+		addServerButton.setEnabled(true);
+		
+	}
+	private class MyDocumentListener implements DocumentListener{
+	public void changedUpdate(DocumentEvent e)  
+    {  
+      checkFieldsChange();  
+    }  
+  
+    public void insertUpdate(DocumentEvent e)  
+    {  
+      checkFieldsChange();  
+    }  
+  
+    public void removeUpdate(DocumentEvent e)  
+    {  
+      checkFieldsChange();  
+    }  
 	}
 
 	public void init(boolean isEditP, boolean comboActive, String title,
@@ -56,7 +88,7 @@ public class AddSource extends JFrame {
 		enableCombo = comboActive;
 		isEditPanel = isEditP;
 		serverURL = url;
-
+			
 		if (isEditPanel) {
 			nameText.setText(server.serverName);
 			typeCombo.setSelectedItem(server.serverType);
@@ -80,7 +112,7 @@ public class AddSource extends JFrame {
 			}
 			
 		}
-
+	
 		setTitle(title);
 		resetTypeLabelAndCombo();
 		display();
@@ -227,31 +259,49 @@ public class AddSource extends JFrame {
 	}//GEN-LAST:event_typeComboActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
-		
-		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("Adding " + nameText.getText()) {
-			@Override
-			protected Void runInBackground() {
-				if (isEditPanel) {
-					DataLoadPrefsView.getSingleton().updateSource(serverURL,
-							(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
-				} else {
-					if (enableCombo) {
-						DataLoadPrefsView.getSingleton().addDataSource(
-								(ServerTypeI) typeCombo.getSelectedItem(),
-								nameText.getText(), urlText.getText(), -1, false);
-					} else {
-						BundleRepositoryPrefsView.getSingleton().addDataSource(null,
-								nameText.getText(), urlText.getText(), -1, false);
-					}
-				}
-				return null;
-			}
-			
-			@Override
-			protected void finished() {
-				
-			}
-		};
+	
+		CThreadWorker<Boolean, Void> worker;
+		worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText()) {
+
+@Override
+protected Boolean runInBackground() {
+if (isEditPanel) {
+DataLoadPrefsView.getSingleton().updateSource(serverURL,
+(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
+} else {
+if (enableCombo) {
+return	DataLoadPrefsView.getSingleton().addDataSource(
+   (ServerTypeI) typeCombo.getSelectedItem(),
+   nameText.getText(), urlText.getText(), -1, false);
+} else {
+	return		BundleRepositoryPrefsView.getSingleton().addDataSource(null,
+   nameText.getText(), urlText.getText(), -1, false);
+}
+}
+return true;
+}
+
+@Override
+protected void finished() {
+boolean serverAdded = true;
+try {
+serverAdded = get();
+} catch (InterruptedException ex) {
+Logger.getLogger(AddSource.class.getName()).log(Level.SEVERE, null, ex);
+} catch (ExecutionException ex) {
+Logger.getLogger(AddSource.class.getName()).log(Level.SEVERE, null, ex);
+}
+
+if(serverAdded)
+Application.confirmPanel("<html>Your data source <b>"+nameText.getText()+"</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
+/*else{
+
+   ErrorHandler.errorPanel(
+"Unable to Load Data Source",
+"Unable to load " + (ServerTypeI) typeCombo.getSelectedItem() + " data source" + urlText.getText() + ".");
+}*/
+}
+};
 		CThreadHolder.getInstance().execute(evt, worker);
 		
 		this.setVisible(false);
@@ -260,6 +310,7 @@ public class AddSource extends JFrame {
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
 		this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addServerButton;
     private static javax.swing.JButton cancelButton;
@@ -271,7 +322,7 @@ public class AddSource extends JFrame {
     private static javax.swing.JLabel urlLabelField;
     private static javax.swing.JTextField urlText;
     // End of variables declaration//GEN-END:variables
-
+	   
 	protected static File fileChooser(int mode, Component parent) throws HeadlessException {
 		JFileChooser chooser = new JFileChooser();
 

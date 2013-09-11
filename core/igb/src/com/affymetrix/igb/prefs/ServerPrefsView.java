@@ -231,23 +231,24 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	public void addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault) {
+	public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault) {
 		if (url == null || url.isEmpty() || url.equals("http://") || name == null || name.isEmpty()) {
-			return;
+			return false;
 		}
 
 		GenericServer server = GeneralLoadUtils.addServer(serverList,
 				type, name, url, order, isDefault, null); //qlmirror
 
 		if (server == null) {
-			ErrorHandler.errorPanel(
-					"Unable to Load Data Source",
-					"Unable to load " + type + " data source '" + url + "'.");
-			return;
+
+			return false;
 		}
 
 		ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
 		sourceTableModel.init();
+		if(server.isEnabled())
+			return true;
+		return false;
 	}
 
 	public boolean confirmRefresh() {

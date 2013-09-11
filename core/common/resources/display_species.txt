@@ -1,3 +1,4 @@
+Z_mays_B73.png
 A_melanoleuca.png
 A_gambiae.png
 A_mellifera.png
@@ -18,8 +19,8 @@ C_elegans.png
 S_cerevisiae.png
 D_melanogaster.png
 M_musculus.png
-A_thaliana.png
 H_sapiens.png
+A_thaliana.png
 V_corymbosum.png
 E_coli_K12-MG1655.png
 O_sativa_japonica.png
@@ -39,4 +40,3 @@ R_communis.png
 S_bicolor.png
 V_carteri.png
 V_vinifera.png
-Z_mays_B73.png

@@ -76,8 +76,8 @@ public final class CoordFloaterGlyph extends Glyph implements FloaterGlyph {
 	
 	@Override
 	public void checkBounds(GlyphI gl, ViewI view) {
-//		Rectangle2D.Double mapbox = getCoordBox(); //If this is used then glyph snaps back at top when something changes.
-		Rectangle2D.Double mapbox = view.getCoordBox();
+		Rectangle2D.Double mapbox = getCoordBox(); //If this is used then glyph snaps back at top when something changes.
+//		Rectangle2D.Double mapbox = view.getCoordBox(); //If this is used then glyph cannot be moved at the end.
 		Rectangle2D.Double gbox = gl.getCoordBox();
 		if (gbox.y < mapbox.y) {
 			gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);

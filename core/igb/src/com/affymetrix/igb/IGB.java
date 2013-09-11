@@ -182,7 +182,7 @@ public final class IGB extends Application
 			}
 		}
 
-		frm = new JFrame(APP_NAME + " " + APP_VERSION);
+		frm = new JFrame(APP_NAME + " " + "7.1");
 
 		// when HTTP authentication is needed, getPasswordAuthentication will
 		//    be called on the authenticator set as the default
@@ -592,7 +592,7 @@ public final class IGB extends Application
 		if (title.length() > 0) {
 			title.append(" - ");
 		}
-		title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
+		title.append(IGBConstants.APP_NAME).append(" ").append("7.1");
 		return title.toString();
 	}
 	

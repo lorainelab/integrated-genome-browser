@@ -62,7 +62,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		setPosition(position);
 		setShowIGBTrack(IGBStateProvider.getShowIGBTrackMarkState());
 	}
-
+	
 	public void setShowIGBTrack(boolean b) {
 		isIGBTrack = b && (reference_tier.getAnnotStyle() instanceof TrackStyle) && 
 				Delegate.EXT.equals(((TrackStyle)reference_tier.getAnnotStyle()).getExt());
@@ -199,7 +199,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				&& IGBStateProvider.getShowLockIcon() && reftier.getDirection() != TierGlyph.Direction.AXIS){
 			drawLock(g, pixelbox.x, pixelbox.y, fgcolor, bgcolor);
 		}
-		if(trackStyle.getFilter() != null) {
+		if(trackStyle.getFilter() != null && IGBStateProvider.getShowFilterMarkState()) {
 			drawFilter(g, pixelbox.x + 20, pixelbox.y + 4, fgcolor, bgcolor);
 		}
 		super.draw(view);

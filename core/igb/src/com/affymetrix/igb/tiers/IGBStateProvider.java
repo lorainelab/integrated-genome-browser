@@ -18,6 +18,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
 	private static boolean draw_collapse_icon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_DRAW_COLLAPSE_ICON, TrackConstants.default_draw_collapse_icon);
 	private static boolean showIGBTracks = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_IGB_TRACK_MARK, TrackConstants.default_show_igb_track_mark);
+	private static boolean showFilterMark = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_FILTER_MARK, TrackConstants.default_show_filter_mark);
 	private static boolean showLockIcon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, TrackConstants.default_show_locked_track_icon);
 	
 	private static boolean showFullFilePathInTrack = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_FULL_FILE_PATH_IN_TRACK, TrackConstants.default_show_full_file_path_in_track);//TK
@@ -113,6 +114,14 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	
 	public static boolean getShowIGBTrackMarkState() {
 		return showIGBTracks;
+	}
+	
+	public static void setShowFilterMark(boolean b) {
+		showFilterMark = b;
+	}
+	
+	public static boolean getShowFilterMarkState() {
+		return showFilterMark;
 	}
 	
 		

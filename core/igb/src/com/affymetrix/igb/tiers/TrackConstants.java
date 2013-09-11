@@ -34,6 +34,7 @@ public interface TrackConstants {
 	static final String PREF_VIEW_MODE = "View Mode";
 	static final String PREF_DRAW_COLLAPSE_ICON = "Draw Collapse Icon";
 	static final String PREF_SHOW_IGB_TRACK_MARK = "Show IGB Track Mark";
+	static final String PREF_SHOW_FILTER_MARK = "Show Filter Mark";//TK
 	static final String PREF_SHOW_LOCKED_TRACK_ICON = "Show Locked Track Icon";
 	static final String PREF_SHOW_FULL_FILE_PATH_IN_TRACK = "Show Full File Path";//TK
 	static final String PREF_SHOW_RESIDUE_MASK = "Show Residue Mask";
@@ -47,6 +48,7 @@ public interface TrackConstants {
 	static final boolean default_show_summary = false;
 	static final boolean default_draw_collapse_icon = true;
 	static final boolean default_show_igb_track_mark = true;
+	static final boolean default_show_filter_mark = true;//TK
 	static final boolean default_show_locked_track_icon = true;
 	static final boolean default_show_full_file_path_in_track = true;//TK
 	static final boolean default_color_by_score = false;

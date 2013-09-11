@@ -337,16 +337,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void addServerInitListener(GenericServerInitListener listener) {
-		ServerList.getServerInstance().addServerInitListener(listener);
-	}
-
-	@Override
-	public void removeServerInitListener(GenericServerInitListener listener) {
-		ServerList.getServerInstance().removeServerInitListener(listener);
-	}
-
-	@Override
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
 	}

@@ -164,8 +164,6 @@ public interface IGBService {
 	// ServerList
 	public GenericServer loadServer(String server_url);
 	public boolean areAllServersInited();
-	public void addServerInitListener(GenericServerInitListener listener);
-	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
 
 	// Open Uri

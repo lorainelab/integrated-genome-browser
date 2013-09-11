@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -36,6 +37,7 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 
 import com.affymetrix.igb.action.*;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
@@ -46,7 +48,6 @@ import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.UpdateStatusAlert;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 //import com.affymetrix.igb.view.factories.CytoBandGlyphFactory;
@@ -187,6 +188,7 @@ public class Activator implements BundleActivator {
 		addShortcuts();
 		addStatusAlertListener(bundleContext);
 		addSearchListener(bundleContext);
+		addServerInitListener(bundleContext);
 		
 		if(IGB.commandLineBatchFileStr != null && IGB.commandLineBatchFileStr.length() > 0){
 			ScriptExecutor se = new ScriptExecutor();
@@ -611,6 +613,22 @@ public class Activator implements BundleActivator {
 		);
 	}
 	
+	private void addServerInitListener(final BundleContext bundleContext){
+		ExtensionPointHandler<GenericServerInitListener> searchExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GenericServerInitListener.class);
+		searchExtensionPoint.addListener(
+			new ExtensionPointListener<GenericServerInitListener>() {
+				@Override
+				public void addService(GenericServerInitListener listener) {
+					ServerList.getServerInstance().addServerInitListener(listener);
+				}
+				@Override
+				public void removeService(GenericServerInitListener listener) {	
+					ServerList.getServerInstance().removeServerInitListener(listener);
+				}
+			}
+		);
+	}
+		
 	private class ScriptExecutor extends Thread {
 		private boolean timeup = false;
 		private Timer timer;

@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  *
@@ -16,12 +18,13 @@ import javax.swing.SwingUtilities;
 public class BookMarkCommandLine {
 
 	private final IGBService igbService;
+	private ServiceRegistration registration;
 	private final String url;
 	private final boolean force;
 	private static final Logger ourLogger
 		  = Logger.getLogger(BookMarkCommandLine.class.getPackage().getName());
 				
-	BookMarkCommandLine(final IGBService igbService, final String url, final boolean force) {
+	BookMarkCommandLine(final BundleContext bundleContext, final IGBService igbService, final String url, final boolean force) {
 		this.igbService = igbService;
 		this.url = url;
 		this.force = force;
@@ -35,11 +38,12 @@ public class BookMarkCommandLine {
 					if (!igbService.areAllServersInited()) { // do this first to avoid race condition
 						return;
 					}
-					igbService.removeServerInitListener(this);
+					registration.unregister();
+					registration = null;
 					gotoBookmark();
 				}
 			};
-			igbService.addServerInitListener(genericServerListener);
+			registration = bundleContext.registerService(GenericServerInitListener.class, genericServerListener, null);
 		}
 	}
 

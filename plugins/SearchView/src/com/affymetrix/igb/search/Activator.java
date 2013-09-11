@@ -4,6 +4,7 @@ import org.osgi.framework.BundleActivator;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
@@ -36,6 +37,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		return new ServiceRegistration[] {
 			bundleContext.registerService(IGBTabPanel.class, searchView, null),
 			bundleContext.registerService(SearchListener.class, searchView, null),
+			bundleContext.registerService(GenericServerInitListener.class, searchView, null),
 		};
 	}
 }

@@ -344,7 +344,6 @@ public final class SearchView extends IGBTabPanel implements
 		searchButton.addActionListener(searchAction);
 		clearButton.addActionListener(clearAction);
 		optionCheckBox.addItemListener(itemListener);
-		igbService.addServerInitListener(this);
 	}
 
 	private void initOptionCheckBox() {

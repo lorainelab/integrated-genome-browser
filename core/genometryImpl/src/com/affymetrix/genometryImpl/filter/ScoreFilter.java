@@ -3,8 +3,8 @@ package com.affymetrix.genometryImpl.filter;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.general.Parameter;
-import com.affymetrix.genometryImpl.operator.comparator.ComparatorI;
-import com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualComparator;
+import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
+import com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -15,15 +15,15 @@ public class ScoreFilter extends SymmetryFilter {
 	private final static String SCORE = "score";
 	private final static String COMPARATOR = "comparator";
 	private final static int DEFAULT_SCORE = 10;
-	private final static ComparatorI DEFAULT_COMPARATOR = new GreaterThanEqualComparator();
+	private final static MathComparisonOperator DEFAULT_COMPARATOR = new GreaterThanEqualMathComparisonOperator();
 	
     private Parameter<Integer> score = new Parameter<Integer>(DEFAULT_SCORE);
-	private Parameter<ComparatorI> comparator = new Parameter<ComparatorI>(DEFAULT_COMPARATOR);
+	private Parameter<MathComparisonOperator> comparator = new Parameter<MathComparisonOperator>(DEFAULT_COMPARATOR);
 	
 	public ScoreFilter(){
 		super();
 		parameters.addParameter(SCORE, Integer.class, score);
-		parameters.addParameter(COMPARATOR, ComparatorI.class, comparator);
+		parameters.addParameter(COMPARATOR, MathComparisonOperator.class, comparator);
 	}
 	
 	@Override

@@ -4,9 +4,9 @@ package com.affymetrix.genometryImpl.operator.comparator;
  *
  * @author hiralv
  */
-public class LessThanEqualComparator implements ComparatorI {
-	LessThanComparator lessThanOperator = new LessThanComparator();
-	EqualComparator equalOperator = new EqualComparator();
+public class LessThanEqualMathComparisonOperator extends MathComparisonOperator {
+	LessThanMathComparisonOperator lessThanOperator = new LessThanMathComparisonOperator();
+	EqualMathComparisonOperator equalOperator = new EqualMathComparisonOperator();
 	
 	@Override
 	public boolean operate(int i1, int i2){

@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.operator.comparator.ComparatorI;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -153,6 +154,7 @@ public class Activator implements BundleActivator {
 		initOperators(bundleContext);
 		initColorProvider(bundleContext);
 		initFilter(bundleContext);
+		initComparators(bundleContext);
 	}
 
 	@Override
@@ -362,6 +364,16 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.ScoreFilter(), null);
 	}
 	
+	private void initComparators(final BundleContext bundleContext){
+		ExtensionPointHandler<ComparatorI> searchExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ComparatorI.class);
+		bundleContext.registerService(ComparatorI.class, new com.affymetrix.genometryImpl.operator.comparator.EqualComparator(), null);
+		bundleContext.registerService(ComparatorI.class, new com.affymetrix.genometryImpl.operator.comparator.GreaterThanComparator(), null);
+		bundleContext.registerService(ComparatorI.class, new com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualComparator(), null);
+		bundleContext.registerService(ComparatorI.class, new com.affymetrix.genometryImpl.operator.comparator.LessThanComparator(), null);
+		bundleContext.registerService(ComparatorI.class, new com.affymetrix.genometryImpl.operator.comparator.LessThanEqualComparator(), null);
+		bundleContext.registerService(ComparatorI.class, new com.affymetrix.genometryImpl.operator.comparator.NotEqualComparator(), null);
+	}
+		
 	private void initMapViewGlyphFactorys(final BundleContext bundleContext) {
 		ExtensionPointHandler<MapTierGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapTierGlyphFactoryI.class);
 		mapViewGlyphFactoryExtensionPoint.addListener(

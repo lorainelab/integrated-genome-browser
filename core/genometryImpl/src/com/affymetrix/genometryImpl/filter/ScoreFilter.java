@@ -34,5 +34,11 @@ public class ScoreFilter extends SymmetryFilter {
 		return false;
 	}
 	
+	@Override
+	public String getPrintableString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(SCORE).append(" >= ").append(score.get());
+		return sb.toString();
+	}
 }
 

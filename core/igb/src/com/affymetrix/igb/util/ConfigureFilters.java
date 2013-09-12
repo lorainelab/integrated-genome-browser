@@ -180,7 +180,8 @@ public class ConfigureFilters extends javax.swing.JPanel {
 		optionDialog.setTitle("Add filter");
 		optionDialog.setLocationRelativeTo(this);
 		SymmetryFilterI selectedFilter = optionDialog.showDialog();
-		if(selectedFilter != null){
+		Object value = optionDialog.getValue();
+		if(value != null && (Integer) value == javax.swing.JOptionPane.OK_OPTION && selectedFilter != null){
 			((javax.swing.DefaultListModel)filterList.getModel()).addElement(selectedFilter);
 			filterList.setSelectedIndex(filterList.getModel().getSize() - 1);
 			removeButton.setEnabled(true);

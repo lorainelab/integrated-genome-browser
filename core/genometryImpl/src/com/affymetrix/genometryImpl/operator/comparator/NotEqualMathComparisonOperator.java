@@ -4,7 +4,7 @@ package com.affymetrix.genometryImpl.operator.comparator;
  *
  * @author hiralv
  */
-public class NotEqualMathComparisonOperator extends MathComparisonOperator {
+public class NotEqualMathComparisonOperator implements MathComparisonOperator {
 	
 	@Override
 	public boolean operate(int i1, int i2){

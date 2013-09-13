@@ -4,7 +4,7 @@ package com.affymetrix.genometryImpl.operator.comparator;
  *
  * @author hiralv
  */
-public class GreaterThanEqualMathComparisonOperator extends MathComparisonOperator {
+public class GreaterThanEqualMathComparisonOperator implements MathComparisonOperator {
 	GreaterThanMathComparisonOperator greaterThanOperator = new GreaterThanMathComparisonOperator();
 	EqualMathComparisonOperator equalOperator = new EqualMathComparisonOperator();
 	

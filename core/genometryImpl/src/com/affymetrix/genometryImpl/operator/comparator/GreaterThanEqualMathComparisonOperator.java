@@ -29,7 +29,12 @@ public class GreaterThanEqualMathComparisonOperator extends MathComparisonOperat
 	}
 	
 	@Override
-	public String getSymbol(){
+	public String getName() {
+		return "greater_than_or_equal";
+	}
+
+	@Override
+	public String getDisplay() {
 		return "\u2265";
 	}
 }

@@ -27,7 +27,12 @@ public class EqualMathComparisonOperator extends MathComparisonOperator {
 	}
 	
 	@Override
-	public String getSymbol(){
+	public String getName() {
+		return "equal_to";
+	}
+
+	@Override
+	public String getDisplay() {
 		return "=";
 	}
 }

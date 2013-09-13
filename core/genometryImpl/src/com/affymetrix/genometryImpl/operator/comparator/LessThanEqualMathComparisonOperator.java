@@ -29,7 +29,12 @@ public class LessThanEqualMathComparisonOperator extends MathComparisonOperator 
 	}
 	
 	@Override
-	public String getSymbol(){
+	public String getName() {
+		return "less_than_or_equal";
+	}
+
+	@Override
+	public String getDisplay() {
 		return "\u2264";
 	}
 }

@@ -27,7 +27,12 @@ public class LessThanMathComparisonOperator extends MathComparisonOperator {
 	}
 	
 	@Override
-	public String getSymbol(){
+	public String getName() {
+		return "less_than";
+	}
+
+	@Override
+	public String getDisplay() {
 		return "<";
 	}
 }

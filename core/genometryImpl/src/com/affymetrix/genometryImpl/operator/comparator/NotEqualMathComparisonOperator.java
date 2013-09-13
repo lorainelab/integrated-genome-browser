@@ -27,7 +27,12 @@ public class NotEqualMathComparisonOperator extends MathComparisonOperator {
 	}
 	
 	@Override
-	public String getSymbol(){
+	public String getName() {
+		return "not_equal_to";
+	}
+
+	@Override
+	public String getDisplay() {
 		return "\u2260";
 	}
 }

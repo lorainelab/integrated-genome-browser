@@ -27,7 +27,12 @@ public class GreaterThanMathComparisonOperator extends MathComparisonOperator {
 	}
 	
 	@Override
-	public String getSymbol(){
+	public String getName() {
+		return "greater_than";
+	}
+
+	@Override
+	public String getDisplay() {
 		return ">";
 	}
 }

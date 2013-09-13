@@ -3,8 +3,8 @@ package com.affymetrix.genometryImpl.filter;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.general.Parameter;
-import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator;
+import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**

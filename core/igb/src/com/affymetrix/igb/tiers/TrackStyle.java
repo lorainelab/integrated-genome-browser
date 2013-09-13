@@ -458,6 +458,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		save(PREF_TRACK_NAME, track_name);
 	}
 
+	public void resetTrackName(String track_name) {
+		track_name = (String)load(PREF_TRACK_NAME, track_name);
+		this.track_name = track_name;
+	}
+	
 	/**
 	 * Whether the tier is shown or hidden.
 	 */

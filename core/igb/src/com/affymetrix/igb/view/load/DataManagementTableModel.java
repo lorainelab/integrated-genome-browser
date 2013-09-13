@@ -12,10 +12,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -484,8 +482,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				}
 				break;
 			case TRACK_NAME_COLUMN:
-				if (vFeature.getStyle() != null) {
+				if (vFeature.getStyle() != null && !vFeature.getStyle().getTrackName().equals((String) value)) {//TK
 					vFeature.getStyle().setTrackName((String) value);
+					
 				}
 				break;
 			default:

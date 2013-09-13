@@ -11,8 +11,10 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.igb.tiers.TrackConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.IGBStateProvider;
+import com.affymetrix.igb.tiers.TrackStyle;
 import static javax.swing.Action.SELECTED_KEY;
 
 /**
@@ -42,22 +44,27 @@ public class ShowFullFilePathInTrack extends SeqMapViewActionA {
 		super.actionPerformed(e);
 		boolean b = (Boolean)getValue(SELECTED_KEY);
 		IGBStateProvider.setShowFullFilePathInTrackMark(b);
-	
-//		for (TierGlyph glyph : getTierManager().getAllTierGlyphs()) {
-//			if(glyph.getAnnotStyle() instanceof TrackStyle 
-//					&& glyph.getAnnotStyle().getFeature() != null) {
-//				String track_name = glyph.getAnnotStyle().getFeature().featureName;
-//				if(b) {
-//					// Code to add the slashes
-//					((TrackStyle)glyph.getAnnotStyle()).resetTrackName(track_name);
-//				} else {
-//					//Code to remove the slashes
-//					//((TrackStyle)glyph.getAnnotStyle()).resetTrackName(track_name);
-//				}
-//			}
-//		}
-//		getSeqMapView().getSeqMap().updateWidget();
-//		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);		
+
+		for (TierGlyph glyph : getTierManager().getAllTierGlyphs()) {
+			if(glyph.getAnnotStyle() instanceof TrackStyle 
+					&& glyph.getAnnotStyle().getFeature() != null) {
+				String track_name = glyph.getAnnotStyle().getFeature().featureName;
+				if(track_name != null){
+				if(b) {
+					// Code to add the slashes
+					((TrackStyle)glyph.getAnnotStyle()).resetTrackName(track_name);
+				
+				} else {
+					//Code to remove the slashes
+					track_name=track_name.substring(track_name.lastIndexOf(java.io.File.separator)+1);
+					((TrackStyle)glyph.getAnnotStyle()).resetTrackName(track_name);
+			
+				}
+			  }
+			}
+		}
+		getSeqMapView().getSeqMap().updateWidget();
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);		
 	}
 
 	@Override

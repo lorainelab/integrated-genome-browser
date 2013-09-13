@@ -39,7 +39,13 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 	}
 	
 	private void init(Class clazz, String label, Filter<T> filter, boolean includeNone) throws SecurityException {
-		configureOptionPanel = new ConfigureOptionsPanel<T>(clazz, label, filter, includeNone);
+		configureOptionPanel = new ConfigureOptionsPanel<T>(clazz, label, filter, includeNone){
+			@Override
+			public void revalidate() {
+				super.revalidate();
+				ConfigureOptionsDialog.this.pack();
+			}
+		};
 
 		okOption = new JButton("OK");
 		cancelOption = new JButton("Cancel");

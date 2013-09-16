@@ -17,14 +17,11 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
@@ -40,8 +37,6 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
-import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -893,6 +888,24 @@ public final class GeneralLoadUtils {
 
 				if (aseq != null) {
 					gviewer.setAnnotatedSeq(aseq, true, true);
+//					if (this.isCancelled()) {
+//						return;
+//					}
+//					try {
+//						Map<String, List<? extends SeqSymmetry>> results = get();
+//						for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
+//							RootSeqSymmetry annotSym = aseq.getAnnotation(entry.getKey());
+//							if (entry.getKey() != null && annotSym != null) {
+//								MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
+//								ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(entry.getKey());
+//								factory.createGlyphs(annotSym, entry.getValue(), style, gviewer, aseq);
+//							}
+//						}
+//						gviewer.getSeqMap().repackTheTiers(true, true, true);
+//					} catch (Exception ex) {
+//						Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+//								Level.SEVERE, "Unable to get refresh action result.", ex);
+//					}
 				} else if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 					// This can happen when loading a brand-new genome
 					aseq = gmodel.getSelectedSeqGroup().getSeq(0);

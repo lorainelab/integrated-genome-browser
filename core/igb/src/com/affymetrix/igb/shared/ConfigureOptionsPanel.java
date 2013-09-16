@@ -4,6 +4,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.NewInstance;
+import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.util.IDComparator;
@@ -127,8 +128,35 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 				final String label = entry.getKey();
 				final Class<?> clazz = entry.getValue();
 				JComponent component = null;
-
-				if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
+				
+				if(MathComparisonOperator.class.isAssignableFrom(clazz)) {
+					final JComboBox cb = new JComboBox();
+					cb.setRenderer(new IDListCellRenderer());
+					TreeSet<MathComparisonOperator> cProviders = new TreeSet<MathComparisonOperator>(new IDComparator());
+					cProviders.addAll(ExtensionPointHandler.getExtensionPoint(MathComparisonOperator.class).getExtensionPointImpls());
+					for(MathComparisonOperator mco : cProviders){
+						cb.addItem(mco);
+					}
+					MathComparisonOperator initialMCO = (MathComparisonOperator)cp.getParameterValue(label);
+					for(int i=0; i<cb.getItemCount(); i++){
+						MathComparisonOperator item = (MathComparisonOperator)cb.getItemAt(i);
+						if(item.getName().equals(initialMCO.getName())){
+							cb.setSelectedItem(item);
+							break;
+						}
+					}
+					cb.addItemListener(new ItemListener() {
+						@Override
+						public void itemStateChanged(ItemEvent e) {
+							ConfigureOptionsPanel.this.setParameter(cp, label, cb.getSelectedItem());
+						}
+					});
+					
+					cb.setMaximumSize(new java.awt.Dimension(50, 60));
+					cb.setPreferredSize(new java.awt.Dimension(50, 60));
+					cb.setMaximumSize(new java.awt.Dimension(50, 60));
+					component = cb;
+				} else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
 					final JTextField tf;
 					if (Number.class.isAssignableFrom(clazz)) {
 						tf = new JTextField(6);
@@ -288,6 +316,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 			paramsPanel.removeAll();
 		}
 		paramsPanel.revalidate();
+		revalidate();
 	}
 	
 	public void addTChangeListner(SelectionChangeListener tcl) {

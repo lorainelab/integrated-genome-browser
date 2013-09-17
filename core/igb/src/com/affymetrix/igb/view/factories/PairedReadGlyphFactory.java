@@ -105,7 +105,7 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 			if(children.isEmpty()){
 				
 			} else if (children.size() == 1) {
-				span = children.get(0).getSpan(aseq);
+				//span = children.get(0).getSpan(aseq);
 			} else if (children.size() >= 2) {
 				SeqSpan child1 = children.get(0).getSpan(aseq);
 				SeqSpan child2 = children.get(1).getSpan(aseq);

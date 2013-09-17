@@ -63,7 +63,7 @@ public class PairedReadGlyphFactory extends AnnotationGlyphFactory {
 		if(pairRelation != null){
 			FillRectGlyph middle = new FillRectGlyph();
 			SeqSpan span = gviewer.getViewSeqSpan(pairRelation);
-			middle.setCoords(span.getStart(), 0, span.getLength(), child_height);
+			middle.setCoords(span.getMin(), 0, span.getLength(), child_height);
 			middle.setHitable(false);
 			middle.setSelectable(false);
 			pglyph.addChild(middle);

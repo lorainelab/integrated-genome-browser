@@ -53,8 +53,8 @@ public class FindMateOperator extends AbstractAnnotationTransformer {
 		SeqSymmetry child;
 		for (int i = 0; i < t.getChildCount(); i++) {
 			child = t.getChild(i);
-			List<SeqSymmetry> pairs = null;
-			if((pairs = map.get(child.getID())) == null){
+			List<SeqSymmetry> pairs = map.get(child.getID());
+			if(pairs == null){
 				pairs = new ArrayList<SeqSymmetry>(2);
 				map.put(child.getID(), pairs);
 			}
@@ -91,5 +91,14 @@ public class FindMateOperator extends AbstractAnnotationTransformer {
 	
 		map.clear();
 		return result;
+	}
+	
+	@Override
+	public Operator newInstance(){
+		try {
+			return getClass().getConstructor().newInstance();
+		} catch (Exception ex) {
+		}
+		return null;
 	}
 }

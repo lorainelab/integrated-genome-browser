@@ -12,6 +12,7 @@ Bundle-Vendor: Genentech
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.style,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.igb.osgi.service,

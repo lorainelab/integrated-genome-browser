@@ -5,11 +5,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.util.ExportDialog;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -290,7 +291,22 @@ public class IGBScriptEngine implements ScriptEngine {
 			}
 			return;
 		}
-		
+		if (action.equalsIgnoreCase("hidetrack")) {
+			// Allowing multiple files to be specified, split by commas
+			String[] hideTrack = join(fields, 1).split(",");
+			for (int i = 0; i < hideTrack.length; i++) {				
+				hideTrack(hideTrack[i]); 
+			}
+			return;
+		}
+				if (action.equalsIgnoreCase("showtrack")) {
+			// Allowing multiple files to be specified, split by commas
+			String[] showTrack = join(fields, 1).split(",");
+			for (int i = 0; i < showTrack.length; i++) {				
+				showTrack(showTrack[i]); 
+			}
+			return;
+		}
 		if (action.startsWith("snapshot")) {
 			// determine the export mode
 			action = action.substring(8, action.length());
@@ -422,6 +438,25 @@ public class IGBScriptEngine implements ScriptEngine {
 		}
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		igbService.openURI(uri, fileName, group, group.getOrganism(), true);
+	}
+	
+
+
+	private void hideTrack(String fileName) {
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
+		style.setShow(false);
+		igbService.packMap(false, false);
+	//	loadMode("no_load",fileName);
+		igbService.updateGeneralLoadView();	
+			
+	}
+	
+	private void showTrack(String fileName) {
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
+		style.setShow(true);
+		igbService.packMap(false, true);
+		igbService.updateGeneralLoadView();	
+			
 	}
 
 	private void loadMode(String loadMode, String featureURIStr) {

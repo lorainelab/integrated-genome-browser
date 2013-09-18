@@ -6,6 +6,7 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.shared.TierGlyph.TierType;
 
 /**
  *
@@ -41,6 +42,19 @@ public class UnlockTierHeightAction extends TierHeightAction{
 		super(BUNDLE.getString("unlockTierHeightAction"), "16x16/actions/unlock_track.png", "22x22/actions/unlock_track.png");
 	}
 
+	@Override
+	public void actionPerformed(java.awt.event.ActionEvent e) {
+		super.actionPerformed(e);
+		for(StyledGlyph glyph : allGlyphs){
+			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).getTierType() == TierType.ANNOTATION){
+				setHeightFixed((DefaultTierGlyph)glyph);
+			}
+		}
+		
+		getTierMap().repackTheTiers(true, true);
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+	
 	@Override
 	protected void setHeightFixed(DefaultTierGlyph dtg) {
 		dtg.setHeightFixed(false);

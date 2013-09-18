@@ -42,6 +42,23 @@ public class LockTierHeightAction extends TierHeightAction{
 	}
 
 	@Override
+	public void actionPerformed(java.awt.event.ActionEvent e) {
+		super.actionPerformed(e);
+		StyledGlyph[] glyphs = allGlyphs.toArray(new StyledGlyph[0]);
+		int len = getTierManager().getVisibleTierGlyphs().size() - 1 == glyphs.length? glyphs.length - 1 : glyphs.length;
+		StyledGlyph glyph;
+		for(int i = 0; i < len ; i++){
+			glyph = glyphs[i];
+			if(glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).getTierType() == TierGlyph.TierType.ANNOTATION){
+				setHeightFixed((DefaultTierGlyph)glyph);
+			}
+		}
+		
+		getTierMap().repackTheTiers(true, true);
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+		
+	@Override
 	protected void setHeightFixed(DefaultTierGlyph dtg) {
 		dtg.setHeightFixed(true);
 	}

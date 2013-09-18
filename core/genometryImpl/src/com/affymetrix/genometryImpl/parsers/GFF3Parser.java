@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.symloader.Fasta;
 
 import java.io.*;
 import java.util.*;
@@ -77,16 +78,20 @@ public final class GFF3Parser implements Parser {
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
+	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, 
+			BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds,
+			int min, int max)
 			throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 
 		// Note that the parse(BufferedReader) method will call br.close(), so
 		// don't worry about it.
-		return parse(br, default_source, seq, seq_group, annot_seq, merge_cds);
+		return parse(br, default_source, seq, seq_group, annot_seq, merge_cds, min, max);
 	}
 
-	public List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
+	public List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, 
+			BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds,
+			int min, int max)
 			throws IOException {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -119,16 +124,18 @@ public final class GFF3Parser implements Parser {
 			}
 		};
 
-		return parse(it, default_source, seq, seq_group, annot_seq, merge_cds);
+		return parse(it, default_source, seq, seq_group, annot_seq, merge_cds, min, max);
 	}
 
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List<? extends SeqSymmetry> parse(Iterator<String> it, String default_source, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds)
+	public List<? extends SeqSymmetry> parse(Iterator<String> it, String default_source, 
+			BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds, 
+			int minV, int maxV)
 			throws IOException {
-		List<GFF3Sym> symlist = new ArrayList<GFF3Sym>();
+		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
 		Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
 		/** Contains a list of parent ids which have been ignored */
 		Set<String> bad_parents = new HashSet<String>();
@@ -152,6 +159,18 @@ public final class GFF3Parser implements Parser {
 				continue;
 			}
 			if ("##FASTA".equals(line)) {
+				try {
+					Fasta fasta = new Fasta(null, null, seq_group);
+					String residues = fasta.parse(it, seq, minV, maxV);
+					if(residues != null) {
+						BioSeq.addResiduesToComposition(seq, residues, new SimpleSeqSpan(minV, maxV, seq));
+					}
+//					SymWithProps sym = new SimpleSymWithResidues(default_source, 
+//							seq, minV, maxV, "", 0.0f, true, 0, 0, null, null, residues);
+//					symlist.add(sym);
+				} catch (Exception ex) {
+					Logger.getLogger(GFF3Parser.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				break;
 			}
 			if (line.startsWith("##track")) {
@@ -284,7 +303,7 @@ public final class GFF3Parser implements Parser {
 	 * @param id2sym	Map of ids to symmetries.
 	 * @throws IOException
 	 */
-	private void addToParent(List<GFF3Sym> all_syms, List<GFF3Sym> results, Map<String, GFF3Sym> id2sym, Set<String> bad_parents, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds) throws IOException {
+	private void addToParent(List<GFF3Sym> all_syms, List<SeqSymmetry> results, Map<String, GFF3Sym> id2sym, Set<String> bad_parents, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds) throws IOException {
 //		Map<String, GFF3Sym> moreCdsSpans = new HashMap<String, GFF3Sym>();
 		for (GFF3Sym sym : all_syms) {
 			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
@@ -445,7 +464,7 @@ public final class GFF3Parser implements Parser {
 	public List<? extends SeqSymmetry> parse(InputStream is,
 			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
 			throws Exception {
-		parse(is, uri, null, group, true, false);
+		parse(is, uri, null, group, true, false, 0, Integer.MAX_VALUE);
 		return null;
 	}
 	

@@ -117,7 +117,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parser.parse(istr, uri.toString(), seq, group, false, merge_cds);
+			return parser.parse(istr, uri.toString(), seq, group, false, merge_cds, min, max);
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
@@ -152,7 +152,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		return parser.parse(it, uri.toString(), seq, group, false, merge_cds);
+		return parser.parse(it, uri.toString(), seq, group, false, merge_cds, 0, Integer.MAX_VALUE);
 	}
 
 	@Override
@@ -178,7 +178,20 @@ public class GFF3 extends SymLoader implements LineProcessor {
 
 				char firstchar = line.charAt(0);
 				if (firstchar == '#') {
-					if (line.startsWith("##track name")) {
+					if(line.startsWith("##FASTA")) {
+						bw.write(line + "\n");
+						while(true) {
+							line = br.readLine();
+							if(line == null){
+								break;
+							}
+							firstchar = line.charAt(0);
+							if(firstchar == '#'){
+								break;
+							}
+							bw.write(line + "\n");
+						}
+					} else if (line.startsWith("##track name")) {
 						chrTrack = new HashMap<String, Boolean>();
 						trackLine = line;
 					}

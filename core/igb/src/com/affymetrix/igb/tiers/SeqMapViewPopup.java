@@ -254,7 +254,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					}
 				});
 				showMenu.add(show_tier);
-				showMenu.setEnabled(true);
+				containHiddenTiers = true;
 			}
 		}
 		showMenu.setEnabled(containHiddenTiers);
@@ -366,7 +366,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		hide.setIcon(null);
 		hide.setEnabled(num_selections > 0);
 		popup.add(hide);
-		JMenu showMenu = addShowMenu(containHiddenTiers);
+		JMenu showMenu = addShowMenu(containHiddenTiers);	
 		popup.add(showMenu);
 		showMenu.getPopupMenu().setBorder(finalBorder);
 		JMenuItem collapse = new JCheckBoxMenuItem();

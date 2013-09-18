@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.general;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -15,8 +16,8 @@ public class Parameters implements IParameters {
 	private Map<String, Parameter> PARAMETERS_VALUE;
 	
 	public Parameters(){
-		PARAMETERS_TYPE = new HashMap<String, Class<?>>();
-		PARAMETERS_VALUE = new HashMap<String, Parameter>();
+		PARAMETERS_TYPE = new LinkedHashMap<String, Class<?>>();
+		PARAMETERS_VALUE = new LinkedHashMap<String, Parameter>();
 	}
 	
 	public void addParameter(String key, Class<?> clazz, Parameter parameter){

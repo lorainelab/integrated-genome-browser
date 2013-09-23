@@ -38,6 +38,7 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
@@ -250,6 +251,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						style.setShow(true);
 						showMenu.remove(show_tier);
 						handler.sortTiers();
+						GeneralLoadView.getLoadView().refreshDataManagementView();						
 						repack(false, true);
 					}
 				});

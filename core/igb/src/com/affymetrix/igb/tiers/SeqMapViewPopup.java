@@ -24,6 +24,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -222,6 +223,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						style.setShow(true);
 						showMenu.remove(show_tier);
 						handler.sortTiers();
+						GeneralLoadView.getLoadView().refreshDataManagementView();	
 						repack(false, true);
 					}
 				});

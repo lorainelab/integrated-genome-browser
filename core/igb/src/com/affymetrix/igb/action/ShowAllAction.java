@@ -10,6 +10,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class ShowAllAction extends RepackTiersAction {
 	private static final long serialVersionUID = 1L;
@@ -42,6 +43,7 @@ public class ShowAllAction extends RepackTiersAction {
 			}
 		}
 		getTierManager().sortTiers();
+		GeneralLoadView.getLoadView().refreshDataManagementView();
 		repack(false, true);
 		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}

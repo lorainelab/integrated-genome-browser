@@ -7,9 +7,9 @@ import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.util.ConfigureFilters;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -17,6 +17,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -74,10 +75,15 @@ public class FilterAction extends SeqMapViewActionA {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if(evt.getNewValue() instanceof Integer && (Integer)evt.getNewValue() == JOptionPane.OK_OPTION){
-					for (TierGlyph tier : getTierManager().getSelectedTiers()) {
-						applyFilter(configurefilters.getFilter(), tier);
-					}
-					getSeqMapView().getSeqMap().repackTheTiers(true, true);
+					AbstractAction applyAction = new AbstractAction() {
+						public void actionPerformed(ActionEvent e) {
+							for (TierGlyph tier : getTierManager().getSelectedTiers()) {
+								applyFilter(configurefilters.getFilter(), tier);
+							}
+							getSeqMapView().getSeqMap().repackTheTiers(true, true);
+						}
+					};
+					getSeqMapView().preserveSelectionAndPerformAction(applyAction);
 				}
 			}
 			

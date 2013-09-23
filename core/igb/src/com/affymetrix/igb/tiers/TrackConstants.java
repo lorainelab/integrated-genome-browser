@@ -48,9 +48,9 @@ public interface TrackConstants {
 	static final boolean default_show_summary = false;
 	static final boolean default_draw_collapse_icon = true;
 	static final boolean default_show_igb_track_mark = true;
-	static final boolean default_show_filter_mark = true;//TK
+	static final boolean default_show_filter_mark = true;
 	static final boolean default_show_locked_track_icon = true;
-	static final boolean default_show_full_file_path_in_track = true;//TK
+	static final boolean default_show_full_file_path_in_track = false;
 	static final boolean default_color_by_score = false;
 	static final boolean default_color_by_rgb = false;
 	static final boolean default_showResidueMask = true;

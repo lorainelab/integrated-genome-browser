@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -154,7 +153,6 @@ public class Activator implements BundleActivator {
 		initOperators(bundleContext);
 		initColorProvider(bundleContext);
 		initFilter(bundleContext);
-		initComparators(bundleContext);
 	}
 
 	@Override
@@ -364,17 +362,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MappingQualityFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.ScoreFilter(), null);
 	}
-	
-	private void initComparators(final BundleContext bundleContext){
-		ExtensionPointHandler<MathComparisonOperator> searchExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MathComparisonOperator.class);
-		bundleContext.registerService(MathComparisonOperator.class, new com.affymetrix.genometryImpl.operator.comparator.EqualMathComparisonOperator(), null);
-		bundleContext.registerService(MathComparisonOperator.class, new com.affymetrix.genometryImpl.operator.comparator.GreaterThanMathComparisonOperator(), null);
-		bundleContext.registerService(MathComparisonOperator.class, new com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator(), null);
-		bundleContext.registerService(MathComparisonOperator.class, new com.affymetrix.genometryImpl.operator.comparator.LessThanMathComparisonOperator(), null);
-		bundleContext.registerService(MathComparisonOperator.class, new com.affymetrix.genometryImpl.operator.comparator.LessThanEqualMathComparisonOperator(), null);
-		bundleContext.registerService(MathComparisonOperator.class, new com.affymetrix.genometryImpl.operator.comparator.NotEqualMathComparisonOperator(), null);
-	}
-		
+			
 	private void initMapViewGlyphFactorys(final BundleContext bundleContext) {
 		ExtensionPointHandler<MapTierGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapTierGlyphFactoryI.class);
 		mapViewGlyphFactoryExtensionPoint.addListener(

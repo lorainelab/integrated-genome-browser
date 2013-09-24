@@ -2,12 +2,10 @@ package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
@@ -152,23 +150,21 @@ public abstract class XAM extends SymLoader {
 			span = new SimpleSeqSpan(end, start, seq);
 		}
 
-		List<SimpleSymWithProps> insertChilds = new ArrayList<SimpleSymWithProps>();
-		List<SimpleSymWithProps> childs = getChildren(seq, sr.getCigar(), sr.getReadNegativeStrandFlag(), insertChilds);
+		List<SeqSpan> insertChilds = new ArrayList<SeqSpan>();
+		List<SeqSpan> childs = getChildren(seq, sr.getCigar(), sr.getReadNegativeStrandFlag(), insertChilds);
 
 		int blockMins[] = new int[childs.size()];
 		int blockMaxs[] = new int[childs.size()];
 		for (int i = 0; i < childs.size(); i++) {
-			SymWithProps child = childs.get(i);
-			blockMins[i] = child.getSpan(0).getMin() + span.getMin();
-			blockMaxs[i] = blockMins[i] + child.getSpan(0).getLength();
+			blockMins[i] = childs.get(0).getMin() + span.getMin();
+			blockMaxs[i] = blockMins[i] + childs.get(0).getLength();
 		}
 
 		int iblockMins[] = new int[insertChilds.size()];
 		int iblockMaxs[] = new int[insertChilds.size()];
 		for (int i = 0; i < insertChilds.size(); i++) {
-			SymWithProps child = insertChilds.get(i);
-			iblockMins[i] = child.getSpan(0).getMin() + span.getMin();
-			iblockMaxs[i] = iblockMins[i] + child.getSpan(0).getLength();
+			iblockMins[i] = insertChilds.get(0).getMin() + span.getMin();
+			iblockMaxs[i] = iblockMins[i] + insertChilds.get(0).getLength();
 		}
 
 		if (childs.isEmpty()) {
@@ -208,15 +204,16 @@ public abstract class XAM extends SymLoader {
 		getFileHeaderProperties(sr.getHeader(), sym);
 	}
 		
-	private static List<SimpleSymWithProps> getChildren(BioSeq seq, Cigar cigar, boolean isNegative, List<SimpleSymWithProps> insertChilds) {
-		List<SimpleSymWithProps> results = new ArrayList<SimpleSymWithProps>();
+	private static List<SeqSpan> getChildren(BioSeq seq, Cigar cigar, boolean isNegative, List<SeqSpan> insertChilds) {
+		List<SeqSpan> results = new ArrayList<SeqSpan>();
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return results;
 		}
 		int currentChildStart = 0;
 		int currentChildEnd = 0;
 		int celLength = 0;
-
+		SeqSpan previousSpan = null;
+		 
 		for (CigarElement cel : cigar.getCigarElements()) {
 			try {
 				celLength = cel.getLength();
@@ -225,27 +222,30 @@ public abstract class XAM extends SymLoader {
 					currentChildEnd = currentChildStart  + celLength;
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					// TODO -- allow possibility that INSERTION is terminator, not M
-					currentChildStart = currentChildEnd;
-					currentChildEnd = currentChildStart;
-					SimpleSymWithProps ss = new SimpleSymWithProps();
+//					currentChildStart = currentChildEnd;
+//					currentChildEnd = currentChildStart;
 					if (!isNegative) {
-						ss.addSpan(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
+						insertChilds.add(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
 					}
 					else {
-						ss.addSpan(new SimpleSeqSpan(currentChildEnd + celLength, currentChildEnd, seq));
+						insertChilds.add(new SimpleSeqSpan(currentChildEnd + celLength, currentChildEnd, seq));
 					}
-					insertChilds.add(ss);
 				} else if (cel.getOperator() == CigarOperator.M) {
 					// print matches
 					currentChildEnd += celLength;
-					SimpleSymWithProps ss = new SimpleSymWithProps();
 					if (!isNegative) {
-						ss.addSpan(new SimpleSeqSpan(currentChildStart, currentChildEnd, seq));
+						if(previousSpan != null && previousSpan.getStart() == currentChildStart) {
+							results.remove(previousSpan);
+						}
+						previousSpan = new SimpleSeqSpan(currentChildStart, currentChildEnd, seq);
 					}
 					else {
-						ss.addSpan(new SimpleSeqSpan(currentChildEnd, currentChildStart, seq));
+						if(previousSpan != null && previousSpan.getEnd() == currentChildStart) {
+							results.remove(previousSpan);
+						}
+						previousSpan = new SimpleSeqSpan(currentChildEnd, currentChildStart, seq);
 					}
-					results.add(ss);
+					results.add(previousSpan);
 				} else if (cel.getOperator() == CigarOperator.N) {
 					currentChildStart = currentChildEnd + celLength;
 					currentChildEnd = currentChildStart;

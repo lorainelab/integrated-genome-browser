@@ -145,9 +145,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 						}
 					});
 					
-					cb.setMaximumSize(new java.awt.Dimension(50, 60));
-					cb.setPreferredSize(new java.awt.Dimension(50, 60));
-					cb.setMaximumSize(new java.awt.Dimension(50, 60));
+					//cb.setMaximumSize(new java.awt.Dimension(70, 60));
+					cb.setPreferredSize(new java.awt.Dimension(70, 60));
+					cb.setMinimumSize(new java.awt.Dimension(70, 60));
 					component = cb;
 				} else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
 					final JTextField tf;
@@ -191,9 +191,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 						}
 					});
 
-					tf.setMaximumSize(new java.awt.Dimension(60, 20));
-					tf.setPreferredSize(new java.awt.Dimension(60, 20));
-					tf.setMaximumSize(new java.awt.Dimension(60, 20));
+					tf.setMaximumSize(new java.awt.Dimension(40, 20));
+					tf.setPreferredSize(new java.awt.Dimension(40, 20));
+					tf.setMinimumSize(new java.awt.Dimension(40, 20));
 					component = tf;
 				} else if (Color.class.isAssignableFrom(clazz)) {
 					final ColorComboBox colorComboBox = new ColorComboBox();
@@ -208,7 +208,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 					colorComboBox.setColorValueVisible(false);
 					colorComboBox.setMaximumSize(new java.awt.Dimension(20, 20));
 					colorComboBox.setPreferredSize(new java.awt.Dimension(20, 20));
-					colorComboBox.setMaximumSize(new java.awt.Dimension(20, 20));
+					colorComboBox.setMinimumSize(new java.awt.Dimension(20, 20));
 					//colorComboBox.setStretchToFit(true);
 					component = colorComboBox;
 				} else if (HeatMapExtended.class.isAssignableFrom(clazz)) {

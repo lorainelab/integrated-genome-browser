@@ -487,6 +487,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 				other_fill_color = Color.darkGray;
 			} else if (intensity > (255 + 127)) {
 				other_fill_color = col.darker();
+			} else if (col.getRed() == 255 || col.getGreen() == 0 || col.getBlue() == 0) {
+				other_fill_color = col.darker();
+			} else if (col.getRed() == 0 || col.getGreen() == 255 || col.getBlue() == 0) {
+				other_fill_color = col.darker();
+			} else if (col.getRed() == 0 || col.getGreen() == 0 || col.getBlue() == 255) {
+				other_fill_color = col.darker();
 			} else {
 				other_fill_color = col.brighter();
 			}

@@ -156,15 +156,15 @@ public abstract class XAM extends SymLoader {
 		int blockMins[] = new int[childs.size()];
 		int blockMaxs[] = new int[childs.size()];
 		for (int i = 0; i < childs.size(); i++) {
-			blockMins[i] = childs.get(0).getMin() + span.getMin();
-			blockMaxs[i] = blockMins[i] + childs.get(0).getLength();
+			blockMins[i] = childs.get(i).getMin() + span.getMin();
+			blockMaxs[i] = blockMins[i] + childs.get(i).getLength();
 		}
 
 		int iblockMins[] = new int[insertChilds.size()];
 		int iblockMaxs[] = new int[insertChilds.size()];
 		for (int i = 0; i < insertChilds.size(); i++) {
-			iblockMins[i] = insertChilds.get(0).getMin() + span.getMin();
-			iblockMaxs[i] = iblockMins[i] + insertChilds.get(0).getLength();
+			iblockMins[i] = insertChilds.get(i).getMin() + span.getMin();
+			iblockMaxs[i] = iblockMins[i] + insertChilds.get(i).getLength();
 		}
 
 		if (childs.isEmpty()) {

@@ -16,9 +16,9 @@ public class WithIntronFilter extends SymmetryFilter {
 	
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
-		if(ss.getChildCount() <= 1)
-            return false;
-        return true;
+		if(ss.getChildCount() > 1)
+            return true;
+        return false;
     }
     
 }

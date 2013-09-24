@@ -71,7 +71,16 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 		}
 
 		Color bgColor = getParent().getBackgroundColor();
-		Color altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));
+		//Color altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));
+		Color altColor;
+		int intensity = bgColor.getRed() + bgColor.getGreen() + bgColor.getBlue();
+		if (intensity == 0) {
+			altColor = Color.darkGray;
+		} else if (intensity > (255 + 127)) {
+			altColor = bgColor.darker();
+		} else {
+			altColor = bgColor.brighter();
+		}
 		g.setColor(altColor);
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		int totalOffset = offset + seqBegIndex;

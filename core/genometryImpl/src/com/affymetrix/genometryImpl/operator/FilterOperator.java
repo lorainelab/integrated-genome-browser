@@ -79,6 +79,11 @@ public class FilterOperator implements Operator, IParameters {
 	}
 
 	@Override
+	public List<Object> getParametersPossibleValues(String key){
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
 	public boolean setParameterValue(String key, Object value) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

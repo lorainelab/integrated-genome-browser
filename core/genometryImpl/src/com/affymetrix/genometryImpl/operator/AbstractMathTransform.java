@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.general.IParameters;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,6 +73,11 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 		return null;
 	}
 
+	@Override
+	public List<Object> getParametersPossibleValues(String key){
+		return null;
+	}
+	
 	@Override
 	public boolean setParameterValue(String key, Object value) {
 		if (parameterized && value != null) {

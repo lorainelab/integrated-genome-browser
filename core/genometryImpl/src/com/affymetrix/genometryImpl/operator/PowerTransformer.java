@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.operator;
 import com.affymetrix.genometryImpl.general.IParameters;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class PowerTransformer extends AbstractFloatTransformer implements Operator, IParameters {
@@ -89,6 +90,11 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		if(key != null && key.equalsIgnoreCase(getParamPrompt())){
 			return exponent;
 		}
+		return null;
+	}
+	
+	@Override
+	public List<Object> getParametersPossibleValues(String key){
 		return null;
 	}
 	

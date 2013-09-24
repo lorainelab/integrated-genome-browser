@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.color;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.Parameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +35,11 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 	@Override
 	public Object getParameterValue(String key) {
 		return parameters.getParameterValue(key);
+	}
+	
+	@Override
+	public List<Object> getParametersPossibleValues(String key){
+		return parameters.getParametersPossibleValues(key);
 	}
 	
 	@Override

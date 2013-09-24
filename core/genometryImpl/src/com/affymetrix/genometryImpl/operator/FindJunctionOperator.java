@@ -155,6 +155,11 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	}
 
 	@Override
+	public List<Object> getParametersPossibleValues(String key){
+		return null;
+	}
+	
+	@Override
 	public boolean setParameterValue(String key, Object value) {
 		if(key.equalsIgnoreCase(THRESHOLD)) {
 			threshold = Integer.valueOf(value.toString());

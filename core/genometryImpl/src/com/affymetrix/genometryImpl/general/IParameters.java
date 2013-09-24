@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,6 +15,13 @@ public interface IParameters {
 	 */
 	public Object getParameterValue(String key);
 
+	/**
+	 * @param key
+	 * @return Returns list of possible values for given key, if any 
+	 * otherwise returns null
+	 */
+	public List<Object> getParametersPossibleValues(String key);
+	
 	/**
 	 * @return parameters for this instance
 	 */

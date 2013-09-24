@@ -28,6 +28,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	
 	private int codeSize;
 	private boolean tried = false;
+	private Color altColor = Color.darkGray;
 	
 	public CodonGlyph(int codeSize) {
 		super();
@@ -64,24 +65,35 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	}
 
 	@Override
-	protected void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
-		if (codeSize == 0) {
+	public void setBackgroundColor(Color bgColor){
+		super.setBackgroundColor(bgColor);
+		if(bgColor == null){
 			return;
 		}
-
-		Color bgColor = getParent().getBackgroundColor();
-		//Color altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));
-		Color altColor;
+		//altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));
 		int intensity = bgColor.getRed() + bgColor.getGreen() + bgColor.getBlue();
 		if (intensity == 0) {
 			altColor = Color.darkGray;
 		} else if (intensity > (255 + 127)) {
 			altColor = bgColor.darker();
+		} else if (bgColor.getRed() == 255 || bgColor.getGreen() == 0 || bgColor.getBlue() == 0){
+			altColor = bgColor.darker();
+		} else if (bgColor.getRed() == 0 || bgColor.getGreen() == 255 || bgColor.getBlue() == 0){
+			altColor = bgColor.darker();
+		} else if (bgColor.getRed() == 0 || bgColor.getGreen() == 0 || bgColor.getBlue() == 255){
+			altColor = bgColor.darker();
 		} else {
 			altColor = bgColor.brighter();
 		}
-		g.setColor(altColor);
+	}
+	
+	@Override
+	protected void drawResidueRectangles(
+			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
+		if (codeSize == 0) {
+			return;
+		}
+		g.setColor(altColor);	
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		int totalOffset = offset + seqBegIndex;
 		int mod = totalOffset % 6;

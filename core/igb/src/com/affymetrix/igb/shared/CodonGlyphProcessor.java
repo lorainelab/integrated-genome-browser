@@ -57,6 +57,7 @@ public class CodonGlyphProcessor {
 				CodonGlyph codonGlyph = new CodonGlyph(codeSize);
 				codonGlyph.setHitable(false);
 				codonGlyph.setCoordBox(glyph.getCoordBox());
+				codonGlyph.setBackgroundColor(glyph.getBackgroundColor());
 				glyph.addChild(codonGlyph);
 			}
 		}

@@ -1,12 +1,14 @@
 package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.BoundedParameter;
 import com.affymetrix.genometryImpl.general.Parameter;
-import com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator;
 import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -16,10 +18,18 @@ public class MappingQualityFilter extends SymmetryFilter {
 	private final static String QUALITY_SCORE = "quality_score";
 	private final static String COMPARATOR = "comparator";
 	private final static int DEFAULT_MIN_QUALITY_SCORE = 30;
-	private final static MathComparisonOperator DEFAULT_COMPARATOR = new GreaterThanEqualMathComparisonOperator();
+	private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<MathComparisonOperator>();
+	static {
+		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator());
+		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.GreaterThanMathComparisonOperator());
+		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.EqualMathComparisonOperator());
+		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.LessThanMathComparisonOperator());
+		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.LessThanEqualMathComparisonOperator());
+		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.NotEqualMathComparisonOperator());
+	}
 	
     private Parameter<Integer> qualityScore = new Parameter<Integer>(DEFAULT_MIN_QUALITY_SCORE);
-	private Parameter<MathComparisonOperator> comparator = new Parameter<MathComparisonOperator>(DEFAULT_COMPARATOR);
+	private Parameter<MathComparisonOperator> comparator = new BoundedParameter<MathComparisonOperator>(COMPARATOR_VALUES);
 	
 	public MappingQualityFilter(){
 		super();

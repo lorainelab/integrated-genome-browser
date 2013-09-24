@@ -3,9 +3,12 @@ package com.affymetrix.igb.colorproviders;
 import java.awt.Color;
 
 import com.affymetrix.genometryImpl.color.ColorProvider;
+import com.affymetrix.genometryImpl.general.BoundedParameter;
 import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -13,7 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
  */
 public class Property extends ColorProvider {
 	private final static String PROPERTY = "property";
-	public final static String DEFAULT_PROPERTY = "id";
+	private final static List<String> PROPERTY_VALUES = new LinkedList<String>();
 	private final static String PROPERTY_VALUE = "value";
 	public final static String DEFAULT_PROPERTY_VALUE = "";
 	private final static String MATCH_COLOR = "match";
@@ -21,19 +24,14 @@ public class Property extends ColorProvider {
 	private final static String NOT_MATCH_COLOR = "not_match";
 	private final static Color DEFAULT_NOT_MATCH_COLOR = Color.RED;
 	private Float float_property_value = null;
-		
-	protected Parameter<String> property = new Parameter<String>(DEFAULT_PROPERTY) {
-		@Override
-		public boolean set(Object e){
-			String prop = (String)e;
-			if(prop == null || prop.length() == 0){
-				return false;
-			}
-			super.set(e);
-			return true;
-		}
-	};
+	static {
+		PROPERTY_VALUES.add("id");
+		PROPERTY_VALUES.add("name");
+		PROPERTY_VALUES.add("score");
+		PROPERTY_VALUES.add("gene name");
+	}
 	
+	protected Parameter<String> property = new BoundedParameter<String>(PROPERTY_VALUES);
 	protected Parameter<String> property_value = new Parameter<String>(DEFAULT_PROPERTY_VALUE){
 		@Override
 		public boolean set(Object e){

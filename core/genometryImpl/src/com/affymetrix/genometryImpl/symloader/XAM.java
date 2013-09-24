@@ -218,8 +218,9 @@ public abstract class XAM extends SymLoader {
 			try {
 				celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					currentChildStart = currentChildEnd;
-					currentChildEnd = currentChildStart  + celLength;
+//					currentChildStart = currentChildEnd;
+//					currentChildEnd = currentChildStart  + celLength;
+					currentChildEnd += celLength;
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					// TODO -- allow possibility that INSERTION is terminator, not M
 //					currentChildStart = currentChildEnd;

@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.general;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,8 +52,11 @@ public class Parameters implements IParameters {
 		return PARAMETERS_VALUE.get(key).get();
 	}
 	
-	@Override
+	@Override @SuppressWarnings("unchecked")
 	public List<Object> getParametersPossibleValues(String key){
+		if(PARAMETERS_VALUE.get(key) instanceof BoundedParameter){
+			return ((BoundedParameter)PARAMETERS_VALUE.get(key)).getValues();
+		}
 		return null;
 	}
 	

@@ -127,24 +127,17 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 			for (Map.Entry<String, Class<?>> entry : cp.getParametersType().entrySet()) {
 				final String label = entry.getKey();
 				final Class<?> clazz = entry.getValue();
+				final List<Object> possibleValues = cp.getParametersPossibleValues(label);
 				JComponent component = null;
 				
-				if(MathComparisonOperator.class.isAssignableFrom(clazz)) {
+				if(possibleValues != null) {
 					final JComboBox cb = new JComboBox();
 					cb.setRenderer(new IDListCellRenderer());
-					TreeSet<MathComparisonOperator> cProviders = new TreeSet<MathComparisonOperator>(new IDComparator());
-					cProviders.addAll(ExtensionPointHandler.getExtensionPoint(MathComparisonOperator.class).getExtensionPointImpls());
-					for(MathComparisonOperator mco : cProviders){
+					for(Object mco : possibleValues){
 						cb.addItem(mco);
 					}
-					MathComparisonOperator initialMCO = (MathComparisonOperator)cp.getParameterValue(label);
-					for(int i=0; i<cb.getItemCount(); i++){
-						MathComparisonOperator item = (MathComparisonOperator)cb.getItemAt(i);
-						if(item.getName().equals(initialMCO.getName())){
-							cb.setSelectedItem(item);
-							break;
-						}
-					}
+					cb.setSelectedItem(cp.getParameterValue(label));
+					
 					cb.addItemListener(new ItemListener() {
 						@Override
 						public void itemStateChanged(ItemEvent e) {
@@ -386,8 +379,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 			if(value == null){
 				return super.getListCellRendererComponent(list, "None", index, isSelected, cellHasFocus);
 			}
-			return super.getListCellRendererComponent(list, ((ID)value).getDisplay(), 
+			if (value instanceof ID) {
+				return super.getListCellRendererComponent(list, ((ID)value).getDisplay(), 
 								index, isSelected, cellHasFocus);
+			}
+			return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		}
 	}
 }

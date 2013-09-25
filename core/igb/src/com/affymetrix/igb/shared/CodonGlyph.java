@@ -69,6 +69,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	public void setBackgroundColor(Color bgColor){
 		super.setBackgroundColor(bgColor);
 		if(bgColor == null){
+			altColor = Color.DARK_GRAY;
 			return;
 		}
 		//altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));

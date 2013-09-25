@@ -46,7 +46,13 @@ public final class ServerList {
 	private static ServerList serverInstance = new ServerList("server");
 	private static ServerList repositoryInstance = new ServerList("repository");
 	private final String textName;
-
+	private final Comparator<GenericServer> serverOrderComparator = new Comparator<GenericServer>() {
+			@Override
+			public int compare(GenericServer o1, GenericServer o2) {
+				return getServerOrder(o1) - getServerOrder(o2);
+			}
+	};
+	
 	private ServerList(String textName) {
 		this.textName = textName;
 	}
@@ -87,6 +93,10 @@ public final class ServerList {
 		return serverList;
 	}
 
+	public Comparator<GenericServer> getServerOrderComparator() {
+		return serverOrderComparator;
+	}
+	
 	public GenericServer getLocalFilesServer() {
 		return localFilesServer;
 	}
@@ -109,13 +119,7 @@ public final class ServerList {
 
 	public synchronized Collection<GenericServer> getAllServers() {
 		ArrayList<GenericServer> allServers = new ArrayList<GenericServer>(url2server.values());
-		Collections.sort(allServers, new Comparator<GenericServer>() {
-
-			@Override
-			public int compare(GenericServer o1, GenericServer o2) {
-				return getServerOrder(o1) - getServerOrder(o2);
-			}
-		});
+		Collections.sort(allServers, serverOrderComparator);
 		return allServers;
 	}
 

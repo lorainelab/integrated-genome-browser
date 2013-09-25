@@ -108,6 +108,14 @@ public final class TierLabelManager implements PropertyHolder {
 				boolean preserve_selections = false;
 				if (nevt.isAltDown() || nevt.isShiftDown()) {
 					preserve_selections = true;
+					Iterator<GlyphI> iterator = selected_glyphs.iterator();
+					while(iterator.hasNext()) {
+						GlyphI g = iterator.next();
+						if(g.isSelected()){
+							g.setSelected(false);
+							iterator.remove();
+						}	
+					}
 				} else if (topgl != null && isPopupTrigger) {
 					if (labelmap.getSelected().contains(topgl)) {
 						preserve_selections = true;
@@ -116,8 +124,7 @@ public final class TierLabelManager implements PropertyHolder {
 				if (!preserve_selections) {
 					labelmap.clearSelected();
 				}
-				List<GlyphI> selected = nevt.getItems();
-				labelmap.select(selected);
+				labelmap.select(selected_glyphs);
 				
 				if(!isPopupTrigger){
 					tiermap.clearSelected();
@@ -127,13 +134,13 @@ public final class TierLabelManager implements PropertyHolder {
 				// make sure selections becomes visible
 				if (isPopupTrigger) {
 					doPopup(evt);
-				} else if (selected.size() > 0) {
+				} else if (selected_glyphs.size() > 0) {
 					// take glyph at end of selected, just in case there is more
 					//    than .	
-					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
+					TierLabelGlyph gl = (TierLabelGlyph) selected_glyphs.get(selected_glyphs.size() - 1);
 					labelmap.toFront(gl);
 					dragLabel(gl, nevt);					
-					if(selected.size() == 1){
+					if(selected_glyphs.size() == 1){
 						transformTier(gl);
 					}			
 				}

@@ -83,4 +83,23 @@ public class ColorUtils {
 		}
 		return c;
 	}
+	
+	public static Color getAlternateColor(Color color) {
+		Color altColor;
+		int intensity = color.getRed() + color.getGreen() + color.getBlue();
+		if (intensity == 0) {
+			altColor = Color.darkGray;
+		} else if (intensity > (255 + 127)) {
+			altColor = color.darker();
+		} else if (color.getRed() == 255 || color.getGreen() == 0 || color.getBlue() == 0){
+			altColor = color.darker();
+		} else if (color.getRed() == 0 || color.getGreen() == 255 || color.getBlue() == 0){
+			altColor = color.darker();
+		} else if (color.getRed() == 0 || color.getGreen() == 0 || color.getBlue() == 255){
+			altColor = color.darker();
+		} else {
+			altColor = color.brighter();
+		}
+		return altColor;
+	}
 }

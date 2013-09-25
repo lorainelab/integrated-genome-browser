@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.util.ColorUtils;
 
 public class CodonGlyph extends AbstractAlignedTextGlyph {
 	private static final double STAGGER_COLOR_PCT = 0.8;
@@ -71,20 +72,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			return;
 		}
 		//altColor = new Color((int)(bgColor.getRed() * STAGGER_COLOR_PCT), (int)(bgColor.getGreen() * STAGGER_COLOR_PCT), (int)(bgColor.getBlue() * STAGGER_COLOR_PCT));
-		int intensity = bgColor.getRed() + bgColor.getGreen() + bgColor.getBlue();
-		if (intensity == 0) {
-			altColor = Color.darkGray;
-		} else if (intensity > (255 + 127)) {
-			altColor = bgColor.darker();
-		} else if (bgColor.getRed() == 255 || bgColor.getGreen() == 0 || bgColor.getBlue() == 0){
-			altColor = bgColor.darker();
-		} else if (bgColor.getRed() == 0 || bgColor.getGreen() == 255 || bgColor.getBlue() == 0){
-			altColor = bgColor.darker();
-		} else if (bgColor.getRed() == 0 || bgColor.getGreen() == 0 || bgColor.getBlue() == 255){
-			altColor = bgColor.darker();
-		} else {
-			altColor = bgColor.brighter();
-		}
+		altColor = ColorUtils.getAlternateColor(bgColor);
 	}
 	
 	@Override

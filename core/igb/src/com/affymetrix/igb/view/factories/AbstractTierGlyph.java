@@ -33,6 +33,7 @@ import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Color;
@@ -482,20 +483,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 		if (col == null) {
 			other_fill_color = Color.DARK_GRAY;
 		} else {
-			int intensity = col.getRed() + col.getGreen() + col.getBlue();
-			if (intensity == 0) {
-				other_fill_color = Color.darkGray;
-			} else if (intensity > (255 + 127)) {
-				other_fill_color = col.darker();
-			} else if (col.getRed() == 255 || col.getGreen() == 0 || col.getBlue() == 0) {
-				other_fill_color = col.darker();
-			} else if (col.getRed() == 0 || col.getGreen() == 255 || col.getBlue() == 0) {
-				other_fill_color = col.darker();
-			} else if (col.getRed() == 0 || col.getGreen() == 0 || col.getBlue() == 255) {
-				other_fill_color = col.darker();
-			} else {
-				other_fill_color = col.brighter();
-			}
+			other_fill_color = ColorUtils.getAlternateColor(col);
 		}
 	}
 	

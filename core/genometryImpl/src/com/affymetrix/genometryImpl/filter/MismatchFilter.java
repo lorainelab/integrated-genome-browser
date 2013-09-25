@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.filter;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import java.util.BitSet;
@@ -24,6 +25,10 @@ public class MismatchFilter extends SymmetryFilter {
 	
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
+		//If insertion is present then include in mismatch.
+		if(ss instanceof BAMSym && ((BAMSym)ss).getInsChildCount() > 0) {
+			return true;
+		}
 		boolean filter = true;
 		int child_count = ss.getChildCount();
 		if (child_count > 0) {
@@ -37,14 +42,15 @@ public class MismatchFilter extends SymmetryFilter {
 		} else if (ss instanceof SymWithResidues) {
 			filter &= filter((SymWithResidues)ss);
 		}
+		
 		return filter;
     }
   
 	private boolean filter(SymWithResidues swr) {
 		BitSet bitSet = swr.getResidueMask();
 		if (bitSet != null && bitSet.cardinality() > 0) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 }

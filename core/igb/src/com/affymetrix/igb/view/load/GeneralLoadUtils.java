@@ -422,7 +422,7 @@ public final class GeneralLoadUtils {
 			}
 		}
 		// make sure these servers always have the same order
-		Collections.sort(serverList);
+		Collections.sort(serverList, ServerList.getServerInstance().getServerOrderComparator());
 		return serverList;
 	}
 

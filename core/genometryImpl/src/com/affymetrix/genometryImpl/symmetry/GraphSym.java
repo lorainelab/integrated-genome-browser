@@ -119,7 +119,11 @@ public class GraphSym extends RootSeqSymmetry {
 			setCoords(x, y, w);
 		}
 		
-		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
+//		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
+		// HV : 26/09/13
+		// Do not use minimum and maximum values from graph. It cause bug
+		// on alt splice view. Moreover graph should be of full length as seq.
+		SeqSpan span = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
 		this.addSpan(span);
 
 	}

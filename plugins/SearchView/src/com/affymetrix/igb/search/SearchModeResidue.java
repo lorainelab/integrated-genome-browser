@@ -34,7 +34,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 	private static final String OVERLAY_RESULTS = "Overlay Results";
 	private static final boolean default_confirm_before_seq_change = true;
 	private static final boolean default_optionSelected = true;
-	
+	private static final String SEPARATOR = "\\|";
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
 	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -70,7 +70,9 @@ public class SearchModeResidue implements ISearchModeExtended,
 			return BUNDLE.getString("searchErrorShort");
 		}
 		try {
-			Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
+			for(String st : search_text.split(SEPARATOR)){
+				Pattern.compile(st, Pattern.CASE_INSENSITIVE);
+			}
 		} catch (PatternSyntaxException pse) {
 			return MessageFormat.format(BUNDLE.getString("searchErrorSyntax"), pse.getMessage());
 		} catch (Exception ex) {
@@ -183,10 +185,24 @@ public class SearchModeResidue implements ISearchModeExtended,
 	}
 
 	public SearchResults<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
-		if(!option){
+		String[] search_terms = search_text.split(SEPARATOR);
+		if(!option && search_terms.length <= 1){
 			clearResults();
 		}
-		
+		StringBuilder searchSummary = new StringBuilder();
+		for(String st : search_terms) {
+			st = st.trim();
+			if(st.length() > 3) {
+				SearchResults<GlyphI> results = search(st, chrFilter, statusHolder);
+				searchSummary.append(st).append(" : ").append(results.getSearchSummary()).append(" ");
+			} else {
+				searchSummary.append(st).append(" : ").append("Search skipped because character lenght is less than 3.");
+			}
+		}
+		return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), searchSummary.toString(), glyphs);
+	}
+
+	private SearchResults<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
 		SeqSpan visibleSpan = igbService.getSeqMapView().getVisibleSpan();
 		GenericAction loadResidue = igbService.loadResidueAction(visibleSpan, true);
 		loadResidue.actionPerformed(null);

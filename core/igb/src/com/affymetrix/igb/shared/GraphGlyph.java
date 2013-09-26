@@ -349,22 +349,26 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 	@Override
 	protected void drawSelectedOutline(ViewI view) {
 		draw(view);
-		Rectangle view_pixbox = view.getPixelBox();
+		// HV : 26/09/13
+		// Use graph's pixelbox values rather than view's. Using view's pixelbox 
+		// cause bug while on genome sequence. It cannot draw handle at correct 
+		// location.
+//		Rectangle view_pixbox = view.getPixelBox();
 		Graphics g = view.getGraphics();
 		Color sel_color = view.getScene().getSelectionColor();
 		g.setColor(sel_color);
 		view.transformToPixels(getPositiveCoordBox(), getPixelBox());
 
 		// only outline the handle, not the whole graph
-		g.drawRect(view_pixbox.x, getPixelBox().y,
+		g.drawRect(getPixelBox().x, getPixelBox().y,
 				handle_width - 1, getPixelBox().height - 1);
-		g.drawRect(view_pixbox.x + 1, getPixelBox().y + 1,
+		g.drawRect(getPixelBox().x + 1, getPixelBox().y + 1,
 				handle_width - 3, getPixelBox().height - 3);
 
 		// also draw a little pointing triangle to make the selection stand-out more
-		int[] xs = {view_pixbox.x + handle_width,
-			view_pixbox.x + handle_width + pointer_width,
-			view_pixbox.x + handle_width};
+		int[] xs = {getPixelBox().x + handle_width,
+			getPixelBox().x + handle_width + pointer_width,
+			getPixelBox().x + handle_width};
 		int[] ys = {getPixelBox().y,
 			getPixelBox().y + (int) (0.5 * (getPixelBox().height - 1)),
 			getPixelBox().y + getPixelBox().height - 1};

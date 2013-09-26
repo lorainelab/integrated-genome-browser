@@ -52,7 +52,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	public List<VirtualFeature> virtualFeatures;
 	public List<GenericFeature> features;
 	private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<GenericFeature, LoadStrategy>(); // Remember the load strategy for un-hidden restoration				
-	private AutoLoadThresholdHandler autoload;
 	
 	DataManagementTableModel(GeneralLoadView glv) {
 		this.glv = glv;
@@ -62,7 +61,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		if (igb != null) {
 			smv = igb.getMapView();
 			map = (AffyLabelledTierMap)smv.getSeqMap();
-			autoload = new AutoLoadThresholdHandler(smv);
 		}
 		map.addTierOrderListener(this);
 		// Here we map the friendly string back to the LoadStrategy.
@@ -576,7 +574,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}else if (gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD){
 			// This would trigger auto load
-			autoload.loadData();
+			smv.getAutoLoadAction().loadData();
 		}
 
 		//  Whatever feature strategy changed, it may have affected

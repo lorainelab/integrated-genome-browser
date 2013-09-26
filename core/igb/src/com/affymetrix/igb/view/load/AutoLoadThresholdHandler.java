@@ -29,7 +29,7 @@ public class AutoLoadThresholdHandler implements MouseListener, MouseMotionListe
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 	
-	AutoLoadThresholdHandler(SeqMapView seqMapView) {
+	public AutoLoadThresholdHandler(SeqMapView seqMapView) {
 		super();
 		this.map = seqMapView.getSeqMap();
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);

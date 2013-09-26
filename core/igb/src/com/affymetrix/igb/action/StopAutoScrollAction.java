@@ -32,5 +32,6 @@ public class StopAutoScrollAction extends SeqMapViewActionA {
 		getSeqMapView().getAutoScroll().stop();
 		setEnabled(false);
 		StartAutoScrollAction.getAction().setEnabled(true);
+		getSeqMapView().getAutoLoadAction().loadData();
 	}
 }

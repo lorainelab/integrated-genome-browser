@@ -61,6 +61,7 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 /**
  * A panel hosting a labeled tier map.
  * Despite it's name this is actually a panel and not a {@link ViewI}.
@@ -206,6 +207,7 @@ public class SeqMapView extends JPanel
 	private TierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final PopupInfo popupInfo;
+	private AutoLoadThresholdHandler autoload;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -373,6 +375,7 @@ public class SeqMapView extends JPanel
 			//tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
+			autoload = new AutoLoadThresholdHandler(this);
 		}
 
 		// Listener for track selection events.  We will use this to populate 'Selection Info'
@@ -2532,6 +2535,10 @@ public class SeqMapView extends JPanel
 
 	public AutoScroll getAutoScroll(){
 		return autoScroll;
+	}
+	
+	public AutoLoadThresholdHandler getAutoLoadAction(){
+		return autoload;
 	}
 	
 	@Override

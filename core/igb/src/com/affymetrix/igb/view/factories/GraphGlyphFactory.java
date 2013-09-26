@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -69,7 +70,6 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
-		boolean isGenome = false;
 
 		if (check_same_seq && graph_seq != aseq) {
 			// may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
@@ -95,14 +95,18 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
 		GraphSym newgraf = graf;
 		if (check_same_seq && graph_seq != vseq) {
-			if (vseq != null && "genome".equals(vseq.getID())) {
-				//TODO: Fix bug 1856102 "Genome View Bug" here. See Gregg's comments above.
-				isGenome = true;
-			}
 			// The new graph doesn't need a new GraphState or a new ID.
 			// Changing any graph properties will thus apply to the original graph.
 			SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
 			newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym);
+	
+			// Just making sure that it won't result in npe
+			if(smv.getTransformPath().length > 0 && smv.getTransformPath()[0].getSpan(vseq) != null){
+				SeqSpan span = newgraf.getSpan(vseq);
+				newgraf.removeSpan(span);
+				span = smv.getTransformPath()[0].getSpan(vseq);
+				newgraf.addSpan(span);
+			}
 		}
 		if (newgraf == null || newgraf.getPointCount() == 0) {
 			return null;
@@ -115,7 +119,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			newgraf.setGraphName(graph_name);
 		}
 
-		return displayGraphSym(newgraf, graf, smv, isGenome);
+		return displayGraphSym(newgraf, graf, smv);
 	}
 	
 	protected void setGraphType(GraphSym newgraf, GraphState gstate, GraphGlyph graphGlyph) {
@@ -131,7 +135,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 	/**
 	 * Almost exactly the same as ScoredContainerGlyphFactory.displayGraphSym.
 	 */
-	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
+	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv) {
 		GraphState gstate = graf.getGraphState();
 		GraphGlyph graphGlyph = new GraphGlyph(newgraf, gstate);
 		setGraphType(newgraf, gstate, graphGlyph);

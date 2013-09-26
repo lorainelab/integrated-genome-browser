@@ -21,6 +21,7 @@ public interface PropertyHandler {
 		"strand",
 		"min score",
 		"max score",
+		"score",
 		"type",
 		"same orientation",
 		"query length",

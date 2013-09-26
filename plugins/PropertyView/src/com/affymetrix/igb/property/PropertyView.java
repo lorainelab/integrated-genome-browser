@@ -205,7 +205,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		Map<String, Object> props = propertyHolder.determineProps(sym);
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]), tooltip_order, "", false);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), prop_order, "", false);
 	}
 
 	@SuppressWarnings("unchecked")

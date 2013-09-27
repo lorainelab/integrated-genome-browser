@@ -54,7 +54,7 @@ public interface TrackConstants {
 	static final boolean default_color_by_score = false;
 	static final boolean default_color_by_rgb = false;
 	static final boolean default_showResidueMask = true;
-	static final boolean default_shadeBasedOnQualityScore = true;
+	static final boolean default_shadeBasedOnQualityScore = false;
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.decode("0x333399"); //Color.CYAN;
 	static final Color default_background = Color.decode("0xDEE0E0"); //Color.BLACK;

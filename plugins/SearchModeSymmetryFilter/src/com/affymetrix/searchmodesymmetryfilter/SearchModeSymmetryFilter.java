@@ -59,7 +59,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 
 	@Override
-	public SearchResults search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
+	public SearchResults<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		if (filter instanceof SymmetryFilter && 
 				!search_text.equals(((SymmetryFilter)filter).getParameterValue(((SymmetryFilter)filter).getParametersType().entrySet().iterator().next().getKey()))) {

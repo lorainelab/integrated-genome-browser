@@ -392,15 +392,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 		JCheckBoxMenuItem showResidueMask = new JCheckBoxMenuItem(ShowMismatchAction.getAction());
 		showResidueMask.setEnabled(any_alignment);
-		if(any_alignment){
-			showResidueMask.setSelected(any_show_residue_mask);
-		}
+		showResidueMask.setSelected(any_alignment && any_show_residue_mask);
 		popup.add(showResidueMask);
 		JCheckBoxMenuItem useBaseQuality = new JCheckBoxMenuItem(ShadeUsingBaseQualityAction.getAction());
 		useBaseQuality.setEnabled(any_alignment);
-		if(any_alignment){
-			useBaseQuality.setSelected(any_shade_based_on_quality);
-		}
+		useBaseQuality.setSelected(any_alignment && any_shade_based_on_quality);
 		popup.add(useBaseQuality);
 //		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
 //		expand.setEnabled(any_are_collapsed);

@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
@@ -808,6 +809,12 @@ public class BED extends SymLoader implements LineProcessor {
 
 			return !thread.isInterrupted();
 
+		} catch (IOException ex) {
+			if(TOO_MANY_CONTIGS_EXCEPTION.equals(ex.getMessage())){
+				ErrorHandler.errorPanel("Too many contigs in a file. Some of the contigs will not be show");
+				return true;
+			}
+			throw ex;
 		} catch (Exception ex) {
 			throw ex;
 		} finally {

@@ -80,10 +80,10 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 	protected void drawResidueRectangles(ViewI view, double pixelsPerBase, 
 			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
 		
-		if (codeSize == 0) {
+		if (codeSize == 0 || (view.getTransform()).getScaleX() < 2) {
 			return;
 		}
-		
+				
 		Graphics g = view.getGraphics();
 		g.setColor(altColor);
 		

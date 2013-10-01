@@ -268,6 +268,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/Update/src</label>
+                    <type>java</type>
+                    <location>plugins/Update/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/Survey/src</label>
                     <type>java</type>
                     <location>plugins/Survey/src</location>
@@ -696,6 +702,10 @@
                         <location>plugins/TutorialHelper/src</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>plugins/Update/src</label>
+                        <location>plugins/Update/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>plugins/Survey/src</label>
                         <location>plugins/Survey/src</location>
                     </source-folder>
@@ -831,6 +841,7 @@
                 <package-root>plugins/Survey/src</package-root>
                 <package-root>plugins/BAMIndexer/src</package-root>
                 <package-root>plugins/NCBIBlast/src</package-root>
+                <package-root>plugins/Update/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:ext/lambdaj-2.4-with-dependencies.jar:ext/JGoogleAnalytics_0.4.jar:ext/commons-pool-1.6.jar:core/HeatmapEditor/lib/swingx-all-1.6.4.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:plugins/TableView/lib/TableView.jar:plugins/PythonScript/lib/jython.jar:plugins/RubyScript/lib/asm-2.2.3.jar:plugins/RubyScript/lib/backport-util-concurrent.jar:plugins/RubyScript/lib/jruby-engine.jar:plugins/RubyScript/lib/jruby.jar:plugins/ThousandGenomesServerType/lib/commons-io-2.4.jar:plugins/SearchModeLucene/lib/commons-httpclient-3.1.jar:plugins/SearchModeLucene/lib/commons-vfs2-2.0.jar:plugins/SearchModeLucene/lib/concurrent.jar:plugins/SearchModeLucene/lib/lucene-core-3.6.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>core/genometryImpl/build</built-to>

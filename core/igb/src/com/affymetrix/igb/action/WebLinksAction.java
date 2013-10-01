@@ -25,11 +25,9 @@ public final class WebLinksAction extends GenericAction {
 	}
 
 	private WebLinksAction() {
-		super(BUNDLE.getString("configureWebLinks"), "Manage Web Links", 
+		super(BUNDLE.getString("configureWebLinks"), 
 				"16x16/categories/applications-internet.png",
-				//"22x22/categories/applications-internet.png", 
-				null,
-				KeyEvent.VK_W, null, true);
+				"22x22/categories/applications-internet.png");
 	    putValue(Action.SHORT_DESCRIPTION, "Manage Web Links");
 	}
 

@@ -26,9 +26,16 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.action.ThreadHandlerAction;
 import java.awt.FontMetrics;
+import java.awt.font.TextAttribute;
+import java.util.HashMap;
 
 public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
+	private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<TextAttribute, Object>();
+	static {
+		textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+		textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);
+	}
 	
 //	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
 	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop_hex.gif");
@@ -106,7 +113,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		layout.setAutoCreateContainerGaps(false);
 		layout.setAutoCreateGaps(true);
 		layout.setHonorsVisibility(false);
-				
+	
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
 				.addComponent(progressBar)
@@ -116,7 +123,8 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item, 1, 200, 200)
-				.addComponent(statusAlertButton));
+				.addComponent(statusAlertButton)
+				.addGap(5, 5, 5));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
@@ -126,7 +134,8 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //				.addComponent(selectionPanel)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(memory_item)
-				.addComponent(statusAlertButton));
+				.addComponent(statusAlertButton)
+				.addGap(5, 5, 5));
 		
 	}
 
@@ -165,11 +174,19 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		this.alert = alert;
 		if(alert != null){
 			statusAlertButton.setIcon(alert.getIcon());
+			if(alert.getIcon() == null) {
+				statusAlertButton.setFont(statusAlertButton.getFont().deriveFont(textAttrMap));
+				statusAlertButton.setText(alert.getDisplayMessage());
+			}
 			statusAlertButton.setToolTipText(alert.getToolTip());
 			statusAlertButton.setVisible(true);
 		}else{
+			statusAlertButton.setIcon(null);
+			statusAlertButton.setText(null);
+			statusAlertButton.setToolTipText(null);
 			statusAlertButton.setVisible(false);
 		}
+		this.revalidate();
 	}
 	
 	public void displayProgress(boolean b) {

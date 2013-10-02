@@ -135,12 +135,12 @@ public abstract class XAM extends SymLoader {
 	 * @return SimpleSymWithProps
 	 */
 	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth) {
-		SymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, meth, true, true);
+		SymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, meth, true);
 		addAllSAMRecordProperties(sym, sr);
 		return sym;
 	}
 	
-	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth, boolean includeResidues, boolean includeNH){
+	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth, boolean includeResidues){
 		SimpleSeqSpan span;
 		int start = sr.getAlignmentStart() - 1; // convert to interbase
 		int end = sr.getAlignmentEnd();
@@ -179,7 +179,7 @@ public abstract class XAM extends SymLoader {
 				iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null, sr.getBaseQualityString());
 		sym.setProperty("id", sr.getReadName());
 		sym.setProperty("method", meth);
-		if(includeNH && sr.getAttribute("NH")!= null){
+		if(sr.getAttribute("NH")!= null){
 			sym.setProperty("NH", sr.getAttribute("NH"));
 		}
 		return sym;

@@ -446,7 +446,7 @@ public final class BAM extends XAM {
 						continue;
 					}
 
-					return convertSAMRecordToSymWithProps(sr, seq, uri.toString(), false, true);
+					return convertSAMRecordToSymWithProps(sr, seq, uri.toString(), false);
 				} catch (SAMException ex) {
 					System.err.print("!!! SAM Record Error:" + ex.getMessage());
 				} catch (NoSuchElementException ex) {

@@ -61,6 +61,7 @@ import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import static com.affymetrix.igb.IGBConstants.*;
+import com.affymetrix.igb.view.Editor;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
@@ -182,6 +183,7 @@ public final class IGB extends Application
 			}
 		}
 
+//		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 		frm = new JFrame(APP_NAME + " " + "7.1");
 
 		// when HTTP authentication is needed, getPasswordAuthentication will
@@ -428,8 +430,9 @@ public final class IGB extends Application
 	}
 
 	public int searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, GlyphI axis_tier, List<GlyphI> glyphs, Color hitColor) {
+			boolean forward, Pattern regex, String residues, int residue_offset, final GlyphI axis_tier, List<GlyphI> glyphs, Color hitColor) {
 		int hit_count = 0;
+		final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
 		Matcher matcher = regex.matcher(residues);
 		while (matcher.find() && !Thread.currentThread().isInterrupted()) {
 			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
@@ -456,10 +459,18 @@ public final class IGB extends Application
 			gl.setColor(hitColor);
 			double pos = forward ? 27 : 32;
 			gl.setCoords(start, pos, end - start, 10);
-			axis_tier.addChild(gl);
-			glyphs.add(gl);
+			resultGlyphs.add(gl);
 			hit_count++;
 		}
+		ThreadUtils.runOnEventQueue(new Runnable(){
+			@Override
+			public void run(){
+				for(GlyphI glyph : resultGlyphs) {
+					axis_tier.addChild(glyph);
+				}
+			}
+		});
+		glyphs.addAll(resultGlyphs);
 		return hit_count;
 	}
 
@@ -592,6 +603,7 @@ public final class IGB extends Application
 		if (title.length() > 0) {
 			title.append(" - ");
 		}
+//		title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
 		title.append(IGBConstants.APP_NAME).append(" ").append("7.1");
 		return title.toString();
 	}

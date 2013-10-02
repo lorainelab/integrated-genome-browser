@@ -12,11 +12,15 @@ package com.affymetrix.igb;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -61,12 +65,6 @@ import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import static com.affymetrix.igb.IGBConstants.*;
-import com.affymetrix.igb.view.Editor;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 
 /**
  * Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).

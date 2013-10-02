@@ -292,7 +292,8 @@ public class AddSource extends JFrame {
 				}
 
 				if (serverAdded) {
-					Application.confirmPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
+					Application.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", false);
+					//Application.confirmPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
 				}/*else{
 
 				 ErrorHandler.errorPanel(

@@ -31,7 +31,15 @@ public class Property extends ColorProvider {
 		PROPERTY_VALUES.add("gene name");
 	}
 	
-	protected Parameter<String> property = new BoundedParameter<String>(PROPERTY_VALUES);
+	protected Parameter<String> property = new BoundedParameter<String>(PROPERTY_VALUES){
+		@Override
+		public boolean set(Object e){
+			if(e != null){
+				return super.set(e.toString().toLowerCase());
+			}
+			return super.set(e);
+		}
+	};
 	protected Parameter<String> property_value = new Parameter<String>(DEFAULT_PROPERTY_VALUE){
 		@Override
 		public boolean set(Object e){
@@ -63,7 +71,8 @@ public class Property extends ColorProvider {
 			if((value instanceof Float || value instanceof Double) 
 					&& float_property_value != null && Float.compare(float_property_value, (Float)value) == 0) {
 				return matchColor.get();
-			} else if(value != null && property_value.get() != null && value.toString().equals(property_value.get())){
+			} else if(value != null && property_value.get() != null 
+					&& value.toString().toLowerCase().equals(property_value.get())){
 				return matchColor.get();
 //				return cp.getColor(value.toString());
 			}

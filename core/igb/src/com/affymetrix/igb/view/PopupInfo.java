@@ -186,18 +186,16 @@ public class PopupInfo extends JWindow {
 			this.properties	= properties;
 			//title.setText(getFormattedTitle(properties));
 			tooltip.setText(convertPropsToString(properties, false));
+			boolean wasVisible = isVisible();
+			setVisible(false);
+			pack();
 			if(moreLess.getAction() == moreAction){
-				boolean wasVisible = isVisible();
-				setVisible(false);
-				pack();
 				setSize(getSize().width, minHeight);
-				setWidth();
-				tooltip.setCaretPosition(0);
-				setVisible(wasVisible);
-			} else {
-				pack();
-				setWidth();
 			}
+			setWidth();
+			tooltip.setCaretPosition(0);
+			setVisible(wasVisible);
+			
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));
 				setVisible(true);

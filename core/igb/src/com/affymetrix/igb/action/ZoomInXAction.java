@@ -42,5 +42,6 @@ public class ZoomInXAction extends SeqMapViewActionA {
 		AffyTieredMap seqmap = getSeqMapView().getSeqMap();
 		Adjustable adj = seqmap.getZoomer(NeoMap.X);
 		adj.setValue(adj.getValue() + (adj.getMaximum() - adj.getMinimum()) / 20);
+		getSeqMapView().getAutoLoadAction().loadData();
 	}
 }

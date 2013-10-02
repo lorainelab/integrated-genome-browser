@@ -32,5 +32,6 @@ public class ScrollLeftAction extends SeqMapViewActionA implements ContinuousAct
 		int[] visible = seqmap.getVisibleRange();
 		seqmap.scroll(NeoAbstractWidget.X, visible[0] - (visible[1] - visible[0]) / 10);
 		seqmap.updateWidget();
+		getSeqMapView().getAutoLoadAction().loadData();
 	}
 }

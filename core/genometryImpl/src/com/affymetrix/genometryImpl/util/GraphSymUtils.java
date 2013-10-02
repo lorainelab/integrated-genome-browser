@@ -82,7 +82,7 @@ public final class GraphSymUtils {
 		for (SeqSymmetry leafsym : leaf_syms) {
 			SeqSpan fspan = leafsym.getSpan(fromseq);
 			SeqSpan tspan = leafsym.getSpan(toseq);
-			if (fspan == null || tspan == null) {
+			if (fspan == null || tspan == null || fspan.getLength() == 0 || tspan.getLength() == 0) {
 				continue;
 			}
 			boolean opposite_spans = fspan.isForward() ^ tspan.isForward();

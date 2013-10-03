@@ -109,11 +109,10 @@ public interface IGBService {
 	 * @param regex - the regular expression to match
 	 * @param residues the residues to search
 	 * @param residue_offset the starting offset within the residues
-	 * @param glyphs the glyphs to mark
 	 * @param hitColor the color to mark them with
 	 */
-	public int searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
+	public List<GlyphI> searchForRegexInResidues(
+			boolean forward, Pattern regex, String residues, int residue_offset, Color hitColor);
 	// for SearchView
 	public void zoomToCoord(String seqID, int start, int end);
 	public void mapRefresh(List<GlyphI> glyphs);

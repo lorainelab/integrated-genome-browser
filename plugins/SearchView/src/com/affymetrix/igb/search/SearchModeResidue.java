@@ -25,6 +25,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
+import com.affymetrix.igb.util.ColorUtils;
 
 public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -237,12 +238,16 @@ public class SearchModeResidue implements ISearchModeExtended,
 			int end = Math.min(i+MAX_RESIDUE_LEN_SEARCH, residuesLength);
 			
 			String residues = chrFilter.getResidues(start, end);
-			hit_count1 += igbService.searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1,start), glyphs, hitcolors[color]);
-
+			List<GlyphI> results = igbService.searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1,start), hitcolors[color]);
+			hit_count1 += results.size();
+			glyphs.addAll(results);
+			
 			// Search for reverse complement of query string
 			// flip searchstring around, and redo nibseq search...
 			String rev_searchstring = DNAUtils.reverseComplement(residues);
-			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolors[color]);
+			results = igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), hitcolors[color]);
+			hit_count2 += results.size();
+			glyphs.addAll(results);
 		}
 		String statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"), hit_count1, hit_count2);
 		statusHolder.setStatus(statusStr);

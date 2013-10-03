@@ -63,6 +63,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 /**
@@ -2577,8 +2578,8 @@ public class SeqMapView extends JPanel
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
 	}
 	
-	public int searchForRegexInResidues(boolean forward, Pattern regex, 
-			String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
+	public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex, 
+			String residues, int residue_offset, Color hitColor) {
 		final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
 		List<SingletonSymWithProps> results = BioSeq.searchForRegexInResidues(forward, regex, residues, residue_offset, getAnnotatedSeq());
 		for (SingletonSymWithProps result : results) {
@@ -2600,8 +2601,7 @@ public class SeqMapView extends JPanel
 				}
 			}
 		});
-		glyphs.addAll(resultGlyphs);
-		return resultGlyphs.size();
+		return resultGlyphs;
 	}
 		
 	public void updateStart(int start, SeqSymmetry sym) {

@@ -294,15 +294,19 @@ public final class RestrictionControlView extends IGBTabPanel
 					System.out.println(MessageFormat.format(BUNDLE.getString("searching"), site_residues));
 
 					residue_offset = vseq.getMin();
-					int hit_count1 = igbService.searchForRegexInResidues(
-							true, regex, residues, residue_offset, glyphs, colors[i % colors.length]);
+					List<GlyphI> results = igbService.searchForRegexInResidues(
+							true, regex, residues, residue_offset, colors[i % colors.length]);
+					int hit_count1 = results.size();
+					glyphs.addAll(results);
 
 					// Search for reverse complement of query string
 					//   flip searchstring around, and redo nibseq search...
 					residue_offset = vseq.getMax();
-					int hit_count2 = igbService.searchForRegexInResidues(
-							false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
-
+					results = igbService.searchForRegexInResidues(
+							false, regex, rev_searchstring, residue_offset, colors[i % colors.length]);
+					int hit_count2 = results.size();
+					glyphs.addAll(results);
+					
 					System.out.println(MessageFormat.format(BUNDLE.getString("found"), site_residues, "" + hit_count1, "" + hit_count2));
 					igbService.getSeqMap().updateWidget();
 					i++;

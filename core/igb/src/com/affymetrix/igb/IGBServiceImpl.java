@@ -197,10 +197,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public int searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
+	public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex, 
+							String residues, int residue_offset, Color hitColor) {
 		return Application.getSingleton().getMapView().searchForRegexInResidues(
-				forward, regex, residues, residue_offset, glyphs, hitColor);
+				forward, regex, residues, residue_offset, hitColor);
 	}
 
 	@Override

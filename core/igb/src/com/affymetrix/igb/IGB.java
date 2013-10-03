@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -25,7 +24,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
 
@@ -38,11 +36,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.util.*;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
@@ -425,51 +420,6 @@ public final class IGB extends Application
 		}
 		prev_selected_seq = selected_seq;
 		getFrame().setTitle(getTitleBar(selected_seq));
-	}
-
-	public int searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, final GlyphI axis_tier, List<GlyphI> glyphs, Color hitColor) {
-		int hit_count = 0;
-		final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
-		Matcher matcher = regex.matcher(residues);
-		while (matcher.find() && !Thread.currentThread().isInterrupted()) {
-			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
-			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
-			//int end = matcher.end(0) + residue_offset;
-			SingletonSymWithProps info = new SingletonSymWithProps(start, end, map_view.getAnnotatedSeq());
-			info.setProperty("direction", forward ? "forward" : "reverse");
-			info.setProperty("match", matcher.group(0));
-			info.setProperty("pattern", regex.pattern());
-			
-			GlyphI gl = new FillRectGlyph() {
-
-				@Override
-				public void moveAbsolute(double x, double y) {
-				}
-
-				;
-				@Override
-				public void moveRelative(double diffx, double diffy) {
-				}
-			;
-			};
-			gl.setInfo(info);
-			gl.setColor(hitColor);
-			double pos = forward ? 27 : 32;
-			gl.setCoords(start, pos, end - start, 10);
-			resultGlyphs.add(gl);
-			hit_count++;
-		}
-		ThreadUtils.runOnEventQueue(new Runnable(){
-			@Override
-			public void run(){
-				for(GlyphI glyph : resultGlyphs) {
-					axis_tier.addChild(glyph);
-				}
-			}
-		});
-		glyphs.addAll(resultGlyphs);
-		return hit_count;
 	}
 
 	public IWindowService getWindowService() {

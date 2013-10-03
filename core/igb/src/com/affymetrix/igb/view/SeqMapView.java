@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import java.util.regex.Pattern;
 import java.text.MessageFormat;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -29,6 +30,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
@@ -37,6 +39,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.CoordFloaterGlyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
@@ -2574,6 +2577,33 @@ public class SeqMapView extends JPanel
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
 	}
 	
+	public int searchForRegexInResidues(boolean forward, Pattern regex, 
+			String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
+		final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
+		List<SingletonSymWithProps> results = BioSeq.searchForRegexInResidues(forward, regex, residues, residue_offset, getAnnotatedSeq());
+		for (SingletonSymWithProps result : results) {
+			GlyphI gl = new FillRectGlyph() {
+				@Override public void moveAbsolute(double x, double y) { }
+				@Override public void moveRelative(double diffx, double diffy) { }
+			};
+			gl.setInfo(result);
+			gl.setColor(hitColor);
+			double pos = forward ? 27 : 32;
+			gl.setCoords(result.getStart(), pos, result.getLength(), 10);
+			resultGlyphs.add(gl);
+		}
+		ThreadUtils.runOnEventQueue(new Runnable(){
+			@Override
+			public void run(){
+				for(GlyphI glyph : resultGlyphs) {
+					axis_tier.addChild(glyph);
+				}
+			}
+		});
+		glyphs.addAll(resultGlyphs);
+		return resultGlyphs.size();
+	}
+		
 	public void updateStart(int start, SeqSymmetry sym) {
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
 		Rectangle2D.Double originalCoordBox = glyph.getCoordBox();

@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.TypedSym;
@@ -637,7 +638,25 @@ public class BioSeq implements SearchableCharIterator {
 		return this.getID();
 	}
 
-
+	public static List<SingletonSymWithProps> searchForRegexInResidues(boolean forward, 
+			Pattern regex, String residues, int residue_offset, BioSeq seq) {
+		List<SingletonSymWithProps> results = new ArrayList<SingletonSymWithProps>();
+		
+		Matcher matcher = regex.matcher(residues);
+		while (matcher.find() && !Thread.currentThread().isInterrupted()) {
+			int residue_start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
+			int residue_end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
+			//int end = matcher.end(0) + residue_offset;
+			SingletonSymWithProps info = new SingletonSymWithProps(residue_start, residue_end, seq);
+			info.setProperty("direction", forward ? "forward" : "reverse");
+			info.setProperty("match", matcher.group(0));
+			info.setProperty("pattern", regex.pattern());
+			
+			results.add(info);
+		}
+		return results;
+	}
+	
 	/**
 	 * Add residues to composition (full sequence loaded).
 	 * @param aseq

@@ -154,7 +154,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 					if (Number.class.isAssignableFrom(clazz)) {
 						tf = new JTextField(6);
 						if(Integer.class.isAssignableFrom(clazz)){
-							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
+							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(Integer.MIN_VALUE, Integer.MAX_VALUE));
 						} else {
 							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 						}

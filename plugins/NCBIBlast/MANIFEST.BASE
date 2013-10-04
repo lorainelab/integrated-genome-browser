@@ -35,9 +35,8 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  javax.swing.text,
  javax.swing.border,
  org.jdesktop.layout,
- net.sf.samtools,
- net.sf.picard.sam,
- net.sf.image4j.codec.ico,
+ apollo.datamodel,
+ apollo.util,
  org.osgi.framework;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,

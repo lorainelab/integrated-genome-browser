@@ -46,13 +46,13 @@ import javax.swing.text.AbstractDocument;
  */
 @SuppressWarnings("unchecked")
 public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
-	
+
 	private T returnValue, selectedCP;
 	private Map<String, Object> paramMap;
 	private JComboBox comboBox;
 	private JPanel paramsPanel;
 	private List<SelectionChangeListener> tChangeListeners;
-	
+
 	/**
 	 * Creates the reusable dialog.
 	 */
@@ -63,40 +63,40 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 	public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter) {
 		this(clazz, label, filter, true);
 	}
-	
+
 	public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone) {
 		init(clazz, label, filter, includeNone);
 	}
-	
+
 	private void init(Class clazz, Object label, Filter<T> filter, boolean includeNone) throws SecurityException {
 		setLayout(new BorderLayout());
 
 		comboBox = new JComboBox();
 		comboBox.setRenderer(new IDListCellRenderer());
-		
-		if(includeNone){
+
+		if (includeNone) {
 			comboBox.addItem(null);
 		}
 		TreeSet<T> tProviders = new TreeSet<T>(new IDComparator());
 		tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
 		for (T cp : tProviders) {
-			if(filter != null){
-				if(!filter.shouldInclude(cp)){
+			if (filter != null) {
+				if (!filter.shouldInclude(cp)) {
 					continue;
 				}
 			}
 			comboBox.addItem(cp);
 		}
-		if(includeNone){
+		if (includeNone) {
 			comboBox.setSelectedItem(null);
 		}
 
 		JPanel optionsBox = new JPanel();
 		optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
-		if(label instanceof JComponent) {
-			optionsBox.add((JComponent)label);
+		if (label instanceof JComponent) {
+			optionsBox.add((JComponent) label);
 		} else if (label instanceof String) {
-			optionsBox.add(new JLabel(label+" :  "));
+			optionsBox.add(new JLabel(label + " :  "));
 		}
 		optionsBox.add(comboBox);
 
@@ -107,15 +107,15 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 		add(paramsPanel, BorderLayout.PAGE_END);
 
 		addListeners();
-		
+
 		//Initialized with first value
-		if(selectedCP == null && comboBox.getItemCount() > 0){
-			T cp = (T)comboBox.getItemAt(0);
+		if (selectedCP == null && comboBox.getItemCount() > 0) {
+			T cp = (T) comboBox.getItemAt(0);
 			returnValue = cp;
 			setSelected(cp);
 		}
 	}
-	
+
 	private void addOptions(final IParameters cp, final JPanel paramsPanel) {
 		paramMap = new HashMap<String, Object>();
 		JPanel panel = new JPanel();
@@ -129,22 +129,22 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 				final Class<?> clazz = entry.getValue();
 				final List<Object> possibleValues = cp.getParametersPossibleValues(label);
 				JComponent component = null;
-				
-				if(possibleValues != null) {
+
+				if (possibleValues != null) {
 					final JComboBox cb = new JComboBox();
 					cb.setRenderer(new IDListCellRenderer());
-					for(Object mco : possibleValues){
+					for (Object mco : possibleValues) {
 						cb.addItem(mco);
 					}
 					cb.setSelectedItem(cp.getParameterValue(label));
-					
+
 					cb.addItemListener(new ItemListener() {
 						@Override
 						public void itemStateChanged(ItemEvent e) {
 							ConfigureOptionsPanel.this.setParameter(cp, label, cb.getSelectedItem());
 						}
 					});
-					
+
 					//cb.setMaximumSize(new java.awt.Dimension(70, 60));
 					cb.setPreferredSize(new java.awt.Dimension(70, 60));
 					cb.setMinimumSize(new java.awt.Dimension(70, 60));
@@ -153,12 +153,12 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 					final JTextField tf;
 					if (Number.class.isAssignableFrom(clazz)) {
 						tf = new JTextField(6);
-						if(Integer.class.isAssignableFrom(clazz)){
+						if (Integer.class.isAssignableFrom(clazz)) {
 							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(Integer.MIN_VALUE, Integer.MAX_VALUE));
 						} else {
 							((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 						}
-						
+
 					} else {
 						tf = new JTextField(10);
 					}
@@ -178,11 +178,16 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
 						private void setParameter() {
 							if (Number.class.isAssignableFrom(clazz)) {
-								if(tf.getText() != null && tf.getText().length() > 0) {
-									if(Integer.class.isAssignableFrom(clazz)){
-										ConfigureOptionsPanel.this.setParameter(cp, label, Integer.valueOf(tf.getText()));
-									} else {
-										ConfigureOptionsPanel.this.setParameter(cp, label, Float.valueOf(tf.getText()));
+								if (tf.getText() != null && tf.getText().length() > 0) {
+									try {
+										if (Integer.class.isAssignableFrom(clazz)) {
+											int value = Integer.valueOf(tf.getText());
+											ConfigureOptionsPanel.this.setParameter(cp, label, value);
+										} else {
+											float value =  Float.valueOf(tf.getText());
+											ConfigureOptionsPanel.this.setParameter(cp, label, value);
+										}
+									} catch (NumberFormatException ex) {
 									}
 								}
 							} else {
@@ -220,7 +225,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 						positions = ((HeatMapExtended) hm).getValues();
 						colorRanges = ((HeatMapExtended) hm).getRangeColors();
 					} else {
-						HeatMapExtended hme = (HeatMapExtended)cp.getParameterValue(label);
+						HeatMapExtended hme = (HeatMapExtended) cp.getParameterValue(label);
 						positions = hme.getValues();
 						colorRanges = hme.getColors();
 					}
@@ -279,11 +284,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 	private void initParamPanel(IParameters cp) {
 		addOptions(cp, paramsPanel);
 	}
-	
+
 	private void addListeners() {
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				T cp = (T)comboBox.getSelectedItem();
+				T cp = (T) comboBox.getSelectedItem();
 				// If a user selects same color provider as initial then reuses the same object
 				if (returnValue != null && cp != null && cp.getName().equals(returnValue.getName())) {
 					cp = returnValue;
@@ -291,8 +296,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 					cp = (T) cp.newInstance();
 				}
 				setSelected(cp);
-				if(tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue){
-					for(SelectionChangeListener tChangeListener : tChangeListeners){
+				if (tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue) {
+					for (SelectionChangeListener tChangeListener : tChangeListeners) {
 						tChangeListener.selectionChanged(cp);
 					}
 				}
@@ -311,77 +316,82 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 		paramsPanel.revalidate();
 		revalidate();
 	}
-	
+
 	public void addTChangeListner(SelectionChangeListener tcl) {
-		if(tChangeListeners == null){
+		if (tChangeListeners == null) {
 			tChangeListeners = new ArrayList<SelectionChangeListener>();
 		}
 		tChangeListeners.add(tcl);
 	}
-	
+
 	public void removeTChangeListner(SelectionChangeListener tcl) {
 		tChangeListeners.remove(tcl);
-		if(tChangeListeners.isEmpty()){
+		if (tChangeListeners.isEmpty()) {
 			tChangeListeners = null;
 		}
 	}
-	
+
 	@Override
-	public void setEnabled(boolean b){
+	public void setEnabled(boolean b) {
 		comboBox.setEnabled(b);
 	}
-	
+
 	public void setInitialValue(T cp) {
 		returnValue = cp;
-		if(cp == null){
+		if (cp == null) {
 			comboBox.setSelectedItem(cp);
 		} else {
-			for(int i=0; i<comboBox.getItemCount(); i++){
-				T item = (T)comboBox.getItemAt(i);
-				if(item != null && item.getName().equals(cp.getName())){
+			for (int i = 0; i < comboBox.getItemCount(); i++) {
+				T item = (T) comboBox.getItemAt(i);
+				if (item != null && item.getName().equals(cp.getName())) {
 					comboBox.setSelectedItem(item);
 					break;
 				}
 			}
 		}
 	}
-	
-	public T getReturnValue(boolean applyChanges){
-		if(applyChanges){
+
+	public T getReturnValue(boolean applyChanges) {
+		if (applyChanges) {
 			returnValue = selectedCP;
-			if(returnValue instanceof IParameters){
-				((IParameters)returnValue).setParametersValue(paramMap);
+			if (returnValue instanceof IParameters) {
+				((IParameters) returnValue).setParametersValue(paramMap);
 			}
 		}
 		return returnValue;
 	}
-	
+
 	/**
 	 * Interface to listen to combobox event change
-	 * @param <T> 
+	 *
+	 * @param <T>
 	 */
 	public static interface SelectionChangeListener<T> {
+
 		public void selectionChanged(T t);
 	}
-	
+
 	/**
-	 * Interface to filter out available 
-	 * @param <T> 
+	 * Interface to filter out available
+	 *
+	 * @param <T>
 	 */
 	public static interface Filter<T> {
+
 		public boolean shouldInclude(T t);
 	}
-	
-	private static class IDListCellRenderer extends DefaultListCellRenderer {	
+
+	private static class IDListCellRenderer extends DefaultListCellRenderer {
+
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value,
-								int index, boolean isSelected, boolean cellHasFocus) {
-			if(value == null){
+				int index, boolean isSelected, boolean cellHasFocus) {
+			if (value == null) {
 				return super.getListCellRendererComponent(list, "None", index, isSelected, cellHasFocus);
 			}
 			if (value instanceof ID) {
-				return super.getListCellRendererComponent(list, ((ID)value).getDisplay(), 
-								index, isSelected, cellHasFocus);
+				return super.getListCellRendererComponent(list, ((ID) value).getDisplay(),
+						index, isSelected, cellHasFocus);
 			}
 			return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		}

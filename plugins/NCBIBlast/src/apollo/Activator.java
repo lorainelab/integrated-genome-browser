@@ -1,11 +1,9 @@
 package apollo;
 
-import apollo.analysis.BlastOptionsI;
-import apollo.analysis.RemoteBlastOptions;
+import apollo.analysis.BlastRunOptsPanel;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
-import com.affymetrix.igb.shared.IPrefEditorComponent;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -22,11 +20,11 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	
 	@Override
 	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
-		BlastOptionsI blastOptions = new RemoteBlastOptions();
+		BlastRunOptsPanel blastRunOptsPanel = new BlastRunOptsPanel();
 		
 		return new ServiceRegistration[] {
-			bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView(), blastOptions), null),
-//			bundleContext.registerService(IPrefEditorComponent.class, (IPrefEditorComponent)blastOptions, null)
+			bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView(), blastRunOptsPanel), null),
+//			bundleContext.registerService(IPrefEditorComponent.class, blastRunOptsPanel, null)
 		};
 	}
 	

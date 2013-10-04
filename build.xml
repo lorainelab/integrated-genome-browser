@@ -47,6 +47,7 @@
 		<property name="BAMIndexer"			 value="${basedir}/plugins/BAMIndexer"/>
 		<property name="NCBIBlast"			 value="${basedir}/plugins/NCBIBlast" />
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
+		<property name="ApolloLibrary"		 value="${basedir}/plugins/ApolloLibrary" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"			 value="${basedir}/ext" />
@@ -718,6 +719,9 @@
 				</dirset>
 				<dirset dir="${basedir}/core">
 					<include name="igb" />
+				</dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="ApolloLibrary" />
 				</dirset>
 			</subant>
 		</sequential>

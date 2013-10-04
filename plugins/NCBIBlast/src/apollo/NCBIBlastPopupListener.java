@@ -14,9 +14,9 @@ import javax.swing.JPopupMenu;
  *
  * @author hiralv
  */
-public class NCBIPopupListener implements ContextualPopupListener {
+public class NCBIBlastPopupListener implements ContextualPopupListener {
 
-	public NCBIPopupListener(SeqMapViewI smv, BlastOptionsI blastOptions){
+	public NCBIBlastPopupListener(SeqMapViewI smv, BlastOptionsI blastOptions){
 		BlastSearchAction.init(smv, blastOptions);
 	}
 

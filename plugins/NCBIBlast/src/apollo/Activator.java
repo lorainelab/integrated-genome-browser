@@ -25,7 +25,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		BlastOptionsI blastOptions = new RemoteBlastOptions();
 		
 		return new ServiceRegistration[] {
-			bundleContext.registerService(ContextualPopupListener.class, new NCBIPopupListener(igbService.getSeqMapView(), blastOptions), null),
+			bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView(), blastOptions), null),
 //			bundleContext.registerService(IPrefEditorComponent.class, (IPrefEditorComponent)blastOptions, null)
 		};
 	}

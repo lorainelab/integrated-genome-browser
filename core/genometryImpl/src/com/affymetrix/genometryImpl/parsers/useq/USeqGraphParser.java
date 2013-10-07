@@ -204,7 +204,7 @@ public class USeqGraphParser {
 		checkSeqLength(chromosomeBS, xcoords);
 		//make GraphSym changing stream name if needed for strand
 		String id = stream_name;
-		if (strand.equals(".") == false) id = id+strand;
+		if (strand.equals(".") == false) id += strand;
 		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());

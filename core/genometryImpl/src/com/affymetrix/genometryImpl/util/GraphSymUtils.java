@@ -405,8 +405,8 @@ public final class GraphSymUtils {
 				if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) strand = "+";
 				else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) strand = "-";
 				if (strand != null){
-					id = id+strand;
-					name = name+strand;
+					id += strand;
+					name += strand;
 				}
 			}
 		}

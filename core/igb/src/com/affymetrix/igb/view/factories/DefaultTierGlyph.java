@@ -459,10 +459,10 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 	@Override
 	public void setPreferredHeight(double height, ViewI view) {
 		if (this.tierType == TierType.SEQUENCE) {
-			height = height - 2 * getSpacing();
+			height -= 2 * getSpacing();
 
 			if (useLabel(style)) {
-				height = height / 2;
+				height /= 2;
 			}
 
 			double percent = ((height * 100) / style.getHeight() - 100) / 100;
@@ -482,7 +482,7 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 
 			// Remove the padding at top and bottom.
 			// Shouldn't we get this info from the packer?
-			height = height - 2 * getSpacing();
+			height -= 2 * getSpacing();
 			
 			if (getPacker() == expand_packer) {
 				// Now figure out how deep to set max depth.
@@ -513,7 +513,7 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 				
 				if (useLabel(style)) {
 					// Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
-					newSlotHeight = newSlotHeight / 2;
+					newSlotHeight /= 2;
 				}
 
 				switch (this.direction) {

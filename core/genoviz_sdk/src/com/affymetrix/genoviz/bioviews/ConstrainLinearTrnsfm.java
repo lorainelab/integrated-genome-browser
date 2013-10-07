@@ -30,7 +30,7 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 			out = in * this.getScaleY();
 		}
 
-		out = out - (out % constrain_value);
+		out -= (out % constrain_value);
 	
 		if (orientation == NeoConstants.HORIZONTAL) {
 			out += this.getTranslateX();

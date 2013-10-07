@@ -833,7 +833,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 					else {
 						if (obj instanceof String) {
 							gff3_id_hash.put(featid, TWO);
-							featid = featid + "_1";
+							featid += "_1";
 						}
 						else if (obj instanceof Integer) {
 							Integer iobj = (Integer)obj;

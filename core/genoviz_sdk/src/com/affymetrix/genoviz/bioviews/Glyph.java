@@ -483,11 +483,11 @@ public abstract class Glyph implements GlyphI  {
 	 */
 	public void setCoords(double x, double y, double width, double height)  {
 		if (width < 0) {
-			x = x + width;
+			x += width;
 			width = -width;
 		}
 		if (height < 0) {
-			y = y + height;
+			y += height;
 			height = -height;
 		}
 		coordbox.setRect(x, y, width, height);

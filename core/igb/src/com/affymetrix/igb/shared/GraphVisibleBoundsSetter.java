@@ -255,10 +255,10 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				avg_of_vismaxes += vismax;
 			}
 
-			avg_of_mins = avg_of_mins / gcount;
-			avg_of_maxes = avg_of_maxes / gcount;
-			avg_of_vismins = avg_of_vismins / gcount;
-			avg_of_vismaxes = avg_of_vismaxes / gcount;
+			avg_of_mins /= gcount;
+			avg_of_maxes /= gcount;
+			avg_of_vismins /= gcount;
+			avg_of_vismaxes /= gcount;
 		}
 
 		sliders_per_val = (total_val_sliders) / (max_of_maxes - min_of_mins);
@@ -325,8 +325,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		}
 
-		avg_of_vismins = avg_of_vismins / gcount;
-		avg_of_vismaxes = avg_of_vismaxes / gcount;
+		avg_of_vismins /= gcount;
+		avg_of_vismaxes /= gcount;
 
 		if (min_of_vismins == max_of_vismins) {
 			min_perT.setText(per_format.format(min_of_vismins));
@@ -477,7 +477,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				avg_of_mins += min_per;
 				gl.setVisibleMinY(val);
 			}
-			avg_of_mins = avg_of_mins / gcount;
+			avg_of_mins /= gcount;
 			if (widg != null) {
 				widg.updateWidget();
 			}
@@ -522,7 +522,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				avg_of_maxes += max_per;
 				gl.setVisibleMaxY(val);
 			}
-			avg_of_maxes = avg_of_maxes / gcount;
+			avg_of_maxes /= gcount;
 			if (widg != null) {
 				widg.updateWidget();
 			}
@@ -579,7 +579,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				avg_of_mins += min_val;
 				gl.setVisibleMinY(min_val);
 			}
-			avg_of_mins = avg_of_mins / gcount;
+			avg_of_mins /= gcount;
 			if (widg != null) {
 				widg.updateWidget();
 			}
@@ -640,7 +640,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				avg_of_maxes += max_val;
 				gl.setVisibleMaxY(max_val);
 			}
-			avg_of_maxes = avg_of_maxes / gcount;
+			avg_of_maxes /= gcount;
 			if (widg != null) {
 				widg.updateWidget();
 			}

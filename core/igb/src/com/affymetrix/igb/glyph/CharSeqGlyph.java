@@ -133,7 +133,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 			int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
 			// adding 1 to visible ref_end to make sure base is drawn if only
 			// part of it is visible
-			visible_ref_end = visible_ref_end + 1;
+			visible_ref_end += 1;
 			int visible_seq_end = Math.min(seq_end, visible_ref_end);
 			int visible_seq_span = visible_seq_end - visible_seq_beg;
 			// ***** otherwise semantic zooming to show more detail *****

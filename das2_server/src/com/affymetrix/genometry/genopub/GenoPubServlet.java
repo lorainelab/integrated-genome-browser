@@ -5256,7 +5256,7 @@ public class GenoPubServlet extends HttpServlet {
 						}
 					}
 					List<UnloadAnnotation> unloadAnnotations = AnnotationQuery.getUnloadedAnnotations(sess, genoPubSecurity, gv);
-					unloadCount = unloadCount + unloadAnnotations.size();
+					unloadCount += unloadAnnotations.size();
 
 				}
 			}

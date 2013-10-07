@@ -120,7 +120,7 @@ public class PositionScoreTextData extends USeqData{
 		String fileType;
 		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
 		else fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
-		fileType = fileType + USeqUtilities.TEXT;
+		fileType += USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -199,7 +199,7 @@ public class PositionScoreTextData extends USeqData{
 		String fileType;
 		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
 		else fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
-		fileType = fileType + USeqUtilities.TEXT;
+		fileType += USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 

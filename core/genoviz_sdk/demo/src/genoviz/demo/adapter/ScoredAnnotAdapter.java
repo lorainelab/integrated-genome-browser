@@ -71,7 +71,7 @@ public class ScoredAnnotAdapter implements NeoDataAdapterI {
 		float end = (float)annot.getEnd();
 
 		int grayscale = (int)(annot.getScore()*255);
-		grayscale = grayscale%256;
+		grayscale %= 256;
 		if (grayscale < 0) { 
 			grayscale = -grayscale;
 		}

@@ -376,7 +376,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		for (int j = RESIDUES_PER_BYTE; j > 0; j--) {
 			dna = value & CHAR_MASK;
-			value = value >> 2;
+			value >>= 2;
 			temp[j-1] = BASES[dna];
 		}
 

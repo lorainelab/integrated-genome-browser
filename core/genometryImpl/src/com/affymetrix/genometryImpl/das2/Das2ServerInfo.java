@@ -165,7 +165,7 @@ public final class Das2ServerInfo  {
 			//   HACK: Affy das2 server has problems  w/ a trailing slash, but URI resolution
 			//      doesn't work without trailing slash, so adding it back in here.
 			if (!das_query.endsWith("/")) {
-				das_query = das_query + "/";
+				das_query += "/";
 			}
 			System.out.println("Initializing " + server_uri);
 			Document doc = XMLUtils.getDocument(response);

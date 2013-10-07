@@ -218,7 +218,7 @@ public abstract class AbstractTieredMap
 
 			mtg.moveAbsolute(mbox.x, offset);
 			mtg.setCoords(mbox.x, offset, mbox.width, height);
-			offset = offset + height;
+			offset += height;
 		}
 
 		if (stretch_map) {

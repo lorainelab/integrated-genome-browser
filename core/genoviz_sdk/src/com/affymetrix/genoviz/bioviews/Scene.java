@@ -465,11 +465,11 @@ public class Scene implements SceneI  {
 	public void expandDamage(double x, double y, double width, double height) {
 		damaged = true;
 		if (width < 0) {
-			x = x + width;
+			x += width;
 			width = -width;
 		}
 		if (height < 0) {
-			y = y + height;
+			y += height;
 			height = -height;
 		}
 

@@ -80,11 +80,11 @@ public class LinearTransform extends AffineTransform  {
 		dst.height = src.height / t.getScaleY();
 
 		if (dst.height < 0) {
-			dst.y = dst.y + dst.height;
+			dst.y += dst.height;
 			dst.height = -dst.height;
 		}
 		if (dst.width < 0) {
-			dst.x = dst.x + dst.width;
+			dst.x += dst.width;
 			dst.width = -dst.width;
 		}
 		return dst;

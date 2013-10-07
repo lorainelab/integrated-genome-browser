@@ -128,4 +128,6 @@ public interface SeqMapViewI {
 	public SeqSymmetry getSeqSymmetry();
 	
 	public <G extends GlyphI> G getItemFromTier(Object datamodel);
+	
+	public void split(GlyphI glyph);
 }

@@ -25,7 +25,7 @@ public class SplitGraphsAction extends GenericAction {
 		super.actionPerformed(e);
 		
 		for (GraphGlyph gg : graphGlyphs) {
-			GraphGlyph.split(gg);
+			igbService.getSeqMapView().split(gg);
 		}
 		//igbService.getSeqMapView().postSelections();
 		updateDisplay();

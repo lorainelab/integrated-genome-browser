@@ -1406,27 +1406,4 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		}
 		return this.getPositiveCoordBox().intersects(this.getParent().getCoordBox());
 	}
-	
-	public static void split(GraphGlyph glyph) {
-		if (glyph.getParent() != null && glyph.getParent().getChildCount() == 2) {
-			for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
-				if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
-					splitGraph((GraphGlyph) glyph.getParent().getChild(i));
-				}
-			}
-		} else {
-			splitGraph(glyph);
-		}
-	}
-	
-	private static void splitGraph(GraphGlyph glyph){
-		GraphSym gsym = (GraphSym) glyph.getInfo();
-		GraphState gstate = gsym.getGraphState();
-		gstate.setComboStyle(null, 0);
-		gstate.getTierStyle().setJoin(false);
-
-		// For simplicity, set the floating state of all new tiers to false.
-		// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
-		gstate.getTierStyle().setFloatTier(false); // for simplicity
-	}
 }

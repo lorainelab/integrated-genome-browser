@@ -151,16 +151,16 @@ public class TrackView {
 		}
 	}
 		
-	public void deleteSymsOnSeq(AffyTieredMap map, String method, BioSeq seq, GenericFeature feature){
+	public void deleteSymsOnSeq(SeqMapView smv, String method, BioSeq seq, GenericFeature feature){
 		
 		if (seq != null) {
 			SeqSymmetry sym = seq.getAnnotation(method);
 			if (sym != null) {
 				if(sym instanceof GraphSym){
-					GlyphI glyph = map.getItemFromTier(sym);
+					GlyphI glyph = smv.getSeqMap().getItemFromTier(sym);
 					if(glyph != null){
 						if(glyph instanceof GraphGlyph){
-							GraphGlyph.split((GraphGlyph)glyph);
+							smv.split((GraphGlyph)glyph);
 						}
 						//map.removeItem(glyph);
 					}

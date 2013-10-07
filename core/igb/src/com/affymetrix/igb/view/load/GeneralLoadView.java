@@ -575,7 +575,7 @@ public final class GeneralLoadView {
 
 				@Override
 				protected Void runInBackground() {
-					TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
+					TrackView.getInstance().deleteSymsOnSeq(gviewer, method, bioseq, feature);
 					return null;
 				}
 
@@ -611,7 +611,7 @@ public final class GeneralLoadView {
 				if (!feature.getMethods().isEmpty()) {
 					for (String method : feature.getMethods()) {
 						for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
-							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
+							TrackView.getInstance().deleteSymsOnSeq(gviewer, method, bioseq, feature);
 						}
 					}
 				}

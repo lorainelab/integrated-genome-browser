@@ -15,9 +15,9 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.view.SeqMapView;
 
-public class CloseTracksAction
-extends SeqMapViewActionA implements SymSelectionListener {
+public class CloseTracksAction extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final CloseTracksAction ACTION = new CloseTracksAction();
 
@@ -56,7 +56,7 @@ extends SeqMapViewActionA implements SymSelectionListener {
 				if (vg instanceof GraphGlyph) {
 					ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
 					if (style != null) {
-						GraphGlyph.split((GraphGlyph)vg);
+						getSeqMapView().split((GraphGlyph)vg);
 					}
 				}
 			}

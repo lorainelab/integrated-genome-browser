@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -2580,6 +2581,31 @@ public class SeqMapView extends JPanel
 	@Override
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
 		seqmap.repackTheTiers(full_repack, stretch_vertically);
+	}
+	
+	@Override
+	public void split(GlyphI glyph) {
+		if(!(glyph instanceof GraphGlyph)){
+			return;
+		}
+		
+		if (glyph.getParent() != null && glyph.getParent().getChildCount() == 2) {
+			for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
+				if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
+					splitGraph((GraphGlyph) glyph.getParent().getChild(i));
+				}
+			}
+		} else {
+			splitGraph((GraphGlyph)glyph);
+		}
+	}
+	
+	private static void splitGraph(GraphGlyph glyph) {
+		GraphSym gsym = (GraphSym) glyph.getInfo();
+		GraphState gstate = gsym.getGraphState();
+		gstate.setComboStyle(null, 0);
+		gstate.getTierStyle().setJoin(false);
+		gstate.getTierStyle().setFloatTier(false);
 	}
 	
 	public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex, 

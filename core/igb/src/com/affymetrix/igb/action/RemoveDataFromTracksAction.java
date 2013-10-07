@@ -7,13 +7,11 @@ import java.text.MessageFormat;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -52,7 +50,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 				if (vg instanceof GraphGlyph) {
 					ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
 					if (style != null) {
-						GraphGlyph.split((GraphGlyph)vg);
+						getSeqMapView().split((GraphGlyph)vg);
 					}
 				}
 			}

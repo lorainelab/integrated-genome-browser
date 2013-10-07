@@ -707,8 +707,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			frameType = frameArray[i];
 			if(frameType < Translatable.FRAME_ONE)
 				continue;
-			selectedTrans.append(">Frame " + BUNDLE.getString("copyTranslation"+frameType+"ToClipBoard").substring(0, 2) + "\n");
-			selectedTrans.append(getSelectedResidues(frameType).trim().replaceAll("\\s", "") + "\n\n");
+			selectedTrans.append(">Frame ").append(BUNDLE.getString("copyTranslation"+frameType+"ToClipBoard").substring(0, 2)).append("\n");
+			selectedTrans.append(getSelectedResidues(frameType).trim().replaceAll("\\s", "")).append("\n\n");
 		}
 		
 		if(selectedTrans != null || selectedTrans.length() < 0) {

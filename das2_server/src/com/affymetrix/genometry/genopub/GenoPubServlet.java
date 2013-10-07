@@ -1123,7 +1123,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (fileExtensions.length() > 0) {
 					fileExtensions.append(";");
 				}
-				fileExtensions.append("*" + Constants.SEQUENCE_FILE_EXTENSIONS[x]);
+				fileExtensions.append("*").append(Constants.SEQUENCE_FILE_EXTENSIONS[x]);
 			}
 
 			res.setContentType("application/xml");
@@ -2420,7 +2420,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (remainingAnnotationGroupings.length() > 0) {
 					remainingAnnotationGroupings.append(",\n");					
 				}
-				remainingAnnotationGroupings.append("    '" + ag.getName() + "'");
+				remainingAnnotationGroupings.append("    '").append(ag.getName()).append("'");
 				agCount++;
 
 			}
@@ -2815,7 +2815,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (fileExtensions.length() > 0) {
 					fileExtensions.append(";");
 				}
-				fileExtensions.append("*" + Constants.ANNOTATION_FILE_EXTENSIONS[x]);
+				fileExtensions.append("*").append(Constants.ANNOTATION_FILE_EXTENSIONS[x]);
 			}
 
 
@@ -3082,7 +3082,7 @@ public class GenoPubServlet extends HttpServlet {
 			StringBuilder badChroms = new StringBuilder();
 			boolean badMito = false;
 			for (SAMSequenceRecord r: chroms){
-				if (oneTwoDigit.matcher(r.getSequenceName()).matches()) badChroms.append(r.getSequenceName()+" ");
+				if (oneTwoDigit.matcher(r.getSequenceName()).matches()) badChroms.append(r.getSequenceName()).append(" ");
 				if (r.getSequenceName().equals("chrMT")) badMito = true;
 			}
 			if (badChroms.length() !=0) throw new Exception("\nYour bam file contains chromosomes that are 1-2 letters/ numbers long. For DAS compatibility they should start with 'chr' for chromosomes and something longish for contigs/ unassembled segments, see -> "+badChroms+"\n");
@@ -3120,35 +3120,35 @@ public class GenoPubServlet extends HttpServlet {
 				//parse name, fileName, summary, description
 				Matcher mat = BULK_UPLOAD_LINE_SPLITTER.matcher(line);
 				if (mat.matches() == false) { 
-					errors.append("Malformed data line -> " + line+" . \n");
+					errors.append("Malformed data line -> ").append(line).append(" . \n");
 					continue;
 				}
 				//name is required
 				String name = mat.group(1).trim();
 				if (name.length()==0) {
-					errors.append("Missing name -> " + line+" . \n");
+					errors.append("Missing name -> ").append(line).append(" . \n");
 				}
 				//check file
 				File dataFile = new File (mat.group(2).trim());
 				if (dataFile.canRead() == false || dataFile.canWrite() == false) {
-					errors.append("Cannot find/modify file -> " + line+" . \n");
+					errors.append("Cannot find/modify file -> ").append(line).append(" . \n");
 				}
 				//check live file
 				else {
 					//check file extension
 					String fileName = dataFile.toString();
 					if (Util.isValidAnnotationFileType(fileName) == false) {
-						errors.append("Unsupported file type ->  " + line+" . \n");
+						errors.append("Unsupported file type ->  ").append(line).append(" . \n");
 					}
 					else {
 						//too many lines in txt file?
-						if (Util.tooManyLines(dataFile)) errors.append("Too many lines in file ->  " + line+" . Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html).\n");
+						if (Util.tooManyLines(dataFile)) errors.append("Too many lines in file ->  ").append(line).append(" . Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html).\n");
 						//bam or bai?
 						if (fileName.endsWith(".bam") || fileName.endsWith(".bai")) bamBaiFiles.add(name+"__"+fileName);
 						//check bam file
 						if (fileName.endsWith(".bam")) {
 							String log = checkBamFile(dataFile);
-							if (log != null) errors.append("Problems were found with this bam file ->  " + line+" . "+log);
+							if (log != null) errors.append("Problems were found with this bam file ->  ").append(line).append(" . ").append(log);
 						}
 					}
 				}
@@ -3159,13 +3159,13 @@ public class GenoPubServlet extends HttpServlet {
 				if (f.endsWith(".bam")) {
 					String bai1 = f.substring(0, f.length()-4)+".bai";
 					String bai2 = f+".bai";
-					if (bamBaiFiles.contains(bai1) == false && bamBaiFiles.contains(bai2) == false) errors.append("Missing xxx.bai index file for ->  " + f+" . \n");
+					if (bamBaiFiles.contains(bai1) == false && bamBaiFiles.contains(bai2) == false) errors.append("Missing xxx.bai index file for ->  ").append(f).append(" . \n");
 				}
 				else {
 					//else bai, might be .bam.bai
 					String bam = f.substring(0, f.length()-4);
 					if (bam.endsWith(".bam") == false) bam += ".bam";
-					if (bamBaiFiles.contains(bam) == false) errors.append("Missing xxx.bam alignment file for ->  " + f+" . \n");
+					if (bamBaiFiles.contains(bam) == false) errors.append("Missing xxx.bam alignment file for ->  ").append(f).append(" . \n");
 				}
 			}
 			if (errors.length() != 0) {
@@ -5235,7 +5235,7 @@ public class GenoPubServlet extends HttpServlet {
 							if (emptyAnnotations.length() > 0) {
 								emptyAnnotations.append("\n");
 							}
-							emptyAnnotations.append(gv.getName() + ":  ");
+							emptyAnnotations.append(gv.getName()).append(":  ");
 							break;
 						}
 					}
@@ -5266,10 +5266,10 @@ public class GenoPubServlet extends HttpServlet {
 
 			if (loadCount > 0 || unloadCount > 0) {
 				if (loadCount > 0) {
-					confirmMessage.append(loadCount + " annotation(s) and ready to load to DAS/2.\n\n");
+					confirmMessage.append(loadCount).append(" annotation(s) and ready to load to DAS/2.\n\n");
 				}
 				if (unloadCount > 0) {
-					confirmMessage.append(unloadCount + " annotation(s) ready to unload from DAS/2.\n\n");
+					confirmMessage.append(unloadCount).append(" annotation(s) ready to unload from DAS/2.\n\n");
 				} 
 				confirmMessage.append("Do you wish to continue?\n\n");					
 			} else {
@@ -5280,14 +5280,10 @@ public class GenoPubServlet extends HttpServlet {
 			if (invalidGenomeVersions.length() > 0 || emptyAnnotations.length() > 0) {
 
 				if (invalidGenomeVersions.length() > 0) {
-					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n" + 
-							invalidGenomeVersions.toString() +  
-					".\n\n");			
+					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n").append(invalidGenomeVersions.toString()).append(".\n\n");			
 				}
 				if (emptyAnnotations.length() > 0) {
-					message.append("The following empty annotations will be bypassed:\n" + 
-							emptyAnnotations.toString() +  
-					".\n\n");			
+					message.append("The following empty annotations will be bypassed:\n").append(emptyAnnotations.toString()).append(".\n\n");			
 				}
 				message.append(confirmMessage.toString());
 				this.reportError(res, message.toString()); 

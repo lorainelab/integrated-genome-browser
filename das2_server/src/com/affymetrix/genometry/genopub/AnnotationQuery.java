@@ -57,10 +57,10 @@ public class AnnotationQuery {
 		StringBuffer queryBuf = new StringBuffer();
 		queryBuf.append(" SELECT     u  ");
 		queryBuf.append(" FROM       UnloadAnnotation as u  ");
-		queryBuf.append(" WHERE      u.idGenomeVersion = " + genomeVersion.getIdGenomeVersion());
+		queryBuf.append(" WHERE      u.idGenomeVersion = ").append(genomeVersion.getIdGenomeVersion());
 		
 		if (genoPubSecurity != null && !genoPubSecurity.isAdminRole()) {
-			queryBuf.append(" AND u.idUser = " + genoPubSecurity.getIdUser());		
+			queryBuf.append(" AND u.idUser = ").append(genoPubSecurity.getIdUser());		
 		}
 
 		queryBuf.append(" ORDER BY   u.idUnloadAnnotation");
@@ -206,7 +206,7 @@ public class AnnotationQuery {
 
 			if (!genoPubSecurity.isAdminRole()) {
 				this.AND();
-				queryBuf.append(" a.idUser = " + genoPubSecurity.getIdUser());		
+				queryBuf.append(" a.idUser = ").append(genoPubSecurity.getIdUser());		
 			}
 
 			queryBuf.append(")");
@@ -826,9 +826,9 @@ public class AnnotationQuery {
 			this.AND();
 			queryBuf.append("(");
 			if (joinLevel == ANNOTATION_LEVEL) {
-				queryBuf.append(" a.idUserGroup = " + this.idUserGroup);
+				queryBuf.append(" a.idUserGroup = ").append(this.idUserGroup);
 			} else if (joinLevel == ANNOTATION_GROUPING_LEVEL) {
-				queryBuf.append(" ag.idUserGroup = " + this.idUserGroup);
+				queryBuf.append(" ag.idUserGroup = ").append(this.idUserGroup);
 				queryBuf.append(" OR ");
 				queryBuf.append(" ag.idUserGroup is NULL");
 			}

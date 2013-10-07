@@ -37,13 +37,13 @@ public class ABIIndex
 
 	public String toString () {
 		StringBuffer s = new StringBuffer();
-		s.append ("index.label:\t" + label);
-		s.append ("index.serial_number:\t" + serial_number);
+		s.append("index.label:\t").append (label);
+		s.append("index.serial_number:\t").append (serial_number);
 		if (occur) {
-			s.append ("index.offset:\t" + offset);
-			s.append ("index.sizwrd:\t" + sizwrd);
-			s.append ("index.numbyt:\t" + numbyt);
-			s.append ("index.numwrd:\t" + numwrd);
+			s.append("index.offset:\t").append (offset);
+			s.append("index.sizwrd:\t").append (sizwrd);
+			s.append("index.numbyt:\t").append (numbyt);
+			s.append("index.numwrd:\t").append (numwrd);
 		}
 		return new String(s);
 	}

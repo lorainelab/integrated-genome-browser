@@ -141,8 +141,8 @@ final class NormalizeXmlStrand {
 			Element childElem = (Element) child;
 			int start = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.STARTSTR));
 			int end = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.ENDSTR));
-			start = start - residuesStart;
-			end = end - residuesStart;
+			start -= residuesStart;
+			end -= residuesStart;
 
 			try {
 				String strand = childElem.getAttribute(Xml2GenometryParser.STRANDSTR);
@@ -180,8 +180,8 @@ final class NormalizeXmlStrand {
 			Element childElem = (Element) child;
 			int start = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.STARTSTR));
 			int end = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.ENDSTR));
-			start = start - residuesStart;
-			end = end - residuesStart;
+			start -= residuesStart;
+			end -= residuesStart;
 			if (isNegativeStrand) {
 				int newEnd = residues.length() - start;
 				start = residues.length() - end;

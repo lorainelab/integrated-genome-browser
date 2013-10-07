@@ -296,7 +296,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		// If there are not at least 4 ticks, then
 		if (coords.size() < 4) { // try original interval divided by 2
 			coords.clear();
-			interval = interval / 2;
+			interval /= 2;
 			start = Math.floor(min / interval) * interval;
 			for (double d = start; d <= max; d += interval) {
 				if (d >= min && d <= max) {

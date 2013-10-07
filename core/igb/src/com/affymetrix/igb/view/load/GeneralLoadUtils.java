@@ -973,7 +973,7 @@ public final class GeneralLoadUtils {
 			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
 				SeqSymmetry child = optimized_sym.getChild(childIndex);
 				for (int spanIndex = 0; spanIndex < child.getSpanCount(); spanIndex++) {
-					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
+					spanWidth += (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
 				}
 			}
 

@@ -367,7 +367,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 		
 		// Remove the padding at top and bottom.
 		// Shouldn't we get this info from the packer?
-        height = height - 2 * getSpacing();
+        height -= 2 * getSpacing();
 		
 		if (getPacker() == expand_packer) {
 			// Now figure out how deep to set max depth.
@@ -398,7 +398,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 			
 			if (useLabel()) {
 				// Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
-				newSlotHeight = newSlotHeight / 2;
+				newSlotHeight /= 2;
 			}
 
 			switch (this.direction) {

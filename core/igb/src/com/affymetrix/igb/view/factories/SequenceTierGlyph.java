@@ -35,10 +35,10 @@ public class SequenceTierGlyph extends AbstractTierGlyph{
 
 	@Override
 	public void setPreferredHeight(double height, ViewI view){
-		height = height - 2 * getSpacing();
+		height -= 2 * getSpacing();
 
 		if(useLabel(style)) {
-			height = height / 2;
+			height /= 2;
 		}
 
 		double percent = ((height * 100)/style.getHeight() - 100)/100;

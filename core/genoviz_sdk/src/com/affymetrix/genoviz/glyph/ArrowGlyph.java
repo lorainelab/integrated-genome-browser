@@ -58,7 +58,7 @@ public class ArrowGlyph extends DirectedGlyph  {
 	public void draw(ViewI view) {
 		double hold_y = getCoordBox().y;
 
-		getCoordBox().y = getCoordBox().y + (getCoordBox().height / 2);
+		getCoordBox().y += (getCoordBox().height / 2);
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		int offset_center = getPixelBox().y;
 		getCoordBox().y = hold_y;

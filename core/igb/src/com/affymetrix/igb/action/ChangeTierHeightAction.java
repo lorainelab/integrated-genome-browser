@@ -54,7 +54,7 @@ public class ChangeTierHeightAction extends SeqMapViewActionA implements Paramet
 			TierGlyph currentTier = labels.get(0).getReferenceTier();
 			if(currentTier instanceof TransformTierGlyph){	
 				h = ((TransformTierGlyph)currentTier).getFixedPixHeight();
-				height = height+h;
+				height += h;
 			}
 		}
 		JPanel panel = new JPanel();

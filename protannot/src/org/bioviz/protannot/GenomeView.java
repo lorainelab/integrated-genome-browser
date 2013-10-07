@@ -669,7 +669,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
 	 */
 	 private static void colorByFrame(GlyphI gl, int genome_codon_start) {
 
-        genome_codon_start = genome_codon_start % 3;
+        genome_codon_start %= 3;
         if (genome_codon_start == 0) {
             gl.setColor(col_frame0);
         } else if (genome_codon_start == 1) {
@@ -702,7 +702,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
             exon_codon_start = 1;
         }
         genome_codon_start += exon_codon_start;
-        genome_codon_start = genome_codon_start % 3;
+        genome_codon_start %= 3;
         if (genome_codon_start == 0) {
             gl.setColor(col_frame0);
         } else if (genome_codon_start == 1) {

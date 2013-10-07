@@ -1142,7 +1142,7 @@ final class GenbankFeature {
                                           index_start, index_end);
               high = Integer.parseInt(pos_str);
               if (high != low) {
-                low = low + ((high - low + 1) / 2);
+                  low += ((high - low + 1) / 2);
                 high = low + 1;
               }
               else

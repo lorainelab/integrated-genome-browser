@@ -240,7 +240,7 @@ public class AffyTieredMap extends NeoMap {
 			// need to call moveAbsolute to trigger recursive move of
 			//   all children
 			mtg.moveAbsolute(mtg.getCoordBox().x, offset);
-			offset = offset + height;
+			offset += height;
 		}
 
 		if (stretch_map) {

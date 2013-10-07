@@ -140,8 +140,8 @@ public class ExpandedTierPacker extends AbstractCoordPacker implements PaddedPac
 				Rectangle2D.union(newbox, tempbox, newbox);
 			}
 		}
-		newbox.y = newbox.y - parent_spacer;
-		newbox.height = newbox.height + (2 * parent_spacer);
+		newbox.y -= parent_spacer;
+		newbox.height += (2 * parent_spacer);
 		parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
 	}
 

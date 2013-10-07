@@ -145,7 +145,7 @@ public class CommonUtils {
 			}
 		}
 		if (!app_dir.endsWith("/")) {
-			app_dir = app_dir + "/";
+			app_dir += "/";
 		}
 		return app_dir;
 	}

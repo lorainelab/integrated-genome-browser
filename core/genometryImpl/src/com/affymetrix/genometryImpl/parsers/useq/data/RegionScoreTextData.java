@@ -117,8 +117,8 @@ public class RegionScoreTextData extends USeqData{
 		String fileType;
 		if (useShortBeginning) fileType = USeqUtilities.SHORT;
 		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType = fileType+ USeqUtilities.SHORT;
-		else fileType = fileType+ USeqUtilities.INT;
+		if (useShortLength) fileType += USeqUtilities.SHORT;
+		else fileType += USeqUtilities.INT;
 		fileType = fileType+ USeqUtilities.FLOAT + USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
@@ -287,8 +287,8 @@ public class RegionScoreTextData extends USeqData{
 		String fileType;
 		if (useShortBeginning) fileType = USeqUtilities.SHORT;
 		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType = fileType+ USeqUtilities.SHORT;
-		else fileType = fileType+ USeqUtilities.INT;
+		if (useShortLength) fileType += USeqUtilities.SHORT;
+		else fileType += USeqUtilities.INT;
 		fileType = fileType+ USeqUtilities.FLOAT + USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;

@@ -55,7 +55,7 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     private Double sum(Number[] arr, int start, Integer end){
         Double answer = new Double(0);
         for(Double value: (Double[]) Arrays.copyOfRange(arr,start,end+1)){
-            answer=answer+value;
+            answer += value;
         }
         return answer;
     }

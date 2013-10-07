@@ -66,7 +66,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
         visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
         // adding 1 to visible ref_end to make sure base is drawn if only
         // part of it is visible
-        visible_ref_end = visible_ref_end + 1;
+        visible_ref_end += 1;
 
         // ******** determine first base and last base displayed ********
         visible_seq_beg = (seq_beg < visible_ref_beg) ? visible_ref_beg : seq_beg;

@@ -534,8 +534,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 			System.out.println("Creating a '.ead' format file: ");
 			System.out.println("Input '"+in_file+"'");
 			System.out.println("Output '"+out_file+"'");
-			ExonArrayDesignParser parser = new ExonArrayDesignParser();
-			parser.convertGff(in_file, out_file, genomeid, annot_type, id_prefix);
+			ExonArrayDesignParser.convertGff(in_file, out_file, genomeid, annot_type, id_prefix);
 			System.out.println("DONE!  Finished converting GFF file to EAD file.");
 			System.out.println("");
 		}

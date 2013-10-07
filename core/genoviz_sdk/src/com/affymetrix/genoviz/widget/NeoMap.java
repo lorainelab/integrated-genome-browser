@@ -1310,11 +1310,11 @@ public class NeoMap extends NeoWidget implements
 	}
 
 	public void toFront(GlyphI gl) {
-		scene.toFront(gl);
+		Scene.toFront(gl);
 	}
 
 	public void toBack(GlyphI gl) {
-		scene.toBack(gl);
+		Scene.toBack(gl);
 	}
 
 	// This assumes root glyph has been assigned a packer...

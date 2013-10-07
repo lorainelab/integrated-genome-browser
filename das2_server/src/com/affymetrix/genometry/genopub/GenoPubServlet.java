@@ -196,99 +196,99 @@ public class GenoPubServlet extends HttpServlet {
 			// Handle the request
 			if (req.getPathInfo() == null) {
 				this.handleFlexRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.SECURITY_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.SECURITY_REQUEST)) {
 				this.handleSecurityRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.DICTIONARIES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.DICTIONARIES_REQUEST)) {
 				this.handleDictionaryRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATIONS_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATIONS_REQUEST)) {
 				this.handleAnnotationsRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_REQUEST)) {
 				this.handleAnnotationRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ORGANISM_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ORGANISM_ADD_REQUEST)) {
 				this.handleOrganismAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ORGANISM_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ORGANISM_UPDATE_REQUEST)) {
 				this.handleOrganismUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ORGANISM_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ORGANISM_DELETE_REQUEST)) {
 				this.handleOrganismDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GENOME_VERSION_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GENOME_VERSION_REQUEST)) {
 				this.handleGenomeVersionRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GENOME_VERSION_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GENOME_VERSION_ADD_REQUEST)) {
 				this.handleGenomeVersionAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GENOME_VERSION_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GENOME_VERSION_UPDATE_REQUEST)) {
 				this.handleGenomeVersionUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GENOME_VERSION_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GENOME_VERSION_DELETE_REQUEST)) {
 				this.handleGenomeVersionDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.SEGMENT_IMPORT_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.SEGMENT_IMPORT_REQUEST)) {
 				this.handleSegmentImportRequest(req, res);
-			}  else if (req.getPathInfo().endsWith(this.SEQUENCE_FORM_UPLOAD_URL_REQUEST)) {
+			}  else if (req.getPathInfo().endsWith(GenoPubServlet.SEQUENCE_FORM_UPLOAD_URL_REQUEST)) {
 				this.handleSequenceFormUploadURLRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.SEQUENCE_UPLOAD_FILES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.SEQUENCE_UPLOAD_FILES_REQUEST)) {
 				this.handleSequenceUploadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_GROUPING_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_GROUPING_ADD_REQUEST)) {
 				this.handleAnnotationGroupingAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_GROUPING_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_GROUPING_UPDATE_REQUEST)) {
 				this.handleAnnotationGroupingUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_GROUPING_MOVE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_GROUPING_MOVE_REQUEST)) {
 				this.handleAnnotationGroupingMoveRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_GROUPING_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_GROUPING_DELETE_REQUEST)) {
 				this.handleAnnotationGroupingDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_ADD_REQUEST)) {
 				this.handleAnnotationAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_UPDATE_REQUEST)) {
 				this.handleAnnotationUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DUPLICATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_DUPLICATE_REQUEST)) {
 				this.handleAnnotationDuplicateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_DELETE_REQUEST)) {
 				this.handleAnnotationDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UNLINK_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_UNLINK_REQUEST)) {
 				this.handleAnnotationUnlinkRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_MOVE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_MOVE_REQUEST)) {
 				this.handleAnnotationMoveRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_INFO_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_INFO_REQUEST)) {
 				this.handleAnnotationInfoRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_FORM_UPLOAD_URL_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_FORM_UPLOAD_URL_REQUEST)) {
 				this.handleAnnotationFormUploadURLRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UPLOAD_FILES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_UPLOAD_FILES_REQUEST)) {
 				this.handleAnnotationUploadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_FDT_UPLOAD_FILES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_FDT_UPLOAD_FILES_REQUEST)) {
 				this.handleAnnotationFDTUploadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DOWNLOAD_FILES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_DOWNLOAD_FILES_REQUEST)) {
 				this.handleAnnotationDownloadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_FDT_DOWNLOAD_FILES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_FDT_DOWNLOAD_FILES_REQUEST)) {
 				this.handleAnnotationFDTDownloadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST)) {
 				this.handleAnnotationEstimateDownloadSizeRequest(req, res);
-			}  else if (req.getPathInfo().endsWith(this.USERS_AND_GROUPS_REQUEST)) {
+			}  else if (req.getPathInfo().endsWith(GenoPubServlet.USERS_AND_GROUPS_REQUEST)) {
 				this.handleUsersAndGroupsRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.USER_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.USER_ADD_REQUEST)) {
 				this.handleUserAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.USER_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.USER_UPDATE_REQUEST)) {
 				this.handleUserUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.USER_PASSWORD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.USER_PASSWORD_REQUEST)) {
 				this.handleUserPasswordRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.USER_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.USER_DELETE_REQUEST)) {
 				this.handleUserDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GROUP_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GROUP_ADD_REQUEST)) {
 				this.handleGroupAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GROUP_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GROUP_UPDATE_REQUEST)) {
 				this.handleGroupUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GROUP_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.GROUP_DELETE_REQUEST)) {
 				this.handleGroupDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.DICTIONARY_ADD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.DICTIONARY_ADD_REQUEST)) {
 				this.handleDictionaryAddRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.DICTIONARY_UPDATE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.DICTIONARY_UPDATE_REQUEST)) {
 				this.handleDictionaryUpdateRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.DICTIONARY_DELETE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.DICTIONARY_DELETE_REQUEST)) {
 				this.handleDictionaryDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.VERIFY_RELOAD_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.VERIFY_RELOAD_REQUEST)) {
 				this.handleVerifyReloadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.MAKE_UCSC_LINKS_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.MAKE_UCSC_LINKS_REQUEST)) {
 				this.handleMakeUCSCLinkRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.MAKE_URL_LINKS_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.MAKE_URL_LINKS_REQUEST)) {
 				this.handleMakeURLLinksRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.INSTITUTES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.INSTITUTES_REQUEST)) {
 				this.handleInstitutesRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.INSTITUTES_SAVE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(GenoPubServlet.INSTITUTES_SAVE_REQUEST)) {
 				this.handleInstitutesSaveRequest(req, res);
 			} else {
 				throw new Exception("Unknown GenoPub request " + req.getPathInfo());
@@ -1112,7 +1112,7 @@ public class GenoPubServlet extends HttpServlet {
 			//
 
 			String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
-			String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.SEQUENCE_UPLOAD_FILES_REQUEST;
+			String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  GenoPubServlet.SEQUENCE_UPLOAD_FILES_REQUEST;
 			// Encode session id in URL so that session maintains for upload servlet when called from
 			// Flex upload component inside FireFox, Safari
 			URL += ";jsessionid=" + req.getRequestedSessionId();
@@ -1238,7 +1238,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
-			this.reportError(res, e.getMessage(),this.ERROR_CODE_UNSUPPORTED_FILE_TYPE);
+			this.reportError(res, e.getMessage(),GenoPubServlet.ERROR_CODE_UNSUPPORTED_FILE_TYPE);
 		} catch (UnsupportedFileTypeException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			this.reportError(res, e.getMessage(), ERROR_CODE_UNSUPPORTED_FILE_TYPE);
@@ -2804,7 +2804,7 @@ public class GenoPubServlet extends HttpServlet {
 			//
 
 			String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
-			String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.ANNOTATION_UPLOAD_FILES_REQUEST;
+			String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  GenoPubServlet.ANNOTATION_UPLOAD_FILES_REQUEST;
 			// Encode session id in URL so that session maintains for upload servlet when called from
 			// Flex upload component inside FireFox, Safari
 			URL += ";jsessionid=" + req.getRequestedSessionId();
@@ -3011,7 +3011,7 @@ public class GenoPubServlet extends HttpServlet {
 			if (tx != null) {
 				tx.rollback();
 			}
-			this.reportError(res, e.getMessage(), this.ERROR_CODE_INVALID_NAME);
+			this.reportError(res, e.getMessage(), GenoPubServlet.ERROR_CODE_INVALID_NAME);
 		} catch (MalformedBamFileException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
@@ -3692,7 +3692,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
-			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+			this.reportError(res, e.getMessage(), GenoPubServlet.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
 		}  catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
 			e.printStackTrace();
@@ -3841,7 +3841,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
-			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+			this.reportError(res, e.getMessage(), GenoPubServlet.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
 		}  catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
 			e.printStackTrace();
@@ -3948,7 +3948,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
-			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+			this.reportError(res, e.getMessage(), GenoPubServlet.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
 		}  catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
 			e.printStackTrace();
@@ -5313,7 +5313,7 @@ public class GenoPubServlet extends HttpServlet {
 		BufferedReader input = null;
 		try {
 			String fileName = getServletContext().getRealPath("/");
-			fileName += "/" + this.GENOPUB_HTML_WRAPPER;
+			fileName += "/" + GenoPubServlet.GENOPUB_HTML_WRAPPER;
 			FileReader fileReader = new FileReader(fileName);
 			input = new BufferedReader(fileReader);
 		} catch (FileNotFoundException ex) {

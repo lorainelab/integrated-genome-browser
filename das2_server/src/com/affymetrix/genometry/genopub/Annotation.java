@@ -635,7 +635,7 @@ public class Annotation implements Serializable, Owned {
 	}
 	public void setIsLoaded(String isLoaded) {
 		this.isLoaded = isLoaded;
-	}
+	}
 	public UserGroup getUserGroup() {
 		return this.userGroup;
 	}

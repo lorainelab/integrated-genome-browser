@@ -150,12 +150,12 @@ public class GFF3ParserTest {
 
 			GFF3Parser instance = new GFF3Parser();
 
-			instance.processDirective("##gff-version 3");
+			GFF3Parser.processDirective("##gff-version 3");
 
 			// Setting to gff-version 2 should throw an exception
 			Exception e = null;
 			try {
-				instance.processDirective("##gff-version 2");
+				GFF3Parser.processDirective("##gff-version 2");
 			} catch (IOException ioe) {
 				e = ioe;
 			}

@@ -413,7 +413,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.PUBLIC + "'");	
 			queryBuf.append(")");
 			
-		} else if (scopeLevel.equals(this.USER_SCOPE_LEVEL)) {
+		} else if (scopeLevel.equals(GenoPubSecurity.USER_SCOPE_LEVEL)) {
 			// Scope to annotations owned by this user
 			addWhere = AND(addWhere, queryBuf);
 			
@@ -427,12 +427,12 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			
 			queryBuf.append(")");
 			
-		} else if (scopeLevel.equals(this.GROUP_SCOPE_LEVEL) || scopeLevel.equals(this.ALL_SCOPE_LEVEL)) {
+		} else if (scopeLevel.equals(GenoPubSecurity.GROUP_SCOPE_LEVEL) || scopeLevel.equals(GenoPubSecurity.ALL_SCOPE_LEVEL)) {
 			addWhere = AND(addWhere, queryBuf);
 
 			// If this user isn't part of any group or we aren't searching for public
 			// annotations, add a security statement that will ensure no rows are returned.
-			if (groupsMemCollabVisibility.isEmpty() && !scopeLevel.equals(this.ALL_SCOPE_LEVEL)) {
+			if (groupsMemCollabVisibility.isEmpty() && !scopeLevel.equals(GenoPubSecurity.ALL_SCOPE_LEVEL)) {
 				appendUserOwnedHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
 			} else {
 				boolean hasSecurityCriteria = false;
@@ -520,7 +520,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
         hasSecurityCriteria = true;
 				
 				// Include all public annotations if scope = ALL	
-				if (scopeLevel.equals(this.ALL_SCOPE_LEVEL)) {
+				if (scopeLevel.equals(GenoPubSecurity.ALL_SCOPE_LEVEL)) {
 
 					if (hasSecurityCriteria) {
 						addWhere = OR(addWhere, queryBuf);						

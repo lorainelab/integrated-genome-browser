@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.Selections;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 
 public class MaximizeTrackAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -32,7 +33,7 @@ public class MaximizeTrackAction extends SeqMapViewActionA {
 		double tierCoordHeight = selectedTier.getCoordBox().getHeight();
 		int totalHeight = getTierMap().getView().getPixelBox().height;
 		double zoom_scale = totalHeight / tierCoordHeight;
-		getTierMap().zoom(getSeqMapView().getSeqMap().Y, zoom_scale);
+		getTierMap().zoom(AffyTieredMap.Y, zoom_scale);
 		// set scroll to top of selected track
 		double coord_value = 0;
 		// add up height of all tiers up to selected tier
@@ -43,7 +44,7 @@ public class MaximizeTrackAction extends SeqMapViewActionA {
 			coord_value += tierGlyph.getCoordBox().getHeight();
 		}
 		coord_value += 0.2; // fudge factor
-		getTierMap().scroll(getSeqMapView().getSeqMap().Y, coord_value);
+		getTierMap().scroll(AffyTieredMap.Y, coord_value);
 		getTierMap().updateWidget();
 	}
 

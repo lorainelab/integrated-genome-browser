@@ -168,14 +168,14 @@ public class NeoWidgetICustomizer
 		if (null == widgeti) {
 		}
 		else if (evtSource == this.colorChoice) {
-			Color c = widgeti.getColor(this.colorChoice.getSelectedItem());
+			Color c = NeoAbstractWidget.getColor(this.colorChoice.getSelectedItem());
 			Color prevColor = widgeti.getBackground();
 			widgeti.setBackground(c);
 			((Component)widgeti).repaint();
 			this.secretary.firePropertyChange("Background", prevColor, c);
 		}
 		else if (evtSource == this.foregroundColorChoice) {
-			Color c = widgeti.getColor(this.foregroundColorChoice.getSelectedItem());
+			Color c = NeoAbstractWidget.getColor(this.foregroundColorChoice.getSelectedItem());
 			widgeti.setForeground(c);
 			widgeti.updateWidget();
 			this.secretary.firePropertyChange("Foreground", null, c);
@@ -234,7 +234,7 @@ public class NeoWidgetICustomizer
 		widgeti.setSelectionAppearance(behavior);
 		this.secretary.firePropertyChange("SelectionAppearance",
 				null, new Integer(behavior));
-		Color color = widgeti.getColor(this.selectionColorChoice.getSelectedItem());
+		Color color = NeoAbstractWidget.getColor(this.selectionColorChoice.getSelectedItem());
 		widgeti.setSelectionColor(color);
 		this.secretary.firePropertyChange("SelectionColor", null, color);
 		widgeti.updateWidget();
@@ -334,12 +334,12 @@ public class NeoWidgetICustomizer
 			loadColorChoice(theChoice, (String)null);
 		}
 		else {
-			loadColorChoice(theChoice, widgeti.getColorName(theDefaultColor));
+			loadColorChoice(theChoice, NeoAbstractWidget.getColorName(theDefaultColor));
 		}
 	}
 
 	protected void loadColorChoice(Choice theChoice, String theDefaultColor) {
-		loadChoice(theChoice, widgeti.getColorNames());
+		loadChoice(theChoice, NeoAbstractWidget.getColorNames());
 		if (null != theDefaultColor) {
 			theChoice.select(theDefaultColor);
 		}

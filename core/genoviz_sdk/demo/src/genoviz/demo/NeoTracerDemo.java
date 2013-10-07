@@ -140,7 +140,7 @@ public class NeoTracerDemo extends Applet
 		descLabel = new Label("");
 		this.setLayout(new BorderLayout());
 		this.widget.setBackground(Color.black);
-		System.out.println(this.widget.getColorName(this.widget.getBackground()));
+		System.out.println(NeoTracer.getColorName(this.widget.getBackground()));
 		// moved from init to constructor -- GAH 3-30-99
 		widg_pan = new NeoPanel();
 		widg_pan.setLayout(new BorderLayout());
@@ -386,7 +386,7 @@ public class NeoTracerDemo extends Applet
 			NeoTracerCustomizer customizer = new NeoTracerCustomizer();
 			customizer.setObject(this.widget);
 //			customizer.setSelectedChoiceColor();
-			System.out.println(this.widget.getColorName(this.widget.getBackground()));
+			System.out.println(NeoTracer.getColorName(this.widget.getBackground()));
 			propFrame.add("Center", customizer);
 			propFrame.pack();
 			propFrame.addWindowListener(new WindowAdapter() {

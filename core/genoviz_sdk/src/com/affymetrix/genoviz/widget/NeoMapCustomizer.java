@@ -80,7 +80,7 @@ public class NeoMapCustomizer
 			return;
 		}
 		else if (theEvent.getSource() == mapColorChoice) {
-			Color c = map.getColor(this.mapColorChoice.getSelectedItem());
+			Color c = NeoMap.getColor(this.mapColorChoice.getSelectedItem());
 			map.setMapColor(c);
 			map.updateWidget();
 			return;

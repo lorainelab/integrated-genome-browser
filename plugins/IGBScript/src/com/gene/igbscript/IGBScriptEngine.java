@@ -63,7 +63,7 @@ public class IGBScriptEngine implements ScriptEngine {
     
     public IGBScriptEngine(IGBScriptEngineFactory factory, IGBService igbService) {
     	super();
-    	this.igbService = igbService;
+    	IGBScriptEngine.igbService = igbService;
     	this.igbFactory = factory;
 		SimpleScriptContext c = new SimpleScriptContext();
 		Bindings b = c.getBindings(ScriptContext.ENGINE_SCOPE);

@@ -398,7 +398,7 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 
 	@Override
 	public int getActualSlots() {
-		if(tierType == tierType.ANNOTATION && getPacker() == expand_packer){
+		if(tierType == TierType.ANNOTATION && getPacker() == expand_packer){
 			return expand_packer.getActualSlots();
 		}
 		return 1;

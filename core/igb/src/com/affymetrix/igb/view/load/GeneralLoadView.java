@@ -668,7 +668,7 @@ public final class GeneralLoadView {
 					gviewer.getSeqMap().removeTier(tier);
 				}
 				
-				if(GraphSymUtils.isAGraphExtension(feature.getExtension())){
+				if(style.isGraphTier()){
 					DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
 				}else{
 					DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);

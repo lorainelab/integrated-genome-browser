@@ -170,21 +170,21 @@ public class NeoQualler extends NeoContainerWidget
 		bar_map.setScaleConstraint(NeoMap.Y, NeoMap.INTEGRAL_COORDS);
 		bar_map.setMapRange(0, 100);
 		bar_map.setMapOffset(0, 100);
-		bar_map.setReshapeBehavior(bar_map.X, NeoConstants.NONE);
-		bar_map.setReshapeBehavior(bar_map.Y, FITWIDGET);
-		bar_map.setZoomBehavior(bar_map.Y, bar_map.CONSTRAIN_END);
-		bar_map.setZoomBehavior(bar_map.X, bar_map.CONSTRAIN_MIDDLE);
+		bar_map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
+		bar_map.setReshapeBehavior(NeoMap.Y, FITWIDGET);
+		bar_map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_END);
+		bar_map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_MIDDLE);
 
 		base_map.setRangeScroller(hscroll);
 		base_map.setRangeZoomer(hzoom);
 
 		base_map.setMapRange(0, 100);
 		base_map.setMapOffset(0, 100);
-		base_map.setReshapeBehavior(base_map.X, NeoConstants.NONE);
-		base_map.setReshapeBehavior(base_map.Y, base_map.FITWIDGET);
+		base_map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
+		base_map.setReshapeBehavior(NeoMap.Y, NeoMap.FITWIDGET);
 
-		bar_map.setMaxZoom(bar_map.X, 12);
-		base_map.setMaxZoom(base_map.X, 12);
+		bar_map.setMaxZoom(NeoMap.X, 12);
+		base_map.setMaxZoom(NeoMap.X, 12);
 
 		base_map.zoomRange(2);
 		bar_map.zoomRange(2);
@@ -560,8 +560,8 @@ public class NeoQualler extends NeoContainerWidget
 			if (source == bar_map) {
 				int id = nevt.getID();
 				if (sel_behavior != NO_SELECTION) {
-					if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN) ||
-							(id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+					if ((id == NeoMouseEvent.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN) ||
+							(id == NeoMouseEvent.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 						if (nevt.isShiftDown() && (!sel_range.isEmpty())) {
 							barMapExtendHighlight(nevt);
 						}
@@ -569,7 +569,7 @@ public class NeoQualler extends NeoContainerWidget
 							barMapStartHighlight(nevt);
 						}
 							}
-					else if (id == nevt.MOUSE_DRAGGED &&
+					else if (id == NeoMouseEvent.MOUSE_DRAGGED &&
 							sel_behavior == ON_MOUSE_DOWN) {
 						barMapExtendHighlight(nevt);
 							}

@@ -1066,7 +1066,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} else {		
 			AnnotatedSeqGroup genome = getGenome(path_info);
 			if (genome == null) {
-				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
 				return;
 			}
 			String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
@@ -1080,7 +1080,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				handleSequenceRequest(genome, request, response);
 			} else {
 				System.out.println("DAS2 request " + path_info + " not recognized, setting HTTP status header to 400, BAD_REQUEST");
-				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
 			}
 		}
 	}
@@ -1226,7 +1226,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		String sequence_directory = data_root + genome.getOrganism() + "/" + genome.getID() + "/dna/";
-		if (this.genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB) || genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
+		if (GenometryDas2Servlet.genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB) || genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
 			try {
 				// Get the  annotation security which will determine the sequence directory
 				AnnotSecurity annotSecurity = this.getAnnotSecurity(request);
@@ -1788,7 +1788,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			outputStream = response.getOutputStream();
 			boolean wrote = useqArchive.writeSlicesToStream(outputStream, chromosome, start, end, true);
 			if (wrote == false){
-				response.setStatus(response.SC_NOT_FOUND);
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				PrintWriter pw = response.getWriter();
 				pw.println("DAS/2 server could not find useq data for " + chromosome+":"+start+"-"+end+" from "+useqArchiveFile.getName());
 				pw.close();
@@ -1797,7 +1797,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			response.setStatus(response.SC_SERVICE_UNAVAILABLE);
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			try {
 				PrintWriter pw = response.getWriter();
 				pw.println("The DAS/2 server encountered an error while attempting to fetch useq data from "+useqArchiveFile.getName());
@@ -1972,7 +1972,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} else {
 			// couldn't generate a GraphSym, so return an error?
 			System.out.println("####### problem with retrieving graph slice ########");
-			response.setStatus(response.SC_NOT_FOUND);
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			try {
 				PrintWriter pw = response.getWriter();
 				pw.println("DAS/2 server could not find graph to return for type: " + type);
@@ -1997,7 +1997,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 			if (result == null) {
 				response.sendError(
-						response.SC_REQUEST_ENTITY_TOO_LARGE,
+						HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
 						"Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
 			} else {
 				outputDataTracks(result, outseq, query_type, xbase, response, writerclass, output_format);
@@ -2030,7 +2030,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		try {
 			if (writerclass == null) {
 				System.out.println("no AnnotationWriter found for format: " + format);
-				response.setStatus(response.SC_BAD_REQUEST);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return false;
 			}
 			AnnotationWriter writer = writerclass.newInstance();

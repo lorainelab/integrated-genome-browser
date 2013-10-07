@@ -182,7 +182,7 @@ public class NeoWidgetCustomizer
 		}
 
 		widget.setSelectionAppearance(behavior);
-		Color color = widget.getColor(this.selectionColorChoice.getSelectedItem());
+		Color color = NeoWidget.getColor(this.selectionColorChoice.getSelectedItem());
 		widget.setSelectionColor(color);
 		widget.updateWidget();
 	}

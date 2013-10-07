@@ -1150,11 +1150,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 	public void toFrontOfSiblings(GlyphI glyph) {
-		scene.toFrontOfSiblings(glyph);
+		Scene.toFrontOfSiblings(glyph);
 	}
 
 	public void toBackOfSiblings(GlyphI glyph) {
-		scene.toBackOfSiblings(glyph);
+		Scene.toBackOfSiblings(glyph);
 	}
 
 	/**

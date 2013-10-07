@@ -45,10 +45,10 @@ public class ExportDialogGUI extends JPanel {
         imageSizePanel = new javax.swing.JPanel();
         widthLabel = new javax.swing.JLabel();
         heightLabel = new javax.swing.JLabel();
-        widthSpinner = ed.widthSpinner;
-        heightSpinner = ed.heightSpinner;
+        widthSpinner = ExportDialog.widthSpinner;
+        heightSpinner = ExportDialog.heightSpinner;
         resolutionLabel = new javax.swing.JLabel();
-        refreshButton = ed.refreshButton;
+        refreshButton = ExportDialog.refreshButton;
         resolutionComboBox = ed.resolutionComboBox;
         unitComboBox = ed.unitComboBox;
         sizeLabel = ed.sizeLabel;

@@ -1882,7 +1882,7 @@ public class NeoAssembler extends NeoContainerWidget
 			Rectangle2D.Double cbox = cglyph.getCoordBox();
 			alignmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 			labelmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
-			alignmap.adjustScroller(alignmap.Y);
+			alignmap.adjustScroller(NeoMap.Y);
 		}
 
 	}

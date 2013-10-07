@@ -17,9 +17,9 @@ public class ColorByScoreEditor extends javax.swing.JPanel {
 	 */
 	public static String minText,maxText,intervalsText, errorText = "";
 	public ColorByScoreEditor(String minText, String maxText, String intervalsText) {
-		this.minText = minText;
-		this.maxText = maxText;
-		this.intervalsText = intervalsText;
+		ColorByScoreEditor.minText = minText;
+		ColorByScoreEditor.maxText = maxText;
+		ColorByScoreEditor.intervalsText = intervalsText;
 		initComponents();
 	}
 	public Float getMaxRange(){

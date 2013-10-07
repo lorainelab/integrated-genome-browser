@@ -285,6 +285,9 @@ public class PopupInfo extends JWindow {
 			bestLocation.y += 10;
 		}
 		
+		bestLocation.x = bestLocation.x < 25 ? 25 : bestLocation.x;
+		bestLocation.y = bestLocation.y < 25 ? 25 : bestLocation.y;
+		
 		lastPoint = currentPoint;
 		
 		return bestLocation;

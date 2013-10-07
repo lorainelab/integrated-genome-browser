@@ -203,7 +203,7 @@ public class Activator implements BundleActivator {
 		try {
 			for (String k : p.keys()) {
 				String preferredKeyStroke = p.get(k, "");
-				if (preferredKeyStroke.equals("")) { // then this ain't our concern.
+				if (preferredKeyStroke.length() == 0) { // then this ain't our concern.
 					continue;
 				}
 				GenericActionHolder h = GenericActionHolder.getInstance();

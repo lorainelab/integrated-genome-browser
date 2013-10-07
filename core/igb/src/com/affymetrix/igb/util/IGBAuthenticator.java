@@ -158,7 +158,7 @@ public class IGBAuthenticator extends Authenticator {
 
 
 
-		if (authType == AuthType.AUTHENTICATE && !userFromPrefs.equals("") && !passFromPrefs.equals("")) {
+		if (authType == AuthType.AUTHENTICATE && userFromPrefs.length() != 0 && passFromPrefs.length() != 0) {
 			return new PasswordAuthentication(userFromPrefs, passFromPrefs.toCharArray());
 		} else if (authType == AuthType.ANONYMOUS) {
 			return doAnonymous();

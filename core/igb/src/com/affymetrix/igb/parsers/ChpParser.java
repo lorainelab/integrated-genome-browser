@@ -359,7 +359,7 @@ public final class ChpParser {
 			String name = psqData.getName();
 			// if name property is empty, then it's a CHP file for exon array results
 			//    otherwise it's a CHP file for 3' IVT array results
-			if (name == null || name.equals("")) {
+			if (name == null || name.length() == 0) {
 				is_exon_chp = true;
 				System.out.println("Exon CHP file");
 			} else {

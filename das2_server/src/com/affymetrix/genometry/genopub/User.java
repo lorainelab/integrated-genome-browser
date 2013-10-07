@@ -47,16 +47,16 @@ public class User implements Serializable {
     }
 	public String getName() {
 		StringBuffer name = new StringBuffer();
-		if (this.getLastName() != null && !this.getLastName().equals("")) {
+		if (this.getLastName() != null && this.getLastName().length() != 0) {
 			name.append(this.getLastName());
 		}
-		if (this.getFirstName() != null && !this.getFirstName().equals("")) {
+		if (this.getFirstName() != null && this.getFirstName().length() != 0) {
 			if (name.length() > 0) {
 				name.append(", ");
 			}
 			name.append(this.getFirstName());
 		}
-		if (this.getMiddleName() != null && !this.getMiddleName().equals("")) {
+		if (this.getMiddleName() != null && this.getMiddleName().length() != 0) {
 			if (name.length() > 0) {
 				name.append(" ");
 			}
@@ -66,16 +66,16 @@ public class User implements Serializable {
 	}
 	public String getUserDisplayName() {
 		StringBuffer name = new StringBuffer();
-		if (this.getFirstName() != null && !this.getFirstName().equals("")) {
+		if (this.getFirstName() != null && this.getFirstName().length() != 0) {
 			name.append(this.getFirstName());
 		}
-		if (this.getMiddleName() != null && !this.getMiddleName().equals("")) {
+		if (this.getMiddleName() != null && this.getMiddleName().length() != 0) {
 			if (name.length() > 0) {
 				name.append(" ");
 			}
 			name.append(this.getMiddleName());
 		}
-		if (this.getLastName() != null && !this.getLastName().equals("")) {
+		if (this.getLastName() != null && this.getLastName().length() != 0) {
 			if (name.length() > 0) {
 				name.append(" ");
 			}
@@ -96,7 +96,7 @@ public class User implements Serializable {
     	this.password = password;
     }
 	public String getPasswordDisplay() {
-		if (this.password != null && !this.password.equals("")) {
+		if (this.password != null && this.password.length() != 0) {
 			return MASKED_PASSWORD;      
 		} else {
 			return "";

@@ -326,7 +326,7 @@ public final class Genbank extends SymLoader {
 				boolean chrFound = false;
 				for (String tag : tagValues.keySet()) {
 					String value = current_feature.getValue(tag);
-					if (value != null && !value.equals("")) {
+					if (value != null && value.length() != 0) {
 						if (tag.equals("chromosome")) {
 							seq = this.group.getSeq(value);
 							if (seq == null) {
@@ -644,7 +644,7 @@ public final class Genbank extends SymLoader {
 				Map<String, List<String>> tagValues = current_feature.getTagValues();
 				for (String tag : tagValues.keySet()) {
 					String value = current_feature.getValue(tag);
-					if (value != null && !value.equals("")) {
+					if (value != null && value.length() != 0) {
 						if (tag.equals("chromosome")) {
 							currentSeq = this.group.getSeq(value);
 						} else if (tag.equals("organism")) {
@@ -682,11 +682,11 @@ public final class Genbank extends SymLoader {
 					|| key.equals("snRNA")
 					|| key.equals("snoRNA")) {
 				String value = current_feature.getValue("gene");
-				if (value != null && !value.equals("")) {
+				if (value != null && value.length() != 0) {
 					annotation.setProperty("name",value);
 				}
 				value = current_feature.getValue("locus_tag");
-				if (value != null && !value.equals("")) {
+				if (value != null && value.length() != 0) {
 					annotation.setID(value);
 				}
 				// What are the spans associated with this key?
@@ -731,9 +731,9 @@ public final class Genbank extends SymLoader {
 
 	private static GenbankSym buildAnnotation(BioSeq seq, String type, GenbankFeature pub_feat, Map<String,GenbankSym> id2sym, int min, int max) {
 		String id = getAnnotationId(pub_feat);
-		if (id == null || id.equals("")) {
+		if (id == null || id.length() == 0) {
 			id = pub_feat.getValue("protein_id");
-			if (id == null || id.equals("")) {
+			if (id == null || id.length() == 0) {
 				Logger.getLogger(Genbank.class.getName()).log(
 						Level.WARNING, "no id for {0}", pub_feat.toString());
 				id = NONAME;
@@ -742,7 +742,7 @@ public final class Genbank extends SymLoader {
 		}
 
 		String name = getAnnotationName(pub_feat);
-		if (name == null || name.equals("")) {
+		if (name == null || name.length() == 0) {
 			name = id;
 		}
 
@@ -774,7 +774,7 @@ public final class Genbank extends SymLoader {
 			id2sym.put(id, annotation);
 		}
 		setDescription(annotation, pub_feat);
-		if (!pub_feat.getValue("pseudo").equals("")) {
+		if (pub_feat.getValue("pseudo").length() != 0) {
 			annotation.setProperty("pseudogene", "true");
 		}
 		return annotation;
@@ -782,7 +782,7 @@ public final class Genbank extends SymLoader {
 
 	private static String getFeatureId(GenbankFeature pub_feat, List<String> tags) {
 		String id = "";
-		for (int i = 0; i < tags.size() && (id == null || id.equals("")); i++) {
+		for (int i = 0; i < tags.size() && (id == null || id.length() == 0); i++) {
 			String tag = tags.get(i);
 			id = pub_feat.getValue(tag);
 		}
@@ -791,7 +791,7 @@ public final class Genbank extends SymLoader {
 
 	private static String getAnnotationId(GenbankFeature pub_feat) {
 		String id = getFeatureId(pub_feat, annot_id_tags);
-		if (id == null || id.equals("")) {
+		if (id == null || id.length() == 0) {
 			id = getFeatureId(pub_feat, annot_name_tags);
 		}
 		return id;
@@ -807,7 +807,7 @@ public final class Genbank extends SymLoader {
     Map<String,List<String>> tagValues = pub_feat.getTagValues();
 	for (String tag : tagValues.keySet()) {
       String value = pub_feat.getValue(tag);
-      if (value != null && !value.equals("")) {
+      if (value != null && value.length() != 0) {
        if (tag.equals("chromosome")) {
        //   curation.setChromosome(value);
 		  }
@@ -1008,7 +1008,7 @@ final class GenbankFeature {
 			  current_vec = new ArrayList<String>();
 			  tagValues.put(tag, current_vec);
 		  }
-		  if (!value.equals("") && !value.equals(".")) {
+		  if (value.length() != 0 && !value.equals(".")) {
 			  current_vec.add(value);
 		  }
 	  }
@@ -1061,7 +1061,7 @@ final class GenbankFeature {
      *
      **/
   private void parseLocations(String location_str, List<int[]> locs) {
-    if (location_str != null && !location_str.equals("")) {
+    if (location_str != null && location_str.length() != 0) {
       String operation_str = null;
       int index_start = 0;
       int index_end = 0;

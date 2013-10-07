@@ -71,13 +71,13 @@ public class CustomTitleBorder extends AbstractBorder {
 		String link = getLink();
 		String emptyTitle = "TEMP";
 
-		if (title == null || title.equals("") && link.equals("")) {
+		if (title == null || title.length() == 0 && link.length() == 0) {
 			if (border != null) {
 				border.paintBorder(c, g, x, y, width, height);
 			}
 			return;
 		}
-		if (title.equals("") || title.equals(" ")) {
+		if (title.length() == 0 || title.equals(" ")) {
 			title = emptyTitle;
 		}
 		Rectangle grooveRect = new Rectangle(x + EDGE_SPACING, y
@@ -247,7 +247,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		Font boldUnderline = new Font("SansSerif", Font.BOLD, 13).deriveFont(fontAttributes);
 		Font plainFont = new Font("SansSerif", Font.PLAIN, 13);
 		AttributedString as = new AttributedString(title + link);
-		if (!title.equals("")) {
+		if (title.length() != 0) {
 			as.addAttribute(TextAttribute.FONT, plainFont, 1,
 					title.length());
 		}
@@ -311,7 +311,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		insets.bottom += EDGE_SPACING
 				+ (insets.bottom > 0 ? TEXT_SPACING : 0);
 
-		if (c == null || getTitle() == null || (getTitle().equals("") && getLink().equals(""))) {
+		if (c == null || getTitle() == null || (getTitle().length() == 0 && getLink().length() == 0)) {
 			return insets;
 		}
 		Font font = getFont(c);

@@ -110,7 +110,7 @@ public final class ServiceUtils {
 	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
 		final AnnotatedSeqGroup group;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
+		if (version == null || "unknown".equals(version) || version.trim().length() == 0) {
 			group = gmodel.getSelectedSeqGroup();
 		} else {
 			group = gmodel.getSeqGroup(version);

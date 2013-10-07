@@ -44,7 +44,7 @@ public class GNomExSecurity implements AnnotSecurity, Serializable {
 	public void setDataTrackInfoURL(String serverName, String portNumber) {
 	  if (portNumber == null) {
       portNumber = "";
-    } else if (!portNumber.equals("")) {
+    } else if (portNumber.length() != 0) {
       portNumber = ":" + portNumber;           
     }
 	  String gnomexFlexApp = this.secAdvisor.isGuest() ? Constants.GNOMEX_GUEST_FLEX_APP : Constants.GNOMEX_FLEX_APP;

@@ -1458,7 +1458,7 @@ public final class GeneralLoadUtils {
 				}
 				
 				//If it does not match any exiting group the return the one that matches organism
-				if (group.getOrganism() != null && !group.getOrganism().equals("")) {
+				if (group.getOrganism() != null && group.getOrganism().length() != 0) {
 					for (AnnotatedSeqGroup gr : groups) {
 						if (group.getOrganism().equalsIgnoreCase(gr.getOrganism())) {
 							return gr;

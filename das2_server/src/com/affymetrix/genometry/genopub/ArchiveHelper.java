@@ -120,7 +120,7 @@ public class ArchiveHelper {
   
   public void setTempDir(String tempDir) {
     this.tempDir = tempDir;
-    if (this.tempDir == null || this.tempDir.equals("")) {
+    if (this.tempDir == null || this.tempDir.length() == 0) {
       this.tempDir = "";
     } else {
       if (!this.tempDir.endsWith(File.separator)) {

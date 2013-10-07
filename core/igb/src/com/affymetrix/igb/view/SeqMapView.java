@@ -2293,8 +2293,12 @@ public class SeqMapView extends JPanel
 //				toolTip = convertPropsToString(properties);
 			}
 //			seqmap.getNeoCanvas().setToolTipText(toolTip);
-			Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
-			popupInfo.setToolTip(point, properties);
+			if(evt != null) {
+				Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
+				popupInfo.setToolTip(point, properties);
+			} else {
+				popupInfo.setToolTip(null, properties);
+			}
 		}
 	}
 	

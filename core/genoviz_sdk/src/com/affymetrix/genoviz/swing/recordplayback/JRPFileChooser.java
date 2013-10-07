@@ -72,7 +72,7 @@ public class JRPFileChooser extends JFileChooser implements JRPWidget {
 						else {
 							selectedFiles.append(",");
 						}
-						selectedFiles.append("new File(\"" + file.getAbsolutePath() + "\")");
+						selectedFiles.append("new File(\"").append(file.getAbsolutePath()).append("\")");
 					}
 					selectedFiles.append("}");
 					ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setSelectedFiles(\"" + selectedFiles.toString() + "\")"));

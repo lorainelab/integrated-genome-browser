@@ -521,7 +521,7 @@ public class Wig2USeq {
 	public static void printDocs(){ 
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i< Text2USeq.GRAPH_STYLES.length; i++){
-			sb.append("      "+i+"\t"+Text2USeq.GRAPH_STYLES[i]+"\n");
+			sb.append("      ").append(i).append("\t").append(Text2USeq.GRAPH_STYLES[i]).append("\n");
 		}
 		System.out.println("\n" +
 				"**************************************************************************************\n" +

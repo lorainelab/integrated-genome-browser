@@ -182,9 +182,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     sb.append("<!DOCTYPE STYLESHEET SYSTEM \"igb_stylesheet_1.dtd\">\n");
 
     sb.append("\n");
-    sb.append(indent).append("<IGB_STYLESHEET\n"
-			+ indent+"version='0.1\'\n"
-			+ indent+"dtd='http://genoviz.sourceforge.net/formats/stylesheets/igb_stylesheet_0_1.dtd' "
+    	sb.append(indent).append("<IGB_STYLESHEET\n").append(indent).append("version='0.1\'\n").append(indent).append("dtd='http://genoviz.sourceforge.net/formats/stylesheets/igb_stylesheet_0_1.dtd' "
 			+ ">\n");
 
     sb.append("\n");

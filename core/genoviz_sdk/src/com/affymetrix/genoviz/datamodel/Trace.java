@@ -317,8 +317,8 @@ public class Trace implements TraceI {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Trace\n");
-		sb.append("sampleVector.size(): " + sampleVector.size() + "\n");
-		sb.append("baseVector.size(): " + baseVector.size() + "\n");
+		sb.append("sampleVector.size(): ").append(sampleVector.size()).append("\n");
+		sb.append("baseVector.size(): ").append(baseVector.size()).append("\n");
 		int i = 0;
 		for (BaseCall cb : baseVector) {
 			sb.append(cb.getBase());

@@ -905,7 +905,7 @@ public class Text2USeq {
 	public static void printDocs(){
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i< GRAPH_STYLES.length; i++){
-			sb.append("      "+i+"\t"+GRAPH_STYLES[i]+"\n");
+			sb.append("      ").append(i).append("\t").append(GRAPH_STYLES[i]).append("\n");
 		}
 		System.out.println("\n" +
 				"**************************************************************************************\n" +

@@ -410,7 +410,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			// Only get public annotations for guests
 			addWhere = AND(addWhere, queryBuf);
 			queryBuf.append("(");
-			queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.PUBLIC + "'");	
+			queryBuf.append(annotationAlias).append(".codeVisibility = '" + Visibility.PUBLIC + "'");	
 			queryBuf.append(")");
 			
 		} else if (scopeLevel.equals(GenoPubSecurity.USER_SCOPE_LEVEL)) {
@@ -444,9 +444,9 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 					// in which user is member (or manager).  (Also, include
 					// any public annotations belong one of the user's groups.)					
 					queryBuf.append("(");
-					queryBuf.append(annotationAlias + ".codeVisibility in ('" + Visibility.MEMBERS + "', '" + Visibility.PUBLIC + "')");
+					queryBuf.append(annotationAlias).append(".codeVisibility in ('" + Visibility.MEMBERS + "', '" + Visibility.PUBLIC + "')");
 					addWhere = AND(addWhere, queryBuf);
-					queryBuf.append(annotationAlias + ".idUserGroup ");
+					queryBuf.append(annotationAlias).append(".idUserGroup ");
 					appendIdInStatement(queryBuf, this.groupsMemVisibility);
 					queryBuf.append(")");
 					
@@ -464,9 +464,9 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 				  }
 					
 					queryBuf.append("(");
-					queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
+					queryBuf.append(annotationAlias).append(".codeVisibility = '" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
 					addWhere = AND(addWhere, queryBuf);
-					queryBuf.append(annotationAlias + ".idUserGroup ");
+					queryBuf.append(annotationAlias).append(".idUserGroup ");
 					appendIdInStatement(queryBuf, this.groupsMemCollabVisibility);
 					queryBuf.append(")");
 
@@ -482,9 +482,9 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
           // For annotations with INSTITUTION visibility, limit to the 
 				  // annotations with an institute that the user's group belongs to.  
           queryBuf.append("(");
-          queryBuf.append(annotationAlias + ".codeVisibility in ('" + Visibility.INSTITUTE + "')");
+          			queryBuf.append(annotationAlias).append(".codeVisibility in ('" + Visibility.INSTITUTE + "')");
           addWhere = AND(addWhere, queryBuf);
-          queryBuf.append(annotationAlias + ".idInstitute ");
+          			queryBuf.append(annotationAlias).append(".idInstitute ");
           appendIdInStatement(queryBuf, this.institutesVisibility);
           queryBuf.append(")");
           
@@ -515,7 +515,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
           addWhere = OR(addWhere, queryBuf);
         }
 		    queryBuf.append("(");
-		    queryBuf.append(collaboratorAlias + ".idUser = " + user.getIdUser());
+		    	queryBuf.append(collaboratorAlias).append(".idUser = ").append(user.getIdUser());
 		    queryBuf.append(")");   
         hasSecurityCriteria = true;
 				
@@ -527,7 +527,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 					}
 					
 					queryBuf.append("(");
-					queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.PUBLIC + "'");	
+					queryBuf.append(annotationAlias).append(".codeVisibility = '" + Visibility.PUBLIC + "'");	
 					queryBuf.append(")");					
 				}
 				queryBuf.append(")");					
@@ -549,12 +549,12 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
             								 boolean addWhere) throws Exception {
 		queryBuf.append("(");
 		
-		queryBuf.append(annotationAlias + ".idUser = " + user.getIdUser());
+												 queryBuf.append(annotationAlias).append(".idUser = ").append(user.getIdUser());
 
 		if (user.getManagingUserGroups().size() > 0) {
 		  addWhere = OR(addWhere, queryBuf);  
 		  
-	    queryBuf.append(annotationAlias + ".idUserGroup in (");
+	    	queryBuf.append(annotationAlias).append(".idUserGroup in (");
 	    boolean firstTime = true;
 	    for (UserGroup group : (Set<UserGroup>)user.getManagingUserGroups()) {
 	      if (!firstTime) {
@@ -579,15 +579,15 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
             								                boolean addWhere) throws Exception {
 		queryBuf.append("(");
 
-		queryBuf.append(annotationAlias + ".idAnnotation is NULL");
+																queryBuf.append(annotationAlias).append(".idAnnotation is NULL");
 		
 		addWhere = AND(addWhere, queryBuf);
 
 		queryBuf.append("(");					
-		queryBuf.append(annotationGroupingAlias + ".idUserGroup is NULL");
+																queryBuf.append(annotationGroupingAlias).append(".idUserGroup is NULL");
 		if (this.groupsMemCollabVisibility.size() > 0) {
 			addWhere = OR(addWhere, queryBuf);
-			queryBuf.append(annotationGroupingAlias + ".idUserGroup");
+			queryBuf.append(annotationGroupingAlias).append(".idUserGroup");
 			appendIdInStatement(queryBuf, this.groupsMemCollabVisibility);			
 		}
 		queryBuf.append(")");

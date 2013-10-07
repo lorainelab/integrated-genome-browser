@@ -236,13 +236,13 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 		if (pass_filter) {
 			if (pass_filter_hash != null) {
 				pass_filter_hash.remove(feature_type);
-				if (pass_filter_hash.size() == 0) { pass_filter_hash = null; }
+				if (pass_filter_hash.isEmpty()) { pass_filter_hash = null; }
 			}
 		}
 		else {
 			if (fail_filter_hash != null) {
 				fail_filter_hash.remove(feature_type);
-				if (fail_filter_hash.size() == 0) { fail_filter_hash = null; }
+				if (fail_filter_hash.isEmpty()) { fail_filter_hash = null; }
 			}
 		}
 	}
@@ -759,7 +759,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 						vals.clear();
 					}
 					// rare case -- if no value for the tag, hash the tag to itself...
-					else if (vals.size() == 0) {
+					else if (vals.isEmpty()) {
 						m.put(tag, tag);
 						vals.clear();
 					}

@@ -89,7 +89,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 	}
 
 	public void setRefSeqTiers(List<TierGlyph> refSeqTiers) {
-		if (refSeqTiers == null || refSeqTiers.size() == 0) {
+		if (refSeqTiers == null || refSeqTiers.isEmpty()) {
 			ErrorHandler.errorPanel("no tiers selected");
 			return;
 		}

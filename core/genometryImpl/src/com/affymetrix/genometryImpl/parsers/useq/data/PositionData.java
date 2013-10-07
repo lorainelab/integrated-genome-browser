@@ -322,7 +322,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		for (int i=0; i< sortedPositions.length; i++){
 			if (sortedPositions[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositions[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedPositions = new Position[al.size()];
 		al.toArray(sortedPositions);
 		updateSliceInfo(sortedPositions, sliceInfo);

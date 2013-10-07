@@ -52,7 +52,7 @@ public class Text2USeq {
 			tempSplitTextDirectory.mkdir();
 
 			chromStrandFileHash = splitFileByChromosomeAndStrand(inputFiles[i], tempSplitTextDirectory, chromosomeColumnIndex, strandColumnIndex, true);
-			if (chromStrandFileHash == null || chromStrandFileHash.size() ==0){
+			if (chromStrandFileHash == null || chromStrandFileHash.isEmpty()){
 				System.err.println("\nFailed to parse genomic data text file, aborting!\n");
 				continue;
 			}

@@ -118,7 +118,7 @@ public class Util {
 	public static boolean fileHasSegmentName(String fileName, GenomeVersion genomeVersion) {
 		// For now, just skip this check if segments haven't beens specified
 		// for this genome version
-		if (genomeVersion.getSegments() == null || genomeVersion.getSegments().size() == 0) {
+		if (genomeVersion.getSegments() == null || genomeVersion.getSegments().isEmpty()) {
 			return true;
 		}
 		

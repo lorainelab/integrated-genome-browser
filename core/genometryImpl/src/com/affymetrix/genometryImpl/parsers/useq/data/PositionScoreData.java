@@ -405,7 +405,7 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		for (int i=0; i< sortedPositionScores.length; i++){
 			if (sortedPositionScores[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositionScores[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedPositionScores = new PositionScore[al.size()];
 		al.toArray(sortedPositionScores);
 		updateSliceInfo(sortedPositionScores, sliceInfo);

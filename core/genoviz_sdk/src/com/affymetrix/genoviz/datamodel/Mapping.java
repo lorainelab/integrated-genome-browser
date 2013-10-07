@@ -160,7 +160,7 @@ public class Mapping {
 	 * @see Span
 	 */
 	public void addSpan(Span span) {
-		if (spans.size() == 0 && (!ref_range_set)) {
+		if (spans.isEmpty() && (!ref_range_set)) {
 			ref_start = span.ref_start;
 			ref_end = span.ref_end;
 			map_start = span.seq_start;

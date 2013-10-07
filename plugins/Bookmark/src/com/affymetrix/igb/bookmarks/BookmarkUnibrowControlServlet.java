@@ -493,13 +493,13 @@ public final class BookmarkUnibrowControlServlet {
 
 		int start = 0;
 		int end = 0;
-		if (start_param == null || start_param.equals("")) {
+		if (start_param == null || start_param.length() == 0) {
 			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
 					"No start value found in the bookmark URL. Setting start={0}", start);
 		} else {
 			start = Integer.parseInt(start_param);
 		}
-		if (end_param == null || end_param.equals("")) {
+		if (end_param == null || end_param.length() == 0) {
 			end = start + 100000;
 			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
 					"No end value found in the bookmark URL. Setting end={0}", end);

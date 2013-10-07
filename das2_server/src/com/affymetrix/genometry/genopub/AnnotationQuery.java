@@ -71,7 +71,7 @@ public class AnnotationQuery {
 	}
 	
 	public AnnotationQuery() {
-		if (scopeLevel == null || scopeLevel.equals("")) {
+		if (scopeLevel == null || scopeLevel.length() == 0) {
 			scopeLevel = GenoPubSecurity.ALL_SCOPE_LEVEL;
 		}		
 	}
@@ -86,7 +86,7 @@ public class AnnotationQuery {
 		this.isVisibilityInstitute = Util.getFlagParameter(req, "isVisibilityInstitute");
 		this.isVisibilityPublic = Util.getFlagParameter(req, "isVisibilityPublic");
 		
-		if (scopeLevel == null || scopeLevel.equals("")) {
+		if (scopeLevel == null || scopeLevel.length() == 0) {
 			scopeLevel = GenoPubSecurity.ALL_SCOPE_LEVEL;
 		}		
 	}
@@ -676,7 +676,7 @@ public class AnnotationQuery {
 	
 	private String concatenateTypePrefix(String typePrefix, String groupingName, boolean showGroupingLevel) {
 		if (showGroupingLevel) {
-			if (typePrefix == null || typePrefix.equals("")) {
+			if (typePrefix == null || typePrefix.length() == 0) {
 				return groupingName;
 			} else {
 				return typePrefix + "/" + groupingName;
@@ -740,7 +740,7 @@ public class AnnotationQuery {
 					boolean prune = true;
 					// Public folders
 					if (groupingNode.getName().equals("AnnotationGrouping") &&
-						(folderIdUserGroup == null || folderIdUserGroup.equals(""))) {
+						(folderIdUserGroup == null || folderIdUserGroup.length() == 0)) {
 						// If we are not filtering by user group,
 						// always show empty public empty folders
 						if (this.idUserGroup == null) {
@@ -754,7 +754,7 @@ public class AnnotationQuery {
 					// User group folders
 					else if (groupingNode.getName().equals("AnnotationGrouping") &&
 							    folderIdUserGroup != null && 
-							    !folderIdUserGroup.equals("") &&
+							    folderIdUserGroup.length() != 0 &&
 							  	(genoPubSecurity.belongsToGroup(new Integer(folderIdUserGroup)))) {
 						if (this.idUserGroup == null) {
 							// If we are not filtering by user group, then always

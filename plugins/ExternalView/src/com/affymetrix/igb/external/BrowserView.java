@@ -109,7 +109,7 @@ public abstract class BrowserView extends JPanel {
 					public Image doInBackground() {
 						String ucscQuery = ucscViewAction.getUCSCQuery();
 						Loc loc = Loc.fromUCSCQuery(ucscQuery);
-						if(ucscQuery.equals("") || loc.db.equals("")){
+						if(ucscQuery.length() == 0 || loc.db.length() == 0){
 							return BrowserLoader.createErrorImage(ExternalViewer.BUNDLE.getString("resolveError"), pixWidth);
 						}
 						return getImage(loc, pixWidth);

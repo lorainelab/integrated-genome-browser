@@ -523,7 +523,7 @@ public class Annotation implements Serializable, Owned {
 	}
 
 	public String getQualifiedFileName(String data_root) {
-		if (this.getFileName() == null || this.getFileName().equals("")) {
+		if (this.getFileName() == null || this.getFileName().length() == 0) {
 			return "";
 		}
 		
@@ -565,7 +565,7 @@ public class Annotation implements Serializable, Owned {
 
 	public String getDirectory(String data_root) {
 	  String dataPath = null;
-	  if (this.getDataPath() != null && !this.getDataPath().equals("")) {
+	  if (this.getDataPath() != null && this.getDataPath().length() != 0) {
       dataPath = this.getDataPath();
     } else {
       dataPath = data_root;

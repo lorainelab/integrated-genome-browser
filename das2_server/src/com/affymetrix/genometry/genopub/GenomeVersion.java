@@ -198,7 +198,7 @@ public class GenomeVersion implements Serializable {
 
 	public String getSequenceDirectory(String data_root) {
 	  String dataPath = null;
-	  if (this.getDataPath() != null && !this.getDataPath().equals("")) {
+	  if (this.getDataPath() != null && this.getDataPath().length() != 0) {
 	    dataPath = this.getDataPath();
 	  } else {
 	    dataPath = data_root;

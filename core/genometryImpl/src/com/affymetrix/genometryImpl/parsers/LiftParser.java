@@ -87,7 +87,7 @@ public final class LiftParser {
 			String line;
 			Thread thread = Thread.currentThread();
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				if ((line.length() == 0) || line.equals("") || line.startsWith("#")) {
+				if ((line.length() == 0) || line.length() == 0 || line.startsWith("#")) {
 					continue;
 				}
 				String fields[] = re_tab.split(line);

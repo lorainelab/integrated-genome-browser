@@ -367,7 +367,7 @@ public final class Das2ServerInfo  {
 			if (pnode instanceof Element) {
 				Element el = (Element)pnode;
 				String xbase = el.getAttribute("xml:base");
-				if (xbase != null && !xbase.equals("")) { xml_bases.push(xbase); }
+				if (xbase != null && xbase.length() != 0) { xml_bases.push(xbase); }
 			}
 			pnode = pnode.getParentNode();
 		}

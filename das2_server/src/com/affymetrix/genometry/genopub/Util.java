@@ -88,7 +88,7 @@ public class Util {
 	}
 	
 	public static Integer getIntegerParameter(HttpServletRequest req, String parameterName) {
-		if (req.getParameter(parameterName) != null && !req.getParameter(parameterName).equals("")) {
+		if (req.getParameter(parameterName) != null && req.getParameter(parameterName).length() != 0) {
 			return new Integer(req.getParameter(parameterName));
 		} else{
 			return null;
@@ -96,7 +96,7 @@ public class Util {
 	}
 	
 	public static Date getDateParameter(HttpServletRequest req, String parameterName) {
-		if (req.getParameter(parameterName) != null && !req.getParameter(parameterName).equals("")) {
+		if (req.getParameter(parameterName) != null && req.getParameter(parameterName).length() != 0) {
 			try {
 				return parseDate(req.getParameter(parameterName));				
 			} catch (ParseException e) {
@@ -108,7 +108,7 @@ public class Util {
 	}
 	
 	public static String getFlagParameter(HttpServletRequest req, String parameterName) {
-		if (req.getParameter(parameterName) != null && !req.getParameter(parameterName).equals("")) {
+		if (req.getParameter(parameterName) != null && req.getParameter(parameterName).length() != 0) {
 			return req.getParameter(parameterName);
 		} else{
 			return "Y";

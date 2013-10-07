@@ -113,7 +113,7 @@ class ENSEMBLoader extends BrowserLoader {
 		if(url.startsWith("http")){
 			String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
 			String session = cookies.get(EnsemblView.ENSEMBLSESSION);
-			if(session != null && !session.equals("")){
+			if(session != null && session.length() != 0){
 				cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
 			}
 			url = getImageUrl(url, cookie, new ENSEMBLURLFinder());

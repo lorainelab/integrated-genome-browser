@@ -346,7 +346,7 @@ public final class Das2VersionedSource {
 					formatid = fnode.getAttribute(ID);
 				}
 				String mimetype = fnode.getAttribute("mimetype");
-				if (mimetype == null || mimetype.equals("")) {
+				if (mimetype == null || mimetype.length() == 0) {
 					mimetype = "unknown";
 				}
 				formats.put(formatid, mimetype);

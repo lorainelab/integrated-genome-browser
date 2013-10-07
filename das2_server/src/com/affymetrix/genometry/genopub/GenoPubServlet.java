@@ -311,7 +311,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			// If idAnnotation was provided, make sure the user has permission
 			// to read this annotation.
-			if (request.getParameter("idAnnotation") != null && !request.getParameter("idAnnotation").equals("")) {
+			if (request.getParameter("idAnnotation") != null && request.getParameter("idAnnotation").length() != 0) {
 				sess = HibernateUtil.getSessionFactory().openSession();
 				Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
@@ -406,7 +406,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
-			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
+			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").length() == 0) {
 				throw new Exception("idAnnotation request to get Annotation");
 			}
 			Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
@@ -453,13 +453,13 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter an organism DAS2 name.");
 			}
-			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").equals("")) {
+			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism binomial name.");
 			}
-			if (request.getParameter("commonName") == null || request.getParameter("commonName").equals("")) {
+			if (request.getParameter("commonName") == null || request.getParameter("commonName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism common name.");
 			}
 
@@ -536,13 +536,13 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter an organism DAS2 name.");
 			}
-			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").equals("")) {
+			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism binomial name.");
 			}
-			if (request.getParameter("commonName") == null || request.getParameter("commonName").equals("")) {
+			if (request.getParameter("commonName") == null || request.getParameter("commonName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism common name.");
 			}
 
@@ -654,7 +654,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
-			if (request.getParameter("idGenomeVersion") == null || request.getParameter("idGenomeVersion").equals("")) {
+			if (request.getParameter("idGenomeVersion") == null || request.getParameter("idGenomeVersion").length() == 0) {
 				throw new Exception("idGenomeVersion request to get Genome Version");
 			}
 
@@ -695,7 +695,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter the genome version name.");
 			}
 			// Make sure that the DAS2 name has no spaces or special characters
@@ -785,7 +785,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter the genome version name.");
 			}
 			// Make sure that the DAS2 name has no spaces or special characters
@@ -827,7 +827,7 @@ public class GenoPubServlet extends HttpServlet {
 				for(Iterator<?> i1 = segmentsDoc.getRootElement().elementIterator(); i1.hasNext();) {
 					Element segmentNode = (Element)i1.next();
 					String idSegment = segmentNode.attributeValue("idSegment");
-					if (idSegment != null && !idSegment.equals("")) {
+					if (idSegment != null && idSegment.length() != 0) {
 						if (segment.getIdSegment().equals(new Integer(idSegment))) {
 							found = true;
 							break;
@@ -850,12 +850,12 @@ public class GenoPubServlet extends HttpServlet {
 				String sortOrder = segmentNode.attributeValue("sortOrder");
 
 				Segment s = null;
-				if (idSegment != null && !idSegment.equals("")) {
+				if (idSegment != null && idSegment.length() != 0) {
 					s = Segment.class.cast(sess.load(Segment.class, new Integer(idSegment)));
 
 					s.setName(segmentNode.attributeValue("name"));
-					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
-					s.setSortOrder(sortOrder != null && !sortOrder.equals("") ? new Integer(sortOrder) : null);
+					s.setLength(len != null && len.length() != 0 ? new Integer(len) : null);
+					s.setSortOrder(sortOrder != null && sortOrder.length() != 0 ? new Integer(sortOrder) : null);
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 
 
@@ -863,8 +863,8 @@ public class GenoPubServlet extends HttpServlet {
 					s = new Segment();		
 
 					s.setName(segmentNode.attributeValue("name"));
-					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
-					s.setSortOrder(sortOrder != null && !sortOrder.equals("") ? new Integer(sortOrder) : null);
+					s.setLength(len != null && len.length() != 0 ? new Integer(len) : null);
+					s.setSortOrder(sortOrder != null && sortOrder.length() != 0 ? new Integer(sortOrder) : null);
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 
 					sess.save(s);
@@ -1013,7 +1013,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			String line;
 			int count = 1;
-			if (chromosomeInfo != null && !chromosomeInfo.equals("")) {
+			if (chromosomeInfo != null && chromosomeInfo.length() != 0) {
 				Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 				GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
 
@@ -1264,7 +1264,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the annotation folder name.");
 			}
 
@@ -1364,7 +1364,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		try {
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the annotation folder name.");
 			}
 
@@ -1682,10 +1682,10 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter an annotation name.");
 			}
-			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").equals("")) {
+			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").length() == 0) {
 				throw new Exception("Please select the visibility for this annotation.");
 			}
 			if (!request.getParameter("codeVisibility").equals(Visibility.PUBLIC)) {
@@ -1835,10 +1835,10 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter an annotation name.");
 			}
-			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").equals("")) {
+			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").length() == 0) {
 				throw new Exception("Please select the visibility for this annotation.");
 			}
 			if (!request.getParameter("codeVisibility").equals(Visibility.PUBLIC)) {
@@ -1903,7 +1903,7 @@ public class GenoPubServlet extends HttpServlet {
 				for(Iterator<?> i1 = propsDoc.getRootElement().elementIterator(); i1.hasNext();) {
 					Element propNode = (Element)i1.next();
 					String idAnnotationProperty = propNode.attributeValue("idAnnotationProperty");
-					if (idAnnotationProperty != null && !idAnnotationProperty.equals("")) {
+					if (idAnnotationProperty != null && idAnnotationProperty.length() != 0) {
 						if (ap.getIdAnnotationProperty().equals(new Integer(idAnnotationProperty))) {
 							found = true;
 							break;
@@ -1930,7 +1930,7 @@ public class GenoPubServlet extends HttpServlet {
 				String idAnnotationProperty = node.attributeValue("idAnnotationProperty");
 
 				AnnotationProperty ap = null;
-				if (idAnnotationProperty == null || idAnnotationProperty.equals("")) {
+				if (idAnnotationProperty == null || idAnnotationProperty.length() == 0) {
 					ap = new AnnotationProperty();
 					ap.setIdProperty(Integer.valueOf(node.attributeValue("idProperty")));
 				} else {
@@ -1940,7 +1940,7 @@ public class GenoPubServlet extends HttpServlet {
 				ap.setValue(node.attributeValue("value"));
 				ap.setIdAnnotation(annotation.getIdAnnotation());
 
-				if (idAnnotationProperty == null || idAnnotationProperty.equals("")) {
+				if (idAnnotationProperty == null || idAnnotationProperty.length() == 0) {
 					sess.save(ap);
 					sess.flush();
 				}
@@ -1954,7 +1954,7 @@ public class GenoPubServlet extends HttpServlet {
 							Element n = (Element)i2.next();
 							if (n.getName().equals("AnnotationPropertyValue")) {
 								String idAnnotationPropertyValue = n.attributeValue("idAnnotationPropertyValue");
-								if (idAnnotationPropertyValue != null && !idAnnotationPropertyValue.equals("")) {
+								if (idAnnotationPropertyValue != null && idAnnotationPropertyValue.length() != 0) {
 									if (av.getIdAnnotationPropertyValue().equals(new Integer(idAnnotationPropertyValue))) {
 										found = true;
 										break;
@@ -1980,7 +1980,7 @@ public class GenoPubServlet extends HttpServlet {
 						if (value != null && value.equals("Enter URL here...")) {
 							continue;
 						}
-						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.equals("")) {
+						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.length() == 0) {
 							av = new AnnotationPropertyValue();
 							av.setIdAnnotationProperty(ap.getIdAnnotationProperty());
 						} else {
@@ -1988,7 +1988,7 @@ public class GenoPubServlet extends HttpServlet {
 						}
 						av.setValue(n.attributeValue("value"));
 
-						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.equals("")) {
+						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.length() == 0) {
 							sess.save(av);
 						}
 					}
@@ -2073,7 +2073,7 @@ public class GenoPubServlet extends HttpServlet {
 			tx = sess.beginTransaction();
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
+			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").length() == 0) {
 				throw new Exception("idAnnotation required.");
 			}
 
@@ -2662,11 +2662,11 @@ public class GenoPubServlet extends HttpServlet {
 
 			Element row   = table.addElement("TR");
 			row.addElement("TD").addText("Summary").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getSummary() != null && !annotation.getSummary().equals("") ? annotation.getSummary() : "&nbsp;");
+			row.addElement("TD").addCDATA(annotation.getSummary() != null && annotation.getSummary().length() != 0 ? annotation.getSummary() : "&nbsp;");
 
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Description").addAttribute("CLASS", "label");
-			if (annotation.getDescription() == null || annotation.getDescription().equals("")) {
+			if (annotation.getDescription() == null || annotation.getDescription().length() == 0) {
 				row.addElement("TD").addCDATA("&nbsp;");
 			} else {
 				String description = annotation.getDescription().replaceAll("\\n", "<br>");
@@ -2705,11 +2705,11 @@ public class GenoPubServlet extends HttpServlet {
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
 			String instituteName = dh.getInstituteName(annotation.getIdInstitute());
-			row.addElement("TD").addCDATA(instituteName != null && !instituteName.equals("" )? instituteName : "&nbsp;");
+			row.addElement("TD").addCDATA(instituteName != null && instituteName.length() != 0? instituteName : "&nbsp;");
 
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && !annotation.getCodeVisibility().equals("") ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
+			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && annotation.getCodeVisibility().length() != 0 ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
 
 			for(AnnotationProperty ap : (Set<AnnotationProperty>)annotation.getAnnotationProperties()) {
 				row   = table.addElement("TR");     
@@ -2725,14 +2725,14 @@ public class GenoPubServlet extends HttpServlet {
 					row.addElement("TD").addCDATA(value.length() > 0 ? value.toString() : "&nbsp;");
 
 				} else {
-					row.addElement("TD").addCDATA(ap.getValue() != null && !ap.getValue().equals("") ? ap.getValue() : "&nbsp;");
+					row.addElement("TD").addCDATA(ap.getValue() != null && ap.getValue().length() != 0 ? ap.getValue() : "&nbsp;");
 
 				}
 
 			}
 
 			String publishedBy = "&nbsp;";
-			if (annotation.getCreatedBy() != null && !annotation.getCreatedBy().equals("")) {
+			if (annotation.getCreatedBy() != null && annotation.getCreatedBy().length() != 0) {
 				publishedBy = annotation.getCreatedBy();
 
 				if (annotation.getCreateDate() != null) {
@@ -2879,11 +2879,11 @@ public class GenoPubServlet extends HttpServlet {
 					} else if (name.equals("idGenomeVersion")) {
 						idGenomeVersion = new Integer(value);
 					} else if (name.equals("idAnnotationGrouping")) {
-						if (value != null && !value.equals("")) {
+						if (value != null && value.length() != 0) {
 							idAnnotationGrouping = new Integer(value);
 						}
 					} else if (name.equals("idUserGroup")) {
-						if (value != null && !value.equals("")) {
+						if (value != null && value.length() != 0) {
 							idUserGroup = new Integer(value);
 						}
 					}
@@ -3563,12 +3563,12 @@ public class GenoPubServlet extends HttpServlet {
 
 		// Get the parameter that tells us if we are handling a large download.
 		ArchiveHelper archiveHelper = new ArchiveHelper();
-		if (req.getParameter("mode") != null && !req.getParameter("mode").equals("")) {
+		if (req.getParameter("mode") != null && req.getParameter("mode").length() != 0) {
 			archiveHelper.setMode(req.getParameter("mode"));
 		}
 
 		try {
-			if (keys == null || keys.equals("")) {
+			if (keys == null || keys.length() == 0) {
 				throw new Exception("Cannot perform download due to empty keys parameter.");
 			}
 			sess = HibernateUtil.getSessionFactory().openSession();
@@ -3720,7 +3720,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 
 
-			if (keys == null || keys.equals("")) {
+			if (keys == null || keys.length() == 0) {
 				throw new Exception("Cannot perform download due to empty keys parameter.");
 			}
 
@@ -4271,11 +4271,11 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if ((request.getParameter("firstName") == null || request.getParameter("firstName").equals("")) &&
-					(request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
+			if ((request.getParameter("firstName") == null || request.getParameter("firstName").length() == 0) &&
+					(request.getParameter("lastName") == null || request.getParameter("lastName").length() == 0)) {
 				throw new Exception("Please enter first or last name.");
 			}
-			if (request.getParameter("userName") == null || request.getParameter("userName").equals("")) {
+			if (request.getParameter("userName") == null || request.getParameter("userName").length() == 0) {
 				throw new Exception("Please enter the user name.");
 			}
 
@@ -4419,14 +4419,14 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if ((request.getParameter("firstName") == null || request.getParameter("firstName").equals("")) &&
-					(request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
+			if ((request.getParameter("firstName") == null || request.getParameter("firstName").length() == 0) &&
+					(request.getParameter("lastName") == null || request.getParameter("lastName").length() == 0)) {
 				throw new Exception("Please enter first or last name.");
 			}
-			if (request.getParameter("userName") == null || request.getParameter("userName").equals("")) {
+			if (request.getParameter("userName") == null || request.getParameter("userName").length() == 0) {
 				throw new Exception("Please enter the user name.");
 			}
-			if (request.getParameter("role") == null || request.getParameter("role").equals("")) {
+			if (request.getParameter("role") == null || request.getParameter("role").length() == 0) {
 				throw new Exception("Please select a role (admin, user, guest).");
 			}
 
@@ -4542,7 +4542,7 @@ public class GenoPubServlet extends HttpServlet {
 			User user = User.class.cast(sess.load(User.class, this.genoPubSecurity.getIdUser()));
 
 			// Encrypt the password
-			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && !request.getParameter("password").equals("")) {
+			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && request.getParameter("password").length() != 0) {
 				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
 				try {
 					String digestedPassword = getDigestedPassword(pw);
@@ -4599,7 +4599,7 @@ public class GenoPubServlet extends HttpServlet {
 				throw new InsufficientPermissionException("Insufficient permissions to add groups.");
 			}
 			// Make sure required fields are filled in.
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the group name.");
 			}
 
@@ -4717,7 +4717,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure required fields are filled in.
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the group name.");
 			}
 
@@ -4967,7 +4967,7 @@ public class GenoPubServlet extends HttpServlet {
 					for(Iterator<?> i1 = optionsDoc.getRootElement().elementIterator(); i1.hasNext();) {
 						Element optionNode = (Element)i1.next();
 						String idPropertyOption = optionNode.attributeValue("idPropertyOption");
-						if (idPropertyOption != null && !idPropertyOption.equals("")) {
+						if (idPropertyOption != null && idPropertyOption.length() != 0) {
 							if (option.getIdPropertyOption().equals(new Integer(idPropertyOption))) {
 								found = true;
 								break;
@@ -5358,7 +5358,7 @@ public class GenoPubServlet extends HttpServlet {
 		genometry_genopub_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 
 		// Make sure we have the parameter
-		if (genometry_genopub_dir == null || genometry_genopub_dir.equals("")) {
+		if (genometry_genopub_dir == null || genometry_genopub_dir.length() == 0) {
 			Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter " + Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 			return false;
 		}

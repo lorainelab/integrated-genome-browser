@@ -414,7 +414,7 @@ public class NeoSeqDemo extends Applet
 			InputStream istream = seq_URL.openStream();
 			BufferedInputStream bistream = new BufferedInputStream(istream);
 			model = (Sequence)parser.importContent(istream);
-			if ( null == model.getID() || model.getID().equals( "" ) )
+			if ( null == model.getID() || model.getID().length() == 0 )
 				model.setID( "NeoSeqDemo" );
 			bistream.close();
 			istream.close();

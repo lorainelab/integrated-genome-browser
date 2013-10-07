@@ -147,7 +147,7 @@ public class Region implements Comparable<Region>, Serializable {
 			e.printStackTrace();
 			return null;
 		}
-		if (ss.size() == 0) return null;
+		if (ss.isEmpty()) return null;
 		//make hashmap
 		HashMap<String,Region[]> ssReal = new HashMap<String,Region[]>();
 		Iterator<String> it = ss.keySet().iterator();

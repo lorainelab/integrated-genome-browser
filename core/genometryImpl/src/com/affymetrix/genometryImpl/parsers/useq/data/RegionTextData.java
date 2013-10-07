@@ -444,7 +444,7 @@ public class RegionTextData extends USeqData{
 		for (int i=0; i< sortedRegionTexts.length; i++){
 			if (sortedRegionTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegionTexts[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedRegionTexts = new RegionText[al.size()];
 		al.toArray(sortedRegionTexts);
 		updateSliceInfo(sortedRegionTexts, sliceInfo);

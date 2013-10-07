@@ -91,12 +91,12 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return operators.size() == 0 ? 0 : operators.get(0).getOperandCountMin(category);
+		return operators.isEmpty() ? 0 : operators.get(0).getOperandCountMin(category);
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return operators.size() == 0 ? 0 : operators.get(0).getOperandCountMax(category);
+		return operators.isEmpty() ? 0 : operators.get(0).getOperandCountMax(category);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class ComboChainOperator implements Operator, IParameters {
 	
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();
+		return operators.isEmpty() ? null :  operators.get(operators.size() - 1).getOutputCategory();
 	}
 
 	@Override

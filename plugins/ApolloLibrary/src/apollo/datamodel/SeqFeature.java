@@ -164,7 +164,7 @@ public class SeqFeature implements SeqFeatureI {
 		if (scores == null) {
 			scores = new HashMap<String, Score>();
 		}
-		String name = scores.size() == 0 ? "score" : "score" + scores.size() + 1;
+		String name = scores.isEmpty() ? "score" : "score" + scores.size() + 1;
 
 		addScore(new Score(name, score));
 		if (name.equals("score")) {

@@ -320,7 +320,7 @@ public class PositionTextData extends USeqData{
 		for (int i=0; i< sortedPositionTexts.length; i++){
 			if (sortedPositionTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositionTexts[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedPositionTexts = new PositionText[al.size()];
 		al.toArray(sortedPositionTexts);
 		updateSliceInfo(sortedPositionTexts, sliceInfo);

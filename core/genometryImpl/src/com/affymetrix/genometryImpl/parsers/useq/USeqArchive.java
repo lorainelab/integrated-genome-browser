@@ -60,9 +60,9 @@ public class USeqArchive {
 			USeqData plus = null;
 			USeqData minus = null;
 			USeqData non = null;
-			if (useqDataALPlus.size() != 0) plus = mergeUSeqData(useqDataALPlus);
-			if (useqDataALMinus.size() != 0) minus = mergeUSeqData(useqDataALMinus);
-			if (useqDataALNone.size() != 0) minus = mergeUSeqData(useqDataALNone);
+			if (!useqDataALPlus.isEmpty()) plus = mergeUSeqData(useqDataALPlus);
+			if (!useqDataALMinus.isEmpty()) minus = mergeUSeqData(useqDataALMinus);
+			if (!useqDataALNone.isEmpty()) minus = mergeUSeqData(useqDataALNone);
 			if (plus != null || minus != null || non !=null) return new USeqData[]{plus, minus, non};
 			else return null;
 
@@ -347,7 +347,7 @@ public class USeqArchive {
 				al.add(dr[i].zipEntry);
 			}
 		}
-		if (al.size() == 0) return null;
+		if (al.isEmpty()) return null;
 		return al;
 	}
 

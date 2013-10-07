@@ -424,7 +424,7 @@ public class RegionData extends USeqData{
 		for (int i=0; i< sortedRegions.length; i++){
 			if (sortedRegions[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegions[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedRegions = new Region[al.size()];
 		al.toArray(sortedRegions);
 		updateSliceInfo(sortedRegions, sliceInfo);

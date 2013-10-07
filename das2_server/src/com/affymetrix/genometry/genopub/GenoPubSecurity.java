@@ -76,7 +76,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 		if (this.scrutinizeAccess) {
 			// Lookup user
 			List<User> users = (List<User>)sess.createQuery("SELECT u from User as u where u.userName = '" + userName + "'").list();
-			if (users == null || users.size() == 0) {
+			if (users == null || users.isEmpty()) {
 				throw new Exception("Cannot find user " + userName);
 			}
 			user = users.get(0);	

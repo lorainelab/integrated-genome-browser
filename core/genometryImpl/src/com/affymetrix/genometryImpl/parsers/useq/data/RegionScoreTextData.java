@@ -468,7 +468,7 @@ public class RegionScoreTextData extends USeqData{
 		for (int i=0; i< sortedRegionScoreTexts.length; i++){
 			if (sortedRegionScoreTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegionScoreTexts[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedRegionScoreTexts = new RegionScoreText[al.size()];
 		al.toArray(sortedRegionScoreTexts);
 		updateSliceInfo(sortedRegionScoreTexts, sliceInfo);

@@ -172,7 +172,7 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
 			popup.add(vcfMenu);
 			final List<String> samples = VCF.getSamples();
 			final List<String> genotypeFields = VCF.getGenotypes();
-			if (genotypeFields.size() == 0) {
+			if (genotypeFields.isEmpty()) {
 				samplesPanel.clear();
 			}
 			else {

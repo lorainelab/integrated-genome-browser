@@ -337,7 +337,7 @@ public class PositionScoreTextData extends USeqData{
 		for (int i=0; i< sortedPositionScoreTexts.length; i++){
 			if (sortedPositionScoreTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositionScoreTexts[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedPositionScoreTexts = new PositionScoreText[al.size()];
 		al.toArray(sortedPositionScoreTexts);
 		updateSliceInfo(sortedPositionScoreTexts, sliceInfo);

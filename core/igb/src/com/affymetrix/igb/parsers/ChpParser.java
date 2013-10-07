@@ -413,7 +413,7 @@ public final class ChpParser {
 				// try to match up id to one previously seen
 				// must deal with possibility that sym ids used ".n" postfixing to uniquify
 				findSyms(group, id, syms, true); // not sure if should allow match to name, or always require full id match
-				if (syms.size() == 0) {
+				if (syms.isEmpty()) {
 					// couldn't find match with just name, so trying full id
 					id = array_type + ":" + id;
 					findSyms(group, id, syms, true);

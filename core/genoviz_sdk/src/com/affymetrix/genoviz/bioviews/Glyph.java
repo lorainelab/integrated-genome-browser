@@ -399,7 +399,7 @@ public abstract class Glyph implements GlyphI  {
 	public void removeChild(GlyphI glyph)  {
 		if (children != null) {
 			children.remove(glyph);
-			if (children.size() == 0) { children = null; }
+			if (children.isEmpty()) { children = null; }
 		}
 		// null out the scene if glyph is removed
 		glyph.setScene(null);

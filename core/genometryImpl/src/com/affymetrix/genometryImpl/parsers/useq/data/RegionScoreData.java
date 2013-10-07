@@ -450,7 +450,7 @@ public class RegionScoreData extends USeqData{
 		for (int i=0; i< sortedRegionScores.length; i++){
 			if (sortedRegionScores[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegionScores[i]);
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) return false;
 		sortedRegionScores = new RegionScore[al.size()];
 		al.toArray(sortedRegionScores);
 		updateSliceInfo(sortedRegionScores, sliceInfo);

@@ -5220,7 +5220,7 @@ public class GenoPubServlet extends HttpServlet {
 					// Make sure that genome versions with annotations or sequence have at least
 					// one segment.
 					if (annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).size() > 0 || gv.hasSequence(this.genometry_genopub_dir)) {
-						if (segments == null || segments.size() == 0) {
+						if (segments == null || segments.isEmpty()) {
 							if (invalidGenomeVersions.length() > 0) {
 								invalidGenomeVersions.append(", ");
 							}
@@ -5639,7 +5639,7 @@ public class GenoPubServlet extends HttpServlet {
 			//c.start(); //separate thread!
 		}
 
-		if (filesAL.size() !=0){
+		if (!filesAL.isEmpty()){
 			//stranded?
 			boolean stranded = false;
 			if (convertedUSeqFiles != null) {
@@ -5693,7 +5693,7 @@ public class GenoPubServlet extends HttpServlet {
 		}
 
 		//convert useq archive?  If a xxx.useq file is found and autoConvertUSeqArchives == true, then the file is converted using a separate thread.
-		if (filesAL.size()==0 && useq !=null && autoConvertUSeqArchives){
+		if (filesAL.isEmpty() && useq !=null && autoConvertUSeqArchives){
 			//this can consume alot of resources and take 1-10min
 			USeq2UCSCBig c = new USeq2UCSCBig(ucscWig2BigWigExe, ucscBed2BigBedExe, useq);
 			filesAL = c.fetchConvertedFileNames();
@@ -5702,7 +5702,7 @@ public class GenoPubServlet extends HttpServlet {
 			//c.start(); //separate thread!
 		}
 
-		if (filesAL.size() !=0){
+		if (!filesAL.isEmpty()){
 			File[] toReturn = new File[filesAL.size()];
 			filesAL.toArray(toReturn);
 			//stranded?

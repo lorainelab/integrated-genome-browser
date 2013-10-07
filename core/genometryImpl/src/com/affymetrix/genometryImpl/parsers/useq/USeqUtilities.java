@@ -171,7 +171,7 @@ public class USeqUtilities {
 					if (mat.matches()) al.add(new File(path, fileNames[i]));
 				}
 				//convert arraylist to file[]
-				if (al.size() != 0){
+				if (!al.isEmpty()){
 					files = new File[al.size()];
 					al.toArray(files);
 				}

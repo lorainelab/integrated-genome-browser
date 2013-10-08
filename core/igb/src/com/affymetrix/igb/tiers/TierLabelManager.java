@@ -112,7 +112,7 @@ public final class TierLabelManager implements PropertyHolder {
 					while(iterator.hasNext()) {
 						GlyphI g = iterator.next();
 						if(g.isSelected()){
-							g.setSelected(false);
+							labelmap.deselect(g);
 							iterator.remove();
 						}	
 					}

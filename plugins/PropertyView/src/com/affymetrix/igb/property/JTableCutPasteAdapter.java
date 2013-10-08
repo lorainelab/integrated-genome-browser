@@ -117,7 +117,7 @@ public final class JTableCutPasteAdapter {
   };
   
   private void doCopy() {
-    StringBuffer sbf=new StringBuffer();
+    StringBuilder sbf=new StringBuilder();
     // Check to ensure we have selected only a contiguous block of cells
     int numcols=jTable1.getSelectedColumnCount();
     int numrows=jTable1.getSelectedRowCount();

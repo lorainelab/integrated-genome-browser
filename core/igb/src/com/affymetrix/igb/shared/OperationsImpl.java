@@ -305,7 +305,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		if (operator == null) {
 			return null;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			int minCount = operator.getOperandCountMin(category);
 			int maxCount = operator.getOperandCountMax(category);

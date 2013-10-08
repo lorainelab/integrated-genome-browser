@@ -87,7 +87,7 @@ public class IGBScriptEngineFactory implements ScriptEngineFactory {
     
 	@Override
     public String getMethodCallSyntax(String obj, String m, String... args)  {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(obj).append(".").append(m).append("(");
         int len = args.length;
         for (int i = 0; i < len; i++) {
@@ -107,7 +107,7 @@ public class IGBScriptEngineFactory implements ScriptEngineFactory {
     
 	@Override
     public String getProgram(String ... statements) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int len = statements.length;
         for (int i = 0; i < len; i++) {
             if (i > 0) {

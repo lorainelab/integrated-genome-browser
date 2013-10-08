@@ -42,7 +42,7 @@ public class ComplementSequenceOperator implements Operator {
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		SimpleSymWithResidues residueSym = (SimpleSymWithResidues)symList.get(0).getChild(0);
 		String residues = residueSym.getResidues();
-		StringBuffer complementResidues = new StringBuffer(residues.length());
+		StringBuilder complementResidues = new StringBuilder(residues.length());
 		for (int i = 0; i < residues.length(); i++) {
 			complementResidues.append(COMPLEMENT[residues.charAt(i)]);
 		}

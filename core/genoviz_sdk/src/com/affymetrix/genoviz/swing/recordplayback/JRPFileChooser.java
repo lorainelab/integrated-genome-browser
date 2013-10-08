@@ -62,7 +62,7 @@ public class JRPFileChooser extends JFileChooser implements JRPWidget {
 					}
 				}
 				else {
-					StringBuffer selectedFiles = new StringBuffer();
+					StringBuilder selectedFiles = new StringBuilder();
 					selectedFiles.append("new File[]{");
 					boolean first = true;
 					for (File file : getSelectedFiles()) {

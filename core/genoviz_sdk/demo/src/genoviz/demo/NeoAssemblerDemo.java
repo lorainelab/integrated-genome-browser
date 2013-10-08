@@ -302,7 +302,7 @@ public class NeoAssemblerDemo extends JApplet
 		align_length = Math.abs(align_end-align_start)+1;
 
 		String seq_string = align.getSequence().getResidues();
-		StringBuffer sb = new StringBuffer(align_length);
+		StringBuilder sb = new StringBuilder(align_length);
 		for (int i=0; i<align_length; i++) {
 			sb.append(' ');
 		}
@@ -993,7 +993,7 @@ public class NeoAssemblerDemo extends JApplet
 		int begSeq = (int)selectedBox.x;
 		int endSeq = (int) ( selectedBox.x + selectedBox.width );
 		int seqPos = 0;
-		StringBuffer retSeq = new StringBuffer( "" );
+		StringBuilder retSeq = new StringBuilder( "" );
 		for ( int i = begSeq; i < endSeq; i++ ) {
 			seqPos = glyphMap.mapToMapped(i); //seqPos = glyphMap.mapToSequence( i );
 			char c = glyphSeq.getResidue( seqPos );

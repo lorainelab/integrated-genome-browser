@@ -118,7 +118,7 @@ public class SCFTraceParser implements ContentParser {
 				comments_offset = scfDataIn.readInt();
 				streampos += 4;
 
-				StringBuffer vb = new StringBuffer();
+				StringBuilder vb = new StringBuilder();
 				vb.append(String.valueOf((char)scfDataIn.readUnsignedByte()));
 				streampos++;
 

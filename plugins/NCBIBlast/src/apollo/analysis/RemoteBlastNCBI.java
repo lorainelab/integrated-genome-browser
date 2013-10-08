@@ -309,7 +309,7 @@ public class RemoteBlastNCBI {
 	}
 
 	private String createGetUrl(RemoteBlastNCBI.BlastRequest req, boolean setRequestFormat, boolean getText) {
-		StringBuffer getBuf = new StringBuffer(BLAST_URL);
+		StringBuilder getBuf = new StringBuilder(BLAST_URL);
 		getBuf.append("RID=").append(req.rid).append("&");
 		if(setRequestFormat){
 			getBuf.append("FORMAT_TYPE=").append(getText ? "Text&" : "XML&");

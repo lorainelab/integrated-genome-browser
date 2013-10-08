@@ -375,7 +375,7 @@ public class NeoAssemblerDemo2 extends JApplet
 		int begSeq = (int)selectedBox.x;
 		int endSeq = (int) ( selectedBox.x + selectedBox.width );
 		int seqPos = 0;
-		StringBuffer retSeq = new StringBuffer( "" );
+		StringBuilder retSeq = new StringBuilder( "" );
 		for ( int i = begSeq; i < endSeq; i++ ) {
 			seqPos = glyphMap.mapToMapped(i); //seqPos = glyphMap.mapToSequence( i );
 			char c = glyphSeq.getResidue( seqPos );

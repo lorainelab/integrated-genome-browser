@@ -437,7 +437,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 	}
 
 	private String getMultiple(char c, int count) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < count; i++) {
 			sb.append(c);
 		}

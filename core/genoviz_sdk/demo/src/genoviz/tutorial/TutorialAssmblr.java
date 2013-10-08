@@ -55,7 +55,7 @@ public class TutorialAssmblr extends JApplet {
 	BufferedReader buf = new BufferedReader(in);
 	boolean first_seq = true;
 	String line;
-	StringBuffer params = new StringBuffer();
+	StringBuilder params = new StringBuilder();
 	int offset = 0;
 	int numlines;
 	boolean forward = true;

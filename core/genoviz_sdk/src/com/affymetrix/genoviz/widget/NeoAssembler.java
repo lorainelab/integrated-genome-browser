@@ -1326,7 +1326,7 @@ public class NeoAssembler extends NeoContainerWidget
 		refend = consensus.getEnd();
 		checkRange(refstart, refend);
 		reflength = refend + 1;
-		StringBuffer refbuf = new StringBuffer(reflength);
+		StringBuilder refbuf = new StringBuilder(reflength);
 		int i;
 		for (i=0; i<reflength; i++) {
 			refbuf.append('*');

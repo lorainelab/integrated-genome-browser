@@ -47,7 +47,7 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public String getName() {
-		StringBuffer name = new StringBuffer(BASE_NAME);
+		StringBuilder name = new StringBuilder(BASE_NAME);
 		for (Operator operator : operators) {
 			name.append("_");
 			name.append(operator.getName());
@@ -57,7 +57,7 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public String getDisplay() {
-		StringBuffer name = new StringBuffer(GenometryConstants.BUNDLE.getString("operator_" + BASE_NAME));
+		StringBuilder name = new StringBuilder(GenometryConstants.BUNDLE.getString("operator_" + BASE_NAME));
 		for (Operator operator : operators) {
 			if (BASE_NAME.equals(name.toString())) {
 				name.append(" ");

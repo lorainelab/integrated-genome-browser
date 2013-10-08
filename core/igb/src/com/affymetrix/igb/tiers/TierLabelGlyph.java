@@ -297,7 +297,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	@SuppressWarnings("unused")
 	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, TierGlyph.Direction direction) {
 		int maxLines = (upperY - lowerY) / text_height;
-		if (maxLines == 0) {
+		if (maxLines <= 0 || pixelbox.width - (pbBuffer_x * 2) <= 0) {
 			return;
 		}
 		String[] lines = StringUtils.wrap(label, fm, pixelbox.width - (pbBuffer_x * 2), maxLines);

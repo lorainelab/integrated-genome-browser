@@ -17,16 +17,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
-import com.affymetrix.genometry.genopub.DictionaryHelper;
-import com.affymetrix.genometry.genopub.GenoPubSecurity;
-import com.affymetrix.genometry.genopub.GenomeVersion;
-import com.affymetrix.genometry.genopub.Institute;
-import com.affymetrix.genometry.genopub.Owned;
-import com.affymetrix.genometry.genopub.User;
-import com.affymetrix.genometry.genopub.UserGroup;
-import com.affymetrix.genometry.genopub.Util;
-import com.affymetrix.genometry.genopub.Visibility;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 public class Annotation implements Serializable, Owned {

@@ -39,6 +39,7 @@ import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
+import java.util.EnumMap;
 
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
@@ -98,9 +99,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	public WindowServiceDefaultImpl() {
 		super();
-		move_tab_to_window_items = new HashMap<TabState, JRPMenuItem>();
-		move_tabbed_panel_to_window_items = new HashMap<TabState, JRPMenuItem>();
-		tabHolders = new HashMap<TabState, TabHolder>();
+		move_tab_to_window_items = new EnumMap<TabState, JRPMenuItem>(TabState.class);
+		move_tabbed_panel_to_window_items = new EnumMap<TabState, JRPMenuItem>(TabState.class);
+		tabHolders = new EnumMap<TabState, TabHolder>(TabState.class);
 		tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
 		tabMenus = new HashMap<IGBTabPanel, JMenu>();

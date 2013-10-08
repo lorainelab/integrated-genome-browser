@@ -31,6 +31,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.EnumMap;
 
 public abstract class AbstractExportFileAction
 extends GenericAction implements SymSelectionListener {
@@ -48,7 +49,7 @@ extends GenericAction implements SymSelectionListener {
 			boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 		model = new ExportFileModel();
-		preferredFilters = new HashMap<FileTypeCategory, UniFileFilter>();
+		preferredFilters = new EnumMap<FileTypeCategory, UniFileFilter>(FileTypeCategory.class);
 	}
 
 	/**

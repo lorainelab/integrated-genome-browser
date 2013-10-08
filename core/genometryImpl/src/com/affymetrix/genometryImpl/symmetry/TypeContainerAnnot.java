@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;

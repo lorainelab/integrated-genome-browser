@@ -2,7 +2,6 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;

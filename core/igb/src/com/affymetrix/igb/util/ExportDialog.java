@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;

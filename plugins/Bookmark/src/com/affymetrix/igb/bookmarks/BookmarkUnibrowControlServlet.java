@@ -26,7 +26,6 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;

@@ -4,9 +4,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.event.MouseInputAdapter;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.tiers.AccordionTierResizer;
-import com.affymetrix.igb.tiers.TierResizer;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *

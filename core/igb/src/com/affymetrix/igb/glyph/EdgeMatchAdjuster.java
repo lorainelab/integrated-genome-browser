@@ -20,7 +20,6 @@ import javax.swing.event.ChangeEvent;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.ColorUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {

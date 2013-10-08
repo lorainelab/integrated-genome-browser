@@ -9,7 +9,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 /**
  * This will instantiate a custom trust manager to handle untrusted

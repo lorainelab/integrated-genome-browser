@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genoviz.bioviews.Glyph;

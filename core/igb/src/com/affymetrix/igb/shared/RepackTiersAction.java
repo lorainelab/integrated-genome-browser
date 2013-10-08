@@ -6,7 +6,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.TierLabelGlyph;

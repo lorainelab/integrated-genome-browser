@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;

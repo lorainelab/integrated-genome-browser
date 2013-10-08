@@ -12,7 +12,6 @@ import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.FileTracker;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.genometryImpl.weblink.WebLinkList;
 
 import java.util.List;
 import java.awt.*;

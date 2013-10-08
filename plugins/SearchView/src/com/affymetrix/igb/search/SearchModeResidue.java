@@ -25,7 +25,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
-import com.affymetrix.igb.util.ColorUtils;
 
 public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {

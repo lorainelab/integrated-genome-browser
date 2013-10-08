@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
@@ -15,7 +14,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import static com.affymetrix.igb.shared.Selections.*;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class CloseTracksAction extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;

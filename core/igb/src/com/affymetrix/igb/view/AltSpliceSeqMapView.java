@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;

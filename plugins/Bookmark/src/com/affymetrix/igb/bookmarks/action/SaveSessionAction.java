@@ -1,7 +1,6 @@
 package com.affymetrix.igb.bookmarks.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
@@ -12,9 +11,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.prefs.Preferences;
 

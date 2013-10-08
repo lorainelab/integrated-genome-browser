@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.Adjustable;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

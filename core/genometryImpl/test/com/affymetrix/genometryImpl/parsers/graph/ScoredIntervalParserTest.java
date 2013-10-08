@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;

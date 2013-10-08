@@ -1,8 +1,6 @@
 package com.affymetrix.igb.bookmarks.action;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.BookmarkList;

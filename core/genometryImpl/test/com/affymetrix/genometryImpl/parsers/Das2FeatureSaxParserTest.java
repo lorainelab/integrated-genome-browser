@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 import java.io.File;
 import java.io.FileInputStream;

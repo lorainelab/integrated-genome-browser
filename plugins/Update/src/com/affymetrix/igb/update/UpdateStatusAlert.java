@@ -1,11 +1,8 @@
 package com.affymetrix.igb.update;
 
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import java.text.MessageFormat;
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 import static com.affymetrix.igb.update.ShowUpdate.*;
 
 /**

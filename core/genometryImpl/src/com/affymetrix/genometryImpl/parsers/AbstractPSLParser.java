@@ -247,7 +247,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 				}
 			}
 		} catch (Exception e) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("Error parsing PSL file\n");
 			sb.append("line count: ").append(line_count).append("\n");
 			sb.append("child count: ").append(childcount).append("\n");

@@ -653,7 +653,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 			return;
 		}
 		char match = match_char.charValue();
-		StringBuffer sb = new StringBuffer ( sequence.length() );
+		StringBuilder sb = new StringBuilder ( sequence.length() );
 		for ( int i = 0; i < sequence.length(); i++ ) {
 			if ( sequence.charAt(i) == consensus.getResidue(i +  seq_beg) ) {
 				sb.append ( match );

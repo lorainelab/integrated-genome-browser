@@ -92,7 +92,7 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
   }
 
   private String getToolTip(Bookmark bm) {
-    StringBuffer toolTipSB = new StringBuffer();
+    StringBuilder toolTipSB = new StringBuilder();
     Map<String, String[]> parameters = Bookmark.parseParameters(bm.getURL());
     BookmarkUnibrowControlServlet bucs = BookmarkUnibrowControlServlet.getInstance();
 	String seqid = bucs.getStringParameter(parameters, Bookmark.SEQID);

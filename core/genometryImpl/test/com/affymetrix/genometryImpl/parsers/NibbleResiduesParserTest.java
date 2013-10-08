@@ -31,7 +31,7 @@ public class NibbleResiduesParserTest {
 	 * @return string
 	 */
 	private String createTestString() {
-		StringBuffer testBuffer = new StringBuffer(256*2);
+		StringBuilder testBuffer = new StringBuilder(256*2);
 		char[] nibble2char = {'A', 'C', 'G', 'T', 'N', 'M', 'R', 'W', 'S', 'Y', 'K', 'V', 'H', 'D', 'B', 'U'};
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {

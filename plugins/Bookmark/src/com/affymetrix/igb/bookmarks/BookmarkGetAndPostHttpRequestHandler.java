@@ -71,7 +71,7 @@ class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 		while (null != line && (0 < line.trim().length())) {
 			String[] word = line.split(": ");
 			if (2 <= word.length) {
-				StringBuffer b = new StringBuffer(word[1]);
+				StringBuilder b = new StringBuilder(word[1]);
 				int i = 2;
 				while (i < word.length) {
 					b.append(": ").append(word[i]);

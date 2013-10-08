@@ -733,7 +733,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		boolean computeIntronLengthForCDSStart = true;
 		boolean computerIntronLengthForCDSEnd = true;
 		
-		StringBuffer annotatedSeqStringBuffer = new StringBuffer();
+		StringBuilder annotatedSeqStringBuffer = new StringBuilder();
 		
 		int start = 0, end = 0;
 		Iterator<CreateValueSet> it_working = null;

@@ -85,7 +85,7 @@ public class BaseCalls {
 	}
 
 	public String getBaseString(){
-		StringBuffer residue = new StringBuffer();
+		StringBuilder residue = new StringBuilder();
 		for (BaseCall cb : this.baseVector) {
 			char base = cb.getBase();
 			residue.append( base );

@@ -532,7 +532,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
 				} else {
 					String msg = MessageFormat.format(PluginsView.BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
-					StringBuffer sb = new StringBuffer(msg);
+					StringBuilder sb = new StringBuilder(msg);
 					sb.append(" -> ");
 					boolean started = false;
 					for (Requirement req : resolver.getUnsatisfiedRequirements()) {

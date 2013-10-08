@@ -80,7 +80,7 @@ public class ScriptManager {
 	}
 
 	public String getScript(ScriptProcessor scriptProcessor) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(scriptProcessor.getHeader());
 		sb.append("\n");
 		for (Operation operation : operations) {

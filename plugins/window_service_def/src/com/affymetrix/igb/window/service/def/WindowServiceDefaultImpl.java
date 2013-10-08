@@ -85,8 +85,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 	
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
-	private final HashMap<TabState, JRPMenuItem> move_tab_to_window_items;
-	private final HashMap<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
+	private final Map<TabState, JRPMenuItem> move_tab_to_window_items;
+	private final Map<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
 	private JRPMenu tabs_menu;
 	private JFrame frame;
 	private Map<TabState, TabHolder> tabHolders;

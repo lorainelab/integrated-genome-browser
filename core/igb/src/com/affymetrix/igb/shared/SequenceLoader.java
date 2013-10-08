@@ -3,7 +3,6 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.igb.shared.LoadResidueAction;
 
 public class SequenceLoader extends CThreadWorker<Object, Void> {
 	private SeqSpan span;

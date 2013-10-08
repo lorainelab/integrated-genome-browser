@@ -13,8 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.BioSeq;
-
 /**
  * Implementations model a contiguous section of a {@link BioSeq}.
  */

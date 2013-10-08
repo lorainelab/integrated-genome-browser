@@ -1,6 +1,5 @@
 package com.affymetrix.igb.update;
 
-import com.affymetrix.igb.update.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;

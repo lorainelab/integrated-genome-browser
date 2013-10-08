@@ -17,7 +17,6 @@ import net.sf.samtools.StubBAMFileIndex;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.symloader.IndexZoomSymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import net.sf.samtools.seekablestream.SeekableFileStream;

@@ -25,8 +25,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.genometryImpl.symloader.SymLoaderTabix;
-import com.gene.sampleselection.SampleSelectionCallback;
-import com.gene.sampleselection.SampleSelectionView;
 
 public class VCFListener implements TrackClickListener, SampleSelectionCallback {
 	private List<VCF> vcfs = new ArrayList<VCF>();

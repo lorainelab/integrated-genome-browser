@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.symmetry;
 
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 

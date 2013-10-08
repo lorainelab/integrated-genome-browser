@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.util.ThresholdReader;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

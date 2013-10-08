@@ -1,6 +1,5 @@
 package com.affymetrix.igb.update;
 
-import com.affymetrix.igb.update.*;
 import java.util.Date;
 import org.osgi.framework.Version;
 

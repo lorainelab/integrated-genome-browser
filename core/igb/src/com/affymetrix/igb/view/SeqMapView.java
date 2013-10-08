@@ -64,8 +64,8 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 /**
  * A panel hosting a labeled tier map.
@@ -2588,21 +2588,34 @@ public class SeqMapView extends JPanel
 		if(!(glyph instanceof GraphGlyph)){
 			return;
 		}
-		
+		GlyphI joinedParent = glyph.getParent();
 		if (glyph.getParent() != null && glyph.getParent().getChildCount() == 2) {
+			List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>(2);
 			for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
 				if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
 					splitGraph((GraphGlyph) glyph.getParent().getChild(i));
+					graphGlyphs.add((GraphGlyph) glyph.getParent().getChild(i));
 				}
+			}
+			for (GraphGlyph graphGlyph : graphGlyphs) {
+				joinedParent.removeChild(graphGlyph);
+				TierGlyph tier = GraphGlyphFactory.addGraphGlyphToTier(graphGlyph, graphGlyph.getAnnotStyle(), this, aseq);
+				tier.pack(getSeqMap().getView());
 			}
 		} else {
 			splitGraph((GraphGlyph)glyph);
+			joinedParent.removeChild(glyph);
 		}
+		joinedParent.pack(getSeqMap().getView());
 	}
-	
+		
 	private static void splitGraph(GraphGlyph glyph) {
 		GraphSym gsym = (GraphSym) glyph.getInfo();
 		GraphState gstate = gsym.getGraphState();
+		// Set Y value from combo style to avoid graph jumping
+		if(gstate.getComboStyle() != null) {
+			gstate.getTierStyle().setY(gstate.getComboStyle().getY());
+		}
 		gstate.setComboStyle(null, 0);
 		gstate.getTierStyle().setJoin(false);
 		gstate.getTierStyle().setFloatTier(false);

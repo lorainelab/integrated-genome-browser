@@ -22,7 +22,6 @@ import javax.swing.border.Border;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.filter.NoIntronFilter;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -135,7 +134,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		repackStub.repack(full_repack, tier_changed);
 	}
 
-	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
+	private JMenu addOperationMenu(List<? extends SeqSymmetry> syms) {
 		JMenu operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
 		if (IGBConstants.GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
 			return operationsMenu; 
@@ -265,8 +264,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	@Override
 	public void popupNotify(javax.swing.JPopupMenu popup, final TierLabelManager handler) {
-		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
-		int num_selections = labels.size();
+		int num_selections = Selections.allGlyphs.size();
 		boolean any_are_collapsed = false;
 		boolean any_are_expanded = false;
 		boolean coordinates_track_selected = false;
@@ -281,11 +279,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		boolean any_locked = false;
 		int no_of_locked = 0;
 		FileTypeCategory category = num_selections > 0 ? 
-				((RootSeqSymmetry)labels.get(0).getReferenceTier().getInfo()).getCategory()
+				((RootSeqSymmetry)Selections.allGlyphs.get(0).getInfo()).getCategory()
 				: null;
 		
-		for (TierLabelGlyph label : labels) {
-			TierGlyph glyph = label.getReferenceTier();
+		for (StyledGlyph glyph : Selections.allGlyphs) {
 			ITrackStyleExtended astyle = glyph.getAnnotStyle();
 			
 			if (astyle.getExpandable()) {
@@ -327,12 +324,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 
 		
-		TierGlyph tierGlyph = (num_selections == 1 ? (TierGlyph) labels.get(0).getInfo() : null);
+		StyledGlyph styledGlyph = (num_selections == 1 ? Selections.allGlyphs.get(0) : null);
 		
 		Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 		Border colorBorder, finalBorder;
-		if(num_selections == 1 && tierGlyph != null){
-			colorBorder = BorderFactory.createLineBorder(tierGlyph.getAnnotStyle().getForeground());
+		if(num_selections == 1 && styledGlyph != null){
+			colorBorder = BorderFactory.createLineBorder(styledGlyph.getAnnotStyle().getForeground());
 			finalBorder = BorderFactory.createCompoundBorder(colorBorder, emptyBorder);
 			
 		} else {
@@ -428,7 +425,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//show_all.setEnabled(containHiddenTiers);
 		//popup.add(show_all);
 		
-		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
+		JMenu operationsMenu = addOperationMenu(Selections.rootSyms);
 		popup.add(operationsMenu);
 		operationsMenu.getPopupMenu().setBorder(finalBorder);
 		operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
@@ -457,11 +454,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 				
 		JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
-		save_selected_annotations.setEnabled(tierGlyph != null && !tierGlyph.getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
+		save_selected_annotations.setEnabled(styledGlyph != null && styledGlyph instanceof TierGlyph && 
+				!((TierGlyph)styledGlyph).getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(styledGlyph.getFileTypeCategory()));
 		save_selected_annotations.setIcon(null);
 		popup.add(save_selected_annotations);
 		JMenuItem save_track = new JRPMenuItemTLP(ExportFileAction.getAction());
-		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && tierGlyph.getInfo() != null && ExportSelectedAnnotationFileAction.getAction().isExportable(tierGlyph.getFileTypeCategory()));
+		save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && styledGlyph.getInfo() != null && ExportSelectedAnnotationFileAction.getAction().isExportable(styledGlyph.getFileTypeCategory()));
 		save_track.setIcon(null);
 		popup.add(save_track);
 		

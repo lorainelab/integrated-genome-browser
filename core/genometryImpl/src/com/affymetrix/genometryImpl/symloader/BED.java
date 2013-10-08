@@ -811,7 +811,7 @@ public class BED extends SymLoader implements LineProcessor {
 
 		} catch (IOException ex) {
 			if(ex.getMessage() != null && ex.getMessage().toLowerCase().contains(TOO_MANY_CONTIGS_EXCEPTION.toLowerCase())){
-				ErrorHandler.errorPanel("Too many contigs in a file. Some of the contigs will not be show");
+				ErrorHandler.errorPanel("File contains too many contigs; some will not be shown.");
 				return true;
 			}
 			throw ex;

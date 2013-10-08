@@ -3,7 +3,6 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import javax.swing.*;

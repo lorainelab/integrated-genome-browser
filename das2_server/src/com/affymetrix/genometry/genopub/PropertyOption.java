@@ -1,7 +1,5 @@
 package com.affymetrix.genometry.genopub;
 
-import java.util.Set;
-
 
 public class PropertyOption  {
     

@@ -2,7 +2,6 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;

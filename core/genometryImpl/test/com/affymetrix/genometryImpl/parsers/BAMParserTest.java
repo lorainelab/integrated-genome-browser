@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import org.junit.Test;

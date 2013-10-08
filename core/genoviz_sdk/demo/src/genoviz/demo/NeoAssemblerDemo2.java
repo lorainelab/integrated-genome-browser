@@ -13,7 +13,6 @@
 
 package genoviz.demo;
 
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.event.NeoRangeEvent;

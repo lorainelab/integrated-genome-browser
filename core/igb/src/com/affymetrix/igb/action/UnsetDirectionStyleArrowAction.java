@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 public class UnsetDirectionStyleArrowAction extends SetDirectionStyleActionA {

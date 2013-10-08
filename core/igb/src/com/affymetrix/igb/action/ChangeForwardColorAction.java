@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.Selections;
 import java.awt.Color;
 
 public class ChangeForwardColorAction extends ChangeColorActionA {

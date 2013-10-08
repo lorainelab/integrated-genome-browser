@@ -1,7 +1,6 @@
 package com.affymetrix.igb.tabs.annotation;
 
 import com.affymetrix.genoviz.swing.NumericFilter;
-import javax.swing.text.AbstractDocument;
 
 /**
  *

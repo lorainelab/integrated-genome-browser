@@ -1,6 +1,5 @@
 package genoviz.demo;
 
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.datamodel.ReadConfidence;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -8,7 +7,6 @@ import com.affymetrix.genoviz.parser.FASTQParser;
 import com.affymetrix.genoviz.widget.NeoQualler;
 import com.affymetrix.genoviz.widget.NeoQuallerCustomizer;
 
-import java.applet.Applet;
 import java.applet.AppletContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;

@@ -12,14 +12,12 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.Action;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

@@ -1,7 +1,6 @@
 package com.affymetrix.genometry.genopub;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class UnloadAnnotation implements Serializable {
 

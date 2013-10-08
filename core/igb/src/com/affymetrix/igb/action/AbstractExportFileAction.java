@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;

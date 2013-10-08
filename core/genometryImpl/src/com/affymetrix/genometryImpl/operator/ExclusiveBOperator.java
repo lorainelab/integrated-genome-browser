@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 

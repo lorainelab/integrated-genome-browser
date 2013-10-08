@@ -7,7 +7,6 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 

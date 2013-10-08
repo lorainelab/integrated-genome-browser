@@ -4,7 +4,6 @@ import java.awt.AWTEvent;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;

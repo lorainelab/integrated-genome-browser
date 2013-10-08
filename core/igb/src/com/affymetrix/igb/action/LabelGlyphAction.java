@@ -1,7 +1,6 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.TierGlyph;

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import java.awt.event.ActionEvent;
 

@@ -14,11 +14,9 @@
 package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import java.applet.*;
 import java.awt.event.*;
 import java.util.Vector;
 
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.event.*;

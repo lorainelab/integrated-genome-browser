@@ -43,7 +43,6 @@ import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Toolkit;
 import java.awt.Window;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 

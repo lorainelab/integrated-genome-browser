@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.glyph;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.AbbreviationsFormat;
 import java.util.List;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.util.GeneralUtils;

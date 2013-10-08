@@ -79,7 +79,7 @@ public class MapqScore extends ColorProvider {
 			return top_color;
 		}
 
-		int index = (int) (((score - min_score_color) / range) * HeatMap.BINS);
+		int index = Math.round(((score - min_score_color) / range) * (HeatMap.BINS - 1));
 
 		return custom_heatmap.get().getColors()[index];
 	}

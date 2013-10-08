@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -183,6 +182,15 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 				graphGlyph.pack(smv.getSeqMap().getView());
 			}
 		//}
+		graphGlyph.setInfo(newgraf);
+		TierGlyph.Direction direction = TierGlyph.Direction.NONE;			
+		if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+			direction = TierGlyph.Direction.REVERSE;
+		} else if (GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+			direction = TierGlyph.Direction.FORWARD;
+		}
+		graphGlyph.setDirection(direction);
+		
 		return graphGlyph;
 	}
 
@@ -192,7 +200,6 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 			GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if (graphGlyph != null) {				
 				if (style.getFloatTier()) {
-					graphGlyph.setInfo(sym);
 					graphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
 					smv.getFloaterGlyph().addChild(graphGlyph);
 //					smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap().getView());
@@ -203,27 +210,24 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 						//result.setExpandedPacker(new GraphFasterExpandPacker());
 						style = graf.getGraphState().getComboStyle();
 					}
-					TierGlyph.Direction direction = TierGlyph.Direction.NONE;
-					
-					if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-						direction = TierGlyph.Direction.REVERSE;
-					} else if (GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-						direction = TierGlyph.Direction.FORWARD;
-					}
-					graphGlyph.setDirection(direction);
-					TierGlyph result = smv.getTrack(style, direction);
-					result.setDataModelFromOriginalSym(graphGlyph, graf);
-					result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
-					result.addChild(graphGlyph);
-					result.setTierType(TierGlyph.TierType.GRAPH);
-					result.setInfo(graf);
-					doMiddlegroundShading(result, smv, seq);
+					addGraphGlyphToTier(graphGlyph, style, smv, seq);
 				}
 			}
 		} else {
 			ourLogger.log(Level.SEVERE,
 					"GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry passed in is NOT a GraphSym: {0}", sym);
 		}
+	}
+	
+	public static TierGlyph addGraphGlyphToTier(GraphGlyph graphGlyph, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
+		TierGlyph result = smv.getTrack(style, graphGlyph.getDirection());
+		result.setDataModelFromOriginalSym(graphGlyph, graphGlyph.getInfo());
+		result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
+		result.addChild(graphGlyph);
+		result.setTierType(TierGlyph.TierType.GRAPH);
+		result.setInfo(graphGlyph.getInfo());
+		doMiddlegroundShading(result, smv, seq);
+		return result;
 	}
 	
 	private static GraphState getGraphState(ITrackStyleExtended style){

@@ -31,6 +31,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import java.util.EnumMap;
 
 public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefreshed, SeqSelectionListener, MouseListener, MouseMotionListener {
 	private final IGBService igbService;
@@ -44,7 +45,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		super();
 		this.igbService = igbService;
 		this.refSeqTiers = new ArrayList<TierGlyph>();
-		intronSpan2Glyphs = new HashMap<StyledGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>>();
+		intronSpan2Glyphs = new EnumMap<StyledGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>>(StyledGlyph.Direction.class);
 		intronSpan2Glyphs.put(StyledGlyph.Direction.FORWARD, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
 		intronSpan2Glyphs.put(StyledGlyph.Direction.REVERSE, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
 	}
@@ -126,7 +127,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 		}
 	}
 
-	private static Map<StyledGlyph.Direction, List<StyledGlyph.Direction>> directionMap = new HashMap<StyledGlyph.Direction, List<StyledGlyph.Direction>>();
+	private static Map<StyledGlyph.Direction, List<StyledGlyph.Direction>> directionMap = new EnumMap<StyledGlyph.Direction, List<StyledGlyph.Direction>>(StyledGlyph.Direction.class);
 	static {
 		List<StyledGlyph.Direction> forward = new ArrayList<StyledGlyph.Direction>();
 		forward.add(StyledGlyph.Direction.FORWARD);

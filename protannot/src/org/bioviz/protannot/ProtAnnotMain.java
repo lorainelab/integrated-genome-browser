@@ -57,6 +57,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -154,7 +155,7 @@ final public class ProtAnnotMain implements WindowListener {
         }
 
     };
-    private final Map<Arguments,String> ArgumentValues = new HashMap<Arguments,String>();
+    private final Map<Arguments,String> ArgumentValues = new EnumMap<Arguments,String>(Arguments.class);
 
     public static void main(String[] args) {
         singleton = ProtAnnotMain.getInstance();

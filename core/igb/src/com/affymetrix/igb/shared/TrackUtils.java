@@ -23,6 +23,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import java.util.EnumMap;
 
 public class TrackUtils {
 
@@ -113,7 +114,7 @@ public class TrackUtils {
 	}
 		
 	private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
-		Map<FileTypeCategory, Integer> trackCounts = new HashMap<FileTypeCategory, Integer>();
+		Map<FileTypeCategory, Integer> trackCounts = new EnumMap<FileTypeCategory, Integer>(FileTypeCategory.class);
 		for (SeqSymmetry sym : syms) {
 			if (sym != null) {
 				FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();

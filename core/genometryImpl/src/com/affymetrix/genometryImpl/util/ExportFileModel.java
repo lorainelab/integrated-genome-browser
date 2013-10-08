@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class ExportFileModel {
 	private final Map<FileTypeCategory, List<Class<? extends AnnotationWriter>>> annotationWriters;
 
 	public ExportFileModel(){
-		annotationWriters = new HashMap<FileTypeCategory, List<Class<? extends AnnotationWriter>>>();
+		annotationWriters = new EnumMap<FileTypeCategory, List<Class<? extends AnnotationWriter>>>(FileTypeCategory.class);
 		init();
 	}
 	

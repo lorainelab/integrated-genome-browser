@@ -44,7 +44,7 @@ public class LockTierHeightAction extends TierHeightAction{
 	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
-		StyledGlyph[] glyphs = allGlyphs.toArray(new StyledGlyph[0]);
+		StyledGlyph[] glyphs = allGlyphs.toArray(new StyledGlyph[allGlyphs.size()]);
 		int len = getTierManager().getVisibleTierGlyphs().size() - 1 == glyphs.length? glyphs.length - 1 : glyphs.length;
 		StyledGlyph glyph;
 		for(int i = 0; i < len ; i++){

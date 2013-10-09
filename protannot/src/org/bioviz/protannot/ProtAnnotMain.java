@@ -673,7 +673,7 @@ final public class ProtAnnotMain implements WindowListener {
         while (matcher.find()) {
             ret.add(matcher.group(1));
         }
-        return ret.toArray(new String[0]);
+        return ret.toArray(new String[ret.size()]);
     }
 
 	/**

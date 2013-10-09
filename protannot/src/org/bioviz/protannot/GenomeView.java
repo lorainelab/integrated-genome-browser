@@ -972,7 +972,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
                 }
             }
         }
-		Properties[] prop_array = propvec.toArray(new Properties[0]);
+		Properties[] prop_array = propvec.toArray(new Properties[propvec.size()]);
         table_view.showProperties(prop_array);
     }
 

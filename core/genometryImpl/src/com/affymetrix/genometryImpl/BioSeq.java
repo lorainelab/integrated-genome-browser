@@ -264,7 +264,6 @@ public class BioSeq implements SearchableCharIterator {
 		if (type != null)  {
 			// add as child to the top-level container
 			addAnnotation(sym, type, ext, index); // side-effect calls notifyModified()
-			return;
 		}
 		else  {
 			throw new RuntimeException(

@@ -206,7 +206,6 @@ public class SimpleMap extends JApplet implements ActionListener {
 			}
 			else { // not a keyword.
 				System.err.println("\"" + keyword + "\" is not a keyword.");
-				return;
 			}
 		}
 	}

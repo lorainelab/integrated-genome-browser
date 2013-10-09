@@ -24,13 +24,12 @@ public class TraceSample {
 	protected int sample_T;
 
 	public TraceSample ( int sample_A, int sample_C, int sample_G, int sample_T ) {
+		super();
 
 		this.sample_A = sample_A;
 		this.sample_C = sample_C;
 		this.sample_G = sample_G;
 		this.sample_T = sample_T;
-
-		return;
 	}
 
 	public int getSampleA () { return sample_A; }

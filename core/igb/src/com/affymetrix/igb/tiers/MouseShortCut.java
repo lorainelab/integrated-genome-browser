@@ -97,7 +97,6 @@ final public class MouseShortCut implements MouseListener{
 			
 			//Zoom to glyphs.
 			smv.zoomToGlyphs(glyphs);
-			return;
 		}
 		
 	}

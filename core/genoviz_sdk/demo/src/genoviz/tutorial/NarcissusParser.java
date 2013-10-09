@@ -372,7 +372,6 @@ public class NarcissusParser implements ContentParser {
 					MapGlyphFactory fac = (MapGlyphFactory)featureTypes.get(keyword);
 					if (null == fac) { // not a keyword.
 						System.err.println("\"" + keyword + "\" is not a keyword.");
-						return;
 					}
 					else { // a feature type
 						int[] r = null;

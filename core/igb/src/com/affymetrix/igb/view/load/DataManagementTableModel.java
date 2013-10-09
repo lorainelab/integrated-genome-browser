@@ -595,8 +595,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		if(virtualFeatures == null)
-			return;
+		if(virtualFeatures == null) {
+		}
 		
 //		sort();
 	}

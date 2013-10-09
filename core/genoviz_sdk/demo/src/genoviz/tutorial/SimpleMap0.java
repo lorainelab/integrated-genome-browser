@@ -213,7 +213,6 @@ public class SimpleMap0 extends Applet implements ActionListener {
 			}
 			else { // not a keyword.
 				System.err.println("\"" + keyword + "\" is not a keyword.");
-				return;
 			}
 		}
 	}

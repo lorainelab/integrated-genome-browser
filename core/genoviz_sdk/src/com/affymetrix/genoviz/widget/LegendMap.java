@@ -117,7 +117,6 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 
 			default:
 				System.out.println("unrecognized TierEvent type: " + type);
-				return;
 		}
 	}
 

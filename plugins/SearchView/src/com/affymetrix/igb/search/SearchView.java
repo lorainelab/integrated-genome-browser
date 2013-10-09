@@ -97,8 +97,6 @@ public final class SearchView extends IGBTabPanel implements
 			}
 
 			SearchView.this.searchTF.setToolTipText(selectedSearchMode.getTooltip());
-
-			return;
 		}
 	}
 	private SearchModeAction searchModeAction = new SearchModeAction();

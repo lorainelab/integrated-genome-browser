@@ -97,7 +97,7 @@ public final class LoadFileAction extends OpenURIAction {
 	
 	private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, FileFilter all_known_types) {
 		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
-		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
 		if (!all_known_types.accept(new File(friendlyName))) {
 			return false;
 		}

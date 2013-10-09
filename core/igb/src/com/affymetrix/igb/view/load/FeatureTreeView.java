@@ -344,7 +344,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	}
 
 	public void restoreState(String state) {
-		int colon = state.indexOf(":");
+		int colon = state.indexOf(':');
 		String expand = state.substring(0, colon);
 		String collapse = state.substring(colon + 1, state.length());
 

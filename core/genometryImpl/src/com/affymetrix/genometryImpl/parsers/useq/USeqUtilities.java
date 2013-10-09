@@ -101,7 +101,7 @@ public class USeqUtilities {
 	 * If none found returns the original.
 	 */
 	public static String removeExtension(String txt) {
-		int index = txt.lastIndexOf(".");
+		int index = txt.lastIndexOf('.');
 		if (index != -1)  return txt.substring(0,index);
 		return txt;
 	}

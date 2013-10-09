@@ -11,7 +11,7 @@ public class FileUtil {
 
 	private int getNamePosition(String uri) {
 	//	String separator = (uri.toLowerCase().startsWith(HTTP_PREFIX) || uri.toLowerCase().startsWith(HTTPS_PREFIX)) ? HTTP_SEPARATOR : FILE_SEPARATOR;
-		int pos = Math.max(uri.lastIndexOf("/"), uri.lastIndexOf("\\")) + 1;
+		int pos = Math.max(uri.lastIndexOf('/'), uri.lastIndexOf('\\')) + 1;
 		return pos;
 	}
 

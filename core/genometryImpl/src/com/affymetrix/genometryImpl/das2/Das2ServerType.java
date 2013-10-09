@@ -399,7 +399,7 @@ public class Das2ServerType implements ServerTypeI {
                 String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
 
-				content_subtype = content_type.substring(content_type.indexOf("/") + 1);
+				content_subtype = content_type.substring(content_type.indexOf('/') + 1);
 				int sindex = content_subtype.indexOf(';');
 				if (sindex >= 0) {
 					content_subtype = content_subtype.substring(0, sindex);

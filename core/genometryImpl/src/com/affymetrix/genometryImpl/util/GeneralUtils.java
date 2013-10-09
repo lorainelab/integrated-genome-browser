@@ -604,8 +604,8 @@ public final class GeneralUtils {
 	public static String getExtension(String stream_name) {
 		if (stream_name.endsWith(".link.psl")) {
 			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
-		} else if (stream_name.lastIndexOf(".") >= 0) {
-			return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
+		} else if (stream_name.lastIndexOf('.') >= 0) {
+			return stream_name.substring(stream_name.lastIndexOf('.'), stream_name.length());
 		} else {
 			return "";
 		}

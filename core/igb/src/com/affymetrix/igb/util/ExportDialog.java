@@ -383,7 +383,7 @@ public class ExportDialog implements ExportConstants {
 
 		if (filename != null && !filename.isEmpty()) {
 
-			int periodIndex = path.lastIndexOf(".");
+			int periodIndex = path.lastIndexOf('.');
 
 			if (periodIndex > 0) {
 				path = path.substring(0, periodIndex) + extension;
@@ -503,7 +503,7 @@ public class ExportDialog implements ExportConstants {
 		if (!isExt(ext)) {
 			ext = selectedExt;
 
-			int index = path.lastIndexOf(".");
+			int index = path.lastIndexOf('.');
 			int length = 0;
 			if (index > 0) {
 				length = path.substring(index).length();
@@ -724,7 +724,7 @@ public class ExportDialog implements ExportConstants {
 		String ext = GeneralUtils.getExtension(path);
 		selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
-		int index = path.lastIndexOf(".");
+		int index = path.lastIndexOf('.');
 		int length = 0;
 		if (index > 0) {
 			length = path.substring(index).length();

@@ -461,7 +461,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The organism DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -544,7 +544,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The organism DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -696,7 +696,7 @@ public class GenoPubServlet extends HttpServlet {
 				throw new InvalidNameException("Please enter the genome version name.");
 			}
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -786,7 +786,7 @@ public class GenoPubServlet extends HttpServlet {
 				throw new InvalidNameException("Please enter the genome version name.");
 			}
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -3223,9 +3223,9 @@ public class GenoPubServlet extends HttpServlet {
 				// the the directory structure embedded in the name;
 				String annotationName = "";
 				AnnotationGrouping ag = null;
-				if (name.lastIndexOf("/") >= 0) {
-					annotationName = name.substring(name.lastIndexOf("/") + 1);
-					ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf("/")));
+				if (name.lastIndexOf('/') >= 0) {
+					annotationName = name.substring(name.lastIndexOf('/') + 1);
+					ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf('/')));
 				} else {
 					annotationName = name;
 					ag = defaultAnnotationGrouping;
@@ -5611,7 +5611,7 @@ public class GenoPubServlet extends HttpServlet {
 		
 		ArrayList<File> filesAL = new ArrayList<File>();
 		for (File f: files){
-			int index = f.getName().lastIndexOf(".");
+			int index = f.getName().lastIndexOf('.');
 			if (index > 0) {
 				String ext = f.getName().substring(index);			
 				if (ext.equals(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)) useq = f;
@@ -5676,7 +5676,7 @@ public class GenoPubServlet extends HttpServlet {
 		boolean converting = false;
 		ArrayList<File> filesAL = new ArrayList<File>();
 		for (File f: files){
-			int index = f.getName().lastIndexOf(".");
+			int index = f.getName().lastIndexOf('.');
 			if (index > 0) {
 				String ext = f.getName().substring(index);
 				//System.out.println("\nFile Extension "+ ext+" "+f.getName());

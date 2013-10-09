@@ -52,7 +52,7 @@ public class TallyLineProcessor implements LineProcessor {
 				}
 				for (String countString : countStrings) {
 					char nucleotide = countString.charAt(0);
-					int pos = countString.indexOf("(");
+					int pos = countString.indexOf('(');
 					if (pos == -1) {
 						pos = countString.length();
 					}

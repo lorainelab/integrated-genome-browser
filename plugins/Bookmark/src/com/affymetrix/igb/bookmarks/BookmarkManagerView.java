@@ -440,7 +440,7 @@ public final class BookmarkManagerView {
 				public void approveSelection() {
 					File f = getSelectedFile();
 					String path;
-					if ((f.getAbsolutePath().indexOf(".")) < 0) {
+					if ((f.getAbsolutePath().indexOf('.')) < 0) {
 						if (static_chooser.getFileFilter().equals(ff)) {
 							path = f.getAbsolutePath() + ".txt";
 						} else {

@@ -187,7 +187,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 //		SeqSpan exonSpan = ((SeqSymmetry)getParent().getInfo()).getSpan(GenometryModel.getGenometryModel().getSelectedSeq());
 		ResidueRange residueRange = getResidueRange();
 		String residue = residueRange.getResidue();
-		if (residue.indexOf("-") > -1) { // load residues
+		if (residue.indexOf('-') > -1) { // load residues
 //			if (view != null) {
 //				loadInBackground(view, exonSpan);
 //			}

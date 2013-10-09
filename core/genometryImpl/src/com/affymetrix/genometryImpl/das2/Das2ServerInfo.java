@@ -244,7 +244,7 @@ public final class Das2ServerInfo  {
 			}
 			String cookie = headers.get("set-cookie");
 			if (cookie != null) {
-				sessionId = cookie.substring(0, cookie.indexOf(";"));
+				sessionId = cookie.substring(0, cookie.indexOf(';'));
 			} 
 		} catch (IOException ex) {
 			System.out.println("Failed server login test:");

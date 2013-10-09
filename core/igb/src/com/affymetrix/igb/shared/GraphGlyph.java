@@ -357,7 +357,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		Graphics g = view.getGraphics();
 		Color sel_color = view.getScene().getSelectionColor();
 		g.setColor(sel_color);
-		view.transformToPixels(getPositiveCoordBox(), getPixelBox());
+		view.transformToPixels(getCoordBox(), getPixelBox());
 
 		// only outline the handle, not the whole graph
 		g.drawRect(getPixelBox().x, getPixelBox().y,

@@ -72,11 +72,15 @@ public class RegionScoreTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop\tScore\t(Text(s)");
-			for (int i=0; i< sortedRegionScoreTexts.length; i++) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text);
+			for (int i=0; i< sortedRegionScoreTexts.length; i++) {
+				out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text);
+			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tScore\tText(s)\tStrand");
-			for (int i=0; i< sortedRegionScoreTexts.length; i++) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text+"\t"+strand);
+			for (int i=0; i< sortedRegionScoreTexts.length; i++) {
+				out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text+"\t"+strand);
+			}
 		}
 	}
 
@@ -229,7 +233,9 @@ public class RegionScoreTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of RegionScoreText[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegionScoreTexts.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedRegionScoreTexts.length;
+		}
 		//concatinate
 		RegionScoreText[] concatinate = new RegionScoreText[num];
 		int index = 0;
@@ -249,7 +255,9 @@ public class RegionScoreTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionScoreTextData> a = new ArrayList<RegionScoreTextData>(num);
-		for (int i=0; i< num; i++) a.add((RegionScoreTextData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((RegionScoreTextData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 

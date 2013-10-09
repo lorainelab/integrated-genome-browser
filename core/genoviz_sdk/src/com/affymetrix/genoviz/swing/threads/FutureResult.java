@@ -92,7 +92,9 @@ final class FutureResult {
    **/
   synchronized Object get() 
     throws InterruptedException, InvocationTargetException {
-    while (!ready_) wait();
+    while (!ready_) {
+			wait();
+		}
     return doGet();
   }
 

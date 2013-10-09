@@ -142,7 +142,9 @@ public class ArchiveInfo {
 			out = new PrintWriter (new FileWriter (readme));
 			//any comment lines?
 			if (commentLines!= null){
-				for (int i=0; i< commentLines.length; i++) out.println(commentLines[i]);
+				for (int i=0; i< commentLines.length; i++) {
+					out.println(commentLines[i]);
+				}
 				out.println();
 			}
 			//print key values, spaces flanking = are permitted
@@ -164,7 +166,9 @@ public class ArchiveInfo {
 	public void appendCommentedKeyValues (PrintWriter out){
 		//any comment lines?
 		if (commentLines!= null){
-			for (int i=0; i< commentLines.length; i++) out.println(commentLines[i]);
+			for (int i=0; i< commentLines.length; i++) {
+				out.println(commentLines[i]);
+			}
 			out.println();
 		}
 		//print key values, spaces flanking = are permitted

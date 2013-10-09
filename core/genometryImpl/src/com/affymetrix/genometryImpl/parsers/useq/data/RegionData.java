@@ -64,11 +64,15 @@ public class RegionData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop");
-			for (int i=0; i< sortedRegions.length; i++) out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop);
+			for (int i=0; i< sortedRegions.length; i++) {
+				out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop);
+			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tStrand");
-			for (int i=0; i< sortedRegions.length; i++) out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+strand);
+			for (int i=0; i< sortedRegions.length; i++) {
+				out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+strand);
+			}
 		}
 	}
 
@@ -202,7 +206,9 @@ public class RegionData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of Region[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegions.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedRegions.length;
+		}
 		//concatinate
 		Region[] concatinate = new Region[num];
 		int index = 0;
@@ -222,7 +228,9 @@ public class RegionData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionData> a = new ArrayList<RegionData>(num);
-		for (int i=0; i< num; i++) a.add((RegionData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((RegionData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 

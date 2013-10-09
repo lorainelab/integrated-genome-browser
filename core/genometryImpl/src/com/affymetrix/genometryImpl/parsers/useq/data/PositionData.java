@@ -41,7 +41,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	public int[] getBasePositions(){
 		if (basePositions == null){
 			basePositions = new int[sortedPositions.length];
-			for (int i=0; i<basePositions.length; i++) basePositions[i] = sortedPositions[i].position;
+			for (int i=0; i<basePositions.length; i++) {
+				basePositions[i] = sortedPositions[i].position;
+			}
 		}
 		return basePositions;
 	}
@@ -54,7 +56,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		Arrays.sort(pdArray);
 		//fetch total size of Position[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositions.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositions.length;
+		}
 		//concatinate
 		Position[] concatinate = new Position[num];
 		int index = 0;
@@ -74,7 +78,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionData> a = new ArrayList<PositionData>(num);
-		for (int i=0; i< num; i++) a.add((PositionData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 
@@ -106,7 +112,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition");
-			for (int i=0; i< sortedPositions.length; i++) out.println(chrom+"\t"+sortedPositions[i].position);
+			for (int i=0; i< sortedPositions.length; i++) {
+				out.println(chrom+"\t"+sortedPositions[i].position);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tStrand");

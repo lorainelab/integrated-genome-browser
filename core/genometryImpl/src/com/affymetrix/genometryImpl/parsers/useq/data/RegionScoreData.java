@@ -69,11 +69,15 @@ public class RegionScoreData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop\tScore");
-			for (int i=0; i< sortedRegionScores.length; i++) out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score);
+			for (int i=0; i< sortedRegionScores.length; i++) {
+				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score);
+			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tScore\tStrand");
-			for (int i=0; i< sortedRegionScores.length; i++) out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score+"\t"+strand);
+			for (int i=0; i< sortedRegionScores.length; i++) {
+				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score+"\t"+strand);
+			}
 		}
 	}
 	
@@ -217,7 +221,9 @@ public class RegionScoreData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of RegionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegionScores.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedRegionScores.length;
+		}
 		//concatinate
 		RegionScore[] concatinate = new RegionScore[num];
 		int index = 0;
@@ -237,7 +243,9 @@ public class RegionScoreData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionScoreData> a = new ArrayList<RegionScoreData>(num);
-		for (int i=0; i< num; i++) a.add((RegionScoreData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((RegionScoreData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 

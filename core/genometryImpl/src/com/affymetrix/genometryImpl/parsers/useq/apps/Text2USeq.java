@@ -816,7 +816,9 @@ public class Text2USeq {
 			in.close();
 			//close the print writers
 			Iterator<PrintWriter> it = chromOut.values().iterator();
-			while (it.hasNext()) it.next().close();
+			while (it.hasNext()) {
+				it.next().close();
+			}
 
 			return chromFile;
 		} catch (Exception e){
@@ -899,7 +901,9 @@ public class Text2USeq {
 	
 	/**Trims all the strings in the array String.trim()*/
 	public static void trim(String[] s){
-		for (int i=0; i< s.length; i++) s[i] = s[i].trim();
+		for (int i=0; i< s.length; i++) {
+			s[i] = s[i].trim();
+		}
 	}
 
 	public static void printDocs(){

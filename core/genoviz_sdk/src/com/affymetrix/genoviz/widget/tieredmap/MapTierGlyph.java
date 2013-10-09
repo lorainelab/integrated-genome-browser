@@ -154,8 +154,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		List kids = this.getChildren();
 
 		if (kids != null) {
-			for (int i=0; i < kids.size(); i++)
+			for (int i=0; i < kids.size(); i++) {
 				this.removeChild((GlyphI)kids.get(i));
+			}
 		}
 		gsn.removeChildren();
 		// CLH: This is a hack. Instead of removing gsn,

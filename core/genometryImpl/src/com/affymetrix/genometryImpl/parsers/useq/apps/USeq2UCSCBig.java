@@ -214,7 +214,9 @@ public class USeq2UCSCBig extends Thread{
 	private void executeUCSCCommand(String[] command) throws Exception{
 		if (verbose) {
 			System.out.println("\nUnix Command:");
-			for (String c : command) System.out.println(c);
+			for (String c : command) {
+				System.out.println(c);
+			}
 			System.out.println();
 		}
 		//execute ucsc converter, nothing should come back for wigToBigWig and sort

@@ -93,8 +93,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
         {
             Map<String,Color> defaults = new HashMap<String,Color>();
 
-            for(COLORS C : values())
-                defaults.put(C.toString(), C.defaultColor());
+            for(COLORS C : values()) {
+				defaults.put(C.toString(), C.defaultColor());
+			}
 
             return defaults;
         }
@@ -961,8 +962,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
                     candidate = gl.getParent().getInfo();
                     if (candidate instanceof SymWithProps) {
                         info = (SymWithProps) candidate;
-                        for(Entry<Object,Object> E: props.entrySet())
-                            info.setProperty( (String) E.getKey(),E.getValue());
+                        for(Entry<Object,Object> E: props.entrySet()) {
+							info.setProperty( (String) E.getKey(),E.getValue());
+						}
                     }
                 }
             }

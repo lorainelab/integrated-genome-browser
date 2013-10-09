@@ -2162,13 +2162,17 @@ public class GenoPubServlet extends HttpServlet {
 			//colaborators?
 			TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
 			Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
-			while (cIt.hasNext()) collaborators.add((User)cIt.next());
+			while (cIt.hasNext()) {
+				collaborators.add((User)cIt.next());
+			}
 			dup.setCollaborators(collaborators);
 
 			//groupings?
 			Set<AnnotationGrouping>  annotationGroupings= new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
 			Iterator<?> aIt = sourceAnnot.getAnnotationGroupings().iterator();
-			while (aIt.hasNext()) annotationGroupings.add((AnnotationGrouping)aIt.next());
+			while (aIt.hasNext()) {
+				annotationGroupings.add((AnnotationGrouping)aIt.next());
+			}
 			dup.setAnnotationGroupings(annotationGroupings);
 
 			//is this needed?
@@ -3438,7 +3442,9 @@ public class GenoPubServlet extends HttpServlet {
 		//collaborators?
 		TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
 		Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
-		while (cIt.hasNext()) collaborators.add((User)cIt.next());
+		while (cIt.hasNext()) {
+			collaborators.add((User)cIt.next());
+		}
 		dup.setCollaborators(collaborators);
 
 		//is this needed?
@@ -5604,7 +5610,9 @@ public class GenoPubServlet extends HttpServlet {
 		//fetch hashSet
 		if (urlLinkFileExtensions == null){
 			urlLinkFileExtensions = new HashSet<String>();
-			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
+			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) {
+				urlLinkFileExtensions.add(ext);
+			}
 		}
 		File useq = null;
 		File bigFile = null;
@@ -5670,7 +5678,9 @@ public class GenoPubServlet extends HttpServlet {
 	private UCSCLinkFiles fetchUCSCLinkFiles(List<File> files) throws Exception{
 		if (urlLinkFileExtensions == null){
 			urlLinkFileExtensions = new HashSet<String>();
-			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
+			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) {
+				urlLinkFileExtensions.add(ext);
+			}
 		}
 		File useq = null;
 		boolean converting = false;

@@ -340,8 +340,9 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
         if (regionLinearBinStart < nLinearBins) {
             linearIndexEntries = new long[actualStop-regionLinearBinStart+1];
             skipBytes(8 * regionLinearBinStart);
-            for(int linearBin = regionLinearBinStart; linearBin <= actualStop; linearBin++)
-                linearIndexEntries[linearBin-regionLinearBinStart] = readLong();
+            for(int linearBin = regionLinearBinStart; linearBin <= actualStop; linearBin++) {
+				linearIndexEntries[linearBin-regionLinearBinStart] = readLong();
+			}
         }
 
         final LinearIndex linearIndex = new LinearIndex(referenceSequence,regionLinearBinStart,linearIndexEntries);
@@ -397,11 +398,21 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
         int k;
         final BitSet bitSet = new BitSet(MAX_BINS);
         bitSet.set(0);
-        for (k =    1 + (start>>26); k <=    1 + (end>>26); ++k) bitSet.set(k);
-        for (k =    9 + (start>>23); k <=    9 + (end>>23); ++k) bitSet.set(k);
-        for (k =   73 + (start>>20); k <=   73 + (end>>20); ++k) bitSet.set(k);
-        for (k =  585 + (start>>17); k <=  585 + (end>>17); ++k) bitSet.set(k);
-        for (k = 4681 + (start>>14); k <= 4681 + (end>>14); ++k) bitSet.set(k);
+        for (k =    1 + (start>>26); k <=    1 + (end>>26); ++k) {
+			bitSet.set(k);
+		}
+        for (k =    9 + (start>>23); k <=    9 + (end>>23); ++k) {
+			bitSet.set(k);
+		}
+        for (k =   73 + (start>>20); k <=   73 + (end>>20); ++k) {
+			bitSet.set(k);
+		}
+        for (k =  585 + (start>>17); k <=  585 + (end>>17); ++k) {
+			bitSet.set(k);
+		}
+        for (k = 4681 + (start>>14); k <= 4681 + (end>>14); ++k) {
+			bitSet.set(k);
+		}
         return bitSet;
     }
 

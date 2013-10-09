@@ -333,11 +333,11 @@ public class TieredMapDemo extends Applet
 	public void mouseClicked ( MouseEvent e ) {
 		NeoMouseEvent nme = (NeoMouseEvent)e;
 		List<GlyphI> glyphs = nme.getItems();
-		for ( int i = 0; i < glyphs.size(); i++ )
-			// iterate through selected glyphs, looking for a MapTierGlyph
+		for ( int i = 0; i < glyphs.size(); i++ ) {
 			if ( glyphs.get ( i ) instanceof MapTierGlyph )
 				selectedTier = (MapTierGlyph) glyphs.get( i );
 			else (glyphs.get ( i )).draw(map.getView());
+		}
 		if ( selectedTier == null ) return;
 		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) return;
 		if ( e.getSource().equals(map) )

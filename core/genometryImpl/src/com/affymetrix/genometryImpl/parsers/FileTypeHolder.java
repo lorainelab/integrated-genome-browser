@@ -552,9 +552,7 @@ public class FileTypeHolder {
 				extensions = new ArrayList<String>();
 				nameToExtensionMap.put(name, extensions);
 			}
-			for (String ext : fileTypeHandler.getExtensions()) {
-				extensions.add(ext);
-			}
+			extensions.addAll(Arrays.asList(fileTypeHandler.getExtensions()));
 		}
 		return nameToExtensionMap;
 	}

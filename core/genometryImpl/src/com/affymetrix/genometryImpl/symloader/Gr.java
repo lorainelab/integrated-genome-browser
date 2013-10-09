@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -240,8 +241,8 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 						x = Integer.parseInt(line.substring(0, indexOfDelimiter));
 						y = Float.parseFloat(line.substring(indexOfDelimiter + 1));
 					} else {
-						Logger.getLogger(Gr.class.getName()).warning(
-								"Line " + line + " doesn't match... ignoring");
+						Logger.getLogger(Gr.class.getName()).log(
+								Level.WARNING, "Line {0} doesn''t match... ignoring", line);
 						continue;
 					}
 				}

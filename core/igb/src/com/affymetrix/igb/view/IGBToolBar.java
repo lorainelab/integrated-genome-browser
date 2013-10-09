@@ -155,7 +155,7 @@ public class IGBToolBar extends JToolBar {
 		if (removed) {
 			reIndex();
 		}else{
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, ".removeToolbarAction: Could not find " + action);
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, ".removeToolbarAction: Could not find {0}", action);
 		}
 	}
 

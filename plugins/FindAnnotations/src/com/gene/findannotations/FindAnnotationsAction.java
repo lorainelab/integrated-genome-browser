@@ -137,7 +137,7 @@ public class FindAnnotationsAction extends GenericAction {
 					}
 				}
 				Date totalEnd = new Date();
-				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "search for " + searchText + " took " + ((totalEnd.getTime() - totalStart.getTime()) / 1000) + " seconds");
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "search for {0} took {1} seconds", new Object[]{searchText, (totalEnd.getTime() - totalStart.getTime()) / 1000});
 				return results;
 			}
 			@Override

@@ -330,8 +330,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
 			throws Exception {
 		List<SeqSymmetry> alist = parse(is, uri, group, annotate_seq);
-		Logger.getLogger(BsnpParser.class.getName()).log(Level.FINE,
-				"total snps loaded: " + alist.size());
+		Logger.getLogger(BsnpParser.class.getName()).log(Level.FINE, "total snps loaded: {0}", alist.size());
 		return alist;
 	}
 

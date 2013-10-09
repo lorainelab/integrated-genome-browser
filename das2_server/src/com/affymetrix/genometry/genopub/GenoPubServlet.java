@@ -880,7 +880,7 @@ public class GenoPubServlet extends HttpServlet {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
 				if (!file.delete()) {
-					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete sequence file " + file.getName() + " for genome version " + genomeVersion.getName());
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete sequence file {0} for genome version {1}", new Object[]{file.getName(), genomeVersion.getName()});
 				}
 			}            
 
@@ -1886,7 +1886,7 @@ public class GenoPubServlet extends HttpServlet {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
 				if (!file.delete()) {
-					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file " + file.getName() + " for annotation " + annotation.getName());
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file {0} for annotation {1}", new Object[]{file.getName(), annotation.getName()});
 				}
 			}       
 
@@ -2945,7 +2945,7 @@ public class GenoPubServlet extends HttpServlet {
 								uploadBulkAnnotations(sess, tempBulkUploadFile, annotation, ag, res);
 								if (tempBulkUploadFile.exists()) { 
 									if (!tempBulkUploadFile.delete()) {
-										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + tempBulkUploadFile.getName() + " during bulk upload.");
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file {0} during bulk upload.", tempBulkUploadFile.getName());
 									}
 									break;
 								}
@@ -2973,7 +2973,7 @@ public class GenoPubServlet extends HttpServlet {
 								//check size of text files
 								if (Util.tooManyLines(file)){
 									if (!file.delete()) {
-										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file {0}.", file.getName());
 									}
 									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
 											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form (xxx.bar).");
@@ -2983,7 +2983,7 @@ public class GenoPubServlet extends HttpServlet {
 									String error = checkBamFile(file);
 									if (error != null ) {
 										if (!file.delete()) {
-											Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
+											Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file {0}.", file.getName());
 										}
 										throw new MalformedBamFileException("Errors found with bam file -> "+fileName+". Aborting upload. "+error);
 									}
@@ -4465,7 +4465,7 @@ public class GenoPubServlet extends HttpServlet {
 					user.setPassword(digestedPassword);       			    
 				} catch (Exception e) {
 					e.printStackTrace();
-					Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unabled to get digested password {0}", e.toString());
 				}
 			}
 
@@ -4546,7 +4546,7 @@ public class GenoPubServlet extends HttpServlet {
 					user.setPassword(digestedPassword);                 
 				} catch (Exception e) {
 					e.printStackTrace();
-					Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unabled to get digested password {0}", e.toString());
 				}		
 			}
 
@@ -5360,7 +5360,7 @@ public class GenoPubServlet extends HttpServlet {
 		if (!new File(genometry_genopub_dir).exists()) {
 			boolean success = (new File(genometry_genopub_dir)).mkdir();
 			if (!success) {
-				Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_genopub_dir);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to create directory {0}", genometry_genopub_dir);
 				return false;
 			}
 		}
@@ -5372,7 +5372,7 @@ public class GenoPubServlet extends HttpServlet {
 		//set web app dir for UCSC hot links
 		genoPubWebAppDir = new File (context.getRealPath("/"));
 
-		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "genometry_genopub_dir = {0}", genometry_genopub_dir);
 
 		return true;
 	}

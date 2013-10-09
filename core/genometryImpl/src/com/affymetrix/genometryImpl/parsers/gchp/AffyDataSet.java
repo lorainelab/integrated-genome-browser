@@ -15,6 +15,7 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class AffyDataSet {
@@ -43,8 +44,8 @@ public final class AffyDataSet {
 		name = AffyGenericChpFile.parseWString(dis);
 		param_count = dis.readInt();
 
-		Logger.getLogger(AffyDataSet.class.getName()).fine(
-				"Parsing data set: name=" + name);
+		Logger.getLogger(AffyDataSet.class.getName()).log(
+				Level.FINE, "Parsing data set: name={0}", name);
 
 		params = new LinkedHashMap<String,AffyChpParameter>(param_count);
 		for (int i=0; i<param_count; i++) {
@@ -80,15 +81,15 @@ public final class AffyDataSet {
 
 				AffySingleChromData chromData = new AffySingleChromData(chpFile, this,
 						chromNum, chromName, start, count, chromDataColumns);
-				Logger.getLogger(AffyDataSet.class.getName()).fine(
-						"Made chrom: " + chromData.toString());
+				Logger.getLogger(AffyDataSet.class.getName()).log(
+						Level.FINE, "Made chrom: {0}", chromData.toString());
 
 				num2chromData.put(chromNum, chromData);
 			}
 		}
 
-		Logger.getLogger(AffyDataSet.class.getName()).fine(
-				"Chromosome Numbers: " + num2chromData.keySet());
+		Logger.getLogger(AffyDataSet.class.getName()).log(
+				Level.FINE, "Chromosome Numbers: {0}", num2chromData.keySet());
 
 		// I am making the assumption that chromosome number n is always stored
 		// before chromosome number n+1.  I don't think the documentation makes that

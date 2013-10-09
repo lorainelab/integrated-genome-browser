@@ -542,8 +542,7 @@ public final class XmlStylesheetParser {
 		Stylesheet stylesheet = null;
 		XmlStylesheetParser parser = new XmlStylesheetParser();
 		try {
-			Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
-				"Loading stylesheet: " + name);
+			Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO, "Loading stylesheet: {0}", name);
 			stylesheet = parser.parse(istr);
 		}catch (Exception e) {
 			System.out.println("ERROR: Couldn't initialize stylesheet " + name);

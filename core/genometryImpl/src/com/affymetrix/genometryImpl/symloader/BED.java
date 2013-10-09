@@ -433,7 +433,7 @@ public class BED extends SymLoader implements LineProcessor {
 			try {
 				c = TrackLineParser.reformatColor(itemRgb);
 			} catch (Exception e) {
-				Logger.getLogger(BED.class.getName()).log(Level.SEVERE, "Could not parse a color from String '" + itemRgb + "'");
+				Logger.getLogger(BED.class.getName()).log(Level.SEVERE, "Could not parse a color from String ''{0}''", itemRgb);
 			}
 			if (c != null) {
 				bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);

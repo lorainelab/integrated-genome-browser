@@ -132,7 +132,7 @@ public class ScriptManager {
 		ScriptEngineManager engineMgr = new ScriptEngineManager();
 		int pos = fileName.lastIndexOf('.');
 		if (pos == -1) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no extension for file " + fileName);
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no extension for file {0}", fileName);
 			return null;
 		}
 		String extension = fileName.substring(pos + 1);
@@ -152,7 +152,7 @@ public class ScriptManager {
 		try {
 			ScriptEngine engine = getScriptEngine(fileName);
 			if (engine == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "script engine is null for file " + fileName);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "script engine is null for file {0}", fileName);
 				return;
 			}
 			InputStream is;
@@ -169,7 +169,7 @@ public class ScriptManager {
 			}
 			
 			if(is == null){
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Input stream null for script file "+fileName);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Input stream null for script file {0}", fileName);
 				return;
 			}
 			 

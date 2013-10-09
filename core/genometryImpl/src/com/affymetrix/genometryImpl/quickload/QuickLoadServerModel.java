@@ -412,7 +412,7 @@ public final class QuickLoadServerModel {
 
 			if (istr == null) {
 				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
-						Level.SEVERE,"Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
+						Level.SEVERE, "Could not load QuickLoad contents from\n{0}{1}", new Object[]{getLoadURL(), contentsTxt});
 				return;
 			}
 

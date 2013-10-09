@@ -44,7 +44,7 @@ public class ShowStrandAction extends ShowStrandActionA implements SymSelectionL
 		String iconPath = separateStrands ? "22x22/actions/strandseparate.png" : "22x22/actions/strandstogether.png";
 		ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 		if (icon == null) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "icon " + iconPath + " returned null");
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "icon {0} returned null", iconPath);
 		}
 		else {
 			putValue(Action.LARGE_ICON_KEY, icon);

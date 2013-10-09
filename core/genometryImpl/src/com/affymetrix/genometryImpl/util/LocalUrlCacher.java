@@ -850,9 +850,7 @@ public final class LocalUrlCacher {
 		
 		if (DEBUG) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(
-					Level.INFO,
-					"Response: " + conn.getResponseCode() + " "
-							+ conn.getResponseMessage());
+					Level.INFO, "Response: {0} {1}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
 		}
 	
 		// Buffer the result into a string
@@ -867,8 +865,7 @@ public final class LocalUrlCacher {
 		conn.disconnect();
 		
 		if (DEBUG) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-					"Result " + sb.toString());
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Result {0}", sb.toString());
 		}
 		
 		return sb.toString();
@@ -902,8 +899,7 @@ public final class LocalUrlCacher {
 		}
 		String content = sb.toString();
 		if (DEBUG) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-					"Content :" + content.toString());
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Content :{0}", content.toString());
 		}
 		
 		// Create the form content
@@ -914,9 +910,7 @@ public final class LocalUrlCacher {
 		
 		if (DEBUG) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(
-					Level.INFO,
-					"Response: " + conn.getResponseCode() + " "
-							+ conn.getResponseMessage());
+					Level.INFO, "Response: {0} {1}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
 		}
 		
 		if (conn.getResponseCode() != 200) {
@@ -935,8 +929,7 @@ public final class LocalUrlCacher {
 		conn.disconnect();
 		
 		if (DEBUG) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-					"Result " + sb.toString());
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Result {0}", sb.toString());
 		}
 		
 		return sb.toString();

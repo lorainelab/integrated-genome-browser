@@ -551,7 +551,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
 		BioSeq newSeq = group.getSeq(chrom_text);
 		if (newSeq == null) {
-			Logger.getLogger(MapRangeBox.class.getName()).severe("Couldn't find chromosome " + chrom_text + " in group " + group.getID());
+			Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, "Couldn''t find chromosome {0} in group {1}", new Object[]{chrom_text, group.getID()});
 			return;
 		}
 

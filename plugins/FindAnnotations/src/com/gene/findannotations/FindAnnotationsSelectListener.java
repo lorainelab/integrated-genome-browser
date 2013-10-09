@@ -121,7 +121,7 @@ public class FindAnnotationsSelectListener implements MouseListener {
 				}
 			}
 			else {
-				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Glyph has too many children " + glyph.getChildCount());
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Glyph has too many children {0}", glyph.getChildCount());
 			}
 		}
 		return glyphsAtSpan;

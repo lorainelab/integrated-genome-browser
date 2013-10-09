@@ -519,7 +519,7 @@ public final class GeneralUtils {
 			}
 		}
 		catch (IOException x) {
-			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can't get length of uri " + uri);
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can''t get length of uri {0}", uri);
 		}
 		return uriLength;
 	}

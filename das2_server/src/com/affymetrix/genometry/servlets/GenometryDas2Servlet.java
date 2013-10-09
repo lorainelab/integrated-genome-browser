@@ -621,7 +621,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 								//watch out for single file bai indexes, just warn and skip
 								if (file.getName().toLowerCase().endsWith(".bai")){
 									Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
-											Level.WARNING, "Bypassing annotation {0}.  No associated bam alignment file for "+file);
+											Level.WARNING, "Bypassing annotation '{'0'}'.  No associated bam alignment file for {0}", file);
 								}
 								
 								else {
@@ -716,7 +716,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
               }
             }
             for (AnnotatedSeqGroup staleVersion : staleVersions) {
-              Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Removing stale genome version " + staleVersion.getID());
+              Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Removing stale genome version {0}", staleVersion.getID());
               versions.remove(staleVersion);
             }
           }
@@ -767,7 +767,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	              if (versions != null) {
 	                for (AnnotatedSeqGroup gv : versions) {
 	                  if (gv.getID().equals(genomeBuildName)) {
-	                    Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Remove invalid genome version " + genomeBuildName);
+	                    Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Remove invalid genome version {0}", genomeBuildName);
 	                    versions.remove(gv);
 	                    break;
 	                  }
@@ -789,7 +789,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
                 if (versions != null) {
                   for (AnnotatedSeqGroup gv : versions) {
                     if (gv.getID().equals(genomeBuildName)) {
-                      Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Remove invalid genome version " + genomeBuildName);
+                      Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Remove invalid genome version {0}", genomeBuildName);
                       versions.remove(gv);
                       break;
                     }
@@ -888,7 +888,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	                //watch out for single file bai indexes, just warn and skip
 	                if (file.getName().toLowerCase().endsWith(".bai")){
 	                  Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
-	                      Level.WARNING, "Bypassing data track {0}.  No associated bam alignment file for "+file);
+	                      Level.WARNING, "Bypassing data track '{'0'}'.  No associated bam alignment file for {0}", file);
 	                }
 	                
 	                else {

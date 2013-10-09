@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -415,7 +416,7 @@ public class BioSeq implements SearchableCharIterator {
 		}
 		int residue_length = this.getLength();
 		if (start < 0 || residue_length <= 0) {
-			Logger.getLogger(BioSeq.class.getName()).fine("Invalid arguments: " + start + "," + end + "," + residue_length);
+			Logger.getLogger(BioSeq.class.getName()).log(Level.FINE, "Invalid arguments: {0},{1},{2}", new Object[]{start, end, residue_length});
 			return "";
 		}
 

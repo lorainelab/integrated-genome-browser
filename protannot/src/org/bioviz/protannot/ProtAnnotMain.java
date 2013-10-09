@@ -130,8 +130,9 @@ final public class ProtAnnotMain implements WindowListener {
 
 		@Override
 		public void openFileAction(List<File> files) {
-			for(File f: files)
+			for(File f: files) {
 				load(f);
+			}
 		}
 
 		@Override
@@ -700,8 +701,9 @@ final public class ProtAnnotMain implements WindowListener {
 		   checkArguments("",args[0]);
        }else if(args.length%2 == 0)
        {
-		   for(int i=0; i<args.length; i += 2)
+		   for(int i=0; i<args.length; i += 2) {
 			   checkArguments(args[i],args[i+1]);
+		   }
        }
        else
            outputErrorMessage("Invalid number of arguments");
@@ -1024,8 +1026,9 @@ final public class ProtAnnotMain implements WindowListener {
             {
                 Map<String,Color> colorhash = new HashMap<String,Color>();
 
-                for(int i=0; i<data.length; i++)
-                    colorhash.put((String)data[i][0], (Color)data[i][1]);
+                for(int i=0; i<data.length; i++) {
+					colorhash.put((String)data[i][0], (Color)data[i][1]);
+				}
 
                 return colorhash;
             }

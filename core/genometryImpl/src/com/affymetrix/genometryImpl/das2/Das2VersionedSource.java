@@ -196,8 +196,9 @@ public final class Das2VersionedSource {
 
 		Set<String> formats = new HashSet<String>();
 		for(Das2Type type : Localtypes){
-			for(String format : type.getFormats().keySet())
+			for(String format : type.getFormats().keySet()) {
 				formats.add(format.toLowerCase());
+			}
 		}
 
 		return formats;

@@ -70,7 +70,9 @@ public class PositionScoreTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tScore\tText(s)");
-			for (int i=0; i< sortedPositionScoreTexts.length; i++) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+sortedPositionScoreTexts[i].score+"\t"+sortedPositionScoreTexts[i].text);
+			for (int i=0; i< sortedPositionScoreTexts.length; i++) {
+				out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+sortedPositionScoreTexts[i].score+"\t"+sortedPositionScoreTexts[i].text);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tScore\tText(s)\tStrand");
@@ -259,7 +261,9 @@ public class PositionScoreTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of PositionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionScoreTexts.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositionScoreTexts.length;
+		}
 		//concatinate
 		PositionScoreText[] concatinate = new PositionScoreText[num];
 		int index = 0;
@@ -279,7 +283,9 @@ public class PositionScoreTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionScoreTextData> a = new ArrayList<PositionScoreTextData>(num);
-		for (int i=0; i< num; i++) a.add((PositionScoreTextData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionScoreTextData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 

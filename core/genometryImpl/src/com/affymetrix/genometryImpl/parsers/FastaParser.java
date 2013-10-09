@@ -492,8 +492,9 @@ public final class FastaParser implements Parser {
 
 			byte[] result = new byte[header.length()];
 
-			for (int i=0;i<header.length();i++)
+			for (int i=0;i<header.length();i++) {
 				result[i] = (byte)header.charAt(i);
+			}
 
 			return result;
 		}

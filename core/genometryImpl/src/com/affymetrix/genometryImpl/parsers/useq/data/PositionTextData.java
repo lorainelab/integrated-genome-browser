@@ -63,7 +63,9 @@ public class PositionTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tText(s)");
-			for (int i=0; i< sortedPositionTexts.length; i++) out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+sortedPositionTexts[i].text);
+			for (int i=0; i< sortedPositionTexts.length; i++) {
+				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+sortedPositionTexts[i].text);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tText(s)\tStrand");
@@ -170,7 +172,9 @@ public class PositionTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of PositionText[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionTexts.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositionTexts.length;
+		}
 		//concatinate
 		PositionText[] concatinate = new PositionText[num];
 		int index = 0;
@@ -190,7 +194,9 @@ public class PositionTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionTextData> a = new ArrayList<PositionTextData>(num);
-		for (int i=0; i< num; i++) a.add((PositionTextData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionTextData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 

@@ -35,7 +35,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	public PositionScoreData(int[] positions, float[] scoreArray, SliceInfo sliceInfo){
 		this.sliceInfo = sliceInfo;
 		sortedPositionScores = new PositionScore[basePositions.length];
-		for (int i=0; i< sortedPositionScores.length; i++) sortedPositionScores[i] = new PositionScore(positions[i], scoreArray[i]);
+		for (int i=0; i< sortedPositionScores.length; i++) {
+			sortedPositionScores[i] = new PositionScore(positions[i], scoreArray[i]);
+		}
 	}
 
 	//methods
@@ -123,7 +125,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		Arrays.sort(pdArray);
 		//fetch total size of PositionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionScores.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositionScores.length;
+		}
 		//concatinate
 		PositionScore[] concatinate = new PositionScore[num];
 		int index = 0;
@@ -143,7 +147,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionScoreData> a = new ArrayList<PositionScoreData>(num);
-		for (int i=0; i< num; i++) a.add((PositionScoreData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionScoreData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 	
@@ -172,7 +178,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tScore");
-			for (int i=0; i< sortedPositionScores.length; i++) out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score);
+			for (int i=0; i< sortedPositionScores.length; i++) {
+				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tScore\tStrand");

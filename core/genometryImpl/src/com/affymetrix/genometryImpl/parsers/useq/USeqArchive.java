@@ -123,7 +123,9 @@ public class USeqArchive {
 				if (i == 0 || sliceInfo.isContainedBy(beginningBP, endingBP)){
 					out.putNextEntry(entry);
 					//read in and write out, wish there was a way of just copying it directly
-					while ((count = bis.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
+					while ((count = bis.read(data, 0, 2048))!= -1) {
+						out.write(data, 0, count);
+					}
 					//close entry
 					out.closeEntry();
 				}
@@ -320,7 +322,9 @@ public class USeqArchive {
 				out.putNextEntry(entry);
 				is = new BufferedInputStream (zipArchive.getInputStream(entry));
 				//read in and write out, wish there was a way of just copying it directly
-				while ((count = is.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
+				while ((count = is.read(data, 0, 2048))!= -1) {
+					out.write(data, 0, count);
+				}
 				//close streams
 				out.closeEntry();
 				is.close();

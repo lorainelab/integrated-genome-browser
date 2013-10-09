@@ -42,7 +42,9 @@ public class Region implements Comparable<Region>, Serializable {
 		ArrayList<Region> ss = new ArrayList<Region>();
 		//find first non zero base
 		int i=0;
-		for (; i< baseHitCount.length; i++) if (baseHitCount[i]!=0) break;
+		for (; i< baseHitCount.length; i++) {
+			if (baseHitCount[i]!=0) break;
+		}
 		if (i == baseHitCount.length) return null;
 		int start = i;
 		int val = baseHitCount[start];
@@ -77,7 +79,9 @@ public class Region implements Comparable<Region>, Serializable {
 	/**Returns the total number of bases, assumes interbase coordinates.*/
 	public static int totalBP (Region[] ss){
 		int total = 0;
-		for (int i=0; i< ss.length; i++) total += ss[i].getLength();
+		for (int i=0; i< ss.length; i++) {
+			total += ss[i].getLength();
+		}
 		return total;
 	}
 

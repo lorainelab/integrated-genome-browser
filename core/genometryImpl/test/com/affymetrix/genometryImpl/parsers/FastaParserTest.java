@@ -26,8 +26,9 @@ public class FastaParserTest {
 			String expected_string = "chrC range:0-1,000 interbase genome:A_thaliana_TAIR8\n";
 			byte[] expected_result = new byte[expected_string.length() +1];
 			expected_result[0]='>';
-			for (int i=0;i<expected_string.length();i++)
+			for (int i=0;i<expected_string.length();i++) {
 				expected_result[i+1] = (byte)expected_string.charAt(i);
+			}
 
 			/*for (int i=0;i<result.length;i++)
 			  System.out.print(":" + (char)result[i]);

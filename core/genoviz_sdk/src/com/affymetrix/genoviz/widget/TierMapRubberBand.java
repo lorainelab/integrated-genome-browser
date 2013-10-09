@@ -90,7 +90,9 @@ public class TierMapRubberBand extends RubberBand {
 			started = true;
 
 			startedTier = 1; // to avoid and index of -1 after decrement below.
-			while ( (tiers.length-1) > startedTier && tiers[startedTier] < y ) startedTier++;
+			while ( (tiers.length-1) > startedTier && tiers[startedTier] < y ) {
+				startedTier++;
+			}
 			startedTier--;
 			current = startedTier;
 			tier = startedTier;

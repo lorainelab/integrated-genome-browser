@@ -242,7 +242,7 @@ public class GenomeVersion implements Serializable {
 					File f = new File(fileName);
 					boolean success = f.delete();
 					if (!success) {
-						Logger.getLogger(GenomeVersion.class.getName()).log(Level.WARNING, "Unable to delete file " + fileName);
+						Logger.getLogger(GenomeVersion.class.getName()).log(Level.WARNING, "Unable to delete file {0}", fileName);
 					}
 				}
 
@@ -251,7 +251,7 @@ public class GenomeVersion implements Serializable {
 			// Delete the annotation directory
 			boolean success = dir.delete();
 			if (!success) {
-				Logger.getLogger(GenomeVersion.class.getName()).log(Level.WARNING, "Unable to delete directory " + filePath);	    	
+				Logger.getLogger(GenomeVersion.class.getName()).log(Level.WARNING, "Unable to delete directory {0}", filePath);	    	
 			}
 		}
 	}

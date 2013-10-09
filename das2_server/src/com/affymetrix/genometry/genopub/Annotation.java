@@ -159,7 +159,7 @@ public class Annotation implements Serializable, Owned {
 
 		GenomeVersion genomeVersion = dh.getGenomeVersion(this.getIdGenomeVersion());
 		if (genomeVersion == null) {
-			Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE,"Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
+			Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE, "Unable to find genome version {0} for annotation {1}", new Object[]{this.getIdGenomeVersion(), this.getName()});
 			throw new Exception("Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
 		}
 
@@ -402,7 +402,7 @@ public class Annotation implements Serializable, Owned {
 					File f = new File(fileName);
 					boolean success = f.delete();
 					if (!success) {
-						Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete file " + fileName);
+						Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete file {0}", fileName);
 					}
 				}
 
@@ -411,7 +411,7 @@ public class Annotation implements Serializable, Owned {
 			// Delete the annotation directory
 			boolean success = dir.delete();	    	
 			if (!success) {
-				Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete directory " + filePath);
+				Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete directory {0}", filePath);
 			}
 		}
 	}

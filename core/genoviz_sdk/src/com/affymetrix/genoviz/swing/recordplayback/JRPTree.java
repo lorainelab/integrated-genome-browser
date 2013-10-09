@@ -114,7 +114,7 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 	public SubRegionFinder getSubRegionFinder(String subId) {
     	final TreePath path = getTreePath(subId);
     	if (path == null) {
-    		Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error sub path " + subId + "for JTree " + getClass().getName() + " was not found");
+    		Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error sub path {0}for JTree {1} was not found", new Object[]{subId, getClass().getName()});
     		return null;
     	}
     	expandPath(path);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.dom4j.Document;
@@ -95,14 +96,14 @@ public class AnnotationQuery {
 	  // Run query to get annotation groupings, organized under
 	  // organism and genome version
 	  StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
-	  Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
+	  Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation grouping query: {0}", queryBuf.toString());
 	  Query query = sess.createQuery(queryBuf.toString());
 	  List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 
 	  // Run query to get annotation grouping and annotations, organized under
 	  // organism and genome version
 	  queryBuf = this.getAnnotationQuery(genoPubSecurity);
-	  Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
+	  Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation query: {0}", queryBuf.toString());
 	  query = sess.createQuery(queryBuf.toString());
 	  List<Object[]> annotationRows = (List<Object[]>)query.list();
 
@@ -125,14 +126,14 @@ public class AnnotationQuery {
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
 		StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
-		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation grouping query: {0}", queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 		
 		// Run query to get annotations, organized under annotation grouping,
 		// organism, and genome version
 		queryBuf = this.getAnnotationQuery(genoPubSecurity);    	
-		Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation query: {0}", queryBuf.toString());
     	query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationRows = (List<Object[]>)query.list();
 		

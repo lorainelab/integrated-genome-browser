@@ -141,7 +141,7 @@ public class IGBAuthenticator extends Authenticator {
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.SEVERE, "Problem translating URL '" + this.getRequestingURL().toString() + "' to server", ex);
 		} catch (IllegalArgumentException ex) {
-			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.WARNING, "URL " + this.getRequestingURL() + " was not in server list.");
+			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.WARNING, "URL {0} was not in server list.", this.getRequestingURL());
 		}
 
 		if (serverObject != null) {

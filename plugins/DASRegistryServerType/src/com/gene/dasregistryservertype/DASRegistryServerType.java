@@ -238,7 +238,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 				return;
 			}
 		}
-		Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "invalid uri " + feature_uri);
+		Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "invalid uri {0}", feature_uri);
 	}
 
 	private void addServer(final String serverURL) {
@@ -525,7 +525,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 			return super.loadFeatures(span, feature);
 		}
 		catch (Exception x) {
-			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load " + feature.featureName + ", " + x.getMessage());
+			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load {0}, {1}", new Object[]{feature.featureName, x.getMessage()});
 		}
 		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 	}

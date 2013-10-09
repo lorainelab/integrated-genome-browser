@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.util.logging.Level;
 
 
 /**
@@ -167,7 +168,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 			}
 			if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
 				// something's gone wrong.  Ignore.
-				Logger.getLogger(AbstractAlignedTextGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
+				Logger.getLogger(AbstractAlignedTextGlyph.class.getName()).log(Level.FINE, "Invalid string: {0},{1}", new Object[]{seq_beg_index, seq_end_index});
 				return;
 			}
 			int seq_pixel_offset = getPixelBox().x;

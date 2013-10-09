@@ -320,7 +320,7 @@ public abstract class SymLoader {
 				addAnnotations(filteredFeats, span, feature.getURI(), feature);
 				added.put(entry.getKey(), filteredFeats);
 			} else {
-				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, "No method name in loaded syms for "+feature.featureName);
+				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, "No method name in loaded syms for {0}", feature.featureName);
 			}
 		}
 

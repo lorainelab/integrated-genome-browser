@@ -38,7 +38,7 @@ public class ComboChainOperator implements Operator, IParameters {
 			int categoryCount = (checkCategory == category) ? 1 : 0;
 			boolean ok = after.getOperandCountMin(checkCategory) <= categoryCount;
 			if (!ok) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "incompatible operands, " + before.getDisplay() + " cannot pass output to " + after.getDisplay());
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "incompatible operands, {0} cannot pass output to {1}", new Object[]{before.getDisplay(), after.getDisplay()});
 			}
 			isCompatible &= ok;
 		}

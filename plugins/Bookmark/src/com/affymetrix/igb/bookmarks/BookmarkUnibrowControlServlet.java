@@ -441,7 +441,7 @@ public final class BookmarkUnibrowControlServlet {
 
 		if (feature == null) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(
-					Level.SEVERE, "Couldn't find feature for bookmark url " + query_url);
+					Level.SEVERE, "Couldn''t find feature for bookmark url {0}", query_url);
 		}
 
 		return feature;

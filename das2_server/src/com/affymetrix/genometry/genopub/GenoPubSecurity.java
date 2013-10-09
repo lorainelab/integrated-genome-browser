@@ -15,6 +15,7 @@ import org.hibernate.Session;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometry.AnnotSecurity;
+import java.util.logging.Level;
 
 
 public class GenoPubSecurity implements AnnotSecurity, Serializable {
@@ -711,7 +712,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 
 		// If the annotation id is not provided, block access
 		if (annotationId == null) {
-			Logger.getLogger(GenoPubSecurity.class.getName()).warning("Unable to find annotation id for " + annotationName + ".  Blocking access.");
+			Logger.getLogger(GenoPubSecurity.class.getName()).log(Level.WARNING, "Unable to find annotation id for {0}.  Blocking access.", annotationName);
 		}
 
 		// Get the hash map of annotation ids this user is authorized to view

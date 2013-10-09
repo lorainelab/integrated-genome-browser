@@ -394,7 +394,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 			throws IllegalAccessException, InstantiationException {
 		if (SeqUtils.overlap(cdsSpan, cspan)) {
 			CdsSeqSymmetry cds_sym_2 = new CdsSeqSymmetry();
-			SeqUtils.intersection(cds_sym, child, cds_sym_2, annotseq);
+			SeqUtils.intersection(cds_sym, child, cds_sym_2, annotseq, cspan.isForward());
 			if (!same_seq) {
 				//cds_sym_2 = (CdsSeqSymmetry)gviewer.transformForViewSeq(cds_sym_2, new CdsSeqSymmetry(), annotseq);
 				SeqUtils.transformSymmetry(cds_sym_2, gviewer.getTransformPath());

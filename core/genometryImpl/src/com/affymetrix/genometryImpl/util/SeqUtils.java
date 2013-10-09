@@ -354,6 +354,14 @@ public abstract class SeqUtils {
 	public static boolean intersection(SeqSymmetry symA, SeqSymmetry symB,
 			MutableSeqSymmetry resultSym,
 			BioSeq seq) {
+		return intersection(symA, symB, resultSym, seq, true);
+	}
+
+	/**
+	 *  "Logical" AND of SeqSymmetries (relative to a particular BioSeq).
+	 */
+	public static boolean intersection(SeqSymmetry symA, SeqSymmetry symB,
+			MutableSeqSymmetry resultSym, BioSeq seq, boolean forward) {
 		// Need to merge spans of symA with each other
 		// and symB with each other (in case symA has overlapping
 		// spans within itself, for example)
@@ -388,11 +396,11 @@ public abstract class SeqUtils {
 		}
 
 		// now set resultSym to max and min of its children...
-		SeqSpan resultSpan = new SimpleSeqSpan(min, max, seq);
+		SeqSpan resultSpan = forward ? new SimpleSeqSpan(min, max, seq) : new SimpleSeqSpan(max, min, seq);
 		resultSym.addSpan(resultSpan);
 		return true;
 	}
-
+	
 	private static MutableSeqSymmetry spanMerger(List<SeqSpan> spans) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		spanMerger(spans, resultSym);

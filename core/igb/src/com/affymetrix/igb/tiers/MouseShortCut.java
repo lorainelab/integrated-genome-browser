@@ -97,9 +97,6 @@ final public class MouseShortCut implements MouseListener{
 			
 			//Zoom to glyphs.
 			smv.zoomToGlyphs(glyphs);
-			if(smv.getAutoLoadAction() != null) {
-				smv.getAutoLoadAction().loadData();
-			}
 		}
 		
 	}

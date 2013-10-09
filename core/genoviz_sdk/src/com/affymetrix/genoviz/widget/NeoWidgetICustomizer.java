@@ -184,7 +184,6 @@ public class NeoWidgetICustomizer
 			widgeti.setPixelFuzziness(Integer.parseInt(this.fuzzinessChoice.getSelectedItem()));
 			this.secretary.firePropertyChange("PixelFuzziness", null,
 					this.fuzzinessChoice.getSelectedItem());
-			return;
 		}
 		else if (evtSource == this.scrollingIncrBehavior) {
 			if(this.scrollingIncrBehavior.getState()) {
@@ -195,7 +194,6 @@ public class NeoWidgetICustomizer
 				widgeti.setScrollIncrementBehavior(NeoAbstractWidget.X,
 						NeoAbstractWidget.NO_AUTO_SCROLL_INCREMENT);
 			}
-			return;
 		}
 		else if (evtSource == this.selectionChoice
 				||  evtSource == this.selectionColorChoice) {

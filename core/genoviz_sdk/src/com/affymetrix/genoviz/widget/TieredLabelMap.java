@@ -95,7 +95,6 @@ public class TieredLabelMap extends AbstractTieredMap {
 				break;
 
 			default:
-				return;
 		}
 	}
 

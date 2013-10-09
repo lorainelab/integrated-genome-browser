@@ -295,8 +295,6 @@ public class GenoPubServlet extends HttpServlet {
 
 			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
 
-			return;
-
 		} catch (Exception e) {
 			e.printStackTrace();		
 			this.reportError(res, e.toString());

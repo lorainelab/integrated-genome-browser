@@ -64,7 +64,8 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 	            	(DefaultMutableTreeNode)getLastSelectedPathComponent();
 
 	        
-	            if (nodes == null) return;
+	            if (nodes == null) {
+				}
 
 	    
 //	            Object nodeInfos = nodes.getUserObject();

@@ -443,7 +443,6 @@ public final class GFF3Parser implements Parser {
 			if (!"3".equals(vstr)) {
 				throw new IOException("The specified GFF version can not be processed by this parser: version = '" + vstr + "'");
 			}
-			return;
 		} else {
 			Logger.getLogger(GFF3Parser.class.getName()).log(Level.WARNING, "Didn''t recognize directive: {0}", line);
 		}

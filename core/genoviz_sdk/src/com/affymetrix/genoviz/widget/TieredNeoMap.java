@@ -146,7 +146,6 @@ public class TieredNeoMap extends AbstractTieredMap {
 				this.updateWidget();
 				break;
 			default:
-				return;
 		}
 	}
 

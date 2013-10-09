@@ -45,6 +45,7 @@ public class CalledBase implements BaseCall {
 	public CalledBase ( int peak_index,
 			int prob_A, int prob_C, int prob_G, int prob_T,
 			char base ) {
+		super();
 
 		this.peak_index = peak_index;
 		this.prob_A = prob_A;
@@ -52,7 +53,6 @@ public class CalledBase implements BaseCall {
 		this.prob_G = prob_G;
 		this.prob_T = prob_T;
 		this.base = base;
-		return;
 	}
 
 	/**

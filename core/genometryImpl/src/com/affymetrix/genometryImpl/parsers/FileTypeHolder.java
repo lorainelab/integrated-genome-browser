@@ -225,7 +225,7 @@ public class FileTypeHolder {
 				public Parser getParser() { return new LinkPSLParser(); }
 				@Override
 				public IndexWriter getIndexWriter(String stream_name) {
-					int sindex = stream_name.lastIndexOf("/");
+					int sindex = stream_name.lastIndexOf('/');
 					String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 					PSLParser parser = new PSLParser();
 					if (type_prefix != null) {
@@ -263,7 +263,7 @@ public class FileTypeHolder {
 					public Parser getParser() { return new PSLParser(); }
 					@Override
 					public IndexWriter getIndexWriter(String stream_name) {
-						int sindex = stream_name.lastIndexOf("/");
+						int sindex = stream_name.lastIndexOf('/');
 						String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 						PSLParser iWriter = new PSLParser();
 						if (type_prefix != null) {

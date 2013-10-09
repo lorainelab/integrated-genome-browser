@@ -374,7 +374,7 @@ public final class GenericFeature {
 			return this.featureName;
 		}
 
-		int lastSlash = this.featureName.lastIndexOf("/");
+		int lastSlash = this.featureName.lastIndexOf('/');
 		return this.featureName.substring(lastSlash + 1, featureName.length());
 	}
 

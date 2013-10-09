@@ -667,7 +667,7 @@ public final class LocalUrlCacher {
 				} else {
 					str = new BufferedInputStream(str);
 				}
-				return GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf("/")));
+				return GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf('/')));
 			} catch (IOException ex) {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {

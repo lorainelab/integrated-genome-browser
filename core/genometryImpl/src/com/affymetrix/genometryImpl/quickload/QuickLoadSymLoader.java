@@ -91,7 +91,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		String ext = GeneralUtils.getExtension(unzippedStreamName);
 
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
-		String strippedName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+		String strippedName = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
 		String friendlyName = strippedName.substring(0, strippedName.toLowerCase().indexOf(ext));
 		return friendlyName;
 	}

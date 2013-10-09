@@ -1069,7 +1069,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
 				return;
 			}
-			String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
+			String das_command = path_info.substring(path_info.lastIndexOf('/') + 1);
 			if (das_command.equals(segments_query)) {
 				handleSegmentsRequest(genome, request, response);
 			} else if (das_command.equals(types_query)) {
@@ -1213,7 +1213,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		String path_info = request.getPathInfo();
-		String seqname = path_info.substring(path_info.lastIndexOf("/") + 1);
+		String seqname = path_info.substring(path_info.lastIndexOf('/') + 1);
 
 		SeqSpan span = null;
 		if (ranges.size() == 1) {
@@ -1673,7 +1673,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					String seqid = segments.get(0);
 					System.out.println("seqid is " + seqid);
 					// using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
-					int sindex = seqid.lastIndexOf("/");
+					int sindex = seqid.lastIndexOf('/');
 					if (sindex >= 0) {
 						seqid = seqid.substring(sindex + 1);
 					}
@@ -1695,7 +1695,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 				String seqid = segments.get(0);
 				// using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
-				int sindex = seqid.lastIndexOf("/");
+				int sindex = seqid.lastIndexOf('/');
 				if (sindex >= 0) {
 					seqid = seqid.substring(sindex + 1);
 				}
@@ -2070,7 +2070,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			trimmed_xml_base = xml_base;
 			xml_base += "/";
 		}
-		sources_query_no_slash = trimmed_xml_base.substring(trimmed_xml_base.lastIndexOf("/"));
+		sources_query_no_slash = trimmed_xml_base.substring(trimmed_xml_base.lastIndexOf('/'));
 		sources_query_with_slash = sources_query_no_slash + "/";
 	}
 

@@ -29,7 +29,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	public GraphState getGraphState(String id, String human_name, String extension, java.util.Map<String, String> props) {
 		if (human_name == null) {
 			String unzippedName = GeneralUtils.getUnzippedName(id);
-			human_name = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+			human_name = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
 		}
 		return super.getGraphState(id, human_name, extension, props);
 	}

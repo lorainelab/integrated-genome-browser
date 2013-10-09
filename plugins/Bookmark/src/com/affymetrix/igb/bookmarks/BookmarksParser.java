@@ -85,7 +85,7 @@ public final class BookmarksParser {
 		String str = html.trim();
 		String str_uc = str.toUpperCase();
 		if (str_uc.startsWith("<DT><H")) { // usually <DT><H3>
-			int ind1 = 1 + str_uc.indexOf(">", 7);
+			int ind1 = 1 + str_uc.indexOf('>', 7);
 			int ind2 = str_uc.indexOf("</H", ind1);
 			result = str.substring(ind1, ind2);
 		}
@@ -131,7 +131,7 @@ public final class BookmarksParser {
 			}
 
 			// Now get the Name
-			int ind1 = 1 + str_uc.indexOf(">", 7);
+			int ind1 = 1 + str_uc.indexOf('>', 7);
 			int ind2 = str_uc.indexOf("</A", ind1);
 			if (ind1 > -1 && ind2 > ind1) {
 				name = str.substring(ind1, ind2);
@@ -322,7 +322,7 @@ public final class BookmarksParser {
 				int uindex = line.indexOf("http://");
 				if (uindex >= 0) {
 					int qstart = uindex;
-					int qend = line.indexOf("\"", qstart);
+					int qend = line.indexOf('"', qstart);
 					String query_string;
 					if (qend < 0) {
 						query_string = line.substring(qstart);
@@ -342,7 +342,7 @@ public final class BookmarksParser {
 					if (DEBUG) {
 						System.out.println("bookmark query_string = " + query_string);
 					}
-					int cstart = line.indexOf(">", qend) + 1;
+					int cstart = line.indexOf('>', qend) + 1;
 					int cend = line.indexOf("</A>", cstart);
 					String label_string = line.substring(cstart, cend);
 					if (DEBUG) {

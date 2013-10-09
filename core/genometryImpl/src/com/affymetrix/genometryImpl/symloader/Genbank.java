@@ -490,8 +490,8 @@ public final class Genbank extends SymLoader {
 		}
 		boolean within_html = true;
 		while (within_html) {
-			int html1 = current_line.indexOf("<");
-			int html2 = current_line.indexOf(">") + 1;
+			int html1 = current_line.indexOf('<');
+			int html2 = current_line.indexOf('>') + 1;
 			within_html = (html1 >= 0 && html2 > 0 && html2 > html1);
 			// Is this REALLY html, or is it < or > indicating incomplete 5' or 3' end?
 			// (don't want to get rid of those!!)
@@ -968,7 +968,7 @@ final class GenbankFeature {
     //String synonyms = null;
 
     if (content.charAt(0) == '/') {
-      int index = content.indexOf("=");
+      int index = content.indexOf('=');
       if (index >= 0) {
         tag = content.substring(1, index);
         value = content.substring(index + "=".length());
@@ -1168,7 +1168,7 @@ final class GenbankFeature {
         }
       }
       int index_comma = (index_end < location_str.length() ?
-			 location_str.indexOf(",", index_end) : -1);
+			 location_str.indexOf(',', index_end) : -1);
       int next_locs = (index_comma >= 0 ?
 		       index_comma + 1 : 0);
       if (next_locs > 0 && next_locs < location_str.length())

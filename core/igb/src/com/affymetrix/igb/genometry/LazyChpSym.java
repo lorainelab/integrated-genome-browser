@@ -347,7 +347,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 				//  fix problem with name matching when name has a path prefix...
 				String name = type.getName();
 				String tname = name;
-				int sindex = name.lastIndexOf("/");
+				int sindex = name.lastIndexOf('/');
 				if (sindex >= 0) { tname = name.substring(sindex+1); }
 				if (tname.startsWith(synonym) || tname.startsWith(lcsyn)) {
 					matched_types.add(type);

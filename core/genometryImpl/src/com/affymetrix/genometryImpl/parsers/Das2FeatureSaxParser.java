@@ -884,7 +884,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 */
 	public static String doSeqIdHack(String seqid) {
 		String new_seqid = seqid;
-		int slash_index = new_seqid.lastIndexOf("/");
+		int slash_index = new_seqid.lastIndexOf('/');
 		if (slash_index >= 0) {
 			new_seqid = new_seqid.substring(slash_index + 1);
 		}

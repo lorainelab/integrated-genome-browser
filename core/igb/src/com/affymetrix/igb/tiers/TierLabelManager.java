@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 
@@ -123,6 +124,14 @@ public final class TierLabelManager implements PropertyHolder {
 				}
 				if (!preserve_selections) {
 					labelmap.clearSelected();
+					// Deselect graphglyph selected in the tiermap
+					List<GlyphI> deselect = new ArrayList<GlyphI>();
+					for(GlyphI selected : tiermap.getSelected()) {
+						if(selected instanceof StyledGlyph) {
+							deselect.add(selected);
+						}
+					}
+					tiermap.deselect(deselect);
 				}
 				labelmap.select(selected_glyphs);
 				

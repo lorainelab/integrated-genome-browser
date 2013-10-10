@@ -11,6 +11,8 @@ import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.VirtualRange;
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -35,7 +37,8 @@ public class Score extends ColorProvider {
 	private float range				= max_score_color - min_score_color;
 	private Color botton_color		= DEFAULT_COLORS[0];
 	private Color top_color			= DEFAULT_COLORS[DEFAULT_COLORS.length - 1];
-	
+	private Map<Float, Color> rangeToColor	= new HashMap<Float, Color>();
+
 	private Parameter<HeatMap> custom_heatmap = new Parameter<HeatMap>(DEFAULT_HEATMAP){
 		@Override
 		public boolean set(Object e){
@@ -46,6 +49,7 @@ public class Score extends ColorProvider {
 			range = max_score_color - min_score_color;
 			botton_color	= heatmap.getRangeColors()[0];
 			top_color		= heatmap.getRangeColors()[heatmap.getValues().length - 1];
+			fillRangeToColor(heatmap);
 			return true;
 		}
 	};
@@ -53,6 +57,16 @@ public class Score extends ColorProvider {
 	public Score(){
 		super();
 		parameters.addParameter(HEATMAP, HeatMapExtended.class, custom_heatmap);
+		fillRangeToColor((HeatMapExtended)custom_heatmap.get());
+	}
+	
+	private void fillRangeToColor(HeatMapExtended heatmap) {
+		float[] values	= heatmap.getValues();
+		Color[] valCols	= heatmap.getRangeColors();
+		rangeToColor.clear();
+		for(int i=0; i<values.length; i++) {
+			rangeToColor.put(values[i], valCols[i]);
+		}
 	}
 	
 	@Override
@@ -71,10 +85,11 @@ public class Score extends ColorProvider {
 			return botton_color;
 		} else if (score > max_score_color) {
 			return top_color;
+		} else if (rangeToColor.containsKey(score)) {
+			return rangeToColor.get(score);
+		} else {
+			int index = Math.round(((score - min_score_color) / range) * (HeatMap.BINS - 1));
+			return custom_heatmap.get().getColors()[index];
 		}
-
-		int index = Math.round(((score - min_score_color) / range) * (HeatMap.BINS - 1));
-
-		return custom_heatmap.get().getColors()[index];
 	}
 }

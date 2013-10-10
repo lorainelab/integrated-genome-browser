@@ -343,8 +343,9 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	/** Converts the data in the score field, if present, to a floating-point number. */
 	private static float parseScore(String s) {
-		if(s == null || s.length() == 0 || s.equals(".") || s.equals("-"))
+		if(s == null || s.length() == 0 || s.equals(".") || s.equals("-")) {
 			return 0.0f;
+		}
 		return Float.parseFloat(s);
 	}
 

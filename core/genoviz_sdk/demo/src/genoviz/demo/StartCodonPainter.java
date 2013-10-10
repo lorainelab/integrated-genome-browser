@@ -54,12 +54,15 @@ public class StartCodonPainter implements ResiduePainter {
 		int i;
 		String residues = residue_string.toUpperCase().replace( 'U', 'T' );
 		while ( -1 < ( i = residues.indexOf( "ATG", residue_start ) ) ) {
-			if ( i < color_array.length )
+			if ( i < color_array.length ) {
 				color_array[i++] = this.startColor;
-			if ( i < color_array.length )
+			}
+			if ( i < color_array.length ) {
 				color_array[i++] = this.startColor;
-			if ( i < color_array.length )
+			}
+			if ( i < color_array.length ) {
 				color_array[i++] = this.startColor;
+			}
 			residue_start = i;
 		}
 	}

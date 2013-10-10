@@ -33,8 +33,9 @@ public class LabelTableCellRenderer extends DefaultTableCellRenderer implements 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
-		if(label.getIcon() == null && value instanceof String)
+		if(label.getIcon() == null && value instanceof String) {
 			label.setText((String)value);
+		}
 		
 		return label;
 	}

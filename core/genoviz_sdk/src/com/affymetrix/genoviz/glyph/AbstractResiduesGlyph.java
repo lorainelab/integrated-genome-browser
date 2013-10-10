@@ -88,8 +88,9 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 			Object child;
 			for (int i=0; i<getChildren().size(); i++) {
 				child = getChildren().get(i);
-				if (child instanceof ResiduesGlyphI)
+				if (child instanceof ResiduesGlyphI) {
 					((ResiduesGlyphI)child).setResidueFont( fnt );
+				}
 			}
 		}
 	}

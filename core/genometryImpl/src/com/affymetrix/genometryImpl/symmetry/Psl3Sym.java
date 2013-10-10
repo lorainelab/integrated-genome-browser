@@ -89,7 +89,9 @@ public final class Psl3Sym extends UcscPslSym {
 			else { span.set(omax, omin, otherseq); }
 			return true;
 		}
-		else return super.getSpan(bs, span);
+		else {
+			return super.getSpan(bs, span);
+		}
 	}
 
 	public boolean getSpan(int index, MutableSeqSpan span) {

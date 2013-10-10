@@ -255,8 +255,9 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 			mapper_matrix = bg_mapper_matrix;
 
 			painter = bg_painter;
-		} else
+		} else {
 			return;
+		}
 
 		// Depending on the color strategy, fill up color_array
 
@@ -289,8 +290,9 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 				try {
 					// Check inorder to prevent Array out of bounds exception
 					// when the length of color array is small -hari 3/21/2000
-					if (j >= residue_array.length)
+					if (j >= residue_array.length) {
 						break;
+					}
 					seq_char = residue_array[j];
 					seq_id   = residue_to_id_map[seq_char];
 
@@ -425,8 +427,9 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 				for (i = seq_beg_index; i <= seq_end_index; i++) {
 					// Check inorder to prevent Array out of bounds exception
 					// when the length of color array is small - hari 3/21/2000
-					if (i+1 >= residue_array.length)
+					if (i+1 >= residue_array.length) {
 						break;
+					}
 					box_width = pixelwidth;
 					pixelstart = (int)doublestart;
 					last_color = bg_color_array[i];
@@ -438,8 +441,9 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 							(bg_color_array[i+1] == last_color)) {
 						// Check inorder to prevent Array out of bounds exception
 						//  when the length of color array is small - hari 3/21/2000
-						if (i >= residue_array.length)
+						if (i >= residue_array.length) {
 							break;
+						}
 						i++;
 						box_width += pixelwidth;
 							}
@@ -479,12 +483,14 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 					// Check inorder to prevent Array out of bounds exception
 					// when the length of color array is small - hari 3/21/2000
 					if (seq_end_index+1 <= residue_array.length) {
-						if (match_char_string == null)
+						if (match_char_string == null) {
 							g.drawString(sequence.substring
 									(Math.max ( 0, seq_beg_index),seq_end_index+1), pixelstart, baseline);
-						else
+						}
+						else {
 							g.drawString(match_char_string.substring
 									(Math.max ( 0, seq_beg_index),seq_end_index+1), pixelstart, baseline);
+						}
 					}
 				}
 				else {

@@ -356,8 +356,9 @@ public class NeoSeq extends NeoContainerWidget
 
 
 	public void setEditable( boolean theAbility ) {
-		if ( this.editable == theAbility )
-			return; // It was already thus.
+		if ( this.editable == theAbility ) {
+			return;
+		} // It was already thus.
 
 		this.editable = theAbility;
 
@@ -409,8 +410,9 @@ public class NeoSeq extends NeoContainerWidget
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (null == this.seq)
+		if (null == this.seq) {
 			return;
+		}
 
 		int rpl = getResiduesPerLine();
 		Range vr = getVisibleRange();
@@ -426,10 +428,12 @@ public class NeoSeq extends NeoContainerWidget
 		switch ( e.getKeyCode() ) {
 			case KeyEvent.VK_HOME:
 				p = 0;
-				if ( isEditable() )
-					this.insertionPoint.setOffset( p );
-				if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-					clearSelection();
+				if ( isEditable() ) {
+			this.insertionPoint.setOffset( p );
+		}
+				if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+			clearSelection();
+		}
 				else {
 					if ( this.sel_range.isEmpty() ) {
 						this.sel_range.setPoint( q );
@@ -441,8 +445,9 @@ public class NeoSeq extends NeoContainerWidget
 				break;
 			case KeyEvent.VK_END:
 				p = last;
-				if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-					clearSelection();
+				if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+			clearSelection();
+		}
 				else {
 					if ( this.sel_range.isEmpty() ) {
 						this.sel_range.setPoint( q );
@@ -463,8 +468,9 @@ public class NeoSeq extends NeoContainerWidget
 						this.insertionPoint.setOffset( p );
 						makeResidueVisible( p );
 					}
-					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-						clearSelection();
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+				clearSelection();
+			}
 					else {
 						if ( this.sel_range.isEmpty() ) {
 							this.sel_range.setPoint( q );
@@ -483,8 +489,9 @@ public class NeoSeq extends NeoContainerWidget
 					p = this.insertionPoint.getOffset() + rpl;
 					p = Math.min( p, last + 1 );
 					this.insertionPoint.setOffset( p );
-					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-						clearSelection();
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+				clearSelection();
+			}
 					else {
 						if ( this.sel_range.isEmpty() ) {
 							this.sel_range.setPoint( q );
@@ -525,8 +532,9 @@ public class NeoSeq extends NeoContainerWidget
 						p--;
 						this.insertionPoint.setOffset( p );
 						makeResidueVisible( p );
-						if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-							clearSelection();
+						if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+					clearSelection();
+				}
 						else {
 							if ( this.sel_range.isEmpty() ) {
 								this.sel_range.setPoint( q );
@@ -542,8 +550,9 @@ public class NeoSeq extends NeoContainerWidget
 					p = this.insertionPoint.getOffset();
 					p = Math.max( 0, p - rps );
 					this.insertionPoint.setOffset( p );
-					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-						clearSelection();
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+				clearSelection();
+			}
 					else {
 						if ( this.sel_range.isEmpty() ) {
 							this.sel_range.setPoint( q );
@@ -559,8 +568,9 @@ public class NeoSeq extends NeoContainerWidget
 					p = this.insertionPoint.getOffset();
 					p = Math.min( p + rps, last+1 );
 					this.insertionPoint.setOffset( p );
-					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
-						clearSelection();
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
+				clearSelection();
+			}
 					else {
 						if ( this.sel_range.isEmpty() ) {
 							this.sel_range.setPoint( q );
@@ -581,8 +591,9 @@ public class NeoSeq extends NeoContainerWidget
 	 */
 	@Override
 	public void keyTyped(KeyEvent e) {
-		if ( ! this.isEditable() )
+		if ( ! this.isEditable() ) {
 			return;
+		}
 
 		if (seq instanceof EditableSequenceI) {
 			EditableSequenceI eseq = (EditableSequenceI) this.seq;
@@ -684,8 +695,9 @@ public class NeoSeq extends NeoContainerWidget
 
 		// Assume that we can bail if our offset_scroll isn't a Component.
 
-		if (!(offset_scroll instanceof Component))
+		if (!(offset_scroll instanceof Component)) {
 			return;
+		}
 
 		Component offsetComp = (Component) offset_scroll;
 
@@ -1115,8 +1127,9 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 	public void setFirstOrdinal (int first) {
-		if (num_glyph == null)
+		if (num_glyph == null) {
 			return;
+		}
 		num_glyph.setFirstOrdinal (first);
 	}
 
@@ -1357,8 +1370,9 @@ public class NeoSeq extends NeoContainerWidget
 
 		if (residue > this.seq.getLength()) {
 			residue = this.seq.getLength();
-			if ( this.isEditable() )
+			if ( this.isEditable() ) {
 				residue++;
+			}
 		}
 
 		if ( residue < 0) {
@@ -1706,8 +1720,9 @@ public class NeoSeq extends NeoContainerWidget
 
 		// Assume we can return null if offset_scroll isn't a Component
 
-		if (!(offset_scroll instanceof Component))
+		if (!(offset_scroll instanceof Component)) {
 			return null;
+		}
 
 		// For x: add needed label width, scrollbar width, and pixel width of
 		//        sequence map needed to exactly display desired residues_per_line
@@ -1883,16 +1898,18 @@ public class NeoSeq extends NeoContainerWidget
 
 	/** Set whether or not the numbering should be displayed descending. */
 	public void setRevNumbering (boolean revNums) {
-		if (num_glyph == null)
+		if (num_glyph == null) {
 			return;
+		}
 
 		num_glyph.setRevNumbering(revNums);
 	}
 
 	/** Get whether or not the numbering will be displayed descending. */
 	public boolean getRevNumbering () {
-		if (num_glyph == null)
+		if (num_glyph == null) {
 			return false;
+		}
 
 		return num_glyph.getRevNumbering();
 	}
@@ -2085,8 +2102,9 @@ public class NeoSeq extends NeoContainerWidget
 			highlightResidues(-1, -1);
 			setResiduesSelected(false);
 		}
-		else
+		else {
 			highlightResidues(start, end);
+		}
 
 		/* It would be nice if we could automatically scroll this NeoSeq
 		 * to ensure that the selection was visible.
@@ -2117,8 +2135,9 @@ public class NeoSeq extends NeoContainerWidget
 	 */
 	public void setScroller(JScrollBar scroller) {
 
-		if (!(scroller instanceof Component) || (scroller == null))
+		if (!(scroller instanceof Component) || (scroller == null)) {
 			return;
+		}
 
 		remove((Component)offset_scroll);
 		offset_scroll = scroller;
@@ -2155,7 +2174,9 @@ public class NeoSeq extends NeoContainerWidget
 			scroll(Y, coord_to_scroll);
 			int sel_cursor = sel_range.getStart() - getResiduesPerLine();
 
-			if (sel_cursor < 0) sel_cursor = 0;
+			if (sel_cursor < 0) {
+				sel_cursor = 0;
+			}
 
 			sel_range.update(sel_cursor);
 			sel_range.notifyObservers();
@@ -2169,8 +2190,9 @@ public class NeoSeq extends NeoContainerWidget
 			scroll(Y, coord_to_scroll);
 			int sel_cursor = sel_range.getEnd() + getResiduesPerLine();
 
-			if (sel_cursor > this.seq.getLength())
+			if (sel_cursor > this.seq.getLength()) {
 				sel_cursor = this.seq.getLength();
+			}
 
 			sel_range.update(sel_cursor);
 			sel_range.notifyObservers();

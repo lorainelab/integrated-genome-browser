@@ -342,8 +342,9 @@ public class AnnotationTierGlyph extends AbstractTierGlyph{
 
 	@Override
 	public int getActualSlots() {
-		if(getPacker() == expand_packer)
+		if(getPacker() == expand_packer) {
 			return expand_packer.getActualSlots();
+		}
 		return 1;
 	}
 

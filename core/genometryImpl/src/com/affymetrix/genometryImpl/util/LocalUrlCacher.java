@@ -78,8 +78,9 @@ public final class LocalUrlCacher {
 	}
 
 	public static boolean isFile(URI uri){
-		if(uri.getScheme() == null || uri.getScheme().length() == 0 || uri.getScheme().equalsIgnoreCase("file"))
+		if(uri.getScheme() == null || uri.getScheme().length() == 0 || uri.getScheme().equalsIgnoreCase("file")) {
 			return true;
+		}
 
 		return false;
 	}
@@ -657,8 +658,9 @@ public final class LocalUrlCacher {
 				String uriStr = uri.toString();
 				istr = LocalUrlCacher.getInputStream(uriStr, false, null, fileMayNotExist);
 
-				if(istr == null)
+				if(istr == null) {
 					return null;
+				}
 				
 				StringBuffer stripped_name = new StringBuffer();
 				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);

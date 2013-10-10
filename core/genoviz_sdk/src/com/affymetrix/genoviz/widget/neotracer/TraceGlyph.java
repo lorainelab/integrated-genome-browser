@@ -117,8 +117,12 @@ public class TraceGlyph extends Glyph  {
 		end = (int)(viewbox.x + viewbox.width) + 1;
 		if (end < getCoordBox().x ) { end++; }
 		if (end >= dataCount + getCoordBox().x) { end = dataCount + (int)getCoordBox().x - 1; }
-		if (beg < getCoordBox().x ) beg = (int)getCoordBox().x;
-		if (end > getCoordBox().x + dataCount - 1) end = (int)getCoordBox().x + dataCount - 1;
+		if (beg < getCoordBox().x ) {
+			beg = (int)getCoordBox().x;
+		}
+		if (end > getCoordBox().x + dataCount - 1) {
+			end = (int)getCoordBox().x + dataCount - 1;
+		}
 
 		for (int i=0; i<=3; i++) {
 			if (!showTrace[i]) {

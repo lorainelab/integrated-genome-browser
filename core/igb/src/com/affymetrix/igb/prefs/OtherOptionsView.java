@@ -428,10 +428,12 @@ public class OtherOptionsView extends IPrefEditorComponent {
 	}//GEN-LAST:event_OtherColorComboBoxActionPerformed
 
 	private void displayOptionStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_displayOptionStateChanged
-		if(displayOption.isSelected())
+		if(displayOption.isSelected()) {
 			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
-		else
+		}
+		else {
 			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
+		}
 	}//GEN-LAST:event_displayOptionStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

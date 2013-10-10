@@ -57,8 +57,9 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	}
 	
 	private void init(){
-		if(initialized)
+		if(initialized) {
 			return;
+		}
 		
 		SeekableBufferedStream bistr = null;
 		try{
@@ -228,8 +229,9 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	 */
 	private static long calculateBytesToRead(long start, long end) {
 
-		if(start/RESIDUES_PER_BYTE == end/RESIDUES_PER_BYTE)
+		if(start/RESIDUES_PER_BYTE == end/RESIDUES_PER_BYTE) {
 			return 1;
+		}
 
 		int endExtra = end % RESIDUES_PER_BYTE == 0 ? 0 : 1;
 		long bytesToRead = (end/RESIDUES_PER_BYTE) - (start/RESIDUES_PER_BYTE) + endExtra;
@@ -279,10 +281,12 @@ public final class TwoBitIterator implements SearchableCharIterator {
 				blocks.removeSpan( block);
 				block = null;
 			} else if (residuePosition >= block.getStart()) {
-				if(isMask)
+				if(isMask) {
 					temp[pos] = Character.toLowerCase(temp[pos]);
-				else
+				}
+				else {
 					temp[pos] = 'N';
+				}
 			}
 		}
 		return block;

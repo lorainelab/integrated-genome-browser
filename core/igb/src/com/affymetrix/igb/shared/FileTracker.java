@@ -59,7 +59,9 @@ public final class FileTracker {
     if (! FILENAMES.contains(name)) {
       throw new IllegalArgumentException("'"+name+"' is not a known name for a file preference");
     }
-    if (f == null || ! f.exists()) return;
+    if (f == null || ! f.exists()) {
+			return;
+		}
     try {
       String path = f.getCanonicalPath();
       PreferenceUtils.getTopNode().put(name, path);

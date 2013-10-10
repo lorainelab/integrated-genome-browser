@@ -249,8 +249,9 @@ public final class TierLabelManager implements PropertyHolder {
 			if(!(glyph.getAnnotStyle().isGraphTier())){
 				Map<String, Object> props = getTierProperties(glyph);
 
-			if(props != null)
-				propList.add(props);
+			if(props != null) {
+					propList.add(props);
+				}
 			}
 		}
 
@@ -607,14 +608,17 @@ public final class TierLabelManager implements PropertyHolder {
 	private void setPopuptitle(){
 		List<TierGlyph> tiers = getSelectedTiers();
 
-		if(tiers.isEmpty())
+		if(tiers.isEmpty()) {
 			return;
+		}
 
 		String label;
-		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getTrackName() != null)
+		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getTrackName() != null) {
 			label = tiers.get(0).getAnnotStyle().getTrackName();
-		else
+		}
+		else {
 			label = tiers.size() + " Selections";
+		}
 
 		if (label != null && label.length() > 30) {
 			label = label.substring(0, 30) + " ...";

@@ -115,8 +115,12 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
 
 	/** Returns null for GFF2 or the group field for GFF1. */
 	public String getGroup()  {
-		if (is_gff1) return group;
-		else return null;
+		if (is_gff1) {
+			return group;
+		}
+		else {
+			return null;
+		}
 	}
 
 	public boolean isGFF1() {
@@ -223,7 +227,9 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
 		if (is_gff1) {
 			if (group != null) {tprops.put("group", group);}
 		} else {
-			if (group != null) GFFParser.processAttributes(tprops, group);
+			if (group != null) {
+				GFFParser.processAttributes(tprops, group);
+			}
 		}
 
 		return tprops;

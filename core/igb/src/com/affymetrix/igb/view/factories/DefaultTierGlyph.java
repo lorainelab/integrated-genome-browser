@@ -540,8 +540,9 @@ public class DefaultTierGlyph extends TransformTierGlyph{
 	
 	@Override
 	public boolean isManuallyResizable() {
-		if(isHeightFixed())
+		if(isHeightFixed()) {
 			return false;
+		}
 		
 		if (this.getPacker() instanceof CollapsePacker) {
 			return false;

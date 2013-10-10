@@ -369,14 +369,16 @@ public final class IGB extends Application
 	}
 	
 	public void removeToolbarAction(GenericAction action) {
-		if(tool_bar == null)
+		if(tool_bar == null) {
 			return;
+		}
 		tool_bar.removeToolbarAction(action);
 	}
 	
 	void saveToolBar() {
-		if(tool_bar == null)
+		if(tool_bar == null) {
 			return;
+		}
 		
 		tool_bar.saveToolBar();
 	}

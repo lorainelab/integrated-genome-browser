@@ -53,8 +53,9 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		calHead();
 		if(headY < 8 || getPixelBox().x + getPixelBox().width/2 + headX/2 + buffer_pixel> getPixelBox().x + getPixelBox().width || 
-				getPixelBox().x + getPixelBox().width/2 - headX/2 - buffer_pixel< getPixelBox().x)
+				getPixelBox().x + getPixelBox().width/2 - headX/2 - buffer_pixel< getPixelBox().x) {
 			return;
+		}
 		
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());

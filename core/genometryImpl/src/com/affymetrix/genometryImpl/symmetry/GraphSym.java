@@ -518,8 +518,9 @@ public class GraphSym extends RootSeqSymmetry {
 	 *  Returns the graph state.  Will never be null.
 	 */
 	public final GraphState getGraphState() {
-		if(gState != null)
+		if(gState != null) {
 			return this.gState;
+		}
 		
 		return DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
 	}
@@ -634,51 +635,68 @@ public class GraphSym extends RootSeqSymmetry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		GraphSym other = (GraphSym) obj;
 		if (!isValid() || !other.isValid()) {
 			return false;
 		}
 //		DO NOT USE bufStart
 		if (gid == null) {
-			if (other.gid != null)
+			if (other.gid != null) {
 				return false;
-		} else if (!gid.equals(other.gid))
+			}
+		} else if (!gid.equals(other.gid)) {
 			return false;
+		}
 		if (graph_original_seq == null) {
-			if (other.graph_original_seq != null)
+			if (other.graph_original_seq != null) {
 				return false;
-		} else if (!graph_original_seq.equals(other.graph_original_seq))
+			}
+		} else if (!graph_original_seq.equals(other.graph_original_seq)) {
 			return false;
-		if (hasWidth != other.hasWidth)
+		}
+		if (hasWidth != other.hasWidth) {
 			return false;
+		}
 		if (Float.floatToIntBits(max_ycoord) != Float
-				.floatToIntBits(other.max_ycoord))
+				.floatToIntBits(other.max_ycoord)) {
 			return false;
+		}
 		if (Float.floatToIntBits(min_ycoord) != Float
-				.floatToIntBits(other.min_ycoord))
+				.floatToIntBits(other.min_ycoord)) {
 			return false;
-		if (pointCount != other.pointCount)
+		}
+		if (pointCount != other.pointCount) {
 			return false;
-		if (!Arrays.equals(wBuf, other.wBuf))
+		}
+		if (!Arrays.equals(wBuf, other.wBuf)) {
 			return false;
-		if (!Arrays.equals(xCoords, other.xCoords))
+		}
+		if (!Arrays.equals(xCoords, other.xCoords)) {
 			return false;
+		}
 		if (Double.doubleToLongBits(xDelta) != Double
-				.doubleToLongBits(other.xDelta))
+				.doubleToLongBits(other.xDelta)) {
 			return false;
-		if (xMax != other.xMax)
+		}
+		if (xMax != other.xMax) {
 			return false;
-		if (xMin != other.xMin)
+		}
+		if (xMin != other.xMin) {
 			return false;
+		}
 //		DO NOT USE yBuf
-		if (Float.floatToIntBits(yFirst) != Float.floatToIntBits(other.yFirst))
+		if (Float.floatToIntBits(yFirst) != Float.floatToIntBits(other.yFirst)) {
 			return false;
+		}
 		return true;
 	}
 	

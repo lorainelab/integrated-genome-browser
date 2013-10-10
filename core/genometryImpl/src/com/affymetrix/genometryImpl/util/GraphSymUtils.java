@@ -402,8 +402,12 @@ public final class GraphSymUtils {
 			if (obj != null){
 				String strand = null;
 				Integer strInt = (Integer)obj;
-				if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) strand = "+";
-				else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) strand = "-";
+				if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) {
+					strand = "+";
+				}
+				else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) {
+					strand = "-";
+				}
 				if (strand != null){
 					id += strand;
 					name += strand;

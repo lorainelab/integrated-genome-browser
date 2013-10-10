@@ -52,8 +52,12 @@ public class PositionTextData extends USeqData{
 			//chrom start stop name score strand
 			//bed12?
 			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedPositionTexts[i].text);
-			if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+tokens[0]+"\t0\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-			else out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+sortedPositionTexts[i].text+"\t0\t"+strand);
+			if (tokens.length == 7) {
+				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+tokens[0]+"\t0\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+			}
+			else {
+				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+sortedPositionTexts[i].text+"\t0\t"+strand);
+			}
 		}
 	}
 	
@@ -111,8 +115,12 @@ public class PositionTextData extends USeqData{
 		}
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.TEXT;
-		else fileType = USeqUtilities.INT + USeqUtilities.TEXT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT + USeqUtilities.TEXT;
+		}
+		else {
+			fileType = USeqUtilities.INT + USeqUtilities.TEXT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -221,8 +229,12 @@ public class PositionTextData extends USeqData{
 		}
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.TEXT;
-		else fileType = USeqUtilities.INT + USeqUtilities.TEXT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT + USeqUtilities.TEXT;
+		}
+		else {
+			fileType = USeqUtilities.INT + USeqUtilities.TEXT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -324,9 +336,13 @@ public class PositionTextData extends USeqData{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<PositionText> al = new ArrayList<PositionText>();
 		for (int i=0; i< sortedPositionTexts.length; i++){
-			if (sortedPositionTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositionTexts[i]);
+			if (sortedPositionTexts[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositionTexts[i]);
+			}
 		}
-		if (al.isEmpty()) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedPositionTexts = new PositionText[al.size()];
 		al.toArray(sortedPositionTexts);
 		updateSliceInfo(sortedPositionTexts, sliceInfo);

@@ -1369,8 +1369,9 @@ public final class GeneralLoadUtils {
 			boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 
 			Map<String, String> featureProps = null;
-			if(!LocalUrlCacher.isValidURI(uri))
+			if(!LocalUrlCacher.isValidURI(uri)) {
 				return null;
+			}
 			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.group);
 			if (symL != null && symL.isResidueLoader() && loadAsTrack) {
 				featureProps = new HashMap<String, String>();

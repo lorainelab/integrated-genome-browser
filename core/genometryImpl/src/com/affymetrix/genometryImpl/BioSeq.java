@@ -183,13 +183,16 @@ public class BioSeq implements SearchableCharIterator {
 	public int getMax() { return end; }
 
 	public int getAnnotationCount() {
-		if (null != annots) return annots.size();
+		if (null != annots) {
+			return annots.size();
+		}
 		return 0;
 	}
 
 	public /*@Nullable*/ RootSeqSymmetry getAnnotation(int index) {
-		if (null != annots && index < annots.size())
+		if (null != annots && index < annots.size()) {
 			return annots.get(index);
+		}
 		return null;
 	}
 	/**
@@ -724,22 +727,29 @@ public class BioSeq implements SearchableCharIterator {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		BioSeq other = (BioSeq) obj;
-		if (end != other.end)
+		if (end != other.end) {
 			return false;
+		}
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
-		if (start != other.start)
+		}
+		if (start != other.start) {
 			return false;
+		}
 		return true;
 	}
 }

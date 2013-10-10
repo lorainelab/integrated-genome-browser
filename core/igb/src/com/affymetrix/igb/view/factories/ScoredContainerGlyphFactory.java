@@ -191,8 +191,9 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 	}
 
 	public boolean isFileSupported(String fileFormat) {
-		if(fileFormat == null)
+		if(fileFormat == null) {
 			return false;
+		}
 
 		for(String format : supportedFormat){
 			if(format.equals(fileFormat)){

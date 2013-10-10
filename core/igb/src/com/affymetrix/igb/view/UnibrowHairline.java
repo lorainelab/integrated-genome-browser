@@ -53,7 +53,9 @@ public final class UnibrowHairline {
   PreferenceChangeListener pcl;
 
   public UnibrowHairline(NeoMap the_map) {
-    if (the_map == null) throw new IllegalArgumentException();
+    if (the_map == null) {
+			throw new IllegalArgumentException();
+		}
 
     map = the_map;
     //visible_range = new VisibleRange();

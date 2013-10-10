@@ -72,17 +72,21 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 	}
 
 	public int getChildCount() {
-		if (null != children)
+		if (null != children) {
 			return children.size();
-		else
+		}
+		else {
 			return 0;
+		}
 	}
 
 	public SeqSymmetry getChild(int index) {
-		if (null != children)
+		if (null != children) {
 			return children.get(index);
-		else
+		}
+		else {
 			return null;
+		}
 	}
 
 	public String getID() { return null; }
@@ -105,27 +109,34 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		SimpleSeqSymmetry other = (SimpleSeqSymmetry) obj;
 		if (children == null) {
-			if (other.children != null)
+			if (other.children != null) {
 				return false;
+			}
 		} else if (other.children == null) {
 			return false;
-		} else if (!(new CopyOnWriteArrayList<SeqSymmetry>(children)).equals(new CopyOnWriteArrayList<SeqSymmetry>(other.children)))
+		} else if (!(new CopyOnWriteArrayList<SeqSymmetry>(children)).equals(new CopyOnWriteArrayList<SeqSymmetry>(other.children))) {
 			return false;
+		}
 		if (spans == null) {
-			if (other.spans != null)
+			if (other.spans != null) {
 				return false;
+			}
 		} else if(other.spans == null){
 			return false;
-		} else if(!(new CopyOnWriteArrayList<SeqSpan>(spans)).equals(new CopyOnWriteArrayList<SeqSpan>(other.spans)))
+		} else if(!(new CopyOnWriteArrayList<SeqSpan>(spans)).equals(new CopyOnWriteArrayList<SeqSpan>(other.spans))) {
 			return false;
+		}
 		return true;
 	}
 

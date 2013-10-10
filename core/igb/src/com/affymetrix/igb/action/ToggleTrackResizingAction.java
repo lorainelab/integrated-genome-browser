@@ -48,8 +48,9 @@ public class ToggleTrackResizingAction extends SeqMapViewActionA {
 	}
 	
 	private void toggle(TrackResizingAction trackResizingAction){
-		if(trackResizingAction == null || trackResizingAction == selectedAction)
+		if(trackResizingAction == null || trackResizingAction == selectedAction) {
 			return;
+		}
 		
 		if(selectedAction != null){
 			selectedAction.putValue(SELECTED_KEY, false);

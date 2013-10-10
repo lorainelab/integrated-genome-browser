@@ -209,7 +209,9 @@ public class Scene implements SceneI  {
 
 	// should really move data adapters out to widgets...
 	public void removeDataAdapter(NeoDataAdapterI adapter) {
-		if (adapters == null)  return;
+		if (adapters == null) {
+			return;
+		}
 		adapters.remove(adapter);
 	}
 

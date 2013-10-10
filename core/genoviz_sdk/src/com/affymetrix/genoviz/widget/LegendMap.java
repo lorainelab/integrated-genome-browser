@@ -134,12 +134,17 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 	 */
 	LegendGlyph addLabelGlyph(MapTierGlyph mtg) {
 		Color glyphColor = mtg.getLabelColor();
-		if (glyphColor == null)
+		if (glyphColor == null) {
 			glyphColor = Color.black;
+		}
 		LegendGlyph lglyph = new LegendGlyph();
 		lglyph.setForegroundColor(Color.black);
-		if (mtg.getState() == MapTierGlyph.EXPANDED ) lglyph.setBackgroundColor ( expanded_color );
-		else lglyph.setBackgroundColor ( collapsed_color );
+		if (mtg.getState() == MapTierGlyph.EXPANDED ) {
+			lglyph.setBackgroundColor ( expanded_color );
+		}
+		else {
+			lglyph.setBackgroundColor ( collapsed_color );
+		}
 		lglyph.setForegroundColor ( Color.black );
 		lglyph.setPrimaryLabel(mtg.getLabel());
 		lglyph.setCoords(0, 0, 100, 30);
@@ -188,8 +193,12 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 					lglyph.setVisibility(true);
 					lglyph.setCoords(mapbox.x, tierbox.y, mapbox.width, tierbox.height);
 				}
-				if (mtg.getState() == MapTierGlyph.EXPANDED ) lglyph.setBackgroundColor ( expanded_color );
-				else lglyph.setBackgroundColor ( collapsed_color );
+				if (mtg.getState() == MapTierGlyph.EXPANDED ) {
+					lglyph.setBackgroundColor ( expanded_color );
+				}
+				else {
+					lglyph.setBackgroundColor ( collapsed_color );
+				}
 			}
 		}
 

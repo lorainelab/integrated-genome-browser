@@ -52,8 +52,9 @@ public class Residues {
 	}
 
 	public final void setStart(int start) {
-		if ( start < 0 )
+		if ( start < 0 ) {
 			throw new IllegalArgumentException("Start cannot be negative");
+		}
 		
 		this.start = start;
 		this.end = this.start + this.length - 1;

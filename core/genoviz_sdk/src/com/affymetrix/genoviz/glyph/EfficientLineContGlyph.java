@@ -91,8 +91,9 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 	pixelbox = fixAWTBigRectBug(view, pixelbox);
 
 	// If parent pixel width is less than number of childerns then do no draw children.
-	if(pixelbox.width < getChildCount())
-		return;
+	if(pixelbox.width < getChildCount()) {
+			return;
+		}
 	
 	Graphics g = view.getGraphics();
 	for(int i=0; i<getChildCount(); i++){

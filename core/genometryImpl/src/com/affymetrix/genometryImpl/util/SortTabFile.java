@@ -110,8 +110,9 @@ public class SortTabFile {
 		
 		public int compare(String o1, String o2) {
 
-			if(o1.startsWith("track") || o2.startsWith("track"))
+			if(o1.startsWith("track") || o2.startsWith("track")) {
 				return 0;
+			}
 
 			int[] mins = minimum(o1,o2);
 

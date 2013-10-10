@@ -58,13 +58,15 @@ public class AnnotatedSeqGroup {
 	}
 
 	final public String getOrganism() {
-		if(organism != null && !("".equals(organism)))
+		if(organism != null && !("".equals(organism))) {
 			return organism;
+		}
 
 		String org = SpeciesLookup.getSpeciesName(id);
 
-		if(org != null && !("".equals(org)))
+		if(org != null && !("".equals(org))) {
 			this.organism = org;
+		}
 
 		return organism;
 	}
@@ -88,8 +90,9 @@ public class AnnotatedSeqGroup {
 
 	final public GenericVersion getVersionOfServer(GenericServer gServer){
 		for(GenericVersion v : gVersions){
-			if(v.gServer.equals(gServer))
+			if(v.gServer.equals(gServer)) {
 				return v;
+			}
 		}
 		return null; // No Associated version with provided server.
 	}

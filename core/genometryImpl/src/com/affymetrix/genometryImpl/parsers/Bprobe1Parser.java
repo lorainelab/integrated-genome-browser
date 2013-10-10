@@ -121,8 +121,9 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 			
 			group = gmodel.getSeqGroup(seq_group_id);
 
-			if(group == null)
+			if(group == null) {
 				group = gmodel.addSeqGroup(seq_group_id);
+			}
 			
 			return group;
 		}catch(Exception ex){

@@ -43,8 +43,9 @@ public class TwoBitParserTest {
 
 	@Test
 	public void testCaseFiles() throws Exception{
-		if(!LocalUrlCacher.isValidURL(url))
+		if(!LocalUrlCacher.isValidURL(url)) {
 			return;
+		}
 
 		residues = noblocks;
 		file = noblocks_file;

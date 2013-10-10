@@ -137,12 +137,15 @@ public class BaseCalls {
 			BaseCall midBase = getBaseCall( mid );
 			int midVal = midBase.getTracePoint();
 
-			if (midVal < tracePoint)
+			if (midVal < tracePoint) {
 				low = mid + 1;
-			else if (midVal > tracePoint)
+			}
+			else if (midVal > tracePoint) {
 				high = mid - 1;
-			else
-				return mid; // hit it exactly
+			}
+			else {
+				return mid;
+			} // hit it exactly
 		}
 
 		// by this time, high <= low

@@ -725,12 +725,15 @@ public class NeoAssemblerDemo extends JApplet
 	}
 
 	private void hideFrames() {
-		if (null != propframe)
+		if (null != propframe) {
 			propframe.setVisible(false);
-		if (null != zoomframe)
+		}
+		if (null != zoomframe) {
 			zoomframe.setVisible(false);
-		if (null != mapframe)
+		}
+		if (null != mapframe) {
 			mapframe.setVisible(false);
+		}
 	}
 
 	@Override
@@ -981,7 +984,9 @@ public class NeoAssemblerDemo extends JApplet
 	}
 
 	public String getSelectedResidues ( AlignmentGlyph theGlyph ) {
-		if ( ! (theGlyph.isSelected() ) ) return( "" );
+		if ( ! (theGlyph.isSelected() ) ) {
+			return( "" );
+		}
 		Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
 		Mapping glyphMap = theGlyph.getMapping();
 		SequenceI glyphSeq = theGlyph.getSequence();
@@ -1018,13 +1023,17 @@ public class NeoAssemblerDemo extends JApplet
 	protected AlignmentGlyph getSelectedGlyph ( NeoAssembler theAssembler ) {
 		AlignmentGlyph oneGlyph;
 		oneGlyph = (AlignmentGlyph)theAssembler.getConsensusGlyph();
-		if (oneGlyph.isSelected() ) return oneGlyph;
+		if (oneGlyph.isSelected() ) {
+			return oneGlyph;
+		}
 		else {
 			List<GlyphI> theGlyphs = theAssembler.getAlignmentGlyphs();
 
 			for ( int i  = 0; i < theGlyphs.size(); i++ ) {
 				oneGlyph = (AlignmentGlyph)theGlyphs.get ( i );
-				if (oneGlyph.isSelected() ) return oneGlyph;
+				if (oneGlyph.isSelected() ) {
+					return oneGlyph;
+				}
 			}
 		}
 		return ( null );
@@ -1043,8 +1052,9 @@ public class NeoAssemblerDemo extends JApplet
 	@Override
 	public AppletContext getAppletContext()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return null;
+		}
 		return super.getAppletContext();
 	}
 
@@ -1052,16 +1062,18 @@ public class NeoAssemblerDemo extends JApplet
 	@Override
 	public URL getDocumentBase()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return getCodeBase();
+		}
 		return super.getDocumentBase();
 	}
 
 	@Override
 	public String getParameter(String name)
 	{
-		if(isApplication)
+		if(isApplication) {
 			return parameters.get(name);
+		}
 		return super.getParameter(name);
 	}
 

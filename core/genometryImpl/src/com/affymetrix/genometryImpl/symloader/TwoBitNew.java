@@ -91,8 +91,9 @@ public class TwoBitNew extends SymLoader {
             }
             seq_name = new String(chars);
 			seq = group.getSeq(seq_name);
-			if(seq == null)
+			if(seq == null) {
 				continue;
+			}
 			
 			chrMap.put(seq, seq_name);
             long pos = readFourBytes();

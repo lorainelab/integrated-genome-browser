@@ -70,8 +70,9 @@ public class DragDropToolBar extends JToolBar implements DragSourceListener, Dro
 	
 	private void moveTo(Point point){
 		Component target = this.getComponentAt(point);
-		if(target == this)
+		if(target == this) {
 			return;
+		}
 		
 		int source_index = 0;
 		while (source_index < getComponentCount()-1 && transferable.comp != getComponent(source_index)) {
@@ -84,8 +85,9 @@ public class DragDropToolBar extends JToolBar implements DragSourceListener, Dro
 		
 		int diff = target_index - source_index;
 		
-		if(diff == 0)
+		if(diff == 0) {
 			return;
+		}
 		
 		int index = source_index + diff;
 		this.remove(transferable.comp);

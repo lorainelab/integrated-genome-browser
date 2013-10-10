@@ -205,8 +205,9 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
 		
 	@Override
 	public boolean isScrollingAllowed(){
-		if(getPacker() != expand_packer)
+		if(getPacker() != expand_packer) {
 			return false;
+		}
 		
 		return true;
 	}
@@ -237,8 +238,9 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
 	}
 
 	private int getInitialRowsToScroll(){
-		if (getStyleDepth() == MAX_EXPAND)
+		if (getStyleDepth() == MAX_EXPAND) {
 			return MAX_EXPAND;
+		}
 		
 		return getActualSlots() - getStyleDepth();
 	}

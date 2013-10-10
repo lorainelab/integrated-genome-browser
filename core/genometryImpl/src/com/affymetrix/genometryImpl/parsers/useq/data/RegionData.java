@@ -43,7 +43,9 @@ public class RegionData extends USeqData{
 		int lastBase = -1;
 		for (Region r : sortedRegions){
 			int end = r.getStop();
-			if (end > lastBase) lastBase = end;
+			if (end > lastBase) {
+				lastBase = end;
+			}
 		}
 		return lastBase;
 	}
@@ -109,10 +111,18 @@ public class RegionData extends USeqData{
 		}
 		//make and put file type/extension 
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType += USeqUtilities.SHORT;
-		else fileType += USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -265,10 +275,18 @@ public class RegionData extends USeqData{
 		}
 		//make and put file type/extension 
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType += USeqUtilities.SHORT;
-		else fileType += USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -430,9 +448,13 @@ public class RegionData extends USeqData{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<Region> al = new ArrayList<Region>();
 		for (int i=0; i< sortedRegions.length; i++){
-			if (sortedRegions[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegions[i]);
+			if (sortedRegions[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegions[i]);
+			}
 		}
-		if (al.isEmpty()) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedRegions = new Region[al.size()];
 		al.toArray(sortedRegions);
 		updateSliceInfo(sortedRegions, sliceInfo);

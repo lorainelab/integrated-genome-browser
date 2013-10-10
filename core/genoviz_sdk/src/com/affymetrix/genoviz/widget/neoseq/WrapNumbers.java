@@ -85,8 +85,9 @@ public class WrapNumbers extends WrapGlyph {
 
 		int first_residue_line = (int)visible_box.y;
 
-		if (!revNums)
+		if (!revNums) {
 			first_residue_line += firstOrd;
+		}
 
 		if (residues_per_line < 1) {
 			return;
@@ -121,10 +122,12 @@ public class WrapNumbers extends WrapGlyph {
 			}
 			String ordinal;
 
-			if (revNums)
+			if (revNums) {
 				ordinal = stringRepresentation(seqEnd - residue_index -1);
-			else
+			}
+			else {
 				ordinal = stringRepresentation(residue_index);
+			}
 			int x = pixelBox.width - RIGHT_MARGIN - fm.stringWidth(ordinal);
 			g.drawString(ordinal, x, ycounter);
 			ycounter += residue_height;
@@ -136,8 +139,9 @@ public class WrapNumbers extends WrapGlyph {
 		return (int) (y + height - (height % residues_per_line) - 1);
 	}
 	public String stringRepresentation(int num){
-		if(labelFormat == COMMA)
+		if(labelFormat == COMMA) {
 			return comma_format.format(num);
+		}
 		return Integer.toString(num);
 	}
 

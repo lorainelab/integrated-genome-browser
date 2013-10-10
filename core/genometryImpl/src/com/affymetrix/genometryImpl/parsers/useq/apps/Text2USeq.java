@@ -103,9 +103,13 @@ public class Text2USeq {
 
 	/**Checks to see if the last character in the first chromStrand file is +, -, or .*/
 	private boolean strandBad(){
-		if (strandColumnIndex == -1) return false;
+		if (strandColumnIndex == -1) {
+			return false;
+		}
 		String name = chromStrandFileHash.keySet().iterator().next();
-		if (PATTERN_STRAND.matcher(name).matches() == true) return false;
+		if (PATTERN_STRAND.matcher(name).matches() == true) {
+			return false;
+		}
 		return true;
 	}
 
@@ -117,13 +121,19 @@ public class Text2USeq {
 				ai.setDataType(ArchiveInfo.DATA_TYPE_VALUE_GRAPH);
 				ai.setInitialGraphStyle(GRAPH_STYLES[graphStyle]);
 			}
-			else ai.setDataType(ArchiveInfo.DATA_TYPE_VALUE_REGION);
+			else {
+				ai.setDataType(ArchiveInfo.DATA_TYPE_VALUE_REGION);
+			}
 			//set text file source
 			ai.setOriginatingDataSource(sourceFile.toString());
 			//set color
-			if (color != null) ai.setInitialColor(color);
+			if (color != null) {
+				ai.setInitialColor(color);
+			}
 			//set description?
-			if (description != null) ai.setDescription(description);
+			if (description != null) {
+				ai.setDescription(description);
+			}
 			//write
 			File readme = ai.writeReadMeFile(workingBinarySaveDirectory);
 			files2Zip.add(readme);
@@ -139,23 +149,39 @@ public class Text2USeq {
 			if (endingColumnIndex == -1){
 				//Position!
 				if (scoreColumnIndex == -1){
-					if (textColumnIndexs == null) sliceWritePositionData();
-					else sliceWritePositionTextData();
+					if (textColumnIndexs == null) {
+						sliceWritePositionData();
+					}
+					else {
+						sliceWritePositionTextData();
+					}
 				}
 				else {
-					if (textColumnIndexs == null) sliceWritePositionScoreData();
-					else sliceWritePositionScoreTextData();
+					if (textColumnIndexs == null) {
+						sliceWritePositionScoreData();
+					}
+					else {
+						sliceWritePositionScoreTextData();
+					}
 				}
 			}
 			else {
 				//Region
 				if (scoreColumnIndex == -1){
-					if (textColumnIndexs == null) sliceWriteRegionData();
-					else sliceWriteRegionTextData();
+					if (textColumnIndexs == null) {
+						sliceWriteRegionData();
+					}
+					else {
+						sliceWriteRegionTextData();
+					}
 				}
 				else {
-					if (textColumnIndexs == null) sliceWriteRegionScoreData();
-					else sliceWriteRegionScoreTextData();
+					if (textColumnIndexs == null) {
+						sliceWriteRegionScoreData();
+					}
+					else {
+						sliceWriteRegionScoreTextData();
+					}
 				}
 
 			}
@@ -178,7 +204,9 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			Region[] reg = makeRegions(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (Region.checkStartStops(reg) == false) {
+				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			}
 			int numberReg = reg.length;
 			while (true){
 				//find beginningIndex and endIndex(excluded) indexes
@@ -216,7 +244,9 @@ public class Text2USeq {
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberReg) break;
+				if (endIndex == numberReg) {
+					break;
+				}
 			}
 		}
 	}	
@@ -232,7 +262,9 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionScore[] reg = makeRegionScores(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (Region.checkStartStops(reg) == false) {
+				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			}
 			int numberReg = reg.length;
 			while (true){
 				//find beginningIndex and endIndex(excluded) indexes
@@ -270,7 +302,9 @@ public class Text2USeq {
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberReg) break;
+				if (endIndex == numberReg) {
+					break;
+				}
 			}
 		}
 	}
@@ -286,7 +320,9 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionScoreText[] reg = makeRegionScoreTexts(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (Region.checkStartStops(reg) == false) {
+				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			}
 			int numberReg = reg.length;
 			while (true){
 				//find beginningIndex and endIndex(excluded) indexes
@@ -324,7 +360,9 @@ public class Text2USeq {
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberReg) break;
+				if (endIndex == numberReg) {
+					break;
+				}
 			}
 		}
 	}
@@ -340,7 +378,9 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionText[] reg = makeRegionTexts(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (Region.checkStartStops(reg) == false) {
+				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			}
 			int numberReg = reg.length;
 			while (true){
 				//find beginningIndex and endIndex(excluded) indexes
@@ -378,7 +418,9 @@ public class Text2USeq {
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberReg) break;
+				if (endIndex == numberReg) {
+					break;
+				}
 			}
 		}
 	}
@@ -432,7 +474,9 @@ public class Text2USeq {
 				File savedFile = pd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberPositions) break;
+				if (endIndex == numberPositions) {
+					break;
+				}
 			}
 		}
 	}	
@@ -485,7 +529,9 @@ public class Text2USeq {
 				File savedFile = pd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberPositions) break;
+				if (endIndex == numberPositions) {
+					break;
+				}
 			}
 		}
 	}
@@ -538,7 +584,9 @@ public class Text2USeq {
 				File savedFile = pd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
-				if (endIndex == numberPositions) break;
+				if (endIndex == numberPositions) {
+					break;
+				}
 			}
 		}
 	}
@@ -747,7 +795,9 @@ public class Text2USeq {
 
 	private String concatinateTextColumns(String[] tokens){
 		//just one?
-		if (textColumnIndexs.length == 1) return tokens[textColumnIndexs[0]];
+		if (textColumnIndexs.length == 1) {
+			return tokens[textColumnIndexs[0]];
+		}
 		//nope so concatinate
 		StringBuilder sb = new StringBuilder(tokens[textColumnIndexs[0]]);
 		for (int i=1; i< textColumnIndexs.length; i++){
@@ -777,24 +827,36 @@ public class Text2USeq {
 			while ((line = in.readLine()) !=null){
 				try {
 					line = line.trim();
-					if (line.length()==0) continue;
-					if (line.startsWith("#")) continue;
-					if (line.contains("chrAdapter")) continue;
+					if (line.length()==0) {
+						continue;
+					}
+					if (line.startsWith("#")) {
+						continue;
+					}
+					if (line.contains("chrAdapter")) {
+						continue;
+					}
 					tokens = tab.split(line);
 					trim(tokens);
 					
 					//parse chromosome
 					String chromosome = tokens[chromosomeColumnIndex];
 					//check for splice junction
-					if (skipSpliceJunctions && spliceJunction.matcher(chromosome).matches()) continue;
+					if (skipSpliceJunctions && spliceJunction.matcher(chromosome).matches()) {
+						continue;
+					}
 					//parse strand
-					if (strandColumnIndex != -1) strand = tokens[strandColumnIndex];
+					if (strandColumnIndex != -1) {
+						strand = tokens[strandColumnIndex];
+					}
 					String chromStrand = chromosome+strand;
 
 					//get PrintWriter
 					if (currentChrom.equals(chromStrand) == false){
 						currentChrom = chromStrand;
-						if (chromOut.containsKey(chromStrand)) out = chromOut.get(chromStrand);
+						if (chromOut.containsKey(chromStrand)) {
+							out = chromOut.get(chromStrand);
+						}
 						else {
 							File f = new File(saveDirectory, chromStrand);
 							out = new PrintWriter (new FileWriter(f));
@@ -867,28 +929,50 @@ public class Text2USeq {
 			}
 		}
 		//check params
-		if (inputFiles == null || inputFiles.length ==0) USeqUtilities.printErrAndExit("\nCannot find your input files?\n");
-		if (chromosomeColumnIndex == -1 || beginningColumnIndex == -1) USeqUtilities.printErrAndExit("\nPlease enter a chromosome and or position column indexes\n");
-		if (versionedGenome == null) USeqUtilities.printErrAndExit("\nPlease enter a genome version following DAS/2 notation (e.g. H_sapiens_Mar_2006, M_musculus_Jul_2007, C_elegans_May_2008).\n");
+		if (inputFiles == null || inputFiles.length ==0) {
+			USeqUtilities.printErrAndExit("\nCannot find your input files?\n");
+		}
+		if (chromosomeColumnIndex == -1 || beginningColumnIndex == -1) {
+			USeqUtilities.printErrAndExit("\nPlease enter a chromosome and or position column indexes\n");
+		}
+		if (versionedGenome == null) {
+			USeqUtilities.printErrAndExit("\nPlease enter a genome version following DAS/2 notation (e.g. H_sapiens_Mar_2006, M_musculus_Jul_2007, C_elegans_May_2008).\n");
+		}
 
 		//instantiate outputFiles
 		outputDirectories = new File[inputFiles.length];
 
 		//find max index
 		maxIndex = -1;
-		if (beginningColumnIndex > maxIndex) maxIndex = beginningColumnIndex;
-		if (endingColumnIndex > maxIndex) maxIndex = endingColumnIndex;
-		if (scoreColumnIndex > maxIndex) maxIndex = scoreColumnIndex;
+		if (beginningColumnIndex > maxIndex) {
+			maxIndex = beginningColumnIndex;
+		}
+		if (endingColumnIndex > maxIndex) {
+			maxIndex = endingColumnIndex;
+		}
+		if (scoreColumnIndex > maxIndex) {
+			maxIndex = scoreColumnIndex;
+		}
 		if (textColumnIndexs != null){
 			for (int x=0; x< textColumnIndexs.length; x++){
-				if (textColumnIndexs[x] > maxIndex) maxIndex = textColumnIndexs[x];
+				if (textColumnIndexs[x] > maxIndex) {
+					maxIndex = textColumnIndexs[x];
+				}
 			}
 		}
-		if (strandColumnIndex > maxIndex) maxIndex = strandColumnIndex;
-		if (chromosomeColumnIndex > maxIndex) maxIndex = chromosomeColumnIndex;
-		if (beginningColumnIndex > maxIndex) maxIndex = beginningColumnIndex;
+		if (strandColumnIndex > maxIndex) {
+			maxIndex = strandColumnIndex;
+		}
+		if (chromosomeColumnIndex > maxIndex) {
+			maxIndex = chromosomeColumnIndex;
+		}
+		if (beginningColumnIndex > maxIndex) {
+			maxIndex = beginningColumnIndex;
+		}
 		//flip make graph boolean? if end position are provided
-		if (endingColumnIndex != -1) makeGraph = false;
+		if (endingColumnIndex != -1) {
+			makeGraph = false;
+		}
 
 		//check color
 		if (color !=null){

@@ -269,8 +269,9 @@ public final class DasSource {
 	}
 
 	private URL getLoadURL(URL server, String query, String pri_default) throws MalformedURLException{
-		if (!isLoadingFromPrimary())
+		if (!isLoadingFromPrimary()) {
 			return new URL(server,query);
+		}
 		
 		return new URL(primary, pri_default + ".xml");
 	}

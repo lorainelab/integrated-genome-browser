@@ -230,8 +230,9 @@ public class SearchModeResidue implements ISearchModeExtended,
 		Thread current_thread = Thread.currentThread();
 		
 		for(int i=visibleSpan.getMin(); i<visibleSpan.getMax(); i+=MAX_RESIDUE_LEN_SEARCH){
-			if(current_thread.isInterrupted())
+			if(current_thread.isInterrupted()) {
 				break;
+			}
 			
 			int start = Math.max(i-search_text.length(), 0);
 			int end = Math.min(i+MAX_RESIDUE_LEN_SEARCH, residuesLength);

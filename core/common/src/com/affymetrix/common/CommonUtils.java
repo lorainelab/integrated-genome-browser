@@ -107,8 +107,9 @@ public class CommonUtils {
 	}
 
 	public String[] getArgs(BundleContext bundleContext) {
-		if(bundleContext.getProperty("args") == null)
+		if(bundleContext.getProperty("args") == null) {
 			return null;
+		}
 		return bundleContext.getProperty("args").split(", ");
 	}
 

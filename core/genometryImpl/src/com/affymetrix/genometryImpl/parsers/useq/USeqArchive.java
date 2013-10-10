@@ -31,7 +31,9 @@ public class USeqArchive {
 	public USeqData[] fetch (String chromosome, int beginningBP, int endingBP) {
 		//fetch any overlapping entries, these might be mixed strand
 		ArrayList<ZipEntry> entries = fetchZipEntries(chromosome, beginningBP, endingBP);
-		if (entries == null) return null;
+		if (entries == null) {
+			return null;
+		}
 
 		//build ArrayList of USeqData to merge
 		ArrayList<USeqData> useqDataALPlus = new ArrayList<USeqData>();
@@ -49,9 +51,15 @@ public class USeqArchive {
 				//load it, this will trim too thus might remove everything.
 				USeqData d = loadSlice(beginningBP, endingBP, sliceInfo, bis);
 				if (d != null) {
-					if (sliceInfo.getStrand().equals("+")) useqDataALPlus.add(d);
-					else if (sliceInfo.getStrand().equals("+")) useqDataALMinus.add(d);
-					else useqDataALNone.add(d);
+					if (sliceInfo.getStrand().equals("+")) {
+						useqDataALPlus.add(d);
+					}
+					else if (sliceInfo.getStrand().equals("+")) {
+						useqDataALMinus.add(d);
+					}
+					else {
+						useqDataALNone.add(d);
+					}
 				}
 				//close input entry input stream
 				bis.close();
@@ -60,11 +68,21 @@ public class USeqArchive {
 			USeqData plus = null;
 			USeqData minus = null;
 			USeqData non = null;
-			if (!useqDataALPlus.isEmpty()) plus = mergeUSeqData(useqDataALPlus);
-			if (!useqDataALMinus.isEmpty()) minus = mergeUSeqData(useqDataALMinus);
-			if (!useqDataALNone.isEmpty()) minus = mergeUSeqData(useqDataALNone);
-			if (plus != null || minus != null || non !=null) return new USeqData[]{plus, minus, non};
-			else return null;
+			if (!useqDataALPlus.isEmpty()) {
+				plus = mergeUSeqData(useqDataALPlus);
+			}
+			if (!useqDataALMinus.isEmpty()) {
+				minus = mergeUSeqData(useqDataALMinus);
+			}
+			if (!useqDataALNone.isEmpty()) {
+				minus = mergeUSeqData(useqDataALNone);
+			}
+			if (plus != null || minus != null || non !=null) {
+				return new USeqData[]{plus, minus, non};
+			}
+			else {
+				return null;
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -78,21 +96,37 @@ public class USeqArchive {
 	/**Merges an ArrayList of the same dataType.*/
 	public USeqData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		//Position
-		if (USeqUtilities.POSITION.matcher(binaryDataType).matches()) return PositionData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.POSITION.matcher(binaryDataType).matches()) {
+			return PositionData.mergeUSeqData(useqDataAL);
+		}
 		//PositionScore
-		if (USeqUtilities.POSITION_SCORE.matcher(binaryDataType).matches()) return PositionScoreData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.POSITION_SCORE.matcher(binaryDataType).matches()) {
+			return PositionScoreData.mergeUSeqData(useqDataAL);
+		}
 		//PositionText
-		if (USeqUtilities.POSITION_TEXT.matcher(binaryDataType).matches()) return PositionTextData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.POSITION_TEXT.matcher(binaryDataType).matches()) {
+			return PositionTextData.mergeUSeqData(useqDataAL);
+		}
 		//PositionScoreText
-		if (USeqUtilities.POSITION_SCORE_TEXT.matcher(binaryDataType).matches()) return PositionScoreTextData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.POSITION_SCORE_TEXT.matcher(binaryDataType).matches()) {
+			return PositionScoreTextData.mergeUSeqData(useqDataAL);
+		}
 		//Region
-		if (USeqUtilities.REGION.matcher(binaryDataType).matches()) return RegionData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.REGION.matcher(binaryDataType).matches()) {
+			return RegionData.mergeUSeqData(useqDataAL);
+		}
 		//RegionScore
-		if (USeqUtilities.REGION_SCORE.matcher(binaryDataType).matches()) return RegionScoreData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.REGION_SCORE.matcher(binaryDataType).matches()) {
+			return RegionScoreData.mergeUSeqData(useqDataAL);
+		}
 		//RegionText
-		if (USeqUtilities.REGION_TEXT.matcher(binaryDataType).matches()) return RegionTextData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.REGION_TEXT.matcher(binaryDataType).matches()) {
+			return RegionTextData.mergeUSeqData(useqDataAL);
+		}
 		//RegionScoreText
-		if (USeqUtilities.REGION_SCORE_TEXT.matcher(binaryDataType).matches()) return RegionScoreTextData.mergeUSeqData(useqDataAL);
+		if (USeqUtilities.REGION_SCORE_TEXT.matcher(binaryDataType).matches()) {
+			return RegionScoreTextData.mergeUSeqData(useqDataAL);
+		}
 		//unknown!
 		return null;
 	}
@@ -102,7 +136,9 @@ public class USeqArchive {
 	public boolean writeSlicesToStream (OutputStream outputStream, String chromosome, int beginningBP, int endingBP, boolean closeStream) {
 		//fetch any overlapping entries
 		ArrayList<ZipEntry> entries = fetchZipEntries(chromosome, beginningBP, endingBP);
-		if (entries == null) return false;
+		if (entries == null) {
+			return false;
+		}
 		//add readme
 		entries.add(0, archiveReadMeEntry);
 		ZipOutputStream out = new ZipOutputStream(outputStream);
@@ -119,7 +155,9 @@ public class USeqArchive {
 				ZipEntry entry = entries.get(i);			
 				bis = new BufferedInputStream (zipArchive.getInputStream(entry));
 				//is this entirely contained or needing to be split?, skip first entry which is the readme file
-				if (i!=0) sliceInfo = new SliceInfo(entry.getName());
+				if (i!=0) {
+					sliceInfo = new SliceInfo(entry.getName());
+				}
 				if (i == 0 || sliceInfo.isContainedBy(beginningBP, endingBP)){
 					out.putNextEntry(entry);
 					//read in and write out, wish there was a way of just copying it directly
@@ -130,7 +168,9 @@ public class USeqArchive {
 					out.closeEntry();
 				}
 				//slice the slice
-				else sliceAndWriteEntry(beginningBP, endingBP, sliceInfo, bis, out, dos);
+				else {
+					sliceAndWriteEntry(beginningBP, endingBP, sliceInfo, bis, out, dos);
+				}
 
 				//close input entry input stream
 				bis.close();
@@ -163,7 +203,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((PositionData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((PositionData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//POSITION_SCORE
@@ -172,7 +214,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((PositionScoreData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((PositionScoreData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//POSITION_TEXT
@@ -181,7 +225,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((PositionTextData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((PositionTextData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//POSITION_SCORE_TEXT
@@ -190,7 +236,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((PositionScoreTextData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((PositionScoreTextData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//REGION
@@ -199,7 +247,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((RegionData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((RegionData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//REGION_SCORE
@@ -208,7 +258,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((RegionScoreData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((RegionScoreData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//REGION_TEXT
@@ -217,7 +269,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((RegionTextData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((RegionTextData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//REGION_SCORE_TEXT
@@ -226,7 +280,9 @@ public class USeqArchive {
 				//entirely contained by?
 				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
 					//nope so slice it and check if anything remains
-					if (((RegionScoreTextData) d).trim(beginningBP, endingBP) == false) d = null; 
+					if (((RegionScoreTextData) d).trim(beginningBP, endingBP) == false) {
+						d = null;
+					} 
 				}
 			}
 			//unknown!
@@ -248,42 +304,58 @@ public class USeqArchive {
 			//Position
 			if (USeqUtilities.POSITION.matcher(dataType).matches()) {
 				PositionData d = new PositionData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//PositionScore
 			else if (USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
 				PositionScoreData d = new PositionScoreData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//PositionText
 			else if (USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
 				PositionTextData d = new PositionTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//PositionScoreText
 			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
 				PositionScoreTextData d = new PositionScoreTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//Region
 			else if (USeqUtilities.REGION.matcher(dataType).matches()) {
 				RegionData d = new RegionData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//RegionScore
 			else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
 				RegionScoreData d = new RegionScoreData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//RegionText
 			else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
 				RegionTextData d = new RegionTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//RegionScoreText
 			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
 				RegionScoreTextData d = new RegionScoreTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
+				if (d.trim(beginningBP, endingBP)) {
+					d.write(out, dos, true);
+				}
 			}
 			//unknown!
 			else {
@@ -303,7 +375,9 @@ public class USeqArchive {
 	public File writeSlicesToFile (File saveDirectory, String chromosome, int beginningBP, int endingBP) {
 		//fetch any overlapping entries
 		ArrayList<ZipEntry> entries = fetchZipEntries(chromosome, beginningBP, endingBP);
-		if (entries == null) return null;
+		if (entries == null) {
+			return null;
+		}
 		//add readme
 		entries.add(0, archiveReadMeEntry);
 		//make new zip archive to hold slices
@@ -345,13 +419,17 @@ public class USeqArchive {
 		ArrayList<ZipEntry> al = new ArrayList<ZipEntry>();
 		//fetch chromStrand
 		DataRange[] dr = chromStrandRegions.get(chromStrand);
-		if (dr == null) return null;
+		if (dr == null) {
+			return null;
+		}
 		for (int i=0; i< dr.length; i++){
 			if (dr[i].intersects(beginningBP, endingBP)) {
 				al.add(dr[i].zipEntry);
 			}
 		}
-		if (al.isEmpty()) return null;
+		if (al.isEmpty()) {
+			return null;
+		}
 		return al;
 	}
 
@@ -360,7 +438,9 @@ public class USeqArchive {
 		InputStream is = null;
 		try {
 			//make ArchiveInfo, it's always the first entry
-			if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) throw new IOException("This file does not appear to be a USeq archive! "+zipFile);
+			if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) {
+				throw new IOException("This file does not appear to be a USeq archive! "+zipFile);
+			}
 			zipArchive = new ZipFile(zipFile);
 			Enumeration<? extends ZipEntry> e = zipArchive.entries();
 			archiveReadMeEntry = e.nextElement();
@@ -373,13 +453,21 @@ public class USeqArchive {
 			while(e.hasMoreElements()) {
 				ZipEntry zipEntry = e.nextElement();
 				SliceInfo sliceInfo = new SliceInfo(zipEntry.getName());
-				if (binaryDataType == null) binaryDataType = sliceInfo.getBinaryType();
+				if (binaryDataType == null) {
+					binaryDataType = sliceInfo.getBinaryType();
+				}
 				//get chromStrand and ranges
 				String chromName;
-				if (maintainStrandedness) chromName = sliceInfo.getChromosome()+sliceInfo.getStrand();
-				else chromName = sliceInfo.getChromosome();
+				if (maintainStrandedness) {
+					chromName = sliceInfo.getChromosome()+sliceInfo.getStrand();
+				}
+				else {
+					chromName = sliceInfo.getChromosome();
+				}
 				//stranded?
-				if (sliceInfo.getStrand().equals(".") == false) stranded = true;
+				if (sliceInfo.getStrand().equals(".") == false) {
+					stranded = true;
+				}
 				//get/make ArrayList
 				ArrayList<DataRange> al = map.get(chromName);
 				if (al == null){
@@ -417,13 +505,19 @@ public class USeqArchive {
 			this.endingBP = endingBP;
 		}
 		public boolean intersects (int start, int stop){
-			if (stop <= beginningBP || start >= endingBP) return false;
+			if (stop <= beginningBP || start >= endingBP) {
+				return false;
+			}
 			return true;
 		}
 		/**Sorts by beginningBP, smaller to larger.*/
 		public int compareTo(DataRange other){
-			if (beginningBP < other.beginningBP) return -1;
-			if (beginningBP > other.beginningBP) return 1;
+			if (beginningBP < other.beginningBP) {
+				return -1;
+			}
+			if (beginningBP > other.beginningBP) {
+				return 1;
+			}
 			return 0;
 		}
 	}
@@ -498,22 +592,40 @@ public class USeqArchive {
 			int lastBase = -1;
 
 			//Position
-			if (USeqUtilities.POSITION.matcher(extension).matches()) lastBase = new PositionData (dis, si).fetchLastBase();
+			if (USeqUtilities.POSITION.matcher(extension).matches()) {
+				lastBase = new PositionData (dis, si).fetchLastBase();
+			}
 			//PositionScore
-			else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) lastBase = new PositionScoreData (dis, si).fetchLastBase();
+			else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+				lastBase = new PositionScoreData (dis, si).fetchLastBase();
+			}
 			//PositionText
-			else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) lastBase = new PositionTextData (dis, si).fetchLastBase();
+			else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+				lastBase = new PositionTextData (dis, si).fetchLastBase();
+			}
 			//PositionScoreText
-			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) lastBase = new PositionScoreTextData (dis, si).fetchLastBase();
+			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+				lastBase = new PositionScoreTextData (dis, si).fetchLastBase();
+			}
 			//Region
-			else if (USeqUtilities.REGION.matcher(extension).matches()) lastBase = new RegionData (dis, si).fetchLastBase();
+			else if (USeqUtilities.REGION.matcher(extension).matches()) {
+				lastBase = new RegionData (dis, si).fetchLastBase();
+			}
 			//RegionScore
-			else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) lastBase = new RegionScoreData (dis, si).fetchLastBase();
+			else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
+				lastBase = new RegionScoreData (dis, si).fetchLastBase();
+			}
 			//RegionText
-			else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) lastBase =  new RegionTextData (dis, si).fetchLastBase();
+			else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
+				lastBase =  new RegionTextData (dis, si).fetchLastBase();
+			}
 			//RegionScoreText
-			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) lastBase = new RegionScoreTextData (dis, si).fetchLastBase();
-			else  throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
+				lastBase = new RegionScoreTextData (dis, si).fetchLastBase();
+			}
+			else {
+				throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+			}
 
 			chromBase.put(chrom, new Integer(lastBase));
 		}

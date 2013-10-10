@@ -670,8 +670,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 			refreshSeqMapViewAndSlicedView();
 			smv.getPopup().refreshMap(false, true);
-			if(previousSelectedRows.length >= 1)
+			if(previousSelectedRows.length >= 1) {
 				table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
+			}
 		}
 	}
 

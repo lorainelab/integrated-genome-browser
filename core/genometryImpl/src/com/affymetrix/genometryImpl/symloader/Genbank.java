@@ -242,8 +242,9 @@ public final class Genbank extends SymLoader {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			br = new BufferedReader(new InputStreamReader(bis));
 			String first_line = getCurrentData(br);
-			if(first_line == null)
+			if(first_line == null) {
 				return false;
+			}
 			
 			String[] vals = first_line.split("\\s+");
 			
@@ -383,8 +384,9 @@ public final class Genbank extends SymLoader {
 	public List<GenbankSym> parse(BufferedReader input, BioSeq seq, int min, int max) {
 		Map<String,GenbankSym> id2sym = new HashMap<String,GenbankSym>(1000);
 
-		if (getCurrentData(input) == null) 
+		if (getCurrentData(input) == null) {
 			return Collections.<GenbankSym>emptyList();
+		}
 		
 		//if (beginEntry() != null) {
 		readFeature(input, id2sym, seq, min, max);
@@ -858,8 +860,9 @@ final class GenbankFeature {
   }
 
   private void init(){
-	if (initialized)
-		return;
+	if (initialized) {
+			return;
+		}
 	  
     initialized = true;
     initSynonyms();
@@ -916,8 +919,9 @@ final class GenbankFeature {
       int val_count = all_vals.size();
       for (int i = 0; i < val_count; i++) {
         val.append(all_vals.get(i));
-        if (i < val_count-1)
-          val.append(" ");
+        if (i < val_count-1) {
+					val.append(" ");
+				}
       }
     }
     return val.toString();
@@ -956,8 +960,9 @@ final class GenbankFeature {
       note_vec.removeElementAt(0);
       note_vec.addElement(prefix + suffix);*/
     }
-    if (syns != null)
-      tagValues.put("synonyms", syns);
+    if (syns != null) {
+			tagValues.put("synonyms", syns);
+		}
   }
 
   private void setTagValue(String content) {
@@ -1025,14 +1030,17 @@ final class GenbankFeature {
   }
 
 	static String stripQuotes(String value) {
-    if (value.length() == 0)
-      return value;
+    if (value.length() == 0) {
+			return value;
+		}
 
-    if (value.charAt(0) == '\"')
-      value = value.substring(1);
+    if (value.charAt(0) == '\"') {
+			value = value.substring(1);
+		}
 
-    if (value.length() >= 1 && value.charAt(value.length() - 1) == '\"')
-      return value.substring(0, value.length() - 1);
+    if (value.length() >= 1 && value.charAt(value.length() - 1) == '\"') {
+			return value.substring(0, value.length() - 1);
+		}
 
 	return value;
   }
@@ -1111,8 +1119,9 @@ final class GenbankFeature {
         else if (location_str.indexOf(':') > 0) {
           parseLocations(location_str.substring(location_str.indexOf(':')+1), locs);
         }
-        else
-          parseLocations(location_str.substring(1), locs);
+        else {
+					parseLocations(location_str.substring(1), locs);
+				}
       }
       else {
         index_start = 0;
@@ -1145,8 +1154,9 @@ final class GenbankFeature {
                   low += ((high - low + 1) / 2);
                 high = low + 1;
               }
-              else
-                high++;
+              else {
+								high++;
+							}
             } else {
               index_start++;
               if (location_str.charAt(index_start) == '>') {
@@ -1171,8 +1181,9 @@ final class GenbankFeature {
 			 location_str.indexOf(',', index_end) : -1);
       int next_locs = (index_comma >= 0 ?
 		       index_comma + 1 : 0);
-      if (next_locs > 0 && next_locs < location_str.length())
-        parseLocations(location_str.substring(next_locs), locs);
+      if (next_locs > 0 && next_locs < location_str.length()) {
+				parseLocations(location_str.substring(next_locs), locs);
+			}
     }
   }
 
@@ -1203,12 +1214,15 @@ final class GenbankFeature {
     int open_paren_count = 1;
     while (index_end < location_str.length() &&
            open_paren_count != 0) {
-      if (location_str.charAt(index_end) == ')')
-        open_paren_count--;
-      else if (location_str.charAt(index_end) == '(')
-        open_paren_count++;
-      if (open_paren_count != 0)
-        index_end++;
+      if (location_str.charAt(index_end) == ')') {
+				open_paren_count--;
+			}
+      else if (location_str.charAt(index_end) == '(') {
+				open_paren_count++;
+			}
+      if (open_paren_count != 0) {
+				index_end++;
+			}
     }
     return index_end;
   }

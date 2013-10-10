@@ -87,7 +87,9 @@ public class ThousandGenomesServerType implements ServerTypeI {
 	}
 
 	private void addFile(GenericVersion gVersion, boolean autoload, String url) {
-		if (DEBUG) System.out.println(">>>>> addFile " + url);
+		if (DEBUG) {
+			System.out.println(">>>>> addFile " + url);
+		}
 		String featureName = url.substring(Activator._1000_GENOMES_US.length());
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandlerForURI(url);
 		if (fth == null) {
@@ -110,7 +112,9 @@ public class ThousandGenomesServerType implements ServerTypeI {
 	}
 
 	private void addIndexFile(GenericVersion gVersion, boolean autoload, String url) {
-		if (DEBUG) System.out.println(">>>>> addIndexFile " + url);
+		if (DEBUG) {
+			System.out.println(">>>>> addIndexFile " + url);
+		}
 		InputStream is = null;
 		try {
 			is = new URL(url).openConnection().getInputStream();
@@ -141,14 +145,18 @@ public class ThousandGenomesServerType implements ServerTypeI {
 	}
 
 	private void addDirectory(GenericVersion gVersion, boolean autoload, String url) {
-		if (DEBUG) System.out.println(">>>>> addDirectory " + url);
+		if (DEBUG) {
+			System.out.println(">>>>> addDirectory " + url);
+		}
 	InputStream is = null;
 		try {
 			is = new URL(url).openConnection().getInputStream();
 			String dataString = IOUtils.toString(is, "UTF-8");
 			String[] lines = dataString.split("\n");
 			if (lines.length > MAX_DIRS) {
-				if (DEBUG) System.out.println(">>>>> skipping directory " + url + " size " + lines.length);
+				if (DEBUG) {
+					System.out.println(">>>>> skipping directory " + url + " size " + lines.length);
+				}
 				return;
 			}
 			for (String line : lines) {

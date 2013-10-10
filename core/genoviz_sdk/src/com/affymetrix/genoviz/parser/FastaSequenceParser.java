@@ -102,8 +102,12 @@ public class FastaSequenceParser implements ContentParser {
 				while ( null != line && !line.startsWith( ">" ) ) {
 					char[] l = line.toCharArray();
 					for ( int i = 0; i < l.length; i++ ) {
-						if ( ';' == l[i] ) break; // the rest of the line is a comment.
-						if ( ' ' < l[i] ) out.append( l[i] );
+						if ( ';' == l[i] ) {
+							break;
+						} // the rest of the line is a comment.
+						if ( ' ' < l[i] ) {
+							out.append( l[i] );
+						}
 					}
 					line = in.readLine();
 				}

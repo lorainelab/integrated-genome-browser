@@ -184,7 +184,9 @@ public class AxisGlyph extends Glyph {
 			System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );
 			return;
 		}
-		if ( selected_regions == null ) selected_regions = new ArrayList<int[]>();
+		if ( selected_regions == null ) {
+			selected_regions = new ArrayList<int[]>();
+		}
 		selected_regions.add( range );
 	}
 
@@ -207,27 +209,31 @@ public class AxisGlyph extends Glyph {
 	public void setTickPlacement(int thePlacement) {
 		switch (thePlacement) {
 			case ABOVE:
-				if (VERTICAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place ticks above a VERTICAL axis.");
+				if (VERTICAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place ticks above a VERTICAL axis.");
+		}
 				subtick_size = 1;
 				break;
 			case RIGHT:
-				if (HORIZONTAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place ticks to the right of a HORIZONTAL axis.");
+				if (HORIZONTAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place ticks to the right of a HORIZONTAL axis.");
+		}
 				subtick_size = 1;
 				break;
 			case BELOW:
-				if (VERTICAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place ticks below a VERTICAL axis.");
+				if (VERTICAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place ticks below a VERTICAL axis.");
+		}
 				subtick_size = -2;
 				break;
 			case LEFT:
-				if (HORIZONTAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place ticks to the left of a HORIZONTAL axis.");
+				if (HORIZONTAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place ticks to the left of a HORIZONTAL axis.");
+		}
 				subtick_size = -2;
 				break;
 			case CENTER:
@@ -269,27 +275,31 @@ public class AxisGlyph extends Glyph {
 	public void setLabelPlacement(int thePlacement) {
 		switch (thePlacement) {
 			case ABOVE:
-				if (VERTICAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place labels above a VERTICAL axis.");
+				if (VERTICAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place labels above a VERTICAL axis.");
+		}
 				labelShift = labelGap;
 				break;
 			case RIGHT:
-				if (HORIZONTAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place labels to the right of a HORIZONTAL axis.");
+				if (HORIZONTAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place labels to the right of a HORIZONTAL axis.");
+		}
 				labelShift = labelGap;
 				break;
 			case BELOW:
-				if (VERTICAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place labels below a VERTICAL axis.");
+				if (VERTICAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place labels below a VERTICAL axis.");
+		}
 				labelShift = -centerLineThickness - labelGap - labelThickness;
 				break;
 			case LEFT:
-				if (HORIZONTAL == this.orient)
-					throw new IllegalArgumentException
-						("Cannot place labels to the left of a HORIZONTAL axis.");
+				if (HORIZONTAL == this.orient) {
+			throw new IllegalArgumentException
+				("Cannot place labels to the left of a HORIZONTAL axis.");
+		}
 				labelShift = -centerLineThickness - labelGap - labelThickness;
 				break;
 			default:
@@ -467,7 +477,9 @@ public class AxisGlyph extends Glyph {
 	 */
 
 	public void rangeChanged() {
-		if (DEBUG_DRAW) System.err.println("Parental Coords: "+getParent().getCoordBox());
+		if (DEBUG_DRAW) {
+			System.err.println("Parental Coords: "+getParent().getCoordBox());
+		}
 		if (VERTICAL == this.orient) {
 			getCoordBox().y = getParent().getCoordBox().y;
 			getCoordBox().height = getParent().getCoordBox().height;
@@ -594,7 +606,9 @@ public class AxisGlyph extends Glyph {
 		}
 		// space between tickmarks (in map coordinates)
 		double tick_increment = tickIncrement(units_per_pixel, pixels_per_unit);
-		if (DEBUG_DRAW) System.err.println("tick increment = " + tick_increment);
+		if (DEBUG_DRAW) {
+			System.err.println("tick increment = " + tick_increment);
+		}
 
 		// Calculate map_loc and max_map.
 
@@ -635,7 +649,9 @@ public class AxisGlyph extends Glyph {
 			max_map = scratchcoords.x + scratchcoords.width;
 		}
 
-		if (DEBUG_DRAW) System.err.println("map_loc " + map_loc + ", max " + max_map);
+		if (DEBUG_DRAW) {
+			System.err.println("map_loc " + map_loc + ", max " + max_map);
+		}
 
 		double subtick_increment = tick_increment/10;
 		double subtick_loc, rev_subtick_loc;
@@ -963,7 +979,9 @@ public class AxisGlyph extends Glyph {
 			while (remainder >= 10)  {
 				remainder /= 10;
 				increment *= 10;
-				if (DEBUG_DRAW) System.err.println(" " + remainder + ", " + increment);
+				if (DEBUG_DRAW) {
+					System.err.println(" " + remainder + ", " + increment);
+				}
 			}
 			if (remainder >= 2)  {
 				remainder /= 2;
@@ -985,7 +1003,9 @@ public class AxisGlyph extends Glyph {
 			while (remainder >= 10)  {
 				remainder /= 10;
 				increment *= 10;
-				if (DEBUG_DRAW) System.err.println(" " + remainder + ", " + increment);
+				if (DEBUG_DRAW) {
+					System.err.println(" " + remainder + ", " + increment);
+				}
 			}
 			if (remainder >= 2.5)  {
 				remainder /= 2.5;

@@ -37,7 +37,9 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 
 	@Override
 	public final void done() {
-		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " done");
+		if (DEBUG) {
+			System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " done");
+		}
 		finished();
 		//CThreadHolder.getInstance().notifyEndThread(this);
 	}
@@ -55,7 +57,9 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	@Override
 	protected final T doInBackground() throws Exception {
 		CThreadHolder.getInstance().notifyStartThread(this);
-		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " started");
+		if (DEBUG) {
+			System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " started");
+		}
 		T t;
 		try {
 			t = runInBackground();
@@ -63,7 +67,9 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		catch (Exception x) {
 			throw (x);
 		}
-		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
+		if (DEBUG) {
+			System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
+		}
 		CThreadHolder.getInstance().notifyEndThread(this);
 		//CThreadHolder.getInstance().notifyBackgroundDone(this);
 		return t;

@@ -93,8 +93,9 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
 	
 	@Override
 	public void performAction(Object... parameters){
-		if(parameters.length < 1 || parameters[0].getClass() != Color.class)
+		if(parameters.length < 1 || parameters[0].getClass() != Color.class) {
 			return;
+		}
 		
 		changeColor((Color)parameters[0]);
 	}

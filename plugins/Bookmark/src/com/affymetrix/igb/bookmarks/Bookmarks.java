@@ -20,8 +20,9 @@ final public class Bookmarks {
     private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
 
 	public boolean add(GenericFeature feature, boolean isGraph){
-		if(feature == null)
+		if(feature == null) {
 			return false;
+		}
 
 		addToSyms(feature, isGraph);
 

@@ -180,37 +180,38 @@ public final class MaxGapThresholder extends JPanel
   public void doAction(Object src) {
     if (graphs.size() <= 0) { return; }
 
-    if (src == maxgapTF) try {
-      int new_thresh = Integer.parseInt(maxgapTF.getText());
-      if (new_thresh != maxgap_thresh) {
-        boolean new_thresh_max = (new_thresh > thresh_max);
+    if (src == maxgapTF) {
+			try {
+int new_thresh = Integer.parseInt(maxgapTF.getText());
+if (new_thresh != maxgap_thresh) {
+boolean new_thresh_max = (new_thresh > thresh_max);
 //	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
-        if (new_thresh < thresh_min)  {
-	  // new threshold outside of min/max possible, so keep current threshold instead
-	  maxgapTF.setText(Integer.toString(maxgap_thresh));
-	}
-	else {
-	  maxgap_thresh = new_thresh;
-		for (GraphGlyph sgg : graphs) {
-	    sgg.setMaxGapThreshold(maxgap_thresh);
-	  }
-	  tslider.removeChangeListener(this);
-          if (new_thresh_max)  {
-            thresh_max = maxgap_thresh;
-            tslider.setMaximum(thresh_max);
-          }
-          else if (maxgap_thresh <= default_thresh_max)  {
-            thresh_max = default_thresh_max;
-            tslider.setMaximum(thresh_max);
-          }
-	  tslider.setValue(maxgap_thresh);
-	  tslider.addChangeListener(this);
-	  widg.updateWidget();
-	}
-      }
-    } catch (NumberFormatException nfe) {
-      setGraphs(new ArrayList<GraphGlyph>(graphs));
-    }
+if (new_thresh < thresh_min)  {
+// new threshold outside of min/max possible, so keep current threshold instead
+maxgapTF.setText(Integer.toString(maxgap_thresh));
+}
+else {
+maxgap_thresh = new_thresh;
+for (GraphGlyph sgg : graphs) {
+sgg.setMaxGapThreshold(maxgap_thresh);
+}
+tslider.removeChangeListener(this);
+if (new_thresh_max)  {
+thresh_max = maxgap_thresh;
+tslider.setMaximum(thresh_max);
+}
+else if (maxgap_thresh <= default_thresh_max)  {
+thresh_max = default_thresh_max;
+tslider.setMaximum(thresh_max);
+}
+tslider.setValue(maxgap_thresh);
+tslider.addChangeListener(this);
+widg.updateWidget();
+}
+}
+} catch (NumberFormatException nfe) {
+setGraphs(new ArrayList<GraphGlyph>(graphs));
+}		}
   }
 
   /*public void deleteGraph(AbstractGraphGlyph gl) {

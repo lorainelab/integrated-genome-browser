@@ -1086,7 +1086,9 @@ public class DNAUtils implements Translatable  {
 
 		StringBuilder amino_acids = new StringBuilder(length);
 
-		if (initial_string != null ) amino_acids.append(initial_string);
+		if (initial_string != null ) {
+			amino_acids.append(initial_string);
+		}
 		// checking for no spaces, can build non-spaced faster by avoiding
 		//     amino_acids.append("") calls
 		int extra_bases = (length - frame) % 3;
@@ -1193,8 +1195,9 @@ public class DNAUtils implements Translatable  {
 		// The matrix given us must not be smaller than LETTERS
 
 		if ((color_matrix.length < LETTERS) ||
-				(color_matrix[0].length < LETTERS))
+				(color_matrix[0].length < LETTERS)) {
 			return;
+		}
 
 		// Default everything to semi_match,
 

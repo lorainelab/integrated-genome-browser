@@ -86,8 +86,12 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 
 	/**By position, smallest to largest, assumes same chromosome strand.*/
 	public int compareTo (PositionData other){
-		if (sortedPositions[0].position <other.sortedPositions[0].position) return -1;
-		if (sortedPositions[0].position >other.sortedPositions[0].position) return 1;
+		if (sortedPositions[0].position <other.sortedPositions[0].position) {
+			return -1;
+		}
+		if (sortedPositions[0].position >other.sortedPositions[0].position) {
+			return 1;
+		}
 		return 0;
 	}
 
@@ -160,8 +164,12 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -230,8 +238,12 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		}
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -328,9 +340,13 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<Position> al = new ArrayList<Position>();
 		for (int i=0; i< sortedPositions.length; i++){
-			if (sortedPositions[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositions[i]);
+			if (sortedPositions[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositions[i]);
+			}
 		}
-		if (al.isEmpty()) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedPositions = new Position[al.size()];
 		al.toArray(sortedPositions);
 		updateSliceInfo(sortedPositions, sliceInfo);

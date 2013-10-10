@@ -286,10 +286,18 @@ public class TieredMapDemo extends Applet
 	 */
 	void addGlyph ( MapTierGlyph mtg ) {
 		MapGlyphFactory factory;
-		if ( mtg.equals ( squiggleTier ) ) factory = squiggleFactory;
-		else if ( mtg.equals ( fillrectTier ) ) factory = fillRectFactory;
-		else if ( mtg.equals ( roundrectTier) ) factory = roundRectFactory;
-		else return;
+		if ( mtg.equals ( squiggleTier ) ) {
+			factory = squiggleFactory;
+		}
+		else if ( mtg.equals ( fillrectTier ) ) {
+			factory = fillRectFactory;
+		}
+		else if ( mtg.equals ( roundrectTier) ) {
+			factory = roundRectFactory;
+		}
+		else {
+			return;
+		}
 		int yval = yscroll.getValue();
 		int offset = map.getVisibleOffset()[0];
 		mtg.addChild ( factory.makeGlyph ( (float)Math.random() * seq_start, (float)Math.random() * seq_end ) );
@@ -302,7 +310,9 @@ public class TieredMapDemo extends Applet
 
 	public void actionPerformed ( ActionEvent ae ) {
 		Object src = ae.getSource();
-		if ( ae.getSource().equals( exit ) ) frame.setVisible ( false );
+		if ( ae.getSource().equals( exit ) ) {
+			frame.setVisible ( false );
+		}
 		else if ( ae.getSource().equals ( showall ) ) {
 			squiggleTier.setState ( MapTierGlyph.EXPANDED );
 			fillrectTier.setState ( MapTierGlyph.EXPANDED );
@@ -310,17 +320,27 @@ public class TieredMapDemo extends Applet
 			map.packTiers ( true, false );
 			map.updateWidget();
 		}
-		if ( selectedTier == null ) return;
-		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) return;
+		if ( selectedTier == null ) {
+			return;
+		}
+		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) {
+			return;
+		}
 		MenuItem source = (MenuItem)ae.getSource();
 		/*
 		   Changes the state of a tier.
 		   Make sure to do a map.repack() or a map.packTiers(boolean, boolean)
 		   after this to make it effective.
 		   */
-		if ( source.getLabel().equals ( "Expanded" ) ) selectedTier.setState ( MapTierGlyph.EXPANDED );
-		if ( source.getLabel().equals ( "Collapsed" ) ) selectedTier.setState ( MapTierGlyph.COLLAPSED );
-		if ( source.getLabel().equals ( "Hidden" ) ) selectedTier.setState ( MapTierGlyph.HIDDEN );
+		if ( source.getLabel().equals ( "Expanded" ) ) {
+			selectedTier.setState ( MapTierGlyph.EXPANDED );
+		}
+		if ( source.getLabel().equals ( "Collapsed" ) ) {
+			selectedTier.setState ( MapTierGlyph.COLLAPSED );
+		}
+		if ( source.getLabel().equals ( "Hidden" ) ) {
+			selectedTier.setState ( MapTierGlyph.HIDDEN );
+		}
 		map.repack();
 		map.updateWidget ( true );
 	}
@@ -334,14 +354,21 @@ public class TieredMapDemo extends Applet
 		NeoMouseEvent nme = (NeoMouseEvent)e;
 		List<GlyphI> glyphs = nme.getItems();
 		for ( int i = 0; i < glyphs.size(); i++ ) {
-			if ( glyphs.get ( i ) instanceof MapTierGlyph )
+			if ( glyphs.get ( i ) instanceof MapTierGlyph ) {
 				selectedTier = (MapTierGlyph) glyphs.get( i );
-			else (glyphs.get ( i )).draw(map.getView());
+			}
+			else {
+				(glyphs.get ( i )).draw(map.getView());
+			}
 		}
-		if ( selectedTier == null ) return;
-		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) return;
-		if ( e.getSource().equals(map) )
-			if ( (nme.getModifiers() & InputEvent.SHIFT_MASK) !=0 ) {
+		if ( selectedTier == null ) {
+			return;
+		}
+		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) {
+			return;
+		}
+		if ( e.getSource().equals(map) ) {
+			if ((nme.getModifiers() & InputEvent.SHIFT_MASK) !=0) {
 				for (int i = 0; i < glyphs.size(); i++) {
 					if ( ! ( glyphs.get(i) instanceof MapTierGlyph ) ) {
 						GlyphI remove_me = glyphs.get(i);
@@ -352,11 +379,14 @@ public class TieredMapDemo extends Applet
 						break;
 					}
 				}
+			} else {
+				addGlyph ( selectedTier );
 			}
-			else addGlyph ( selectedTier );
+		}
 		else if ( ( ( nme.getModifiers() & InputEvent.BUTTON3_MASK ) != 0 ) ||
-				( (nme.getModifiers() & InputEvent.CTRL_MASK ) !=0 ) )
+				( (nme.getModifiers() & InputEvent.CTRL_MASK ) !=0 ) ) {
 			popup.show ( labelmap, nme.getX(), nme.getY() );
+		}
 	}
 	public void mousePressed ( MouseEvent e ) {
 	}

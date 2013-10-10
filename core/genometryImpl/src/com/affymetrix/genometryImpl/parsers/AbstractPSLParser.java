@@ -537,8 +537,9 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 
 			for (SeqSymmetry sym : syms) {
 
-				if(Thread.currentThread().isInterrupted())
+				if(Thread.currentThread().isInterrupted()) {
 					break;
+				}
 				
 				if (! (sym instanceof UcscPslSym)) {
 					int spancount = sym.getSpanCount();

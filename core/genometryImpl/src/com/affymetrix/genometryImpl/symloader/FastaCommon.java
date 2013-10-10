@@ -36,8 +36,9 @@ public abstract class FastaCommon extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
-		if(initChromosomes())
+		if(initChromosomes()) {
 			super.init();
+		}
 	}
 
 	@Override

@@ -54,8 +54,9 @@ public final class IGBStateProvider extends DefaultStateProvider {
 			TrackStyle template = getDefaultInstance();
 
 			if(!getShowFullFilePathInTrackMark()){
-				if(track_name!= null)
-				 track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator)+1);
+				if(track_name!= null) {
+					track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator)+1);
+				}
 			}
 			
 			style = new TrackStyle(unique_name, track_name, file_type, template, props);

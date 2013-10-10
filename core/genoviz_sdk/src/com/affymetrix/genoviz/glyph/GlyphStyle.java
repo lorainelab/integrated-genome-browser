@@ -39,8 +39,9 @@ public class GlyphStyle {
 		this.background_color = gb;
 		this.foreground_color = fg;
 		this.fnt = fnt;
-		if ( fg == null || gb == null || fnt == null )
+		if ( fg == null || gb == null || fnt == null ) {
 			throw new NullPointerException ( "Can't make GlyphStyle with null constructor argument." );
+		}
 	}
 
 	public Color getBackgroundColor () {
@@ -66,8 +67,12 @@ public class GlyphStyle {
 	}
 
 	public boolean equals( GlyphStyle theStyle ) {
-		if ( theStyle == this ) return true;
-		if ( null == theStyle ) return false;
+		if ( theStyle == this ) {
+			return true;
+		}
+		if ( null == theStyle ) {
+			return false;
+		}
 		return ( this.getFont().equals( theStyle.getFont() ) &&
 				this.getForegroundColor().equals( theStyle.getForegroundColor() ) &&
 				this.getBackgroundColor().equals( theStyle.getBackgroundColor() ) );

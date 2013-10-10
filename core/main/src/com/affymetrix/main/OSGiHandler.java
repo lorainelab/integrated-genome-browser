@@ -234,8 +234,9 @@ public class OSGiHandler {
 
 	            if(directory == null)
 	            {
-	                if(newFile.isDirectory())
-	                    break;
+	                if(newFile.isDirectory()) {
+						break;
+					}
 	            }
 	            zipinputstream.closeEntry();
 	            zipentry = zipinputstream.getNextEntry();

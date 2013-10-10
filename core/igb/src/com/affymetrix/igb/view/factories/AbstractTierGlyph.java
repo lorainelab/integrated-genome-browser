@@ -496,8 +496,9 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	public final void copyChildren(TierGlyph temp) {
-		if(temp == null)
+		if(temp == null) {
 			return;
+		}
 		
 		List<GlyphI> childrens = new ArrayList<GlyphI>();
 		childrens.addAll(temp.getChildren());

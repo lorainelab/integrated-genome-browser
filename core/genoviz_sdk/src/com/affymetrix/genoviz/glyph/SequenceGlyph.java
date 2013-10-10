@@ -105,7 +105,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				full_rect.setSelected(false);
 			}
 			else {
-				if (show_background) full_rect.drawTraversal(view);
+				if (show_background) {
+					full_rect.drawTraversal(view);
+				}
 			}
 
 			// 2.) draw any child glyphs

@@ -44,7 +44,9 @@ public class RegionScoreData extends USeqData{
 		int lastBase = -1;
 		for (RegionScore r : sortedRegionScores){
 			int end = r.getStop();
-			if (end > lastBase) lastBase = end;
+			if (end > lastBase) {
+				lastBase = end;
+			}
 		}
 		return lastBase;
 	}
@@ -59,7 +61,9 @@ public class RegionScoreData extends USeqData{
 				int score = USeqUtilities.fixBedScore(sortedRegionScores[i].score);
 				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ score +"\t"+strand);
 			}
-			else out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ sortedRegionScores[i].score +"\t"+strand);
+			else {
+				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ sortedRegionScores[i].score +"\t"+strand);
+			}
 		}
 	}
 	
@@ -115,10 +119,18 @@ public class RegionScoreData extends USeqData{
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType += USeqUtilities.SHORT;
-		else fileType += USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		fileType += USeqUtilities.FLOAT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
@@ -281,10 +293,18 @@ public class RegionScoreData extends USeqData{
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType += USeqUtilities.SHORT;
-		else fileType += USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		fileType += USeqUtilities.FLOAT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
@@ -456,9 +476,13 @@ public class RegionScoreData extends USeqData{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<RegionScore> al = new ArrayList<RegionScore>();
 		for (int i=0; i< sortedRegionScores.length; i++){
-			if (sortedRegionScores[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegionScores[i]);
+			if (sortedRegionScores[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegionScores[i]);
+			}
 		}
-		if (al.isEmpty()) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedRegionScores = new RegionScore[al.size()];
 		al.toArray(sortedRegionScores);
 		updateSliceInfo(sortedRegionScores, sliceInfo);

@@ -1202,10 +1202,12 @@ public static String determineSelectedResidues(SeqSymmetry residues_sym, BioSeq 
 
 public static String selectedAllResidues(SeqSymmetry residues_sym, BioSeq seq)	{
 			SeqSpan span = residues_sym.getSpan(seq);
-		if ( (span != null) )
-			return seq.getResidues(span.getStart(), span.getEnd());
-		else
-			return null;
+		if ( (span != null) ) {
+		return seq.getResidues(span.getStart(), span.getEnd());
+	}
+		else {
+		return null;
+	}
 }
 
 public static boolean areResiduesComplete(String residues) {

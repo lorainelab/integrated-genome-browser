@@ -199,8 +199,9 @@ public class CyGradientTrackRenderer extends JComponent implements TrackRenderer
 
 	private static void drawGradient(Graphics2D g, Point2D start, Point2D end, float[] fractions,
 	                                 Color[] colors) {
-		if (fractions.length < 1)
+		if (fractions.length < 1) {
 			return;
+		}
 
 		final int width = (int) (end.getX() - start.getX());
 		final int height = (int) (end.getY() - start.getY());

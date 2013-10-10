@@ -323,12 +323,14 @@ public final class GeneralUtils {
 	}
 
 	public static GenericFeature findFeatureWithURI(Collection<GenericFeature> features, URI uri) {
-		if(uri == null || features.isEmpty())
+		if(uri == null || features.isEmpty()) {
 			return null;
+		}
 		
 		for (GenericFeature feature : features) {
-			if(uri.equals(feature.getURI()))
+			if(uri.equals(feature.getURI())) {
 				return feature;
+			}
 		}
 		
 		return null;	// couldn't find it

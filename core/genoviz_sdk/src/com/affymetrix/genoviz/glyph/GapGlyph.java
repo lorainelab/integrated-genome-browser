@@ -36,8 +36,9 @@ public class GapGlyph extends SolidGlyph  {
 		// draw the box
 		// Note: the cost of the cull test should be miniscule compared with
 		// the cost of what follows when it tests positive.
-		if(getPixelBox().width + getPixelBox().height > mSizeThreshold)
+		if(getPixelBox().width + getPixelBox().height > mSizeThreshold) {
 			g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
+		}
 		super.draw(view);
 	}
 

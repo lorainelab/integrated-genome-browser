@@ -73,8 +73,9 @@ public final class QuickLoadServerModel {
 	private QuickLoadServerModel(String url, String pri_url, GenericServer priServer) {
 		url = ServerUtils.formatURL(url, ServerTypeI.QuickLoad);
 
-		if(pri_url != null)
+		if(pri_url != null) {
 			pri_url = ServerUtils.formatURL(pri_url, ServerTypeI.QuickLoad);
+		}
 		
 		root_url = url;
 		primary_url = pri_url;

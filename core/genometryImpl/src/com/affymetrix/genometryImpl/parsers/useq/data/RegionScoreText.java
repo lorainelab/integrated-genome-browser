@@ -41,7 +41,9 @@ public class RegionScoreText extends RegionScore{
 		} catch (EOFException eof){
 			RegionScoreText[] s = new RegionScoreText[sss.size()];
 			sss.toArray(s);
-			if (sort) Arrays.sort(s);
+			if (sort) {
+				Arrays.sort(s);
+			}
 			return s;
 		}
 		catch (Exception e){

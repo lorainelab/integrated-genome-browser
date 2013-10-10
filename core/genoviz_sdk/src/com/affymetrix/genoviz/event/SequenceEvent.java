@@ -32,12 +32,14 @@ public class SequenceEvent extends EventObject {
 			int theOffset,
 			int theLength ) {
 		super( theSource );
-		if ( theOffset < 0 )
+		if ( theOffset < 0 ) {
 			throw new IllegalArgumentException
 				( "theOffset must not be negative." );
-		if ( theLength < 0 )
+		}
+		if ( theLength < 0 ) {
 			throw new IllegalArgumentException
 				( "theLength must not be negative." );
+		}
 		this.type= theType;
 		this.offset = theOffset;
 		this.length = theLength;

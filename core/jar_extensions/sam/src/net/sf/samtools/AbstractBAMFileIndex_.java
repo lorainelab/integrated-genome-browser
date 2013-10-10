@@ -132,10 +132,12 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
      * @return The size (number of possible bins) of the given level.
      */
     public int getLevelSize(final int levelNumber) {
-        if(levelNumber == getNumIndexLevels())
-            return MAX_BINS+1-LEVEL_STARTS[levelNumber];
-        else
-            return LEVEL_STARTS[levelNumber+1]-LEVEL_STARTS[levelNumber];
+        if(levelNumber == getNumIndexLevels()) {
+			return MAX_BINS+1-LEVEL_STARTS[levelNumber];
+		}
+        else {
+			return LEVEL_STARTS[levelNumber+1]-LEVEL_STARTS[levelNumber];
+		}
     }
 
     /**
@@ -144,11 +146,13 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
      * @return the level associated with the given bin number.
      */
     public int getLevelForBin(final Bin bin) {
-        if(bin.getBinNumber() >= MAX_BINS)
-            throw new SAMException("Tried to get level for invalid bin.");
+        if(bin.getBinNumber() >= MAX_BINS) {
+			throw new SAMException("Tried to get level for invalid bin.");
+		}
         for(int i = getNumIndexLevels()-1; i >= 0; i--) {
-            if(bin.getBinNumber() >= LEVEL_STARTS[i])
-                return i;
+            if(bin.getBinNumber() >= LEVEL_STARTS[i]) {
+				return i;
+			}
         }
         throw new SAMException("Unable to find correct bin for bin "+bin);
     }

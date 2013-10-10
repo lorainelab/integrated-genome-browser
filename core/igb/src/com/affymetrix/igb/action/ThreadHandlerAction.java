@@ -54,8 +54,9 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		int size = setCancelPopup();
-		if(size == 0 )
+		if(size == 0 ) {
 			return;
+		}
 		
 		JFrame frame = Application.getSingleton().getFrame();
 		final int x = (int) frame.getAlignmentX();

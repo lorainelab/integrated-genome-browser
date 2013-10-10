@@ -2067,8 +2067,9 @@ public class SeqMapView extends JPanel
 			return false;
 		}
 		
-		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null))
+		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null)) {
 			return true;
+		}
 		
 		for(FileTypeCategory category : categories){
 			if(rootSeqSymmetry.getCategory() == category){

@@ -203,19 +203,22 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, TrackConstants.DIRECTION_TYPE direction_type) 
 			throws InstantiationException, IllegalAccessException{
 		
-		if (cspan.getLength() == 0) 
+		if (cspan.getLength() == 0) { 
 			return new DeletionGlyph();
+		}
 		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
-				(direction_type == TrackConstants.DIRECTION_TYPE.ARROW || direction_type == TrackConstants.DIRECTION_TYPE.BOTH))
+				(direction_type == TrackConstants.DIRECTION_TYPE.ARROW || direction_type == TrackConstants.DIRECTION_TYPE.BOTH)) {
 			return new PointedGlyph();
+		}
 			
 		return new EfficientOutlinedRectGlyph();
 	}
 	
 	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, TrackConstants.DIRECTION_TYPE direction_type) {
 		if(direction_type == TrackConstants.DIRECTION_TYPE.COLOR || direction_type == TrackConstants.DIRECTION_TYPE.BOTH){
-			if(isForward)
+			if(isForward) {
 				return style.getForwardColor();
+			}
 			return style.getReverseColor();
 		}
 		return style.getForeground();

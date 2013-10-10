@@ -244,8 +244,9 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 		ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
 		sourceTableModel.init();
-		if(server.isEnabled())
+		if(server.isEnabled()) {
 			return true;
+		}
 		return false;
 	}
 

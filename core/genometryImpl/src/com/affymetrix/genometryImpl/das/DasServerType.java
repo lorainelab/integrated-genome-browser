@@ -118,8 +118,9 @@ public class DasServerType implements ServerTypeI {
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
 			file = GeneralUtils.getFile(fileDet.getKey(), false);
 
-			if((file == null || !GeneralUtils.moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError)
+			if((file == null || !GeneralUtils.moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError) {
 				return false;
+			}
 
 		}
 
@@ -129,8 +130,9 @@ public class DasServerType implements ServerTypeI {
 	@Override
 	public boolean processServer(GenericServer gServer, String path) {
 		File file = GeneralUtils.getFile(gServer.URL, false);
-		if(!GeneralUtils.moveFileTo(file,dsn,path))
+		if(!GeneralUtils.moveFileTo(file,dsn,path)) {
 			return false;
+		}
 		
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String, DasSource> sources = server.getDataSources();

@@ -79,8 +79,9 @@ public class QuickLoadSymLoader extends SymLoader {
 	@Override
 	public boolean isResidueLoader(){
 		init();
-		if(symL != null)
+		if(symL != null) {
 			return symL.isResidueLoader();
+		}
 		
 		return isResidueLoader;
 	}
@@ -305,11 +306,13 @@ public class QuickLoadSymLoader extends SymLoader {
 		String loggerName = QuickLoadSymLoader.class.getName();
 		Level level = Level.SEVERE;
 		
-		if (symL != null) 
+		if (symL != null) {
 			loggerName = symL.getClass().getName();
+		}
 		
-		if(ex instanceof RuntimeException) 
+		if(ex instanceof RuntimeException) {
 			level = Level.WARNING;
+		}
 		
 		Logger.getLogger(loggerName).log(level, ex.getMessage(), ex);
 	}

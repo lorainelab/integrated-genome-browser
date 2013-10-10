@@ -1634,9 +1634,15 @@ public class NeoAssembler extends NeoContainerWidget
 	//-------------------------------------------
 
 	public void updateMap(boolean alignments, boolean consensus, boolean labels) {
-		if (alignments)  alignmap.updateWidget();
-		if (consensus)   consmap.updateWidget();
-		if (labels)      labelmap.updateWidget();
+		if (alignments) {
+			alignmap.updateWidget();
+		}
+		if (consensus) {
+			consmap.updateWidget();
+		}
+		if (labels) {
+			labelmap.updateWidget();
+		}
 	}
 
 	public void updateMap(int id) {
@@ -2157,8 +2163,9 @@ public class NeoAssembler extends NeoContainerWidget
 	 */
 	public void setInternalZoomer (Adjustable adjustable) {
 
-		if (!(adjustable instanceof Component) || (adjustable == null))
+		if (!(adjustable instanceof Component) || (adjustable == null)) {
 			return;
+		}
 
 		remove ((Component)hzoom);
 		hzoom = adjustable;
@@ -2595,8 +2602,12 @@ public class NeoAssembler extends NeoContainerWidget
 		for(GlyphI residue: align_glyphs) {
 			if (residue.isSelected()){
 				Rectangle2D.Double rec = residue.getCoordBox();
-				if (rec.x > x_coord_start) start = (int)rec.x;
-				if ( (rec.x + rec.width) < x_coord_end) end = (int)(rec.x + rec.width);
+				if (rec.x > x_coord_start) {
+					start = (int)rec.x;
+				}
+				if ( (rec.x + rec.width) < x_coord_end) {
+					end = (int)(rec.x + rec.width);
+				}
 			}
 		}
 		if( cons_glyph.intersects( new_rect, map_view ) ) {
@@ -2647,8 +2658,9 @@ public class NeoAssembler extends NeoContainerWidget
 	 */
 	public void setHorizontalScroller(JScrollBar scroller) {
 
-		if (!(scroller instanceof Component) || (scroller == null))
+		if (!(scroller instanceof Component) || (scroller == null)) {
 			return;
+		}
 
 		remove ((Component)hscroll);
 		hscroll = scroller;
@@ -2670,8 +2682,9 @@ public class NeoAssembler extends NeoContainerWidget
 	 */
 	public void setVerticalScroller(JScrollBar scroller) {
 
-		if (!(scroller instanceof Component) || (scroller == null))
+		if (!(scroller instanceof Component) || (scroller == null)) {
 			return;
+		}
 
 		remove ((Component)vscroll);
 		vscroll = scroller;

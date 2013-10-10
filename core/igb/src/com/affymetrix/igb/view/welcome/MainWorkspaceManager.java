@@ -78,8 +78,9 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 					CargoPicture pic = (CargoPicture) e.getShape();
 					Object obj = pic.getCargo();
 
-					if(obj == null)
+					if(obj == null) {
 						return;
+					}
 
 					String speciesName = (String)obj;
 					final List<String> versionNames = SeqGroupView.getInstance().getAllVersions(speciesName);
@@ -121,8 +122,9 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null)
+		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null) {
 			return;
+		}
 		
 		CardLayout layout = (CardLayout) getLayout();
 //		System.out.println("MainWorkspaceManager:itemStateChanged hit");

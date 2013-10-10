@@ -41,8 +41,9 @@ public class TestSamples {
 		}
 		
 		String dirpath = args[0];
-		if(!dirpath.endsWith("/"))
+		if(!dirpath.endsWith("/")) {
 			dirpath += "/";
+		}
 
         File dir = new File(dirpath);
         String[] files = dir.list(new FilenameFilter() {
@@ -55,10 +56,12 @@ public class TestSamples {
         System.out.println("Total files " + files.length);
         for(String s : files)
         {
-            if(testFile(dirpath+s))
-                System.out.println(s + " read sucessfully.");
-            else
-                System.out.println("Error reading " + s);
+            if(testFile(dirpath+s)) {
+				System.out.println(s + " read sucessfully.");
+			}
+            else {
+				System.out.println("Error reading " + s);
+			}
         }
         
     }

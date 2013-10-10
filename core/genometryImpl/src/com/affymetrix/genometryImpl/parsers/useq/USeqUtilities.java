@@ -88,8 +88,12 @@ public class USeqUtilities {
 	/**Rounds to an int and will set to 0 if neg or 1000 if > 1000 according to bed format requirements.*/
 	public static int fixBedScore(float value){
 		int score = Math.round(value);
-		if (score < 0) score = 0;
-		else if (score > 1000) score = 1000;
+		if (score < 0) {
+			score = 0;
+		}
+		else if (score > 1000) {
+			score = 1000;
+		}
 		return score;
 	}
 	/**Prints message to screen, then exits.*/
@@ -102,15 +106,23 @@ public class USeqUtilities {
 	 */
 	public static String removeExtension(String txt) {
 		int index = txt.lastIndexOf('.');
-		if (index != -1)  return txt.substring(0,index);
+		if (index != -1) {
+			return txt.substring(0,index);
+		}
 		return txt;
 	}
 	/**Returns a String separated by commas for each bin.*/
 	public static String stringArrayToString(String[] s, String separator){
-		if (s==null) return "";
+		if (s==null) {
+			return "";
+		}
 		int len = s.length;
-		if (len==1) return s[0];
-		if (len==0) return "";
+		if (len==1) {
+			return s[0];
+		}
+		if (len==0) {
+			return "";
+		}
 		StringBuffer sb = new StringBuffer(s[0]);
 		for (int i=1; i<len; i++){
 			sb.append(separator);
@@ -131,7 +143,9 @@ public class USeqUtilities {
 			else if (name.endsWith(".gz")) {
 				in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(txtFile))));
 			}
-			else in = new BufferedReader (new FileReader (txtFile));
+			else {
+				in = new BufferedReader (new FileReader (txtFile));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			safeClose(in);
@@ -168,7 +182,9 @@ public class USeqUtilities {
 				Matcher mat; 
 				for (int i=0; i< num; i++)  {
 					mat = pat.matcher(fileNames[i]);
-					if (mat.matches()) al.add(new File(path, fileNames[i]));
+					if (mat.matches()) {
+						al.add(new File(path, fileNames[i]));
+					}
 				}
 				//convert arraylist to file[]
 				if (!al.isEmpty()){
@@ -211,7 +227,9 @@ public class USeqUtilities {
 				files.addAll(al);
 			}
 			else{
-				if (list[i].getName().endsWith(extension)) files.add(list[i]);
+				if (list[i].getName().endsWith(extension)) {
+					files.add(list[i]);
+				}
 			}
 		}
 		return files;
@@ -221,7 +239,9 @@ public class USeqUtilities {
 	 * If the dirFile is a file and ends with the extension then it returns a File[] with File[0] the
 	 * given directory. Returns null if nothing found. Case insensitive.*/
 	public static File[] extractFiles(File dirOrFile, String extension){
-		if (dirOrFile == null) return null;
+		if (dirOrFile == null) {
+			return null;
+		}
 		File[] files = null;
 		Pattern p = Pattern.compile(".*"+extension+"$", Pattern.CASE_INSENSITIVE);
 		Matcher m;
@@ -231,7 +251,9 @@ public class USeqUtilities {
 			ArrayList<File> chromFiles = new ArrayList<File>();
 			for (int i=0; i< num; i++)  {
 				m= p.matcher(files[i].getName());
-				if (m.matches()) chromFiles.add(files[i]);
+				if (m.matches()) {
+					chromFiles.add(files[i]);
+				}
 			}
 			files = new File[chromFiles.size()];
 			chromFiles.toArray(files);
@@ -243,7 +265,9 @@ public class USeqUtilities {
 				files[0]= dirOrFile;
 			}
 		}
-		if (files != null) Arrays.sort(files);
+		if (files != null) {
+			Arrays.sort(files);
+		}
 		return files;
 	}
 	/**Takes a file, capitalizes the text, strips off .gz or .zip and any other extension, then makes a directory of the file and returns it.*/
@@ -269,16 +293,24 @@ public class USeqUtilities {
 	/**Deletes a directories contents, and then the directory.
 	 * Returns false if at any time a file cannot be deleted or the directory is null.*/
 	public static boolean deleteDirectory(File directory){
-		if (directory == null) return false;
+		if (directory == null) {
+			return false;
+		}
 		File[] files = directory.listFiles();
 		int num = files.length;
 		for (int i=0; i<num; i++){
 			if (files[i].isDirectory()) {
-				if (deleteDirectory(files[i]) == false) return false;
+				if (deleteDirectory(files[i]) == false) {
+					return false;
+				}
 			}
-			else if (files[i].delete() == false) return false;
+			else if (files[i].delete() == false) {
+				return false;
+			}
 		}
-		if (directory.delete() == false)return false;
+		if (directory.delete() == false) {
+			return false;
+		}
 		return true;
 	}
 	/**Zip compresses an array of Files, be sure to text your zipFile with a .zip extension!*/
@@ -325,7 +357,9 @@ public class USeqUtilities {
 	}
 	/**Using interbase coordinates so length = stop - start.*/
 	public static int calculateMiddleIntergenicCoordinates(int start, int end){
-		if (start == end) return start;
+		if (start == end) {
+			return start;
+		}
 		double length = end - start;
 		double halfLength = length/2.0;
 		return (int)Math.round(halfLength) + start;
@@ -334,7 +368,9 @@ public class USeqUtilities {
 	/**Converts #3333CC to RGB values 51 51 204*/
 	public static String convertHexadecimal2RGB(String hexColor, String divider){
 		String hex = hexColor.replaceFirst("#", "");
-		if (hex.length() != 6) return null;
+		if (hex.length() != 6) {
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
 		String toCon = hex.substring(0,2);
 		int color= Integer.parseInt(toCon,16);

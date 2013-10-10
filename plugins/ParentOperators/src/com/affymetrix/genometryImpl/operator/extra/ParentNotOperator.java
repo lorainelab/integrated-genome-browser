@@ -42,8 +42,9 @@ public class ParentNotOperator extends AbstractAnnotationTransformer implements 
 
 	private static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq, boolean include_ends) {
 		SeqSymmetry union = SeqSymSummarizer.getUnion(syms, seq, 2);
-		if(union == null)
+		if(union == null) {
 			return null;
+		}
 		int spanCount = union.getChildCount();
 
 		// rest of this is pretty much pulled directly from SeqUtils.inverse()

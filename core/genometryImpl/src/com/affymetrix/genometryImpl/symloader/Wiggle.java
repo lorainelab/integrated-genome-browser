@@ -326,8 +326,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 		int start = Math.min(x1, x2);
 		int width = Math.max(x1, x2) - start;
 
-		if(!checkRange(x1,width,min,max))
+		if(!checkRange(x1,width,min,max)) {
 			return;
+		}
 
 		current_data.add(x1, Float.parseFloat(fields[3]), width);
 	}
@@ -360,8 +361,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 		}
 		current_start -=1;	// This is because fixedStep and variableStep sequences are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
-		if(!checkRange(current_start,current_span,min,max))
+		if(!checkRange(current_start,current_span,min,max)) {
 			return;
+		}
 		
 		current_data.add(current_start, Float.parseFloat(fields[1]), current_span);
 
@@ -392,8 +394,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 
 		current_start -=1;	// This is because fixedStep and variableStep formats are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
-		if(!checkRange(current_start,current_span,min,max))
+		if(!checkRange(current_start,current_span,min,max)) {
 			return;
+		}
 		
 		current_data.add(current_start, Float.parseFloat(fields[0]), current_span);
 	}

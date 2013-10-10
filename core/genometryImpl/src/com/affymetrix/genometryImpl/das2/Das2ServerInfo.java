@@ -214,8 +214,9 @@ public final class Das2ServerInfo  {
 	 *         else actual server's URL.
 	 */
 	private String getLoadURL(){
-		if(!isLoadingFromPrimary())
+		if(!isLoadingFromPrimary()) {
 			return server_uri.toString();
+		}
 
 		return primary_uri.toString() + "/" + Constants.GENOME_SEQ_ID+XML;
 	}

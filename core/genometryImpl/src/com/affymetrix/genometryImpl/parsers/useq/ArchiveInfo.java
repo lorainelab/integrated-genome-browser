@@ -78,7 +78,9 @@ public class ArchiveInfo {
 		//set versioned genome
 		keyValues.put(VERSIONED_GENOME_KEY, versionedGenome);
 		//check to see if verisonedGenome follows form 
-		if (DAS2_VERSIONED_GENOME_FORM.matcher(versionedGenome).matches() == false) System.err.println("WARNING: Versioned genome does not follow recommended form (e.g. H_sapiens_Mar_2006) correct -> "+versionedGenome);
+		if (DAS2_VERSIONED_GENOME_FORM.matcher(versionedGenome).matches() == false) {
+			System.err.println("WARNING: Versioned genome does not follow recommended form (e.g. H_sapiens_Mar_2006) correct -> "+versionedGenome);
+		}
 	}
 	public ArchiveInfo(File readMeTxtFile) throws IOException{
 		loadTextArchiveReadMeFile(readMeTxtFile);
@@ -116,7 +118,9 @@ public class ArchiveInfo {
 		InputStream is = null;
 		ArchiveInfo ai = null;
 		try {
-			if (USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches() == false) return null;
+			if (USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches() == false) {
+				return null;
+			}
 			ZipFile zf = new ZipFile(useqArchive);
 			Enumeration<? extends ZipEntry> e = zf.entries();
 			ZipEntry ze = e.nextElement();
@@ -125,7 +129,9 @@ public class ArchiveInfo {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (closeStream) USeqUtilities.safeClose(is);
+			if (closeStream) {
+				USeqUtilities.safeClose(is);
+			}
 		}
 		return ai;
 	}
@@ -188,12 +194,18 @@ public class ArchiveInfo {
 			ArrayList<String> comments = new ArrayList<String>();
 			while ((line = in.readLine()) != null){
 				line = line.trim();
-				if (line.length() == 0) continue;
-				if (line.startsWith("#")) comments.add(line);
+				if (line.length() == 0) {
+					continue;
+				}
+				if (line.startsWith("#")) {
+					comments.add(line);
+				}
 				else {
 					//split line
 					Matcher mat = KEY_VALUE_SPLITTER.matcher(line);
-					if (mat.matches() == false) throw new IOException("Error in parsing archiveReadMe.txt file. Found a non comment and non key = value line. Bad line -> '"+line);
+					if (mat.matches() == false) {
+						throw new IOException("Error in parsing archiveReadMe.txt file. Found a non comment and non key = value line. Bad line -> '"+line);
+					}
 					keyValues.put(mat.group(1), mat.group(2));
 				}
 			}
@@ -234,11 +246,15 @@ public class ArchiveInfo {
 		keyValues.put(GRAPH_STYLE_KEY, initialGraphStyle);
 	}
 	public void setInitialColor(String initialColor) throws IOException{
-		if (COLOR_HEX_FORM.matcher(initialColor).matches()== false) throw new IOException ("Error: initial color does not follow hex form (e.g. #B2B300)! "+initialColor);
+		if (COLOR_HEX_FORM.matcher(initialColor).matches()== false) {
+			throw new IOException ("Error: initial color does not follow hex form (e.g. #B2B300)! "+initialColor);
+		}
 		keyValues.put(COLOR_KEY, initialColor);
 	}
 	public void setInitialBackgroundColor(String initialBackgroundColor) throws IOException{
-		if (COLOR_HEX_FORM.matcher(initialBackgroundColor).matches()== false) throw new IOException ("Error: initial background color does not follow hex form (e.g. #B2B300)! "+initialBackgroundColor);
+		if (COLOR_HEX_FORM.matcher(initialBackgroundColor).matches()== false) {
+			throw new IOException ("Error: initial background color does not follow hex form (e.g. #B2B300)! "+initialBackgroundColor);
+		}
 		keyValues.put(BACKGROUND_COLOR_KEY, initialBackgroundColor);
 	}
 	public void setInitialMinY(String initialMinY) {
@@ -285,11 +301,15 @@ public class ArchiveInfo {
 		return keyValues.get(DATA_TYPE_KEY);
 	}
 	public boolean isGraphData(){
-		if (keyValues.get(DATA_TYPE_KEY).equals(DATA_TYPE_VALUE_GRAPH)) return true;
+		if (keyValues.get(DATA_TYPE_KEY).equals(DATA_TYPE_VALUE_GRAPH)) {
+			return true;
+		}
 		return false;
 	}
 	public boolean isRegionData(){
-		if (keyValues.get(DATA_TYPE_KEY).equals(DATA_TYPE_VALUE_REGION)) return true;
+		if (keyValues.get(DATA_TYPE_KEY).equals(DATA_TYPE_VALUE_REGION)) {
+			return true;
+		}
 		return false;
 	}
 }

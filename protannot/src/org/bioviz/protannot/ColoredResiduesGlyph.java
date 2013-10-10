@@ -114,8 +114,9 @@ class ColoredResiduesGlyph extends SequenceGlyph {
             int pixelStart) {
         int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 
-		if(drawRect)
+		if(drawRect) {
 			drawResidueRectangles(g, pixelsPerBase, str);
+		}
         drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
     }
 

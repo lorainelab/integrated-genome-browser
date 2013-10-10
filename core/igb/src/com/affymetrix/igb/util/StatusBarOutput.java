@@ -27,8 +27,9 @@ public class StatusBarOutput extends Handler {
 	
 	@Override
 	public boolean isLoggable(LogRecord record) {
-		if(record.getLevel() == Level.SEVERE)
+		if(record.getLevel() == Level.SEVERE) {
 			return true;
+		}
 		return false;
 	}
 	

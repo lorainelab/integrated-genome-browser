@@ -429,8 +429,9 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		final Float[] newVal = MinMaxDialog.getMinMax(null, model.getVirtualMinimum(), model.getVirtualMaximum(),
 				"min-max-attribute");
 
-		if (newVal == null)
+		if (newVal == null) {
 			return;
+		}
 		
 		model.setVirtualMinimum(newVal[0].floatValue());
 		model.setVirtualMaximum(newVal[1].floatValue());

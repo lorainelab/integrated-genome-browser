@@ -147,10 +147,12 @@ final public class ProtAnnotMain implements WindowListener {
 
         public static Arguments getValue(String s)
         {
-           if(s.equalsIgnoreCase("-s"))
-               return SERVER;
-           else if(s.equalsIgnoreCase("-f"))
-               return FILENAME;
+           if(s.equalsIgnoreCase("-s")) {
+				return SERVER;
+			}
+           else if(s.equalsIgnoreCase("-f")) {
+				return FILENAME;
+			}
 
            return null;
         }
@@ -174,8 +176,9 @@ final public class ProtAnnotMain implements WindowListener {
 				System.out.print(" " + arg);
 			}
 			System.out.println();
-		}else
+		}else {
 			System.out.print("No startup arguments");
+		}
 
 		System.out.println();
 
@@ -267,20 +270,24 @@ final public class ProtAnnotMain implements WindowListener {
         setUpMenus();
         setupColorChooser();
 		setupAddServer();
-        if(getArgumentValue(Arguments.SERVER)!=null)
-            setupSamplesFromServer();
+        if(getArgumentValue(Arguments.SERVER)!=null) {
+			setupSamplesFromServer();
+		}
 
         frm.addWindowListener(this);
         frm.setVisible(true);
 		String file = getArgumentValue(Arguments.FILENAME);
         if(file != null)
 		{
-			if(isServer(file))
+			if(isServer(file)) {
 				load(file);
-			else if(getArgumentValue(Arguments.SERVER)!=null)
+			}
+			else if(getArgumentValue(Arguments.SERVER)!=null) {
 				load(getArgumentValue(Arguments.SERVER) + file);
-			else
+			}
+			else {
 				load(new File(file));
+			}
 		}
     }
 
@@ -415,10 +422,12 @@ final public class ProtAnnotMain implements WindowListener {
 		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getAddServerAction()));
 		
 	
-		if(getArgumentValue(Arguments.SERVER)==null)
+		if(getArgumentValue(Arguments.SERVER)==null) {
 			server_load_action.setEnabled(false);
-		else
+		}
+		else {
 			server_load_action.setEnabled(true);
+		}
 		
 		MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
 
@@ -604,8 +613,9 @@ final public class ProtAnnotMain implements WindowListener {
                 }
             });
 
-        if(files.length <= 0)
-            open.setEnabled(false);
+        if(files.length <= 0) {
+			open.setEnabled(false);
+		}
 
         sampleChooser.add(buttonpanel);
 
@@ -705,8 +715,9 @@ final public class ProtAnnotMain implements WindowListener {
 			   checkArguments(args[i],args[i+1]);
 		   }
        }
-       else
-           outputErrorMessage("Invalid number of arguments");
+       else {
+			outputErrorMessage("Invalid number of arguments");
+		}
     }
 
 	/**
@@ -740,26 +751,32 @@ final public class ProtAnnotMain implements WindowListener {
 					}
 					//If path name is invalid then should be server name without '/' at the end.
 					//eg http://protannot.bioviz.org/samples
-					else
+					else {
 						return addToArgumentDictionary(new String[]{"-s", argValue+"/"});
+					}
 				} 
-			} else
+			} else {
 				return outputErrorMessage("Invalid server name: Server name should start with http or https. " +
 						"\n eg. http://protannot.bioviz.org/samples/");
+			}
 			
 		} else if("-f".equals(arg)){
-			if (GeneralUtils.getUnzippedName(argValue).endsWith(".paxml"))
+			if (GeneralUtils.getUnzippedName(argValue).endsWith(".paxml")) {
 				return addToArgumentDictionary(new String[]{"-f", argValue});
-			else
+			}
+			else {
 				return outputErrorMessage("Invalid file name: File name should end with .paxml" +
 						"\n eg. /user/home/protannot/samples/ABCD.paxml OR " +
 						"\n eg. https://protannot.bioviz.org/samples/ABCD.paxml");
+			}
 			
 		} else if(arg.length()==0){
-			if(isServer(argValue))
+			if(isServer(argValue)) {
 				checkArguments("-s",argValue);
-			else
+			}
+			else {
 				checkArguments("-f",argValue);
+			}
 		}
 		
 		return false;
@@ -782,8 +799,9 @@ final public class ProtAnnotMain implements WindowListener {
 
        for(int i=0; i<args.length; i+=2)
        {
-            if(Arguments.getValue(args[i])!=null)
-                ArgumentValues.put(Arguments.getValue(args[i]), args[i+1]);
+            if(Arguments.getValue(args[i])!=null) {
+				ArgumentValues.put(Arguments.getValue(args[i]), args[i+1]);
+			}
        }
 
 	   return true;

@@ -115,7 +115,9 @@ public abstract class AbstractTieredMap
 						MapTierGlyph.getStateString(evt.getTier().getState()));
 			}
 		}
-		if ( notifyingListeners ) return;
+		if ( notifyingListeners ) {
+			return;
+		}
 		notifyingListeners = true;
 		for (TierEventListener l : tierEventListeners) {
 			l.heardTierEvent(evt);
@@ -126,14 +128,17 @@ public abstract class AbstractTieredMap
 	/* TierStateChangeListener implementation */
 
 	public void heardTierStateChangeEvent (TierStateChangeEvent evt) {
-		if ( notifyingListeners ) return;
+		if ( notifyingListeners ) {
+			return;
+		}
 
 		// Distill the relevant tier from the event
 
 		MapTierGlyph tier = (MapTierGlyph) evt.getSource();
 
-		if (tier == null)
+		if (tier == null) {
 			return;
+		}
 
 		// And tell the label map's listeners about it
 
@@ -208,8 +213,9 @@ public abstract class AbstractTieredMap
 
 			// don't make room if tier isn't visible, or if it's hidden
 
-			if (!mtg.isVisible() || (mtg.getState() == MapTierGlyph.HIDDEN))
+			if (!mtg.isVisible() || (mtg.getState() == MapTierGlyph.HIDDEN)) {
 				continue;
+			}
 
 			height = mtg.getCoordBox().height;
 
@@ -229,7 +235,9 @@ public abstract class AbstractTieredMap
 
 			for (int i=0; i<tiers.size(); i++) {
 				mtg = tiers.get(i);
-				if ( mtg.getState() == MapTierGlyph.HIDDEN ) continue;
+				if ( mtg.getState() == MapTierGlyph.HIDDEN ) {
+					continue;
+				}
 				else if ( newbox == null ) {
 					newbox = new Rectangle2D.Double();
 					newbox.setRect(pbox.x, mtg.getCoordBox().y,
@@ -240,14 +248,17 @@ public abstract class AbstractTieredMap
 				}
 			}
 
-			if ( newbox != null )
+			if ( newbox != null ) {
 				setMapOffset((int) newbox.y, (int) (newbox.y + newbox.height));
+			}
 
 			updateWidget();
 		}
 
-		if (notifyOnPackTiers) notifyTierEventListeners(new TierEvent(
-					this, TierEvent.REPACK, null, full_repack, stretch_map));
+		if (notifyOnPackTiers) {
+			notifyTierEventListeners(new TierEvent(
+ this, TierEvent.REPACK, null, full_repack, stretch_map));
+		}
 	}
 
 
@@ -268,7 +279,9 @@ public abstract class AbstractTieredMap
 		if (i>=0 && i<tiers.size()) {
 			return tiers.get(i);
 		}
-		else return null;
+		else {
+			return null;
+		}
 	}
 
 	/**
@@ -300,8 +313,9 @@ public abstract class AbstractTieredMap
 		super.setBounds(axis, start, end);
 		Rectangle2D.Double mbox = getScene().getGlyph().getCoordBox();
 
-		if ((axis != X) || (tiers == null))
+		if ((axis != X) || (tiers == null)) {
 			return;
+		}
 
 		for (int i=0; i<tiers.size(); i++) {
 			MapTierGlyph tier = tiers.get(i);
@@ -317,8 +331,9 @@ public abstract class AbstractTieredMap
 
 		// First, see if we've got such a tier
 
-		if (!tiers.contains(toRemove))
+		if (!tiers.contains(toRemove)) {
 			return;
+		}
 
 		// Then tell our listeners to remove the corresponding tier
 
@@ -389,8 +404,9 @@ public abstract class AbstractTieredMap
 
 		// Then do the other map:
 		mtg = otherMap.tiers.get(tierLocs[0]);
-		if (mtg == null)
-			return; // Why isn't an exception thrown?
+		if (mtg == null) {
+			return;
+		} // Why isn't an exception thrown?
 		otherMap.tiers.remove(from);
 		otherMap.tiers.add(to, mtg);
 
@@ -407,8 +423,9 @@ public abstract class AbstractTieredMap
 
 		int loc = otherMap.indexOf (otherTier);
 
-		if ((loc < 0) || loc > tiers.size())
+		if ((loc < 0) || loc > tiers.size()) {
 			return;
+		}
 
 		// Remove the tier's children
 
@@ -457,7 +474,9 @@ public abstract class AbstractTieredMap
 			ourTier   = getTierAt (i);
 			otherTier = otherMap.getTierAt (i);
 
-			if (otherTier == null || ourTier == null) return;
+			if (otherTier == null || ourTier == null) {
+				return;
+			}
 
 			// Deal with the geometries --
 
@@ -494,8 +513,9 @@ public abstract class AbstractTieredMap
 
 		int loc = otherMap.indexOf (otherTier);
 
-		if ((loc < 0) || loc > tiers.size())
+		if ((loc < 0) || loc > tiers.size()) {
 			return null;
+		}
 
 		// And set the state of our corresponding tier appropriately.
 

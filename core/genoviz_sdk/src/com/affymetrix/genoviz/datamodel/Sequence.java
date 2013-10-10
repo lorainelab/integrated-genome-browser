@@ -104,9 +104,10 @@ public class Sequence implements EditableSequenceI {
 	 * Defaults to 0.
 	 */
 	public void setStart(int theStart) {
-		if ( theStart < 0 )
+		if ( theStart < 0 ) {
 			throw new IllegalArgumentException
 				( "theStart cannot be negative" );
+		}
 		this.start = theStart;
 		this.end = this.start + this.length - 1;
 	}
@@ -308,9 +309,15 @@ public class Sequence implements EditableSequenceI {
 	public String toString() {
 		String s = this.getClass().getName()
 			+ ": length = " + this.length;
-		if (null != this.id) s += ", id = " + this.id;
-		if (null != this.name) s += ", name = " + this.name;
-		if (null != this.description) s += ", " + this.description;
+		if (null != this.id) {
+			s += ", id = " + this.id;
+		}
+		if (null != this.name) {
+			s += ", name = " + this.name;
+		}
+		if (null != this.description) {
+			s += ", " + this.description;
+		}
 		return s;
 	}
 
@@ -331,9 +338,10 @@ public class Sequence implements EditableSequenceI {
 	public void insertString( int offset, String str/*, AttributeSet a*/ )
 		/* throws BadLocationException */
 	{
-		if ( this.end + 1 < offset )
+		if ( this.end + 1 < offset ) {
 			throw new IllegalArgumentException
 				( "Cannot insert beyond the end." );
+		}
 		if ( this.end < offset ) {
 			this.residues.append( str );
 		}
@@ -371,9 +379,10 @@ public class Sequence implements EditableSequenceI {
 	 */
 	public void remove( int offset, int length )
 	{
-		if ( this.end + 1 < offset + length )
+		if ( this.end + 1 < offset + length ) {
 			throw new IllegalArgumentException
 				( "Cannot remove beyond the end." );
+		}
 		char[] tail = new char[this.length - offset - length];
 		if ( 0 < tail.length ) {
 			this.residues.getChars( offset + length, this.length, tail, 0 );
@@ -382,7 +391,9 @@ public class Sequence implements EditableSequenceI {
 		this.residues.append( tail );
 		this.length -= length;
 		this.end -= length;
-		if ( this.end < 0 ) this.end = 0;
+		if ( this.end < 0 ) {
+			this.end = 0;
+		}
 
 		// Adjust positions.
 		for ( Position p : positions ) {

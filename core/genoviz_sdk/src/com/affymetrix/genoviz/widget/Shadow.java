@@ -165,7 +165,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 		if (map.getView() != null) {
 			map.getView().addPreDrawViewListener(this);
 		}
-		else this.map.addViewBoxListener( this );
+		else {
+			this.map.addViewBoxListener( this );
+		}
 	}
 
 
@@ -177,7 +179,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	 * have been initialized before this method is called.
 	 */
 	public void setLabeled(boolean labeled) {
-		if (this.labeled == labeled) return; // already in the requested state.
+		if (this.labeled == labeled) {
+			return;
+		} // already in the requested state.
 
 		this.labeled = labeled;
 		if (labeled) {
@@ -218,7 +222,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	 * like the NeoSeq.
 	 */
 	public void setResidueRange( boolean isResidueRange ) {
-		if ( isResidueRange == this.isRR ) return; // It was already thus.
+		if ( isResidueRange == this.isRR ) {
+			return;
+		} // It was already thus.
 		this.isRR = isResidueRange;
 	}
 
@@ -232,7 +238,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
 
 	public void setRange(int st, int en) {
-		if (null == map.getView().getGraphics()) return;
+		if (null == map.getView().getGraphics()) {
+			return;
+		}
 
 		if ( null != this.vGlyph ) {
 			int x, y, width, height;
@@ -252,7 +260,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 				View view = map.getView();
 				Graphics g = view.getGraphics();
 				Font font = label.getFont();
-				if (font != null) g.setFont(font);
+				if (font != null) {
+					g.setFont(font);
+				}
 				FontMetrics fm = g.getFontMetrics();
 				tx.width  = fm.stringWidth(label.getString());
 				tx.height = fm.getAscent();
@@ -289,7 +299,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 					throw new IllegalStateException( "The orientation must be HORIZONTAL or VERTICAL." );
 			}
 
-			if ( this.isRR ) width++;
+			if ( this.isRR ) {
+				width++;
+			}
 
 			if ( null != this.tg )  {
 				this.tg.setCoords( x, y, width, height );
@@ -338,7 +350,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 				int[] offset = map.getVisibleOffset();
 				Graphics g = view.getGraphics();
 				Font font = label.getFont();
-				if (font != null) g.setFont(font);
+				if (font != null) {
+					g.setFont(font);
+				}
 				FontMetrics fm = g.getFontMetrics();
 				tx.width  = fm.stringWidth(label.getString());
 				tx.height = fm.getAscent();
@@ -423,8 +437,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	public void destroy() {
 		if ( map != null ) {
 			map.removeViewBoxListener(this);
-			if ( map.getView() != null )
+			if ( map.getView() != null ) {
 				map.getView().removePreDrawViewListener(this);
+			}
 			map = null;
 		}
 	}

@@ -68,8 +68,9 @@ public class MinMaxDialog extends javax.swing.JDialog {
 		dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 
-		if ((dialog.min == null) || (dialog.max == null))
+		if ((dialog.min == null) || (dialog.max == null)) {
 			return null;
+		}
 
 		minMax[0] = dialog.min;
 		minMax[1] = dialog.max;

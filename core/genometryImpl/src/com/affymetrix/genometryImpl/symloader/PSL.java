@@ -158,8 +158,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				line_count++;
 				// Ignore psl header lines
-				if(line.trim().length() == 0)
+				if(line.trim().length() == 0) {
 					continue;
+				}
 				char firstchar = line.charAt(0);
 
 				if (firstchar == '#' ||
@@ -426,8 +427,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
 //				line_count++;
 				// Ignore psl header lines
-				if(line.trim().length() == 0)
-					continue;
+				if(line.trim().length() == 0) {
+				continue;
+			}
 				char firstchar = line.charAt(0);
 
 				if (firstchar == '#' ||
@@ -456,8 +458,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 						target_group, other_group, in_bottom_of_link_psl, f21, 
 						target2types, query2types, other2types);
 				
-				if(sym == null)
-					continue;
+				if(sym == null) {
+				continue;
+			}
 				
 				
 				total_annot_count++;
@@ -552,8 +555,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
 //				line_count++;
 				// Ignore psl header lines
-				if(line.trim().length() == 0)
-					continue;
+				if(line.trim().length() == 0) {
+				continue;
+			}
 				char firstchar = line.charAt(0);
 
 				if (firstchar == '#' ||
@@ -586,8 +590,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 						target_group, other_group, in_bottom_of_link_psl, fields, 
 						target2types, query2types, other2types);
 				
-				if(sym == null)
-					continue;
+				if(sym == null) {
+				continue;
+			}
 				
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
@@ -1025,8 +1030,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
 			for (SeqSymmetry sym : syms) {
 
-				if(Thread.currentThread().isInterrupted())
+				if(Thread.currentThread().isInterrupted()) {
 					break;
+				}
 
 				if (! (sym instanceof UcscPslSym)) {
 					int spancount = sym.getSpanCount();

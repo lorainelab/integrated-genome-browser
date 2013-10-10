@@ -134,8 +134,9 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 				if (Float.MIN_VALUE < maxMax) {
 					if (tg.getAnnotStyle().isGraphTier()) {
 						for(GlyphI g : tg.getChildren()){
-							if(!(g instanceof GraphGlyph))
+							if(!(g instanceof GraphGlyph)) {
 								break;
+							}
 						
 							GraphGlyph gg = (GraphGlyph) g;
 							gg.setVisibleMaxY(maxMax);

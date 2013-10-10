@@ -130,7 +130,9 @@ public final class JTableCutPasteAdapter {
     for (int i=0;i<numrows;i++) {
       for (int j=0;j<numcols;j++) {
         sbf.append(jTable1.getValueAt(rowsselected[i],colsselected[j]));
-        if (j<numcols-1) sbf.append("\t");
+        if (j<numcols-1) {
+					sbf.append("\t");
+				}
       }
       sbf.append("\n");
     }

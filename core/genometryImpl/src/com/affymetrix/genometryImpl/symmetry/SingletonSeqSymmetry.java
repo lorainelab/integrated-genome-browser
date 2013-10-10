@@ -35,17 +35,21 @@ public class SingletonSeqSymmetry extends LeafSingletonSymmetry  implements SeqS
 	}
 
 	public int getChildCount() {
-		if (null != children)
+		if (null != children) {
 			return children.size();
-		else
+		}
+		else {
 			return 0;
+		}
 	}
 
 	public SeqSymmetry getChild(int index) {
-		if (null != children)
+		if (null != children) {
 			return children.get(index);
-		else
+		}
+		else {
 			return null;
+		}
 	}
 
 }

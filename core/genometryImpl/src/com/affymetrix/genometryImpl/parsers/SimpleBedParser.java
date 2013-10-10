@@ -31,8 +31,9 @@ public final class SimpleBedParser implements AnnotationWriter {
 		List<SeqSpan> spanlist = new ArrayList<SeqSpan>(syms.size());  // initialize to number of top-level syms, won't be lower...
 		for (SeqSymmetry sym : syms) {
 			SeqUtils.collectLeafSpans(sym, seq, spanlist);
-			if(Thread.currentThread().isInterrupted())
+			if(Thread.currentThread().isInterrupted()) {
 				break;
+			}
 		}
 
 		try {
@@ -45,8 +46,9 @@ public final class SimpleBedParser implements AnnotationWriter {
 				bw.write(Integer.toString(span.getMax()));
 				bw.write('\n');
 
-				if(Thread.currentThread().isInterrupted())
+				if(Thread.currentThread().isInterrupted()) {
 					break;
+				}
 			}
 			bw.flush();
 			success = true;

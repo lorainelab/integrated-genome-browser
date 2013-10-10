@@ -43,7 +43,9 @@ public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
 	public Object getProperty(String key) {
 		if (key.equals("gene name")) { return geneName; }
 		else if (key.equals("description")) { return description; }
-		else return super.getProperty(key);
+		else {
+			return super.getProperty(key);
+		}
 	}
 
 	public void outputBedDetailFormat(DataOutputStream out) throws IOException {

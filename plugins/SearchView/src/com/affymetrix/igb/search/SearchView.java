@@ -348,8 +348,9 @@ public final class SearchView extends IGBTabPanel implements
 		String searchMode = (String) searchCB.getSelectedItem();
 		selectedSearchMode = searchModeMap.get(searchMode);
 		
-		if(selectedSearchMode == null)
+		if(selectedSearchMode == null) {
 			return;
+		}
 		
 		if(selectedSearchMode instanceof ISearchModeExtended){
 			ISearchModeExtended extenedSearch = (ISearchModeExtended)selectedSearchMode;

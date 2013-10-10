@@ -97,8 +97,9 @@ public class Selection extends Observable {
 	 * to be sure that zero is really selected.</em>
 	 */
 	public void clear() {
-		if (this.isEmpty())
-			return; // It was already thus.
+		if (this.isEmpty()) {
+			return;
+		} // It was already thus.
 		setChanged();
 		sel_orientation = ORIENTATION_NONE;
 		sel_orig = sel_start = sel_end = 0;
@@ -113,8 +114,9 @@ public class Selection extends Observable {
 	public void setPoint(int point) {
 		if (sel_orientation == ORIENTATION_POINT
 				&& point == sel_orig
-				&& !isEmpty())
-			return; // It was already thus.
+				&& !isEmpty()) {
+			return;
+		} // It was already thus.
 		setRange(point, point);
 	}
 
@@ -127,10 +129,12 @@ public class Selection extends Observable {
 	 */
 	public void setRange(int start, int end) {
 
-		if ( start <= end && start == sel_start && end == sel_end && !isEmpty() )
-			return; // It was already thus.
-		if ( end < start && end == sel_start && start == sel_end && !isEmpty() )
-			return; // It was already thus.
+		if ( start <= end && start == sel_start && end == sel_end && !isEmpty() ) {
+			return;
+		} // It was already thus.
+		if ( end < start && end == sel_start && start == sel_end && !isEmpty() ) {
+			return;
+		} // It was already thus.
 
 		setChanged();
 

@@ -157,12 +157,18 @@ public final class BookmarkUnibrowControlServlet {
 									end = currentSpan.getEnd();
 									seqid = currentSpan.getBioSeq().getID();
 								}
-								else pickOne = true;
+								else {
+									pickOne = true;
+								}
 							}
-							else pickOne = true;
+							else {
+								pickOne = true;
+							}
 						}
 						//pick first chromosome and 1M span
-						else pickOne = true;
+						else {
+							pickOne = true;
+						}
 					}
 					//pick something, only works if version was loaded.
 					if (pickOne){
@@ -171,9 +177,13 @@ public final class BookmarkUnibrowControlServlet {
 							int len = bs.getLength();
 							seqid = bs.getID();
 							start = len/3 - 500000;
-							if (start < 0) start = 0;
+							if (start < 0) {
+								start = 0;
+							}
 							end = start + 500000;
-							if (end > len) end = len-1;
+							if (end > len) {
+								end = len-1;
+							}
 						}
 					}
 				}
@@ -201,8 +211,12 @@ public final class BookmarkUnibrowControlServlet {
 
 				GenericServer[] gServers2 = null;
 
-				if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) loaddas2data = false; 
-				else gServers2 = loadServers(igbService, das2_server_urls);
+				if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
+					loaddas2data = false;
+				} 
+				else {
+					gServers2 = loadServers(igbService, das2_server_urls);
+				}
 				
 				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
@@ -295,8 +309,12 @@ public final class BookmarkUnibrowControlServlet {
 	/**Checks for nulls or Strings with zero length.*/
 	public static boolean missingString(String[] params){
 		for (String s : params){
-			if (s == null) return true;
-			if (s.trim().length() == 0) return true;
+			if (s == null) {
+				return true;
+			}
+			if (s.trim().length() == 0) {
+				return true;
+			}
 		}
 		return false;
 	}

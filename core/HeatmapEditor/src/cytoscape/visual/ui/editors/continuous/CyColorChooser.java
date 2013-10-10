@@ -28,8 +28,9 @@ public class CyColorChooser {
 	 * @return  DOCUMENT ME!
 	 */
 	public static Color showDialog(Component component, String title, Color initialColor) {
-		if (initialColor != null)
+		if (initialColor != null) {
 			chooser.setColor(initialColor);
+		}
 
 		JDialog dialog = JColorChooser.createDialog(component, title, true, chooser, listener, null);
 		dialog.setVisible(true);

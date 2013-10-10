@@ -124,8 +124,9 @@ public final class FastaParser implements Parser {
 
 	public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
 		List <BioSeq> bioList = parseAll(istr,group);
-		if (bioList == null || bioList.isEmpty())
+		if (bioList == null || bioList.isEmpty()) {
 			return null;
+		}
 		return bioList.get(0);
 	}
 
@@ -190,8 +191,9 @@ public final class FastaParser implements Parser {
 			
 		}
 		
-		if(Thread.currentThread().isInterrupted())
+		if(Thread.currentThread().isInterrupted()) {
 			return null;
+		}
 		
 		return result;
 	}
@@ -368,16 +370,20 @@ public final class FastaParser implements Parser {
 	public static byte[] readFASTA(File seqfile, int begin_sequence, int end_sequence)
 			throws FileNotFoundException, IOException, IllegalArgumentException {
 
-			if (begin_sequence < 0)
-				throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
-			if (end_sequence < begin_sequence)
-				throw new java.lang.IllegalArgumentException("range " + begin_sequence + ":" + end_sequence + " was negative.");
+			if (begin_sequence < 0) {
+			throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
+		}
+			if (end_sequence < begin_sequence) {
+			throw new java.lang.IllegalArgumentException("range " + begin_sequence + ":" + end_sequence + " was negative.");
+		}
 
-			if (!seqfile.exists())
-				throw new java.io.FileNotFoundException("Couldn't find file " + seqfile.toString());
+			if (!seqfile.exists()) {
+			throw new java.io.FileNotFoundException("Couldn't find file " + seqfile.toString());
+		}
 
-			if (begin_sequence > seqfile.length())
-				throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " larger than file size:" + (int)seqfile.length());
+			if (begin_sequence > seqfile.length()) {
+			throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " larger than file size:" + (int)seqfile.length());
+		}
 
 			// Sanity check on huge range... can't be larger than the overall file size.
 			if (seqfile.length() <= (long)Integer.MAX_VALUE) {
@@ -452,8 +458,9 @@ public final class FastaParser implements Parser {
 					// Read several characters if possible
 					int nucleotides_left_on_this_line = Math.min(LINELENGTH - line_location, nucleotides_len - i);
 					int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
-					if (nucleotides_read == -1)
-						return trimBuffer(buf);
+					if (nucleotides_read == -1) {
+					return trimBuffer(buf);
+				}
 					i+= nucleotides_read;
 					line_location += nucleotides_read;
 
@@ -507,8 +514,9 @@ public final class FastaParser implements Parser {
 			while (i>=0 && (buf[i-1] == '\n' || buf[i-1] == 0)) {
 				i--;
 			}
-			if (i == 0)
-				return null;
+			if (i == 0) {
+			return null;
+		}
 
 			// Copy over shortened buffer
 
@@ -532,8 +540,9 @@ public final class FastaParser implements Parser {
 			while(bytes_to_read > 0){
 				int bytesRead = bis.read(header,begin,bytes_to_read);
 
-				if(bytesRead < 0)
-					break;
+				if(bytesRead < 0) {
+				break;
+			}
 
 				begin = bytesRead;
 				bytes_to_read -= bytesRead;

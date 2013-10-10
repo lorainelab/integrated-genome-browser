@@ -137,7 +137,9 @@ public class Das2Demo {
 			zis.getNextEntry();
 			in = new BufferedReader(new InputStreamReader(zis));
 		}
-		else in = new BufferedReader(new InputStreamReader(is));
+		else {
+			in = new BufferedReader(new InputStreamReader(is));
+		}
 		return in;
 	}
 

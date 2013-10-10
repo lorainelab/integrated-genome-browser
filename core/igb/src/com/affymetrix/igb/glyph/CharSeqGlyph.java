@@ -191,8 +191,9 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
-		if(min_char_xpix > pixelsPerBase)
+		if(min_char_xpix > pixelsPerBase) {
 			return;
+		}
 		
 		int index = (int) (pixelsPerBase > max_char_xpix ? max_char_xpix : pixelsPerBase);
 		Font xmax_font = xpix2fonts[index];

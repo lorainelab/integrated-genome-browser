@@ -150,8 +150,9 @@ public class UcscPslSym
 	}
 
 	private static String getResidue(String[] target_res_arr){
-		if(target_res_arr == null)
+		if(target_res_arr == null) {
 			return "";
+		}
 
 		StringBuilder builder = new StringBuilder(2000);
 
@@ -274,12 +275,16 @@ public class UcscPslSym
 		List<SeqSymmetry> results = null;
 		if (input_span.getBioSeq() != this.getQuerySeq()) {
 			results =  SeqUtils.getOverlappingChildren(this, input_span);
-			if (debug) System.out.println("input span != query seq, doing normal SeqUtils.getOverlappingChildren() call");
+			if (debug) {
+				System.out.println("input span != query seq, doing normal SeqUtils.getOverlappingChildren() call");
+			}
 		}
 		else if (overlapping_query_coords) {
 			results =  SeqUtils.getOverlappingChildren(this, input_span);
 			// or maybe do a smarter binary search with constrained scan???
-			if (debug) System.out.println("query children overlap, doing normal SeqUtils.getOverlappingChildren() call");
+			if (debug) {
+				System.out.println("query children overlap, doing normal SeqUtils.getOverlappingChildren() call");
+			}
 		}
 		else {
 			//      System.out.println("trying to do a binary search on qmins");

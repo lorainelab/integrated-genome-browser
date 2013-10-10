@@ -67,7 +67,9 @@ public final class ThreadProgressMonitor {
   };
   
   private void setMessage(Object o) {
-    if (is_closed) return;
+    if (is_closed) {
+			return;
+		}
     opt_pane.setMessage(o);
     dialog.pack();
   }
@@ -81,7 +83,9 @@ public final class ThreadProgressMonitor {
   }
   
   private void showDialog() {
-    if (is_closed) return;
+    if (is_closed) {
+			return;
+		}
     dialog.pack();
     dialog.setVisible(true);
   }

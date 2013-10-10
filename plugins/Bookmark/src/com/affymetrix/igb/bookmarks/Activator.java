@@ -146,7 +146,9 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 			//Don't do anything. isBound() throws an error when trying to bind a bound port
 		} finally {
 			try {
-				if (sock != null) sock.close();
+				if (sock != null) {
+					sock.close();
+				}
 			} catch (IOException e) {}
 		}
 		return false;

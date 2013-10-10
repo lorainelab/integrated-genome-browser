@@ -63,8 +63,9 @@ public class MisMatchGraphSym extends GraphSym {
 		}
 		
 		int leftBound = this.determineBegIndex(x);
-		if(span.getMax() - span.getMin() > BUFSIZE || leftBound < 0)
+		if(span.getMax() - span.getMin() > BUFSIZE || leftBound < 0) {
 			return super.getLocationProperties(x, span);
+		}
 
 		Map<String, Object> locprops = new HashMap<String, Object>();
 		
@@ -212,11 +213,13 @@ public class MisMatchGraphSym extends GraphSym {
 				pos = raf.getFilePointer();
 				y = raf.readInt() + tempy[i];
 
-				if(y < ymin)
+				if(y < ymin) {
 					ymin = y;
+				}
 				
-				if(y > ymax)
+				if(y > ymax) {
 					ymax = y;
+				}
 				
 
 				for(int j=0; j<yR.length; j++){

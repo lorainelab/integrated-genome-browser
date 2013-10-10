@@ -211,7 +211,9 @@ public final class BAM extends XAM {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		if (reader != null) {
 			for (final SAMRecord sr: reader){
-				if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
+				if (skipUnmapped && sr.getReadUnmappedFlag()) {
+					continue;
+				}
 				symList.add(convertSAMRecordToSymWithProps(sr, seq, method));
 			}
 		}
@@ -319,14 +321,16 @@ public final class BAM extends XAM {
 		//look for xxx.bam.bai
 		String path = bamfile.getPath();
 		File f = new File(path+".bai");
-		if (f.exists())
+		if (f.exists()) {
 			return f;
+		}
 
 		//look for xxx.bai
 		path = path.substring(0, path.length()-3)+"bai";
 		f = new File(path);
-		if (f.exists())
-				return f;
+		if (f.exists()) {
+			return f;
+		}
 
 		return null;
 	}
@@ -373,8 +377,9 @@ public final class BAM extends XAM {
 			return null;
 		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("Creating new bam index file -> "+indexfile);
+		}
 
 		String input = "INPUT=" + bamfile.getAbsolutePath();
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
@@ -394,7 +399,9 @@ public final class BAM extends XAM {
 		bamfile.deleteOnExit();
 		BAM bam = new BAM(bamfile.toURI(),featureName, group);
 		//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
-		if (uri.getScheme().equals("http")) return bam.parseAll(overlap_span.getBioSeq(), uri.toString());
+		if (uri.getScheme().equals("http")) {
+			return bam.parseAll(overlap_span.getBioSeq(), uri.toString());
+		}
 		return bam.getRegion(overlap_span);
 	}
 

@@ -29,8 +29,9 @@ public final class SeqSymSummarizer {
 
 	public static MisMatchGraphSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end, boolean pileup)  {
 
-		if(syms.isEmpty())
+		if(syms.isEmpty()) {
 			return null;
+		}
 
 		int range = end - start;
 		int[] y = new int[range];

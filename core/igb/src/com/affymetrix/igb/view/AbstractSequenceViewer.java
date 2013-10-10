@@ -683,8 +683,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	
 	public void copyTransAction(int frametype){
 		String residues = seqview.getResidues().trim();
-		if(residues == null)
+		if(residues == null) {
 			return;
+		}
 		residues = DNAUtils.translate(residues, frametype, DNAUtils.ONE_LETTER_CODE);
 		if(residues != null){
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -705,8 +706,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		
 		for(int i =0; i< frameArray.length; i++) {
 			frameType = frameArray[i];
-			if(frameType < Translatable.FRAME_ONE)
+			if(frameType < Translatable.FRAME_ONE) {
 				continue;
+			}
 			selectedTrans.append(">Frame ").append(BUNDLE.getString("copyTranslation"+frameType+"ToClipBoard").substring(0, 2)).append("\n");
 			selectedTrans.append(getSelectedResidues(frameType).trim().replaceAll("\\s", "")).append("\n\n");
 		}

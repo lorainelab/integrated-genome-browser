@@ -193,13 +193,20 @@ public class Trace implements TraceI {
 			setPeaks();
 		}
 		int candidate = Arrays.binarySearch(peak, thePoint);
-		if (0 <= candidate) // exact match was found.
+		if (0 <= candidate) {
 			return candidate;
+		}
 		// Exact match was not found.
 		int j = -(candidate + 1), i = j - 1;
-		if (i < 0) return j;
-		if (peak.length <= j) return i;
-		if (thePoint < (peak[i] + peak[j]) / 2) return i;
+		if (i < 0) {
+			return j;
+		}
+		if (peak.length <= j) {
+			return i;
+		}
+		if (thePoint < (peak[i] + peak[j]) / 2) {
+			return i;
+		}
 		return j;
 	}
 

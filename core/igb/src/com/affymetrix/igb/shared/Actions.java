@@ -43,16 +43,18 @@ public class Actions {
 	}
 	
 	public static void setStrandsReverseColor(Color color) {
-		if(color == null)
+		if(color == null) {
 			return;
+		}
 		
 		ParameteredAction action = ChangeReverseColorAction.getAction();
 		action.performAction(color);
 	}
 	
 	public static void setStrandsForwardColor(Color color){
-		if(color == null)
+		if(color == null) {
 			return;
+		}
 		
 		ParameteredAction action = ChangeForwardColorAction.getAction();
 		action.performAction(color);

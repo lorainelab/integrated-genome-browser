@@ -29,8 +29,12 @@ public class BridgeGlyph extends SolidGlyph {
 
 	public void draw(ViewI theView) {
 		theView.transformToPixels(getCoordBox(), getPixelBox());
-		if (0 == getPixelBox().width) getPixelBox().width = 1;
-		if (0 == getPixelBox().height) getPixelBox().height = 1;
+		if (0 == getPixelBox().width) {
+			getPixelBox().width = 1;
+		}
+		if (0 == getPixelBox().height) {
+			getPixelBox().height = 1;
+		}
 		Graphics g = theView.getGraphics();
 		g.setColor(getBackgroundColor());
 		g.fillRect(getPixelBox().x, getPixelBox().y+(int)Math.round(getPixelBox().height*POS),

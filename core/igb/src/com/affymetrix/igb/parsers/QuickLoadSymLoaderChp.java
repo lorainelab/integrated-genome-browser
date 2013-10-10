@@ -45,8 +45,9 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 	//Only used for "chp"
 	private static Map<String, List<? extends SeqSymmetry>> addMethodsToFeature(
 			GenericFeature feature, List<? extends SeqSymmetry> results) {
-		if(results == null)
+		if(results == null) {
 			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
+		}
 		
 		Map<String, List<SeqSymmetry>> syms = SymLoader.splitResultsByTracks(results);
 		Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();

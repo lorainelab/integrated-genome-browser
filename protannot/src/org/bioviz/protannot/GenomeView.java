@@ -772,10 +772,12 @@ final public class GenomeView extends JPanel implements MouseListener, Component
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
                 LabelledRectGlyph cglyph = new LabelledRectGlyph();
-				if(i%2 == 0)
+				if(i%2 == 0) {
 					cglyph.setColor(color);
-				else
+				}
+				else {
 					cglyph.setColor(color.darker());
+				}
 
 				String spanno = "Span " + String.valueOf(i+1) + " of ";
 				String interpro = (String) ((SymWithProps)annot2protein).getProperty("InterPro Name");
@@ -918,8 +920,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
 
         showProperties();
 
-		if(hairline != null)
+		if(hairline != null) {
 			hairline.setRange((int)nme.getCoordX(), (int)nme.getCoordX() + 1);
+		}
 
         if (e.isPopupTrigger()) {
             popup.show(this, e.getX(), e.getY());

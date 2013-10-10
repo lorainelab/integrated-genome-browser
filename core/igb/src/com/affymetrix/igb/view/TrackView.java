@@ -199,8 +199,9 @@ public class TrackView {
 				}
 				style = getStyle(method, feature);
 				
-				if(style == null)
+				if(style == null) {
 					continue;
+				}
 				
 				addTierFor(style, gviewer);
 			}
@@ -217,8 +218,9 @@ public class TrackView {
 			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
 					method, feature.featureName, feature.getExtension(), feature.featureProps);
 			
-			if(state.getTierStyle().getFloatTier())
+			if(state.getTierStyle().getFloatTier()) {
 				return null;
+			}
 			
 			return state.getTierStyle();
 		}else{

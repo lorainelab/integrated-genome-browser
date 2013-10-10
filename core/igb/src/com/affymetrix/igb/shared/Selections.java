@@ -159,12 +159,14 @@ public abstract class Selections {
 	}
 	
 	public static boolean isOneJoined(){
-		if(graphStates.size() < 2)
+		if(graphStates.size() < 2) {
 			return false;
+		}
 		
 		Object comboStyle = graphStates.get(0).getComboStyle();
-		if(comboStyle == null)
+		if(comboStyle == null) {
 			return false;
+		}
 		
 		for(int i=1; i<graphStates.size(); i++){
 			if(graphStates.get(i).getComboStyle() != comboStyle){
@@ -203,11 +205,13 @@ public abstract class Selections {
 	}
 	
 	public static boolean isAllRootSeqSymmetrySame(){
-		if(rootSyms.isEmpty())
+		if(rootSyms.isEmpty()) {
 			return false;
+		}
 		
-		if(rootSyms.size() == 1)
+		if(rootSyms.size() == 1) {
 			return true;
+		}
 		
 		for(int i=1; i<rootSyms.size(); i++){
 			if(rootSyms.get(0).getCategory() != rootSyms.get(i).getCategory()){

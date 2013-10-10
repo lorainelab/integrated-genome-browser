@@ -222,8 +222,9 @@ public final class DasServerInfo {
 	}
 
 	private URL getLoadURL() throws MalformedURLException{
-		if (!isLoadingFromPrimary())
+		if (!isLoadingFromPrimary()) {
 			return serverURL;
+		}
 		
 		return new URL(primaryURL.toExternalForm() +"/dsn.xml");
 	}

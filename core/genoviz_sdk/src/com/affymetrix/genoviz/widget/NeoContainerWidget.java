@@ -201,14 +201,16 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setExpansionBehavior
 	 */
 	public void setExpansionBehavior(int axisid, int behavior) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set behavior for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for "+ axisid);
-		if (!(NeoAbstractWidget.EXPAND == behavior || NeoAbstractWidget.NO_EXPAND == behavior))
+		}
+		if (!(NeoAbstractWidget.EXPAND == behavior || NeoAbstractWidget.NO_EXPAND == behavior)) {
 			throw new IllegalArgumentException(
 					"Can only set behavior to EXPAND or NO_EXPAND");
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setExpansionBehavior(axisid, behavior);
 		}
@@ -220,11 +222,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#getExpansionBehavior
 	 */
 	public int getExpansionBehavior(int axisid) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can get behavior for X ("+NeoAbstractWidget.X+") or Y ("
 					+NeoAbstractWidget.Y+") axis. "
 					+"Not for "+ axisid);
+		}
 		// The following will throw an exception if widgets is empty.
 		// This will do until we find out (and formalize) the default.
 		return widgets.get(0).getExpansionBehavior(axisid);
@@ -285,11 +288,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setScaleConstraint
 	 */
 	public void setScaleConstraint(int axisid, int constraint) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can constrain scale for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
+		}
 		if (!(INTEGRAL_PIXELS == constraint
 					|| INTEGRAL_COORDS == constraint
 					|| INTEGRAL_ALL == constraint)) {
@@ -308,11 +312,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setZoomBehavior
 	 */
 	public void setZoomBehavior(int axisid, int constraint) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set zoom behavior for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setZoomBehavior(axisid, constraint);
 		}
@@ -322,11 +327,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setZoomBehavior
 	 */
 	public void setZoomBehavior(int axisid, int constraint, double coord) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set zoom behavior for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setZoomBehavior(axisid, constraint, coord);
 		}
@@ -337,11 +343,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 */
 	//  public void setZoomer(int axisid, NeoAdjustable adj) {
 	public void setZoomer(int axisid, Adjustable adj) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set zoomer for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setZoomer(axisid, adj);
 		}
@@ -352,11 +359,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 */
 	//  public void setScroller(int axisid, NeoAdjustable adj) {
 	public void setScroller(int axisid, JScrollBar adj) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set Scroller for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setScroller(axisid, adj);
 		}
@@ -366,11 +374,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#zoom
 	 */
 	public void zoom(int axisid, double zoom_scale) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.zoom(axisid, zoom_scale);
 		}
@@ -380,11 +389,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setMaxZoom
 	 */
 	public void setMaxZoom(int axisid, double limit) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set max zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setMaxZoom(axisid, limit);
 		}
@@ -394,11 +404,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setMinZoom
 	 */
 	public void setMinZoom(int axisid, double limit) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set min zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.setMaxZoom(axisid, limit);
 		}
@@ -408,11 +419,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setMaxZoom
 	 */
 	public double getMaxZoom(int axisid) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can get max zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
+		}
 		// The following will throw an exception if widgets is empty.
 		// This will do until we find out (and formalize) the default.
 		return widgets.get(0).getMaxZoom(axisid);
@@ -422,11 +434,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#getMinZoom
 	 */
 	public double getMinZoom(int axisid) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can get min zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
+		}
 		// The following will throw an exception if widgets is empty.
 		// This will do until we find out (and formalize) the default.
 		return widgets.get(0).getMinZoom(axisid);
@@ -439,11 +452,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#scroll
 	 */
 	public void scroll(int axisid, double value) {
-		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set scroll along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
+		}
 		for (NeoAbstractWidget widg : widgets) {
 			widg.scroll(axisid, value);
 		}

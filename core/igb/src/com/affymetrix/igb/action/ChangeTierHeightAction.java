@@ -85,8 +85,9 @@ public class ChangeTierHeightAction extends SeqMapViewActionA implements Paramet
 	}
 
 	public void performAction(Object... parameters) {
-		if(parameters.length < 1 || parameters[0].getClass() != Integer.class)
+		if(parameters.length < 1 || parameters[0].getClass() != Integer.class) {
 			return;
+		}
 		int height = Integer.valueOf(parameters[0].toString());
 		changeHeight(height);
 	}

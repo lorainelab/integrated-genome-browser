@@ -278,7 +278,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		boolean any_lockable = false;
 //		boolean any_locked = false;
 		int no_of_locked = 0;
-		FileTypeCategory category = num_selections > 0 ? 
+		FileTypeCategory category = num_selections > 0 && Selections.allGlyphs.get(0).getInfo() != null ? 
 				((RootSeqSymmetry)Selections.allGlyphs.get(0).getInfo()).getCategory()
 				: null;
 		
@@ -294,11 +294,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				no_of_locked++;
 			}
 			
-			if(((RootSeqSymmetry)glyph.getInfo()).getCategory() != category){
+			if(glyph.getInfo() != null && ((RootSeqSymmetry)glyph.getInfo()).getCategory() != category){
 				all_same_category = false;
 			}
 			
-			if(((RootSeqSymmetry)glyph.getInfo()).getCategory() == FileTypeCategory.Alignment){
+			if(glyph.getInfo() != null && ((RootSeqSymmetry)glyph.getInfo()).getCategory() == FileTypeCategory.Alignment){
 				any_alignment = true;
 				any_show_residue_mask = any_show_residue_mask || astyle.getShowResidueMask();
 				any_shade_based_on_quality = any_shade_based_on_quality || astyle.getShadeBasedOnQualityScore();

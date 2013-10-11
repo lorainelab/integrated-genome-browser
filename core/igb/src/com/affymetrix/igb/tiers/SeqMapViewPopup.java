@@ -443,12 +443,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			
 		JMenuItem set_color_by = new JRPMenuItemTLP(ColorByAction.getAction());
 		set_color_by.setIcon(null);
-		set_color_by.setEnabled(all_same_category);
+		set_color_by.setEnabled(all_same_category && (category == FileTypeCategory.Annotation 
+				|| category == FileTypeCategory.Alignment || category == FileTypeCategory.ProbeSet));
 		popup.add(set_color_by);
 			
 		JMenuItem filter_action = new JRPMenuItemTLP(FilterAction.getAction());
 		filter_action.setIcon(null);
-		filter_action.setEnabled(all_same_category);
+		filter_action.setEnabled(all_same_category && (category == FileTypeCategory.Annotation 
+				|| category == FileTypeCategory.Alignment || category == FileTypeCategory.ProbeSet));
 		popup.add(filter_action);
 		
 		popup.add(new JSeparator());

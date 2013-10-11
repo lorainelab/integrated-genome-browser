@@ -9,8 +9,7 @@ public enum FileTypeCategory {
 	Sequence(false),
 	Mismatch(false),
 	ProbeSet(true),
-	ScoredContainer(false), 
-	PairedRead(true);
+	ScoredContainer(false);
 
 	private final boolean container;
 	private FileTypeCategory(boolean container) {

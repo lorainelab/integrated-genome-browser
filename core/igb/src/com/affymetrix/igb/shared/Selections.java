@@ -80,7 +80,9 @@ public abstract class Selections {
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
 				allGlyphs.add(gg);
-				rootSyms.add((RootSeqSymmetry)gg.getInfo());
+				if(gg.getInfo() != null) {
+					rootSyms.add((RootSeqSymmetry)gg.getInfo());
+				}
 			}else if (useGlyph instanceof TierGlyph && ((TierGlyph)useGlyph).getTierType() == TierGlyph.TierType.GRAPH) {
 				if (useGlyph.getChildCount() > 0) {
 					for (GlyphI g : useGlyph.getChildren()) {
@@ -91,7 +93,9 @@ public abstract class Selections {
 							allStyles.add(gg.getGraphState().getTierStyle());
 							graphGlyphs.add(gg);
 							allGlyphs.add(gg);
-							rootSyms.add((RootSeqSymmetry)gg.getInfo());
+							if(gg.getInfo() != null) {
+								rootSyms.add((RootSeqSymmetry)gg.getInfo());
+							}
 						} else if(useGlyph.getChildCount()==1 && g instanceof SolidGlyph) { // This happens for graph when the data is cleared
 							allStyles.add(useGlyph.getAnnotStyle());
 							allGlyphs.add(useGlyph);
@@ -103,7 +107,7 @@ public abstract class Selections {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
-				if(category != FileTypeCategory.PairedRead){
+				if(useGlyph.getInfo() != null && category != FileTypeCategory.PairedRead){
 					rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
 				}
 			} else if (category == FileTypeCategory.Axis){
@@ -124,7 +128,9 @@ public abstract class Selections {
 				allStyles.add(gg.getGraphState().getTierStyle());
 				graphGlyphs.add(gg);
 				allGlyphs.add(gg);
-				rootSyms.add((RootSeqSymmetry)gg.getInfo());
+				if(gg.getInfo() != null) {
+					rootSyms.add((RootSeqSymmetry)gg.getInfo());
+				}
 			}
 		}
 		notifyRefreshListener();

@@ -584,10 +584,12 @@ public final class GeneralLoadView {
 					TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
 					if(tier != null){
 						tier.removeAllChildren();
+						tier.setInfo(null);
 					}
 					tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
 					if(tier != null){
 						tier.removeAllChildren();
+						tier.setInfo(null);
 					}
 					TrackView.getInstance().addTierFor(style, gviewer);
 					gviewer.getSeqMap().repackTheTiers(true, true, true);

@@ -64,6 +64,7 @@ public class IGBToolBar extends JToolBar {
 		tf.setComponentPopupMenu(CCPUtils.getCCPPopup());
 		selection_font = tf.getFont();
 		no_selection_font = selection_font.deriveFont(Font.ITALIC);
+		setFloatable(false);
 		setLayout(new BorderLayout());
 		
 		setup();

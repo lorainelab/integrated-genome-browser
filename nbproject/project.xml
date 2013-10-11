@@ -395,6 +395,7 @@
                     <context>
                         <property>debug.class</property>
                         <folder>core/genoviz_sdk/demo/src</folder>
+						<folder>core/genometryImpl/src</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>

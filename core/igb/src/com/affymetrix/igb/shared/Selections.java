@@ -109,11 +109,11 @@ public abstract class Selections {
 					}
 				}
 			} else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment 
-					|| category == FileTypeCategory.ProbeSet) {
+					|| category == FileTypeCategory.ProbeSet || category == FileTypeCategory.PairedRead) {
 				annotStyles.add(useGlyph.getAnnotStyle());
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
-				if(useGlyph.getInfo() != null){
+				if(useGlyph.getInfo() != null && category != FileTypeCategory.PairedRead){
 					rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
 					annotSyms.add((RootSeqSymmetry)useGlyph.getInfo());
 				}

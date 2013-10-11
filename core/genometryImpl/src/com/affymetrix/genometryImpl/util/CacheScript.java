@@ -123,7 +123,7 @@ public class CacheScript extends Thread {
 		String serverCachePath = path + gServer.serverName + temp;
 		GeneralUtils.makeDir(serverCachePath);
 
-		return gServer.serverType.processServer(gServer, path);
+		return gServer.serverType.processServer(gServer, serverCachePath);
 	}
 
 	/**

@@ -456,6 +456,41 @@
 		</jar>
 	</target>
 	
+	<target name="cache_exe" depends="common-init" description="Create a single-jar Protannot application">
+		<sequential>
+			<subant	target="jar" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
+				<dirset dir="${jar_extensions}">
+					<include name="sam" />
+					<include name="tribble" />
+				</dirset>
+			</subant>
+			<subant target="jar" genericantfile="generic.xml" inheritall="true">
+				<!-- multiple dirsets ensure dependency ordering -->
+				<dirset dir="${basedir}/core">
+					<include name="common" />
+					<include name="genometryImpl" />
+				</dirset>
+			</subant>
+		</sequential>
+		<jar jarfile="cache_exe.jar" update="false">
+			<manifest>
+				<attribute name="Main-Class" value="com.affymetrix.genometryImpl.util.CacheScript"/>
+			</manifest>
+			<zipgroupfileset dir="${dist.dir}">
+				<include name="common.jar"/>
+				<include name="genometry.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="freehep-2.1.1.jar"/>
+				<include name="jlfgr-1_0.jar"/>
+				<include name="tango-icon-theme-0.8.90.jar"/>
+				<include name="colt.jar" />
+				<include name="sam.jar" />
+				<include name="felix.jar" />
+			</zipgroupfileset>
+		</jar>
+	</target>
+
 	<target name="run" depends="compile,classpath" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />

@@ -13,6 +13,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+import java.awt.Color;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -120,6 +122,18 @@ public interface SeqMapViewI {
 	 * Update the widget in this panel.
 	 */
 	public void updatePanel(boolean preserveViewX, boolean preserveViewY);
+	
+	/**
+	 * Returns the list of glyphs on the axis tier
+	 * @param forward - true = forward search, false = reverse search
+	 * @param regex - the regular expression to match
+	 * @param residues the residues to search
+	 * @param residue_offset the starting offset within the residues
+	 * @param hitColor the color to mark them with
+	 * @return 
+	 */
+	public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex, 
+			String residues, int residue_offset, Color hitColor);
 	
 	public List<? extends GlyphI> getSelectedFloatingGraphGlyphs();
 

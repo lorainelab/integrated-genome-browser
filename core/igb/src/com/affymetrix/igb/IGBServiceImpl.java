@@ -197,13 +197,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex, 
-							String residues, int residue_offset, Color hitColor) {
-		return Application.getSingleton().getMapView().searchForRegexInResidues(
-				forward, regex, residues, residue_offset, hitColor);
-	}
-
-	@Override
 	public void zoomToCoord(String seqID, int start, int end) {
 		((SeqMapView) getSeqMapView()).getMapRangeBox().zoomToSeqAndSpan(((SeqMapView) getSeqMapView()), seqID, start, end);
 	}

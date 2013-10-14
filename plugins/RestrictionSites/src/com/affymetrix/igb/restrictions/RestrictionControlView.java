@@ -294,7 +294,7 @@ public final class RestrictionControlView extends IGBTabPanel
 					System.out.println(MessageFormat.format(BUNDLE.getString("searching"), site_residues));
 
 					residue_offset = vseq.getMin();
-					List<GlyphI> results = igbService.searchForRegexInResidues(
+					List<GlyphI> results = igbService.getSeqMapView().searchForRegexInResidues(
 							true, regex, residues, residue_offset, colors[i % colors.length]);
 					int hit_count1 = results.size();
 					glyphs.addAll(results);
@@ -302,7 +302,7 @@ public final class RestrictionControlView extends IGBTabPanel
 					// Search for reverse complement of query string
 					//   flip searchstring around, and redo nibseq search...
 					residue_offset = vseq.getMax();
-					results = igbService.searchForRegexInResidues(
+					results = igbService.getSeqMapView().searchForRegexInResidues(
 							false, regex, rev_searchstring, residue_offset, colors[i % colors.length]);
 					int hit_count2 = results.size();
 					glyphs.addAll(results);

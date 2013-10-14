@@ -2259,12 +2259,8 @@ public class SeqMapView extends JPanel
 			return;
 		}
 
-		List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
-		glyphs.add(glyph);
-		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
-
-		if (!sym.isEmpty()) {
-			setToolTip(evt, sym.get(0), x);
+		if (glyph != null && glyph.getInfo() instanceof SeqSymmetry) {
+			setToolTip(evt, (SeqSymmetry)glyph.getInfo(), x);
 		} else {
 			setToolTip(evt, null, x);
 		}

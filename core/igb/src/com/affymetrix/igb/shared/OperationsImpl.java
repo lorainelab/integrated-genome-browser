@@ -1,17 +1,23 @@
 package com.affymetrix.igb.shared;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeSet;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;
-import java.util.*;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.text.AbstractDocument;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.general.IParameters;
@@ -29,8 +35,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.osgi.service.IGBService;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.*;
-import java.util.Map.Entry;
-import javax.swing.text.AbstractDocument;
 
 public class OperationsImpl extends Operations implements RefreshSelectionListener{ 
 
@@ -177,8 +181,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator, true)) {
 				name2transformation.put(operator.getDisplay(), operator);
 				getTransformationCB().addItem(operator.getDisplay());
-			}
-			if (TrackUtils.getInstance().checkCompatible(rootSyms, operator, true)) {
+			} else if (TrackUtils.getInstance().checkCompatible(rootSyms, operator, true)) {
 				name2operation.put(operator.getDisplay(), operator);
 				getOperationCB().addItem(operator.getDisplay());
 			}
@@ -208,7 +211,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 		}
 		getTransformationGoB().setEnabled(enableTransformation);
 		setTransformationDisplay(enableTransformation);
-		boolean enableOperation = enable && allGlyphs.size() > 1 && operatorCount > 0;
+		boolean enableOperation = enable && rootSyms.size() > 1 && operatorCount > 0;
 		
 		getOperationParamLabel().setEnabled(enableOperation);
 		getOperationCB().setEnabled(enableOperation);
@@ -258,7 +261,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 			Operator operator = name2ation.get(selection);
 //			ationGoB.setToolTipText(getTooltipMessage(operator));
 			Map<String, Class<?>> params = operator instanceof IParameters? ((IParameters)operator).getParametersType() : null ;
-			if (params == null || params.isEmpty() || (!singleOK && allGlyphs.size() < 2)) {
+			if (params == null || params.isEmpty() || (!singleOK && rootSyms.size() < 2)) {
 				ationParamLabel.setText(" ");
 				ationParamLabel.setEnabled(false);
 				ationParam.setEditable(false);

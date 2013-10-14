@@ -2239,7 +2239,8 @@ public class SeqMapView extends JPanel
 			return;
 		}
 
-		if (glyph != null && glyph.getInfo() instanceof SeqSymmetry) {
+		if (glyph != null && glyph.getInfo() instanceof SeqSymmetry && 
+				glyph.getPixelBox(seqmap.getView()).getWidth() > 30) {
 			setToolTip(evt, (SeqSymmetry)glyph.getInfo(), -1);
 //			else if (glyphs.get(0) instanceof TierLabelGlyph) {
 //				Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
@@ -2260,7 +2261,8 @@ public class SeqMapView extends JPanel
 			return;
 		}
 
-		if (glyph != null && glyph.getInfo() instanceof SeqSymmetry) {
+		if (glyph != null && glyph.getInfo() instanceof SeqSymmetry 
+				&& seqmap.getView().getTransform().getScaleX() > 0.2) {
 			setToolTip(evt, (SeqSymmetry)glyph.getInfo(), x);
 		} else {
 			setToolTip(evt, null, x);

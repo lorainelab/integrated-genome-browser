@@ -2622,6 +2622,7 @@ public class SeqMapView extends JPanel
 		gstate.getTierStyle().setFloatTier(false);
 	}
 	
+	@Override
 	public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex, 
 			String residues, int residue_offset, Color hitColor) {
 		final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();

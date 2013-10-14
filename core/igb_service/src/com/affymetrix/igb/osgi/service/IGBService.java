@@ -99,18 +99,6 @@ public interface IGBService {
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();
 	public Color getDefaultForegroundColor();
-	// for RestrictionSites/SearchView
-	/**
-	 * Get a count of the number of hits that match the specified regular
-	 * expression and mark the in the Seq Map View.
-	 * @param forward - true = forward search, false = reverse search
-	 * @param regex - the regular expression to match
-	 * @param residues the residues to search
-	 * @param residue_offset the starting offset within the residues
-	 * @param hitColor the color to mark them with
-	 */
-	public List<GlyphI> searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, Color hitColor);
 	// for SearchView
 	public void zoomToCoord(String seqID, int start, int end);
 	public void mapRefresh(List<GlyphI> glyphs);

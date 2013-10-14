@@ -116,6 +116,11 @@ public abstract class Selections {
 			} else if(category == null) { // This happens when feature checked but data is not loaded
 				allStyles.add(useGlyph.getAnnotStyle());
 				allGlyphs.add(useGlyph);
+				if(useGlyph.getAnnotStyle().isGraphTier()) {
+					graphStyles.add(useGlyph.getAnnotStyle());
+				} else {
+					annotStyles.add(useGlyph.getAnnotStyle());
+				}
 			} 
 		}
 		@SuppressWarnings({ "unchecked", "rawtypes", "cast" })

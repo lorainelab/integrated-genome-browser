@@ -31,25 +31,25 @@ public class AnnotationTrackPanel extends TrackViewPanel{
 	@Override
 	protected void clearButtonReset() {
 		javax.swing.JButton clearButton = getClearButton();
-		clearButton.setEnabled(annotStyles.size() > 0);
+		clearButton.setEnabled(annotSyms.size() > 0);
 	}
 
 	@Override
 	protected void saveButtonReset() {
 		javax.swing.JButton saveButton = getSaveButton();
-		saveButton.setEnabled(annotStyles.size() > 0);
+		saveButton.setEnabled(annotSyms.size() > 0);
 	}
 
 	@Override
 	protected void deleteButtonReset() {
 		javax.swing.JButton deleteButton = getDeleteButton();
-		deleteButton.setEnabled(annotStyles.size() > 0);
+		deleteButton.setEnabled(annotSyms.size() > 0);
 	}
 
 	@Override
 	protected void restoreButtonReset() {
 		javax.swing.JButton restoreButton = getRestoreButton();
-		restoreButton.setEnabled(annotStyles.size() > 0);
+		restoreButton.setEnabled(annotSyms.size() > 0);
 	}
 	
 	@Override

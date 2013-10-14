@@ -35,30 +35,30 @@ public class GraphTrackPanel extends TrackViewPanel {
 	@Override
 	protected void clearButtonReset() {
 		javax.swing.JButton clearButton = getClearButton();
-		clearButton.setEnabled(graphStyles.size() > 0);
+		clearButton.setEnabled(graphSyms.size() > 0);
 	}
 
 	@Override
 	protected void saveButtonReset() {
 		javax.swing.JButton saveButton = getSaveButton();
-		saveButton.setEnabled(graphStyles.size() > 0);
+		saveButton.setEnabled(graphSyms.size() > 0);
 	}
 
 	@Override
 	protected void deleteButtonReset() {
 		javax.swing.JButton deleteButton = getDeleteButton();
-		deleteButton.setEnabled(graphStyles.size() > 0);
+		deleteButton.setEnabled(graphSyms.size() > 0);
 	}
 
 	@Override
 	protected void restoreButtonReset() {
 		javax.swing.JButton restoreButton = getRestoreButton();
-		restoreButton.setEnabled(graphStyles.size() > 0);
+		restoreButton.setEnabled(graphSyms.size() > 0);
 	}
 	
 	@Override
 	protected void customButtonReset() {
-		getCustomButton().setEnabled(!graphGlyphs.isEmpty());
+		getCustomButton().setEnabled(!graphSyms.isEmpty());
 	}
 		
 	@Override

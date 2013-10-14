@@ -38,6 +38,8 @@ public abstract class Selections {
 	public static final List<GraphState> graphStates = new CopyOnWriteArrayList<GraphState>();
 	public static final List<GraphGlyph> graphGlyphs = new CopyOnWriteArrayList<GraphGlyph>();
 	public static final List<RootSeqSymmetry> rootSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
+	public static final List<RootSeqSymmetry> annotSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
+	public static final List<RootSeqSymmetry> graphSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
 	public static final List<ITrackStyleExtended> axisStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
 	
 	private static final SeqMapView smv;
@@ -70,6 +72,8 @@ public abstract class Selections {
 		graphGlyphs.clear();
 		allGlyphs.clear();
 		rootSyms.clear();
+		annotSyms.clear();
+		graphSyms.clear();
 		axisStyles.clear();
 		for (StyledGlyph useGlyph : selected) {
 			FileTypeCategory category = useGlyph.getFileTypeCategory();
@@ -82,6 +86,7 @@ public abstract class Selections {
 				allGlyphs.add(gg);
 				if(gg.getInfo() != null) {
 					rootSyms.add((RootSeqSymmetry)gg.getInfo());
+					graphSyms.add((RootSeqSymmetry)gg.getInfo());
 				}
 			}else if (useGlyph instanceof TierGlyph && ((TierGlyph)useGlyph).getTierType() == TierGlyph.TierType.GRAPH) {
 				if (useGlyph.getChildCount() > 0) {
@@ -95,6 +100,7 @@ public abstract class Selections {
 							allGlyphs.add(gg);
 							if(gg.getInfo() != null) {
 								rootSyms.add((RootSeqSymmetry)gg.getInfo());
+								graphSyms.add((RootSeqSymmetry)gg.getInfo());
 							}
 						} else if(useGlyph.getChildCount()==1 && g instanceof SolidGlyph) { // This happens for graph when the data is cleared
 							allStyles.add(useGlyph.getAnnotStyle());
@@ -109,6 +115,7 @@ public abstract class Selections {
 				allGlyphs.add(useGlyph);
 				if(useGlyph.getInfo() != null && category != FileTypeCategory.PairedRead){
 					rootSyms.add((RootSeqSymmetry)useGlyph.getInfo());
+					annotSyms.add((RootSeqSymmetry)useGlyph.getInfo());
 				}
 			} else if (category == FileTypeCategory.Axis){
 				allGlyphs.add(useGlyph);

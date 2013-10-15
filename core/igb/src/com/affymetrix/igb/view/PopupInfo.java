@@ -92,7 +92,7 @@ public class PopupInfo extends JWindow {
 		
 			newWindow.pack();
 			newWindow.setSize(getSize());
-			newWindow.setLocation(getLocationOnScreen().x + 10, getLocationOnScreen().y + 10);
+			newWindow.setLocation(getLocationOnScreen().x + 20, getLocationOnScreen().y + 25);
 			newWindow.setVisible(true);
 			Opacity.INSTANCE.set(newWindow, 1.0f);
 			
@@ -229,11 +229,13 @@ public class PopupInfo extends JWindow {
 	}
 	
 	private void setWidth() {
-		if (getSize().width > maxWidth) {
-			setSize(maxWidth, getSize().height);
-		}
+//		if (getSize().width > maxWidth) {
+//			setSize(maxWidth, getSize().height);
+//		}
 		if (preferredWidth > 0) {
 			setSize(preferredWidth, getSize().height);
+		} else {
+			setSize(maxWidth, getSize().height);
 		}
 	}
 	

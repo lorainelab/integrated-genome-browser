@@ -59,7 +59,7 @@ public class PopupInfo extends JWindow {
 	private Point lastPoint;
 	private String[][] properties;
 	
-	private AbstractAction copyAction = new AbstractAction("c",CommonUtils.getInstance().getIcon("/toolbarButtonGraphics/general/Copy16.gif")){
+	private AbstractAction copyAction = new AbstractAction("c",CommonUtils.getInstance().getIcon("16x16/actions/copy.png")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			GeneralUtils.copyToClipboard(convertPropsToString(properties, false));

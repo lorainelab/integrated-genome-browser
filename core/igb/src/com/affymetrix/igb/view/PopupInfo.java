@@ -63,7 +63,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			GeneralUtils.copyToClipboard(convertPropsToString(properties, false));
-			flashMessage("copied");
+			flashMessage("data copied");
 		}
 	};
 		
@@ -78,6 +78,7 @@ public class PopupInfo extends JWindow {
 	private AbstractAction snapShotAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/camera.png")) {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
+			flashMessage("created snapshot");
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
 			newWindow.properties = properties;
 			newWindow.tooltip.setText(tooltip.getText());
@@ -106,6 +107,7 @@ public class PopupInfo extends JWindow {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			flashMessage("location locked");
 			preferredLocationSet = true;
 			setLockAction(unlockAction);
 		}
@@ -115,6 +117,7 @@ public class PopupInfo extends JWindow {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			flashMessage("location unlocked");
 			preferredLocationSet = false;
 			setLockAction(lockAction);
 		}

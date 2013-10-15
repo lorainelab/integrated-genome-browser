@@ -52,7 +52,7 @@ public class PopupInfo extends JWindow {
 	private static final int maxWidth  = 300;
 	private final JLabel message;
 	private final JTextPane tooltip;
-	private final JButton button, moreLess;
+	private final JButton camera, lock, moreLess;
 	private final boolean isPinned;
 	private boolean preferredLocationSet;
 	private int preferredWidth;
@@ -66,17 +66,7 @@ public class PopupInfo extends JWindow {
 			flashMessage("copied");
 		}
 	};
-	
-	private AbstractAction unStickAction = new AbstractAction("*",CommonUtils.getInstance().getIcon("16x16/actions/yellow_pin.png")){
-		@Override
-		public void actionPerformed(ActionEvent ae) {
-			setButtonAction(stickAction);
-			setVisible(false);
-			preferredLocationSet = false;
-//			AWTUtilities.setWindowOpacity(PopupInfo.this, 0.5f);
-		}
-	};
-	
+		
 	private AbstractAction closeAction = new AbstractAction("x",CommonUtils.getInstance().getIcon("16x16/actions/cross.png")){
 		@Override
 		public void actionPerformed(ActionEvent ae) {
@@ -85,7 +75,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
-	private AbstractAction stickAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/stock_pin.png")) {
+	private AbstractAction snapShotAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/stock_pin.png")) {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
@@ -97,21 +87,39 @@ public class PopupInfo extends JWindow {
 				newWindow.moreLess.setAction(newWindow.lessAction);
 			}
 			newWindow.tooltip.setCaretPosition(0);
-			newWindow.setButtonAction(newWindow.closeAction);
+			newWindow.setCameraAction(newWindow.closeAction);
 		
 			newWindow.pack();
 			newWindow.setSize(getSize());
-			newWindow.setLocation(getLocationOnScreen());
+			newWindow.setLocation(getLocationOnScreen().x + 10, getLocationOnScreen().y + 10);
 			newWindow.setVisible(true);
 			Opacity.INSTANCE.set(newWindow, 1.0f);
 			
 			if(Opacity.INSTANCE.isSupported()){
 				timer.stop();
 			}
-			setVisible(false);
+//			setVisible(false);
 		}
 	};
 
+	private AbstractAction lockAction = new AbstractAction("l",CommonUtils.getInstance().getIcon("16x16/actions/un_lock.png")) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			preferredLocationSet = true;
+			setLockAction(unlockAction);
+		}
+	};
+	
+	private AbstractAction unlockAction = new AbstractAction("u",CommonUtils.getInstance().getIcon("16x16/actions/lock.png")) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			preferredLocationSet = false;
+			setLockAction(lockAction);
+		}
+	};
+	
 	private AbstractAction moreAction = new AbstractAction("More \u00BB") {
 		@Override
 		public void actionPerformed(final ActionEvent ae) {
@@ -157,12 +165,16 @@ public class PopupInfo extends JWindow {
 		
 		message  = new JLabel();
 		tooltip  = new JTextPane();
-		button   = new JButton();
+		camera   = new JButton();
+		lock	 = new JButton();
 		moreLess = new JButton();
 	
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
-		setButtonAction(stickAction);
+		setCameraAction(snapShotAction);
+		if(!isPinned) {
+			setLockAction(lockAction);
+		}
 		init();
 	}
 	
@@ -293,10 +305,17 @@ public class PopupInfo extends JWindow {
 		return bestLocation;
 	}
 	
-	private void setButtonAction(AbstractAction action){
-		button.setAction(action);
-		if(button.getIcon() != null){
-			button.setText(null);
+	private void setCameraAction(AbstractAction action){
+		camera.setAction(action);
+		if(camera.getIcon() != null){
+			camera.setText(null);
+		}
+	}
+	
+	private void setLockAction(AbstractAction action){
+		lock.setAction(action);
+		if(lock.getIcon() != null){
+			lock.setText(null);
 		}
 	}
 	
@@ -329,8 +348,11 @@ public class PopupInfo extends JWindow {
 		scrollPane.setBackground(backgroundColor);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		
-		button.setMargin(new Insets(0,0,0,0));
-		button.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+		lock.setMargin(new Insets(0,0,0,0));
+		lock.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+		
+		camera.setMargin(new Insets(0,0,0,0));
+		camera.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		
 		JButton copyButton = new JButton(copyAction);
 		if(copyButton.getIcon() != null){
@@ -352,12 +374,17 @@ public class PopupInfo extends JWindow {
 		Component glueRight = Box.createHorizontalGlue();
 		glueRight.setBackground(backgroundColor);
 		glueRight.setForeground(backgroundColor);
-
+		Component strutRight = Box.createHorizontalStrut(5);
+		strutRight.setBackground(backgroundColor);
+		strutRight.setForeground(backgroundColor);
+		
+		button_box.add(camera);
+		button_box.add(strutRight);
 		button_box.add(copyButton);
 		button_box.add(glueLeft);
 		button_box.add(message);
 		button_box.add(glueRight);
-		button_box.add(button);
+		button_box.add(lock);
 		button_box.addMouseListener(move);
 		button_box.addMouseMotionListener(move);
 		
@@ -452,10 +479,6 @@ public class PopupInfo extends JWindow {
 		public void mouseReleased(MouseEvent evt) {
 			x_offset = 0;
 			y_offset = 0;
-			if(!PopupInfo.this.isPinned && !PopupInfo.this.preferredLocationSet){
-				PopupInfo.this.preferredLocationSet = true;
-				PopupInfo.this.setButtonAction(PopupInfo.this.unStickAction);
-			}
 		}
 		
 		@Override

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.tabs.annotation;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -13,6 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import com.jidesoft.combobox.ColorComboBox;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
@@ -251,7 +251,13 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 		}
 		if (allFields == null) {
 			allFields = new TreeSet<String>();
+			allFields.add("* none *");
+			allFields.add("id");
+			if (labelField != null && labelField.trim().length() > 0) {
+				allFields.add(labelField);
+			}
 		}
+		
 		labelFieldComboBox.setModel(new DefaultComboBoxModel(allFields.toArray()));
 		if (labelField != null) {
 			labelFieldComboBox.setSelectedItem(labelField);
@@ -339,7 +345,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	@Override
 	protected void stackDepthAllButtonReset() {
 		JButton stackDepthAllButton = getStackDepthAllButton();
-		stackDepthAllButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
+		stackDepthAllButton.setEnabled(annotSyms.size() > 0 && isAllAnnot());
 	}
 
 	@Override

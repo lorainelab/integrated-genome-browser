@@ -201,16 +201,8 @@ public class PopupInfo extends JWindow {
 			this.properties	= properties;
 			//title.setText(getFormattedTitle(properties));
 			tooltip.setText(convertPropsToString(properties, false));
-			boolean wasVisible = isVisible();
-			setVisible(false);
-			pack();
-			if(moreLess.getAction() == moreAction){
-				setSize(getSize().width, minHeight);
-			}
-			setWidth();
 			tooltip.setCaretPosition(0);
-			setVisible(wasVisible);
-			
+		
 			if(!preferredLocationSet){
 				setLocation(determineBestLocation(point));
 				setVisible(true);
@@ -428,6 +420,9 @@ public class PopupInfo extends JWindow {
 		if(!isPinned && Opacity.INSTANCE.isSupported()){
 			Toolkit.getDefaultToolkit().addAWTEventListener(opacityController, AWTEvent.MOUSE_EVENT_MASK);
 		}
+		
+		pack();
+		setSize(maxWidth, minHeight);
 	}
 	
 	Timer flashTimer = new Timer(1000, new ActionListener() {

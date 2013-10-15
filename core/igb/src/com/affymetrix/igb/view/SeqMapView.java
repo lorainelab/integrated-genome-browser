@@ -1479,10 +1479,15 @@ public class SeqMapView extends JPanel
 	}
 
 	public final void toggleHorizontalClamp() {
-		horizontalClamp(horizontalClampedRegion == null);
-		seqmap.repackTheTiers(true, false);
-		//seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
-		//seqmap.updateWidget();
+		preserveSelectionAndPerformAction(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				horizontalClamp(horizontalClampedRegion == null);
+				seqmap.repackTheTiers(true, false);
+				//seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
+				//seqmap.updateWidget();
+			}
+		});
 	}
 
 	public void horizontalClamp(boolean clamp) {

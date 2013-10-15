@@ -340,6 +340,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		
 		JMenuItem optimize_stack_height = new JRPMenuItemTLP(ChangeExpandMaxOptimizeAction.getAction());
 		optimize_stack_height.setIcon(null);
+		optimize_stack_height.setEnabled(Selections.annotSyms.size() > 0);
 		optimize_stack_height.setText("Optimize Stack Height");
 		popup.add(optimize_stack_height);
 		JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
@@ -469,13 +470,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		
 		JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
 		remove_data_from_tracks.setText("Clear Data");
-		remove_data_from_tracks.setEnabled(Selections.annotStyles.size() > 0 || Selections.graphStyles.size() > 0);
+		remove_data_from_tracks.setEnabled(Selections.rootSyms.size() > 0);
 		remove_data_from_tracks.setIcon(null);
 		popup.add(remove_data_from_tracks); // Remove data from selected tracks.
 		
 		JMenuItem delete_track = new JRPMenuItemTLP(CloseTracksAction.getAction());
 		delete_track.setText("Delete Track");
-		delete_track.setEnabled(num_selections > 0 && !coordinates_track_selected);
+		delete_track.setEnabled(Selections.rootSyms.size() > 0 && !coordinates_track_selected);
 		delete_track.setIcon(null);
 		popup.add(delete_track);
 				

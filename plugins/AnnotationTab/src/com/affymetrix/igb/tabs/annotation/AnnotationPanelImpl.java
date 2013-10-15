@@ -339,7 +339,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	@Override
 	protected void stackDepthAllButtonReset() {
 		JButton stackDepthAllButton = getStackDepthAllButton();
-		stackDepthAllButton.setEnabled(annotStyles.size() > 0 && isAllAnnot());
+		stackDepthAllButton.setEnabled(annotSyms.size() > 0 && isAllAnnot());
 	}
 
 	@Override

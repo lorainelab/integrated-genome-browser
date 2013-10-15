@@ -64,7 +64,8 @@ public class Score extends ColorProvider {
 		float[] values	= heatmap.getValues();
 		Color[] valCols	= heatmap.getRangeColors();
 		rangeToColor.clear();
-		for(int i=0; i<values.length; i++) {
+		//Don't include top and bottom colors
+		for(int i=1; i<values.length-1; i++) {
 			rangeToColor.put(values[i], valCols[i]);
 		}
 	}
@@ -81,12 +82,12 @@ public class Score extends ColorProvider {
 	}
 
 	protected Color getScoreColor(float score) {
-		if (score < min_score_color) {
-			return botton_color;
-		} else if (score > max_score_color) {
-			return top_color;
-		} else if (rangeToColor.containsKey(score)) {
+		if (rangeToColor.containsKey(score)) {
 			return rangeToColor.get(score);
+		} else if (score <= min_score_color) {
+			return botton_color;
+		} else if (score >= max_score_color) {
+			return top_color;
 		} else {
 			int index = Math.round(((score - min_score_color) / range) * (HeatMap.BINS - 1));
 			return custom_heatmap.get().getColors()[index];

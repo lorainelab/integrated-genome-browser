@@ -84,7 +84,7 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
-	private AbstractAction snapShotAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/stock_pin.png")) {
+	private AbstractAction snapShotAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/camera.png")) {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 //			flashMessage("created snapshot");

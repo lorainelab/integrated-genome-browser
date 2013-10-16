@@ -8,6 +8,8 @@ import com.affymetrix.igb.general.ServerList;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URISyntaxException;
@@ -77,6 +79,7 @@ public class IGBAuthenticator extends Authenticator {
 			final JRPTextField username,
 			final JPasswordField password,
 			final JCheckBox remember,
+			final JCheckBox showPassword,
 			final boolean authOptional) {
 		JPanel dialog = new JPanel();
 		JLabel s = new JLabel(BUNDLE.getString("server"));
@@ -90,10 +93,21 @@ public class IGBAuthenticator extends Authenticator {
 		layout.setAutoCreateContainerGaps(true);
 		layout.linkSize(SwingConstants.HORIZONTAL, s, u, p);
 
-		layout.setHorizontalGroup(layout.createParallelGroup().addComponent(messageContainer).addComponent(anon).addComponent(auth).addGroup(layout.createSequentialGroup().addComponent(s).addComponent(server)).addGroup(layout.createSequentialGroup().addComponent(u).addComponent(username)).addGroup(layout.createSequentialGroup().addComponent(p).addComponent(password)).addComponent(remember));
+		layout.setHorizontalGroup(layout.createParallelGroup().addComponent(messageContainer).addComponent(anon).addComponent(auth).addGroup(layout.createSequentialGroup().addComponent(s).addComponent(server)).addGroup(layout.createSequentialGroup().addComponent(u).addComponent(username)).addGroup(layout.createSequentialGroup().addComponent(p).addComponent(password)).addComponent(showPassword).addComponent(remember));
 
-		layout.setVerticalGroup(layout.createSequentialGroup().addComponent(messageContainer).addComponent(anon).addComponent(auth).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(s).addComponent(server)).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(u).addComponent(username)).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(p).addComponent(password)).addComponent(remember));
+		layout.setVerticalGroup(layout.createSequentialGroup().addComponent(messageContainer).addComponent(anon).addComponent(auth).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(s).addComponent(server)).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(u).addComponent(username)).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(p).addComponent(password)).addComponent(showPassword).addComponent(remember));
 
+
+		showPassword.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (showPassword.isSelected()) {
+					password.setEchoChar((char) 0);					
+				} else {
+					password.setEchoChar('\u2022');
+				}
+			}
+		});
+		
 		ActionListener radioListener = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -101,7 +115,7 @@ public class IGBAuthenticator extends Authenticator {
 				p.setEnabled(auth.isSelected());
 				username.setEnabled(auth.isSelected());
 				password.setEnabled(auth.isSelected());
-
+				showPassword.setText("Display Password");
 				if (anon.isSelected()) {
 					remember.setText(BUNDLE.getString("alwaysAnonymous"));
 				} else {
@@ -194,8 +208,9 @@ public class IGBAuthenticator extends Authenticator {
 		JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
 		JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));
 		JCheckBox remember = new JCheckBox();
+		JCheckBox showPassword = new JCheckBox();
 		remember.setSelected(true);
-		JPanel dialog = buildDialog(messageContainer, anon, auth, server, username, password, remember, authOptional);
+		JPanel dialog = buildDialog(messageContainer, anon, auth, server, username, password, remember, showPassword,authOptional);
 
 		server.setText(url);
 		anon.setSelected(authOptional);

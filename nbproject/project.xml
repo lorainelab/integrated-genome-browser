@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
@@ -8,7 +8,7 @@
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>IGB</name>
-            <properties />
+            <properties/>
             <folders>
                 <source-folder>
                     <label>IGB</label>
@@ -310,6 +310,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/SequenceViewer</label>
+                    <type>java</type>
+                    <location>plugins/SequenceViewer</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/ThousandGenomesServerType/src</label>
                     <type>java</type>
                     <location>plugins/ThousandGenomesServerType/src</location>
@@ -397,7 +403,7 @@
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
-                            <one-file-only />
+                            <one-file-only/>
                         </arity>
                     </context>
                 </action>
@@ -407,11 +413,10 @@
                     <context>
                         <property>debug.class</property>
                         <folder>core/genoviz_sdk/demo/src</folder>
-                        <folder>core/genometryImpl/src</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
-                            <one-file-only />
+                            <one-file-only/>
                         </arity>
                     </context>
                 </action>
@@ -424,7 +429,7 @@
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
-                            <one-file-only />
+                            <one-file-only/>
                         </arity>
                     </context>
                 </action>
@@ -723,6 +728,10 @@
                         <location>plugins/NCBIPrimer/src</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>plugins/SequenceViewer</label>
+                        <location>plugins/SequenceViewer</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>plugins/ThousandGenomesServerType/src</label>
                         <location>plugins/ThousandGenomesServerType/src</location>
                     </source-folder>
@@ -763,13 +772,13 @@
                     </source-file>
                 </items>
                 <context-menu>
-                    <ide-action name="build" />
-                    <ide-action name="rebuild" />
-                    <ide-action name="clean" />
-                    <ide-action name="javadoc" />
-                    <ide-action name="run" />
-                    <ide-action name="test" />
-                    <ide-action name="debug" />
+                    <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
+                    <ide-action name="run"/>
+                    <ide-action name="test"/>
+                    <ide-action name="debug"/>
                     <action>
                         <label>Demos</label>
                         <target>demos</target>
@@ -788,7 +797,7 @@
                     </action>
                 </context-menu>
             </view>
-            <subprojects />
+            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
             <compilation-unit>
@@ -879,28 +888,28 @@
                     <node name="x-java">
                         <node name="CodeStyle">
                             <node name="project">
-                                <property name="spaces-per-tab" value="4" />
-                                <property name="expand-tabs" value="false" />
-                                <property name="text-limit-width" value="80" />
-                                <property name="indent-shift-width" value="4" />
-                                <property name="tab-size" value="4" />
+                                <property name="spaces-per-tab" value="4"/>
+                                <property name="expand-tabs" value="false"/>
+                                <property name="text-limit-width" value="80"/>
+                                <property name="indent-shift-width" value="4"/>
+                                <property name="tab-size" value="4"/>
                             </node>
                         </node>
                     </node>
                 </node>
                 <node name="CodeStyle">
                     <node name="project">
-                        <property name="spaces-per-tab" value="4" />
-                        <property name="expand-tabs" value="false" />
-                        <property name="text-limit-width" value="80" />
-                        <property name="indent-shift-width" value="4" />
-                        <property name="tab-size" value="4" />
+                        <property name="spaces-per-tab" value="4"/>
+                        <property name="expand-tabs" value="false"/>
+                        <property name="text-limit-width" value="80"/>
+                        <property name="indent-shift-width" value="4"/>
+                        <property name="tab-size" value="4"/>
                     </node>
-                    <property name="usedProfile" value="project" />
+                    <property name="usedProfile" value="project"/>
                 </node>
             </module>
-            <module name="org-netbeans-modules-projectimport-eclipse-core" />
-            <module name="org-netbeans-modules-html-editor-lib" />
+            <module name="org-netbeans-modules-projectimport-eclipse-core"/>
+            <module name="org-netbeans-modules-html-editor-lib"/>
         </preferences>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>Fasta</word>

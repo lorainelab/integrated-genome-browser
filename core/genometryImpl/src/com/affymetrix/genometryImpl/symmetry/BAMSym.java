@@ -34,6 +34,9 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 	private SeqSymmetry children[];
 	private SeqSymmetry insChildren[];
 	private Integer averageQualityScore;
+	//Should be made final
+	private boolean readPairedFlag, firstOfPairFlag, secondOfPairFlag;
+	private int flags;
 	
 	//Residues residues;
 	private String insResidues;
@@ -451,5 +454,37 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 			return quality/quals.length;
 		}
 		return -1;
+	}
+	
+	public boolean getReadPairedFlag() {
+		return readPairedFlag;
+	}
+	
+	public void setReadPairedFlag(boolean b) {
+		this.readPairedFlag = b;
+	}
+	
+	public boolean getFirstOfPairFlag() {
+		return firstOfPairFlag;
+	}
+	
+	public void setFirstOfPairFlag(boolean b) {
+		this.firstOfPairFlag = b;
+	}
+	
+	public boolean getSecondOfPairFlag() {
+		return secondOfPairFlag;
+	}
+	
+	public void setSecondOfPairFlag(boolean b) {
+		this.secondOfPairFlag = b;
+	}
+	
+	public int getFlags(){
+		return flags;
+	}
+	
+	public void setFlags(int i){
+		this.flags = i;
 	}
 }

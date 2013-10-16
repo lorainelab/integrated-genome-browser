@@ -183,6 +183,7 @@ public abstract class XAM extends SymLoader {
 			sym.setProperty("NH", sr.getAttribute("NH"));
 		}
 		sym.setFlags(sr.getFlags());
+		sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
 		sym.setReadPairedFlag(sr.getReadPairedFlag());
 		if(sym.getReadPairedFlag()) {
 			sym.setFirstOfPairFlag(sr.getFirstOfPairFlag());

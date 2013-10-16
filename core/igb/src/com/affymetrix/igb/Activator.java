@@ -361,6 +361,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.QualityScoreFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MappingQualityFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.ScoreFilter(), null);
+		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.PairedFilter(), null);
 	}
 			
 	private void initMapViewGlyphFactorys(final BundleContext bundleContext) {

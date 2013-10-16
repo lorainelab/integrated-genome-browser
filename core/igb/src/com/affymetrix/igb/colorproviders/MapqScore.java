@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.igb.IGBConstants;
 import cytoscape.visual.ui.editors.continuous.BasicVirtualRange;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
@@ -69,6 +70,16 @@ public class MapqScore extends ColorProvider {
 		for(int i=1; i<values.length-1; i++) {
 			rangeToColor.put(values[i], valCols[i]);
 		}
+	}
+	
+	@Override
+	public String getName() {
+		return "mapqscore";
+	}
+	
+	@Override
+	public String getDisplay() {
+		return IGBConstants.BUNDLE.getString("color_by_" + getName());
 	}
 	
 	@Override

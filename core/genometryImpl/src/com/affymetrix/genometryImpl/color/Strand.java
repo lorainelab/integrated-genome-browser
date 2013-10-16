@@ -23,7 +23,12 @@ public class Strand extends ColorProvider {
 		parameters.addParameter(FORWARD_COLOR, Color.class, forwardColor);
 		parameters.addParameter(REVERSE_COLOR, Color.class, reverseColor);
 	}
-		
+	
+	@Override
+	public String getName() {
+		return "strand";
+	}
+	
 	@Override
 	public Color getColor(SeqSymmetry sym) {
 		if(sym.getSpan(model.getSelectedSeq()).isForward()){

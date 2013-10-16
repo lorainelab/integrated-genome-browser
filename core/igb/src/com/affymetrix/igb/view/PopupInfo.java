@@ -392,16 +392,21 @@ public class PopupInfo extends JWindow {
 		bottom_box.setForeground(backgroundColor);
 		bottom_box.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 	
+		Component bottomGlueLeft = Box.createHorizontalGlue();
+		bottomGlueLeft.setBackground(backgroundColor);
+		bottomGlueLeft.setForeground(backgroundColor);
+		
+		Component bottomStrutRight = Box.createHorizontalStrut(5);
+		bottomStrutRight.setBackground(backgroundColor);
+		bottomStrutRight.setForeground(backgroundColor);
+		
 		moreLess.setFont(moreLess.getFont().deriveFont(textAttrMap));
 		moreLess.setAction(moreAction);
 		moreLess.setMargin(new Insets(0,0,0,0));
 		moreLess.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		bottom_box.add(bottomGlueLeft);
 		bottom_box.add(moreLess);
-		
-		Component glue = Box.createHorizontalGlue();
-		glue.setBackground(backgroundColor);
-		glue.setForeground(backgroundColor);
-		bottom_box.add(glue);
+		bottom_box.add(bottomStrutRight);
 		
 		Box component_box = new Box(BoxLayout.Y_AXIS);
 		component_box.setBackground(backgroundColor);

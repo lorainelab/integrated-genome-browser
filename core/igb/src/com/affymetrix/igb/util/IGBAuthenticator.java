@@ -194,6 +194,7 @@ public class IGBAuthenticator extends Authenticator {
 		JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
 		JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));
 		JCheckBox remember = new JCheckBox();
+		remember.setSelected(true);
 		JPanel dialog = buildDialog(messageContainer, anon, auth, server, username, password, remember, authOptional);
 
 		server.setText(url);

@@ -174,13 +174,19 @@ public abstract class XAM extends SymLoader {
 			blockMaxs[0] = span.getEnd();
 		}
 
-		SymWithProps sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
+		BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
 				sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, iblockMins, 
 				iblockMaxs, sr.getCigar(), includeResidues?sr.getReadString():null, sr.getBaseQualityString());
 		sym.setProperty("id", sr.getReadName());
 		sym.setProperty("method", meth);
 		if(sr.getAttribute("NH")!= null){
 			sym.setProperty("NH", sr.getAttribute("NH"));
+		}
+		sym.setFlags(sr.getFlags());
+		sym.setReadPairedFlag(sr.getReadPairedFlag());
+		if(sym.getReadPairedFlag()) {
+			sym.setFirstOfPairFlag(sr.getFirstOfPairFlag());
+			sym.setSecondOfPairFlag(sr.getSecondOfPairFlag());
 		}
 		return sym;
 	}

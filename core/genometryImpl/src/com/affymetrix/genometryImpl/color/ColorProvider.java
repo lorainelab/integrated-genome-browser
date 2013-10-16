@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.color;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.Parameters;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -43,13 +44,8 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 	}
 	
 	@Override
-	public String getName(){
-		return getClass().getName();
-	}
-	
-	@Override
-	public String getDisplay(){
-		return getClass().getSimpleName();
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("color_by_" + getName());
 	}
 	
 	@Override
@@ -72,4 +68,6 @@ public abstract class ColorProvider implements ColorProviderI, IParameters {
 	public String getPrintableString() {
 		return parameters.getPrintableString();
 	}
+	
+	public abstract String getName();
 }

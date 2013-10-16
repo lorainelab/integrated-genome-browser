@@ -31,6 +31,11 @@ public class Paired extends ColorProvider {
 	}
 	
 	@Override
+	public String getName() {
+		return "paired";
+	}
+	
+	@Override
 	public Color getColor(SeqSymmetry sym) {
 		if(sym instanceof BAMSym && ((BAMSym)sym).getReadPairedFlag()){
 			return pairColor.get();

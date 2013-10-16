@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.general.BoundedParameter;
 import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.igb.IGBConstants;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,6 +59,16 @@ public class Property extends ColorProvider {
 		parameters.addParameter(PROPERTY_VALUE, String.class, property_value);
 		parameters.addParameter(MATCH_COLOR, Color.class, matchColor);
 		parameters.addParameter(NOT_MATCH_COLOR, Color.class, notMatchColor);
+	}
+	
+	@Override
+	public String getName() {
+		return "property";
+	}
+	
+	@Override
+	public String getDisplay() {
+		return IGBConstants.BUNDLE.getString("color_by_" + getName());
 	}
 	
 	@Override

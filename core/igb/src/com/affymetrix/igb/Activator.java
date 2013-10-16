@@ -347,6 +347,7 @@ public class Activator implements BundleActivator {
 		//bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Strand(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
 		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
+		bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Paired(), null);
 	}
 	
 	private void initFilter(final BundleContext bundleContext) {

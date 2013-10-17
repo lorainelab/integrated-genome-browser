@@ -15,11 +15,11 @@ import java.util.List;
  * @author hiralv
  */
 public class PairedFilter extends SymmetryFilter {
-	private final static String COMPARATOR = "comparator";
+	private final static String COMPARATOR = "show";
 	private final static List<Boolean> COMPARATOR_VALUES = new LinkedList<Boolean>();
 	static {
-		COMPARATOR_VALUES.add(true);
-		COMPARATOR_VALUES.add(false);
+		COMPARATOR_VALUES.add(Boolean.TRUE);
+		COMPARATOR_VALUES.add(Boolean.FALSE);
 	}
 	private Parameter<Boolean> comparator = new BoundedParameter<Boolean>(COMPARATOR_VALUES);
 	

@@ -29,21 +29,23 @@ public class MismatchFilter extends SymmetryFilter {
 		if(ss instanceof BAMSym && ((BAMSym)ss).getInsChildCount() > 0) {
 			return true;
 		}
-		boolean filter = true;
+	
 		int child_count = ss.getChildCount();
 		if (child_count > 0) {
 			SeqSymmetry child;
 			for (int i = 0; i < child_count; i++) {
 				child = ss.getChild(i);
 				if (child instanceof SymWithResidues) {
-					filter &= filter((SymWithResidues)child);
+					if(filter((SymWithResidues)child)){
+						return true;
+					}
 				}
 			}
 		} else if (ss instanceof SymWithResidues) {
-			filter &= filter((SymWithResidues)ss);
+			return filter((SymWithResidues)ss);
 		}
 		
-		return filter;
+		return false;
     }
   
 	private boolean filter(SymWithResidues swr) {

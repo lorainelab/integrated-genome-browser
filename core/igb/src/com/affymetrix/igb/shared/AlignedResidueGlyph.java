@@ -62,7 +62,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 		
 		Graphics2D g = view.getGraphics();
 		Composite dac = g.getComposite();
-		byte[] quals = qualCharIter.substring(seqBegIndex, seqEndIndex).getBytes();
+		byte[] quals = useBaseQuality ? qualCharIter.substring(seqBegIndex, seqEndIndex).getBytes() : null;
 		
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		float alpha;

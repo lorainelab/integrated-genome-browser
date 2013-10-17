@@ -15,17 +15,37 @@ import java.util.List;
  */
 public class DuplicateFilter extends SymmetryFilter {
 
-	private final static String COMPARATOR = "show";
-	private final static List<Boolean> COMPARATOR_VALUES = new LinkedList<Boolean>();
-	static {
-		COMPARATOR_VALUES.add(Boolean.TRUE);
-		COMPARATOR_VALUES.add(Boolean.FALSE);
+	private static enum SHOW {
+		DUPLICATES("Duplicates only", Boolean.TRUE), NON_DUPLICATES("Non-Duplicates only", Boolean.FALSE);
+		
+		String name;
+		boolean value;
+		SHOW(String name, boolean value){
+			this.name = name;
+			this.value = value;
+		}
+		
+		public boolean value(){
+			return value;
+		}
+		
+		@Override
+		public String toString(){
+			return name;
+		}
 	}
-	private Parameter<Boolean> comparator = new BoundedParameter<Boolean>(COMPARATOR_VALUES);
+	
+	private final static String COMPARATOR = "show";
+	private final static List<SHOW> COMPARATOR_VALUES = new LinkedList<SHOW>();
+	static {
+		COMPARATOR_VALUES.add(SHOW.DUPLICATES);
+		COMPARATOR_VALUES.add(SHOW.NON_DUPLICATES);
+	}
+	private Parameter<SHOW> comparator = new BoundedParameter<SHOW>(COMPARATOR_VALUES);
 	
 	public DuplicateFilter(){
 		super();
-		parameters.addParameter(COMPARATOR, Boolean.class, comparator);
+		parameters.addParameter(COMPARATOR, SHOW.class, comparator);
 	}
 	
 	@Override
@@ -41,7 +61,7 @@ public class DuplicateFilter extends SymmetryFilter {
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
 		if (ss instanceof BAMSym) {
-			return comparator.get() == ((BAMSym)ss).getDuplicateReadFlag();
+			return comparator.get().value() == ((BAMSym)ss).getDuplicateReadFlag();
 		}
 		return false;
     }

@@ -1209,6 +1209,9 @@ public class SeqMapView extends JPanel
 			if (show_edge_matches) {
 				doEdgeMatching(glyphs, false);
 			}
+			if(autoload != null) {
+				autoload.loadData();
+			}
 		}
 	}
 	
@@ -2440,6 +2443,9 @@ public class SeqMapView extends JPanel
 			zoomTo(view_span);
 			final double middle = (start + end) / 2.0;
 			setZoomSpotX(middle);
+			if(autoload != null) {
+				autoload.loadData();
+			}
 		}
 	}
 

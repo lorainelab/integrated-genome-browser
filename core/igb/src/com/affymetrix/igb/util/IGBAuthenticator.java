@@ -275,8 +275,8 @@ public class IGBAuthenticator extends Authenticator {
 			if (auth.isSelected()) {
 				InputStream temp = null;
 				try {
-					Authenticator.setDefault(new SingleAuthenticator(username.getText(), password.getPassword()));
-
+					PasswordAuthentication pa = new PasswordAuthentication(username.getText(), password.getPassword());
+					Authenticator.setDefault(new SingleAuthenticator(pa));
 					URL url = new URL(urlString);
 					URLConnection conn = url.openConnection();
 					temp = conn.getInputStream();
@@ -291,7 +291,7 @@ public class IGBAuthenticator extends Authenticator {
 								password.getPassword(), anon.isSelected(), remember.isSelected());
 					}
 
-					return new PasswordAuthentication(username.getText(), password.getPassword());
+					return pa;
 				} catch (Exception ex) {
 					return displayDialog(parent, serverNode, serverObject, urlString, username.getText(), new String(password.getPassword()), ERROR_LOGIN);
 				} finally {
@@ -380,17 +380,14 @@ public class IGBAuthenticator extends Authenticator {
 
 	private static class SingleAuthenticator extends Authenticator {
 
-		final String uname;
-		final char[] pwd;
-
-		private SingleAuthenticator(String uname, char[] pwd) {
-			this.uname = uname;
-			this.pwd = pwd;
+		final PasswordAuthentication pa;
+		private SingleAuthenticator(PasswordAuthentication pa) {
+			this.pa = pa;
 		}
 
 		@Override
 		public PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(uname, pwd);
+			return pa;
 		}
 	}
 

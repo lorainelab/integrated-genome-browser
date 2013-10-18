@@ -7,7 +7,7 @@ package com.affymetrix.genometryImpl.operator;
 public class AddMathTransform extends AbstractMathTransform {
 	
 	private static final String BASE_NAME = "add";
-	private static final String PARAMETER_NAME = "base";
+	private static final String PARAMETER_NAME = "add";
 	
 	@Override
 	protected String getParameterName(){

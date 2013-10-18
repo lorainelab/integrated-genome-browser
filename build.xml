@@ -413,7 +413,7 @@
 	</target>
 
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
-		<jar jarfile="${igb.jar.name}.jar" update="false">
+		<jar jarfile="${igb.jar.name}.jar" update="false" index="true">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->

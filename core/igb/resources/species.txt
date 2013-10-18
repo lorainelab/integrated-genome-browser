@@ -1,4 +1,5 @@
 Ailuropoda melanoleuca	Giant panda	A_melanoleuca	ailMel	Ailuropoda_melanoleuca
+Alligator mississippiensis	American alligator	A_mississippiensis	allMis
 Anolis carolinensis	Anole Lizard	A_carolinensis	anoCar	Anolis_carolinensis
 Anopheles gambiae	Mosquito	A_gambiae	anoGam
 Apis mellifera	European honey bee	A. mellifera	A_mellifera	apiMel
@@ -23,6 +24,7 @@ Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
 Capsella rubella	Red shepherd's purse	C_rubella
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
+Ceratotherium simum	White rhinoceros	C_simum	cerSim
 Chlamydomonas reinhardtii	motile single-celled green alga	C_reinhardtii
 Choloepus hoffmanni	Two-toed sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
 Chrysemys picta	painted turtle	C_picta	Chrysemys_picta	chrPic
@@ -32,7 +34,7 @@ Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinal
 Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
-Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus		Dasypus_novemcinctus
+Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus	dasNov	Dasypus_novemcinctus
 Dictyostelium discoideum	slime mold	D_discoideum
 Drosophila ananassae	D. ananassae (fruit fly)	D_ananassae	droAna
 Drosophila erecta	D. erecta (fruit fly)	D_erecta	droEre
@@ -48,7 +50,7 @@ Drosophila yakuba	D. yakuba (fruit fly)	D_yakuba	droYak
 Dipodomys ordii	Kangaroo rat	D_ordii	dipOrd	Dipodomys_ordii
 Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi	echTel
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus
-Erinaceus europaeus	European hedgehog	E_europaeus		Erinaceus_europaeus
+Erinaceus europaeus	European hedgehog	E_europaeus	eriEur	Erinaceus_europaeus
 Escherichia coli K12-MG1655	E. coli K12-MG1655	E. coli	E_coli
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
 Eucalyptus grandis	Eucalyptus	E_grandis
@@ -59,11 +61,13 @@ Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
 Geospiza fortis	medium ground finch	Geospiza_fortis	G_fortis	geoFor
 Glycine max	Soybean	G_max	
 Gorilla gorilla	Western gorilla	G_gorilla	gorGor	Gorilla_gorilla
+Gadus morhua	Atlantic cod	G_morhua	gadMor
 Gossypium hirsutum	Upland cotton	G_hirsutum
 Gossypium raimondii	Cotton D	G_raimondii
 Heterocephalus glaber	Naked mole rat	Heterocephalus_glaber	H_glaber	hetGla
 Homo sapiens	Human	H_sapiens	hg	Homo_sapiens
 Hordeum vulgare	Barley	H_vulgare
+Latimeria chalumnae	Coelacanth	L_chalumnae	latCha
 Lemna gibba	Gibbous duckweed	L_gibba
 Linum usitatissimum	flax	L_usitatissimum
 Loligo pealeii	Longfin inshore squid	L_pealeii
@@ -75,11 +79,13 @@ Malus domestica	Apple	M_domestica
 Manihot esculenta	Cassava	M_esculenta
 Medicago truncatula	Barrel medic	M_truncatula	
 Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo	melGal
+Melopsittacus undulatus	Budgie	M_undulatus	melUnd
 Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
 Monodelphis domestica	Opossum	M_domestica	monDom	Monodelphis_domestica
 Monosiga brevicollis	Choanoflagellates	Monosiga_brevicollis
 Mus musculus	House mouse	M_musculus	mm	Mus_musculus
+Mustela putorius furo	Domesticated ferret	M_putorius	musFur
 Mycobacterium abscessus	M. abcessus	M_abscessus	
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
 Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
@@ -87,17 +93,20 @@ Myotis lucifugus	Little brown bat	M_lucifugus		Myotis_lucifugus	myoLuc
 Nematostella vectensis	starlet sea anemone	N_vectensis
 Nicotiana tabacum	Tobacco	N_tabacum
 Nomascus leucogenys	Northern white-cheeked gibbon	Nomascus_leucogenys	N_leucogenys	nomLeu
-Ochotona princeps	American pika	O_princeps		Ochotona_princeps
+Ochotona princeps	American pika	O_princeps	ochPri	Ochotona_princeps
+Oreochromis niloticus	Nile tilapia	O_niloticus	oreNil
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun
 Oryza sativa indica	Rice (indica)	O_sativa_indica	
 Oryza sativa japonica	Rice (japonica)	O_sativa	O_sativa_japonica
 Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
-Otolemur garnettii	Nothern greater galago	O_garnettii		Otolemur_garnettii
+Otolemur garnettii	Nothern greater galago	O_garnettii	otoGar	Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
 Ovis aries	sheep	O_aries	OAR	oviAri
 Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
 Panicum virgatum	Switchgrass	P_virgatum
+Papio anubis	olive baboon	P_anubis	papAnu
+Papio hamadryas	hamadryas baboon	P_hamadryas	papHam
 Petromyzon marinus	Lamprey	P_marinus	petMar
 Phaseolus vulgaris	Common bean	P_vulgaris
 Physcomitrella patens	Moss	P_patens
@@ -113,6 +122,7 @@ Prunus persica	Peach	P_persica
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
 Ricinus communis	Castor oil plant	R_communis
 Saccharomyces cerevisiae	Budding Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
+Saimiri boliviensis	squirrel monkey	S_boliviensis	saiBol
 Sarcophilus harrisii	Tasmanian devil	Sarcophilus_harrisii	S_harrisii	sarHar
 Schizosaccharomyces pombe	Fission Yeast	S_pombe
 Selaginella moellendorffii	Spikemoss	S. moellendorffii	S_moellendorffii
@@ -120,9 +130,9 @@ Setaria italica	Foxtail millet	S. italica	S_italica
 Sigmodon hispidus	Cotton rat	S_hispidus
 Sodalis glossinidius	S. glossinidius	S_glossinidius
 Solanum lycopersicum	Tomato	S_lycopersicum
-Sorex araneus	Eurasian shrew	S_araneus		Sorex_araneus
+Sorex araneus	Eurasian shrew	S_araneus	sorAra	Sorex_araneus
 Sorghum bicolor	Sorghum	S_bicolor	
-Spermophilus tridecemlineatus	Thirteen-lined ground squirrel	S_tridecemlineatus		Spermophilus_tridecemlineatus
+Spermophilus tridecemlineatus	Thirteen-lined ground squirrel	S_tridecemlineatus	speTri	Spermophilus_tridecemlineatus
 Strongylocentrotus purpuratus	Purple sea urchin	S_purpuratus	strPur
 Sus scrofa	Wild boar	S_scrofa		Sus_scrofa	susScr
 Taeniopygia guttata	Zebra finch	T_guttata	taeGut	Taeniopygia_guttata
@@ -133,9 +143,10 @@ Thellungiella halophila	Salt cress	T_halophila
 Thellungiella parvula	Anatolian cress	T_parvula
 Thermococcus kodakaraensis KOD1	Hyperthermophilic Archaeon	T_kodakaraensis_KOD1	T. kodakaraensis_KOD1	T_kodakaraensis_KOD
 Tribolium castaneum	Red flour beetle	T_castaneum
+Trichechus manatus latirostris	West Indian manatee	T_manatus	triMan
 Triticum aestivum	Common wheat	T_aestivum
 Trypanosoma brucei	Protozoan parasites	T_brucei
-Tupaia belangeri	Northern tree shrew	T_belangeri		Tupaia_belangeri
+Tupaia belangeri	Northern tree shrew	T_belangeri	tupBel	Tupaia_belangeri
 Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus
 Vaccinium corymbosum	blueberry	V_corymbosum
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos

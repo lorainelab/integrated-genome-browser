@@ -214,7 +214,6 @@ public final class KeyStrokesView {
 //		smallTimeActions.add(ShrinkWrapAction.getAction());
 		smallTimeActions.add(ToggleHairlineAction.getAction());
 		smallTimeActions.add(ToggleHairlineLabelAction.getAction());
-		smallTimeActions.add(ToggleToolTipAction.getAction());
 		smallTimeActions.add(DrawCollapseControlAction.getAction());
 		smallTimeActions.add(ShowIGBTrackMarkAction.getAction());
 		smallTimeActions.add(ToggleEdgeMatchingAction.getAction());

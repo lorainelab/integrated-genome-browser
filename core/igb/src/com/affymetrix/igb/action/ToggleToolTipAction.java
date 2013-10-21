@@ -17,8 +17,8 @@ public class ToggleToolTipAction extends GenericAction {
 
 	private ToggleToolTipAction() {
 		super(BUNDLE.getString("togglePropertiesTooltip"), null,
-				"toolbarButtonGraphics/general/ContextualHelp16.gif",
-				"toolbarButtonGraphics/general/ContextualHelp16.gif", // for tool bar
+				"16x16/actions/speech-bubble.png",
+				"22x22/actions/speech-bubble.png", // for tool bar
 				KeyEvent.VK_H);
 		this.ordinal = 160;
 		/* TODO: This is only correct for English Locale" */

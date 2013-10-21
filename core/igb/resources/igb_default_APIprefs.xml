@@ -51,6 +51,7 @@
 							<entry key="com.affymetrix.igb.action.ZoomingRepackAction" value="true"/>
 							<entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.ChangeExpandMaxAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ToggleToolTipAction" value="true"/>
 							
 							<!-- Toolbar Action Indices -->
 							<entry key="com.affymetrix.igb.action.LoadFileAction.index" value="0"/>
@@ -68,6 +69,7 @@
 							<entry key="com.affymetrix.igb.action.ZoomingRepackAction.index" value="12"/>
 							<entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.index" value="13"/>
 							<entry key="com.affymetrix.igb.action.ChangeExpandMaxAction.index" value="14"/>
+							<entry key="com.affymetrix.igb.action.ToggleToolTipAction.index" value="15"/>
 
                         </map>
                     </node>

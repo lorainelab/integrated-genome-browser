@@ -330,6 +330,8 @@ public class PopupInfo extends JWindow {
 		
 		tooltip.setBackground(backgroundColor);
 		tooltip.setEditable(false);
+		tooltip.setEnabled(false);
+		tooltip.setDisabledTextColor(tooltip.getForeground());
 		tooltip.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));

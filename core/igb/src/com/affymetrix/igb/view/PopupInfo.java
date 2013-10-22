@@ -92,14 +92,14 @@ public class PopupInfo extends JWindow {
 		
 			newWindow.pack();
 			newWindow.setSize(getSize());
-			newWindow.setLocation(getLocationOnScreen().x + 20, getLocationOnScreen().y + 25);
+			newWindow.setLocation(getLocationOnScreen().x, getLocationOnScreen().y);
 			newWindow.setVisible(true);
 			Opacity.INSTANCE.set(newWindow, 1.0f);
 			
 			if(Opacity.INSTANCE.isSupported()){
 				timer.stop();
 			}
-//			setVisible(false);
+			setVisible(false);
 		}
 	};
 
@@ -171,7 +171,7 @@ public class PopupInfo extends JWindow {
 		camera   = new JButton();
 		lock	 = new JButton();
 		moreLess = new JButton();
-	
+		
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
 		setCameraAction(snapShotAction);
@@ -335,7 +335,12 @@ public class PopupInfo extends JWindow {
 		tooltip.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK),
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-		
+		if(isPinned) {
+			tooltip.addMouseListener(move);
+			tooltip.addMouseMotionListener(move); 
+		} else {
+			tooltip.addMouseListener(snapShot);
+		}
 		JPanel noWrapPanel = new JPanel( new BorderLayout() );
 		noWrapPanel.setBackground(backgroundColor);
 		noWrapPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -384,8 +389,12 @@ public class PopupInfo extends JWindow {
 		button_box.add(message);
 		button_box.add(glueRight);
 		button_box.add(lock);
-		button_box.addMouseListener(move);
-		button_box.addMouseMotionListener(move);
+		if(isPinned) {
+			button_box.addMouseListener(move);
+			button_box.addMouseMotionListener(move); 
+		} else {
+			button_box.addMouseListener(snapShot);
+		}
 		
 		JPanel bottom_box = new JPanel();
 		BoxLayout bottom_box_layout = new BoxLayout(bottom_box, BoxLayout.X_AXIS);
@@ -469,6 +478,13 @@ public class PopupInfo extends JWindow {
 					Opacity.INSTANCE.set(PopupInfo.this, 0.5f);
 				}
 			}
+		}
+	};
+	
+	MouseAdapter snapShot = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent evt) {
+			snapShotAction.actionPerformed(null);
 		}
 	};
 	

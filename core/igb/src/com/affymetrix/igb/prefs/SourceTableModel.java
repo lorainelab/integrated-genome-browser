@@ -139,11 +139,11 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 					if (!server.isEnabled()
 							|| DataLoadPrefsView.getSingleton().confirmRefresh()) {
 						DataLoadPrefsView.getSingleton().updateSource(server.URL,
-								server.serverType, server.serverName, server.URL);
+								server.serverType, server.serverName, server.URL, server.mirrorURL);
 					}
 				} else {
 					BundleRepositoryPrefsView.getSingleton().updateSource(server.URL,
-							server.serverType, server.serverName, server.URL);
+							server.serverType, server.serverName, server.URL, server.mirrorURL);
 				}
 				break;
 			case Enabled:

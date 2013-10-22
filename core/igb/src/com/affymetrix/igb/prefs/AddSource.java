@@ -40,7 +40,7 @@ public class AddSource extends JFrame {
 
 	// server type combobox will be hide in repository panel - enableCombo
 	private boolean enableCombo, isEditPanel;
-	private String serverURL;
+	private String serverURL, mirrorURL;
 	private static AddSource singleton;
 
 	public static AddSource getSingleton() {
@@ -84,11 +84,12 @@ public class AddSource extends JFrame {
 	}
 
 	public void init(boolean isEditP, boolean comboActive, String title,
-			GenericServer server, String url) {
+			GenericServer server, String url, String mirrorurl) {
 		enableCombo = comboActive;
 		isEditPanel = isEditP;
 		serverURL = url;
-
+		mirrorURL = mirrorurl;
+		
 		if (isEditPanel) {
 			nameText.setText(server.serverName);
 			typeCombo.setSelectedItem(server.serverType);
@@ -266,15 +267,15 @@ public class AddSource extends JFrame {
 			protected Boolean runInBackground() {
 				if (isEditPanel) {
 					DataLoadPrefsView.getSingleton().updateSource(serverURL,
-							(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
+							(ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText(), mirrorURL);
 				} else {
 					if (enableCombo) {
 						return DataLoadPrefsView.getSingleton().addDataSource(
 								(ServerTypeI) typeCombo.getSelectedItem(),
-								nameText.getText(), urlText.getText(), -1, false);
+								nameText.getText(), urlText.getText(), -1, false, mirrorURL);
 					} else {
 						return BundleRepositoryPrefsView.getSingleton().addDataSource(null,
-								nameText.getText(), urlText.getText(), -1, false);
+								nameText.getText(), urlText.getText(), -1, false, mirrorURL);
 					}
 				}
 				return true;

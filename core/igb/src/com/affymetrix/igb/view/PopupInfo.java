@@ -52,7 +52,7 @@ public class PopupInfo extends JWindow {
 	private static final int maxWidth  = 300;
 	private final JLabel message;
 	private final JTextPane tooltip;
-	private final JButton camera, lock, moreLess;
+	private final JButton camera, /*lock,*/ moreLess;
 	private final boolean isPinned;
 	private final Color backgroundColor;
 	private boolean preferredLocationSet;
@@ -104,25 +104,25 @@ public class PopupInfo extends JWindow {
 		}
 	};
 
-	private AbstractAction lockAction = new AbstractAction("l",CommonUtils.getInstance().getIcon("16x16/actions/un_lock.png")) {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			flashMessage("location locked");
-			preferredLocationSet = true;
-			setLockAction(unlockAction);
-		}
-	};
-	
-	private AbstractAction unlockAction = new AbstractAction("u",CommonUtils.getInstance().getIcon("16x16/actions/lock.png")) {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			flashMessage("location unlocked");
-			preferredLocationSet = false;
-			setLockAction(lockAction);
-		}
-	};
+//	private AbstractAction lockAction = new AbstractAction("l",CommonUtils.getInstance().getIcon("16x16/actions/un_lock.png")) {
+//		
+//		@Override
+//		public void actionPerformed(ActionEvent e) {
+//			flashMessage("location locked");
+//			preferredLocationSet = true;
+//			setLockAction(unlockAction);
+//		}
+//	};
+//	
+//	private AbstractAction unlockAction = new AbstractAction("u",CommonUtils.getInstance().getIcon("16x16/actions/lock.png")) {
+//		
+//		@Override
+//		public void actionPerformed(ActionEvent e) {
+//			flashMessage("location unlocked");
+//			preferredLocationSet = false;
+//			setLockAction(lockAction);
+//		}
+//	};
 	
 	private AbstractAction moreAction = new AbstractAction("More \u00BB") {
 		@Override
@@ -170,16 +170,16 @@ public class PopupInfo extends JWindow {
 		message  = new JLabel();
 		tooltip  = new JTextPane();
 		camera   = new JButton();
-		lock	 = new JButton();
+//		lock	 = new JButton();
 		moreLess = new JButton();
 		
 		this.backgroundColor = isPinned ? Color.WHITE : DEFAULT_BACKGROUNDCOLOR;
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
 		setCameraAction(snapShotAction);
-		if(!isPinned) {
-			setLockAction(lockAction);
-		}
+//		if(!isPinned) {
+//			setLockAction(lockAction);
+//		}
 		init();
 	}
 	
@@ -311,12 +311,12 @@ public class PopupInfo extends JWindow {
 		}
 	}
 	
-	private void setLockAction(AbstractAction action){
-		lock.setAction(action);
-		if(lock.getIcon() != null){
-			lock.setText(null);
-		}
-	}
+//	private void setLockAction(AbstractAction action){
+//		lock.setAction(action);
+//		if(lock.getIcon() != null){
+//			lock.setText(null);
+//		}
+//	}
 	
 	private void init(){
 		
@@ -354,8 +354,8 @@ public class PopupInfo extends JWindow {
 		scrollPane.setBackground(backgroundColor);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		
-		lock.setMargin(new Insets(0,0,0,0));
-		lock.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+//		lock.setMargin(new Insets(0,0,0,0));
+//		lock.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		
 		camera.setMargin(new Insets(0,0,0,0));
 		camera.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
@@ -390,7 +390,7 @@ public class PopupInfo extends JWindow {
 		button_box.add(glueLeft);
 		button_box.add(message);
 		button_box.add(glueRight);
-		button_box.add(lock);
+//		button_box.add(lock);
 		if(isPinned) {
 			button_box.addMouseListener(move);
 			button_box.addMouseMotionListener(move); 

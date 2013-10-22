@@ -89,7 +89,7 @@ public class PopupInfo extends JWindow {
 				newWindow.moreLess.setAction(newWindow.lessAction);
 			}
 			newWindow.tooltip.setCaretPosition(0);
-			newWindow.setCameraAction(newWindow.closeAction);
+//			newWindow.setCameraAction(newWindow.closeAction);
 		
 			newWindow.pack();
 			newWindow.setSize(getSize());
@@ -176,7 +176,7 @@ public class PopupInfo extends JWindow {
 		this.backgroundColor = isPinned ? Color.WHITE : DEFAULT_BACKGROUNDCOLOR;
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
-		setCameraAction(snapShotAction);
+		setCameraAction(closeAction);
 //		if(!isPinned) {
 //			setLockAction(lockAction);
 //		}

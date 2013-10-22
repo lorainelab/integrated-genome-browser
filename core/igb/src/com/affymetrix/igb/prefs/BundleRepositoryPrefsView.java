@@ -68,9 +68,9 @@ public class BundleRepositoryPrefsView extends ServerPrefsView {
 	}
 	
 	@Override
-	protected void updateSource(String url, ServerTypeI type, String name, String newUrl){
+	protected void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL){
 		ServerList.getServerInstance().removeServer(url);
 		ServerList.getServerInstance().removeServerFromPrefs(url);
-		addDataSource(type, name, url, -1, false);
+		addDataSource(type, name, url, -1, false, mirrorURL);
 	}
 }

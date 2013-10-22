@@ -95,7 +95,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
 
-				AddSource.getSingleton().init(false, enableCombo(), "Add Source", null, null);
+				AddSource.getSingleton().init(false, enableCombo(), "Add Source", null, null, null);
 			}
 		});
 
@@ -229,13 +229,13 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault) {
+	public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault, String mirrorURL) {
 		if (url == null || url.isEmpty() || url.equals("http://") || name == null || name.isEmpty()) {
 			return false;
 		}
 
 		GenericServer server = GeneralLoadUtils.addServer(serverList,
-				type, name, url, order, isDefault, null); //qlmirror
+				type, name, url, order, isDefault, mirrorURL); //qlmirror
 
 		if (server == null) {
 
@@ -318,5 +318,5 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	protected abstract boolean enableCombo();
 	
-	protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl);
+	protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL);
 }

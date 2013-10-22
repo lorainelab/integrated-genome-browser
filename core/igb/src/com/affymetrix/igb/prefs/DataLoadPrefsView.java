@@ -115,7 +115,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
 				GenericServer server = ServerList.getServerInstance().getServer((String) url);
 
-				AddSource.getSingleton().init(true, true, "Edit Source", server, (String) url);
+				AddSource.getSingleton().init(true, true, "Edit Source", server, (String) url, server.mirrorURL);
 			}
 		});
 		editSourceButton.setEnabled(false);
@@ -372,12 +372,12 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	}
 	
 	@Override
-	protected void updateSource(String url, ServerTypeI type, String name, String newUrl){
+	protected void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL){
 		Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
 		int order = node.getInt(GenericServer.ORDER, -1);
 		boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
 		ServerList.getServerInstance().removeServer(url);
 		ServerList.getServerInstance().removeServerFromPrefs(url);
-		addDataSource(type, name, newUrl, order, isDefault);
+		addDataSource(type, name, newUrl, order, isDefault, mirrorURL);
 	}
 }

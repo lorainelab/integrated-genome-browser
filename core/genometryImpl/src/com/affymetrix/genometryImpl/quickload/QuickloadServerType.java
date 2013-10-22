@@ -492,7 +492,7 @@ public class QuickloadServerType implements ServerTypeI {
 	
 	@Override
 	public boolean useMirrorSite(GenericServer gServer) {
-		if (gServer.mirrorURL != null && gServer.mirrorURL != gServer.serverObj && LocalUrlCacher.isURLReachable(URI.create(gServer.mirrorURL))) {
+		if (gServer.mirrorURL != null && gServer.mirrorURL != gServer.serverObj && LocalUrlCacher.isValidURL(gServer.mirrorURL)) {
 			return true;
 		}
 		return false;

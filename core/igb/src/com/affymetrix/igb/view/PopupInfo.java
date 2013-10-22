@@ -429,8 +429,10 @@ public class PopupInfo extends JWindow {
 		component_box.add(scrollPane);
 		component_box.add(bottom_box);
 		
-		addMouseListener(resize);
-		addMouseMotionListener(resize);
+		if(isPinned) {
+			addMouseListener(resize);
+			addMouseMotionListener(resize);
+		}
 		
 		setLayout(new BorderLayout(0,0));
 		add(component_box);

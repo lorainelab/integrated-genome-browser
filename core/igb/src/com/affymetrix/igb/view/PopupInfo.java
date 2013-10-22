@@ -47,13 +47,14 @@ public class PopupInfo extends JWindow {
 		textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);
 	}	
-	private static final Color backgroundColor = new Color(253, 254, 196);
+	private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
 	private static final int minHeight = 100;
 	private static final int maxWidth  = 300;
 	private final JLabel message;
 	private final JTextPane tooltip;
 	private final JButton camera, lock, moreLess;
 	private final boolean isPinned;
+	private final Color backgroundColor;
 	private boolean preferredLocationSet;
 	private int preferredWidth;
 	private Point lastPoint;
@@ -172,6 +173,7 @@ public class PopupInfo extends JWindow {
 		lock	 = new JButton();
 		moreLess = new JButton();
 		
+		this.backgroundColor = isPinned ? Color.WHITE : DEFAULT_BACKGROUNDCOLOR;
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
 		setCameraAction(snapShotAction);

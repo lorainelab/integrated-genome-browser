@@ -462,7 +462,7 @@ public class QuickloadServerType implements ServerTypeI {
 			BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-		String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, version.gServer.URL, span, aseq);
+		String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, (String)version.gServer.serverObj, span, aseq);
 		if (residues != null) {
 			BioSeq.addResiduesToComposition(aseq, residues, span);
 			return true;
@@ -492,7 +492,7 @@ public class QuickloadServerType implements ServerTypeI {
 	
 	@Override
 	public boolean useMirrorSite(GenericServer gServer) {
-		if (gServer.mirrorURL != null && LocalUrlCacher.isURLReachable(URI.create(gServer.mirrorURL))) {
+		if (gServer.mirrorURL != null && gServer.mirrorURL != gServer.serverObj && LocalUrlCacher.isURLReachable(URI.create(gServer.mirrorURL))) {
 			return true;
 		}
 		return false;

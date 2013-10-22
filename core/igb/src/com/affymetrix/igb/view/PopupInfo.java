@@ -43,9 +43,12 @@ import javax.swing.Timer;
  */
 public class PopupInfo extends JWindow {
 	private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<TextAttribute, Object>();
+	private static final HashMap<TextAttribute, Object> messageAttrMap = new HashMap<TextAttribute, Object>();
 	static {
 		textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);
+		messageAttrMap.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+		messageAttrMap.put(TextAttribute.FOREGROUND, Color.DARK_GRAY);
 	}	
 	private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
 	private static final int minHeight = 100;
@@ -64,7 +67,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			GeneralUtils.copyToClipboard(convertPropsToString(properties, false));
-			flashMessage("data copied");
+//			flashMessage("data copied");
 		}
 	};
 		
@@ -79,7 +82,7 @@ public class PopupInfo extends JWindow {
 	private AbstractAction snapShotAction = new AbstractAction("o",CommonUtils.getInstance().getIcon("16x16/actions/camera.png")) {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
-			flashMessage("created snapshot");
+//			flashMessage("created snapshot");
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
 			newWindow.properties = properties;
 			newWindow.tooltip.setText(tooltip.getText());
@@ -177,6 +180,7 @@ public class PopupInfo extends JWindow {
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
 		setCameraAction(closeAction);
+		message.setText(!isPinned ? "Click this data tooltip to stick" : null);
 //		if(!isPinned) {
 //			setLockAction(lockAction);
 //		}
@@ -233,10 +237,10 @@ public class PopupInfo extends JWindow {
 		}
 	}
 	
-	private void flashMessage(String str) {
-		message.setText(str);
-		flashTimer.start();
-	}
+//	private void flashMessage(String str) {
+//		message.setText(str);
+//		flashTimer.start();
+//	}
 	
 	private static String getFormattedTitle(String[][] properties){
 		StringBuilder props = new StringBuilder();
@@ -326,6 +330,7 @@ public class PopupInfo extends JWindow {
 		setForeground(backgroundColor);
 		Opacity.INSTANCE.set(PopupInfo.this, 0.5f);
 		
+		message.setFont(message.getFont().deriveFont(messageAttrMap));
 		message.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		message.setAlignmentY(JComponent.CENTER_ALIGNMENT);
 		message.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));

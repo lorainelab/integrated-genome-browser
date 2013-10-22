@@ -343,11 +343,11 @@
                     <target>compile</target>
                 </action>
                 <action name="debug">
-                    <script>nbproject/nbjdk.xml</script>
+                    <script>nbproject/ide-targets.xml</script>
                     <target>debug-nb</target>
                 </action>
                 <action name="run.single">
-                    <script>nbproject/nbjdk.xml</script>
+                    <script>nbproject/ide-file-targets.xml</script>
                     <target>run-selected-file-in-src</target>
                     <context>
                         <property>run.class</property>
@@ -359,29 +359,16 @@
                         </arity>
                     </context>
                 </action>
-                <action name="run.single">
-                    <script>nbproject/nbjdk.xml</script>
-                    <target>run-selected-file-in-src</target>
+                <action name="debug.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-selected-file-in-src</target>
                     <context>
-                        <property>run.class</property>
-                        <folder>core/igb/src</folder>
+                        <property>debug.class</property>
+                        <folder>core/genoviz_sdk/demo/src</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
                             <one-file-only/>
-                        </arity>
-                    </context>
-                </action>
-                <action name="compile.single">
-                    <script>nbproject/nbjdk.xml</script>
-                    <target>compile-selected-files-in-src</target>
-                    <context>
-                        <property>files</property>
-                        <folder>core/igb/src</folder>
-                        <pattern>\.java$</pattern>
-                        <format>relative-path</format>
-                        <arity>
-                            <separated-files>,</separated-files>
                         </arity>
                     </context>
                 </action>

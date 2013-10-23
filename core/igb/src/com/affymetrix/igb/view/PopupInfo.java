@@ -428,6 +428,13 @@ public class PopupInfo extends JWindow {
 		bottom_box.add(moreLess);
 		bottom_box.add(bottomStrutRight);
 		
+		if(isPinned) {
+			bottom_box.addMouseListener(move);
+			bottom_box.addMouseMotionListener(move); 
+		} else {
+			bottom_box.addMouseListener(snapShot);
+		}
+		
 		Box component_box = new Box(BoxLayout.Y_AXIS);
 		component_box.setBackground(backgroundColor);
 		component_box.setForeground(backgroundColor);

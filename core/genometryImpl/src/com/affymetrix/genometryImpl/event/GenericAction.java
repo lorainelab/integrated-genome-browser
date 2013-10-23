@@ -28,6 +28,7 @@ public abstract class GenericAction extends AbstractAction {
 	private final Object extraInfo;
 	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
+	private ImageIcon alternateIcon;
 
 	/**
 	 * For ordering buttons in the toolbar.
@@ -72,6 +73,7 @@ public abstract class GenericAction extends AbstractAction {
 			if (icon == null) {
 				System.out.println("icon " + largeIconPath + " returned null");
 			}
+			alternateIcon = isToggle() && icon != null ? CommonUtils.getInstance().getAlternateIcon(largeIconPath) : null;
 			putValue(Action.LARGE_ICON_KEY, icon);
 		}
 		if (mnemonic != KeyEvent.VK_UNDEFINED) {
@@ -114,6 +116,11 @@ public abstract class GenericAction extends AbstractAction {
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(alternateIcon != null && getValue(Action.LARGE_ICON_KEY) != null) {
+			ImageIcon temp = (ImageIcon)getValue(Action.LARGE_ICON_KEY);
+			this.putValue(Action.LARGE_ICON_KEY, alternateIcon);
+			alternateIcon = temp;
+		}
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
 	public boolean usePrefixInMenu() {

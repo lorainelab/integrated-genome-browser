@@ -100,9 +100,9 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
 			}
 		}
 
-		if (span == null) {
-			throw new IllegalArgumentException("This Symmetry does not have a CDS");
-		}
+//		if (span == null) {
+//			throw new IllegalArgumentException("This Symmetry does not have a CDS");
+//		}
 
 		return span;
 	}

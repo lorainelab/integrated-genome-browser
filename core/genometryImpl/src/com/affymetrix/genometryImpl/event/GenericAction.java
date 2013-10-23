@@ -3,6 +3,8 @@ package com.affymetrix.genometryImpl.event;
 import com.affymetrix.common.CommonUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
@@ -28,8 +30,7 @@ public abstract class GenericAction extends AbstractAction {
 	private final Object extraInfo;
 	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
-	private ImageIcon alternateIcon;
-
+	
 	/**
 	 * For ordering buttons in the toolbar.
 	 * Subclasses should assign different numbers
@@ -69,12 +70,27 @@ public abstract class GenericAction extends AbstractAction {
 			putValue(Action.SMALL_ICON, icon);
 		}
 		if (largeIconPath != null) {
-			ImageIcon icon = CommonUtils.getInstance().getIcon(largeIconPath);
+			final ImageIcon icon = CommonUtils.getInstance().getIcon(largeIconPath);
+			final ImageIcon alternateIcon = isToggle() && icon != null ? CommonUtils.getInstance().getAlternateIcon(largeIconPath) : null;
 			if (icon == null) {
 				System.out.println("icon " + largeIconPath + " returned null");
 			}
-			alternateIcon = isToggle() && icon != null ? CommonUtils.getInstance().getAlternateIcon(largeIconPath) : null;
 			putValue(Action.LARGE_ICON_KEY, icon);
+			
+			if (alternateIcon != null) {
+				this.addPropertyChangeListener(new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
+							if(evt.getNewValue() == Boolean.TRUE) {
+								putValue(Action.LARGE_ICON_KEY, icon);
+							} else {
+								putValue(Action.LARGE_ICON_KEY, alternateIcon);
+							}
+						}
+					}
+				});
+			}
 		}
 		if (mnemonic != KeyEvent.VK_UNDEFINED) {
 			this.putValue(MNEMONIC_KEY, mnemonic);
@@ -116,7 +132,6 @@ public abstract class GenericAction extends AbstractAction {
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		toggleIcon();
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
 	public boolean usePrefixInMenu() {
@@ -128,13 +143,6 @@ public abstract class GenericAction extends AbstractAction {
 	 */
 	public boolean isToggle() {
 		return false;
-	}
-	protected final void toggleIcon() {
-		if(alternateIcon != null && getValue(Action.LARGE_ICON_KEY) != null) {
-			ImageIcon temp = (ImageIcon)getValue(Action.LARGE_ICON_KEY);
-			this.putValue(Action.LARGE_ICON_KEY, alternateIcon);
-			alternateIcon = temp;
-		}
 	}
 	public final boolean isPopup() {
 		return popup;

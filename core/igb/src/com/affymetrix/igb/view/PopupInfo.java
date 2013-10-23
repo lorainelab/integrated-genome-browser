@@ -344,7 +344,9 @@ public class PopupInfo extends JWindow {
 				BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 		if(isPinned) {
 			tooltip.addMouseListener(move);
-			tooltip.addMouseMotionListener(move); 
+			tooltip.addMouseMotionListener(move);
+			tooltip.addMouseListener(scrollListener);
+			tooltip.addMouseMotionListener(scrollListener);
 		} else {
 			tooltip.addMouseListener(snapShot);
 		}
@@ -497,6 +499,24 @@ public class PopupInfo extends JWindow {
 		}
 	};
 	
+	MouseAdapter scrollListener = new MouseAdapter() {
+		
+		@Override
+		public void mousePressed(MouseEvent e){
+			tooltip.setCaretPosition(0);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			tooltip.setCaretPosition(0);
+		}
+		
+		@Override
+		public void mouseDragged(final MouseEvent e) {
+			tooltip.setCaretPosition(0);	
+		}
+	};
+			
 	MouseAdapter move = new MouseAdapter(){
 		int x_offset, y_offset;
 		

@@ -78,16 +78,14 @@ public abstract class GenericAction extends AbstractAction {
 			putValue(Action.LARGE_ICON_KEY, icon);
 			
 			if (alternateIcon != null) {
-				Boolean selected = (Boolean)getValue(Action.SELECTED_KEY);
-				putValue(Action.LARGE_ICON_KEY,  selected != null && selected ? alternateIcon : icon);
 				this.addPropertyChangeListener(new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
 						if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
 							if(evt.getNewValue() == Boolean.TRUE) {
-								putValue(Action.LARGE_ICON_KEY, alternateIcon);
-							} else {
 								putValue(Action.LARGE_ICON_KEY, icon);
+							} else {
+								putValue(Action.LARGE_ICON_KEY, alternateIcon);
 							}
 						}
 					}
@@ -134,7 +132,6 @@ public abstract class GenericAction extends AbstractAction {
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		toggleIcon();
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
 	public boolean usePrefixInMenu() {
@@ -146,13 +143,6 @@ public abstract class GenericAction extends AbstractAction {
 	 */
 	public boolean isToggle() {
 		return false;
-	}
-	protected final void toggleIcon() {
-		if(alternateIcon != null && getValue(Action.LARGE_ICON_KEY) != null) {
-			ImageIcon temp = (ImageIcon)getValue(Action.LARGE_ICON_KEY);
-			this.putValue(Action.LARGE_ICON_KEY, alternateIcon);
-			alternateIcon = temp;
-		}
 	}
 	public final boolean isPopup() {
 		return popup;

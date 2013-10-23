@@ -180,7 +180,7 @@ public class PopupInfo extends JWindow {
 		this.isPinned  = isPinned;
 		preferredWidth = -1;
 		setCameraAction(closeAction);
-		message.setText(!isPinned ? "Click this data tooltip to stick" : null);
+		message.setText(!isPinned ? "Click this data tooltip to stick" : "Click and drag data tooltip to move");
 //		if(!isPinned) {
 //			setLockAction(lockAction);
 //		}

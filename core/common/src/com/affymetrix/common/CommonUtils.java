@@ -1,9 +1,14 @@
 package com.affymetrix.common;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.MediaTracker;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import javax.imageio.ImageIO;
 
 import javax.swing.ImageIcon;
 
@@ -155,9 +160,9 @@ public class CommonUtils {
 		return app_dir;
 	}
 
-	  public ImageIcon getIcon(String resource_name) {
-	      return getIcon(CommonUtils.class, resource_name);
-	  }
+	 public ImageIcon getIcon(String resource_name) {
+	     return getIcon(CommonUtils.class, resource_name);
+	 }
 	  
 	 /**
 	   *  Loads an ImageIcon from the specified system resource.
@@ -168,7 +173,7 @@ public class CommonUtils {
 	   *  For example: "toolbarButtonGraphics/general/About16.gif".
 	   *  @return An ImageIcon or null if the one specified could not be found.
 	   */
-	  public ImageIcon getIcon(Class<?> clazz, String resource_name) {
+	 public ImageIcon getIcon(Class<?> clazz, String resource_name) {
 		ImageIcon icon = null;
 	    try {
 	      // Note: MenuUtil.class.getResource(resource_name) does not work;
@@ -192,4 +197,23 @@ public class CommonUtils {
 	    
 	    return icon; 
 	  }
+	  
+	public ImageIcon getAlternateIcon(String resource_name) {
+		try {
+			java.net.URL resource_url = CommonUtils.class.getClassLoader().getResource(resource_name);
+			if (resource_url != null) {
+				BufferedImage resource_img = ImageIO.read(resource_url);
+				Graphics2D resource_graphics = resource_img.createGraphics();
+				resource_graphics.setColor(Color.red);
+				resource_graphics.setStroke(new BasicStroke(2.0f));
+				resource_graphics.drawLine(0, 0, resource_img.getWidth(), resource_img.getHeight());
+				resource_graphics.drawLine(0, resource_img.getHeight(), resource_img.getWidth(), 0);
+				return new ImageIcon(resource_img);
+			}
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			// It isn't a big deal if we can't find the icon, just return null
+		}
+		return null;
+	}
 }

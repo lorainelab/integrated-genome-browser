@@ -416,6 +416,7 @@
 		<jar jarfile="${igb.jar.name}.jar" update="false" index="true">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
+				<arritbute name="Application-Name" value="IGB" />
 				<attribute name="Permissions" value="all-permissions"/>
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>

@@ -23,7 +23,7 @@
 		<property name="apple.laf.useScreenMenuBar" value="true" />
 		<property name="http.agent" value="IGB/@jnlp.version@ (Webstart)" />
 	</resources>
-	<application-desc main-class="com.affymetrix.main.Main">
+	<application-desc main-class="com.affymetrix.main.Main" name="IGB">
 		<argument>-prefs</argument>
 		<argument>@jnlp.codebase@/igb_prefs.xml</argument>
 	</application-desc>

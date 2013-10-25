@@ -177,10 +177,7 @@
 		<mkdir dir="${webstart.dir}" />
 
 		<delete file="${webstart.dir}/das2server.jar" />
-
-		<my.signjar jar="${basedir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
-		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
-
+		
 		<copy file="${def.prefs.dir}/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
 		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.largefile.path}" tofile="${webstart.dir}/igb-large.jnlp" filtering="true" overwrite="true" />
@@ -188,6 +185,30 @@
 		<copy file="${jnlp.basefile.path}" tofile="${webstart.dir}/igb-base.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 <!--		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />-->
+
+		<mkdir dir="${dist.dir}/JNLP-INF" />
+		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
+		<jar destfile="${igb.jar.name}-5GB.jar" update="true">
+			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
+			<zipgroupfileset file="${igb.jar.name}.jar" />
+		</jar>
+
+		<copy file="${webstart.dir}/igb-large.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
+		<jar destfile="${igb.jar.name}-large.jar" update="true">
+			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
+			<zipgroupfileset file="${igb.jar.name}.jar" />
+		</jar>
+
+		<copy file="${webstart.dir}/igb.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
+		<jar destfile="${igb.jar.name}.jar" update="true">
+			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
+		</jar>		
+		<delete dir="${dist.dir}/JNLP-INF" />
+
+		<my.signjar jar="${basedir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
+		<my.signjar jar="${basedir}/${igb.jar.name}-large.jar" signedjar="${webstart.dir}/${igb.jar.name}-large.jar" />
+		<my.signjar jar="${basedir}/${igb.jar.name}-5GB.jar" signedjar="${webstart.dir}/${igb.jar.name}-5GB.jar" />
+		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
 	</target>
 
 	<target name="webapp" depends="jar,flex" description="Create das2servlet web application">

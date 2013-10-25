@@ -36,6 +36,9 @@ import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 /**
  *
@@ -44,11 +47,13 @@ import javax.swing.Timer;
 public class PopupInfo extends JWindow {
 	private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<TextAttribute, Object>();
 	private static final HashMap<TextAttribute, Object> messageAttrMap = new HashMap<TextAttribute, Object>();
+	private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
 	static {
 		textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);
 		messageAttrMap.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
 		messageAttrMap.put(TextAttribute.FOREGROUND, Color.DARK_GRAY);
+		StyleConstants.setBold(NAME, true);
 	}	
 	private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
 	private static final int minHeight = 100;
@@ -85,7 +90,7 @@ public class PopupInfo extends JWindow {
 //			flashMessage("created snapshot");
 			PopupInfo newWindow = new PopupInfo(getOwner(), true);
 			newWindow.properties = properties;
-			newWindow.tooltip.setText(tooltip.getText());
+			newWindow.formatTooltip();
 			if(moreLess.getAction() == moreAction){
 				newWindow.moreLess.setAction(newWindow.moreAction);
 			} else {
@@ -205,8 +210,7 @@ public class PopupInfo extends JWindow {
 		
 		if(properties != null && properties.length > 1){
 			this.properties	= properties;
-			//title.setText(getFormattedTitle(properties));
-			tooltip.setText(convertPropsToString(properties, false));
+			formatTooltip();
 			tooltip.setCaretPosition(0);
 		
 			if(!preferredLocationSet){
@@ -276,6 +280,23 @@ public class PopupInfo extends JWindow {
 		}
 		
 		return " ..." + string.substring(strlen - length, strlen);
+	}
+	
+	private void formatTooltip() {
+		for (int i = 0; i < properties.length; i++) {
+			try {
+				tooltip.getDocument().insertString(
+						tooltip.getDocument().getLength(), properties[i][0], NAME);
+				tooltip.getDocument().insertString(
+						tooltip.getDocument().getLength(), " : ", null);
+				tooltip.getDocument().insertString(
+						tooltip.getDocument().getLength(), properties[i][1], null);
+				tooltip.getDocument().insertString(
+						tooltip.getDocument().getLength(), "\n", null);
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private Point determineBestLocation(Point currentPoint){

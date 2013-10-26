@@ -188,13 +188,13 @@
 
 		<mkdir dir="${dist.dir}/JNLP-INF" />
 		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.name}-5GB.jar" update="false" filesetmanifest="merge" >
+		<jar destfile="${igb.jar.5GB.name}.jar" update="false" filesetmanifest="merge" >
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
 			<zipgroupfileset file="${igb.jar.name}.jar" />
 		</jar>
 
 		<copy file="${webstart.dir}/igb-large.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.name}-large.jar" update="false" filesetmanifest="merge" >
+		<jar destfile="${igb.jar.large.name}.jar" update="false" filesetmanifest="merge" >
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
 			<zipgroupfileset file="${igb.jar.name}.jar" />
 		</jar>
@@ -393,6 +393,8 @@
 			<fileset dir="${bundle.dir}" />
 			<fileset dir="${igb.ant.dir}/build" />
 			<fileset file="${igb.jar.name}.jar" />
+			<fileset file="${igb.jar.large.name}.jar" />
+			<fileset file="${igb.jar.5GB.name}.jar" />
 			<fileset file="protannot_exe.jar" />
 			<fileset file="${genoviz}/genoviz.jar" />
 			<fileset file="${demos.dir}/genoviz.jar" />

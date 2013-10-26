@@ -39,7 +39,8 @@
 		<property name="jnlp.largefile.path" value="${igb}/etc/igb-large.jnlp" />
 		<property name="jnlp.5GB.path" value="${igb}/etc/igb-5GB.jnlp" />
 		<property name="jnlp.basefile.path" value="${igb}/etc/igb-base.jnlp" />
-		<property name="jnlp.version"   value="${build.version}" />
+		<!-- property name="jnlp.version"   value="${build.version}" / -->
+		<property name="jnlp.version"   value="${appVersion}" />
 		<property name="jnlp.codebase"  value="http://USE_YOUR_URL_HERE" />
 		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${common}/resources/images/${jnlp.icon.name}" />

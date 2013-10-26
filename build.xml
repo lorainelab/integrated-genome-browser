@@ -188,13 +188,13 @@
 
 		<mkdir dir="${dist.dir}/JNLP-INF" />
 		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.name}-5GB.jar" update="true">
+		<jar destfile="${igb.jar.name}-5GB.jar" update="false" filesetmanifest="merge" >
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
 			<zipgroupfileset file="${igb.jar.name}.jar" />
 		</jar>
 
 		<copy file="${webstart.dir}/igb-large.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.name}-large.jar" update="true">
+		<jar destfile="${igb.jar.name}-large.jar" update="false" filesetmanifest="merge" >
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
 			<zipgroupfileset file="${igb.jar.name}.jar" />
 		</jar>

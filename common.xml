@@ -34,19 +34,22 @@
 		<property name="das2.resources" value="${das2server}/resources" />
 		<property name="das2.UCSCExecutables" value="${das2server}/UCSCExecutables" />
 
+		<taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" classpathref="contrib.path" />
+		<propertyregex property="appShortVersion" input="${appVersion}" regexp="(\d+\.\d+)" select="\1" defaultValue="${appVersion}" />
+
 		<!-- JNLP Webstart -->
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
 		<property name="jnlp.largefile.path" value="${igb}/etc/igb-large.jnlp" />
 		<property name="jnlp.5GB.path" value="${igb}/etc/igb-5GB.jnlp" />
 		<property name="jnlp.basefile.path" value="${igb}/etc/igb-base.jnlp" />
 		<!-- property name="jnlp.version"   value="${build.version}" / -->
-		<property name="jnlp.version"   value="${appVersion}" />
+		<property name="jnlp.version"   value="${appShortVersion}" />
 		<property name="jnlp.codebase"  value="http://USE_YOUR_URL_HERE" />
 		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${common}/resources/images/${jnlp.icon.name}" />
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />
 		<property name="jnlp.splashicon.path" value="${common}/resources/images/${jnlp.splashicon.name}" />
-
+	
 		
 		<!-- FLEX -->
 		<property name="FLEX_HOME"              value="${lib.dir}/flex_sdk/"/>

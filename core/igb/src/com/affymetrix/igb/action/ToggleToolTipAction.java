@@ -6,12 +6,18 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import javax.swing.Action;
 
 /**
  *
  * @author hiralv
  */
 public class ToggleToolTipAction extends GenericAction {
+	private static final String SHOW_TOOLTIP = "Show data tooltip";
+	private static final String HIDE_TOOLTIP = "Hide data tooltip";
+	
 	private static final long serialVersionUID = 1;
 	private static final ToggleToolTipAction ACTION = new ToggleToolTipAction();
 
@@ -23,6 +29,21 @@ public class ToggleToolTipAction extends GenericAction {
 		this.ordinal = 160;
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
+		
+		Boolean selected = (Boolean) getValue(Action.SELECTED_KEY);
+		putValue(Action.SHORT_DESCRIPTION, selected != null && selected ? HIDE_TOOLTIP : SHOW_TOOLTIP);
+		this.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
+					if (evt.getNewValue() == Boolean.TRUE) {
+						putValue(Action.SHORT_DESCRIPTION, HIDE_TOOLTIP);
+					} else {
+						putValue(Action.SHORT_DESCRIPTION, SHOW_TOOLTIP);
+					}
+				}
+			}
+		});
 	}
 	
 	static{

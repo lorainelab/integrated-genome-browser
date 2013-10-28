@@ -134,7 +134,10 @@
 
 	<target name="create-jar" depends="mani-vers">
 		<mkdir dir="${dist.dir}" />
-		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
+		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF" filesetmanifest="merge">
+			<manifest>
+                <attribute name="Trusted-Library" value="true" />
+            </manifest>
 			<fileset dir="${build.dir}" />
 		</jar>
 	</target>

@@ -41,8 +41,8 @@ public class RemoteBlastNCBI {
 	 */
 	public enum BlastType {
 
-		blastn,
 		blastx,
+		blastn,
 		tblastx
 	}
 

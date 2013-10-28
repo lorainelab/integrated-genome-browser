@@ -435,6 +435,12 @@ public final class LocalUrlCacher {
 					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
 							"Remote URL not reachable: {0}", url);
 				}
+				
+				if (cache_file.exists()) { // If cache file exists and url is not reacheable then probably site is down.
+					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
+							"Remote URL {0} not reachable to compare to local cache. So ignoring the cache.", url);
+					return null;
+				}
 			}
 			if (DEBUG_CONNECTION) {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,

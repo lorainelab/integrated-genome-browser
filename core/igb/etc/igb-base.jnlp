@@ -9,7 +9,7 @@
 		<all-permissions/>
 	</security>
 	<resources>
-		<jar href="igb_exe.jar" main="true" />
+		<jar href="@igb.jar.name@.jar" main="true" />
 		<!-- jar href="igb-i18n.jar" / -->
 
 		<property name="apple.laf.useScreenMenuBar" value="true" />

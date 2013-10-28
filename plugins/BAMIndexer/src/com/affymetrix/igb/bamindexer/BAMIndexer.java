@@ -56,7 +56,8 @@ public class BAMIndexer {
 		}
 		mainGUI.updateStatus("Checking sort type...");
 		DEBUG(TAB.RIGHT, "Header");
-		//TODO check for sorted flag. see http://gatkforums.broadinstitute.org/discussion/1317/collected-faqs-about-bam-files
+		
+		//check for sorted flag. see http://gatkforums.broadinstitute.org/discussion/1317/collected-faqs-about-bam-files
 		SAMFileReader sfReader = new SAMFileReader(bamFile);
 		SAMFileHeader sfHeader = sfReader.getFileHeader();
 		Set<Map.Entry<String, String>> attributes = sfHeader.getAttributes();
@@ -70,13 +71,17 @@ public class BAMIndexer {
 		DEBUG(TAB.ONCE, "SO:", sortType);
 		option.put(opt.SortType, sortType);
 
-		if (sortType == null || sortType.isEmpty() || !sortType.equalsIgnoreCase("coordinate")) {
-			int dialog = JOptionPane.showConfirmDialog(mainGUI, "BAM file \"" + bamFile.getName() + "\" does not appear to be coordinate sorted.\nIndex files can be created for sorted files only.\nWould you like to create a new, coordinate sorted copy of the file? \n Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size.", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+		if (sortType == null || sortType.isEmpty() || !sortType.equalsIgnoreCase("coordinate") || sortType.equalsIgnoreCase("sorted")) {
+			int dialog = JOptionPane.showConfirmDialog(mainGUI
+					,"BAM file \"" + bamFile.getName() + "\" does not appear to be coordinate sorted.\nIndex files can be created for sorted files only.\n"
+							+ "Would you like to create a new, coordinate sorted copy of the file? \n"
+							+ " Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size."
+					, "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
 
 			if (dialog == JOptionPane.YES_OPTION) {
 				option.put(opt.DoSort, true);
 			} else if (dialog == JOptionPane.CANCEL_OPTION) {
-				throw new CancellationException("User canceled");
+				throw new CancellationException("User canceled bam indexing operations.");
 			}
 
 		} else {
@@ -88,7 +93,7 @@ public class BAMIndexer {
 	static class BAMIndexAction extends GenericAction {
 
 		BAMIndexAction() {
-			super("BamIndexer", "16x16/actions/save_session.png", "22x22/actions/save_session.png");
+			super("BamIndexer", "",""/*"16x16/actions/save_session.png", "22x22/actions/save_session.png"*/); //Set name and icon
 		}
 
 		@Override
@@ -339,9 +344,14 @@ public class BAMIndexer {
 	 * This function will take in N number of BAM or SAM files and create
 	 * indexes.
 	 *
-	 * The work flow is as follows 1) Check files Simple check for the
-	 * SO:coordinate flag Simple check to see if there is a file name collision
-	 * 2) Process Do all sorting and indexing
+	 * The work flow is as follows...
+	 * Checks:
+	 *	1)Simple check to see if there is a file name collision
+	 *	2) Simple SO: flag check.
+	 *		values expected = unknown (default), unsorted, queryname and coordinate. 
+	 *		values that pass = coordinate and the unofficial "sorted"
+	 * Processing:
+	 *	3) Sorting and indexing.
 	 *
 	 * @param bamFiles any List interface full of File objects. Expected to be
 	 * SAM or BAM
@@ -371,7 +381,7 @@ public class BAMIndexer {
 		for (File bamFile : bamFiles) {
 			mainGUI.updateStatus(bamFile.getName());
 
-			//save options from last iteration (last file)
+			//save options from last iteration (i-1)
 			if (option != null) { //skip the first iteration
 				options.put(bamFile.getName(), option);
 			}
@@ -396,13 +406,13 @@ public class BAMIndexer {
 
 			//Now see if we have a file named fileName.bai NOTE: not official ext but accepted in the community
 			File altIndexName = new File(removeExtension(bamFile.getAbsolutePath()) + ".bai");
-			if (altIndexName.exists()) {
-				if (!indexFile.exists()) {
+			if (altIndexName.exists()) { //alt name exists
+				if (!indexFile.exists()) { //if the real extention does not exist then let's clean up by enforcing the accepted ext
 					JOptionPane.showMessageDialog(mainGUI, ""
 							+ "Index file \"" + altIndexName.getName() + "\" exists. Renaming to " + indexFile.getName());
 					option.put(opt.DoesIndexExist, true);
 					altIndexName.renameTo(indexFile);
-				} else {
+				} else { //both exist.
 					JOptionPane.showMessageDialog(mainGUI, ""
 							+ "Index file \"" + altIndexName.getName() + "\" and " + indexFile.getName() + " exists. This indexing utility will use " + indexFile.getName());
 				}

@@ -23,11 +23,11 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		
 		// assuming last file menu item is Exit, leave it there
 		JRPMenu file_menu = igbService.getMenu("tools");
-		final int index = file_menu.getItemCount() - 1;
-		file_menu.insertSeparator(index);
+		final int index = file_menu.getItemCount() ;
+		//file_menu.insertSeparator(index);
 	
 		return new ServiceRegistration[] {
-			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("BAMIndexer", BAMIndexer.getAction()), "tools", index), null),
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Make Index for BAM File(s)", BAMIndexer.getAction()), "tools", index), null),
 		};
 	}
 }

@@ -26,15 +26,16 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     private int iCompleteJobs = 0;
 
     public void setNewTasks(double tasks) throws Exception {
-        if (iCompleteJobs >= jobs.length) {
+        if (iCompleteJobs >= this.jobs.length) {
             throw new Exception("This progress bar can not have any more jobs!");
         }
         this.stepSize = (max * jobs[iCompleteJobs]) / tasks;
     }
 
     public void finishedTask() {
+		
         double newValue = jProgressBar1.getValue() + stepSize;
-
+		
 
         if (jProgressBar1.isIndeterminate()) {
             jProgressBar1.setIndeterminate(false);

@@ -18,7 +18,7 @@
 	</security>
 	<resources>
 		<java version="1.6+" initial-heap-size="32m" max-heap-size="2048m"/>
-		<jar href="igb_exe-large.jar" main="true" />
+		<jar href="@igb.jar.large.name@.jar" main="true" />
 		<!-- jar href="igb-i18n.jar" / -->
 		<property name="apple.laf.useScreenMenuBar" value="true" />
 		<property name="http.agent" value="IGB/@jnlp.version@ +LargeMem (Webstart)" />

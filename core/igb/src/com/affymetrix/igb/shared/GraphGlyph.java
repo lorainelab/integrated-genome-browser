@@ -1406,6 +1406,6 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		if(!getAnnotStyle().getFloatTier()){
 			return super.withinView(view);
 		}
-		return this.getPositiveCoordBox().intersects(this.getParent().getCoordBox());
+		return this.getCoordBox().intersects(this.getParent().getCoordBox());
 	}
 }

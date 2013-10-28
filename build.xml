@@ -177,9 +177,7 @@
 		</parallel>
 	</target>
 
-<<<<<<< HEAD
 	<target name="sign">
-<<<<<<< HEAD
 		<jar destfile="${theFile}" update="true" index="true">
             <manifest>
                 <attribute name="Trusted-Library" value="true" />
@@ -204,15 +202,6 @@
 	</macrodef>
 
 	<target name="webstart" depends="jar, bundles_properties" description="Create webstart-compatible IGB jars">
-=======
-		<my.signjar jar="${theFile}" signedjar="${theFile}" />
-	</target>
-
-	<target name="webstart" depends="jar,bundles_properties" description="Create webstart-compatible IGB jars">
->>>>>>> Sign all jars inside igb_exe.
-=======
-	<target name="webstart" depends="exe" description="Create webstart-compatible IGB jars">
->>>>>>> Reverting changes of r15655.
 		<mkdir dir="${webstart.dir}" />
 
 <!--		<delete file="${webstart.dir}/das2server.jar" />-->	
@@ -220,7 +209,6 @@
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 <!--		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />-->
 
-<<<<<<< HEAD
 		<taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach" classpathref="contrib.path" />
 		<foreach target="sign" parallel="true" inheritall="true" param="theFile">
 			<fileset dir="${bundle.dir}">
@@ -231,12 +219,6 @@
 			</fileset>
 		</foreach>
 
-=======
->>>>>>> Reverting changes of r15655.
-		<mkdir dir="${dist.dir}/JNLP-INF" />
-		<property name="temp.jar" value="${webstart.dir}/${igb.jar.name}.tmp.jar" />
-		<igb.executable jarfile="${temp.jar}" index="false" />
-
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.name}.jar" jnlp.file="igb.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.large.name}.jar" jnlp.file="igb-large.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.5GB.name}.jar" jnlp.file="igb-5GB.jnlp" />
@@ -245,6 +227,7 @@
 				
 		<!--my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" / -->
 	</target>
+
 
 	<presetdef name="igb.launcher">		
 		<jar update="false">

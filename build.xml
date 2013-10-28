@@ -173,11 +173,7 @@
 		</parallel>
 	</target>
 
-	<target name="sign">
-		<my.signjar jar="${theFile}" signedjar="${theFile}" />
-	</target>
-
-	<target name="webstart" depends="jar,bundles_properties" description="Create webstart-compatible IGB jars">
+	<target name="webstart" depends="exe" description="Create webstart-compatible IGB jars">
 		<mkdir dir="${webstart.dir}" />
 
 		<delete file="${webstart.dir}/das2server.jar" />
@@ -190,15 +186,6 @@
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 <!--		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />-->
 
-		<taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach" classpathref="contrib.path" />
-		<foreach target="sign" parallel="true" inheritall="true" param="theFile">
-			<fileset dir="${bundle.dir}">
-				<include name="**/*.jar"/>
-				<exclude name="**/*Test*"/>
-			</fileset>
-		</foreach>
-		
-		<antcall target="-igb_exe" />
 		<mkdir dir="${dist.dir}/JNLP-INF" />
 		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
 		<jar destfile="${igb.jar.5GB.name}.jar" update="false" filesetmanifest="merge" >
@@ -458,16 +445,12 @@
 	</target>
 
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
-		<antcall target="-igb_exe" />
-	</target>
-	
-	<target name="-igb_exe" description="Create a single-jar IGB application">
 		<jar jarfile="${igb.jar.name}.jar" update="false" index="true">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
 				<attribute name="Application-Name" value="IGB" />
 				<attribute name="Permissions" value="all-permissions"/>
-				<!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
+<!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>

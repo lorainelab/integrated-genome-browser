@@ -80,7 +80,7 @@ public class NewGenome extends javax.swing.JPanel {
         });
 
         switchCheckBox.setSelected(true);
-        switchCheckBox.setText("Switch to new species after creating it");
+        switchCheckBox.setText("Switch to custom genome");
 
         refSeqLabel.setText("Reference Sequence");
 

@@ -92,7 +92,7 @@
     <Component class="javax.swing.JCheckBox" name="switchCheckBox">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" value="Switch to new species after creating it"/>
+        <Property name="text" type="java.lang.String" value="Switch to custom genome"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="refSeqLabel">

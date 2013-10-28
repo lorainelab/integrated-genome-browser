@@ -288,7 +288,7 @@ public class PopupInfo extends JWindow {
 				tooltip.getDocument().insertString(
 						tooltip.getDocument().getLength(), properties[i][0], NAME);
 				tooltip.getDocument().insertString(
-						tooltip.getDocument().getLength(), " : ", null);
+						tooltip.getDocument().getLength(), " ", null);
 				tooltip.getDocument().insertString(
 						tooltip.getDocument().getLength(), properties[i][1], null);
 				tooltip.getDocument().insertString(

@@ -33,7 +33,10 @@
 		<mkdir dir="${proj.dist}" />
 		
 		
-		<jar destfile="${proj.dist}/${output.jar}--igbext.jar">
+		<jar destfile="${proj.dist}/${output.jar}--igbext.jar" filesetmanifest="merge">
+			<manifest>
+                <attribute name="Trusted-Library" value="true" />
+            </manifest>
 			<fileset dir="${build.dir}"/>
 			<zipfileset includes="**/*" src="${lib.dir}/${project}.jar"/>
 		</jar>

@@ -11,11 +11,7 @@
     <tstamp/>
 
 		<!-- directory paths -->
-		<property name="dist.dir"     value="${basedir}/dist" />
-		<property name="webstart.dir" value="${dist.dir}/webstart" />
 		<property name="flex.dir"     value="${basedir}/flex" />
-		<property name="webapp.dir"   value="${dist.dir}/webapp" />
-		<property name="release.dir"  value="${dist.dir}/release" />
 		<property name="root.dir"     value="${basedir}" />
 
 		<property name="server.deploy.dir"   value="/Applications/apache-tomcat-5.5.31/webapps" />
@@ -241,16 +237,16 @@
 	<condition property="should_compile_flex">
 		<and>
 			<!-- Is the das2 mode genopub? -->
-  	  <istrue value="${das2genopub}"/>
+			<istrue value="${das2genopub}"/>
 			
-	    <!-- Is the flex app not already up-to-date? -->
+			<!-- Is the flex app not already up-to-date? -->
 			<not>
-	  	  <uptodate property="flex_up_to_date" targetfile="${dist.dir}/GenoPub.swf">
-	    	  <srcfiles dir="${das2server}/flex">
-		    	  <include name="**/*.as"/>
-	  	  	  <include name="**/*.mxml"/>
-	  		  </srcfiles>
-			  </uptodate>
+				<uptodate property="flex_up_to_date" targetfile="${basedir}/dist/GenoPub.swf">
+					<srcfiles dir="${das2server}/flex">
+						<include name="**/*.as"/>
+						<include name="**/*.mxml"/>
+					</srcfiles>
+				</uptodate>
 			</not>
 		</and>
 	</condition>

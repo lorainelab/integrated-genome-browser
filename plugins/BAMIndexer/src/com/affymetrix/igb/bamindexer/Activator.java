@@ -27,7 +27,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		//file_menu.insertSeparator(index);
 	
 		return new ServiceRegistration[] {
-			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Index Bam Files", BAMIndexer.getAction()), "tools", index), null),
+			bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Make Index for BAM File(s)", BAMIndexer.getAction()), "tools", index), null),
 		};
 	}
 }

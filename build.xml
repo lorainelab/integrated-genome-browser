@@ -178,6 +178,7 @@
 	</target>
 
 	<target name="sign">
+<<<<<<< HEAD
 		<jar destfile="${theFile}" update="true" index="true">
             <manifest>
                 <attribute name="Trusted-Library" value="true" />
@@ -202,6 +203,12 @@
 	</macrodef>
 
 	<target name="webstart" depends="jar, bundles_properties" description="Create webstart-compatible IGB jars">
+=======
+		<my.signjar jar="${theFile}" signedjar="${theFile}" />
+	</target>
+
+	<target name="webstart" depends="jar,bundles_properties" description="Create webstart-compatible IGB jars">
+>>>>>>> Sign all jars inside igb_exe.
 		<mkdir dir="${webstart.dir}" />
 
 <!--		<delete file="${webstart.dir}/das2server.jar" />-->	

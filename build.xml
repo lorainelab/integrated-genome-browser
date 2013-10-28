@@ -177,6 +177,7 @@
 		</parallel>
 	</target>
 
+<<<<<<< HEAD
 	<target name="sign">
 <<<<<<< HEAD
 		<jar destfile="${theFile}" update="true" index="true">
@@ -209,6 +210,9 @@
 
 	<target name="webstart" depends="jar,bundles_properties" description="Create webstart-compatible IGB jars">
 >>>>>>> Sign all jars inside igb_exe.
+=======
+	<target name="webstart" depends="exe" description="Create webstart-compatible IGB jars">
+>>>>>>> Reverting changes of r15655.
 		<mkdir dir="${webstart.dir}" />
 
 <!--		<delete file="${webstart.dir}/das2server.jar" />-->	
@@ -216,6 +220,7 @@
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 <!--		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />-->
 
+<<<<<<< HEAD
 		<taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach" classpathref="contrib.path" />
 		<foreach target="sign" parallel="true" inheritall="true" param="theFile">
 			<fileset dir="${bundle.dir}">
@@ -226,6 +231,8 @@
 			</fileset>
 		</foreach>
 
+=======
+>>>>>>> Reverting changes of r15655.
 		<mkdir dir="${dist.dir}/JNLP-INF" />
 		<property name="temp.jar" value="${webstart.dir}/${igb.jar.name}.tmp.jar" />
 		<igb.executable jarfile="${temp.jar}" index="false" />

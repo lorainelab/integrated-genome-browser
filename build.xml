@@ -135,7 +135,14 @@
 			<arg value="wrap"/>
 			<arg value="${jar_name}.jar"/>
 		</java>
-		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
+		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.tmp.bnd.jar" filtering="false" />
+		<jar jarfile="${bundle.dir}/${jar_name}.bnd.jar" filesetmanifest="merge">
+            <manifest>
+                <attribute name="Trusted-Library" value="true" />
+            </manifest>
+			<zipgroupfileset file="${bundle.dir}/${jar_name}.tmp.bnd.jar" />
+        </jar>
+		<delete file="${bundle.dir}/${jar_name}.tmp.bnd.jar" />
 	</target>
 
 	<target name="copy-bundle" description="copy bundles to bundle dir">

@@ -159,7 +159,12 @@
 	</target>
 		
 	<target name="bundle-copy" description="copy lib to bundles dir">
-		<copy file="${lib.dir}/${jar_name}.jar" tofile="${bundle.dir}/${jar_name}.jar" filtering="false" />
+		<jar jarfile="${bundle.dir}/${jar_name}.jar" filesetmanifest="merge">
+            <manifest>
+                <attribute name="Trusted-Library" value="true" />
+            </manifest>
+			<zipgroupfileset file="${lib.dir}/${jar_name}.jar" />
+        </jar>
 	</target>
 	
 	<target name="copy-bundles" description="copy bundles to bundle dir" depends="init,extras-init,compiler-def-args">

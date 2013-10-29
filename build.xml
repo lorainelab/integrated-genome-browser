@@ -461,6 +461,7 @@
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
 				<attribute name="Application-Name" value="IGB" />
 				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Trusted-Library" value="true"/>
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
 			<metainf file="LICENSE.html"/>

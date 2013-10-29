@@ -135,14 +135,7 @@
 			<arg value="wrap"/>
 			<arg value="${jar_name}.jar"/>
 		</java>
-		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.tmp.bnd.jar" filtering="false" />
-		<jar jarfile="${bundle.dir}/${jar_name}.bnd.jar" filesetmanifest="merge">
-            <manifest>
-                <attribute name="Trusted-Library" value="true" />
-            </manifest>
-			<zipgroupfileset file="${bundle.dir}/${jar_name}.tmp.bnd.jar" />
-        </jar>
-		<delete file="${bundle.dir}/${jar_name}.tmp.bnd.jar" />
+		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
 	</target>
 
 	<target name="copy-bundle" description="copy bundles to bundle dir">
@@ -159,12 +152,7 @@
 	</target>
 		
 	<target name="bundle-copy" description="copy lib to bundles dir">
-		<jar jarfile="${bundle.dir}/${jar_name}.jar" filesetmanifest="merge">
-            <manifest>
-                <attribute name="Trusted-Library" value="true" />
-            </manifest>
-			<zipgroupfileset file="${lib.dir}/${jar_name}.jar" />
-        </jar>
+		<copy file="${lib.dir}/${jar_name}.jar" tofile="${bundle.dir}/${jar_name}.jar" filtering="false" />
 	</target>
 	
 	<target name="copy-bundles" description="copy bundles to bundle dir" depends="init,extras-init,compiler-def-args">
@@ -190,18 +178,18 @@
 	</target>
 
 	<target name="sign">
-		<jar jarfile="${theFile}.tmp" filesetmanifest="merge" index="true">
-            <!-- manifest>
+		<copy file="${theFile}" tofile="${theFile}.tmp" filtering="false" />
+		<jar jarfile="${theFile}" filesetmanifest="merge" index="true">
+            <manifest>
                 <attribute name="Trusted-Library" value="true" />
-            </manifest -->
-			<zipgroupfileset file="${theFile}" />
+            </manifest>
+			<zipgroupfileset file="${theFile}.tmp" />
         </jar>
-		<delete file="${bundle.dir}/${jar_name}.tmp.bnd.jar" />
-		<my.signjar jar="${theFile}.tmp" signedjar="${theFile}" />
+		<my.signjar jar="${theFile}" signedjar="${theFile}" />
 		<delete file="${theFile}.tmp"/>
 	</target>
 
-	<target name="webstart" depends="jar,bundles_properties" description="Create webstart-compatible IGB jars">
+	<target name="webstart" depends="jar, bundles_properties" description="Create webstart-compatible IGB jars">
 		<mkdir dir="${webstart.dir}" />
 
 		<delete file="${webstart.dir}/das2server.jar" />
@@ -219,37 +207,94 @@
 			<fileset dir="${bundle.dir}">
 				<include name="**/*.jar"/>
 			</fileset>
+			<fileset dir="${ext.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
 		</foreach>
-		<antcall target="-igb_exe" />
 
 		<mkdir dir="${dist.dir}/JNLP-INF" />
-		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.5GB.name}.jar" update="false" filesetmanifest="merge" index="true">
+		<copy file="${webstart.dir}/igb.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
+		<jar jarfile="${igb.jar.name}.jar" update="false" index="true">
 			<manifest>
-				<attribute name="Codebase" value="${jnlp.codebase}"/>
+				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
+				<attribute name="Application-Name" value="IGB" />
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Trusted-Library" value="true"/>
+				<attribute name="Codebase" value="${jnlp.codebase}"/>	
+<!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
+			<metainf file="LICENSE.html"/>
+			<metainf file="NOTICES.txt"/>
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
-			<zipgroupfileset file="${igb.jar.name}.jar" />
+			<zipgroupfileset dir="${dist.dir}">
+				<include name="main.jar"/>
+				<include name="common.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset file="${osgi.impl}" />
+			<fileset dir="${bundle.dir}">
+				<include name="*.jar"/>
+				<include name="bundles.properties"/>
+			</fileset>
+			<fileset dir="${ext.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
 		</jar>
 
 		<copy file="${webstart.dir}/igb-large.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.large.name}.jar" update="false" filesetmanifest="merge" index="true">
+		<jar jarfile="${igb.jar.large.name}.jar" update="false" filesetmanifest="merge" index="true">
 			<manifest>
-				<attribute name="Codebase" value="${jnlp.codebase}"/>
+				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
+				<attribute name="Application-Name" value="IGB" />
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Trusted-Library" value="true"/>
+				<attribute name="Codebase" value="${jnlp.codebase}"/>	
+<!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
+			<metainf file="LICENSE.html"/>
+			<metainf file="NOTICES.txt"/>
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
-			<zipgroupfileset file="${igb.jar.name}.jar" />
+			<zipgroupfileset dir="${dist.dir}">
+				<include name="main.jar"/>
+				<include name="common.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset file="${osgi.impl}" />
+			<fileset dir="${bundle.dir}">
+				<include name="*.jar"/>
+				<include name="bundles.properties"/>
+			</fileset>
+			<fileset dir="${ext.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
 		</jar>
 
-		<copy file="${webstart.dir}/igb.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.name}.jar" update="true" index="true">
+		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
+		<jar jarfile="${igb.jar.5GB.name}.jar" update="false" filesetmanifest="merge" index="true">
 			<manifest>
-				<attribute name="Codebase" value="${jnlp.codebase}"/>
+				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
+				<attribute name="Application-Name" value="IGB" />
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Trusted-Library" value="true"/>
+				<attribute name="Codebase" value="${jnlp.codebase}"/>	
+<!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
+			<metainf file="LICENSE.html"/>
+			<metainf file="NOTICES.txt"/>
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
-		</jar>		
+			<zipgroupfileset dir="${dist.dir}">
+				<include name="main.jar"/>
+				<include name="common.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset file="${osgi.impl}" />
+			<fileset dir="${bundle.dir}">
+				<include name="*.jar"/>
+				<include name="bundles.properties"/>
+			</fileset>
+			<fileset dir="${ext.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</jar>
 		<delete dir="${dist.dir}/JNLP-INF" />
-
+		
 		<my.signjar jar="${basedir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
 		<my.signjar jar="${basedir}/${igb.jar.large.name}.jar" signedjar="${webstart.dir}/${igb.jar.large.name}.jar" />
 		<my.signjar jar="${basedir}/${igb.jar.5GB.name}.jar" signedjar="${webstart.dir}/${igb.jar.5GB.name}.jar" />
@@ -481,10 +526,6 @@
 	</target>
 
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
-		<antcall target="-igb_exe" />
-	</target>
-	
-	<target name="-igb_exe" description="Create a single-jar IGB application">
 		<jar jarfile="${igb.jar.name}.jar" update="false" index="true">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>

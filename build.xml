@@ -235,7 +235,6 @@
 		<!--my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" / -->
 	</target>
 
-
 	<presetdef name="igb.launcher">		
 		<jar update="false">
 			<manifest>

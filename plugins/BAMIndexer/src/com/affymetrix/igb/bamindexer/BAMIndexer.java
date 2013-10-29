@@ -93,7 +93,7 @@ public class BAMIndexer {
 	static class BAMIndexAction extends GenericAction {
 
 		BAMIndexAction() {
-			super("BamIndexer", "",""/*"16x16/actions/save_session.png", "22x22/actions/save_session.png"*/); //Set name and icon
+			super("Make Index for BAM File(s)","16x16/actions/blank_placeholder.png", "22x22/actions/blank_placeholder.png"); //Set name and icon
 		}
 
 		@Override

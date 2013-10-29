@@ -204,7 +204,7 @@
 
 		<mkdir dir="${dist.dir}/JNLP-INF" />
 		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.5GB.name}.jar" update="false" filesetmanifest="merge" >
+		<jar destfile="${igb.jar.5GB.name}.jar" update="false" filesetmanifest="merge" index="true">
 			<manifest>
 				<attribute name="Codebase" value="${jnlp.codebase}"/>
 			</manifest>
@@ -213,7 +213,7 @@
 		</jar>
 
 		<copy file="${webstart.dir}/igb-large.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.large.name}.jar" update="false" filesetmanifest="merge" >
+		<jar destfile="${igb.jar.large.name}.jar" update="false" filesetmanifest="merge" index="true">
 			<manifest>
 				<attribute name="Codebase" value="${jnlp.codebase}"/>
 			</manifest>
@@ -222,7 +222,7 @@
 		</jar>
 
 		<copy file="${webstart.dir}/igb.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar destfile="${igb.jar.name}.jar" update="true">
+		<jar destfile="${igb.jar.name}.jar" update="true" index="true">
 			<manifest>
 				<attribute name="Codebase" value="${jnlp.codebase}"/>
 			</manifest>

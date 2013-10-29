@@ -526,7 +526,11 @@
 	</target>
 
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
-		<jar jarfile="${igb.jar.name}.jar" update="false" index="true">
+		<igb.executable jarfile="${igb.jar.name}.jar" />
+	</target>
+	
+	<presetdef name="igb.executable">
+		<jar update="false" index="true">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
 				<attribute name="Application-Name" value="IGB" />
@@ -549,7 +553,7 @@
 				<include name="*.jar"/>
 			</fileset>
 		</jar>
-	</target>
+	</presetdef>
 
 	<target name="protannot_exe" depends="jar" description="Create a single-jar Protannot application">
 		<jar jarfile="protannot_exe.jar" update="false">

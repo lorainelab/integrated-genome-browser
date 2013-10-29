@@ -93,6 +93,7 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
         return new Double[]{min, max};
     }
 
+
     public BAMIndexerProgress() throws Exception {
         this(null, null);
     }

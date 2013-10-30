@@ -34,7 +34,7 @@ public class ShowLockedTrackIconAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		IGBStateProvider.setShowLockIcon((Boolean)getValue(SELECTED_KEY));
-		getSeqMapView().getSeqMap().repackTheTiers(true, true);
+		getSeqMapView().getSeqMap().updateWidget();
 	}
 
 	@Override

@@ -393,7 +393,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		if (col == REFRESH_FEATURE_COLUMN){
-			if (IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID())) {
+			if (smv.getAnnotatedSeq() == null || IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID())) {
 				return false; 
 			}
 			return true;

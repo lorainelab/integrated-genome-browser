@@ -215,13 +215,17 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 	public TableCellRenderer getCellRenderer(int row, int column) {
 		DataManagementTableModel ftm = (DataManagementTableModel) getModel();
 		VirtualFeature vFeature = ftm.getFeature(row);
-
+		if(vFeature == null) {
+			return super.getCellRenderer(row, column);
+		}
+		
 		if (column == DataManagementTableModel.REFRESH_FEATURE_COLUMN) {
 //			if (!vFeature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
 			boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD 
 					&& vFeature.getLoadStrategy() != LoadStrategy.GENOME 
+					&& smv.getAnnotatedSeq() != null 
 					&& !IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID()));
 			return new LabelTableCellRenderer(DataManagementTable.refresh_icon, enabled);
 		} else if (column == DataManagementTableModel.LOAD_STRATEGY_COLUMN) {

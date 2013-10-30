@@ -209,33 +209,34 @@
 			</fileset>
 		</foreach>
 
-		<igb.executable jarfile="${igb.jar.name}.tmp.jar" index="false" />
 		<mkdir dir="${dist.dir}/JNLP-INF" />
-
+		<property name="temp.jar" value="${webstart.dir}/${igb.jar.name}.tmp.jar" />
+		<igb.executable jarfile="${temp.jar}" index="false" />
+		
 		<copy file="${webstart.dir}/igb.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar jarfile="${igb.jar.name}.jar" update="false" filesetmanifest="merge" index="true">
+		<jar jarfile="${webstart.dir}/${igb.jar.name}.jar" update="false" index="true" filesetmanifest="merge">
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
-			<zipgroupfileset file="${igb.jar.name}.tmp.jar" />
+			<zipgroupfileset file="${temp.jar}" />
 		</jar>
+		<my.signjar jar="${webstart.dir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
 
 		<copy file="${webstart.dir}/igb-large.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar jarfile="${igb.jar.large.name}.jar" update="false" filesetmanifest="merge" index="true">
+		<jar jarfile="${webstart.dir}/${igb.jar.large.name}.jar" update="false" index="true" filesetmanifest="merge">
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
-			<zipgroupfileset file="${igb.jar.name}.tmp.jar" />
+			<zipgroupfileset file="${temp.jar}" />
 		</jar>
+		<my.signjar jar="${webstart.dir}/${igb.jar.large.name}.jar" signedjar="${webstart.dir}/${igb.jar.large.name}.jar" />
 
 		<copy file="${webstart.dir}/igb-5GB.jnlp" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
-		<jar jarfile="${igb.jar.5GB.name}.jar" update="false" index="true">
+		<jar jarfile="${webstart.dir}/${igb.jar.5GB.name}.jar" index="true" filesetmanifest="merge">
 			<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
-			<zipgroupfileset file="${igb.jar.name}.tmp.jar" />
+			<zipgroupfileset file="${temp.jar}" />
 		</jar>
+		<my.signjar jar="${webstart.dir}/${igb.jar.5GB.name}.jar" signedjar="${webstart.dir}/${igb.jar.5GB.name}.jar" />
 
 		<delete dir="${dist.dir}/JNLP-INF" />
-		<delete file="${igb.jar.name}.tmp.jar" />
-		
-		<my.signjar jar="${basedir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
-		<my.signjar jar="${basedir}/${igb.jar.large.name}.jar" signedjar="${webstart.dir}/${igb.jar.large.name}.jar" />
-		<my.signjar jar="${basedir}/${igb.jar.5GB.name}.jar" signedjar="${webstart.dir}/${igb.jar.5GB.name}.jar" />
+		<delete file="${temp.jar}" />
+				
 		<!--my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" / -->
 	</target>
 

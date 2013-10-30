@@ -357,21 +357,15 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		Graphics g = view.getGraphics();
 		Color sel_color = view.getScene().getSelectionColor();
 		g.setColor(sel_color);
-		view.transformToPixels(getCoordBox(), getPixelBox());
-
+		Rectangle hpix = calcHandlePix(view);
+		
 		// only outline the handle, not the whole graph
-		g.drawRect(getPixelBox().x, getPixelBox().y,
-				handle_width - 1, getPixelBox().height - 1);
-		g.drawRect(getPixelBox().x + 1, getPixelBox().y + 1,
-				handle_width - 3, getPixelBox().height - 3);
+		g.drawRect(hpix.x, hpix.y, hpix.width - 1, hpix.height - 1);
+		g.drawRect(hpix.x + 1, hpix.y + 1, hpix.width - 3, hpix.height - 3);
 
 		// also draw a little pointing triangle to make the selection stand-out more
-		int[] xs = {getPixelBox().x + handle_width,
-			getPixelBox().x + handle_width + pointer_width,
-			getPixelBox().x + handle_width};
-		int[] ys = {getPixelBox().y,
-			getPixelBox().y + (int) (0.5 * (getPixelBox().height - 1)),
-			getPixelBox().y + getPixelBox().height - 1};
+		int[] xs = {hpix.x + hpix.width, hpix.x + hpix.width + pointer_width, hpix.x + hpix.width};
+		int[] ys = {hpix.y, hpix.y + (int) (0.5 * (hpix.height - 1)), hpix.y + hpix.height - 1};
 		Color c = new Color(sel_color.getRed(), sel_color.getGreen(), sel_color.getBlue(), 128);
 		g.setColor(c);
 		g.fillPolygon(xs, ys, 3);

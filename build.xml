@@ -178,15 +178,12 @@
 	</target>
 
 	<target name="sign">
-		<copy file="${theFile}" tofile="${theFile}.tmp" filtering="false" />
-		<jar jarfile="${theFile}" filesetmanifest="merge" index="true">
+		<jar destfile="${theFile}" update="true" index="true">
             <manifest>
                 <attribute name="Trusted-Library" value="true" />
             </manifest>
-			<zipgroupfileset file="${theFile}.tmp" />
         </jar>
 		<my.signjar jar="${theFile}" signedjar="${theFile}" />
-		<delete file="${theFile}.tmp"/>
 	</target>
 
 	<target name="webstart" depends="jar, bundles_properties" description="Create webstart-compatible IGB jars">

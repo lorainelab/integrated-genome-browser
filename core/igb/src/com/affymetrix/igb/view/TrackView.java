@@ -164,6 +164,11 @@ public class TrackView {
 						}
 						//map.removeItem(glyph);
 					}
+				} else if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher("").reset(method).matches()) {
+					GlyphI glyph = smv.getAxisTier().getItem(sym);
+					if(glyph != null){
+						smv.getSeqMap().removeItem(glyph);
+					}
 				}
 				seq.unloadAnnotation(sym);
 				

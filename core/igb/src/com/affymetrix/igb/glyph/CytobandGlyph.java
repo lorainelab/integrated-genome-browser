@@ -132,6 +132,7 @@ public abstract class CytobandGlyph {
 			}
 		
 		};
+		axis_tier.setDataModelFromOriginalSym(cytoband_glyph, cyto_annots);
 		cytoband_glyph.setMoveChildren(false);
 		if (cytoband_glyph_A != null && cytoband_glyph_B != null) {
 			cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());

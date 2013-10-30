@@ -191,6 +191,7 @@
 		<attribute name="jar.file" />
 		<attribute name="temp.file" />
 		<sequential>
+			<copy file="${jnlp.dir}/@{jnlp.file}" tofile="${webstart.dir}/@{jnlp.file}" filtering="true" overwrite="true" />
 			<copy file="${webstart.dir}/@{jnlp.file}" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
 			<jar jarfile="${webstart.dir}/@{jar.file}" update="false" index="true" filesetmanifest="merge">
 				<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
@@ -206,10 +207,6 @@
 		<delete file="${webstart.dir}/das2server.jar" />
 		
 		<copy file="${def.prefs.dir}/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
-		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
-		<copy file="${jnlp.largefile.path}" tofile="${webstart.dir}/igb-large.jnlp" filtering="true" overwrite="true" />
-		<copy file="${jnlp.5GB.path}" tofile="${webstart.dir}/igb-5GB.jnlp" filtering="true" overwrite="true" />
-		<copy file="${jnlp.basefile.path}" tofile="${webstart.dir}/igb-base.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 <!--		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />-->
 

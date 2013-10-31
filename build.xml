@@ -204,7 +204,8 @@
 	<target name="webstart" depends="jar, bundles_properties" description="Create webstart-compatible IGB jars">
 		<mkdir dir="${webstart.dir}" />
 
-<!--		<delete file="${webstart.dir}/das2server.jar" />-->	
+<!--		<delete file="${webstart.dir}/das2server.jar" />-->
+		
 		<copy file="${def.prefs.dir}/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 <!--		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />-->
@@ -218,6 +219,10 @@
 				<include name="*.jar"/>
 			</fileset>
 		</foreach>
+
+		<mkdir dir="${dist.dir}/JNLP-INF" />
+		<property name="temp.jar" value="${webstart.dir}/${igb.jar.name}.tmp.jar" />
+		<igb.executable jarfile="${temp.jar}" index="false" />
 
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.name}.jar" jnlp.file="igb.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.large.name}.jar" jnlp.file="igb-large.jnlp" />
@@ -960,4 +965,3 @@
 </target>
 
 </project>
-

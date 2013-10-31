@@ -223,7 +223,7 @@
 		<mkdir dir="${dist.dir}/JNLP-INF" />
 		<property name="temp.jar" value="${webstart.dir}/${igb.jar.name}.tmp.jar" />
 		<igb.executable jarfile="${temp.jar}" index="false" />
-		
+
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.name}.jar" jnlp.file="igb.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.large.name}.jar" jnlp.file="igb-large.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.5GB.name}.jar" jnlp.file="igb-5GB.jnlp" />
@@ -232,6 +232,48 @@
 		<delete file="${temp.jar}" />
 				
 		<!--my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" / -->
+	</target>
+
+	<presetdef name="igb.launcher">		
+		<jar update="false">
+			<manifest>
+				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
+				<attribute name="Application-Name" value="IGB" />
+				<!--Attributes below are useless for local instance. 
+					But they are need for webstart.	-->
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Trusted-Library" value="true"/>
+				<attribute name="Codebase" value="${jnlp.codebase}"/>
+<!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
+			</manifest>
+			<metainf file="LICENSE.html"/>
+			<metainf file="NOTICES.txt"/>
+			<fileset dir="${main}/build" />
+			<fileset dir="${common}/build" />
+			<fileset file="${bundle.dir}/bundles.properties"/>
+			<zipgroupfileset file="${osgi.impl}" />
+		</jar>
+	</presetdef>
+
+	<target name="create.bundles.list" depends="common-init" >
+		<mkdir dir="${webstart.dir}/bundles"/>
+		<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="contrib.path" />
+		<taskdef name="var" classname="net.sf.antcontrib.property.Variable" classpathref="contrib.path" />
+		<var name="felix.auto.start" value="" />
+		<for param="file">
+			<path>
+				<fileset dir="${bundle.dir}" includes="**/*.jar"/>	
+				<fileset dir="${ext.bundle.dir}" includes="*.jar"/>
+			</path>
+			<sequential>
+				<var name="basename" unset="true"/> 
+				<basename property="basename" file="@{file}" />
+				<var name="felix.auto.start" value="${felix.auto.start} ${jnlp.codebase}/bundles/${basename}"/>
+				<copy file="@{file}" tofile="${webstart.dir}/bundles/${basename}" />
+			</sequential>
+		</for>
+		<filter token="felix.auto.start"  value="${felix.auto.start}" />
+		<copy file="${main}/resources/config.properties" tofile="${main}/build/config.properties" overwrite="true" filtering="true" />
 	</target>
 
 	<target name="webapp" depends="jar,flex" description="Create das2servlet web application">

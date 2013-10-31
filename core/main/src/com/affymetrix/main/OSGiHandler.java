@@ -144,6 +144,13 @@ public class OSGiHandler {
             if (bundleContext.getBundles().length <= 1) {
             	loadEmbeddedBundles(bundleContext);
             }
+			// This should not be required if felix.auto.start works correctly
+			String felix_auto_start = CONFIG_BUNDLE.getString("felix.autoload.bundles");
+			if(felix_auto_start != null && felix_auto_start.length() > 0 && felix_auto_start.split(" ").length > 1) {
+				for(String url : felix_auto_start.split(" ")) {
+					installBundles(bundleContext, url);
+				}
+			}
     		uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
     		installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
     		for (Bundle bundle : bundleContext.getBundles()) {

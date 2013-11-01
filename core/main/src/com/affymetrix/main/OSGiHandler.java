@@ -132,16 +132,18 @@ public class OSGiHandler {
 			clearCache();
 			return;
 		}
-
+		ourLogger.log(Level.INFO, "Starting OSGi");
 		setLaf();
 
-		String argArray = Arrays.toString(args);
+		ourLogger.log(Level.INFO, "Loading OSGi framework");
+		String argArray = Arrays.toString(args);		
 		loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try
         {
             BundleContext bundleContext = m_fwk.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
+				ourLogger.log(Level.INFO, "Loading embedded OSGi bundles");
             	loadEmbeddedBundles(bundleContext);
             }
     		uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));

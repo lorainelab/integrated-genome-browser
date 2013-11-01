@@ -132,21 +132,24 @@ public class OSGiHandler {
 			clearCache();
 			return;
 		}
-
+		ourLogger.log(Level.INFO, "Starting OSGi");
 		setLaf();
 
-		String argArray = Arrays.toString(args);
+		ourLogger.log(Level.INFO, "Loading OSGi framework");
+		String argArray = Arrays.toString(args);		
 		loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try
         {
             BundleContext bundleContext = m_fwk.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
+				ourLogger.log(Level.INFO, "Loading embedded OSGi bundles");
             	loadEmbeddedBundles(bundleContext);
             }
 			// This should not be required if felix.auto.start works correctly
 			String felix_auto_start = CONFIG_BUNDLE.getString("felix.autoload.bundles");
 			if(felix_auto_start != null && felix_auto_start.length() > 0 && felix_auto_start.split(" ").length > 1) {
+				ourLogger.log(Level.INFO, "Installing remote OSGi bundles");
 				for(String url : felix_auto_start.split(" ")) {
 					installBundles(bundleContext, url);
 				}

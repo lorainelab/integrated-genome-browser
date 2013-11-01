@@ -243,7 +243,9 @@
 					But they are need for webstart.	-->
 				<attribute name="Permissions" value="all-permissions"/>
 				<attribute name="Trusted-Library" value="true"/>
-				<attribute name="Codebase" value="${jnlp.codebase}"/>
+				<attribute name="Codebase" value="*"/>
+				<attribute name="Caller-Allowable-Codebase" value="*"/>
+				<attribute name="Application-Library-Allowable-Codebase" value="*" />
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
 			<metainf file="LICENSE.html"/>
@@ -513,7 +515,9 @@
 					But they are need for webstart.	-->
 				<attribute name="Permissions" value="all-permissions"/>
 				<attribute name="Trusted-Library" value="true"/>
-				<attribute name="Codebase" value="${jnlp.codebase}"/>
+				<attribute name="Codebase" value="*"/>
+				<attribute name="Caller-Allowable-Codebase" value="*"/>
+				<attribute name="Application-Library-Allowable-Codebase" value="*" />
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
 			<metainf file="LICENSE.html"/>

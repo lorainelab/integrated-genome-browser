@@ -369,6 +369,14 @@ public class GraphGlyph extends Glyph implements StyledGlyph{
 		Color c = new Color(sel_color.getRed(), sel_color.getGreen(), sel_color.getBlue(), 128);
 		g.setColor(c);
 		g.fillPolygon(xs, ys, 3);
+		
+		if (getShowLabel()) {
+			g.setColor(sel_color);
+			g.setFont(default_font);
+			FontMetrics fm = g.getFontMetrics();
+			Rectangle pix = fm.getStringBounds(getLabel(), g).getBounds();
+			g.drawRect(hpix.x + hpix.width, hpix.y + fm.getMaxAscent() - pix.height + 1, pix.width, pix.height);
+		}
 	}
 
 	@Override

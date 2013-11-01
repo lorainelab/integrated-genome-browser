@@ -72,6 +72,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 		GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
 		JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
 		Properties tutorials = new Properties();
+		loadDefaultTutorialPrefs();
 		Preferences tutorialsNode = getTutorialsNode();
 		
 		try {

@@ -149,6 +149,7 @@ public class OSGiHandler {
 			// This should not be required if felix.auto.start works correctly
 			String felix_auto_start = CONFIG_BUNDLE.getString("felix.autoload.bundles");
 			if(felix_auto_start != null && felix_auto_start.length() > 0 && felix_auto_start.split(" ").length > 1) {
+				ourLogger.log(Level.INFO, "Installing remote OSGi bundles");
 				for(String url : felix_auto_start.split(" ")) {
 					installBundles(bundleContext, url);
 				}

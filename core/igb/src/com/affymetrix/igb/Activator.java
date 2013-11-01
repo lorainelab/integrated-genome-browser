@@ -337,6 +337,9 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.NewFindJunctionOperator(false), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.NewFindJunctionOperator(true), null);
+
 	}
 	
 	private void initColorProvider(final BundleContext bundleContext) {

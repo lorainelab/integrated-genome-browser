@@ -89,6 +89,7 @@ public interface IGBService {
 	public JRPMenu getMenu(String menuName);
 	public JRPMenu addTopMenu(String id, String text);
 
+	public void loadAndDisplayAnnotations(GenericFeature gFeature);
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void loadChromosomes(GenericFeature gFeature);
 	public void updateGeneralLoadView();

@@ -60,7 +60,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionListener;
@@ -145,6 +144,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return igb.addTopMenu(id, text);
 	}
 
+	@Override
+	public void loadAndDisplayAnnotations(GenericFeature gFeature) {
+		GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+	}
+	
 	@Override
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);

@@ -7,6 +7,7 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -26,11 +27,12 @@ import java.util.*;
  * @author Ed Erwin
  */
 public class WiggleParserTest {
-
-	public WiggleParserTest() {
-		Wiggle.ensure_unique_id = true;
-	}
-
+	
+    @Before 
+	public void initialize() {
+       Wiggle.ensure_unique_id = true;
+    }
+	
 	@Test
 	public void testParse() throws Exception {
 		String filename = "test/data/wiggle/wiggleExample.wig";

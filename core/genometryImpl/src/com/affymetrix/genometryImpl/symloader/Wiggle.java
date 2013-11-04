@@ -59,7 +59,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 	};
 
 	private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
-	private static final boolean ensure_unique_id = true;
+	private static final boolean ensure_unique_id = false;
 	private final TrackLineParser track_line_parser;
 
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -239,7 +239,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 					grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString(), extension));
 				}
 
-				track_line_parser.parseTrackLine(line);
+				track_line_parser.parseTrackLine(line, uri.toString());
 				previous_track_line = true;
 
 				current_format = WigFormat.BED4; // assume BED4 until changed.

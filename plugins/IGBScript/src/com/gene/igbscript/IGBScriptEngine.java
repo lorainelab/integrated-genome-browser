@@ -500,6 +500,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
 		if (feature != null) {
 			feature.setPreferredLoadStrategy(s);
+			igbService.refreshDataManagementView();
 		} else {
 			LOG.log(Level.SEVERE, "Could not find feature: {0}", featureURIStr);
 		}

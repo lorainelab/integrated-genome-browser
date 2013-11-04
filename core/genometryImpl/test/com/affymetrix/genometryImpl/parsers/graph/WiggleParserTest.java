@@ -7,7 +7,6 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import org.junit.Test;
-import org.junit.Before;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -27,12 +26,14 @@ import java.util.*;
  * @author Ed Erwin
  */
 public class WiggleParserTest {
-		
+
+	public WiggleParserTest() {
+	}
+
 	@Test
 	public void testParse() throws Exception {
 		String filename = "test/data/wiggle/wiggleExample.wig";
-		File file = new File(filename);
-		assertTrue(file.exists());
+		assertTrue(new File(filename).exists());
 
 		InputStream istr = new FileInputStream(filename);
 		assertNotNull(istr);
@@ -72,10 +73,9 @@ public class WiggleParserTest {
 //		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		String filelocation = new File(filename).toURI().toString();
-		assertEquals(filelocation+"Bed Format", gr0.getID());
-		assertEquals(filelocation+"variableStep", gr1.getID());
-		assertEquals(filelocation+"fixedStep", gr2.getID());
+		assertEquals("Bed Format", gr0.getID());
+		assertEquals("variableStep", gr1.getID());
+		assertEquals("fixedStep", gr2.getID());
 
 		GraphState state = gr1.getGraphState();
 		assertEquals(0.0, state.getVisibleMinY(), 0.00001);
@@ -89,8 +89,7 @@ public class WiggleParserTest {
 	@Test
 	public void testWiggle1() throws Exception {
 		String filename = "test/data/wiggle/wiggleExample.wig";
-		File file = new File(filename);
-		assertTrue(file.exists());
+		assertTrue(new File(filename).exists());
 
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
@@ -128,9 +127,9 @@ public class WiggleParserTest {
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
 		String filelocation = new File(filename).toURI().toString();
-		assertEquals(filelocation+"Bed Format", gr0.getID());
-		assertEquals(filelocation+"variableStep", gr1.getID());
-		assertEquals(filelocation+"fixedStep", gr2.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 
 		GraphState state = gr1.getGraphState();
 		assertEquals(0.0, state.getVisibleMinY(), 0.00001);
@@ -164,9 +163,9 @@ public class WiggleParserTest {
 //		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		assertEquals(filelocation+"Bed Format", gr0.getID());
-		assertEquals(filelocation+"variableStep", gr1.getID());
-		assertEquals(filelocation+"fixedStep", gr2.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 
 		List<BioSeq> allSeqs = wiggle.getChromosomeList();
 		assertEquals(allSeqs.size(),1);
@@ -226,9 +225,9 @@ public class WiggleParserTest {
 
 		if(checkId){
 			String filelocation = new File(filename).toURI().toString();
-			assertEquals(filelocation+"Bed Format", gr0.getID());
-			assertEquals(filelocation+"variableStep", gr1.getID());
-			assertEquals(filelocation+"fixedStep", gr2.getID());
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 		}
 
 		return true;

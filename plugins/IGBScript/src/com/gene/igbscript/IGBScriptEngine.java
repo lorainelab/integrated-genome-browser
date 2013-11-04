@@ -501,6 +501,9 @@ public class IGBScriptEngine implements ScriptEngine {
 		if (feature != null) {
 			feature.setPreferredLoadStrategy(s);
 			igbService.refreshDataManagementView();
+			if(s == LoadStrategy.GENOME){
+				igbService.loadAndDisplayAnnotations(feature);
+			}
 		} else {
 			LOG.log(Level.SEVERE, "Could not find feature: {0}", featureURIStr);
 		}

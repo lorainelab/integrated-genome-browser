@@ -28,6 +28,7 @@ import java.util.*;
 public class WiggleParserTest {
 
 	public WiggleParserTest() {
+		Wiggle.ensure_unique_id = true;
 	}
 
 	@Test

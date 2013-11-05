@@ -60,8 +60,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 
 	private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
 	private static final boolean ensure_unique_id = true;
-	private final TrackLineParser track_line_parser;
-
+	
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -72,7 +71,6 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 	
 	public Wiggle(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri, featureName, seq_group);
-		track_line_parser = new TrackLineParser();
 	}
 
 	@Override
@@ -211,6 +209,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 	}
 
 	private List<GraphSym> parse(Iterator<String> it, BioSeq seq, int min, int max) {
+		TrackLineParser track_line_parser = new TrackLineParser();
 		WigFormat current_format = WigFormat.BED4;
 		List<GraphSym> grafs = new ArrayList<GraphSym>();
 		WiggleData current_data = null;

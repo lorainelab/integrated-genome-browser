@@ -98,6 +98,9 @@ public class TrackView {
 				boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
 				seqmap.addTier(tierGlyph, above_axis);
 			}
+		} else if (seqmap.getTierIndex(tierGlyph) == -1) { // 
+			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
+			seqmap.addTier(tierGlyph, above_axis);
 		}
 		
 		if (!style.isGraphTier() && (tier_direction == TierGlyph.Direction.FORWARD || 

@@ -975,7 +975,7 @@ public class SeqMapView extends JPanel
 		factory.createGlyphs(null, CoordinateStyle.coordinate_annot_style, this, aseq);
 		
 		addAnnotationTracks();
-		hideEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
+		removeEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
 	}
 
 	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
@@ -1050,13 +1050,14 @@ public class SeqMapView extends JPanel
 	 *
 	 * @param tiers the list of TierGlyphs
 	 */
-	private void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
+	private void removeEmptyTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
 			if (tg.getChildCount() == 0) {
-				tg.setVisibility(false);
-				if(tg instanceof DefaultTierGlyph){
-					((DefaultTierGlyph)tg).setHeightFixed(false);
-				}
+				seqmap.removeTier(tg);			
+//				tg.setVisibility(false);
+//				if(tg instanceof DefaultTierGlyph){
+//					((DefaultTierGlyph)tg).setHeightFixed(false);
+//				}
 			}
 		}
 	}

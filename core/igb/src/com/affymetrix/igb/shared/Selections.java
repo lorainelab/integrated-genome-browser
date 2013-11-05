@@ -142,6 +142,7 @@ public abstract class Selections {
 				allGlyphs.add(gg);
 				if(gg.getInfo() != null) {
 					rootSyms.add((RootSeqSymmetry)gg.getInfo());
+					graphSyms.add((RootSeqSymmetry)gg.getInfo());
 				}
 			}
 		}

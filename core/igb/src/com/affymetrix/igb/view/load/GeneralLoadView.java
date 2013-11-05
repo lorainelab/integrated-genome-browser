@@ -640,12 +640,11 @@ public final class GeneralLoadView {
 				}
 								
 				if (refresh) {
+					removeTier(feature.getURI().toString());
 					if (!feature.getMethods().isEmpty()) {
 						for (String method : feature.getMethods()) {
 							removeTier(method);
 						}
-					}  else {
-						removeTier(feature.getURI().toString());
 					}
 					feature.clear();
 					

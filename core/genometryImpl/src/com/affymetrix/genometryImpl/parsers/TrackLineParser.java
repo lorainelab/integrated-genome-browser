@@ -18,8 +18,9 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import java.awt.Color;
+import com.affymetrix.genometryImpl.style.PropertyConstants;
 
+import java.awt.Color;
 import java.util.*;
 import java.util.regex.*;
 
@@ -135,7 +136,7 @@ public final class TrackLineParser {
 		String human_name = appendTrackName(track_hash, default_track_name);
 		String name = track_hash.get(NAME);
 		
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type, null);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type, getTrackProperties(track_hash));
 		applyTrackProperties(track_hash, style);
 		return style;
 	}
@@ -199,15 +200,12 @@ public final class TrackLineParser {
 	 *  (For a graph, the ITrackStyle will be an instance of DefaultTrackStyle,
 	 *   for a non-graph, it will be an instance of TrackStyle.)
 	 */
-	private static void applyTrackProperties(Map<String,String> track_hash, ITrackStyle style) {
+	private static Map<String, String> getTrackProperties(Map<String,String> track_hash) {
+		Map<String, String> props = new HashMap<String, String>();
 		String visibility = track_hash.get(VISIBILITY);
-
 		String color_string = track_hash.get(COLOR);
 		if (color_string != null) {
-			Color color = reformatColor(color_string);
-			if (color != null) {
-				style.setForeground(color);
-			}
+			props.put(PropertyConstants.PROP_FOREGROUND, color_string);
 		}
 
 		List<String> collapsed_modes = Arrays.asList("1", "dense");
@@ -218,12 +216,15 @@ public final class TrackLineParser {
 			// The numerical values or the words can be used, i.e. full mode may be
 			// specified by "2" or "full". The default is "1".
 			if (collapsed_modes.contains(visibility)) {
-				style.setCollapsed(true);
+				props.put(PropertyConstants.PROP_COLLAPSED, PropertyConstants.TRUE);
 			} else if (expanded_modes.contains(visibility)) {
-				style.setCollapsed(false);
+				props.put(PropertyConstants.PROP_COLLAPSED, PropertyConstants.FALSE);
 			}
 		}
+		return props;
+	}
 
+	private static void applyTrackProperties(Map<String,String> track_hash, ITrackStyle style) {
 		if (style instanceof ITrackStyleExtended) { // for non-graph tiers
 			ITrackStyleExtended annot_style = (ITrackStyleExtended) style;
 			String url = track_hash.get(URL);
@@ -244,13 +245,13 @@ public final class TrackLineParser {
 			style.getTransientPropertyMap().put(key, value);
 		}
 	}
-
+	
 	/**
 	 *  Applies the UCSC track properties that it understands to the GraphState
 	 *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
 	 */
 	public static void createGraphStyle(Map<String,String> track_hash, String graph_id, String graph_name, String extension) {
-		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, getHumanName(track_hash, graph_id, graph_name), extension, null);
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, getHumanName(track_hash, graph_id, graph_name), extension, getTrackProperties(track_hash));
 		applyTrackProperties(track_hash, gstate.getTierStyle());
 
 		String view_limits = track_hash.get("viewlimits");

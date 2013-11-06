@@ -1,5 +1,18 @@
 package com.affymetrix.igb.util;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import javax.imageio.*;
+import javax.imageio.metadata.*;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
+
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -12,30 +25,6 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import java.awt.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Properties;
-import java.util.prefs.Preferences;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOInvalidTreeException;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import org.freehep.graphicsio.svg.SVGExportFileType;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB
@@ -49,60 +38,48 @@ import org.freehep.graphicsio.svg.SVGGraphics2D;
  * @author nick
  */
 public class ExportDialog implements ExportConstants {
-	private static float FONT_SIZE = 13.0f;
-	private static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 	private static ExportDialog singleton;
-	private static JFrame static_frame = null;
-	private static final String TITLE = "Export Image";
+	
+	private JFrame static_frame = null;
+	private File defaultDir;
 	private AffyTieredMap seqMap;
 	private AffyTieredMap svseqMap;
 	private Component wholeFrame;
 	private Component mainView;
 	private Component mainViewWithLabels;
 	private Component slicedView;
-	private static Component component; // Export component
-	private static BufferedImage exportImage;
-	private static ImageInfo imageInfo;
-	private static String unit = "";
+	private Component component; // Export component
+	private BufferedImage exportImage;
+	private ImageInfo imageInfo;
+	private String unit = "";
 	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
 	private boolean isHeightSpinner = false;
-	private static File exportFile;
-	private static FileFilter extFilter;
-	private static File fileFilter;
-	private static File defaultDir = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
-	private static ExportFileChooser fileChooser;
-	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
-	private static String selectedExt;
-	private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
-	private static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
-	private static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
-	private static final SVGExportFileType svgExport = new SVGExportFileType();
-	private static final Properties svgProperties = new Properties();
-
-	static {
-		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
-		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
-		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
-	}
-	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
+	private File exportFile;
+	private FileFilter extFilter;
+	private File fileFilter;
+	private ExportFileChooser fileChooser;
+	private String selectedExt;
+	private LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST;
+	
+	JComboBox extComboBox = new JComboBox();
 	JComboBox resolutionComboBox = new JComboBox(RESOLUTION);
 	JComboBox unitComboBox = new JComboBox(UNIT);
 	JTextField filePathTextField = new JTextField();
-	static JSpinner widthSpinner = new JSpinner();
-	static JSpinner heightSpinner = new JSpinner();
+	JSpinner widthSpinner = new JSpinner();
+	JSpinner heightSpinner = new JSpinner();
 	JLabel previewLabel = new JLabel();
 	JLabel sizeLabel = new JLabel();
 	JButton browseButton = new JButton();
 	JButton cancelButton = new JButton();
 	JButton okButton = new JButton();
-	static JButton refreshButton = new JButton();
+	JButton refreshButton = new JButton();
 	JRadioButton svRadioButton = new JRadioButton();
 	JRadioButton wfRadioButton = new JRadioButton();
 	JRadioButton mvRadioButton = new JRadioButton();
 	JRadioButton mvlRadioButton = new JRadioButton();
 	JPanel buttonsPanel = new JPanel();
 	// detect export view size changed and activate refresh button.
-	private static final ComponentListener resizelistener = new ComponentListener() {
+	private final ComponentListener resizelistener = new ComponentListener() {
 
 		public void componentResized(ComponentEvent e) {
 			if (isVisible()) {
@@ -115,7 +92,7 @@ public class ExportDialog implements ExportConstants {
 		public void componentHidden(ComponentEvent ce) {}
 	};
 	// detect export view range changed and activate refresh button.
-	private static final NeoRangeListener rangeListener = new NeoRangeListener() {
+	private final NeoRangeListener rangeListener = new NeoRangeListener() {
 
 		@Override
 		public void rangeChanged(NeoRangeEvent evt) {
@@ -125,7 +102,7 @@ public class ExportDialog implements ExportConstants {
 		}
 	};
 	// detect export view changed and activate refresh button. (Just for Seq View)
-	private static final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
+	private final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
 
 		public void adjustmentValueChanged(AdjustmentEvent ae) {
 			if (isVisible()) {
@@ -134,6 +111,13 @@ public class ExportDialog implements ExportConstants {
 		}
 	};
 
+	public ExportDialog() {
+		FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
+		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
+	}
+	
 	/**
 	 * @return ExportDialog instance
 	 */
@@ -163,11 +147,11 @@ public class ExportDialog implements ExportConstants {
 	/**
 	 * @return whether the export panel is initialized and visible or not.
 	 */
-	private static boolean isVisible() {
+	private boolean isVisible() {
 		return static_frame != null && static_frame.isVisible();
 	}
 
-	private static void enableRefreshButton() {
+	private void enableRefreshButton() {
 		if (!refreshButton.isEnabled()) {
 			refreshButton.setEnabled(true);
 		}
@@ -241,13 +225,14 @@ public class ExportDialog implements ExportConstants {
 				exportFile = new File(file);
 			}
 
-			defaultDir = new File(exportNode.get(PREF_DIR, defaultDir.getAbsolutePath()));
+			defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
 
 			imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
 
 			filePathTextField.setText(exportFile.getAbsolutePath());
 
 			ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
+			extComboBox.setModel(new DefaultComboBoxModel(FILTER_LIST.keySet().toArray()));
 			extComboBox.setSelectedItem(type);
 			selectedExt = type.getExtension();
 			resolutionComboBox.setSelectedItem(imageInfo.getResolution());
@@ -257,7 +242,7 @@ public class ExportDialog implements ExportConstants {
 
 			initSpinner(unit);
 
-			static_frame = PreferenceUtils.createFrame(TITLE, ExportDialogGUI.getSingleton());
+			static_frame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
 			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		} else {
 			initSpinner((String) unitComboBox.getSelectedItem());
@@ -275,10 +260,10 @@ public class ExportDialog implements ExportConstants {
 		scroller.addAdjustmentListener(adjustmentlistener);
 	}
 
-	public static FileFilter[] getAllExportFileFilters() {
+	public FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
 	}
-
+	
 	/**
 	 * Initialize height and width Spinner. Support Unit: pixels and Inches
 	 *
@@ -307,14 +292,14 @@ public class ExportDialog implements ExportConstants {
 	 *
 	 * @param c
 	 */
-	public static void setComponent(Component c) {
+	public void setComponent(Component c) {
 		component = c;
 	}
 
 	/**
 	 * Saved image information basis on component.
 	 */
-	public static void initImageInfo() {
+	public void initImageInfo() {
 		if (imageInfo == null) {
 			imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
 		} else {
@@ -329,7 +314,7 @@ public class ExportDialog implements ExportConstants {
 	 * @param metadata
 	 * @throws IIOInvalidTreeException
 	 */
-	private static void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+	private void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
 		horiz.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
 
@@ -352,7 +337,7 @@ public class ExportDialog implements ExportConstants {
 	 * @param metadata
 	 * @throws IIOInvalidTreeException
 	 */
-	private static void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+	private void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode tree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
 		IIOMetadataNode jfif = (IIOMetadataNode) tree.getElementsByTagName("app0JFIF").item(0);
 		jfif.setAttribute("Xdensity", Integer.toString(imageInfo.getResolution()));
@@ -368,7 +353,7 @@ public class ExportDialog implements ExportConstants {
 	 * @param extension
 	 * @return file with new extension
 	 */
-	public static File changeFileExtension(File file, String extension) {
+	public File changeFileExtension(File file, String extension) {
 		if ((file == null) || (extension == null) || extension.trim().isEmpty()) {
 			return null;
 		}
@@ -413,7 +398,7 @@ public class ExportDialog implements ExportConstants {
 			extFilter = getFilter(selectedExt);
 		}
 
-		fileChooser = new ExportFileChooser(defaultDir, fileFilter, extFilter);
+		fileChooser = new ExportFileChooser(defaultDir, fileFilter, extFilter, this);
 		fileChooser.setDialogTitle("Save view as...");
 		fileChooser.showDialog(panel, "Select");
 
@@ -585,7 +570,7 @@ public class ExportDialog implements ExportConstants {
 	 * @param isScript (is from command line or not)
 	 * @throws IOException
 	 */
-	public static void exportScreenshot(File f, String ext, boolean isScript) throws IOException {
+	public void exportScreenshot(File f, String ext, boolean isScript) throws IOException {
 		if (ext.equals(EXTENSION[0])) {
 			svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
 					(int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
@@ -673,7 +658,7 @@ public class ExportDialog implements ExportConstants {
 	 * Return whether the passed extention is contained in IGB support image
 	 * extention list or not.
 	 */
-	public static boolean isExt(String ext) {
+	public boolean isExt(String ext) {
 		for (String s : EXTENSION) {
 			if (s.equalsIgnoreCase(ext)) {
 				return true;
@@ -825,7 +810,6 @@ public class ExportDialog implements ExportConstants {
 
 	public void refreshButtonActionPerformed() {
 		refreshPreview();
-
 		refreshButton.setEnabled(false);
 	}
 
@@ -853,17 +837,5 @@ public class ExportDialog implements ExportConstants {
 		initImageInfo();
 		initSpinner((String) unitComboBox.getSelectedItem());
 		previewImage();
-	}
-
-	/**
-	 * @return sliced view component.
-	 */
-	public static Component determineSlicedComponent() {
-		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
-		if (slice_view == null) {
-			return null;
-		}
-
-		return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 }

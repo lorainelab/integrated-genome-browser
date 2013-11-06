@@ -42,6 +42,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.ExportDialog;
 import com.affymetrix.igb.util.ServiceUtils;
+import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -481,16 +482,21 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	
 	@Override
 	public Component determineSlicedComponent() {
-		return ExportDialog.determineSlicedComponent();
+		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+		if (slice_view == null) {
+			return null;
+		}
+
+		return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 	
 	@Override
 	public void setComponent(Component c) {
-		ExportDialog.setComponent(c);
+		ExportDialog.getSingleton().setComponent(c);
 	}
 	
 	@Override
 	public void exportScreenshot (File f, String ext, boolean isScript) throws IOException {
-		ExportDialog.exportScreenshot(f, ext, isScript);
+		ExportDialog.getSingleton().exportScreenshot(f, ext, isScript);
 	}
 }

@@ -1,7 +1,12 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.shared.FileTracker;
 import java.io.File;
+import java.util.Properties;
+import java.util.prefs.Preferences;
 import javax.swing.filechooser.FileFilter;
+import org.freehep.graphicsio.svg.SVGExportFileType;
 
 /**
  *
@@ -9,6 +14,10 @@ import javax.swing.filechooser.FileFilter;
  */
 public interface ExportConstants {
 
+	static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
+	
+	static float FONT_SIZE = 13.0f;
+	static final String TITLE = "Export Image";
 	static final String PREF_FILE = "File";
 	static final String PREF_EXT = "Ext";
 	static final String PREF_DIR = "Dir";
@@ -24,6 +33,12 @@ public interface ExportConstants {
 	
 	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
 	static final Object[] UNIT = { "pixels", "inches"};
+	
+	static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
+	static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
+	static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+	static final SVGExportFileType svgExport = new SVGExportFileType();
+	static final Properties svgProperties = new Properties();
 }
 
 class ImageInfo {

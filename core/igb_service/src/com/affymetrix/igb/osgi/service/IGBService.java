@@ -187,6 +187,4 @@ public interface IGBService {
 	public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order, String mirrorURL); //qlmirror
 	public void removeServer(GenericServer gServer);
 	public Component determineSlicedComponent();
-	public void setComponent(Component c);
-	public void exportScreenshot(File f, String ext, boolean isScript) throws IOException;
 }

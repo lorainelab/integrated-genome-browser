@@ -489,14 +489,4 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 		return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
-	
-	@Override
-	public void setComponent(Component c) {
-		ExportDialog.getSingleton().setComponent(c);
-	}
-	
-	@Override
-	public void exportScreenshot (File f, String ext, boolean isScript) throws IOException {
-		ExportDialog.getSingleton().exportScreenshot(f, ext, isScript);
-	}
 }

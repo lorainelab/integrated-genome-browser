@@ -2,16 +2,10 @@ package com.affymetrix.igb.util;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import javax.imageio.*;
-import javax.imageio.metadata.*;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -25,6 +19,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
+import com.affymetrix.igb.shared.HeadLessExport;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB
@@ -37,8 +32,18 @@ import com.affymetrix.igb.view.AltSpliceView;
  *
  * @author nick
  */
-public class ExportDialog implements ExportConstants {
+public class ExportDialog extends HeadLessExport {
 	private static ExportDialog singleton;
+	
+	static float FONT_SIZE = 13.0f;
+	static final String TITLE = "Export Image";
+	static final String DEFAULT_FILE = "export.png";
+	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
+	static final Object[] UNIT = { "pixels", "inches"};
+	
+	static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
+	static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
+	static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
 	
 	private JFrame static_frame = null;
 	private File defaultDir;
@@ -49,8 +54,6 @@ public class ExportDialog implements ExportConstants {
 	private Component mainViewWithLabels;
 	private Component slicedView;
 	private Component component; // Export component
-	private BufferedImage exportImage;
-	private ImageInfo imageInfo;
 	private String unit = "";
 	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
 	private boolean isHeightSpinner = false;
@@ -309,44 +312,6 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Passed meta data of PNG image and reset its DPI
-	 *
-	 * @param metadata
-	 * @throws IIOInvalidTreeException
-	 */
-	private void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
-		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
-		horiz.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
-
-		IIOMetadataNode vert = new IIOMetadataNode("VerticalPixelSize");
-		vert.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
-
-		IIOMetadataNode dim = new IIOMetadataNode("Dimension");
-		dim.appendChild(horiz);
-		dim.appendChild(vert);
-
-		IIOMetadataNode root = new IIOMetadataNode("javax_imageio_1.0");
-		root.appendChild(dim);
-
-		metadata.mergeTree("javax_imageio_1.0", root);
-	}
-
-	/**
-	 * Passed meta data of JPEG image and reset its DPI
-	 *
-	 * @param metadata
-	 * @throws IIOInvalidTreeException
-	 */
-	private void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
-		IIOMetadataNode tree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
-		IIOMetadataNode jfif = (IIOMetadataNode) tree.getElementsByTagName("app0JFIF").item(0);
-		jfif.setAttribute("Xdensity", Integer.toString(imageInfo.getResolution()));
-		jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getResolution()));
-		jfif.setAttribute("resUnits", "1"); // density is dots per inch 
-		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
-	}
-
-	/**
 	 * Passed file and changed its extension.
 	 *
 	 * @param file
@@ -508,7 +473,7 @@ public class ExportDialog implements ExportConstants {
 			}
 		}
 
-		exportScreenshot(exportFile, selectedExt, false);
+		exportScreenshot(component, exportFile, selectedExt, false);
 
 		String des = getDescription(ext);
 		extComboBox.setSelectedItem(getType(des));
@@ -563,63 +528,9 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Export image to passed file by passed extension.
-	 *
-	 * @param f
-	 * @param ext
-	 * @param isScript (is from command line or not)
-	 * @throws IOException
-	 */
-	public void exportScreenshot(File f, String ext, boolean isScript) throws IOException {
-		if (ext.equals(EXTENSION[0])) {
-			svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
-					(int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
-			svgExport.exportToFile(f, component, null, svgProperties, "");
-		} else {
-			// From Script Loader, need to initialize the export image
-			if (isScript) {
-				exportImage = GraphicsUtil.getDeviceCompatibleImage(
-						component.getWidth(), component.getHeight());
-				Graphics g = exportImage.createGraphics();
-				component.paintAll(g);
-				initImageInfo();
-				imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
-			}
-			
-			exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
-			Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
-			while (iw.hasNext()) {
-				ImageWriter writer = iw.next();
-				ImageWriteParam writeParam = writer.getDefaultWriteParam();
-				ImageTypeSpecifier typeSpecifier =
-						ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
-				IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-				if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-					continue;
-				}
-
-				if (ext.equals(EXTENSION[1])) {
-					setPNG_DPI(metadata);
-				} else {
-					setJPEG_DPI(metadata);
-				}
-
-				final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
-				try {
-					writer.setOutput(stream);
-					writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
-				} finally {
-					stream.close();
-				}
-				break;
-			}
-		}
-	}
-
-	/**
 	 * Creates a new buffered image by component and reset label's icon.
 	 */
-	public void previewImage() {
+	private void previewImage() {
 		exportImage = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
 		Graphics2D g = exportImage.createGraphics();
@@ -734,7 +645,7 @@ public class ExportDialog implements ExportConstants {
 			}
 		}
 
-		if (selectedExt.equals(ExportConstants.EXTENSION[0])) {
+		if (selectedExt.equals(EXTENSION[0])) {
 			mvRadioButton.setSelected(true);
 			mvRadioButtonActionPerformed();
 			wfRadioButton.setEnabled(false);
@@ -837,5 +748,59 @@ public class ExportDialog implements ExportConstants {
 		initImageInfo();
 		initSpinner((String) unitComboBox.getSelectedItem());
 		previewImage();
+	}
+}
+
+class ExportFileType {
+
+	private String fileExtension;
+	private String fileDescription;
+
+	ExportFileType(String extension, String description) {
+		fileExtension = extension;
+		fileDescription = description;
+	}
+
+	public String getExtension() {
+		return fileExtension;
+	}
+
+	public String getDescription() {
+		return fileDescription;
+	}
+
+	@Override
+	public String toString() {
+		return getDescription();
+	}
+}
+
+class ExportFileFilter extends FileFilter {
+
+	public ExportFileType type;
+
+	public ExportFileFilter(ExportFileType type) {
+		this.type = type;
+	}
+
+	public boolean accept(File file) {
+
+		if (file.isDirectory()) {
+			return true;
+		}
+
+		return file.getName().toLowerCase().endsWith(type.getExtension());
+	}
+
+	public String getDescription() {
+		return type.getDescription();
+	}
+
+	public String getExtension() {
+		return type.getExtension();
+	}
+
+	public boolean accept(File file, String name) {
+		return name.toLowerCase().endsWith(type.getExtension());
 	}
 }

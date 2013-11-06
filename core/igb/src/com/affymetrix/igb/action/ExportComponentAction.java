@@ -29,8 +29,8 @@ public abstract class ExportComponentAction extends GenericAction {
 		}
 
 		try {
-			ExportDialog.setComponent(component);
-			ExportDialog.initImageInfo();
+			ExportDialog.getSingleton().setComponent(component);
+			ExportDialog.getSingleton().initImageInfo();
 			ExportDialog.getSingleton().initSeqViewListener(component, getScroller());
 			ExportDialog.getSingleton().display(true);
 		} catch (Exception ex) {

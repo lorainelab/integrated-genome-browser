@@ -12,23 +12,10 @@ import javax.swing.JPanel;
  */
 public class ExportDialogGUI extends JPanel {
 
-	private static ExportDialogGUI singleton;
 	private ExportDialog ed;
 
-	/**
-	 *
-	 * @return ExportDialogGUI instance
-	 */
-	public static synchronized ExportDialogGUI getSingleton() {
-		if (singleton == null) {
-			singleton = new ExportDialogGUI();
-		}
-		return singleton;
-	}
-
-	public ExportDialogGUI() {
-		ed = ExportDialog.getSingleton();
-
+	public ExportDialogGUI(ExportDialog ed) {
+		this.ed = ed;
 		initComponents();
 	}
 
@@ -45,10 +32,10 @@ public class ExportDialogGUI extends JPanel {
         imageSizePanel = new javax.swing.JPanel();
         widthLabel = new javax.swing.JLabel();
         heightLabel = new javax.swing.JLabel();
-        widthSpinner = ExportDialog.widthSpinner;
-        heightSpinner = ExportDialog.heightSpinner;
+        widthSpinner = ed.widthSpinner;
+        heightSpinner = ed.heightSpinner;
         resolutionLabel = new javax.swing.JLabel();
-        refreshButton = ExportDialog.refreshButton;
+        refreshButton = ed.refreshButton;
         resolutionComboBox = ed.resolutionComboBox;
         unitComboBox = ed.unitComboBox;
         sizeLabel = ed.sizeLabel;

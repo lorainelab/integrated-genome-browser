@@ -25,12 +25,12 @@ public class ExportFileChooser extends JFileChooser {
 	File previousFile;
 	FileFilter selectedFilter;
 
-	public ExportFileChooser(File directory, File selectedFile, FileFilter selectedFilter) {
+	public ExportFileChooser(File directory, File selectedFile, FileFilter selectedFilter, ExportDialog exportDialog) {
 		super(directory);
 		this.selectedFilter = selectedFilter;
 		setPreviousFile(selectedFile);
-		this.setAcceptAllFileFilterUsed(false);
-		init();
+		setAcceptAllFileFilterUsed(false);
+		init(exportDialog);
 	}
 
 	@Override
@@ -71,16 +71,13 @@ public class ExportFileChooser extends JFileChooser {
 		return dialog;
 	}
 
-	private void init() {
-		FileFilter[] fileFilters = ExportDialog.getAllExportFileFilters();
-
-		if (fileFilters != null) {
-			for (FileFilter fileFilter : fileFilters) {
-				this.addChoosableFileFilter(fileFilter);
-			}
+	private void init(final ExportDialog exportDialog) {
+		
+		for (FileFilter fileFilter : exportDialog.getAllExportFileFilters()) {
+			addChoosableFileFilter(fileFilter);
 		}
-
-		this.setFileFilter(this.selectedFilter);
+		
+		setFileFilter(selectedFilter);
 
 		addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -104,7 +101,7 @@ public class ExportFileChooser extends JFileChooser {
 								file = previousFile;
 							}
 
-							final File selectedFile = ExportDialog.changeFileExtension(
+							final File selectedFile = exportDialog.changeFileExtension(
 									file, newFilter.getExtension());
 							SwingUtilities.invokeLater(new Runnable() {
 

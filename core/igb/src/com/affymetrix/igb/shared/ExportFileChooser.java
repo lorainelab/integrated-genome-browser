@@ -1,5 +1,7 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
+import com.affymetrix.igb.shared.ExportFileFilter;
+import com.affymetrix.igb.shared.ExportDialog;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;

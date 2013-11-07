@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,6 +20,7 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.shared.HeadLessExport;
+import com.affymetrix.igb.util.GraphicsUtil;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB

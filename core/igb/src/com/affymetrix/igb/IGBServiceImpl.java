@@ -40,7 +40,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.util.ExportDialog;
+import com.affymetrix.igb.shared.ExportDialog;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqGroupView;

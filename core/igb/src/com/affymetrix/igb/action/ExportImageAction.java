@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.util.ExportDialog;
+import com.affymetrix.igb.shared.ExportDialog;
 import java.util.logging.Level;
 
 /**

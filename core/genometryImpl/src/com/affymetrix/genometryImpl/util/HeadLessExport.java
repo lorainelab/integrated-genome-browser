@@ -1,9 +1,11 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.util.GraphicsUtil;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +52,7 @@ public class HeadLessExport {
 	public void exportScreenshot(Component component, File f, String ext, boolean isScript) throws IOException {
 		// From Script Loader, need to initialize the export image
 		if (isScript) {
-			exportImage = GraphicsUtil.getDeviceCompatibleImage(
-					component.getWidth(), component.getHeight());
+			exportImage = getDeviceCompatibleImage(component.getWidth(), component.getHeight());
 			Graphics g = exportImage.createGraphics();
 			component.paintAll(g);
 			imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
@@ -63,7 +64,7 @@ public class HeadLessExport {
 					(int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
 			svgExport.exportToFile(f, component, null, svgProperties, "");
 		} else {
-			exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+			exportImage = resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
 			Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
 			while (iw.hasNext()) {
 				ImageWriter writer = iw.next();
@@ -129,6 +130,40 @@ public class HeadLessExport {
 		jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getResolution()));
 		jfif.setAttribute("resUnits", "1"); // density is dots per inch 
 		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+	}
+	
+	/**
+	 * Get device compatible image by passed width and height.
+	 */
+	public static BufferedImage getDeviceCompatibleImage(int width, int height) {
+		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
+		GraphicsConfiguration graphicConfiguration = screenDevice.getDefaultConfiguration();
+		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height);
+				//, Transparency.TRANSLUCENT);
+
+		return image;
+	}
+
+	/**
+	 * Resize the passed image by passed width and height.
+	 */
+	public static BufferedImage resizeImage(BufferedImage image,
+			int width, int height) {
+		if (image.getWidth() == width
+				&& image.getHeight() == height) {
+			return image;
+		}
+
+		int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+		BufferedImage resizedImage = new BufferedImage(width, height, type);
+		Graphics2D g = resizedImage.createGraphics();
+//		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+//				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.drawImage(image, 0, 0, width, height, null);
+		g.dispose();
+
+		return resizedImage;
 	}
 	
 	public static class ImageInfo {

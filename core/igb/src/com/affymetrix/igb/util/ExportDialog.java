@@ -10,16 +10,18 @@ import javax.swing.filechooser.FileFilter;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.HeadLessExport;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
+
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import com.affymetrix.igb.shared.HeadLessExport;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB
@@ -531,17 +533,14 @@ public class ExportDialog extends HeadLessExport {
 	 * Creates a new buffered image by component and reset label's icon.
 	 */
 	private void previewImage() {
-		exportImage = GraphicsUtil.getDeviceCompatibleImage(
-				component.getWidth(), component.getHeight());
+		exportImage = getDeviceCompatibleImage(component.getWidth(), component.getHeight());
 		Graphics2D g = exportImage.createGraphics();
 		if(component instanceof JFrame){
 			drawTitleBar( g);
 		}
 		component.printAll(g);
 
-		Image previewImage = GraphicsUtil.resizeImage(exportImage,
-				previewLabel.getWidth(), previewLabel.getHeight());
-
+		Image previewImage = resizeImage(exportImage, previewLabel.getWidth(), previewLabel.getHeight());
 		previewLabel.setIcon(new ImageIcon(previewImage));
 	}
 

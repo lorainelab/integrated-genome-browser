@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.HeadLessExport;
+import com.affymetrix.genometryImpl.util.HeadLessExport;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;

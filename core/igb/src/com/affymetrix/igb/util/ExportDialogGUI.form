@@ -47,7 +47,7 @@
               <Component id="imageSizePanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="previewPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+              <EmptySpace pref="28" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -204,11 +204,11 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Component id="buttonsPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                  <Component id="previewLabel" min="-2" pref="218" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="optionPanelWrapper" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="previewPanelWrapper" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -216,98 +216,148 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="buttonsPanel" linkSize="23" alignment="0" min="-2" max="-2" attributes="1"/>
-                      <Component id="previewLabel" linkSize="23" alignment="0" min="-2" pref="107" max="-2" attributes="1"/>
+                      <Component id="optionPanelWrapper" min="-2" max="-2" attributes="0"/>
+                      <Component id="previewPanelWrapper" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="previewLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="   "/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.previewLabel"/>
-          </AuxValues>
-        </Component>
-        <Container class="javax.swing.JPanel" name="buttonsPanel">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.buttonsPanel"/>
-          </AuxValues>
+        <Container class="javax.swing.JPanel" name="optionPanelWrapper">
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="wfRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="svRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="mvlRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="mvRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Component id="buttonsPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="wfRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Component id="mvRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Component id="mvlRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      <Component id="svRadioButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Component id="buttonsPanel" linkSize="23" alignment="0" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JRadioButton" name="svRadioButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Sliced View (with Labels)"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="svRadioButtonActionPerformed"/>
-              </Events>
+            <Container class="javax.swing.JPanel" name="buttonsPanel">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.svRadioButton"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(svRadioButton);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.buttonsPanel"/>
               </AuxValues>
-            </Component>
-            <Component class="javax.swing.JRadioButton" name="mvRadioButton">
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="wfRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="svRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="mvlRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="mvRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="wfRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="mvRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="mvlRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="svRadioButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JRadioButton" name="svRadioButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Sliced View (with Labels)"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="svRadioButtonActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.svRadioButton"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(svRadioButton);"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JRadioButton" name="mvRadioButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Main View"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvRadioButtonActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvRadioButton"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvRadioButton);"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JRadioButton" name="wfRadioButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Whole Frame"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wfRadioButtonActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.wfRadioButton"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(wfRadioButton);"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JRadioButton" name="mvlRadioButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Main View (with Labels)"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvlRadioButtonActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvlRadioButton"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvlRadioButton);"/>
+                  </AuxValues>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="previewPanelWrapper">
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Component id="previewLabel" min="-2" pref="218" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Component id="previewLabel" linkSize="23" min="-2" pref="107" max="-2" attributes="1"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="previewLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Main View"/>
+                <Property name="text" type="java.lang.String" value="   "/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvRadioButtonActionPerformed"/>
-              </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvRadioButton"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvRadioButton);"/>
-              </AuxValues>
-            </Component>
-            <Component class="javax.swing.JRadioButton" name="wfRadioButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Whole Frame"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wfRadioButtonActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.wfRadioButton"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(wfRadioButton);"/>
-              </AuxValues>
-            </Component>
-            <Component class="javax.swing.JRadioButton" name="mvlRadioButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Main View (with Labels)"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvlRadioButtonActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvlRadioButton"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvlRadioButton);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.previewLabel"/>
               </AuxValues>
             </Component>
           </SubComponents>
@@ -325,7 +375,7 @@
                   <Component id="browseButton" min="-2" max="-2" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
-                  <Component id="extComboBox" max="32767" attributes="2"/>
+                  <Component id="extComboBox" pref="309" max="32767" attributes="2"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="cancelButton" min="-2" pref="76" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>

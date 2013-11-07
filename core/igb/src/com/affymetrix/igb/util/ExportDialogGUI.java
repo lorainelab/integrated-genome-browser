@@ -40,14 +40,12 @@ public class ExportDialogGUI extends JPanel {
         unitComboBox = ed.unitComboBox;
         sizeLabel = ed.sizeLabel;
         previewPanel = new javax.swing.JPanel();
-        optionPanelWrapper = new javax.swing.JPanel();
+        previewLabel = ed.previewLabel;
         buttonsPanel = ed.buttonsPanel;
         svRadioButton = ed.svRadioButton;
         mvRadioButton = ed.mvRadioButton;
         wfRadioButton = ed.wfRadioButton;
         mvlRadioButton = ed.mvlRadioButton;
-        previewPanelWrapper = new javax.swing.JPanel();
-        previewLabel = ed.previewLabel;
         topPanel = new javax.swing.JPanel();
         browseButton = ed.browseButton;
         filePathTextField = ed.filePathTextField;
@@ -149,6 +147,8 @@ public class ExportDialogGUI extends JPanel {
 
         previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
 
+        previewLabel.setText("   ");
+
         svRadioButton.setText("Sliced View (with Labels)");
         buttonGroup.add(svRadioButton);
         svRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -202,61 +202,27 @@ public class ExportDialogGUI extends JPanel {
                 .add(svRadioButton))
         );
 
-        org.jdesktop.layout.GroupLayout optionPanelWrapperLayout = new org.jdesktop.layout.GroupLayout(optionPanelWrapper);
-        optionPanelWrapper.setLayout(optionPanelWrapperLayout);
-        optionPanelWrapperLayout.setHorizontalGroup(
-            optionPanelWrapperLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(optionPanelWrapperLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
-        );
-        optionPanelWrapperLayout.setVerticalGroup(
-            optionPanelWrapperLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(optionPanelWrapperLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
-        );
-
-        previewLabel.setText("   ");
-
-        org.jdesktop.layout.GroupLayout previewPanelWrapperLayout = new org.jdesktop.layout.GroupLayout(previewPanelWrapper);
-        previewPanelWrapper.setLayout(previewPanelWrapperLayout);
-        previewPanelWrapperLayout.setHorizontalGroup(
-            previewPanelWrapperLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(previewPanelWrapperLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
-        );
-        previewPanelWrapperLayout.setVerticalGroup(
-            previewPanelWrapperLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(previewPanelWrapperLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
-        );
-
         org.jdesktop.layout.GroupLayout previewPanelLayout = new org.jdesktop.layout.GroupLayout(previewPanel);
         previewPanel.setLayout(previewPanelLayout);
         previewPanelLayout.setHorizontalGroup(
             previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(previewPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(optionPanelWrapper, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(previewPanelWrapper, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
+                .add(15, 15, 15)
+                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(22, 22, 22)
+                .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         previewPanelLayout.setVerticalGroup(
             previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(previewPanelLayout.createSequentialGroup()
                 .add(previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(optionPanelWrapper, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(previewPanelWrapper, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(0, 0, 0))
+                    .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(5, 5, 5))
         );
+
+        previewPanelLayout.linkSize(new java.awt.Component[] {buttonsPanel, previewLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         browseButton.setText("Browse...");
         browseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -294,7 +260,7 @@ public class ExportDialogGUI extends JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(browseButton))
             .add(topPanelLayout.createSequentialGroup()
-                .add(extComboBox, 0, 309, Short.MAX_VALUE)
+                .add(extComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
@@ -338,7 +304,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
                 .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .add(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -411,10 +377,8 @@ public class ExportDialogGUI extends JPanel {
     private javax.swing.JRadioButton mvRadioButton;
     private javax.swing.JRadioButton mvlRadioButton;
     private javax.swing.JButton okButton;
-    private javax.swing.JPanel optionPanelWrapper;
     private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
-    private javax.swing.JPanel previewPanelWrapper;
     private javax.swing.JButton refreshButton;
     private javax.swing.JComboBox resolutionComboBox;
     private javax.swing.JLabel resolutionLabel;

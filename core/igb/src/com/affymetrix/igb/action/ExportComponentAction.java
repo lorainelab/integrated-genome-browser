@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.util.ExportDialog;
+import com.affymetrix.igb.shared.ExportDialog;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.event.ActionEvent;

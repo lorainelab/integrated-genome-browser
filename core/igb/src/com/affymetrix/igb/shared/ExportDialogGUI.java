@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
 import java.io.IOException;
 import java.util.logging.Level;

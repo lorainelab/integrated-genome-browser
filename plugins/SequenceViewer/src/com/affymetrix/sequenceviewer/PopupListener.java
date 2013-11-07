@@ -5,6 +5,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
@@ -16,9 +17,12 @@ public class PopupListener implements ContextualPopupListener{
 	
 	JMenuItem genomicSequenceViewer, readSequenceViewer;
 	
-	PopupListener(JMenuItem genomicSequenceViewer, JMenuItem readSequenceViewer){
-		this.genomicSequenceViewer = genomicSequenceViewer;
-		this.readSequenceViewer = readSequenceViewer;
+	PopupListener(GenericAction genomicSequenceAction, GenericAction readSequencAction){
+		this.genomicSequenceViewer = new JMenuItem(genomicSequenceAction);
+		this.genomicSequenceViewer.setIcon(null);
+		
+		this.readSequenceViewer = new JMenuItem(readSequencAction);
+		this.readSequenceViewer.setIcon(null);
 	}
 	
 	@Override

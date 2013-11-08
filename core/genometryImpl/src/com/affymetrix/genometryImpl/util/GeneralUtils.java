@@ -46,6 +46,7 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import net.sf.samtools.seekablestream.SeekableStream;
 import net.sf.samtools.seekablestream.SeekableStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 public final class GeneralUtils {
@@ -71,7 +72,7 @@ public final class GeneralUtils {
 	 *  This list is all lower-case, but should be treated as case-insensitive.
 	 */
 	public static final String[] compression_endings =
-	{".z", ".gzip", ".gz", ".zip", ".bz2"};
+	{".z", ".gzip", ".gz", ".zip", ".bz2", ".tar"};
 
 
 	/** Returns the file name with all {@link #compression_endings} stripped-off. */
@@ -130,6 +131,10 @@ public final class GeneralUtils {
 			BZip2CompressorInputStream bz2 = new BZip2CompressorInputStream(istr);
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(bz2, new_name, stripped_name);
+		} else if (stream_name.endsWith(".tar")) {
+			TarArchiveInputStream tarInput = new TarArchiveInputStream(istr);
+			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
+			return unzipStream(tarInput, new_name, stripped_name);
 		}
 		stripped_name.append(stream_name);
 		return istr;
@@ -143,6 +148,8 @@ public final class GeneralUtils {
 		} else if (stream_name.endsWith(".zip")) {
 			return stream_name.substring(0, stream_name.lastIndexOf('.'));
 		} else if (stream_name.endsWith(".bz2")) {
+			return stream_name.substring(0, stream_name.lastIndexOf('.'));
+		} else if (stream_name.endsWith(".tar")) {
 			return stream_name.substring(0, stream_name.lastIndexOf('.'));
 		}
 		return stream_name;

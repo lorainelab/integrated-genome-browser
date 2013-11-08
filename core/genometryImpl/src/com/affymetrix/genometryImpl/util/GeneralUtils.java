@@ -133,6 +133,7 @@ public final class GeneralUtils {
 			return unzipStream(bz2, new_name, stripped_name);
 		} else if (stream_name.endsWith(".tar")) {
 			TarArchiveInputStream tarInput = new TarArchiveInputStream(istr);
+			tarInput.getNextTarEntry();
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(tarInput, new_name, stripped_name);
 		}

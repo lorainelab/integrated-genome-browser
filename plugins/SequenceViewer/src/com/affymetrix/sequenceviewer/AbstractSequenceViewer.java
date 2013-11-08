@@ -73,10 +73,12 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	String errorMessage = null;
 	private int cdsMax = -1;
 	private int cdsMin = -1;
+	private int txMin  = -1;
 	private String title = null;
 	private boolean showcDNASwitch = false;
 	private String[] buttonText = new String[]{"Show cDNA", "Show Genomic"};
 	private String[] multipleSelection = new String[]{"Concatenate", "Show Genomic"};
+	private String[] buttonNumbering = new String[]{"Internal Numbering", "Genomic Numbering"};
 	private boolean colorSwitch = (Boolean) PreferenceUtils.load(PreferenceUtils.getTopNode(), PREF_COLOR_SCHEME, false);
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
@@ -138,6 +140,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		if (syms.size() >= 1) {
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
+				txMin  = residues_sym.getSpan(seqmapview.getAnnotatedSeq()).getMin();
 				if (residues_sym.getChildCount() == 0) {
 					SeqSymmetry residues_syms1 = residues_sym;
 					if ((residues_syms1 instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_syms1).hasCdsSpan()) {
@@ -162,9 +165,14 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 					residues_sym = new SimpleMutableSeqSymmetry();
 					SeqSymmetry child;
 					SeqSpan childSpan;
+					Boolean checkFirst = false;
 					for (int i = 0; i < temp.getChildCount(); i++) {
 						child = temp.getChild(i);
 						childSpan = child.getSpan(seqmapview.getAnnotatedSeq());
+						if(!checkFirst){
+							checkFirst = true;
+							txMin = childSpan.getMin();
+						}
 						((MutableSeqSymmetry) residues_sym).addChild(new MutableSingletonSeqSymmetry(childSpan.getMin(), childSpan.getMax(), childSpan.getBioSeq()));
 					}
 					((MutableSeqSymmetry) residues_sym).addSpan(temp.getSpan(seqmapview.getAnnotatedSeq()));
@@ -550,6 +558,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	ButtonGroup bg = new ButtonGroup();
 	JToggleButton showcDNAButton = new JToggleButton("Show cDNA");
 	JToggleButton reverseColorsButton = new JToggleButton("Change color scheme");
+	JToggleButton showNumberingButton = new JToggleButton(buttonNumbering[1]);
 	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Complement");
 	JCheckBoxMenuItem revCompCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
 	JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(BUNDLE.getString("copyTranslation2ToClipBoard"));
@@ -644,6 +653,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		transNegThreeCBMenuItem.addItemListener(this);
 		showcDNAButton.addActionListener(this);
 		reverseColorsButton.addActionListener(this);
+		showNumberingButton.addActionListener(this);
 		// add the menus to the menubar
 		JMenuBar bar = new JMenuBar();
 		bar.add(fileMenu);
@@ -651,6 +661,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		bar.add(showMenu);
 		bar.add(colorMenu);
 		bar.add(showcDNAButton);
+		bar.add(showNumberingButton);
 //		bar.add(reverseColorsButton);
 		dock.setJMenuBar(bar);
 		return dock;
@@ -1008,17 +1019,36 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		System.setProperty("apple.laf.useScreenMenuBar", "false");
 		getGoing(residues_sym);
 	}
-
+	
 	public void actionPerformed(ActionEvent e) {
 		Object evtSource = e.getSource();
+		if (evtSource == showNumberingButton) {
+			String text = e.getActionCommand();
+			if(text.equals(buttonNumbering[1])){
+				seqview.setFirstOrdinal(txMin);
+				showNumberingButton.setText(buttonNumbering[0]);
+			}
+			else{
+				seqview.setFirstOrdinal(0);
+				showNumberingButton.setText(buttonNumbering[1]);
+			}
+			seqview.clearWidget();
+			addFormattedResidues();
+			seqview.updateWidget();
+		}
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
+			seqview.setFirstOrdinal(0);
 			if (text.equals(buttonText[0])) {
-				showcDNASwitch = true;
+				showcDNASwitch = true;	
 				showcDNAButton.setText(buttonText[1]);
+				showNumberingButton.setText(buttonNumbering[1]);
+				showNumberingButton.setEnabled(false);
 			} else {
 				showcDNASwitch = false;
 				showcDNAButton.setText(buttonText[0]);
+				showNumberingButton.setText(buttonNumbering[1]);
+				showNumberingButton.setEnabled(true);
 			}
 			seqview.clearWidget();
 			addFormattedResidues();
@@ -1039,7 +1069,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 //				seqview.setResidues(seq1);
 //				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 //			}
-		}
+		} 
 	}
 
 	public void menuSelected(MenuEvent me) {

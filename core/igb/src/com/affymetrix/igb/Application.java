@@ -165,7 +165,12 @@ public abstract class Application {
 		
 	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,
 			final String check, final boolean def_val) {
-		Object[] params;
+		return confirmPanel(comp, message, node, check, def_val, "Do not show this message again");
+	}
+	
+	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,
+		final String check, final boolean def_val, final String save_string) {
+			Object[] params;
 
 		//If no node is provided then show default message
 		if (node == null) {
@@ -183,7 +188,7 @@ public abstract class Application {
 		}
 
 		//If preference is not set then show message with option to disable it.
-		final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+		final JCheckBox checkbox = new JCheckBox(save_string);
 		params = new Object[]{message, checkbox};
 
 		int ret = showConfirmDialog(comp, params);
@@ -195,7 +200,7 @@ public abstract class Application {
 			return true;
 		}
 
-		return false;
+		return false;	
 	}
 	
 	private static int showConfirmDialog(final JComponent comp, Object[] params){

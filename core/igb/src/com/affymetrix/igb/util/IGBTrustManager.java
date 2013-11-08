@@ -45,7 +45,7 @@ public class IGBTrustManager implements X509TrustManager {
 		Application app = Application.getSingleton();
 		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
 		boolean response = Application.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),
-				PreferenceUtils.getCertificatePrefsNode(), certificates.toString(), true);
+				PreferenceUtils.getCertificatePrefsNode(), certificates.toString(), true, "Do not show this again for the publisher above");
 
 		if (!response) {
 			throw new RuntimeException("Untrusted certificate.");

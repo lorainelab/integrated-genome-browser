@@ -4,9 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.AminoAcid;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -226,32 +225,9 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			}
 			return errorMessage;
 		}
-		StringBuilder aminoAcidsSB = new StringBuilder("");
-		String nextCodon;
-		for (int pos = 0; pos < residue.length(); pos += 3) {
-			nextCodon = residue.substring(pos, pos + 3).toUpperCase();
-			AminoAcid aminoAcid = AminoAcid.CODON_TO_AMINO_ACID.get(nextCodon);
-			if (aminoAcid == null) { // should never happen
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "invalid sequence {0} for {1}:{2}", new Object[]{nextCodon, parentSym.toString(), parentSym.getID()});
-				return null;
-			}
-			String aaCode = "";
-			if (codeSize == 3) {
-				aaCode = aminoAcid.getCode();
-			}
-			else if (codeSize == 1)  {
-				if(parentSym.isForward()){
-					aaCode = aminoAcid.getLetter() + "  ";
-				}else{
-					aaCode = "  " + aminoAcid.getLetter();
-				}
-			}
-			if (parentSym.isForward()) {
-				aminoAcidsSB.append(aaCode);
-			}
-			else {
-				aminoAcidsSB.insert(0, aaCode);
-			}
+		String aminoAcidsSB = AminoAcid.getAminoAcid(residue, codeSize, parentSym.isForward());
+		if(aminoAcidsSB == null) {
+			return null;
 		}
 		offset = residueRange.getStartPos();
 //		return aminoAcidsSB.substring(Math.min(residueRange.getStartPos(), residueRange.getEndPos()), Math.max(residueRange.getStartPos(), residueRange.getEndPos()));

@@ -1,7 +1,9 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometryImpl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public enum AminoAcid {
 	Alanine("Ala", 'A'),
@@ -190,5 +192,39 @@ public enum AminoAcid {
 	}
 	public static AminoAcid getByCode(String code) {
 		return code3aminoAcid.get(code.substring(0, 1).toUpperCase() + code.substring(1, 3).toLowerCase());
+	}
+	public static boolean canGetAminoAcid(String residue) {
+		return residue.length() < 6 || residue.length() % 3 != 0 || residue.indexOf('-') > -1;
+	}
+	public static String getAminoAcid(String residue, int codeSize, boolean forward) {
+		StringBuilder aminoAcidsSB = new StringBuilder("");
+		String nextCodon;
+		for (int pos = 0; pos < residue.length(); pos += 3) {
+			nextCodon = residue.substring(pos, pos + 3).toUpperCase();
+			AminoAcid aminoAcid = AminoAcid.CODON_TO_AMINO_ACID.get(nextCodon);
+			if (aminoAcid == null) { // should never happen
+				Logger.getLogger(AminoAcid.class.getName()).log(Level.WARNING, "invalid sequence {0} ", new Object[]{nextCodon});
+				return null;
+			}
+			String aaCode = "";
+			if (codeSize == 3) {
+				aaCode = aminoAcid.getCode();
+			}
+			else if (codeSize == 1)  {
+				if(forward){
+					aaCode = aminoAcid.getLetter() + "  ";
+				}else{
+					aaCode = "  " + aminoAcid.getLetter();
+				}
+			}
+			if (forward) {
+				aminoAcidsSB.append(aaCode);
+			}
+			else {
+				aminoAcidsSB.insert(0, aaCode);
+			}
+		}
+		
+		return aminoAcidsSB.toString();
 	}
 }

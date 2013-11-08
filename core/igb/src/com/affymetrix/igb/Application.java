@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometryImpl.util.UrlToFileName;
 import com.affymetrix.igb.view.StatusBar;
 
 public abstract class Application {
@@ -171,9 +172,10 @@ public abstract class Application {
 			params = new Object[]{message};
 			return JOptionPane.YES_OPTION == showConfirmDialog(comp, params);
 		}
-
+		//Large key does not work in preferences. So convert key into md5 value.
+		final String md5_check = UrlToFileName.toMd5(check); 
 		//If all parameters are provided then look up for boolean value from preference.
-		final boolean b = node.getBoolean(check, def_val);
+		final boolean b = node.getBoolean(md5_check, def_val);
 
 		//If user has already set preference then return true.
 		if (b != def_val) {
@@ -188,7 +190,7 @@ public abstract class Application {
 
 		if (JOptionPane.YES_OPTION == ret) {
 			if(checkbox.isSelected()){
-				node.putBoolean(check, checkbox.isSelected() != b);
+				node.putBoolean(md5_check, checkbox.isSelected() != b);
 			}
 			return true;
 		}

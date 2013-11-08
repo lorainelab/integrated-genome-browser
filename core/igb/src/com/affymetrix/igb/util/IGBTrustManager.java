@@ -39,15 +39,17 @@ public class IGBTrustManager implements X509TrustManager {
 	}
 
 	public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+		StringBuilder certificates = new StringBuilder("\n\n");
 		for (int i = 0; i < certs.length; i++) {
-			Application app = Application.getSingleton();
-			JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
-			boolean response = Application.confirmPanel(comp, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?", 
-					PreferenceUtils.getCertificatePrefsNode(), certs[i].getIssuerX500Principal().getName(), true);
-			 
-			if (!response) {
-				throw new RuntimeException("Untrusted certificate.");
-			}
+			certificates.append(certs[i].getIssuerX500Principal().getName()).append(",").append("\n");
+		}
+		Application app = Application.getSingleton();
+		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		boolean response = Application.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),
+				PreferenceUtils.getCertificatePrefsNode(), certificates.toString(), true);
+
+		if (!response) {
+			throw new RuntimeException("Untrusted certificate.");
 		}
 	}
 }

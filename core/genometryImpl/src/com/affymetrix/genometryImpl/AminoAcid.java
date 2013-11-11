@@ -193,7 +193,7 @@ public enum AminoAcid {
 	public static AminoAcid getByCode(String code) {
 		return code3aminoAcid.get(code.substring(0, 1).toUpperCase() + code.substring(1, 3).toLowerCase());
 	}
-	public static String getAminoAcid(String residue, int codeSize, boolean forward) {
+	public static String getAminoAcid(String residue, int codeSize, boolean forward, String filler) {
 		StringBuilder aminoAcidsSB = new StringBuilder("");
 		String nextCodon;
 		for (int pos = 0; pos < residue.length(); pos += 3) {
@@ -209,9 +209,9 @@ public enum AminoAcid {
 			}
 			else if (codeSize == 1)  {
 				if(forward){
-					aaCode = aminoAcid.getLetter() + "  ";
+					aaCode = aminoAcid.getLetter() + filler;
 				}else{
-					aaCode = "  " + aminoAcid.getLetter();
+					aaCode = filler + aminoAcid.getLetter();
 				}
 			}
 			if (forward) {

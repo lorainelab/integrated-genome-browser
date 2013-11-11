@@ -19,12 +19,9 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	}
 	
 	@Override
-	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
-		BlastRunOptsPanel blastRunOptsPanel = new BlastRunOptsPanel();
-		
+	protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {	
 		return new ServiceRegistration[] {
-			bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView(), blastRunOptsPanel), null),
-//			bundleContext.registerService(IPrefEditorComponent.class, blastRunOptsPanel, null)
+			bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView()), null),
 		};
 	}
 	

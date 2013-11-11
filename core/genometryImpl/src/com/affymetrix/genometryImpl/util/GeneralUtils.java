@@ -122,16 +122,16 @@ public final class GeneralUtils {
 			InputStream gzstr = getGZipInputStream(stream_name, istr);
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(gzstr, new_name, stripped_name);
-		} else if (stream_name.endsWith(".zip")) {
+		} else if (lc_stream_name.endsWith(".zip")) {
 			ZipInputStream zstr = new ZipInputStream(istr);
 			zstr.getNextEntry();
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(zstr, new_name, stripped_name);
-		} else if (stream_name.endsWith(".bz2")) {
+		} else if (lc_stream_name.endsWith(".bz2")) {
 			BZip2CompressorInputStream bz2 = new BZip2CompressorInputStream(istr);
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(bz2, new_name, stripped_name);
-		} else if (stream_name.endsWith(".tar")) {
+		} else if (lc_stream_name.endsWith(".tar")) {
 			TarArchiveInputStream tarInput = new TarArchiveInputStream(istr);
 			tarInput.getNextTarEntry();
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));

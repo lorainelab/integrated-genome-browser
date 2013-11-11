@@ -12,7 +12,7 @@
   <AuxClasspathEntry>ext/checkers.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/commons-codec-1.4.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/commons-collections-2.1.1.jar</AuxClasspathEntry>
-  <AuxClasspathEntry>ext/commons-compress-1.0.jar</AuxClasspathEntry>
+  <AuxClasspathEntry>ext/commons-compress-1.6.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/commons-logging-1.0.4.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/cos.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/dom4j-1.6.1.jar</AuxClasspathEntry>

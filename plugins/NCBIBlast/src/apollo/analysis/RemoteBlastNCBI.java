@@ -43,7 +43,8 @@ public class RemoteBlastNCBI {
 
 		blastx,
 		blastn,
-		tblastx
+		tblastx,
+		blastp
 	}
 
 	/**

@@ -225,7 +225,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
 			}
 			return errorMessage;
 		}
-		String aminoAcidsSB = AminoAcid.getAminoAcid(residue, codeSize, parentSym.isForward());
+		String aminoAcidsSB = AminoAcid.getAminoAcid(residue, codeSize, parentSym.isForward(), "  ");
 		if(aminoAcidsSB == null) {
 			return null;
 		}

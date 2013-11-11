@@ -32,11 +32,10 @@ public class BlastSearchAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	
 	private final SeqMapViewI smv;
-	private final BlastRunOpts blastRunOpts;
-	public BlastSearchAction(SeqMapViewI smv, BlastRunOpts blastRunOpts) {
-		super(blastRunOpts.getBlastType().toString().toUpperCase() + " nr protein database", null, null);
+	
+	public BlastSearchAction(SeqMapViewI smv) {
+		super(RemoteBlastNCBI.BlastType.blastx.toString().toUpperCase() + " nr protein database", null, null);
 		this.smv = smv;
-		this.blastRunOpts = blastRunOpts;
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class BlastSearchAction extends GenericAction {
 						StrandedFeatureSetI sf = new StrandedFeatureSet();
 						Sequence seq = new Sequence(aseq.getID(), residues);
 						
-						RemoteBlastNCBI blast = new RemoteBlastNCBI(blastRunOpts.getBlastType(), blastRunOpts.getBlastOptions());
+						RemoteBlastNCBI blast = new RemoteBlastNCBI(RemoteBlastNCBI.BlastType.blastx, new RemoteBlastNCBI.BlastOptions());
 						String url = blast.runAnalysis(sf, seq, 1);
 						
 						GeneralUtils.browse(url);

@@ -77,7 +77,7 @@ public class TrackView {
 	 * @param tier_direction the direction
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
-	TierGlyph getTrack(SeqMapView smv, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+	synchronized TierGlyph getTrack(SeqMapView smv, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		AffyTieredMap seqmap = smv.getSeqMap();
 		TierGlyph tierGlyph;
 		tierGlyph = getTier(style, tier_direction);

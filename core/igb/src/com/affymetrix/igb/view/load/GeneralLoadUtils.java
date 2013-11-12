@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.comparator.SortIgnoreCase;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
@@ -1202,7 +1203,7 @@ public final class GeneralLoadUtils {
 	public static List<String> getSpeciesList() {
 		final List<String> speciesList = new ArrayList<String>();
 		speciesList.addAll(species2genericVersionList.keySet());
-		Collections.sort(speciesList);
+		Collections.sort(speciesList, new SortIgnoreCase());
 		return speciesList;
 	}
 

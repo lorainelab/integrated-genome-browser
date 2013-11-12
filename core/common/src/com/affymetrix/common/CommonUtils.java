@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.MediaTracker;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -205,10 +206,18 @@ public class CommonUtils {
 			if (resource_url != null) {
 				BufferedImage resource_img = ImageIO.read(resource_url);
 				Graphics2D resource_graphics = resource_img.createGraphics();
-				resource_graphics.setColor(Color.red);
-				resource_graphics.setStroke(new BasicStroke(2.0f));
-				resource_graphics.drawLine(0, 0, resource_img.getWidth(), resource_img.getHeight());
-				resource_graphics.drawLine(0, resource_img.getHeight(), resource_img.getWidth(), 0);
+				
+				int width = resource_img.getWidth();
+				int height = resource_img.getHeight();
+				int half_width = width/2;
+				int half_height = height/2;
+				
+				resource_graphics.setColor(Color.BLACK);
+				resource_graphics.setStroke(new BasicStroke(1.5f));
+				resource_graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				resource_graphics.drawOval(half_width - 2, half_height - 2, half_width, half_height);
+				resource_graphics.drawLine(half_width, half_height, 2 * half_width - 4, 2 * half_height - 4);
+//				resource_graphics.drawLine(0, resource_img.getHeight(), resource_img.getWidth(), 0);
 				return new ImageIcon(resource_img);
 			}
 		} catch (Exception e) {

@@ -1131,6 +1131,8 @@ public class NeoSeq extends NeoContainerWidget
 			return;
 		}
 		num_glyph.setFirstOrdinal (first);
+		calcNumPixelWidth();
+		doLayout();
 	}
 
 	/**
@@ -1400,7 +1402,8 @@ public class NeoSeq extends NeoContainerWidget
 		FontMetrics fontmet = GeneralUtils.getFontMetrics(residue_font);
 		int font_width = fontmet.charWidth('C');
 
-		int chars = (int) Math.log(Math.abs(this.seq.getLength()));
+		int firstOrdinal = num_glyph != null ? num_glyph.getFirstOrdinal() : 0;
+		int chars = (int) Math.log10(Math.abs(firstOrdinal + this.seq.getLength()));
 		if (chars < 1) {
 			chars = 1;
 		}

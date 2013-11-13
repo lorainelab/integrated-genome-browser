@@ -193,7 +193,8 @@ public class IGBAuthenticator extends Authenticator {
 	 */
 	@Override
 	public PasswordAuthentication getPasswordAuthentication() {
-		String url = this.getRequestingURL().toString();
+		String urlString = this.getRequestingURL().toString();
+		String url = urlString;
 		Preferences serverNode = null;
 		AuthType authType = AuthType.ASK;
 		String userFromPrefs = "";
@@ -221,7 +222,11 @@ public class IGBAuthenticator extends Authenticator {
 		}
 
 		if (authType == AuthType.AUTHENTICATE && userFromPrefs.length() != 0 && passFromPrefs.length() != 0) {
-			return new PasswordAuthentication(userFromPrefs, passFromPrefs.toCharArray());
+			try {
+				return testAuthentication(urlString, userFromPrefs, passFromPrefs.toCharArray());
+			} catch (Exception ex) {
+				return displayDialog(parent.getFocusOwner(), serverNode, serverObject, url, userFromPrefs, passFromPrefs, ERROR_LOGIN);
+			}
 		} else if (authType == AuthType.ANONYMOUS) {
 			return doAnonymous();
 		} else {

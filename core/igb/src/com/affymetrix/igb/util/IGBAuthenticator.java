@@ -273,18 +273,9 @@ public class IGBAuthenticator extends Authenticator {
 		
 		if (optionPane.getValue() == (Integer) JOptionPane.OK_OPTION) {
 			if (auth.isSelected()) {
-				InputStream temp = null;
 				try {
-					PasswordAuthentication pa = new PasswordAuthentication(username.getText(), password.getPassword());
-					Authenticator.setDefault(new SingleAuthenticator(pa));
-					URL url = new URL(urlString);
-					URLConnection conn = url.openConnection();
-					temp = conn.getInputStream();
-
-					if (temp == null) {
-						throw new IllegalArgumentException(ERROR_LOGIN);
-					}
-
+					PasswordAuthentication pa = testAuthentication(urlString, username.getText(), password.getPassword());
+					
 					//Only save correct username and password
 					if (remember.isSelected()) {
 						savePreferences(serverNode, serverObject, username.getText(),
@@ -294,9 +285,6 @@ public class IGBAuthenticator extends Authenticator {
 					return pa;
 				} catch (Exception ex) {
 					return displayDialog(parent, serverNode, serverObject, urlString, username.getText(), new String(password.getPassword()), ERROR_LOGIN);
-				} finally {
-					GeneralUtils.safeClose(temp);
-					Authenticator.setDefault(this);
 				}
 			} else {
 				return doAnonymous();
@@ -318,6 +306,28 @@ public class IGBAuthenticator extends Authenticator {
 		return authOptional ? doAnonymous() : null;
 	}
 
+	private PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) throws Exception {
+		InputStream temp = null;
+		try {
+			PasswordAuthentication pa = new PasswordAuthentication(usrnmString, pwd);
+			Authenticator.setDefault(new SingleAuthenticator(pa));
+			URL url = new URL(urlString);
+			URLConnection conn = url.openConnection();
+			temp = conn.getInputStream();
+
+			if (temp == null) {
+				throw new IllegalArgumentException(ERROR_LOGIN);
+			}
+
+			return pa;
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			GeneralUtils.safeClose(temp);
+			Authenticator.setDefault(this);
+		}
+	}
+	
 	/**
 	 * Formats and word wraps the message of the authentication dialog.
 	 *

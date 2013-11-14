@@ -28,7 +28,7 @@ public class BlastPSearchAction extends BlastSearchAction {
 			if(span.isForward()) {
 				residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax() + 3 - remainder, span.getBioSeq());
 			} else {
-				residues_sym = new SingletonSeqSymmetry(span.getMin() + 3 - remainder, span.getMax(), span.getBioSeq());
+				residues_sym = new SingletonSeqSymmetry(span.getMax() + 3 - remainder, span.getMin(), span.getBioSeq());
 			}
 		}
 		return residues_sym;

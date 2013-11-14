@@ -311,7 +311,7 @@ public class IGBAuthenticator extends Authenticator {
 		return authOptional ? doAnonymous() : null;
 	}
 
-	private PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) throws Exception {
+	private synchronized PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) throws Exception {
 		InputStream temp = null;
 		try {
 			PasswordAuthentication pa = new PasswordAuthentication(usrnmString, pwd);

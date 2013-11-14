@@ -25,7 +25,7 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
 	}
 
 	private ChangeExpandMaxOptimizeAction() {
-		super(BUNDLE.getString("changeExpandMaxOptimizeAction"), "16x16/actions/optimize_stack_depth.png", "22x22/actions/optimize_stack_depth.png");
+		super(BUNDLE.getString("changeExpandMaxOptimizeAction"), "16x16/actions/optimize_all.png", "22x22/actions/optimize_all.png");
 		putValue(SHORT_DESCRIPTION, BUNDLE.getString("changeExpandMaxOptimizeActionTooltip"));
 	}
 

@@ -1,11 +1,9 @@
 package apollo.action;
 
-import apollo.analysis.BlastRunOpts;
 import apollo.analysis.RemoteBlastNCBI;
 import apollo.datamodel.Sequence;
 import apollo.datamodel.StrandedFeatureSet;
 import apollo.datamodel.StrandedFeatureSetI;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -28,14 +26,16 @@ import java.util.logging.Level;
  *
  * @author hiralv
  */
-public class BlastSearchAction extends GenericAction {
+public abstract class BlastSearchAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	
-	private final SeqMapViewI smv;
+	protected final SeqMapViewI smv;
+	protected final RemoteBlastNCBI.BlastType blastType;
 	
-	public BlastSearchAction(SeqMapViewI smv) {
-		super(RemoteBlastNCBI.BlastType.blastx.toString().toUpperCase() + " nr protein database", null, null);
+	public BlastSearchAction(SeqMapViewI smv, RemoteBlastNCBI.BlastType blastType) {
+		super(blastType.toString().toUpperCase() + " nr protein database", null, null);
 		this.smv = smv;
+		this.blastType = blastType;
 	}
 
 	@Override
@@ -48,11 +48,10 @@ public class BlastSearchAction extends GenericAction {
 			final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
 				public void actionDone(GenericAction action) {
 					try {
-						String residues = SeqUtils.getResidues(residues_sym, aseq);
 						StrandedFeatureSetI sf = new StrandedFeatureSet();
-						Sequence seq = new Sequence(aseq.getID(), residues);
+						Sequence seq = new Sequence(aseq.getID(), getSequence(residues_sym));
 						
-						RemoteBlastNCBI blast = new RemoteBlastNCBI(RemoteBlastNCBI.BlastType.blastx, new RemoteBlastNCBI.BlastOptions());
+						RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());
 						String url = blast.runAnalysis(sf, seq, 1);
 						
 						GeneralUtils.browse(url);
@@ -68,8 +67,10 @@ public class BlastSearchAction extends GenericAction {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex, Level.WARNING);
 		}
 	}
-
-	private SeqSymmetry getResidueSym() {
+	
+    public abstract String getSequence(SeqSymmetry residues_sym);
+	
+	protected SeqSymmetry getResidueSym() {
 		SeqSymmetry residues_sym = null;
 		List<SeqSymmetry> syms = smv.getSelectedSyms();
 		if (syms.size() >= 1) {

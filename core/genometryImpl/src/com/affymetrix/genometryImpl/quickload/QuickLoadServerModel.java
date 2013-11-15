@@ -101,7 +101,7 @@ public final class QuickLoadServerModel {
 
 		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
 		if (ql_server == null) {
-			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + "synonyms.txt");
+			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + Constants.synonymsTxt);
 			ql_server = new QuickLoadServerModel(ql_http_root, primary_root, primaryServer);
 			url2quickload.put(ql_http_root, ql_server);
 		}

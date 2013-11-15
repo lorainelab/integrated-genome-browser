@@ -15,7 +15,7 @@ public interface Constants {
 	public static final String liftAllLft = "liftAll.lft";
 	public static final String modChromInfoTxt = "mod_chromInfo.txt";
 	public static final String genomeTxt = "genome.txt";
-
+	
 	//Cached Server filenames
 	public static final String serverMapping = "serverMapping.txt";
 	public static final String xml_ext = ".xml";
@@ -31,4 +31,8 @@ public interface Constants {
 	 * [Arabidopsis thaliana]->[Thale cress] -> A_thaliana 
 	 */
 	public static final String speciesTxt = "species.txt";
+	
+	// Synonym filenames
+	public static final String chromosomesTxt = "chromosomes.txt";
+	public static final String synonymsTxt = "synonyms.txt";
 }

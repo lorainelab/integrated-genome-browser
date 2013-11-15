@@ -166,8 +166,8 @@ public final class IGB extends Application
 		// Initialize statusbar output logger.
 		StatusBarOutput.initStatusBarOutput();
 		
-		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
-		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());
+		loadSynonyms("/"+Constants.synonymsTxt, SynonymLookup.getDefaultLookup());
+		loadSynonyms("/"+Constants.chromosomesTxt, SynonymLookup.getChromosomeLookup());
 
 		if ("Mac OS X".equals(System.getProperty("os.name"))) {
 			MacIntegration mi = MacIntegration.getInstance();

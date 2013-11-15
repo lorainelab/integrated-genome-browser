@@ -325,12 +325,15 @@ public final class QuickLoadServerModel {
 		String liftAll = Constants.liftAllLft;
 		String modChromInfo = Constants.modChromInfoTxt;
 		String genomeTxt = Constants.genomeTxt;
+		String chromosomeTxt = Constants.chromosomesTxt;
+		
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
 		InputStream lift_stream = null;
 		InputStream cinfo_stream = null;
 		InputStream ginfo_stream = null;
-		try {
+		InputStream chrom_stream = null;
+		try {	
 			String lift_path = getPath(genome_name, liftAll);
 			try {
 				// don't warn about this file, since we'll look for modChromInfo file
@@ -367,6 +370,17 @@ public final class QuickLoadServerModel {
 
 			boolean annot_contigs = false;
 			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().addSeqGroup(genome_name);
+			
+			try {
+				String chromosome_path = getPath(genome_name, chromosomeTxt);
+				chrom_stream = getInputStream(chromosome_path, true, true);
+				if(chrom_stream != null) {
+					group.loadSynonyms(chrom_stream);
+				}
+			} catch (Exception ex) {
+				chrom_stream = null;
+			}
+			
 			if (lift_stream != null) {
 				LiftParser.parse(lift_stream, group, annot_contigs);
 				success = true;
@@ -383,6 +397,7 @@ public final class QuickLoadServerModel {
 			GeneralUtils.safeClose(lift_stream);
 			GeneralUtils.safeClose(ginfo_stream);
 			GeneralUtils.safeClose(cinfo_stream);
+			GeneralUtils.safeClose(chrom_stream);
 		}
 //		if(!success){
 //			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required sequence metadata "

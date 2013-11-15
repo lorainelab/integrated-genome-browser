@@ -48,7 +48,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 	 * Create an action for the given tiered map.
 	 */
 	public ZoomingRepackAction() {
-		super(BUNDLE.getString("optimizeAll"),"16x16/actions/optimize_all.png", "22x22/actions/optimize_all.png");
+		super(BUNDLE.getString("optimizeAll"),"16x16/actions/optimize_stack_depth.png", "22x22/actions/optimize_stack_depth.png");
 		putValue(Action.SHORT_DESCRIPTION, BUNDLE.getString("optimizeAllToolTip"));
 	}
 

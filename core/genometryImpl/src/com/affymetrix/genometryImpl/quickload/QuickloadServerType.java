@@ -64,6 +64,7 @@ public class QuickloadServerType implements ServerTypeI {
 		quickloadFiles.add(Constants.annotsXml);
 		quickloadFiles.add(Constants.modChromInfoTxt);
 		quickloadFiles.add(Constants.liftAllLft);
+		quickloadFiles.add(Constants.genomeTxt);
 	}
 	private static final QuickloadServerType instance = new QuickloadServerType();
 

@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -28,9 +30,8 @@ public class AnnotatedSeqGroup {
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	private HashMap<String, Set<String>> uri2Seqs = new HashMap<String, Set<String>>();
 	
-	private final static SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
-	private final static SynonymLookup groupLookup = SynonymLookup.getDefaultLookup();
-
+	private SynonymLookup chrLookup;
+	
 	public AnnotatedSeqGroup(String gid) {
 		id = gid;
 		use_synonyms = true;
@@ -161,6 +162,13 @@ public class AnnotatedSeqGroup {
 		use_synonyms = b;
 	}
 
+	public void loadSynonyms(InputStream istr) throws IOException {
+		if(chrLookup == null) {
+			chrLookup = new SynonymLookup();
+		}
+		chrLookup.loadSynonyms(istr, false);
+	}
+	
 	/** Gets a sequence based on its name, possibly taking synonyms into account.
 	 *  See {@link #setUseSynonyms(boolean)}.
 	 *
@@ -171,16 +179,31 @@ public class AnnotatedSeqGroup {
 		BioSeq aseq = id2seq.get(synonym.toLowerCase());
 		if (use_synonyms && aseq == null) {
 			// Try and find a synonym.
-			for (String syn : chrLookup.getSynonyms(synonym,false)) {
-				aseq = id2seq.get(syn.toLowerCase());
-				if (aseq != null) {
-					return aseq;
-				}
+			// First look up species specific synonym
+			if(chrLookup != null) {
+				aseq = findSeqSynonym(synonym, chrLookup);
 			}
+			
+			// If synonym is not found in local then lookup global list
+			if(aseq == null) {
+				aseq = findSeqSynonym(synonym, SynonymLookup.getChromosomeLookup());
+			}
+			
 		}
 		return aseq;
 	}
 
+	private BioSeq findSeqSynonym(String synonym, SynonymLookup lookup) {
+		BioSeq aseq = null;
+		for (String syn : lookup.getSynonyms(synonym, false)) {
+			aseq = id2seq.get(syn.toLowerCase());
+			if (aseq != null) {
+				break;
+			}
+		}
+		return aseq;
+	}
+	
 	/**
 	 *  For the given symmetry, tries to find in the group a sequence
 	 *    that is pointed to by that symmetry.
@@ -203,7 +226,7 @@ public class AnnotatedSeqGroup {
 	}
 
 	public final boolean isSynonymous(String synonym) {
-		return id.equals(synonym) || groupLookup.isSynonym(id, synonym);
+		return id.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(id, synonym);
 	}
 
 	private boolean findSeqid(String searchSeqid) {

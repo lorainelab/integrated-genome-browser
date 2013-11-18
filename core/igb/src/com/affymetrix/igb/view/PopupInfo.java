@@ -56,7 +56,7 @@ public class PopupInfo extends JWindow {
 		StyleConstants.setBold(NAME, true);
 	}	
 	private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
-	private static final int minHeight = 100;
+	private static final int minHeight = 110;
 	private static final int maxWidth  = 300;
 	private final JLabel message;
 	private final JTextPane tooltip;
@@ -355,7 +355,7 @@ public class PopupInfo extends JWindow {
 		message.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		message.setAlignmentY(JComponent.CENTER_ALIGNMENT);
 		message.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		
+				
 		tooltip.setBackground(backgroundColor);
 		tooltip.setEditable(false);
 		tooltip.setEnabled(false);
@@ -371,12 +371,8 @@ public class PopupInfo extends JWindow {
 		} else {
 			tooltip.addMouseListener(snapShot);
 		}
-		JPanel noWrapPanel = new JPanel( new BorderLayout() );
-		noWrapPanel.setBackground(backgroundColor);
-		noWrapPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		noWrapPanel.add(tooltip);
 		
-		JScrollPane scrollPane = new JScrollPane(noWrapPanel);
+		JScrollPane scrollPane = new JScrollPane(tooltip);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		scrollPane.setBackground(backgroundColor);

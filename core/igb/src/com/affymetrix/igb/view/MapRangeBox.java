@@ -368,7 +368,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
 	public void setRangeText(double start, double end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		range_box.setText((seq == null ? "" : seq.getID() + " : ") + nformat.format(start) + " - " + nformat.format(end));
+		range_box.setText((seq == null ? "" : seq.getID() + ":") + nformat.format(start) + "-" + nformat.format(end));
 	}
 
 	public void actionPerformed(ActionEvent evt) {

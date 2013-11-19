@@ -168,7 +168,8 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 			return;
 		}
 		
-		optimziedTooltip(evt);
+//		optimziedTooltip(evt);
+		oldToolTip(evt);
 	}
 
 	private void oldToolTip(MouseEvent evt){

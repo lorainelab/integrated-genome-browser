@@ -52,6 +52,8 @@ import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 /**
  * An Authenticator class for IGB. It is designed to make it easier for a user
@@ -311,10 +313,10 @@ public class IGBAuthenticator extends Authenticator {
 		return authOptional ? doAnonymous() : null;
 	}
 
-	private synchronized PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) throws Exception {
+	private synchronized PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) {
 		InputStream temp = null;
+		PasswordAuthentication pa = new PasswordAuthentication(usrnmString, pwd);
 		try {
-			PasswordAuthentication pa = new PasswordAuthentication(usrnmString, pwd);
 			Authenticator.setDefault(new SingleAuthenticator(pa));
 			URL url = new URL(urlString);
 			URLConnection conn = url.openConnection();
@@ -323,14 +325,13 @@ public class IGBAuthenticator extends Authenticator {
 			if (temp == null) {
 				throw new IllegalArgumentException(ERROR_LOGIN);
 			}
-
-			return pa;
-		} catch (Exception ex) {
-			throw ex;
+			
+		} catch (IOException ex) {	
 		} finally {
 			GeneralUtils.safeClose(temp);
 			Authenticator.setDefault(this);
 		}
+		return pa;
 	}
 	
 	/**

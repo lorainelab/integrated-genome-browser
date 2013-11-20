@@ -162,7 +162,7 @@ public class SeqMapView extends JPanel
 	 * Name of a string preference define which resize behavior to use.
 	 */
 	public static final String PREF_TRACK_RESIZING_BEHAVIOR = "Track resizing behavior";
-	public static final Color default_edge_match_color = Color.WHITE;
+	public static final Color default_edge_match_color = Color.RED;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 	private static final boolean default_x_zoomer_above = true;
 	private static final boolean default_y_zoomer_left = true;

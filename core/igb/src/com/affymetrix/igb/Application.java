@@ -1,5 +1,6 @@
 package com.affymetrix.igb;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -8,7 +9,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
@@ -152,23 +152,23 @@ public abstract class Application {
 	 */
 	public static boolean confirmPanel(String message) {
 		Application app = getSingleton();
-		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
 		return confirmPanel(comp, message, null, null, false);
 	}
 	
 	public static boolean confirmPanel(final String message, final String check, 
 			final boolean def_val) {
 		Application app = getSingleton();
-		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
 		return confirmPanel(comp, message, PreferenceUtils.getTopNode(), check, def_val);
 	}
 		
-	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,
+	public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
 			final String check, final boolean def_val) {
 		return confirmPanel(comp, message, node, check, def_val, "Do not show this message again");
 	}
 	
-	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,
+	public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
 		final String check, final boolean def_val, final String save_string) {
 			Object[] params;
 
@@ -203,7 +203,7 @@ public abstract class Application {
 		return false;	
 	}
 	
-	private static int showConfirmDialog(final JComponent comp, Object[] params){
+	private static int showConfirmDialog(final Component comp, Object[] params){
 		JOptionPane pane = new JOptionPane(params, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, getSingleton().getSmallIcon());
 		javax.swing.JDialog dialog = pane.createDialog(comp, "Confirm");	
 		dialog.setVisible(true);
@@ -220,7 +220,7 @@ public abstract class Application {
 	public static void infoPanel(final String message, final String check, final boolean def_val) {
 		Preferences node = PreferenceUtils.getTopNode();
 		Application app = getSingleton();
-		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
 		
 //		if(node == null){
 //			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);

@@ -42,7 +42,6 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.CoordFloaterGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
-import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.*;
@@ -2637,7 +2636,7 @@ public class SeqMapView extends JPanel
 			gl.setInfo(result);
 			gl.setColor(hitColor);
 			double pos = forward ? 27 : 32;
-			gl.setCoords(result.getStart(), pos, result.getLength(), 10);
+			gl.setCoords(result.getMin(), pos, result.getLength(), 10);
 			resultGlyphs.add(gl);
 		}
 		ThreadUtils.runOnEventQueue(new Runnable(){

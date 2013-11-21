@@ -1,6 +1,7 @@
 package com.affymetrix.igb.search;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -16,9 +18,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -53,6 +58,35 @@ public class SearchModeResidue implements ISearchModeExtended,
 	private IGBService igbService;
 	private int color = 0;
 	private boolean optionSelected;
+	
+	private final Action createTrackAction = new AbstractAction("Create Track"){
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			CThreadWorker worker = new CThreadWorker("Creating track"){
+
+				@Override
+				protected Object runInBackground() {
+					for(GlyphI glyph : glyphs) {
+						SingletonSymWithProps info = (SingletonSymWithProps) glyph.getInfo();
+						if(info != null) {
+							BioSeq seq = info.getSpanSeq(0);
+							info.setProperty("method", "Search Track");
+							seq.addAnnotation(info);
+						}
+					}
+					return null;
+				}
+
+				@Override
+				protected void finished() {
+					igbService.getSeqMapView().updatePanel();
+				}
+				
+			};
+			CThreadHolder.getInstance().execute(SearchModeResidue.this, worker);
+		}
+	};
 	
 	public SearchModeResidue(IGBService igbService) {
 		super();
@@ -265,6 +299,6 @@ public class SearchModeResidue implements ISearchModeExtended,
 
 	@Override
 	public Action getCustomAction() {
-		return null;
+		return createTrackAction;
 	}
 }

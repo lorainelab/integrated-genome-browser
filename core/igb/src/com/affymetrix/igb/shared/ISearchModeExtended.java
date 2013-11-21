@@ -29,4 +29,9 @@ public interface ISearchModeExtended extends ISearchMode{
 	 * @return if option state
 	 */
 	public boolean getOptionState();
+	
+	/**
+	 * @return Action to be associated with button
+	 */
+	public javax.swing.Action getCustomAction();
 }

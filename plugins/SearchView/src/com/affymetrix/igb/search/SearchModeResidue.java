@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.Action;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -260,5 +261,10 @@ public class SearchModeResidue implements ISearchModeExtended,
 		});
 		color++;
 		return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), statusStr, glyphs);
+	}
+
+	@Override
+	public Action getCustomAction() {
+		return null;
 	}
 }

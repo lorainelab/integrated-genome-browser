@@ -1,6 +1,10 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
 import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+import javax.swing.Action;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -14,9 +18,6 @@ import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended, ISearchHints {
 	private static final int SEARCH_ALL_ORDINAL = -9000;
@@ -99,6 +100,11 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
 		GenometryModel.getGenometryModel().getSelectedSeqGroup().searchHints(results, regex, 20);
 		
 		return results;
+	}
+	
+	@Override
+	public Action getCustomAction() {
+		return null;
 	}
 	
 	private int getRemoteServerCount() {

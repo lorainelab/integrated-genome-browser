@@ -650,7 +650,9 @@ public class BioSeq implements SearchableCharIterator {
 			int residue_start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
 			int residue_end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;
-			SingletonSymWithProps info = new SingletonSymWithProps(residue_start, residue_end, seq);
+			SingletonSymWithProps info = forward ? new SingletonSymWithProps(residue_start, residue_end, seq) : 
+					new SingletonSymWithProps(residue_end, residue_start, seq);
+			info.setProperty("method", "Search term:"+regex.pattern());
 			info.setProperty("direction", forward ? "forward" : "reverse");
 			info.setProperty("match", matcher.group(0));
 			info.setProperty("pattern", regex.pattern());

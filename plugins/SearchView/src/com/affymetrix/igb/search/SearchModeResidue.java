@@ -2,17 +2,23 @@ package com.affymetrix.igb.search;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -21,13 +27,17 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -35,7 +45,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
-import java.util.Calendar;
 
 public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -68,15 +77,11 @@ public class SearchModeResidue implements ISearchModeExtended,
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			final String trackId = GeneralUtils.URLEncode("SearchTrack://"+Calendar.getInstance().getTime().toString());
 			CThreadWorker worker = new CThreadWorker("Creating track"){
 
 				@Override
 				protected Object runInBackground() {
-					String trackId = "Search Track:"+Calendar.getInstance().getTime().toString();
-					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(trackId, "Search Track", null, null);
-					style.setColorProvider(new RGB());
-					style.setLabelField("match");
-					style.setSeparate(false);
 					for(GlyphI glyph : glyphs) {
 						SingletonSymWithProps info = (SingletonSymWithProps) glyph.getInfo();
 						if(info != null) {
@@ -91,7 +96,17 @@ public class SearchModeResidue implements ISearchModeExtended,
 
 				@Override
 				protected void finished() {
-					igbService.getSeqMapView().updatePanel(true, false);
+					try {
+						ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(trackId, "Search Track", null, null);
+						style.setColorProvider(new RGB());
+						style.setLabelField("match");
+						style.setSeparate(false);
+						
+						GenericFeature feature = igbService.createFeature(trackId, new DummySymLoader(trackId, "Search Track", GenometryModel.getGenometryModel().getSelectedSeqGroup()));
+						igbService.loadAndDisplayAnnotations(feature);
+					} catch (URISyntaxException ex) {
+						Logger.getLogger(SearchModeResidue.class.getName()).log(Level.SEVERE, null, ex);
+					}
 				}
 				
 			};
@@ -311,5 +326,24 @@ public class SearchModeResidue implements ISearchModeExtended,
 	@Override
 	public Action getCustomAction() {
 		return createTrackAction;
+	}
+	
+	static class DummySymLoader extends QuickLoadSymLoader {
+
+		private static final List<LoadUtils.LoadStrategy> strategyList = new ArrayList<LoadUtils.LoadStrategy>();
+		static {
+			strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
+			strategyList.add(LoadUtils.LoadStrategy.VISIBLE);
+
+		}
+
+		public DummySymLoader(String trackId, String featureName, AnnotatedSeqGroup group) throws URISyntaxException {
+			super(new URI(trackId), featureName, group);
+		}
+		
+		@Override
+		public List<LoadUtils.LoadStrategy> getLoadChoices() {
+			return strategyList;
+		}
 	}
 }

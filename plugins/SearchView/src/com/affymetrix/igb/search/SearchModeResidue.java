@@ -16,11 +16,15 @@ import javax.swing.Action;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -31,6 +35,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
+import java.util.Calendar;
 
 public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -67,11 +72,17 @@ public class SearchModeResidue implements ISearchModeExtended,
 
 				@Override
 				protected Object runInBackground() {
+					String trackId = "Search Track:"+Calendar.getInstance().getTime().toString();
+					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(trackId, "Search Track", null, null);
+					style.setColorProvider(new RGB());
+					style.setLabelField("match");
+					style.setSeparate(false);
 					for(GlyphI glyph : glyphs) {
 						SingletonSymWithProps info = (SingletonSymWithProps) glyph.getInfo();
 						if(info != null) {
 							BioSeq seq = info.getSpanSeq(0);
-							info.setProperty("method", "Search Track");
+							info.setProperty("method", trackId);
+							info.setProperty(TrackLineParser.ITEM_RGB, glyph.getColor());
 							seq.addAnnotation(info);
 						}
 					}
@@ -80,7 +91,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 
 				@Override
 				protected void finished() {
-					igbService.getSeqMapView().updatePanel();
+					igbService.getSeqMapView().updatePanel(true, false);
 				}
 				
 			};

@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -40,7 +41,6 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.shared.ExportDialog;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -53,8 +53,6 @@ import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.print.PrinterException;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
@@ -488,5 +486,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		}
 
 		return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
+	}
+	
+	@Override
+	public GenericFeature createFeature(String featureName, SymLoader loader) {	
+		return GeneralLoadView.getLoadView().createFeature(featureName, loader);
 	}
 }

@@ -19,10 +19,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -152,14 +150,8 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		}
 		
 		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
-		GenericFeature feature = new GenericFeature(featureName, null, version, new Delegate(uri, featureName, version.group, operator, dps), null, false);
-		version.addFeature(feature);
-		feature.setVisible(); // this should be automatically checked in the feature tree
-		
-		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true);
-		
-		GeneralLoadView.getLoadView().refreshDataManagementView();
-		
+		GenericFeature feature = GeneralLoadView.getLoadView().createFeature(featureName, new Delegate(uri, featureName, version.group, operator, dps));
+				
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, featureName, Delegate.EXT, null);
 		if(preferredStyle != null){
 			style.copyPropertiesFrom(preferredStyle);
@@ -179,7 +171,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 		
 		return feature;
 	}
-	
+		
 	private static String removeIllegalCharacters(String string){
 		string = string.replaceAll("\\s+", "_");
 		string = string.replaceAll("\\|", "_");

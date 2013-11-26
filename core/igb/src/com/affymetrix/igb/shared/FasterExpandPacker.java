@@ -290,6 +290,12 @@ public class FasterExpandPacker extends ExpandPacker {
 		GlyphI child;
 		for (int i = 0; i < child_count; i++) {
 			child = parent.getChild(i);
+			
+			// If child is not visible then it is filtered.
+			if(!child.isVisible()) {
+				continue;
+			}
+			
 			//If info is null then it is edge match glyph
 			if(child.getInfo() == null){
 				continue;

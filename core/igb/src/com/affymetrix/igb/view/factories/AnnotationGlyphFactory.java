@@ -290,28 +290,14 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 				// if no span for view, then child is either to left or right of view
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
-				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				boolean cds = (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan));
 				double cheight = thin_height;
 				if(cds){
 					cheight = child_height;
 				}
-				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-				cglyph.setColor(child_color);
-				the_tier.setDataModelFromOriginalSym(cglyph, child);
-				pglyph.addChild(cglyph);
-
+				
+				addChildGlyph(child, cspan, pspan, direction_type, cheight, child_color, childCount == 1, pglyph, the_tier, annotseq);
 				addAlignedResiduesGlyph(child, annotseq, cspan, cheight, pglyph, the_tier);
-				
-				// Special case: When there is only one child, then make it not hitable.
-				if(childCount == 1){
-					cglyph.setHitable(false);
-				}
-				
-				if(cglyph instanceof DirectedGlyph){
-					((DirectedGlyph)cglyph).setForward(cspan.isForward());
-				}
-				codon_glyph_processor.processGlyph(cglyph, child, annotseq);
 				
 				if(!cds){
 					handleCDSSpan(gviewer, the_tier, cdsSpan, cspan, cds_sym, child, insym, annotseq, same_seq, child_color, /*the_style.getHeight()*/ child_height, pglyph);
@@ -328,6 +314,22 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, thin_height);
 	}
 
+	private void addChildGlyph(SeqSymmetry sym, SeqSpan span, SeqSpan pspan, 
+			DIRECTION_TYPE direction_type, double height, Color color, boolean hitable, GlyphI pglyph, TierGlyph the_tier, BioSeq annotseq) 
+			throws InstantiationException, IllegalAccessException {
+		GlyphI cglyph = getChild(span, span.getMin() == pspan.getMin(), span.getMax() == pspan.getMax(), direction_type);
+		cglyph.setCoords(span.getMin(), 0, span.getLength(), height);
+		cglyph.setColor(color);
+		the_tier.setDataModelFromOriginalSym(cglyph, sym);
+		pglyph.addChild(cglyph);
+		
+		cglyph.setHitable(hitable);
+		if(cglyph instanceof DirectedGlyph){
+			((DirectedGlyph)cglyph).setForward(span.isForward());
+		}
+		codon_glyph_processor.processGlyph(cglyph, sym, annotseq);
+	}
+	
 	private void addAlignedResiduesGlyph(SeqSymmetry sym, BioSeq annotseq, SeqSpan span, double height, GlyphI pglyph, TierGlyph the_tier) {
 		AlignedResidueGlyph alignResidueGlyph = getAlignedResiduesGlyph(sym, annotseq, true);
 		if (alignResidueGlyph != null) {

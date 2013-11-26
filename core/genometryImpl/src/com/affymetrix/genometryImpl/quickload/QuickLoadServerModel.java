@@ -380,7 +380,10 @@ public final class QuickLoadServerModel {
 			} catch (Exception ex) {
 				chrom_stream = null;
 			}
-						
+			
+			// Remove previously loaded sequence.
+			group.removeSeqsForUri(getLoadURL());
+			
 			if (lift_stream != null) {
 				success = LiftParser.parse(lift_stream, group, annot_contigs);
 			} else if (ginfo_stream != null ){

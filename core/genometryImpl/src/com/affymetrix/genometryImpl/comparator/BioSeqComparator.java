@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.affymetrix.genometryImpl.comparator;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -14,6 +9,8 @@ import java.util.Comparator;
  */
 public final class BioSeqComparator implements Comparator<BioSeq>{
 
+	static final AlphanumComparator alphaNumComparator = new AlphanumComparator();
+	
 	public int compare(BioSeq o1, BioSeq o2) {
 		return compareStrings(o1.getID(), o2.getID());
 	}
@@ -22,7 +19,7 @@ public final class BioSeqComparator implements Comparator<BioSeq>{
 		if (id1 == null || id2 == null) {
 			return compareNullIDs(id1, id2);
 		}
-		return id1.compareTo(id2);
+		return alphaNumComparator.compare(id1, id2);
 	}
 	
 	static int compareNullIDs(String id1, String id2) {

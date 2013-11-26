@@ -5,6 +5,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.comparator.AlphanumComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymIdComparator;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
@@ -374,7 +375,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			public Comparator<?> getComparator(int column) {
 				if (column == 0) {
-					return String.CASE_INSENSITIVE_ORDER;
+					return new AlphanumComparator();
 				}
 				return new SeqLengthComparator();
 			}

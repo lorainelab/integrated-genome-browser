@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.UrlToFileName;
 import com.affymetrix.igb.view.StatusBar;
+import java.awt.Window;
 
 public abstract class Application {
 
@@ -160,6 +161,9 @@ public abstract class Application {
 			final boolean def_val) {
 		Application app = getSingleton();
 		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
+		if(!(comp instanceof Window)){
+			comp = (app == null) ? null : app.getFrame().getRootPane();
+		}
 		return confirmPanel(comp, message, PreferenceUtils.getTopNode(), check, def_val);
 	}
 		
@@ -221,6 +225,9 @@ public abstract class Application {
 		Preferences node = PreferenceUtils.getTopNode();
 		Application app = getSingleton();
 		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
+		if(!(comp instanceof Window)){
+			comp = (app == null) ? null : app.getFrame().getRootPane();
+		}
 		
 //		if(node == null){
 //			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);

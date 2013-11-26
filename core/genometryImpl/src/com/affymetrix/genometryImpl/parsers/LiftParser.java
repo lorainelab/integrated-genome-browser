@@ -13,20 +13,20 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SeqSpan;
-import java.io.*;
-import java.util.regex.*;
-
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.Timer;
 
 public final class LiftParser {
 
@@ -41,7 +41,7 @@ public final class LiftParser {
 
 	private static final boolean SET_COMPOSITION = true;
 
-	public static void loadChroms(String file_name, AnnotatedSeqGroup seq_group)
+	public static boolean loadChroms(String file_name, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		Logger.getLogger(LiftParser.class.getName()).log(
 							Level.FINE, "trying to load lift file: {0}", file_name);
@@ -49,7 +49,7 @@ public final class LiftParser {
 		try {
 			File fil = new File(file_name);
 			fistr = new FileInputStream(fil);
-			LiftParser.parse(fistr, seq_group);
+			return parse(fistr, seq_group);
 		}
 		finally {
 			GeneralUtils.safeClose(fistr);
@@ -62,8 +62,8 @@ public final class LiftParser {
 	 *  @return  A Map with chromosome ids as keys, and SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file as values.
 	 */
-	public static void parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
-		parse(istr, seq_group, true);
+	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+		return parse(istr, seq_group, true);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public final class LiftParser {
 	 *  @return an AnnotatedSeqGroup containing SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file.
 	 */
-	public static void parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
 		Logger.getLogger(LiftParser.class.getName()).log(
 							Level.FINE,"parsing in lift file");
@@ -81,7 +81,7 @@ public final class LiftParser {
 		int contig_count = 0;
 		int chrom_count = 0;
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-
+		boolean isEmpty = true;
 		try {
 			String line;
 			Thread thread = Thread.currentThread();
@@ -129,6 +129,7 @@ public final class LiftParser {
 				csym.setProperty("method", "contig");
 				csym.setProperty("id", contig.getID());
 				comp.addChild(csym);
+				isEmpty = false;
 			}
 		} catch (EOFException ex) {
 			Logger.getLogger(LiftParser.class.getName()).log(
@@ -149,6 +150,7 @@ public final class LiftParser {
 							Level.INFO, "contig count: {0}", contig_count);
 		Logger.getLogger(LiftParser.class.getName()).log(
 							Level.INFO, "chrom count: {0}", chrom_count);
+		return !isEmpty;
 	}
 
 }

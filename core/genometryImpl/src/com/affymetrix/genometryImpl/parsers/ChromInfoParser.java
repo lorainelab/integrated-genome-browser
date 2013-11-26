@@ -25,7 +25,7 @@ public final class ChromInfoParser {
 	 *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
 	 *  adds it to the GenometryModel.
 	 */
-	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group)
+	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, String uri)
 		throws IOException {
 		BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
 		String line;
@@ -46,7 +46,7 @@ public final class ChromInfoParser {
 				System.out.println("WARNING: chromInfo line does not match.  Ignoring: " + line);
 				continue;
 			}
-			seq_group.addSeq(chrom_name, chrLength);	// adds if it doesn't already exist.
+			seq_group.addSeq(chrom_name, chrLength, uri);	// adds if it doesn't already exist.
 			isEmpty = false;
 		}
 		return !isEmpty;

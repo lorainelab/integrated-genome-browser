@@ -66,7 +66,7 @@ public class NewGenomeAction extends OpenURIAction {
 				String fileName = getFriendlyName(refSeqPath);
 				if(Constants.genomeTxt.equals(fileName) || Constants.modChromInfoTxt.equals(fileName)){
 					try {
-						ChromInfoParser.parse(getInputStream(refSeqPath), group);
+						ChromInfoParser.parse(getInputStream(refSeqPath), group, refSeqPath);
 						GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
 						ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
 					} catch (Exception ex) {

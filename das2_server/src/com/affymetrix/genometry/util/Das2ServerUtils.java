@@ -600,7 +600,7 @@ public class Das2ServerUtils {
 			Logger.getLogger(Das2ServerUtils.class.getName()).log(Level.INFO, "parsing {0} for: {1}", new Object[]{modChromInfo, genome_version});
 			InputStream chromstream = new FileInputStream(chrom_info_file);
 			try {
-				ChromInfoParser.parse(chromstream, genome);
+				ChromInfoParser.parse(chromstream, genome, "");
 			} finally {
 				GeneralUtils.safeClose(chromstream);
 			}

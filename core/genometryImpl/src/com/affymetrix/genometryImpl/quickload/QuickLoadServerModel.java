@@ -380,13 +380,13 @@ public final class QuickLoadServerModel {
 			} catch (Exception ex) {
 				chrom_stream = null;
 			}
-			
+						
 			if (lift_stream != null) {
 				success = LiftParser.parse(lift_stream, group, annot_contigs);
 			} else if (ginfo_stream != null ){
-				success = ChromInfoParser.parse(ginfo_stream, group);
+				success = ChromInfoParser.parse(ginfo_stream, group, getLoadURL());
 			}else if (cinfo_stream != null) {
-				success = ChromInfoParser.parse(cinfo_stream, group);
+				success = ChromInfoParser.parse(cinfo_stream, group, getLoadURL());
 			} 
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Error loading data for genome '" + genome_name + "'", ex, Level.SEVERE);

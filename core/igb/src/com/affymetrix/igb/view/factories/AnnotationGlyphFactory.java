@@ -186,6 +186,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_tier, the_style, insym, labelInSouth, pspan, sym, gviewer, child_height, direction_type, color, annotseq);
+			if(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH){
+				addChildGlyph(sym, pspan, pspan, direction_type, pglyph.getCoordBox().getHeight(), color, false, pglyph, the_tier, annotseq);
+			}
 			addAlignedResiduesGlyph(insym, annotseq, pspan, child_height, pglyph, the_tier);
 		}
 		return pglyph;

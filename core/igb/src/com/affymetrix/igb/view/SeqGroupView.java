@@ -60,12 +60,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -375,7 +378,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			public Comparator<?> getComparator(int column) {
 				if (column == 0) {
-					return new AlphanumComparator();
+					return new BioSeqAlphanumComparator();
 				}
 				return new SeqLengthComparator();
 			}
@@ -384,7 +387,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		selected_seq = null;
 		seqtable.setModel(mod);
 		seqtable.setRowSorter(sorter);
-
+		sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
+		
 		TableColumn c = seqtable.getColumnModel().getColumn(1);
 		c.setCellRenderer(new ColumnRenderer());
 
@@ -974,5 +978,17 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	public JComboBox getVersionCB() {
 		return versionCB;
+	}
+	
+	private static class BioSeqAlphanumComparator extends AlphanumComparator {
+		@Override
+		public int compare(Object o1, Object o2) {
+			if(o1.toString().equals("genome")) {
+				return 1;
+			} else if (o2.toString().equals("genome")) {
+				return -1;
+			}
+			return super.compare(o1, o2);
+		}
 	}
 }

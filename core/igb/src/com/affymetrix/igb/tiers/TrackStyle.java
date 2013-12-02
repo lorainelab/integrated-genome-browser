@@ -222,8 +222,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		start_color		= (Color)	load(PREF_START_COLOR, this.getForwardColor());
 		end_color		= (Color)	load(PREF_END_COLOR, this.getReverseColor());
 		label_field		= (String)	load(PREF_LABEL_FIELD, this.getLabelField());
-		track_name_size = (Float) load(PREF_TRACK_SIZE, this.getTrackNameSize());
+		track_name_size = (Float)	load(PREF_TRACK_SIZE, this.getTrackNameSize());
 		direction_type	= DIRECTION_TYPE.valueFor((Integer)load(PREF_DIRECTION_TYPE, this.getDirectionType()));
+		Color temp_fg	= (Color)	load(PREF_LABEL_FOREGROUND, this.getLabelForeground());
+		Color temp_bg	= (Color)	load(PREF_LABEL_BACKGROUND, this.getLabelBackground());
+		if(temp_fg != foreground) {
+			labelForeground = temp_fg;
+		}
+		if(temp_bg != background) {
+			labelBackground = temp_bg;
+		}
 	}
 
 	public PropertyMap getProperties() {
@@ -972,11 +980,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public void setLabelForeground(Color c) {
 		labelForeground = c;
+		save(PREF_LABEL_FOREGROUND, c);
 	}
 
 	@Override
 	public void setLabelBackground(Color c) {
 		labelBackground = c;
+		save(PREF_LABEL_BACKGROUND, c);
 	}
 
 	@Override
@@ -1060,9 +1070,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			this.setGlyphDepth((Integer)value);
 		} else if (PROP_LABEL_FIELD.equals(key) && value instanceof String){
 			this.setLabelField((String)value);
-		} else if (PROP_LABEL_COLOR.equals(key) && value instanceof Color){
+		} else if (PROP_LABEL_FOREGROUND.equals(key) && value instanceof Color){
 			this.setLabelForeground((Color)value);
-		} else if (PROP_MAX_DEPTH.equals(key) && value instanceof Number){
+		} else if (PROP_LABEL_BACKGROUND.equals(key) && value instanceof Color){
+			this.setLabelBackground((Color)value);
+		}else if (PROP_MAX_DEPTH.equals(key) && value instanceof Number){
 			this.setMaxDepth((Integer)value);
 		} else if (PROP_SEPARATE.equals(key) && value instanceof Boolean){
 			this.setSeparate((Boolean)value);

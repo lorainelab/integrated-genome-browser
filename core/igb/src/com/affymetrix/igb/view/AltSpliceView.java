@@ -44,7 +44,7 @@ public class AltSpliceView extends IGBTabPanel
 
 	private static AltSpliceView singleton;
 	private static final long serialVersionUID = 1L;
-	private static final int TAB_POSITION = 3;
+	private static final int TAB_POSITION = 5;
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
 	private final JRPTextField buffer_sizeTF;

@@ -21,7 +21,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
-	private static final int TAB_POSITION = 5;
+	private static final int TAB_POSITION = 6;
 
 	private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
 	final JRPComboBox ucscBox;

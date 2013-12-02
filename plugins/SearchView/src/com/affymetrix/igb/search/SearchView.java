@@ -63,7 +63,7 @@ public final class SearchView extends IGBTabPanel implements
 	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
 	private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
-	private static final int TAB_POSITION = 2;
+	private static final int TAB_POSITION = 3;
 	private static String[] regexChars = new String[]{"|"};
 	
 	public class SearchModeAction extends GenericAction {

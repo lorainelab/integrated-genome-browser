@@ -63,7 +63,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
 	private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
-	private static final int TAB_POSITION = 6;
+	private static final int TAB_POSITION = 7;
 
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	private final Cursor defaultCursor = null;

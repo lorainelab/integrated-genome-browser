@@ -506,6 +506,7 @@ public class SeqMapView extends JPanel
 	
 	protected void addZoomInXButton(String id) {
 		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
+		zoomInXB.setToolTipText(BUNDLE.getString("horizontalZoomerPlusButtonTooltip"));
 		zoomInXB.setMargin(new Insets(0,0,0,0));
 		zoomInXB.addMouseListener(continuousActionListener);
 		xzoombox.add(zoomInXB);
@@ -513,6 +514,7 @@ public class SeqMapView extends JPanel
 
 	protected void addZoomOutXButton(String id) {
 		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
+		zoomOutXB.setToolTipText(BUNDLE.getString("horizontalZoomerMinusButtonTooltip"));
 		zoomOutXB.setMargin(new Insets(0,0,0,0));
 		zoomOutXB.addMouseListener(continuousActionListener);
 		xzoombox.add(zoomOutXB);
@@ -520,6 +522,7 @@ public class SeqMapView extends JPanel
 
 	protected void addZoomInYButton(String id) {
 		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
+		zoomInYB.setToolTipText(BUNDLE.getString("verticalZoomerPlusButtonTooltip"));
 		zoomInYB.setAlignmentX(CENTER_ALIGNMENT);
 		zoomInYB.setMargin(new Insets(0,0,0,0));
 		zoomInYB.addMouseListener(continuousActionListener);
@@ -528,6 +531,7 @@ public class SeqMapView extends JPanel
 
 	protected void addZoomOutYButton(String id) {
 		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
+		zoomOutYB.setToolTipText(BUNDLE.getString("verticalZoomerMinusButtonTooltip"));
 		zoomOutYB.setAlignmentX(CENTER_ALIGNMENT);
 		zoomOutYB.setMargin(new Insets(0,0,0,0));
 		zoomOutYB.addMouseListener(continuousActionListener);

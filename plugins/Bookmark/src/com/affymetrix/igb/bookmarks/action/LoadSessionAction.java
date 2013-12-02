@@ -31,7 +31,7 @@ public class LoadSessionAction extends GenericAction {
 	}
 	
 	private LoadSessionAction(IGBService igbService) {
-		super(BookmarkManagerView.BUNDLE.getString("loadSession"), null,
+		super(BookmarkManagerView.BUNDLE.getString("loadSession"), BookmarkManagerView.BUNDLE.getString("openSessionTooltip"),
 				"16x16/actions/load_session.png", "22x22/actions/load_session.png",
 				KeyEvent.VK_L, null, true);
 		this.igbService = igbService;

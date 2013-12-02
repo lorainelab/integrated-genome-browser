@@ -14,8 +14,8 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 	private static StartAutoScrollAction ACTION = new StartAutoScrollAction();
 	
 	private StartAutoScrollAction(){
-		super(BUNDLE.getString("startAutoScroll"), "16x16/actions/autoscroll.png",
-			"22x22/actions/autoscroll.png");
+		super(BUNDLE.getString("startAutoScroll"), BUNDLE.getString("autoscrollTooltip"),"16x16/actions/autoscroll.png",
+			"22x22/actions/autoscroll.png",0);
 		setEnabled(true);
 	}
 	

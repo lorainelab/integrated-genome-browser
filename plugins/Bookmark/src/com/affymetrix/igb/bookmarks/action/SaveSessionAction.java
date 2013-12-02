@@ -36,7 +36,7 @@ public class SaveSessionAction extends GenericAction {
 	}
 	
 	private SaveSessionAction(IGBService igbService) {
-		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null,
+		super(BookmarkManagerView.BUNDLE.getString("saveSession"), BookmarkManagerView.BUNDLE.getString("saveSessionTooltip"),
 				"16x16/actions/save_session.png", "22x22/actions/save_session.png",
 				KeyEvent.VK_S, null, true);
 		this.igbService = igbService;

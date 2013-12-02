@@ -125,7 +125,7 @@ public final class LoadFileAction extends OpenURIAction {
 	}
 
 	private LoadFileAction() {
-		super(BUNDLE.getString("openFile"), null,
+		super(BUNDLE.getString("openFile"), BUNDLE.getString("openFileTooltip"),
 				"16x16/actions/document-open.png",
 				"22x22/actions/document-open.png",
 				KeyEvent.VK_O, null, true);

@@ -28,7 +28,7 @@ public class ExportImageAction extends GenericAction {
 	}
 
 	private ExportImageAction() {
-		super(BUNDLE.getString("exportImage"), null,
+		super(BUNDLE.getString("exportImage"), BUNDLE.getString("exportImageTooltip"),
 				"16x16/actions/export_image.png",
 				"22x22/actions/export_image.png",
 				KeyEvent.VK_UNDEFINED, null, true);

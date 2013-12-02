@@ -95,11 +95,11 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private Rectangle trayRectangle;
 	private final SelectAction selectAction;
 
-	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
-		this(igbService, displayName, title, main, DEFAULT_TAB_POSITION);
+	public IGBTabPanel(IGBService igbService, String displayName, String title,String tooltip, boolean main) {
+		this(igbService, displayName, title,tooltip, main, DEFAULT_TAB_POSITION);
 	}
 	
-	protected IGBTabPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
+	protected IGBTabPanel(IGBService igbService, String displayName, String title,String tooltip, boolean focus, int position) {
 		super();
 		this.igbService = igbService;
 		this.displayName = displayName;
@@ -107,6 +107,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this.focus = focus;
 		this.position = position;
     	this.id = "IGBTabPanel_" + this.getClass().getSimpleName();
+		this.setToolTipText(tooltip);
    		ScriptManager.getInstance().addWidget(this);
    		selectAction = new SelectAction();
 	}

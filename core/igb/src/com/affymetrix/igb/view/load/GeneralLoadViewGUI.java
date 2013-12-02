@@ -49,7 +49,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 	 * Creates new form GeneralLoadView
 	 */
 	public GeneralLoadViewGUI(IGBService _igbService) {
-		super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true, TAB_POSITION);
+		super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"),BUNDLE.getString("dataAccessTooltip"), true, TAB_POSITION);
 		initComponents();
 	}
 

@@ -273,7 +273,7 @@ public final class SearchView extends IGBTabPanel implements
 	};
 	
 	public SearchView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
+		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"),BUNDLE.getString("advancedSearchTooltip"), false, TAB_POSITION);
 		
 		group = gmodel.getSelectedSeqGroup();
 

@@ -36,7 +36,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
 	}
 
 	private SeqGroupViewGUI(IGBService _igbService) {
-		super(_igbService, BUNDLE.getString("genomeTab"), BUNDLE.getString("genomeTab"), true, TAB_POSITION);
+		super(_igbService, BUNDLE.getString("genomeTab"), BUNDLE.getString("genomeTab"),BUNDLE.getString("currentGenomeTooltip"), true, TAB_POSITION);
 
 		SeqGroupView.init(_igbService);
 	    seqGroupModel = SeqGroupView.getInstance();

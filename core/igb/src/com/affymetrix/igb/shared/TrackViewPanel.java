@@ -16,8 +16,8 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
 	/**
 	 * Creates new form TrackViewPanel
 	 */
-	public TrackViewPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
-		super(igbService, displayName, title, focus, position);
+	public TrackViewPanel(IGBService igbService, String displayName, String title, String tooltip, boolean focus, int position) {
+		super(igbService, displayName, title, tooltip ,focus, position);
 		initComponents();
 		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(componentPanel);

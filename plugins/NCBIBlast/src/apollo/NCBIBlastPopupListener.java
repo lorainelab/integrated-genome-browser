@@ -1,6 +1,7 @@
 package apollo;
 
 import apollo.action.BlastPSearchAction;
+import apollo.action.BlastSearchAction;
 import apollo.action.BlastXSearchAction;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -24,13 +25,18 @@ public class NCBIBlastPopupListener implements ContextualPopupListener {
 	@Override
 	public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym) {
 		if (!selected_items.isEmpty() && !(selected_items.get(0) instanceof GraphSym)) {
-			JMenuItem remote_ncbi_blast_action = new JMenuItem(new BlastXSearchAction(smv));
+			BlastSearchAction blastXAction = new BlastXSearchAction(smv);
+			JMenuItem remote_ncbi_blast_action = new JMenuItem(blastXAction);
 			remote_ncbi_blast_action.setIcon(null);
+			remote_ncbi_blast_action.setEnabled(blastXAction.isEnabled());
 			popup.add(remote_ncbi_blast_action);
 			
-			JMenuItem remote_ncbi_blastp_action = new JMenuItem(new BlastPSearchAction(smv));
+			BlastSearchAction blastPAction = new BlastPSearchAction(smv);
+			JMenuItem remote_ncbi_blastp_action = new JMenuItem(blastPAction);
 			remote_ncbi_blastp_action.setIcon(null);
+			remote_ncbi_blastp_action.setEnabled(blastPAction.isEnabled());
 			popup.add(remote_ncbi_blastp_action);
+			
 		}
 	}
 }

@@ -5,23 +5,17 @@ import apollo.datamodel.Sequence;
 import apollo.datamodel.StrandedFeatureSet;
 import apollo.datamodel.StrandedFeatureSetI;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -73,35 +67,7 @@ public abstract class BlastSearchAction extends GenericAction {
 		}
 	}
 	
-    public abstract String getSequence(SeqSymmetry residues_sym);
+	protected abstract SeqSymmetry getResidueSym();
 	
-	protected SeqSymmetry getResidueSym() {
-		SeqSymmetry residues_sym = null;
-		List<SeqSymmetry> syms = smv.getSelectedSyms();
-		if (syms.size() >= 1) {
-			if (syms.size() == 1) {
-				residues_sym = syms.get(0);
-			} else {
-				BioSeq aseq = smv.getAnnotatedSeq();
-				if (syms.size() > 1 || smv.getSeqSymmetry() != null) {
-					MutableSeqSymmetry temp = new SimpleMutableSeqSymmetry();
-					SeqUtils.union(syms, temp, aseq);
-
-					// Make all reverse children forward
-					residues_sym = new SimpleMutableSeqSymmetry();
-					SeqSymmetry child;
-					SeqSpan childSpan;
-					for (int i = 0; i < temp.getChildCount(); i++) {
-						child = temp.getChild(i);
-						childSpan = child.getSpan(aseq);
-						((MutableSeqSymmetry) residues_sym).addChild(new MutableSingletonSeqSymmetry(childSpan.getMin(), childSpan.getMax(), childSpan.getBioSeq()));
-					}
-					((MutableSeqSymmetry) residues_sym).addSpan(temp.getSpan(aseq));
-				}
-			}
-		} else {
-			residues_sym = smv.getSeqSymmetry();
-		}
-		return residues_sym;
-	}
+    public abstract String getSequence(SeqSymmetry residues_sym);
 }

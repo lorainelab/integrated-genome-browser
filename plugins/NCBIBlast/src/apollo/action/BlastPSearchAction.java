@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import java.util.List;
 
 /**
  *
@@ -20,6 +21,11 @@ public class BlastPSearchAction extends BlastSearchAction {
 	
 	public BlastPSearchAction(SeqMapViewI smv) {
 		super(smv, RemoteBlastNCBI.BlastType.blastp);
+	}
+	
+	@Override
+	protected SeqSymmetry getResidueSym() {
+		return smv.getSelectedSyms().get(0);
 	}
 	
 	@Override
@@ -51,6 +57,22 @@ public class BlastPSearchAction extends BlastSearchAction {
 		}
 
 		return AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
+	}
+	
+	@Override
+	public boolean isEnabled(){
+		List<SeqSymmetry> syms = smv.getSelectedSyms();
+		if (syms.size() == 1) {
+			SeqSymmetry sym = syms.get(0);
+			if ((sym instanceof SupportsCdsSpan) 
+					&& ((SupportsCdsSpan) sym).hasCdsSpan()) {
+//				SeqSpan span = ((SupportsCdsSpan) sym).getCdsSpan();
+//				if(span.getLength() % 3 == 0) {
+					return true;
+//				}
+			}
+		}
+		return false;
 	}
 }
 

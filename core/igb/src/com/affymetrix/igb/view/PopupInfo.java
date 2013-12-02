@@ -72,7 +72,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			GeneralUtils.copyToClipboard(convertPropsToString(properties, false));
-//			flashMessage("data copied");
+			flashMessage("Copied to clipboard");
 		}
 	};
 		
@@ -241,10 +241,10 @@ public class PopupInfo extends JWindow {
 		}
 	}
 	
-//	private void flashMessage(String str) {
-//		message.setText(str);
-//		flashTimer.start();
-//	}
+	private void flashMessage(String str) {
+		message.setText(str);
+		flashTimer.start();
+	}
 	
 	private static String getFormattedTitle(String[][] properties){
 		StringBuilder props = new StringBuilder();
@@ -476,11 +476,11 @@ public class PopupInfo extends JWindow {
 		setSize(maxWidth, minHeight);
 	}
 	
-	Timer flashTimer = new Timer(1000, new ActionListener() {
+	Timer flashTimer = new Timer(2000, new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			flashTimer.stop();
-			message.setText(null);
+			message.setText(!isPinned ? "Click to stick" : "Drag to move");
 		}
 	});
 	

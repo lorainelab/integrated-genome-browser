@@ -5,6 +5,7 @@ import apollo.datamodel.Sequence;
 import apollo.datamodel.StrandedFeatureSet;
 import apollo.datamodel.StrandedFeatureSetI;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
@@ -19,6 +20,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -44,12 +46,15 @@ public abstract class BlastSearchAction extends GenericAction {
 		try {
 			final SeqSymmetry residues_sym = getResidueSym();
 			final BioSeq aseq = smv.getAnnotatedSeq();
+			final SeqSpan span = residues_sym.getSpan(aseq);
 			
 			final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
 				public void actionDone(GenericAction action) {
 					try {
 						StrandedFeatureSetI sf = new StrandedFeatureSet();
-						Sequence seq = new Sequence(aseq.getID(), getSequence(residues_sym));
+						String id = MessageFormat.format("{0} {1}:{2}-{3} {4} {5}", 
+								new Object[]{residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getSeqGroup().getOrganism()});
+						Sequence seq = new Sequence(id, getSequence(residues_sym));
 						
 						RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());
 						String url = blast.runAnalysis(sf, seq, 1);

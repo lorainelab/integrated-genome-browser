@@ -25,7 +25,7 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
-	private static final int TAB_POSITION = 1;
+	private static final int TAB_POSITION = 4;
 	private static final int MAX_SYM_PROPERTIES = 20;
 	
 	// the table showing name-value pairs

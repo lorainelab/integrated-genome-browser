@@ -12,7 +12,7 @@ import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 public class GraphTrackPanel extends TrackViewPanel {
 	private static final long serialVersionUID = 1L;
 	public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("graph");
-	private static final int TAB_POSITION = 4;
+	private static final int TAB_POSITION = 2;
 	
 	public GraphTrackPanel(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("graphTab"), BUNDLE.getString("graphTab"), false, TAB_POSITION);

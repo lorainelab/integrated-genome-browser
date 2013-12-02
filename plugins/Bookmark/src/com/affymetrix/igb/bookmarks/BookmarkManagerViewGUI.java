@@ -26,7 +26,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
 	private static BookmarkManagerViewGUI singleton;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
-	private static final int TAB_POSITION = 9;
+	private static final int TAB_POSITION = 8;
 	public static BookmarkManagerView bmv;
 
 	public static void init(IGBService _igbService) {

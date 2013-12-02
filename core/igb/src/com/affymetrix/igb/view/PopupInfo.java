@@ -283,6 +283,7 @@ public class PopupInfo extends JWindow {
 	}
 	
 	private void formatTooltip() {
+		tooltip.setText(null);
 		for (int i = 0; i < properties.length; i++) {
 			try {
 				tooltip.getDocument().insertString(

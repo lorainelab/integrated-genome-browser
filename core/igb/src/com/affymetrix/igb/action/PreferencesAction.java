@@ -32,7 +32,7 @@ public class PreferencesAction extends GenericAction {
 	}
 
 	private PreferencesAction() {
-		super(BUNDLE.getString("Preferences"), null,
+		super(BUNDLE.getString("Preferences"), BUNDLE.getString("preferencesTooltip"),
 				"16x16/actions/preferences.png",
 				"22x22/actions/preferences.png",
 				KeyEvent.VK_E, null, true);

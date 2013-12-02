@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 public class ScrollRightAction extends SeqMapViewActionA implements ContinuousAction{
 	private static final long serialVersionUID = 1L;
 	private static final ScrollRightAction ACTION = new ScrollRightAction();
@@ -20,7 +22,7 @@ public class ScrollRightAction extends SeqMapViewActionA implements ContinuousAc
 	}
 
 	public ScrollRightAction() {
-		super("Scroll Right", "16x16/actions/go-next.png", "22x22/actions/go-next.png" );
+		super("Scroll Right",BUNDLE.getString("rightGreenArrowTooltip"), "16x16/actions/go-next.png", "22x22/actions/go-next.png" ,0);
 		this.ordinal = -4007020;
 	}
 

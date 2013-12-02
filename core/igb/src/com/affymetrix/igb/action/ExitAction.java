@@ -29,7 +29,7 @@ public class ExitAction extends GenericAction {
 	}
 
 	private ExitAction() {
-		super(BUNDLE.getString("exit"), null,
+		super(BUNDLE.getString("exit"), BUNDLE.getString("exitTooltip"),
 				"16x16/actions/process-stop.png",
 				"22x22/actions/process-stop.png",
 				KeyEvent.VK_X);

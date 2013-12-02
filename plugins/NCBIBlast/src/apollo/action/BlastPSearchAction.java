@@ -2,9 +2,12 @@ package apollo.action;
 
 import apollo.analysis.RemoteBlastNCBI;
 import com.affymetrix.genometryImpl.AminoAcid;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SupportsCdsSpan;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
@@ -18,27 +21,36 @@ public class BlastPSearchAction extends BlastSearchAction {
 	public BlastPSearchAction(SeqMapViewI smv) {
 		super(smv, RemoteBlastNCBI.BlastType.blastp);
 	}
-
-	@Override
-	protected SeqSymmetry getResidueSym() {
-		SeqSymmetry residues_sym = super.getResidueSym();
-		SeqSpan span = residues_sym.getSpan(smv.getAnnotatedSeq());
-		int remainder = span.getLength() % 3;
-		if(remainder != 0) {
-			if(span.isForward()) {
-				residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax() + 3 - remainder, span.getBioSeq());
-			} else {
-				residues_sym = new SingletonSeqSymmetry(span.getMax() + 3 - remainder, span.getMin(), span.getBioSeq());
-			}
-		}
-		return residues_sym;
-	}
 	
 	@Override
 	public String getSequence(SeqSymmetry residues_sym) {
-		SeqSpan span = residues_sym.getSpan(smv.getAnnotatedSeq());
-		String residues = SeqUtils.getResidues(residues_sym, smv.getAnnotatedSeq());
-		return AminoAcid.getAminoAcid(residues, 1, span.isForward(), "");
+		SeqSpan cdsSpan = null;
+		if ((residues_sym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_sym).hasCdsSpan()) {
+			cdsSpan = ((SupportsCdsSpan) residues_sym).getCdsSpan();		
+		}
+
+		if(cdsSpan == null) {
+			return "";
+		}
+		
+		SimpleMutableSeqSymmetry cds_sym = new SimpleMutableSeqSymmetry();
+		cds_sym.addSpan(new SimpleMutableSeqSpan(cdsSpan));
+		BioSeq aseq = smv.getAnnotatedSeq();
+		SeqSpan span = residues_sym.getSpan(aseq);
+		StringBuilder residues = new StringBuilder();
+		for(int i=0; i<residues_sym.getChildCount(); i++){
+			SeqSymmetry child = residues_sym.getChild(i);
+			SeqSpan cspan = child.getSpan(aseq);
+			if(SeqUtils.contains(cdsSpan, cspan)){
+				residues.append(SeqUtils.getResidues(child, aseq));
+			} else if (SeqUtils.overlap(cdsSpan, cspan)) {
+				SimpleMutableSeqSymmetry cds_sym_2 = new SimpleMutableSeqSymmetry();
+				SeqUtils.intersection(cds_sym, child, cds_sym_2, aseq, cspan.isForward());
+				residues.append(SeqUtils.getResidues(cds_sym_2, aseq));
+			}
+		}
+
+		return AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
 	}
 }
 

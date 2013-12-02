@@ -23,6 +23,8 @@ public interface TrackConstants {
 	static final String PREF_MAX_DEPTH = "Max Depth";
 	static final String PREF_FOREGROUND = "Foreground";
 	static final String PREF_BACKGROUND = "Background";
+	static final String PREF_LABEL_FOREGROUND = "Label Foreground";
+	static final String PREF_LABEL_BACKGROUND = "Label Background";
 	static final String PREF_START_COLOR = "Start Color";
 	static final String PREF_END_COLOR = "End Color";
 	static final String PREF_TRACK_NAME = "Track Name";

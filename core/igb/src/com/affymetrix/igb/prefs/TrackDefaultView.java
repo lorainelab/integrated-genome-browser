@@ -454,7 +454,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 							break;
 						case COL_LABEL_COLOR:
 							if (!style.equals(default_annot_style)) {
-								element.getPropertyMap().put(PROP_LABEL_COLOR, value);
+								element.getPropertyMap().put(PROP_LABEL_FOREGROUND, value);
 							}
 							style.setLabelForeground((Color) value);
 							labelColorComboBox.setSelectedColor((Color) value);

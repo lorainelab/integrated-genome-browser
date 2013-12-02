@@ -46,7 +46,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	 */
 	public BookmarkManagerViewGUI(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("bookmarksTab"),
-				BUNDLE.getString("bookmarksTab"), false, TAB_POSITION);
+				BUNDLE.getString("bookmarksTab"),BUNDLE.getString("bookmarksTooltip"), false, TAB_POSITION);
 		BookmarkManagerView.init(_igbService);
 		bmv = BookmarkManagerView.getSingleton();
 

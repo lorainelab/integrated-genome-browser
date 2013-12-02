@@ -128,7 +128,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private OSGIImpl osgiImpl;
 	
 	public PluginsView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false, TAB_POSITION);
+		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"),BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
 		latest = new HashMap<String, Bundle>();
 		osgiImpl = new Felix();
 		

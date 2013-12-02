@@ -20,7 +20,7 @@ public class FindAnnotationsGUI extends com.affymetrix.igb.osgi.service.IGBTabPa
 
     /** Creates new form FindAnnotationsGUI */
     public FindAnnotationsGUI() {
-		super(null, java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), false, 2);
+		super(null, java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), "",false, 2);
         initComponents();
     }
 

@@ -65,7 +65,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	public RestrictionControlView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false, TAB_POSITION);
+		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"),BUNDLE.getString("restrictionSitesTooltip"), false, TAB_POSITION);
 		boolean load_success = true;
 
 		String rest_file = "/rest_enzymes";

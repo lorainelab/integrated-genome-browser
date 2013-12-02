@@ -28,7 +28,7 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	final JRPComboBox ensemblBox;
 	
 	public ExternalViewer(IGBService igbService_, UCSCViewAction ucscViewAction) {
-		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
+		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"),BUNDLE.getString("externalViewTooltip"), false, TAB_POSITION);
 		this.setLayout(new CardLayout());
 		ucscBox = createBox("ExternalViewer_ucsc");
 		ensemblBox = createBox("ExternalViewer_ensemble");

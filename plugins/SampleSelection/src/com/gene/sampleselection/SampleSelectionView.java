@@ -43,7 +43,7 @@ public class SampleSelectionView extends IGBTabPanel {
 	private Map<String, List<String>> selections; // key is type, value is list of samples
 	
 	public SampleSelectionView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false);
+		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"),"", false);
 		selectionProcessing = false;
 		setLayout(new BorderLayout());
 		JPanel titlePanel = new JPanel();

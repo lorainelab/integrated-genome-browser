@@ -36,7 +36,7 @@ public class BlastPSearchAction extends BlastSearchAction {
 		}
 
 		if(cdsSpan == null) {
-			return "";
+			throw new IllegalArgumentException("No CDS span present");
 		}
 		
 		SimpleMutableSeqSymmetry cds_sym = new SimpleMutableSeqSymmetry();
@@ -56,6 +56,10 @@ public class BlastPSearchAction extends BlastSearchAction {
 			}
 		}
 
+		if(residues.length() % 3 != 0) {
+			throw new IllegalArgumentException("Residues length is not in multiple of 3");
+		}
+		
 		return AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
 	}
 	

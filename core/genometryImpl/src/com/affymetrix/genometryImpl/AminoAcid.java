@@ -193,7 +193,7 @@ public enum AminoAcid {
 	public static AminoAcid getByCode(String code) {
 		return code3aminoAcid.get(code.substring(0, 1).toUpperCase() + code.substring(1, 3).toLowerCase());
 	}
-	public static String getAminoAcid(String residue, int codeSize, boolean forward, String filler) {
+	public static StringBuilder getAminoAcid(String residue, int codeSize, boolean forward, String filler) {
 		StringBuilder aminoAcidsSB = new StringBuilder("");
 		String nextCodon;
 		for (int pos = 0; pos < residue.length(); pos += 3) {
@@ -201,7 +201,7 @@ public enum AminoAcid {
 			AminoAcid aminoAcid = AminoAcid.CODON_TO_AMINO_ACID.get(nextCodon);
 			if (aminoAcid == null) { // should never happen
 				Logger.getLogger(AminoAcid.class.getName()).log(Level.WARNING, "invalid sequence {0} ", new Object[]{nextCodon});
-				return null;
+				return aminoAcidsSB;
 			}
 			String aaCode = "";
 			if (codeSize == 3) {
@@ -222,6 +222,6 @@ public enum AminoAcid {
 			}
 		}
 		
-		return aminoAcidsSB.toString();
+		return aminoAcidsSB;
 	}
 }

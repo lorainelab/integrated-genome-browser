@@ -122,6 +122,13 @@ public final class QuickLoadServerModel {
 	 */
 	public static synchronized void removeQLModelForURL(String url){
 		if(url2quickload.get(url) != null){
+			QuickLoadServerModel model = url2quickload.get(url);
+			for(String genome : model.getGenomeNames()) {
+				AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(genome);
+				if(group != null) {
+					group.removeSeqsForUri(url);
+				}
+			}
 			url2quickload.remove(url);
 		}
 	}
@@ -380,9 +387,6 @@ public final class QuickLoadServerModel {
 			} catch (Exception ex) {
 				chrom_stream = null;
 			}
-			
-			// Remove previously loaded sequence.
-			group.removeSeqsForUri(getLoadURL());
 			
 			if (lift_stream != null) {
 				success = LiftParser.parse(lift_stream, group, annot_contigs);

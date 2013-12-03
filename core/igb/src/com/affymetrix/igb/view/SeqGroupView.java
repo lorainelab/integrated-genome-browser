@@ -568,8 +568,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	public void genericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer) evt.getSource();
-
+		
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
+			((AbstractTableModel)seqtable.getModel()).fireTableDataChanged();
 			GeneralLoadView.getLoadView().refreshTreeView();
 			refreshSpeciesCB();
 			return;
@@ -606,6 +607,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				if (AutoLoadFeatureAction.getActionCB().isSelected()) {
 					GeneralLoadView.loadWholeRangeFeatures(null);
 				}
+				((AbstractTableModel)seqtable.getModel()).fireTableDataChanged();
 			}
 		}
 

@@ -16,6 +16,7 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 /**
@@ -55,7 +56,9 @@ public abstract class BlastSearchAction extends GenericAction {
 						
 						GeneralUtils.browse(url);
 					} catch (Exception ex) {
-						ex.printStackTrace();
+						ArrayList<Throwable> exs = new ArrayList<Throwable>(1);
+						exs.add(ex);
+						ErrorHandler.errorPanel("Error", ex.getMessage(), exs, Level.SEVERE);
 					}
 				}
 			};

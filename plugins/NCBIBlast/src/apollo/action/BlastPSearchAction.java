@@ -48,11 +48,19 @@ public class BlastPSearchAction extends BlastSearchAction {
 			SeqSymmetry child = residues_sym.getChild(i);
 			SeqSpan cspan = child.getSpan(aseq);
 			if(SeqUtils.contains(cdsSpan, cspan)){
-				residues.append(SeqUtils.getResidues(child, aseq));
+				if(cspan.isForward()) {
+					residues.append(SeqUtils.getResidues(child, aseq));
+				} else {
+					residues.insert(0, SeqUtils.getResidues(child, aseq));
+				}
 			} else if (SeqUtils.overlap(cdsSpan, cspan)) {
 				SimpleMutableSeqSymmetry cds_sym_2 = new SimpleMutableSeqSymmetry();
 				SeqUtils.intersection(cds_sym, child, cds_sym_2, aseq, cspan.isForward());
-				residues.append(SeqUtils.getResidues(cds_sym_2, aseq));
+				if(cspan.isForward()) {
+					residues.append(SeqUtils.getResidues(cds_sym_2, aseq));
+				} else {
+					residues.insert(0, SeqUtils.getResidues(cds_sym_2, aseq));
+				}
 			}
 		}
 
@@ -60,7 +68,13 @@ public class BlastPSearchAction extends BlastSearchAction {
 			throw new IllegalArgumentException("Residues length is not in multiple of 3");
 		}
 		
-		return AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
+		String aminoAcid = AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
+		if(span.isForward()) {
+			return aminoAcid;
+		}
+		StringBuilder sb = new StringBuilder(aminoAcid.length());
+		sb.append(aminoAcid);
+		return sb.reverse().toString();
 	}
 	
 	@Override

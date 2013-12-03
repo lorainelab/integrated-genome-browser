@@ -47,8 +47,8 @@ public abstract class BlastSearchAction extends GenericAction {
 				public void actionDone(GenericAction action) {
 					try {
 						StrandedFeatureSetI sf = new StrandedFeatureSet();
-						String id = MessageFormat.format("{0} {1}:{2}-{3} {4} {5}", 
-								new Object[]{residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getSeqGroup().getOrganism()});
+						String id = MessageFormat.format("{0} {1}:{2}-{3} {4} {5} [{6}]", 
+								new Object[]{residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getSeqGroup().getID(), aseq.getSeqGroup().getOrganism()});
 						Sequence seq = new Sequence(id, getSequence(residues_sym));
 						
 						RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());

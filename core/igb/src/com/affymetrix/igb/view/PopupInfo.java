@@ -614,6 +614,7 @@ public class PopupInfo extends JWindow {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
+			setAlwaysOnTop(true);
 			sp = e.getPoint();
 			compStartHeight = getSize().height;
 			compStartWidth = getSize().width;
@@ -622,6 +623,7 @@ public class PopupInfo extends JWindow {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			sp = null;
+			setAlwaysOnTop(false);
 		}
 			
 		@Override

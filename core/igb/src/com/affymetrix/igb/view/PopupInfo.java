@@ -547,6 +547,7 @@ public class PopupInfo extends JWindow {
 		
 		@Override
 		public void mousePressed(MouseEvent evt) {
+			setAlwaysOnTop(true);
 			x_offset = (int) (evt.getLocationOnScreen().getX() - PopupInfo.this.getLocationOnScreen().getX());
 			y_offset = (int) (evt.getLocationOnScreen().getY() - PopupInfo.this.getLocationOnScreen().getY());
 			Opacity.INSTANCE.set(PopupInfo.this, 1.0f);
@@ -556,6 +557,7 @@ public class PopupInfo extends JWindow {
 		public void mouseReleased(MouseEvent evt) {
 			x_offset = 0;
 			y_offset = 0;
+			setAlwaysOnTop(false);
 		}
 		
 		@Override

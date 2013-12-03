@@ -68,13 +68,11 @@ public class BlastPSearchAction extends BlastSearchAction {
 			throw new IllegalArgumentException("Residues length is not in multiple of 3");
 		}
 		
-		String aminoAcid = AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
+		StringBuilder aminoAcid = AminoAcid.getAminoAcid(residues.toString(), 1, span.isForward(), "");
 		if(span.isForward()) {
-			return aminoAcid;
+			return aminoAcid.toString();
 		}
-		StringBuilder sb = new StringBuilder(aminoAcid.length());
-		sb.append(aminoAcid);
-		return sb.reverse().toString();
+		return aminoAcid.reverse().toString();
 	}
 	
 	@Override

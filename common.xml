@@ -37,7 +37,7 @@
 		<property name="jnlp.dir" value="${igb}/etc" />
 		<!-- property name="jnlp.version"   value="${build.version}" / -->
 		<property name="jnlp.version"   value="${appShortVersion}" />
-		<property name="jnlp.codebase"  value="http://USE_YOUR_URL_HERE" />
+		<property name="jnlp.codebase"  value="http://www.bioviz.org/igb/releases/igb-8.0.0" />
 		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${common}/resources/images/${jnlp.icon.name}" />
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />

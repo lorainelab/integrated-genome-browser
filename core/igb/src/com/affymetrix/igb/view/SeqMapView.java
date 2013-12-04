@@ -557,7 +557,7 @@ public class SeqMapView extends JPanel
 	
 	protected void addSearchButton(String id) {
 		JRPButton searchButton = new JRPButton(this.id + "_search_button",
-				new GenericAction(null, BUNDLE.getString("goToRegionToolTip"),
+				new GenericAction(null, BUNDLE.getString("magnifyGlassTolltip"),
 				"16x16/actions/system-search.png",
 				null, //"22x22/actions/system-search.png",
 				KeyEvent.VK_UNDEFINED) {

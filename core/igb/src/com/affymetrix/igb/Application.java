@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
+import javax.swing.FocusManager;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -17,7 +18,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.UrlToFileName;
 import com.affymetrix.igb.view.StatusBar;
-import java.awt.Window;
 
 public abstract class Application {
 
@@ -152,19 +152,12 @@ public abstract class Application {
 	 * @return true if the user confirms, else false.
 	 */
 	public static boolean confirmPanel(String message) {
-		Application app = getSingleton();
-		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
-		return confirmPanel(comp, message, null, null, false);
+		return confirmPanel(getActiveWindow(), message, null, null, false);
 	}
 	
 	public static boolean confirmPanel(final String message, final String check, 
 			final boolean def_val) {
-		Application app = getSingleton();
-		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
-		if(!(comp instanceof Window)){
-			comp = (app == null) ? null : app.getFrame().getRootPane();
-		}
-		return confirmPanel(comp, message, PreferenceUtils.getTopNode(), check, def_val);
+		return confirmPanel(getActiveWindow(), message, PreferenceUtils.getTopNode(), check, def_val);
 	}
 		
 	public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
@@ -221,21 +214,15 @@ public abstract class Application {
 		//return JOptionPane.showConfirmDialog(comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
 	}
 	
-	public static void infoPanel(final String message, final String check, final boolean def_val) {
-		Preferences node = PreferenceUtils.getTopNode();
-		Application app = getSingleton();
-		Component comp = (app == null) ? null : app.getFrame().getFocusOwner();
-		if(!(comp instanceof Window)){
-			comp = (app == null) ? null : app.getFrame().getRootPane();
-		}
-		
+	public static void infoPanel(final String message, final String check, final boolean def_val) {	
 //		if(node == null){
 //			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);
 //			return;
 //		}
 		
 		final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
-		Object[] params = new Object[]{message, checkbox};
+		final Object[] params = new Object[]{message, checkbox};
+		final Preferences node = PreferenceUtils.getTopNode();
 		
 		//If all parameters are provided then look up for boolean value from preference.
 		final boolean b = node.getBoolean(check, def_val);
@@ -245,10 +232,19 @@ public abstract class Application {
 			return;
 		}
 
-		JOptionPane.showMessageDialog(comp, params, "IGB", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(getActiveWindow(), params, "IGB", JOptionPane.INFORMATION_MESSAGE);
 		
 		if(checkbox.isSelected()){
 			node.putBoolean(check, checkbox.isSelected() != b);
 		}		
+	}
+	
+	private static Component getActiveWindow(){
+		Component comp = FocusManager.getCurrentManager().getActiveWindow();
+		if(comp == null){
+			Application app = getSingleton();
+			comp = (app == null) ? null : app.getFrame().getRootPane();
+		}
+		return comp;
 	}
 }

@@ -15,8 +15,8 @@ import javax.swing.Action;
  * @author hiralv
  */
 public class ToggleToolTipAction extends GenericAction {
-	private static final String SHOW_TOOLTIP = "Show data tooltip";
-	private static final String HIDE_TOOLTIP = "Hide data tooltip";
+	private static final String SHOW_TOOLTIP = BUNDLE.getString("showDataTooltip");
+	private static final String HIDE_TOOLTIP = BUNDLE.getString("hideDataTooltip");
 	
 	private static final long serialVersionUID = 1;
 	private static final ToggleToolTipAction ACTION = new ToggleToolTipAction();

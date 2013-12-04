@@ -64,7 +64,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
 		super(one.getText(), one.getIconPath(), one.getLargeIconPath());
 		this.shownAction = one;
 		this.hiddenAction = two;
-		putValue(Action.SHORT_DESCRIPTION, getValue(Action.SHORT_DESCRIPTION));
+		putValue(Action.SHORT_DESCRIPTION, this.shownAction.getValue(Action.SHORT_DESCRIPTION));
 		one.addPropertyChangeListener(toggle);
 		two.addPropertyChangeListener(toggle);
 		this.identifier = this.getClass().getName() +

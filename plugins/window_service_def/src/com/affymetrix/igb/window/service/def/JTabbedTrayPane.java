@@ -324,7 +324,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		PreferenceUtils.saveComponentState(title, TrayState.EXTENDED.toString());
 		notifyTrayStateChangeListeners();
 		tab_pane.setIconAt(0, getRetractIcon());
-		tab_pane.setToolTipTextAt(0, "retract tray");
+		tab_pane.setToolTipTextAt(0, "retract tray.");
 		if (tab_pane.getSelectedIndex() < 1) {
 			tab_pane.setSelectedIndex(1);
 		}

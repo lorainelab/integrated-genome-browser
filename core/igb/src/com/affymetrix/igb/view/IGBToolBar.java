@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @author hiralv
@@ -265,7 +266,7 @@ public class IGBToolBar extends JToolBar {
 		private static final long serialVersionUID = 1l;
 
 		public SelectionRulesAction() {
-			super(null, "16x16/actions/info.png", "16x16/actions/info.png");
+			super(null,BUNDLE.getString("selectionInforTooltip"), "16x16/actions/info.png", "16x16/actions/info.png",0);
 		}
 
 		@Override

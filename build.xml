@@ -702,7 +702,7 @@
 			</fileset>
 		</copy>
 		
-		<chmod perm="550">
+		<chmod perm="550" verbose="true">
 			<fileset dir="${release.dir}/igb">
 				<include name="run_igb*" />
 			</fileset>

@@ -711,6 +711,15 @@
 		<zip destfile="${release.dir}/igb.zip" basedir="${release.dir}">
 			<include name="igb/**" />
 		</zip>
+
+		<!--Since Ant does not preserve executable permission on Unix while
+			creating archive, use unix zip command to create a zip. 
+			https://ant.apache.org/manual/platform.html -->
+		<exec executable="zip" osfamily="unix">
+			<arg value="-FSrj"/> 
+			<arg value="${release.dir}/igb.zip"/>
+			<arg value="${release.dir}/igb"/>
+		</exec>
 	</target>
 
 	<target name="release-das2server" depends="common-init">

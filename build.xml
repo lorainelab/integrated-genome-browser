@@ -704,9 +704,9 @@
 			</fileset>
 		</chmod>
 
-		<!-- zip destfile="${release.dir}/igb.zip" basedir="${release.dir}">
+		<zip destfile="${release.dir}/igb.zip" basedir="${release.dir}">
 			<include name="igb/**" />
-		</zip -->
+		</zip>
 
 		<!--Since Ant does not preserve executable permission on Unix while
 			creating archive, use unix zip command to create a zip. 

@@ -287,7 +287,7 @@ public class FileTypeHolder {
 		addFileTypeHandler("Graph", new String[]{"wig"}, FileTypeCategory.Graph, WiggleParser.class, Wiggle.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {
-				String[] extensions = new String[]{"bedgraph"};
+				String[] extensions = new String[]{"bdg","bedgraph"};
 				@Override
 				public String getName() { return "Graph"; }
 				@Override
@@ -557,7 +557,7 @@ public class FileTypeHolder {
 		return nameToExtensionMap;
 	}
 	
-	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "gff", "gff3", "gtf", "psl", "psl3", "pslx", "vcf"}));
+	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "bdg", "gff", "gff3", "gtf", "psl", "psl3", "pslx", "vcf"}));
 	public List<String> getTabixFileTypes() {
 		return TABIX_FILE_TYPES;
 	}

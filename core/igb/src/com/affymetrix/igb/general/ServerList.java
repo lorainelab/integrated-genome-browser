@@ -499,11 +499,11 @@ public final class ServerList {
 			if (!removedManually) {
 				String errorText;
 				if (server.serverType != null && server.serverType == ServerTypeI.QuickLoad) {
-					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
-					errorText = siteOK
-							? MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
-							: MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
-						ErrorHandler.errorPanelWithReportBug(server.serverName, errorText, Level.SEVERE);
+//					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
+//					errorText = siteOK
+//							? MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
+//							: MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
+					ErrorHandler.errorPanelWithReportBug(server.serverName, MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName), Level.SEVERE);
 				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.serverName);

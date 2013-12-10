@@ -38,6 +38,7 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -176,8 +177,9 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 
-		discoverServer(gServer);
-
+		if(!discoverServer(gServer)){ 
+			return null;
+		}
 		return gServer;
 	}
 
@@ -239,6 +241,16 @@ public final class GeneralLoadUtils {
 				return false;
 			}
 			if (gServer.serverType != null) {
+				//tKanapar
+				if(!LocalUrlCacher.isValidURL(gServer.URL)){//Adding check on the request if authentication is required
+					if(IGBAuthenticator.authenticationRequestCancelled()){//If the cancel dialog is clicked in the IGB Authenticator
+						IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
+						ServerList.getServerInstance().removeServer(gServer.URL);//Remove the preference so that it wont add the server to list
+						ServerList.getServerInstance().removeServerFromPrefs(gServer.URL);
+						return false;
+					}
+					throw new IllegalStateException(MessageFormat.format("{0} is not reachable", gServer.serverName));
+				}
 				
 				Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
@@ -282,6 +294,8 @@ public final class GeneralLoadUtils {
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
+		} catch (IllegalStateException ex ) {
+			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -683,10 +697,10 @@ public final class GeneralLoadUtils {
 				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
-			if (checkBamAndSamLoading(feature, optimized_sym)) {
+			 if (checkBamAndSamLoading(feature, optimized_sym)) {
 				return;
 			}
-
+			
 			loadFeaturesForSym(optimized_sym, feature);
 			return;
 		}

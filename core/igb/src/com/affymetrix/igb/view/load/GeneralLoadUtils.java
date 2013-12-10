@@ -240,6 +240,10 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType != null) {
 				
+				if(!LocalUrlCacher.isValidURL(gServer.URL)){
+					throw new IllegalStateException(MessageFormat.format("{0} is not reachable", gServer.serverName));
+				}
+				
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 				URL primaryURL = getServerDirectory(gServer.URL);
 				
@@ -281,6 +285,8 @@ public final class GeneralLoadUtils {
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
+		} catch (IllegalStateException ex ) {
+			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;

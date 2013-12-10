@@ -716,7 +716,7 @@
 			creating archive, use unix zip command to create a zip. 
 			https://ant.apache.org/manual/platform.html -->
 		<exec executable="zip" osfamily="unix" failifexecutionfails="false" dir="${release.dir}">
-			<arg value="-FSr"/> 
+			<arg value="-r"/> 
 			<arg value="igb.zip"/>
 			<arg value="igb"/>
 		</exec>

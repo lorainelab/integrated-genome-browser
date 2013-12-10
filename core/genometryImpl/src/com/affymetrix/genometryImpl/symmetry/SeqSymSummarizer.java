@@ -530,4 +530,78 @@ public final class SeqSymSummarizer {
 		}
 		return psym;
 	}
+	
+	public static GraphSym getSymmetryStartSummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int desired_leaf_depth)  {
+		int symcount = syms.size();
+		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+		for (SeqSymmetry sym : syms) {
+			SeqUtils.collectSpans(sym, seq, leaf_spans, desired_leaf_depth);
+		}
+		if (leaf_spans.isEmpty()) {
+			return null;
+		} else {
+			return getSpanStartSummary(leaf_spans, binary_depth, id);
+		}
+	}
+	
+	/**
+	 *  GetSpanSummary.
+	 *  General idea is that this will make getUnion(), getIntersection(), etc. easier and
+	 *       more efficient.
+	 *  @param spans a List of SeqSpan's all defined on the same BioSeq
+	 *  @param binary_depth if false, then return a graph with full depth information
+	 *                  if true, then return a graph with flattened / binary depth information,
+	 *                  1 for covered, 0 for not covered
+	 */
+	private static GraphSym getSpanStartSummary(List<SeqSpan> spans, boolean binary_depth, String gid) {
+		BioSeq seq = spans.get(0).getBioSeq();
+		int span_num = spans.size();
+		int[] starts = new int[span_num];
+		for (int i = 0; i < span_num; i++) {
+			SeqSpan span = spans.get(i);
+			starts[i] = span.getStart();
+		}
+		Arrays.sort(starts);
+		int starts_index = 0;
+		int depth = 0;
+		
+		// initializing capacity of sum_starts and sum_stops to max that could theoretically be
+		//   needed, though likely won't fill it
+		IntArrayList transition_xpos = new IntArrayList(span_num * 2);
+		FloatArrayList transition_ypos = new FloatArrayList(span_num * 2);
+
+		int prev_depth = 0;
+		while (starts_index < span_num) {
+			// figure out whether next position is a start, stop, or both
+			int next_start = starts[starts_index];
+			depth = 0;
+			// note that by design, if (next_start == next_stop), then both of the following
+			//    conditionals will execute:
+			while ((starts_index < span_num) && (starts[starts_index] == next_start)) {
+				depth++;
+				starts_index++;
+			}
+
+			if (binary_depth) {
+				if ((prev_depth <= 0) && (depth > 0)) {
+					transition_xpos.add(next_start);
+					transition_ypos.add(1);
+					prev_depth = 1;
+				} else if ((prev_depth > 0) && (depth <= 0)) {
+					transition_xpos.add(next_start);
+					transition_ypos.add(0);
+					prev_depth = 0;
+				}
+			} else {
+				transition_xpos.add(next_start);
+				transition_ypos.add(depth);
+			}
+		}
+		transition_xpos.trimToSize();
+		transition_ypos.trimToSize();
+
+		String uid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq);
+
+		return new GraphSym(transition_xpos.elements(), transition_ypos.elements(), uid, seq);
+	}
 }

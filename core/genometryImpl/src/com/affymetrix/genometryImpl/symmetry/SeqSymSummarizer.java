@@ -558,7 +558,7 @@ public final class SeqSymSummarizer {
 		int[] starts = new int[span_num];
 		for (int i = 0; i < span_num; i++) {
 			SeqSpan span = spans.get(i);
-			starts[i] = span.getStart();
+			starts[i] = span.isForward() ? span.getStart() : span.getStart() - 1;
 		}
 		Arrays.sort(starts);
 		int starts_index = 0;

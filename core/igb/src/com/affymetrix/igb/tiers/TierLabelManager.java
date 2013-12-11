@@ -13,6 +13,8 @@ import com.affymetrix.genoviz.bioviews.MultiGlyphDragger;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
+import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
+import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -49,24 +51,35 @@ public final class TierLabelManager implements PropertyHolder {
 	private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
-	
-	private void setCurrentCursor(Cursor cursor) {
-		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
-	}
-	private void restoreCursor() {
-		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
-	}
+	private final NeoGlyphDragListener dragListener = new NeoGlyphDragListener() {
+		@Override
+		public void heardGlyphDrag(NeoGlyphDragEvent evt) {
+			if (evt.getID() == NeoGlyphDragEvent.DRAG_ENDED) {
+				List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
+				Collections.sort(label_glyphs, tier_sorter);
 
+				List<TierGlyph> tiers = tiermap.getTiers();
+				tiers.clear();
+				for (TierLabelGlyph label : label_glyphs) {
+					TierGlyph tier = (TierGlyph) label.getInfo();
+					tiers.add(tier);
+				}
+
+				updatePositions();
+				// then repack of course (tiermap repack also redoes labelmap glyph coords...)
+				tiermap.packTiers(false, true, true);
+				tiermap.updateWidget();
+			}
+		}
+	};
+			
 	/**
 	 * For moving tiers around and adjusting their sizes.
 	 * Use Swing for the future. Otherwise could have used AWT's MouseAdapter.
 	 * Actual dragging around is delegated to a GlyphDragger and a GlyphResizer.
 	 * This is why the mouseDragged method is not implemented.
 	 */
-	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
-
-		TierLabelGlyph[] dragging_label = null;
-		
+	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {		
 //		@Override
 //		public void mouseMoved(MouseEvent evt) {
 //			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
@@ -165,13 +178,6 @@ public final class TierLabelManager implements PropertyHolder {
 		 */
 		@Override
 		public void mouseReleased(MouseEvent evt) {
-			if (evt.getSource() == labelmap && dragging_label != null) {
-				// A tier has been dragged.
-				// So, try to sort out rearrangement of tiers in the tiermap 
-				// based on the new positions of labels in the labelmap.
-				rearrangeTiers();
-				dragging_label = null;
-			}
 			// Start trying to set the vertical zoom point appropriately.
 			// First try, just set it at this place.
 			if (evt instanceof NeoMouseEvent) {
@@ -186,8 +192,8 @@ public final class TierLabelManager implements PropertyHolder {
 		}
 		
 		private void dragLabel(TierLabelGlyph[] gl, NeoMouseEvent nevt) {
-			dragging_label = gl;
 			MultiGlyphDragger dragger = new MultiGlyphDragger((NeoAbstractWidget) nevt.getSource(), gl);
+			dragger.addGlyphDragListener(dragListener);
 			dragger.setUseCopy(false);
 			dragger.startDrag(nevt);
 			dragger.setConstraint(NeoConstants.HORIZONTAL, true);
@@ -535,20 +541,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 * Rearrange tiers in case mouse is dragged.
 	 */
 	void rearrangeTiers(){
-		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
-		Collections.sort(label_glyphs, tier_sorter);
-
-		List<TierGlyph> tiers = tiermap.getTiers();
-		tiers.clear();
-		for (TierLabelGlyph label : label_glyphs) {
-			TierGlyph tier = (TierGlyph) label.getInfo();
-			tiers.add(tier);
-		}
-
-		updatePositions();
-		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
-		tiermap.packTiers(false, true, true);
-		tiermap.updateWidget();
+		
 	}
 
 	private void updatePositions(){
@@ -756,4 +749,11 @@ public final class TierLabelManager implements PropertyHolder {
 		return props;
 	}
 
+	private void setCurrentCursor(Cursor cursor) {
+		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
+	}
+	
+	private void restoreCursor() {
+		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+	}
 }

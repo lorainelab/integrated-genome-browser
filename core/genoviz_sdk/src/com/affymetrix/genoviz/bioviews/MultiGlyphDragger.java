@@ -1,23 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.affymetrix.genoviz.bioviews;
 
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 /**
  *
  * @author hiralv
  */
-public class MultiGlyphDragger implements MouseListener, MouseMotionListener, NeoConstants {
+public class MultiGlyphDragger implements NeoConstants {
 	protected GlyphI[] dragged_glyphs;
 	protected GlyphDragger[] glyph_draggers;
 	NeoAbstractWidget widget;
@@ -43,25 +35,6 @@ public class MultiGlyphDragger implements MouseListener, MouseMotionListener, Ne
 	public void startDrag(NeoMouseEvent nevt, LinearTransform t, boolean restrict_to_parent) {
 		for(int i=0; i<dragged_glyphs.length; i++){
 			glyph_draggers[i].startDrag(dragged_glyphs[i], nevt, t, restrict_to_parent);
-		}
-	}
-
-	public void mouseMoved(MouseEvent evt) { }
-
-	public void mouseDragged(MouseEvent evt) {
-		for(GlyphDragger glyph_dragger : glyph_draggers){
-			glyph_dragger.mouseDragged(evt);
-		}
-	}
-
-	public void mousePressed(MouseEvent evt) { }
-	public void mouseClicked(MouseEvent evt) { }
-	public void mouseEntered(MouseEvent evt) { }
-	public void mouseExited(MouseEvent evt) { }
-
-	public void mouseReleased(MouseEvent evt) {
-		for(GlyphDragger glyph_dragger : glyph_draggers){
-			glyph_dragger.mouseReleased(evt);
 		}
 	}
 

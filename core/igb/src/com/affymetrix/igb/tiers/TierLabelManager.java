@@ -8,8 +8,8 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.MultiGlyphDragger;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
@@ -65,7 +65,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 */
 	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
-		TierLabelGlyph dragging_label = null;
+		TierLabelGlyph[] dragging_label = null;
 		
 //		@Override
 //		public void mouseMoved(MouseEvent evt) {
@@ -148,7 +148,7 @@ public final class TierLabelManager implements PropertyHolder {
 					//    than .	
 					TierLabelGlyph gl = (TierLabelGlyph) selected_glyphs.get(selected_glyphs.size() - 1);
 					labelmap.toFront(gl);
-					dragLabel(gl, nevt);					
+					dragLabel(labelmap.getSelected().toArray(new TierLabelGlyph[1]), nevt);					
 					if(selected_glyphs.size() == 1){
 						transformTier(gl);
 					}			
@@ -183,11 +183,11 @@ public final class TierLabelManager implements PropertyHolder {
 			// gs.startscroll(gl);
 		}
 		
-		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
+		private void dragLabel(TierLabelGlyph[] gl, NeoMouseEvent nevt) {
 			dragging_label = gl;
-			GlyphDragger dragger = new GlyphDragger((NeoAbstractWidget) nevt.getSource());
+			MultiGlyphDragger dragger = new MultiGlyphDragger((NeoAbstractWidget) nevt.getSource(), gl);
 			dragger.setUseCopy(false);
-			dragger.startDrag(gl, nevt);
+			dragger.startDrag(nevt);
 			dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 		}
 

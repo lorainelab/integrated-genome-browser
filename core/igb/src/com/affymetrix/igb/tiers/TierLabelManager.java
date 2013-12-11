@@ -122,7 +122,7 @@ public final class TierLabelManager implements PropertyHolder {
 						preserve_selections = true;
 					}
 				}
-				if (!preserve_selections) {
+				if (!preserve_selections && (labelmap.getSelected().size() == 1 || (topgl != null && !topgl.isSelected()))) {
 					labelmap.clearSelected();
 					// Deselect graphglyph selected in the tiermap
 					List<GlyphI> deselect = new ArrayList<GlyphI>();
@@ -145,13 +145,15 @@ public final class TierLabelManager implements PropertyHolder {
 					doPopup(evt);
 				} else if (selected_glyphs.size() > 0) {
 					// take glyph at end of selected, just in case there is more
-					//    than .	
-					TierLabelGlyph gl = (TierLabelGlyph) selected_glyphs.get(selected_glyphs.size() - 1);
-					labelmap.toFront(gl);
-					dragLabel(labelmap.getSelected().toArray(new TierLabelGlyph[1]), nevt);					
-					if(selected_glyphs.size() == 1){
-						transformTier(gl);
-					}			
+					//    than .
+					TierLabelGlyph[] gls = labelmap.getSelected().toArray(new TierLabelGlyph[1]);
+					for(TierLabelGlyph gl : gls){
+						labelmap.toFront(gl);
+					}
+					dragLabel(gls, nevt);					
+//					if(selected_glyphs.size() == 1){
+//						transformTier(gl);
+//					}			
 				}
 				tiermap.updateWidget();
 			}

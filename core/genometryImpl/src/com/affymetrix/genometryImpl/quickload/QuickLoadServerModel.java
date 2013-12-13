@@ -394,7 +394,7 @@ public final class QuickLoadServerModel {
 				success = ChromInfoParser.parse(ginfo_stream, group, getLoadURL());
 			}else if (cinfo_stream != null) {
 				success = ChromInfoParser.parse(cinfo_stream, group, getLoadURL());
-			} 
+			}
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Error loading data for genome '" + genome_name + "'", ex, Level.SEVERE);
 		} finally {
@@ -431,9 +431,7 @@ public final class QuickLoadServerModel {
 			}
 
 			if (istr == null) {
-				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
-						Level.SEVERE, "Could not load QuickLoad contents from\n{0}{1}", new Object[]{getLoadURL(), contentsTxt});
-				return;
+				throw new FileNotFoundException(MessageFormat.format("Could not load QuickLoad contents from\n{0}{1}", new Object[]{getLoadURL(), contentsTxt}));
 			}
 
 			ireader = new InputStreamReader(istr);

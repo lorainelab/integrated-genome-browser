@@ -479,7 +479,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
 	private List<TypeContainerAnnot> getTrackSyms() {
 		List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
-		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs();
+		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs(false);
 		for (GlyphI selectedTierGlyph : tierGlyphs) {
 			Object info = selectedTierGlyph.getInfo();
 			if (info instanceof TypeContainerAnnot) {

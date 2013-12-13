@@ -45,7 +45,7 @@ public class ShowFullFilePathInTrack extends SeqMapViewActionA {
 		boolean b = (Boolean)getValue(SELECTED_KEY);
 		IGBStateProvider.setShowFullFilePathInTrackMark(b);
 
-		for (TierGlyph glyph : getTierManager().getAllTierGlyphs()) {
+		for (TierGlyph glyph : getTierManager().getAllTierGlyphs(true)) {
 			if(glyph.getAnnotStyle() instanceof TrackStyle 
 					&& glyph.getAnnotStyle().getFeature() != null) {
 				String track_name = glyph.getAnnotStyle().getFeature().featureName;

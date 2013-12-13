@@ -318,16 +318,18 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	/** Returns a list of all TierGlyph items. */
-	public List<TierGlyph> getAllTierGlyphs() {
+	public List<TierGlyph> getAllTierGlyphs(boolean allTiers) {
 		List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
-			if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
+			if (allTiers) {
+				allTierGlyphs.add(tierlabel.getReferenceTier());
+			} else if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
 				allTierGlyphs.add(tierlabel.getReferenceTier());
 			}
 		}
 		return allTierGlyphs;
 	}
-
+	
 	/** Returns a list of visible TierGlyph items. */
 	public List<TierGlyph> getVisibleTierGlyphs() {
 		List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();

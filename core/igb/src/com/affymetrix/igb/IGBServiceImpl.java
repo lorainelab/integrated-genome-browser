@@ -300,7 +300,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
 	@Override
 	public List<Glyph> getAllTierGlyphs() {
-		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs();
+		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes", "cast"})

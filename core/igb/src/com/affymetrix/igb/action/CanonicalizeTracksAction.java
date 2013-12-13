@@ -72,7 +72,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 	public boolean shouldBeEnabled() {
 		List<? extends GlyphI> l = getTierManager().getSelectedTiers();
 		if (0 == l.size()) {
-			l = this.getSeqMapView().getTierManager().getAllTierGlyphs();
+			l = this.getSeqMapView().getTierManager().getAllTierGlyphs(false);
 		}
 		if (1 == l.size()) {
 			return false;

@@ -132,6 +132,11 @@ public class LocalFilesServerType implements ServerTypeI {
 	}
 
 	@Override
+	public void removeServer(GenericServer server) {
+		// Do Nothing for now
+	}
+	
+	@Override
 	public boolean isSaveServersInPrefs() {
 		return false;
 	}

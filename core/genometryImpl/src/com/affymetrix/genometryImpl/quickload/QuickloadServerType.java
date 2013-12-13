@@ -472,6 +472,11 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 
 	@Override
+	public void removeServer(GenericServer server) {
+		QuickLoadServerModel.removeQLModelForURL(server.URL);
+	}
+	
+	@Override
 	public boolean isSaveServersInPrefs() {
 		return true;
 	}

@@ -655,6 +655,11 @@ public class Das2ServerType implements ServerTypeI {
 	}
 
 	@Override
+	public void removeServer(GenericServer server) {
+		// Do Nothing for now
+	}
+	
+	@Override
 	public boolean isSaveServersInPrefs() {
 		return true;
 	}

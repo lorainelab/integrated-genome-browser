@@ -4,11 +4,9 @@ import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
@@ -228,10 +226,7 @@ public final class ServerList {
 		GenericServer server = url2server.get(url);
 		url2server.remove(url);
 		if (server != null) {
-			server.setEnabled(false);
-			if (server.serverType == ServerTypeI.QuickLoad) {
-				QuickLoadServerModel.removeQLModelForURL(url);
-			}
+			server.clean();
 			fireServerInitEvent(server, ServerStatus.NotResponding, true); // remove it from our lists.
 		}
 	}

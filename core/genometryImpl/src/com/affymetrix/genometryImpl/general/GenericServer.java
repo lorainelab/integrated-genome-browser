@@ -263,6 +263,13 @@ public final class GenericServer implements GenericServerPref, Comparable<Generi
 		return this.serverType.compareTo(gServer.serverType);
 	}
 
+	public void clean(){
+		if(serverType != null) {
+			serverType.removeServer(this);
+		}
+		setEnabled(false);
+	}
+	
 	/**
 	 * React to modifications of the Java preferences. This should probably fire
 	 * an event notifying listeners that this generic server has changed.

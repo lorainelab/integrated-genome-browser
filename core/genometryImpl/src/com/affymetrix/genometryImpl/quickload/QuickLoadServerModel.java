@@ -123,11 +123,8 @@ public final class QuickLoadServerModel {
 	public static synchronized void removeQLModelForURL(String url){
 		if(url2quickload.get(url) != null){
 			QuickLoadServerModel model = url2quickload.get(url);
-			for(String genome : model.getGenomeNames()) {
-				AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(genome);
-				if(group != null) {
-					group.removeSeqsForUri(url);
-				}
+			if(model != null){
+				model.clean();
 			}
 			url2quickload.remove(url);
 		}
@@ -557,6 +554,15 @@ public final class QuickLoadServerModel {
 		}
 			
 		return primary_url;
+	}
+	
+	private void clean() {
+		for (String genome : getGenomeNames()) {
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(genome);
+			if (group != null) {
+				group.removeSeqsForUri(root_url);
+			}
+		}
 	}
 	
 	@Override

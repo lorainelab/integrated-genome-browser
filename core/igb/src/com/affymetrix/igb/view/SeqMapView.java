@@ -297,7 +297,9 @@ public class SeqMapView extends JPanel
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			timer.stop();
+			if(timer != null) {
+				timer.stop();
+			}
 		}
 	};
 	
@@ -2653,7 +2655,14 @@ public class SeqMapView extends JPanel
 		});
 		return resultGlyphs;
 	}
-		
+	
+	@Override
+	public void setBackGroundProvider(ViewI.BackGroundProvider bgp, ViewI.BackGroundProvider labelbgp){
+		seqmap.getView().setBackGroundProvider(bgp);
+		((AffyLabelledTierMap)seqmap).getLabelMap().getView().setBackGroundProvider(labelbgp);
+		seqmap.updateWidget();
+	}
+	
 	public void updateStart(int start, SeqSymmetry sym) {
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
 		Rectangle2D.Double originalCoordBox = glyph.getCoordBox();

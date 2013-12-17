@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.Color;
@@ -144,4 +145,6 @@ public interface SeqMapViewI {
 	public <G extends GlyphI> G getItemFromTier(Object datamodel);
 	
 	public void split(GlyphI glyph);
+	
+	public void setBackGroundProvider(ViewI.BackGroundProvider bgp, ViewI.BackGroundProvider labelbgp);
 }

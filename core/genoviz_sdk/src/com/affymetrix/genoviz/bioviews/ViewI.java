@@ -211,4 +211,10 @@ public interface ViewI  {
 	 */
 	public Rectangle getComponentSizeRect();
 
+	public static interface BackGroundProvider {
+		public String getID();
+		public String getName();
+		public void drawBackGround(ViewI view);
+		public BackGroundProvider newInstance();
+	}
 }

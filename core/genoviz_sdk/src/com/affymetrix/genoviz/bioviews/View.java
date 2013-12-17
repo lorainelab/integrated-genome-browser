@@ -99,7 +99,7 @@ public class View implements ViewI, NeoPaintListener,
 	protected Rectangle component_bounds;
 	protected Rectangle component_size_rect;
 	protected int drawCount = 0;
-
+	
 	/*
 	Views have a few boxes that aren't visible to the outside world
 	These are to store temporary stuff, for instance to have a
@@ -110,7 +110,8 @@ public class View implements ViewI, NeoPaintListener,
 	private final Point2D.Double scratch_coord;
 	protected Rectangle scene_pixelbox;
 	protected Rectangle2D.Double scene_coordbox;
-	
+	private BackGroundProvider backGroundProvider;
+		
 	public View() {
 		full_view = this;
 		// transforms initialized to Identity transform
@@ -439,15 +440,15 @@ public class View implements ViewI, NeoPaintListener,
 	public void normalDraw() {
 		transformToCoords(pixelbox, getCoordBox());
 
-		// need to sort out whether background fill is needed or not  GAH 8/11/97
-		// needed if NeoCanvas background fill is removed, and it currently is --
-		//   GAH 11/30/97
-
-		// clipping rect to eliminate any spillover outside of viewbox
-
-		graphics.setColor(component.getBackground());
-
-		graphics.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		if(backGroundProvider != null) {
+			backGroundProvider.drawBackGround(this);
+		} else {
+			// need to sort out whether background fill is needed or not  GAH 8/11/97
+			// needed if NeoCanvas background fill is removed, and it currently is --
+			//   GAH 11/30/97
+			graphics.setColor(component.getBackground());
+			graphics.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		}
 		graphics.setColor(component.getForeground());
 		scene.getGlyph().drawTraversal((ViewI) this);
 	}
@@ -960,5 +961,7 @@ public class View implements ViewI, NeoPaintListener,
 		return scratch_pixelbox;
 	}
 
-
+	public void setBackGroundProvider(BackGroundProvider bgp){
+		this.backGroundProvider = bgp;
+	}
 }

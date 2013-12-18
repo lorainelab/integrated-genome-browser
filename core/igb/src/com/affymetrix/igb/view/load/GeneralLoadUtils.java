@@ -872,7 +872,7 @@ public final class GeneralLoadUtils {
 
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
 		final CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object> worker 
-				= new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>("Loading feature " + feature.featureName, Thread.MIN_PRIORITY) {
+				= new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>("Loading data set " + feature.featureName, Thread.MIN_PRIORITY) {
 			
 			@Override
 			protected Map<String, List<? extends SeqSymmetry>> runInBackground() {
@@ -1546,7 +1546,7 @@ public final class GeneralLoadUtils {
 		final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading feature " + feature.featureName) {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading data set " + feature.featureName) {
 
 			@Override
 			protected Object runInBackground() {

@@ -113,7 +113,7 @@ public final class UrlLoaderThread extends Thread {
 					try {
 						parseDataFromURL(url, file_extension, tier_name);
 					} finally {
-						igbService.removeNotLockedUpMsg("Loading feature " + tier_name);
+						igbService.removeNotLockedUpMsg("Loading data set " + tier_name);
 					}
 				} catch (IOException ioe) {
 					handleException(ioe);

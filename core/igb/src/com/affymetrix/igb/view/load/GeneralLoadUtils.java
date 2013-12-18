@@ -229,10 +229,10 @@ public final class GeneralLoadUtils {
 			return true;
 		}
 		if (gServer.serverType == null) { // bundle repository
-			return IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryAdded(gServer.URL);
+			ServerList.getRepositoryInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
+			return true;
 		}
-				
-		Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+		
 		try {
 			if (gServer == null || gServer.serverType == ServerTypeI.LocalFiles) {
 				// should never happen
@@ -240,6 +240,7 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType != null) {
 				
+				Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 				URL primaryURL = getServerDirectory(gServer.URL);
 				

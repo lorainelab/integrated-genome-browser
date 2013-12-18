@@ -4,20 +4,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JFrame;
 
-
+import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	private static RepositoryChangerHolder instance = new RepositoryChangerHolder();
 	
+	private final GenericServerInitListener genericServerListener = new GenericServerInitListener() {
+		@Override
+		public void genericServerInit(GenericServerInitEvent evt) {
+			GenericServer gServer = (GenericServer) evt.getSource();
+			if (gServer.getServerStatus() == ServerStatus.Initialized) {
+				repositoryAdded(gServer.URL);
+			} else if (gServer.getServerStatus() == ServerStatus.NotResponding) {
+				repositoryRemoved(gServer.URL);
+			}
+		}
+	};
+			
 	private RepositoryChangerHolder() {
 		super();
+		ServerList.getRepositoryInstance().addServerInitListener(genericServerListener);
 	}
 	
 	public static RepositoryChangerHolder getInstance() {

@@ -299,7 +299,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 					cheight = child_height;
 				}
 				
-				addChildGlyph(child, cspan, pspan, direction_type, cheight, child_color, childCount == 1, pglyph, the_tier, annotseq);
+				addChildGlyph(child, cspan, pspan, direction_type, cheight, child_color, childCount > 1, pglyph, the_tier, annotseq);
 				addAlignedResiduesGlyph(child, annotseq, cspan, cheight, pglyph, the_tier);
 				
 				if(!cds){

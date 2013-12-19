@@ -987,9 +987,9 @@ public final class GeneralLoadUtils {
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
 		}
-		if(!check )
-			return !check;
-				
+//		if(!check )
+//			return !check;
+//
 		return false;
 		//end max
 	}

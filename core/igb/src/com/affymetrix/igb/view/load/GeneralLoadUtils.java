@@ -984,14 +984,18 @@ public final class GeneralLoadUtils {
 			}
 
 			if (spanWidth > 500000) {
-				if(!check ){
+				if (!check) {
 					return !check;
 				}
+
 				GeneralLoadView.getLoadView().setShowLoadingConfirm(!check);
-				return !(Application.confirmPanel(message, 
+				return !(Application.confirmPanel(message,
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
 		}
+		if(!check )
+			return !check;
+				
 		return false;
 		//end max
 	}

@@ -971,8 +971,7 @@ public final class GeneralLoadUtils {
 	private static boolean checkBamAndSamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
 		//start max
 		boolean check = GeneralLoadView.getLoadView().isLoadingConfirm();
-		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
-		if (check && optimized_sym != null && feature.getExtension() != null
+		if (optimized_sym != null && feature.getExtension() != null
 				&& (feature.getExtension().endsWith("bam") || feature.getExtension().endsWith("sam"))) {
 			String message = "Region in view is big (> 500k), do you want to continue?";
 			int childrenCount = optimized_sym.getChildCount();
@@ -985,6 +984,10 @@ public final class GeneralLoadUtils {
 			}
 
 			if (spanWidth > 500000) {
+				if(!check ){
+					return !check;
+				}
+				GeneralLoadView.getLoadView().setShowLoadingConfirm(!check);
 				return !(Application.confirmPanel(message, 
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}

@@ -1001,9 +1001,15 @@ public final class GeneralLoadUtils {
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
 		}
+<<<<<<< HEAD
 //		if(!check )
 //			return !check;
 //
+=======
+		if(!check )
+			return !check;
+				
+>>>>>>> IGBD 424
 		return false;
 		//end max
 	}

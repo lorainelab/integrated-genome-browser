@@ -50,10 +50,12 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         pxGoButton = new javax.swing.JButton();
 
         annotationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Labels and Strand"));
+        annotationsPanel.setToolTipText("Use this to configure how IGB displays labels and strand information.");
 
         labelFieldLabel.setText("Label Field:");
+        labelFieldLabel.setToolTipText("Choose a feature property to label features within the track.");
 
-        labelFieldComboBox.setToolTipText("Set label for models within the track");
+        labelFieldComboBox.setToolTipText("Choose a feature property to label features within the track.");
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 labelFieldComboBoxActionPerformed(evt);
@@ -61,7 +63,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strands2TracksCheckBox.setText("+/-");
-        strands2TracksCheckBox.setToolTipText("Allows plus and minus strands to be combined");
+        strands2TracksCheckBox.setToolTipText("Show + and - strand features the same track.");
         strands2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 strands2TracksCheckBoxActionPerformed(evt);
@@ -69,7 +71,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strandsArrowCheckBox.setText("Arrow");
-        strandsArrowCheckBox.setToolTipText("Show strand using arrow");
+        strandsArrowCheckBox.setToolTipText("Show strand using arrows.");
         strandsArrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 strandsArrowCheckBoxActionPerformed(evt);
@@ -77,7 +79,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strandsColorCheckBox.setText("Color by Strand:");
-        strandsColorCheckBox.setToolTipText("Show strand by using color");
+        strandsColorCheckBox.setToolTipText("Show strand using different colors for + and - strand features.");
         strandsColorCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 strandsColorCheckBoxActionPerformed(evt);
@@ -85,12 +87,14 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strandsLabel.setText("Strand:");
+        strandsLabel.setToolTipText("Configure how IGB represents strand.");
 
         strandsForwardColorLabel.setText("+");
 
         strandsReverseColorLabel.setText("-");
 
         strandsReverseColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        strandsReverseColorComboBox.setToolTipText("Choose color for - strand features.");
         strandsReverseColorComboBox.setButtonVisible(false);
         strandsReverseColorComboBox.setColorValueVisible(false);
         strandsReverseColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
@@ -102,6 +106,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         strandsForwardColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        strandsForwardColorComboBox.setToolTipText("Choose color for + strand features.");
         strandsForwardColorComboBox.setButtonVisible(false);
         strandsForwardColorComboBox.setColorValueVisible(false);
         strandsForwardColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
@@ -117,14 +122,14 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         annotationsPanelLayout.setHorizontalGroup(
             annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(annotationsPanelLayout.createSequentialGroup()
-                .add(5, 5, 5)
+                .add(20, 20, 20)
                 .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(annotationsPanelLayout.createSequentialGroup()
                         .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(labelFieldLabel)
                             .add(strandsLabel))
                         .add(0, 0, 0)
-                        .add(labelFieldComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(labelFieldComboBox, 0, 143, Short.MAX_VALUE))
                     .add(annotationsPanelLayout.createSequentialGroup()
                         .add(annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(strandsArrowCheckBox)
@@ -144,7 +149,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                                 .add(strandsReverseColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(0, 0, 0)
                                 .add(strandsReverseColorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                        .addContainerGap(107, Short.MAX_VALUE))))
         );
         annotationsPanelLayout.setVerticalGroup(
             annotationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -179,7 +184,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         stackDepthGoButton.setText("Apply");
-        stackDepthGoButton.setToolTipText("Set stack height for selected tracks");
+        stackDepthGoButton.setToolTipText("Click or press ENTER to set the stack height.");
         stackDepthGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthGoButtonActionPerformed(evt);
@@ -187,7 +192,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         stackDepthAllButton.setText("Optimize");
-        stackDepthAllButton.setToolTipText("Optimize stack height for selected annotation tracks so that all annotations are shown");
+        stackDepthAllButton.setToolTipText("Set stack height to show everything. ");
         stackDepthAllButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthAllButtonActionPerformed(evt);
@@ -221,7 +226,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         trackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Height"));
 
         lockTierHeightCheckBox.setText("Lock Track Height (Pixels)");
-        lockTierHeightCheckBox.setToolTipText("Prevents selected track from changing height");
+        lockTierHeightCheckBox.setToolTipText("Lock track height to the value entered below. ");
         lockTierHeightCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lockTierHeightCheckBoxActionPerformed(evt);
@@ -238,7 +243,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         });
 
         pxGoButton.setText("Apply");
-        pxGoButton.setToolTipText("Sets height for the locked tracks");
+        pxGoButton.setToolTipText("Click to apply a new locked track height.");
         pxGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pxGoButtonActionPerformed(evt);
@@ -260,7 +265,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                                 .add(setPxHeightTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(0, 0, 0)
                                 .add(pxGoButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
-                .add(14, 14, 14))
+                .add(16, 16, 16))
         );
         trackHeightPanelLayout.setVerticalGroup(
             trackHeightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -291,7 +296,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(stackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)

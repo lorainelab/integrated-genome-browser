@@ -7,7 +7,7 @@
 <server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="0" default="true" mirror="http://bioviz.org/quickload/"/>
 <server type="quickload" name="Pollen" url="http://www.igbquickload.org/pollen" order="1" default="true" mirror="http://bioviz.org/pollen/"/>
 <server type="quickload" name="Cytokinin" url="http://www.igbquickload.org/cyto" order="2" default="true" mirror="http://bioviz.org/cytopub/"/>
-<server type="quickload" name="Blueberry" url="http://www.igbquickload.org/blueberry" order="3" default="true" mirror="http://bioviz.org/berrypub/">
+<server type="quickload" name="Blueberry" url="http://www.igbquickload.org/blueberry" order="3" default="true" mirror="http://bioviz.org/berrypub/"/>
 <server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="4" default="true"/>
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="5" default="true"/>
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="6" default="true"/>

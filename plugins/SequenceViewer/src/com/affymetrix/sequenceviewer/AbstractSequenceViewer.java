@@ -128,6 +128,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			return defaultColors;
 		}
 	}
+	private void checkNegativeStrand(SeqSpan cdsSpan){
+		if(!cdsSpan.isForward()){
+			this.toggle_Reverse_Complement=true;
+		}			
+	}
 
 	/*This is the starting point for sequence viewer
 	 * syms.size()=1 valid case for sequenceviewer and it is not a genomic request
@@ -141,14 +146,15 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
 				txMin  = residues_sym.getSpan(seqmapview.getAnnotatedSeq()).getMin();
-				if (residues_sym.getChildCount() == 0) {
+				checkNegativeStrand(residues_sym.getSpan(seqmapview.getAnnotatedSeq()));//check for negative strand and 
+				if (residues_sym.getChildCount() == 0) {//for single child
 					SeqSymmetry residues_syms1 = residues_sym;
 					if ((residues_syms1 instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_syms1).hasCdsSpan()) {
 						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_syms1).getCdsSpan();
 						cdsMin = cdsSpan.getStart();
 						cdsMax = cdsSpan.getEnd();
 					}
-				} else {
+				} else {//for single strand bed file will children
 					if ((residues_sym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_sym).hasCdsSpan()) {
 						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_sym).getCdsSpan();
 						cdsMin = cdsSpan.getStart();

@@ -689,7 +689,13 @@ public final class GeneralLoadUtils {
 				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
-			if (checkBamAndSamLoading(feature, optimized_sym)) {
+			/* can remove this 
+			 if (checkBamAndSamLoading(feature, optimized_sym)) {
+				return;
+			}
+			*/
+			//check for large data in group only once
+			if(checkForLargeDataSingleton(span)){
 				return;
 			}
 
@@ -967,7 +973,60 @@ public final class GeneralLoadUtils {
 
 		return loaded;
 	}
+	// Code to check the group of features only once
+	static boolean checkForLargeDataSingleton(SeqSpan span){
+		boolean check = GeneralLoadView.getLoadView().isLoadingConfirm();
+		boolean result=!check;
+		if(check){
+			result=checkForLargeData(getVisibleFeatures(),span);
+			GeneralLoadView.getLoadView().setShowLoadingConfirm(!check);
+		}
+		return result;
 
+	}
+	//Code to check for the bam or sam file
+	static List<GenericFeature> checkForBamOrSam(List<GenericFeature> gvf){
+		List<GenericFeature> bamSamList = new ArrayList<GenericFeature>();
+		for(GenericFeature feature:gvf){
+			if((feature.getExtension().endsWith("bam")||feature.getExtension().endsWith("sam"))){
+				bamSamList.add(feature);
+			}
+		}
+		return bamSamList;
+	}
+	//Code to check for large data sets
+	static boolean checkForLargeData(List<GenericFeature> gvf, SeqSpan span) {
+		List<GenericFeature> bamSamList = checkForBamOrSam(gvf);
+		SeqSymmetry optimized_sym;
+		String message = "Region in view is big (> 500k), do you want to continue?";
+		int spanWidth;
+		int childrenCount;
+		if (bamSamList.isEmpty()) {
+			return false;
+		}
+		for (GenericFeature feature : bamSamList) {
+			optimized_sym = feature.optimizeRequest(span);
+			if (optimized_sym == null) {
+				continue;
+			}
+			childrenCount = optimized_sym.getChildCount();
+			spanWidth = 0;
+			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
+				SeqSymmetry child = optimized_sym.getChild(childIndex);
+				for (int spanIndex = 0; spanIndex < child.getSpanCount(); spanIndex++) {
+					spanWidth += (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
+				}
+			}
+
+			if (spanWidth > 500000) {
+				return !(Application.confirmPanel(message,
+						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
+			}
+		}
+
+		return false;
+	}
+	//Can remove this code once stabilised
 	private static boolean checkBamAndSamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
 		//start max
 		boolean check = GeneralLoadView.getLoadView().isLoadingConfirm();

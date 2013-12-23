@@ -48,6 +48,7 @@
 		<copy file="${bundle.dir}/icons--igbext.bnd.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/jdom-1.1.3.bnd.jar" todir="temp/bundle" />
 		<copy file="${bundle.dir}/commons-pool-1.6.jar" todir="temp/bundle" />
+		<copy file="${bundle.dir}/commons-compress-1.6.jar" todir="temp/bundle" />
 		<mkdir dir="temp" />
 		<copy file="lib/lucene-core-3.6.0.jar" todir="temp/bundle" />
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="temp/bundle" >

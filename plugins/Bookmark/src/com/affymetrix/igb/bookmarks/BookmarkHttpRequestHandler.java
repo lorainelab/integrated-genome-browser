@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,24 +48,65 @@ class BookmarkHttpRequestHandler implements Runnable {
 
  private void processRequest() throws IOException {
 		BufferedReader reader = null;
-		OutputStream output = null;
+		PrintWriter out = null;
 		
 		String line;
 		try {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			output = socket.getOutputStream();
+			out = new PrintWriter(socket.getOutputStream());
 			while ((line = reader.readLine()) != null && line.trim().length() > 0) {
 				// we need to process only the GET header line of the input, which will
 				// look something like this:
 				// 'GET /IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310 HTTP/1.1'
+				System.out.println(line);
 				String command = null;
-				if (line.length() >= 4 && line.substring(0, 4).toUpperCase().equals("GET ")) {
+				if (line.startsWith("GET ")) {
 					String[] getCommand = line.substring(4).split(" ");
-					if (getCommand.length > 0) {
+					if(line.startsWith("GET / ")){//send a simple message for the user to see
+						out.println("HTTP/1.1 200 OK");
+						out.println("Content-Type: text/html");
+						out.println("\r\n");
+						out.println("<html><head><title>IGB</title></head><body>");
+						out.println("<h2 style='display:inline-block'>IGB is running!</h2> <a href='http://localhost:7085/UnibrowControl?bringIGBToFront=true'>bringing it to the front!</a><br>");
+						out.println("<h4>Helpful Links:</h4>");
+						out.println("<ul>");
+						out.println("<li>If you are trying to run IGB commands head over to <a href='http://wiki.transvar.org/confluence/display/igbman/Controlling+IGB+using+IGB+Links'>How to use IGB links</a></li>");
+						out.println("<li>Data sets can be found at <a href='http://igbquickload.org/'>igbquickload.org</a></li>");
+						out.println("<li>Newer versions of IGB can be downloaded on <a href='http://bioviz.org'>bioviz.org</a></li>");
+						out.println("<li>For the latest news go over to the <a href='https://twitter.com/igbbioviz'>Twitter page</a></li>");
+						out.println("<li>If you need more help there are plenty of \"How Tos\" over on our <a href='http://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg'>Youtube channel</a></li>");
+						out.println("</ul>");
+						out.println("<h4><a href='http://bioviz.org/igb/cite.html'>How to site IGB</a> in your research</h4>");
+						out.println("<div style='position:absolute;top:1em;right:1em;'><a href='https://wiki.transvar.org/confluence/display/igbman/Quick+start'>Users Guide and Help</a></div>");
+						out.println("<div style='position:absolute;bottom:0;right:0;left:0;background:white;text-align:center;width:100%;padding-bottom:1em'>IGB is a product of the <a href='http://transvar.org/'>Loraine Lab</a> and is <a href='http://sourceforge.net/projects/genoviz/'>open source</a></div>");
+						out.println("</body></html>");
+						out.flush();
+						break;
+					}
+					//feature not approved yet! -kts
+					//else if(line.startsWith("GET /IGB.js")){//send javascript file and close socket
+					//	out.println("HTTP/1.1 200 OK");
+					//	out.println("Content-Type: text/javascript");
+					//	out.println("\r\n");
+					//	out.println("var IGB={};");
+					//	out.flush();
+					//	break;
+					//}
+					else if(getCommand.length > 0) {
 						command = getCommand[0];
+						out.write(SimpleBookmarkServer.http_response);
+						out.flush();
+					}else{
+						out.println("HTTP/1.1 400 Bad Request");
+						out.println("Content-Type: text/html");
+						out.println("\r\n");
+						out.println("<h2>Error with IGB command!</h2><pre>>> " + line +"</pre>");
+					    out.flush();
+						break;
 					}
 				}
 
+				//TODO should this block be included in the while loop? -kts
 				if (command != null) {
 					//bring IGB to front?
 					if (command.contains("bringIGBToFront=true")){
@@ -79,12 +121,10 @@ class BookmarkHttpRequestHandler implements Runnable {
 				}
 
 //				output.write(SimpleBookmarkServer.prompt);
-			}
-			output.write(SimpleBookmarkServer.http_response.getBytes());
-			output.flush();
+			}			
 		} finally {
 
-			GeneralUtils.safeClose(output);
+			GeneralUtils.safeClose(out);
 			GeneralUtils.safeClose(reader);
 			try {
 				socket.close();

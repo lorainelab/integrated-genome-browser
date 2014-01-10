@@ -149,6 +149,7 @@ public class MainMenuUtil {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_start_autoscroll", StartAutoScrollAction.getAction()));
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction()));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction()));
 		tools_menu.addSeparator();
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));

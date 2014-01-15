@@ -73,8 +73,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	private List<SeqSpan> foundSpans;
 	private int spanPointer;
 	private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
-
-//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 	
+//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 
+	
 	// Use the ENGLISH locale here because we want the user to be able to
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)

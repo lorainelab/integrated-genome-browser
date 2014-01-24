@@ -62,7 +62,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 				String command = null;
 				if (line.startsWith("GET ")) {
 					String[] getCommand = line.substring(4).split(" ");
-					if(line.startsWith("GET /")){//send a simple message for the user to see Tk this will show that IGB is running
+					if(line.startsWith("GET / ")){//send a simple message for the user to see 
 						out.println("HTTP/1.1 200 OK");
 						out.println("Content-Type: text/html");
 						out.println("\r\n");

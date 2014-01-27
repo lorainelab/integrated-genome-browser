@@ -73,8 +73,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	private List<SeqSpan> foundSpans;
 	private int spanPointer;
 	private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
-	private static String[] regexChars = new String[]{"|"};
-	
+
+//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 	
 	// Use the ENGLISH locale here because we want the user to be able to
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
@@ -449,9 +449,10 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		List<ISearchModeSym> modes = new ArrayList<ISearchModeSym>();
 		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
 		String search_term = search_text;
-		for(String c : regexChars){
-			search_term = search_term.replace(c, "\\"+c);
-		}
+		search_term = Pattern.quote(search_term);// kTs n Tk
+		//for(String c : regexChars){
+		//	search_term = search_term.replace(c, "\\"+c);
+		//}
 		for (ISearchModeSym searchMode : modes) {
 			if (searchMode.checkInput(search_term, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
 //				for (TypeContainerAnnot trackSym : trackSyms) {

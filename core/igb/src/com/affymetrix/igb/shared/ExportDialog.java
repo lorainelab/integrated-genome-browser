@@ -34,18 +34,16 @@ import com.affymetrix.igb.util.GraphicsUtil;
  * @author nick
  */
 public class ExportDialog extends HeadLessExport {
+
 	private static ExportDialog singleton;
-	
 	static float FONT_SIZE = 13.0f;
 	static final String TITLE = "Export Image";
 	static final String DEFAULT_FILE = "export.png";
 	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
-	static final Object[] UNIT = { "pixels", "inches"};
-	
+	static final Object[] UNIT = {"pixels", "inches"};
 	static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
 	static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
-	
 	private JFrame static_frame = null;
 	private File defaultDir;
 	private AffyTieredMap seqMap;
@@ -64,7 +62,6 @@ public class ExportDialog extends HeadLessExport {
 	private ExportFileChooser fileChooser;
 	private String selectedExt;
 	private LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST;
-	
 	JComboBox extComboBox = new JComboBox();
 	JComboBox resolutionComboBox = new JComboBox(RESOLUTION);
 	JComboBox unitComboBox = new JComboBox(UNIT);
@@ -73,6 +70,7 @@ public class ExportDialog extends HeadLessExport {
 	JSpinner heightSpinner = new JSpinner();
 	JLabel previewLabel = new JLabel();
 	JLabel sizeLabel = new JLabel();
+	JButton resetButton = new JButton();
 	JButton browseButton = new JButton();
 	JButton cancelButton = new JButton();
 	JButton okButton = new JButton();
@@ -84,20 +82,23 @@ public class ExportDialog extends HeadLessExport {
 	JPanel buttonsPanel = new JPanel();
 	// detect export view size changed and activate refresh button.
 	private final ComponentListener resizelistener = new ComponentListener() {
-
 		public void componentResized(ComponentEvent e) {
 			if (isVisible()) {
 				enableRefreshButton();
 			}
 		}
 
-		public void componentMoved(ComponentEvent ce) {}
-		public void componentShown(ComponentEvent ce) {}
-		public void componentHidden(ComponentEvent ce) {}
+		public void componentMoved(ComponentEvent ce) {
+		}
+
+		public void componentShown(ComponentEvent ce) {
+		}
+
+		public void componentHidden(ComponentEvent ce) {
+		}
 	};
 	// detect export view range changed and activate refresh button.
 	private final NeoRangeListener rangeListener = new NeoRangeListener() {
-
 		@Override
 		public void rangeChanged(NeoRangeEvent evt) {
 			if (isVisible()) {
@@ -107,7 +108,6 @@ public class ExportDialog extends HeadLessExport {
 	};
 	// detect export view changed and activate refresh button. (Just for Seq View)
 	private final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
-
 		public void adjustmentValueChanged(AdjustmentEvent ae) {
 			if (isVisible()) {
 				enableRefreshButton();
@@ -121,7 +121,7 @@ public class ExportDialog extends HeadLessExport {
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 	}
-	
+
 	/**
 	 * @return ExportDialog instance
 	 */
@@ -248,6 +248,7 @@ public class ExportDialog extends HeadLessExport {
 
 			static_frame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
 			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+			static_frame.getRootPane().setDefaultButton(okButton);
 		} else {
 			initSpinner((String) unitComboBox.getSelectedItem());
 		}
@@ -267,7 +268,7 @@ public class ExportDialog extends HeadLessExport {
 	public FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
 	}
-	
+
 	/**
 	 * Initialize height and width Spinner. Support Unit: pixels and Inches
 	 *
@@ -535,8 +536,8 @@ public class ExportDialog extends HeadLessExport {
 		exportImage = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
 		Graphics2D g = exportImage.createGraphics();
-		if(component instanceof JFrame){
-			drawTitleBar( g);
+		if (component instanceof JFrame) {
+			drawTitleBar(g);
 		}
 		component.printAll(g);
 
@@ -548,24 +549,25 @@ public class ExportDialog extends HeadLessExport {
 
 	/**
 	 * A hack to force export to draw title bar
-	 * @param g 
+	 *
+	 * @param g
 	 */
 	private void drawTitleBar(Graphics2D g) {
 		// Draw Background
 		g.setColor(component.getBackground().darker());
 		g.fillRect(0, 0, component.getWidth(), component.getHeight());
-		
+
 		// Draw Border
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 20, component.getWidth(), 2);
-		
+
 		// Draw Title
 		g.setFont(g.getFont().deriveFont(FONT_SIZE));
-		int x_offset = (component.getWidth() - g.getFontMetrics().stringWidth(((JFrame)component).getTitle()))/2;
+		int x_offset = (component.getWidth() - g.getFontMetrics().stringWidth(((JFrame) component).getTitle())) / 2;
 		int y_offset = 14;
-		g.drawString(((JFrame)component).getTitle(), x_offset, y_offset);
+		g.drawString(((JFrame) component).getTitle(), x_offset, y_offset);
 	}
-		
+
 	/**
 	 * Return whether the passed extention is contained in IGB support image
 	 * extention list or not.
@@ -593,6 +595,7 @@ public class ExportDialog extends HeadLessExport {
 			isWidthSpinner = false;
 
 			resetWidthHeight(newWidth, newHeight);
+			resetButton.setEnabled(true);
 		}
 	}
 
@@ -609,6 +612,8 @@ public class ExportDialog extends HeadLessExport {
 			isHeightSpinner = false;
 
 			resetWidthHeight(newWidth, newHeight);
+			resetButton.setEnabled(true);
+
 		}
 	}
 
@@ -687,20 +692,24 @@ public class ExportDialog extends HeadLessExport {
 		if (unit != null) {
 			if (unit.equals(UNIT[1])) {
 				// Convert back from inches to pixels
+
 				width *= imageInfo.getResolution();
 				height *= imageInfo.getResolution();
+				sizeLabel.setText(String.valueOf((int) width)
+						+ " x "
+						+ String.valueOf((int) height)
+						+ " " + UNIT[0]);
+			} else {
+				sizeLabel.setText(String.valueOf((int) width / imageInfo.getResolution())
+						+ " x "
+						+ String.valueOf((int) height / imageInfo.getResolution())
+						+ " " + UNIT[1]);
 			}
 
 			imageInfo.setWidth(width);
 			imageInfo.setHeight(height);
-
-			sizeLabel.setText(String.valueOf((int) width)
-					+ " x "
-					+ String.valueOf((int) height)
-					+ " pixels");
-
 			// Allow user to reset width and height back to current size
-			enableRefreshButton();
+			resetButton.setEnabled(false);
 		}
 	}
 
@@ -721,7 +730,7 @@ public class ExportDialog extends HeadLessExport {
 	}
 
 	public void refreshButtonActionPerformed() {
-		refreshPreview();
+		updatePreview();
 		refreshButton.setEnabled(false);
 	}
 
@@ -745,10 +754,24 @@ public class ExportDialog extends HeadLessExport {
 		refreshPreview();
 	}
 
+	public void resetButtonActionPerformed() {
+		initImageInfo();
+		initSpinner((String) unitComboBox.getSelectedItem());
+
+	}
+
+	private void updatePreview() {
+		previewImage();
+		refreshButton.setEnabled(false);
+		resetButton.setEnabled(false);
+	}
+
 	private void refreshPreview() {
 		initImageInfo();
 		initSpinner((String) unitComboBox.getSelectedItem());
 		previewImage();
+		refreshButton.setEnabled(false);
+		resetButton.setEnabled(false);
 	}
 }
 

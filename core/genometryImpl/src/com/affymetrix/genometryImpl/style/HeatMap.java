@@ -1,62 +1,61 @@
 /**
- *   Copyright (c) 2007 Affymetrix, Inc.
+ * Copyright (c) 2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.genometryImpl.style;
 
 import java.awt.Color;
 
 public class HeatMap {
+
 	public static final int BINS = 256;
 	public static final String FOREGROUND_BACKGROUND = "FG/BG";
+
 	public static enum StandardHeatMap {
+
 		BLACK_WHITE("Black/White", Color.BLACK, Color.WHITE),
 		VIOLET("Violet", Color.BLACK, new Color(255, 0, 255)),
 		BLUE_YELLOW("Blue/Yellow", Color.BLUE, Color.YELLOW),
 		BLUE_YELLOW_2("Blue/Yellow 2", new Color(0, 0, 128), new Color(255, 255, 0)),
 		RED_BLACK_GREEN("Red/Black/Green", null, null) {
-			@Override
-			protected HeatMap create(String name, Color c1, Color c2) {
-				Color[] colors = new Color[BINS];
-				for (int bin = 0; bin < BINS; bin++) {
-					colors[bin] = new Color(Math.max(255 - 2*bin, 0), Math.min(Math.max(2 * (bin-128), 0), 255), 0);
-				}
-				return new HeatMap(name, colors);
+					@Override
+					protected HeatMap create(String name, Color c1, Color c2) {
+						Color[] colors = new Color[BINS];
+						for (int bin = 0; bin < BINS; bin++) {
+							colors[bin] = new Color(Math.max(255 - 2 * bin, 0), Math.min(Math.max(2 * (bin - 128), 0), 255), 0);
+						}
+						return new HeatMap(name, colors);
 
-			}
-		},
+					}
+				},
 		RAINBOW("Rainbow", null, null) {
-			@Override
-			protected HeatMap create(String name, Color c1, Color c2) {
-				Color[] colors = new Color[BINS];
-				for (int bin = 0; bin < BINS; bin++) {
-					colors[bin] = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/BINS, 0.8f, 1.0f));
-				}
-				return new HeatMap(name, colors);
-			}
-		},
+					@Override
+					protected HeatMap create(String name, Color c1, Color c2) {
+						Color[] colors = new Color[BINS];
+						for (int bin = 0; bin < BINS; bin++) {
+							colors[bin] = new Color(Color.HSBtoRGB(0.66f * (1.0f * bin) / BINS, 0.8f, 1.0f));
+						}
+						return new HeatMap(name, colors);
+					}
+				},
 		RED_GRAY_BLUE("Red/Gray/Blue", null, null) {
-			@Override
-			protected HeatMap create(String name, Color c1, Color c2) {
-				Color c;
-				Color[] colors = new Color[BINS];
-				for (int bin = 0; bin < BINS; bin++) {
-					c = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/BINS, 0.8f, 1.0f));
-					int g = (192 * c.getGreen()) / 256;
-					colors[bin] = new Color(Math.max(c.getRed(), g), g, Math.max(c.getBlue(), g));
-				}
-				return new HeatMap(name, colors);
-			}
-		},
+					@Override
+					protected HeatMap create(String name, Color c1, Color c2) {
+						Color c;
+						Color[] colors = new Color[BINS];
+						for (int bin = 0; bin < BINS; bin++) {
+							c = new Color(Color.HSBtoRGB(0.66f * (1.0f * bin) / BINS, 0.8f, 1.0f));
+							int g = (192 * c.getGreen()) / 256;
+							colors[bin] = new Color(Math.max(c.getRed(), g), g, Math.max(c.getBlue(), g));
+						}
+						return new HeatMap(name, colors);
+					}
+				},
 		TRANSPARENT_BW("Transparent B/W", new Color(0, 0, 0, 128), new Color(255, 255, 255, 128)),
 		TRANSPARENT_RED("Transparent Red", new Color(0, 0, 0, 128), new Color(255, 0, 0, 128)),
 		TRANSPARENT_GREEN("Transparent Green", new Color(0, 0, 0, 128), new Color(0, 255, 0, 128)),
@@ -72,7 +71,9 @@ public class HeatMap {
 			return HeatMap.makeLinearHeatmap(name, c1, c2);
 		}
 
-		public HeatMap getHeatMap() { return heatmap; }
+		public HeatMap getHeatMap() {
+			return heatmap;
+		}
 
 		@Override
 		public String toString() {
@@ -93,9 +94,9 @@ public class HeatMap {
 			return heatmap.getName();
 		}
 	}
-	
+
 	public static final String PREF_HEATMAP_NAME = "Default Heatmap";
-	
+
 	private final String name;
 	protected final Color[] colors;
 
@@ -112,28 +113,30 @@ public class HeatMap {
 		return colors;
 	}
 
-	/** Gets the color at the given index value.
-	 * @param heatmap_index an integer in the range 0 to 255.  If the specified
-	 *  index is outside this range, the color corresponding to index 0 or 255
-	 *  will be returned.
+	/**
+	 * Gets the color at the given index value.
+	 *
+	 * @param heatmap_index an integer in the range 0 to 255. If the specified
+	 * index is outside this range, the color corresponding to index 0 or 255
+	 * will be returned.
 	 */
 	public Color getColor(int heatmap_index) {
 		if (heatmap_index < 0) {
 			return colors[0];
-		} else if (heatmap_index > BINS-1) {
-			return colors[BINS-1];
+		} else if (heatmap_index > BINS - 1) {
+			return colors[BINS - 1];
 		} else {
 			return colors[heatmap_index];
 		}
 	}
 
 	/**
-	 *  Returns one of the standard pre-defined heat maps using the names in
-	 *  StandardHeatMap.
+	 * Returns one of the standard pre-defined heat maps using the names in
+	 * StandardHeatMap.
 	 * <br />
 	 * Will throw NullPointerException if name is null or
-	 * IllegalArgumentException if a StandardHeatMap for the requested
-	 * name does not exist.
+	 * IllegalArgumentException if a StandardHeatMap for the requested name does
+	 * not exist.
 	 *
 	 * @param name the name of the StandardHeatMap to return
 	 * @return the HeatMap for the requested StandHeatMap
@@ -151,23 +154,25 @@ public class HeatMap {
 		}
 	}
 
-	/** Make a HeatMap that interpolates linearly between the two given colors. */
+	/**
+	 * Make a HeatMap that interpolates linearly between the two given colors.
+	 */
 	public static HeatMap makeLinearHeatmap(String name, Color low, Color high) {
 		Color[] colors = new Color[BINS];
-		HeatMap heat_map = new HeatMap(name, colors);
-		
-		for (int i=0; i<BINS; i++) {
-			float x = (i*1.0f)/BINS - 1;
+
+		for (int i = 0; i < BINS; i++) {
+			float x = (i*1.0f)/255.0f;//tk
 			colors[i] = interpolateColor(low, high, x);
 		}
 
-		return heat_map;
+		return new HeatMap(name, colors);
 	}
 
 	/**
-	 *  Creates a new color inbetween c1 and c2.
-	 *  @param x  The fraction of the new color (0.00 to 1.00) that
-	 *  should be based on color c2, the rest is based on c1.
+	 * Creates a new color inbetween c1 and c2.
+	 *
+	 * @param x The fraction of the new color (0.00 to 1.00) that should be
+	 * based on color c2, the rest is based on c1.
 	 */
 	public static Color interpolateColor(Color c1, Color c2, float x) {
 		if (x <= 0.0f) {
@@ -185,13 +190,13 @@ public class HeatMap {
 	}
 
 	public static String[] getStandardNames() {
-			int length = StandardHeatMap.values().length;
-			String[] names = new String[length + 1];
-			HeatMap.StandardHeatMap[] shm = StandardHeatMap.values();
-			names[0] = FOREGROUND_BACKGROUND;
-			for (int i=1; i<length; i++) {
-				names[i] = shm[i].toString();
-			}
-			return names;
-		}
+		int length = StandardHeatMap.values().length;
+		String[] names = new String[length + 1];
+		HeatMap.StandardHeatMap[] shm = StandardHeatMap.values();
+		names[0] = FOREGROUND_BACKGROUND;
+		for (int i = 1; i < length + 1; i++) {
+			names[i] = shm[i - 1].toString();
+		}//tk
+		return names;
+	}
 }

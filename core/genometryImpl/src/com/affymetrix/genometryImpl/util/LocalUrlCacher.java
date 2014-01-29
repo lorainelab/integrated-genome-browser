@@ -758,8 +758,13 @@ public final class LocalUrlCacher {
 	}
 	
 	public static boolean isValidURI(URI uri){
-
-		String scheme = uri.getScheme().toLowerCase();
+		String scheme = null;
+		try {
+			scheme = uri.getScheme().toLowerCase();
+		} catch (NullPointerException ex) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Check if Url {0} is proper. No schema found", uri.toString());
+			return false;
+		}
 		if (scheme.length() == 0 || scheme.equals("file")) {
 			File f = new File(uri);
 			if(f != null && f.exists()){

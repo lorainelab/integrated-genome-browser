@@ -38,7 +38,6 @@ public class ExportDialogGUI extends JPanel {
         resolutionComboBox = ed.resolutionComboBox;
         unitComboBox = ed.unitComboBox;
         sizeLabel = ed.sizeLabel;
-        Reset = ed.resetButton;
         previewPanel = new javax.swing.JPanel();
         previewLabel = ed.previewLabel;
         buttonsPanel = ed.buttonsPanel;
@@ -90,13 +89,6 @@ public class ExportDialogGUI extends JPanel {
 
         sizeLabel.setText("  ");
 
-        Reset.setText("Reset");
-        Reset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ResetActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout imageSizePanelLayout = new org.jdesktop.layout.GroupLayout(imageSizePanel);
         imageSizePanel.setLayout(imageSizePanelLayout);
         imageSizePanelLayout.setHorizontalGroup(
@@ -119,14 +111,9 @@ public class ExportDialogGUI extends JPanel {
                         .add(resolutionLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(resolutionComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .add(14, 14, 14)
-                        .add(unitComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(Reset)))
-                .add(0, 0, Short.MAX_VALUE))
+                .add(14, 14, 14)
+                .add(unitComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 64, Short.MAX_VALUE))
         );
 
         imageSizePanelLayout.linkSize(new java.awt.Component[] {heightSpinner, widthSpinner}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -140,13 +127,12 @@ public class ExportDialogGUI extends JPanel {
                     .add(widthSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(heightLabel)
                     .add(widthLabel))
-                .add(5, 5, 5)
+                .add(6, 6, 6)
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(sizeLabel)
                     .add(resolutionComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(resolutionLabel)
-                    .add(Reset))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(resolutionLabel))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
@@ -206,9 +192,8 @@ public class ExportDialogGUI extends JPanel {
                 .add(svRadioButton))
         );
 
-        refreshButton.setText("Refresh");
-        refreshButton.setToolTipText("Refresh preview");
-        refreshButton.setToolTipText("Refreshes the size and the preview to the current dimensions of the image.");
+        refreshButton.setText("Update Preview Image");
+        refreshButton.setToolTipText("Click to update Preview and image dimensions after changing IGB.");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
@@ -234,12 +219,13 @@ public class ExportDialogGUI extends JPanel {
         previewPanelLayout.setVerticalGroup(
             previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(previewPanelLayout.createSequentialGroup()
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 27, Short.MAX_VALUE)
-                .add(refreshButton))
-            .add(previewPanelLayout.createSequentialGroup()
-                .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, Short.MAX_VALUE))
+                .add(previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(previewPanelLayout.createSequentialGroup()
+                        .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(refreshButton))
+                    .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(0, 21, Short.MAX_VALUE))
         );
 
         browseButton.setText("Browse...");
@@ -382,13 +368,7 @@ public class ExportDialogGUI extends JPanel {
 		ed.extComboBoxActionPerformed();
 	}//GEN-LAST:event_extComboBoxActionPerformed
 
-    private void ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetActionPerformed
-        // TODO add your handling code here:
-		ed.resetButtonActionPerformed();
-    }//GEN-LAST:event_ResetActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Reset;
     private javax.swing.JButton browseButton;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JPanel buttonsPanel;

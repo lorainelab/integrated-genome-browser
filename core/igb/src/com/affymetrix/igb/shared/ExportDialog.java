@@ -70,7 +70,6 @@ public class ExportDialog extends HeadLessExport {
 	JSpinner heightSpinner = new JSpinner();
 	JLabel previewLabel = new JLabel();
 	JLabel sizeLabel = new JLabel();
-	JButton resetButton = new JButton();
 	JButton browseButton = new JButton();
 	JButton cancelButton = new JButton();
 	JButton okButton = new JButton();
@@ -84,7 +83,7 @@ public class ExportDialog extends HeadLessExport {
 	private final ComponentListener resizelistener = new ComponentListener() {
 		public void componentResized(ComponentEvent e) {
 			if (isVisible()) {
-				enableRefreshButton();
+//				enableRefreshButton();
 			}
 		}
 
@@ -102,7 +101,7 @@ public class ExportDialog extends HeadLessExport {
 		@Override
 		public void rangeChanged(NeoRangeEvent evt) {
 			if (isVisible()) {
-				enableRefreshButton();
+	//			enableRefreshButton();
 			}
 		}
 	};
@@ -110,7 +109,7 @@ public class ExportDialog extends HeadLessExport {
 	private final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
 		public void adjustmentValueChanged(AdjustmentEvent ae) {
 			if (isVisible()) {
-				enableRefreshButton();
+		//		enableRefreshButton();
 			}
 		}
 	};
@@ -143,8 +142,6 @@ public class ExportDialog extends HeadLessExport {
 		initRadioButton(isSequenceViewer);
 		initFrame();
 		DisplayUtils.bringFrameToFront(static_frame);
-
-		refreshButton.setEnabled(false);
 		previewImage();
 	}
 
@@ -155,11 +152,11 @@ public class ExportDialog extends HeadLessExport {
 		return static_frame != null && static_frame.isVisible();
 	}
 
-	private void enableRefreshButton() {
-		if (!refreshButton.isEnabled()) {
-			refreshButton.setEnabled(true);
-		}
-	}
+//	private void enableRefreshButton() {
+//		if (!refreshButton.isEnabled()) {
+//			refreshButton.setEnabled(true);
+//		}
+//	}
 
 	/**
 	 * Set export component by determined which radio button is selected. If the
@@ -595,7 +592,6 @@ public class ExportDialog extends HeadLessExport {
 			isWidthSpinner = false;
 
 			resetWidthHeight(newWidth, newHeight);
-			resetButton.setEnabled(true);
 		}
 	}
 
@@ -612,7 +608,6 @@ public class ExportDialog extends HeadLessExport {
 			isHeightSpinner = false;
 
 			resetWidthHeight(newWidth, newHeight);
-			resetButton.setEnabled(true);
 
 		}
 	}
@@ -709,7 +704,6 @@ public class ExportDialog extends HeadLessExport {
 			imageInfo.setWidth(width);
 			imageInfo.setHeight(height);
 			// Allow user to reset width and height back to current size
-			resetButton.setEnabled(false);
 		}
 	}
 
@@ -731,7 +725,7 @@ public class ExportDialog extends HeadLessExport {
 
 	public void refreshButtonActionPerformed() {
 		updatePreview();
-		refreshButton.setEnabled(false);
+		//refreshButton.setEnabled(false);
 	}
 
 	public void mvRadioButtonActionPerformed() {
@@ -754,24 +748,16 @@ public class ExportDialog extends HeadLessExport {
 		refreshPreview();
 	}
 
-	public void resetButtonActionPerformed() {
-		initImageInfo();
-		initSpinner((String) unitComboBox.getSelectedItem());
 
-	}
 
 	private void updatePreview() {
 		previewImage();
-		refreshButton.setEnabled(false);
-		resetButton.setEnabled(false);
 	}
 
 	private void refreshPreview() {
 		initImageInfo();
 		initSpinner((String) unitComboBox.getSelectedItem());
 		previewImage();
-		refreshButton.setEnabled(false);
-		resetButton.setEnabled(false);
 	}
 }
 

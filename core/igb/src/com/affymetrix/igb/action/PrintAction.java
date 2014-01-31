@@ -2,26 +2,27 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.IGB;
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.PrintDialog;
+import java.util.logging.Level;
 
 /**
  *
- * @author sgblanch
- * @version $Id: PrintAction.java 11361 2012-05-02 14:46:42Z anuj4159 $
+ * @author tkanapar
  */
 public class PrintAction extends GenericAction {
+
 	private static final long serialVersionUID = 1l;
 	private static final PrintAction ACTION = new PrintAction();
 
-	static{
+	static {
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
-	
+
 	public static PrintAction getAction() {
 		return ACTION;
 	}
@@ -33,10 +34,11 @@ public class PrintAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		super.actionPerformed(e);
 		try {
-			IGB.getSingleton().getMapView().getSeqMap().print();
+			PrintDialog.getSingleton().display();
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem trying to print.", ex);
+			com.affymetrix.genometryImpl.util.ErrorHandler.errorPanel("Problem during print.", ex, Level.SEVERE);
 		}
 	}
 }

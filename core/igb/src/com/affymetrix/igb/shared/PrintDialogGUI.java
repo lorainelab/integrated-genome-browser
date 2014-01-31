@@ -37,6 +37,7 @@ public class PrintDialogGUI extends javax.swing.JPanel {
         mainViewWithLabelRB = pd.mvlRadioButton;
         Print = pd.printButton;
         Cancel =  pd.cancelButton;
+        jSeparator1 = new javax.swing.JSeparator();
 
         wholeFrameRB.setText("Whole Frame");
         buttonGroup.add(wholeFrameRB);
@@ -72,7 +73,7 @@ public class PrintDialogGUI extends javax.swing.JPanel {
                     .add(mainViewWithLabelRB)
                     .add(mainViewRB)
                     .add(wholeFrameRB))
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -106,7 +107,7 @@ public class PrintDialogGUI extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        Print.setText("Print");
+        Print.setText("Ok");
         Print.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PrintActionPerformed(evt);
@@ -126,25 +127,33 @@ public class PrintDialogGUI extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .add(143, 143, 143)
-                .add(Print)
-                .add(81, 81, 81)
-                .add(Cancel)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(Cancel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(Print)
+                        .add(54, 54, 54))))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 518, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(34, 34, 34))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(3, 3, 3)
+                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(Print)
                     .add(Cancel))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -178,6 +187,7 @@ public class PrintDialogGUI extends javax.swing.JPanel {
     private javax.swing.JButton Print;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JPanel buttonsPanel;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JRadioButton mainViewRB;
     private javax.swing.JRadioButton mainViewWithLabelRB;
     private javax.swing.JLabel previewLabel;

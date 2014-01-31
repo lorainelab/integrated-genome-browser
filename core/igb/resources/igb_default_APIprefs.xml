@@ -19,7 +19,7 @@
 							<entry key="com.affymetrix.igb.action.LoadFileAction" value="ctrl O"/>
 							<entry key="com.affymetrix.igb.action.LoadURLAction" value="ctrl shift O"/>
 							<entry key="com.affymetrix.igb.action.PreferencesAction" value="alt P"/>
-							<entry key="com.affymetrix.igb.action.PrintFrameAction" value="ctrl P"/>
+							<entry key="com.affymetrix.igb.action.PrintAction" value="ctrl P"/>
 							<entry key="com.affymetrix.igb.action.ExportFileAction" value="ctrl S"/>
                             <entry key="com.affymetrix.igb.action.ScrollDownAction" value="ctrl DOWN"/>
                             <entry key="com.affymetrix.igb.action.ScrollLeftAction" value="ctrl LEFT"/>
@@ -40,7 +40,8 @@
 							<entry key="com.affymetrix.igb.bookmarks.action.SaveSessionAction" value="true"/>
 							<entry key="com.affymetrix.igb.bookmarks.action.LoadSessionAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.NewGenomeAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.ExportImageAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.ExportImageAction" value="true"/>
+							<entry key="com.affymetrix.igb.action.PrintAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.PreferencesAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.ExitAction" value="true"/>
 							<entry key="com.affymetrix.igb.action.DocumentationAction" value="true"/>
@@ -58,18 +59,19 @@
 							<entry key="com.affymetrix.igb.bookmarks.action.SaveSessionAction.index" value="1"/>
 							<entry key="com.affymetrix.igb.bookmarks.action.LoadSessionAction.index" value="2"/>
 							<entry key="com.affymetrix.igb.action.NewGenomeAction.index" value="3"/>							
-                            <entry key="com.affymetrix.igb.action.ExportImageAction.index" value="4"/>
-							<entry key="com.affymetrix.igb.action.PreferencesAction.index" value="5"/>
-							<entry key="com.affymetrix.igb.action.ExitAction.index" value="6"/>
-							<entry key="com.affymetrix.igb.action.DocumentationAction.index" value="7"/>
-							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction.index" value="8"/>
-							<entry key="com.affymetrix.igb.action.ScrollLeftAction.index" value="9"/>
-							<entry key="com.affymetrix.igb.action.ScrollRightAction.index" value="10"/>
-							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction.index" value="11" />
-							<entry key="com.affymetrix.igb.action.ZoomingRepackAction.index" value="12"/>
-							<entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.index" value="13"/>
-							<entry key="com.affymetrix.igb.action.ChangeExpandMaxAction.index" value="14"/>
-							<entry key="com.affymetrix.igb.action.ToggleToolTipAction.index" value="15"/>
+							<entry key="com.affymetrix.igb.action.ExportImageAction.index" value="4"/>
+							<entry key="com.affymetrix.igb.action.PrintAction.index" value="5"/>
+							<entry key="com.affymetrix.igb.action.PreferencesAction.index" value="6"/>
+							<entry key="com.affymetrix.igb.action.ExitAction.index" value="7"/>
+							<entry key="com.affymetrix.igb.action.DocumentationAction.index" value="8"/>
+							<entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction.index" value="9"/>
+							<entry key="com.affymetrix.igb.action.ScrollLeftAction.index" value="10"/>
+							<entry key="com.affymetrix.igb.action.ScrollRightAction.index" value="11"/>
+							<entry key="SeqMapToggleAction:StartAutoScrollAction;StopAutoScrollAction.index" value="12" />
+							<entry key="com.affymetrix.igb.action.ZoomingRepackAction.index" value="13"/>
+							<entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.index" value="14"/>
+							<entry key="com.affymetrix.igb.action.ChangeExpandMaxAction.index" value="15"/>
+							<entry key="com.affymetrix.igb.action.ToggleToolTipAction.index" value="16"/>
 
                         </map>
                     </node>

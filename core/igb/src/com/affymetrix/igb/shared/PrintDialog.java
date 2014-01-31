@@ -112,6 +112,7 @@ public class PrintDialog {
 			
 			static_frame = PreferenceUtils.createFrame(TITLE, new PrintDialogGUI(this));
 			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+			static_frame.getRootPane().setDefaultButton(printButton);
 			static_frame.setResizable(false);
 		}
 	}	

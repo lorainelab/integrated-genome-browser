@@ -278,11 +278,11 @@ public final class BookmarkManagerView {
 	public void exportBookmarks() {
 		BookmarkList main_bookmark_list;
 		TreePath path = tree.getSelectionPath();
-		try {
-			main_bookmark_list = (BookmarkList) path.getLastPathComponent(); // Export selected node
-		} catch(NullPointerException ex) {
-			main_bookmark_list = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected
-		}
+		//try {
+	//		main_bookmark_list = (BookmarkList) path.getLastPathComponent(); // Export selected node
+	//	} catch(NullPointerException ex) {
+			main_bookmark_list = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected#tK
+	//	}
 		
 		if (main_bookmark_list == null) { // Support exporting from any node 
 			ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);

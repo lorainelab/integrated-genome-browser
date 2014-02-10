@@ -55,6 +55,7 @@ import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
 import com.jidesoft.hints.ListDataIntelliHints;
 import java.awt.Component;
+import java.util.regex.Pattern;
 import javax.swing.table.TableCellRenderer;
 
 public final class SearchView extends IGBTabPanel implements
@@ -113,6 +114,7 @@ public final class SearchView extends IGBTabPanel implements
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
+			final String searchString = Pattern.quote(SearchView.this.searchTF.getText().trim());//Making a searchString to be searched (literal search.) tK
 			final boolean search_hint_selection = e == null;
 			selectedSearchMode = searchModeMap.get(searchMode);
 			String chrStr = (String) SearchView.this.sequenceCB.getSelectedItem();
@@ -136,9 +138,9 @@ public final class SearchView extends IGBTabPanel implements
 							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
 						}
 						else {
-							String search_term = SearchView.this.searchTF.getText().trim();
+							String search_term = searchString;
 							if(search_hint_selection){
-								for(String c : regexChars){
+								for(String c : regexChars){//Became obsolete after using pattern quote can be removed
 									search_term = search_term.replace(c, "\\"+c);
 								}
 							}
@@ -709,10 +711,11 @@ public final class SearchView extends IGBTabPanel implements
 		}
 		
 		clearResults();
-		
-		searchTF.setText(searchResults.getSearchTerm());
+		String resultText = searchResults.getSearchTerm();//tK gets the searchResult object from mapRangeBox
+		resultText = resultText.replaceAll("(^.{2})|(.{2}$)", "");//Removing the quotes to be displayed in the advance search box
+		searchTF.setText(resultText);
 		sequenceCB.setSelectedItem(searchResults.getSearchFilter());
-		
+
 		searchCB.setSelectedItem(searchResults.getSearchType());
 		searchModeAction.actionPerformed(null);
 		

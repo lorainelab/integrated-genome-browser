@@ -38,6 +38,7 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -176,8 +177,9 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 
-		discoverServer(gServer);
-
+		if(!discoverServer(gServer)){ 
+			return null;
+		}
 		return gServer;
 	}
 
@@ -239,8 +241,14 @@ public final class GeneralLoadUtils {
 				return false;
 			}
 			if (gServer.serverType != null) {
-				
-				if(!LocalUrlCacher.isValidURL(gServer.URL)){
+				//tKanapar
+				if(!LocalUrlCacher.isValidURL(gServer.URL)){//Adding check on the request if authentication is required
+					if(IGBAuthenticator.authenticationRequestCancelled()){//If the cancel dialog is clicked in the IGB Authenticator
+						IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
+						ServerList.getServerInstance().removeServer(gServer.URL);//Remove the preference so that it wont add the server to list
+						ServerList.getServerInstance().removeServerFromPrefs(gServer.URL);
+						return false;
+					}
 					throw new IllegalStateException(MessageFormat.format("{0} is not reachable", gServer.serverName));
 				}
 				

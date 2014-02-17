@@ -67,6 +67,7 @@ import java.net.MalformedURLException;
  *
  * @author sgblanch
  * @version $Id: IGBAuthenticator.java 10143 2012-02-02 21:59:36Z hiralv $
+ * updated tkanapar
  */
 public class IGBAuthenticator extends Authenticator {
 
@@ -74,6 +75,7 @@ public class IGBAuthenticator extends Authenticator {
 
 		ASK, ANONYMOUS, AUTHENTICATE
 	};
+	private static boolean authenticationRequestCancelled = false;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 	private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
 	private static final String GUEST = "guest";
@@ -277,8 +279,12 @@ public class IGBAuthenticator extends Authenticator {
 		JDialog jdg = optionPane.createDialog(parent, null);
 		jdg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		jdg.setVisible(true);
-		
+		if(optionPane.getValue() == (Integer) JOptionPane.CANCEL_OPTION){
+			authenticationRequestCancelled = true;
+			return null;
+		}
 		if (optionPane.getValue() == (Integer) JOptionPane.OK_OPTION) {
+			authenticationRequestCancelled = false;
 			if (auth.isSelected()) {
 				try {
 					PasswordAuthentication pa = testAuthentication(urlString, username.getText(), password.getPassword());
@@ -405,7 +411,12 @@ public class IGBAuthenticator extends Authenticator {
 			return pa;
 		}
 	}
-
+	public static boolean authenticationRequestCancelled(){
+		return authenticationRequestCancelled;
+	}
+		public static void resetAuthenticationRequestCancelled(){
+		 authenticationRequestCancelled = !authenticationRequestCancelled;
+	}
 	private static class UPDocumentListener implements DocumentListener {
 
 		JTextField[] tfs;

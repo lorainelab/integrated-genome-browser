@@ -54,7 +54,7 @@ public class BAMIndexer {
 		}
 		mainGUI.updateStatus("Checking sort type...");
 		DEBUG(TAB.RIGHT, "Header");
-		
+
 		//check for sorted flag. see http://gatkforums.broadinstitute.org/discussion/1317/collected-faqs-about-bam-files
 		SAMFileReader sfReader = new SAMFileReader(bamFile);
 		SAMFileHeader sfHeader = sfReader.getFileHeader();
@@ -70,11 +70,9 @@ public class BAMIndexer {
 		option.put(opt.SortType, sortType);
 
 		if (sortType == null || sortType.isEmpty() || !sortType.equalsIgnoreCase("coordinate") || sortType.equalsIgnoreCase("sorted")) {
-			int dialog = JOptionPane.showConfirmDialog(mainGUI
-					,"BAM file \"" + bamFile.getName() + "\" does not appear to be coordinate sorted.\nIndex files can be created for sorted files only.\n"
-							+ "Would you like to create a new, coordinate sorted copy of the file? \n"
-							+ " Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size."
-					, "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+			int dialog = JOptionPane.showConfirmDialog(mainGUI, "BAM file \"" + bamFile.getName() + "\" does not appear to be coordinate sorted.\nIndex files can be created for sorted files only.\n"
+					+ "Would you like to create a new, coordinate sorted copy of the file? \n"
+					+ " Note that this will create a new file that is " + readableFileSize(bamFile.length()) + " in size.", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
 
 			if (dialog == JOptionPane.YES_OPTION) {
 				option.put(opt.DoSort, true);
@@ -91,7 +89,7 @@ public class BAMIndexer {
 	static class BAMIndexAction extends GenericAction {
 
 		BAMIndexAction() {
-			super("Make Index for BAM File(s)","16x16/actions/blank_placeholder.png", "22x22/actions/blank_placeholder.png"); //Set name and icon
+			super("Make Index for BAM File(s)", "16x16/actions/blank_placeholder.png", "22x22/actions/blank_placeholder.png"); //Set name and icon
 		}
 
 		@Override
@@ -154,9 +152,16 @@ public class BAMIndexer {
 		}
 
 		sb.append(new String(new char[printTabs]).replace("\0", "\t"));
-
 		for (Object arg : args) {
-			if (arg instanceof TAB || arg.equals("")) {
+			try {
+				if (arg== null) {
+					continue;
+				}
+			}catch (Exception e) {
+				continue;
+			}
+	
+			if (arg instanceof TAB) {
 				continue;
 			}
 			sb.append(arg);
@@ -215,7 +220,8 @@ public class BAMIndexer {
 		return result;
 	}
 
-	public static <T> T[] CAT(T[] first, T[]... rest) {
+	public static <T> T[] CAT(T[] first, T[]  
+		... rest) {
 		int totalLength = first.length;
 		for (T[] array : rest) {
 			totalLength += array.length;
@@ -342,14 +348,11 @@ public class BAMIndexer {
 	 * This function will take in N number of BAM or SAM files and create
 	 * indexes.
 	 *
-	 * The work flow is as follows...
-	 * Checks:
-	 *	1)Simple check to see if there is a file name collision
-	 *	2) Simple SO: flag check.
-	 *		values expected = unknown (default), unsorted, queryname and coordinate. 
-	 *		values that pass = coordinate and the unofficial "sorted"
-	 * Processing:
-	 *	3) Sorting and indexing.
+	 * The work flow is as follows... Checks: 1)Simple check to see if there is
+	 * a file name collision 2) Simple SO: flag check. values expected = unknown
+	 * (default), unsorted, queryname and coordinate. values that pass =
+	 * coordinate and the unofficial "sorted" Processing: 3) Sorting and
+	 * indexing.
 	 *
 	 * @param bamFiles any List interface full of File objects. Expected to be
 	 * SAM or BAM
@@ -432,8 +435,6 @@ public class BAMIndexer {
 				}
 			}
 
-
-
 			checkSortFlag(bamFile, option);
 			//do not do work yet. Save it for the next iteration
 			//option is saved into options on the next iteration or after the loop on the last one
@@ -468,7 +469,6 @@ public class BAMIndexer {
 			File sortedFile = null;
 			String sortType = (String) option.get(opt.SortType);
 			if (sortType == null && (Boolean) option.get(opt.DoSort)) {
-
 
 				String fileName = removeExtension(bamFile.getAbsolutePath());
 				String nameFlag = ".sorted";
@@ -516,7 +516,6 @@ public class BAMIndexer {
 			}
 		}
 
-
 		int errors = getERRORcount();
 		if (errors != 0) {
 			this.mainGUI.updateProgressBarMessage("There were " + errors + "errors.");
@@ -536,7 +535,6 @@ public class BAMIndexer {
 	void cancel() {
 		this.cancelOperations = true;
 		mainGUI.setTitle("Canceling Operations after current file");
-
 
 	}
 

@@ -105,7 +105,7 @@ public final class SearchView extends IGBTabPanel implements
 	
 	private static String unQuoteString(String quotedString){
 		return quotedString.replaceAll("\\\\Q|\\\\E", "");
-	}//tkanapar
+	}
 	public class SearchAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 
@@ -651,7 +651,7 @@ public final class SearchView extends IGBTabPanel implements
 		setSequenceCBValue();
 	}
 
-	private void setStatus(final SearchResults searchResults){//tK
+	private void setStatus(final SearchResults searchResults){
 		infoButton.setAction(new AbstractAction(){
 			@Override
 			public void actionPerformed(ActionEvent e) {

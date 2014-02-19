@@ -102,7 +102,10 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 	private SearchModeAction searchModeAction = new SearchModeAction();
-
+	
+	private static String unQuoteString(String quotedString){
+		return quotedString.replaceAll("\\\\Q|\\\\E", "");
+	}
 	public class SearchAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 
@@ -653,7 +656,7 @@ public final class SearchView extends IGBTabPanel implements
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String message = MessageFormat.format("<html><b>Search Term :</b> {0}<br><b>Search Summary :</b> {1} </html>", 
-						new Object[]{searchResults.getSearchTerm(), searchResults.getSearchSummary()});
+						new Object[]{unQuoteString(searchResults.getSearchTerm()), unQuoteString(searchResults.getSearchSummary())});
 				JOptionPane.showMessageDialog(SearchView.this, message, searchResults.getSearchType(), JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
@@ -669,7 +672,7 @@ public final class SearchView extends IGBTabPanel implements
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				status_bar.setText(text);
+				status_bar.setText(unQuoteString(text));
 			}
 		});
 	}
@@ -712,7 +715,7 @@ public final class SearchView extends IGBTabPanel implements
 		
 		clearResults();
 		String resultText = searchResults.getSearchTerm();//tK gets the searchResult object from mapRangeBox
-		resultText = resultText.replaceAll("(^.{2})|(.{2}$)", "");//Removing the quotes to be displayed in the advance search box
+		resultText = unQuoteString(resultText);//Removing the quotes to be displayed in the advance search box
 		searchTF.setText(resultText);
 		sequenceCB.setSelectedItem(searchResults.getSearchFilter());
 

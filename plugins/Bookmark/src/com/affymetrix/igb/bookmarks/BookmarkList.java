@@ -315,7 +315,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 		} else if(currentNode instanceof String) { // Export selected folder
 
 			if (isSelectedNode && !currentNode.toString().equals("Bookmarks")) { // Not for the 'Bookmark'
-				bw.write(indent + "<DT><H3>" + currentNode + "</H3>" + "<DD>" + list.getComment() + "</DD>" + "\n");
+				bw.write(indent + "<DT><H3>" + currentNode + "</H3>" + "<DD>" + (list.getComment()==null?" ":list.getComment()) + "</DD>" + "\n");//tK
 				bw.write(indent + "<DL><p>\n");
 				bw.write(indent + "</DL><p>\n");
 			}
@@ -324,7 +324,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 				BookmarkList btn = e.nextElement();
 				Object o = btn.getUserObject();
 				if (o instanceof String) {
-					bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + btn.getComment() + "</DD>" + "\n");
+					bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + (btn.getComment()==null?" ":btn.getComment()) + "</DD>" + "\n");//tK 
 					bw.write(indent + "<DL><p>\n");
 					exportAsHTML_recursive(btn, bw, indent + "  ", false);
 					bw.write(indent + "</DL><p>\n");

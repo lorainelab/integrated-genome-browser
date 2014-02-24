@@ -77,7 +77,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 				if(path.startsWith("/favicon.ico")){ //TODO Add a favicon.ico
 						return; //note finally will still be called!!
 				}
-				String[] getCommand = line.substring(4).split(" ");
+				boolean isCommand = (path.indexOf("UnibrowControl?") !=-1);
 				if(path.equals("/")){//send a simple message for the user to see 
 						out.println("HTTP/1.1 200 OK");
 						out.println("Content-Type: text/html");
@@ -108,8 +108,8 @@ class BookmarkHttpRequestHandler implements Runnable {
 					//	out.flush();
 					//	break;
 					//}
-					else if(getCommand.length > 0) {
-						command = getCommand[0];
+					else if(isCommand) {
+						command = path;
 						out.write(SimpleBookmarkServer.http_response);
 						out.flush();
 						parseAndGoToBookmark(command);
@@ -122,16 +122,17 @@ class BookmarkHttpRequestHandler implements Runnable {
 						return;
 					}
 				
-			do{//skip rest of header
-			}while ((line = reader.readLine()) != null || line.trim().length() > 0); //same as looking for "\r\n\r\n" which indicates end of header
+			
+			while ((line =reader.readLine()) != null && line.trim().length() > 0){ //same as looking for "\r\n\r\n" which indicates end of header
+			}
 			}
 			
-			if(line!=null){
-				do{
-					igbService.runScriptString(line, "igb");
+			//Removed Temporarily
+			//while(line!=null){
+			//		igbService.runScriptString(line, "igb");
 //					output.write(SimpleBookmarkServer.prompt);
-				}while ((line = reader.readLine()) != null); //same as looking for "\r\n\r\n" which indicates end of header
-			}
+			//		line = reader.readLine(); //same as looking for "\r\n\r\n" which indicates end of header
+			//}
 			
 		
 		} finally {

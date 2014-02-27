@@ -8,6 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-Bookmarks
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.bookmarks.BookmarkManagerViewGUI
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ org.apache.commons.io,
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.event,
@@ -40,5 +41,6 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  org.osgi.framework;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
- resources/
+ resources/,
+ lib/nanohttpd-webserver-2.0.5.jar
 Bundle-Description: A panel for viewing and re-arranging bookmarks in a hierarchy.

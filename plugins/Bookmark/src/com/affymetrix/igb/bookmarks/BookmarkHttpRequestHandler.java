@@ -1,174 +1,151 @@
 /**
-*   Copyright (c) 2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ * Copyright (c) 2007 Affymetrix, Inc.
+ * 
+* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * 
+* The license is also available at http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import static com.affymetrix.igb.bookmarks.SimpleBookmarkServer.SERVLET_NAME;
+import static com.affymetrix.igb.bookmarks.SimpleBookmarkServer.SERVLET_NAME_OLD;
 import com.affymetrix.igb.osgi.service.IGBService;
-import java.io.BufferedReader;
+import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import org.apache.commons.io.IOUtils;
 
-class BookmarkHttpRequestHandler implements Runnable {
+class BookmarkHttpRequestHandler extends NanoHTTPD {
 
-  private final Socket socket;
-  private final IGBService igbService;
-  private static final Logger ourLogger
-		  = Logger.getLogger(BookmarkHttpRequestHandler.class.getPackage().getName());
+    private final IGBService igbService;
+    private static final String GALAXY_REQUEST = "igbGalaxyDataView";
+    private static final String DEFAULT_SCRIPT_EXTENSION = "igb";
+    private static final String FAVICON_REQUEST = "favicon.ico";
+    private static final String FOCUS_IGB_COMMAND = "bringIGBToFront";
+    private static final Logger ourLogger
+            = Logger.getLogger(BookmarkHttpRequestHandler.class.getPackage().getName());
 
-  public BookmarkHttpRequestHandler(IGBService igbService, Socket socket) {
-    this.socket = socket;
-    this.igbService = igbService;
-  }
-
-  @Override
-  public void run() {
-    try {
-      processRequest();
-    } catch (Exception e) {
-      e.printStackTrace();
+    public BookmarkHttpRequestHandler(IGBService igbService, int port) {
+        super(port);
+        this.igbService = igbService;
     }
-  }
 
- private void processRequest() throws IOException {
-		BufferedReader reader = null;
-		PrintWriter out = null;
-		
-		try {
-			String line;
-			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			out = new PrintWriter(socket.getOutputStream());
-			
-			String command = null;
-			line = reader.readLine();
-			/*
-			Headers are formated as follows Example
-			GET /
-			name: value
-			name: value
-			
-			content
-			content content 
-			content
-			*/
-			// we need to process only the GET header line of the input, which will look something like this:
-			// 'GET /IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310 HTTP/1.1'
-			
-			if(line.startsWith("GET ") || line.startsWith("POST ")){
-				String[] requestLine = line.split(" ");
-				String path = requestLine[1];
-				if(path.startsWith("/favicon.ico")){ //TODO Add a favicon.ico
-						return; //note finally will still be called!!
-				}
-				boolean isCommand = (path.indexOf("UnibrowControl?") !=-1);
-				if(path.equals("/")){//send a simple message for the user to see 
-						out.println("HTTP/1.1 200 OK");
-						out.println("Content-Type: text/html");
-						out.println("\r\n");
-						out.println("<html><head><title>IGB</title></head><body>");
-						out.println("<h2 style='display:inline-block'>IGB is running!</h2> <a href='http://localhost:7085/UnibrowControl?bringIGBToFront=true'>bringing it to the front!</a><br>");
-						out.println("<h4>Helpful Links:</h4>");
-						out.println("<ul>");
-						out.println("<li>If you are trying to run IGB commands head over to <a href='http://wiki.transvar.org/confluence/display/igbman/Controlling+IGB+using+IGB+Links'>How to use IGB links</a></li>");
-						out.println("<li>Data sets can be found at <a href='http://igbquickload.org/'>igbquickload.org</a></li>");
-						out.println("<li>Newer versions of IGB can be downloaded on <a href='http://bioviz.org'>bioviz.org</a></li>");
-						out.println("<li>For the latest news go over to the <a href='https://twitter.com/igbbioviz'>Twitter page</a></li>");
-						out.println("<li>If you need more help there are plenty of \"How Tos\" over on our <a href='http://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg'>Youtube channel</a></li>");
-						out.println("</ul>");
-						out.println("<h4><a href='http://bioviz.org/igb/cite.html'>How to cite IGB</a> in your research</h4>");
-						out.println("<div style='position:absolute;top:1em;right:1em;'><a href='https://wiki.transvar.org/confluence/display/igbman/Quick+start'>Users Guide and Help</a></div>");
-						out.println("<div style='position:absolute;bottom:0;right:0;left:0;background:white;text-align:center;width:100%;padding-bottom:1em'>IGB is a product of the <a href='http://transvar.org/'>Loraine Lab</a> and is <a href='http://sourceforge.net/projects/genoviz/'>open source</a></div>");
-						out.println("</body></html>");
-						out.flush();
-						return;
-					}
-					//feature not approved yet! -kts
-					//else if(path.startsWith("/IGB.js")){//send javascript file and close socket
-					//	out.println("HTTP/1.1 200 OK");
-					//	out.println("Content-Type: text/javascript");
-					//	out.println("\r\n");
-					//	out.println("var IGB={};");
-					//	out.flush();
-					//	break;
-					//}
-					else if(isCommand) {
-						command = path;
-						out.write(SimpleBookmarkServer.http_response);
-						out.flush();
-						parseAndGoToBookmark(command);
-					}else{
-						out.println("HTTP/1.1 400 Bad Request");
-						out.println("Content-Type: text/html");
-						out.println("\r\n");
-						out.println("<h2>Error with IGB command!</h2><pre>>> " + line +"</pre>");
-					    out.flush();
-						return;
-					}
-				
-			
-			while ((line =reader.readLine()) != null && line.trim().length() > 0){ //same as looking for "\r\n\r\n" which indicates end of header
-			}
-			}
-			
-			//Removed Temporarily
-			//while(line!=null){
-			//		igbService.runScriptString(line, "igb");
-//					output.write(SimpleBookmarkServer.prompt);
-			//		line = reader.readLine(); //same as looking for "\r\n\r\n" which indicates end of header
-			//}
-			
-		
-		} finally {
+    @Override
+    public Response serve(IHTTPSession session) {
+        Response response;
+        Method method = session.getMethod();
+        if (method.equals(Method.GET)) {
+            processRequest(session);
+            response = new Response(getWelcomeMessage());
+            response.setStatus(Response.Status.OK);
+        } else if (method.equals(Method.POST)) {            
+//            processPost(session);
+//            response = new Response(getWelcomeMessage());
+//            response.setStatus(Response.Status.OK);
+            response = new Response(getNotSupportedMessage(method));
+            response.setStatus(Response.Status.METHOD_NOT_ALLOWED);
+        } else {
+            response = new Response(getNotSupportedMessage(method));
+            response.setStatus(Response.Status.METHOD_NOT_ALLOWED);
+        }
+        return response;
+    }
 
-			GeneralUtils.safeClose(out);
-			GeneralUtils.safeClose(reader);
-			try {
-				socket.close();
-			} catch (Exception e) {
-				// do nothing
-			}
-		}
+    private String getWelcomeMessage() {
+        StringBuilder msg = new StringBuilder("<html>");
+        msg.append("<link rel=\"stylesheet\" href=\"//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css\">");
+        msg.append("<body>");
+        msg.append("     <div align='center'>"
+                + "        <h1>"
+                + "          Integrated Genome Browser"
+                + "        </h1>"
+                + "      <h2>"
+                + "        Visualization for genome-scale data"
+                + "      </h2>"
+                + "    </div>"
+                + "      <hr/>"
+                + "    <div class='well' align='center'>"
+                + "      <h3>"
+                + "        Thank you for using IGB! "
+                + "      </h3>"
+                + "      <p>"
+                + "        Your Data is Loading"
+                + "      </p>"
+                + "      <a class='btn btn-primary' href='http://localhost:7085/UnibrowControl?bringIGBToFront=true'>Click to go to IGB</a>"
+                + "    </div>"
+        );
 
-	}
+        msg.append("</body></html>");
+        return msg.toString();
+    }
 
-	private void parseAndGoToBookmark(String command) throws NumberFormatException {
-		ourLogger.log(Level.FINE, "Command = {0}", command);
-		// at this point, the command will look something like this:
-		// '/IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310'
-		//TODO: We could check to see that the command is "IGBControl" or "UnibrowControl",
-		// but since that is the only command we ever expect, we can just assume for now.
-		int index = command.indexOf('?');
-		if (index >= 0 && index < command.length()) {
-			String params = command.substring(index + 1);
-			Map<String, String[]> paramMap = new HashMap<String, String[]>();
-			Bookmark.parseParametersFromQuery(paramMap, params, true);
-			if(paramMap.containsKey("bringIGBToFront")){
-				JFrame f = igbService.getFrame();
-				boolean tmp = f.isAlwaysOnTop();
-				f.setAlwaysOnTop(true);
-				f.toFront();
-				f.requestFocus();
-				f.repaint();
-				f.setAlwaysOnTop(tmp);
-			}
-			BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap);
-		}
-	}
+    private String getNotSupportedMessage(Method method) {
+        StringBuilder msg = new StringBuilder("<html><body>");
+        msg.append("<h2 style='display:inline-block'>");
+        msg.append(method.name().toUpperCase());
+        msg.append(" is not supported!</h2>");
+        msg.append("</body></html>\n");
+        return msg.toString();
+    }
+
+    private void processRequest(final IHTTPSession session) {
+        String contextRoot = session.getUri().substring(1); //removes prefixed /
+
+        if (contextRoot.equals(SERVLET_NAME_OLD) || contextRoot.equals(SERVLET_NAME)) {
+            parseAndGoToBookmark(session);
+        } else if (contextRoot.equals(GALAXY_REQUEST)) {
+            //This exist to allow custom pipeline for galaxy requests if desired
+            parseAndGoToBookmark(session);
+        } else if (contextRoot.equals(FAVICON_REQUEST)) {
+            //for now do nothing
+        }
+    }
+
+    //This code can be deleted once it is confirmed we have no need to support post
+    @Deprecated
+    private void processPost(final IHTTPSession session) {
+        String scriptContent = getRequestContent(session);
+        igbService.runScriptString(scriptContent, DEFAULT_SCRIPT_EXTENSION);
+    }
+    
+    //This code can be deleted once it is confirmed we have no need to support post
+    @Deprecated
+    private String getRequestContent(final IHTTPSession session) {
+        String requestContent = null;
+        try {
+            requestContent = IOUtils.toString(session.getInputStream(), "UTF-8");
+        } catch (IOException ex) {
+            ourLogger.log(Level.SEVERE, "Could not extract request content", ex);
+        }
+        return requestContent;
+    }
+
+    
+    private void parseAndGoToBookmark(final IHTTPSession session) throws NumberFormatException {
+        String params = session.getQueryParameterString();
+        ourLogger.log(Level.FINE, "Command = {0}", params);
+        //TODO refactor all of this code... there is no need to manually parse the request
+        Map<String, String[]> paramMap = new HashMap<String, String[]>();
+        Bookmark.parseParametersFromQuery(paramMap, params, true);
+        if (paramMap.containsKey(FOCUS_IGB_COMMAND)) {
+            JFrame f = igbService.getFrame();
+            boolean tmp = f.isAlwaysOnTop();
+            f.setAlwaysOnTop(true);
+            f.toFront();
+            f.requestFocus();
+            f.repaint();
+            f.setAlwaysOnTop(tmp);
+        } else {
+            BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap);
+        }
+
+    }
+
 }

@@ -194,14 +194,14 @@ class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 						} else {
 							parseAndGoToBookmark(resource);
 						}
-						output.write(SimpleBookmarkServer.http_response.getBytes());
+						output.write(SimpleBookmarkServer.HTTP_RESPONSE.getBytes());
 						output.flush();
 					} else if ("POST".equals(cmd)) {
 						Map<String, String> headers = getRequestHeaders(reader);
 						String resource = getResourceID(line);
 						String body = getRequestBody(reader,
 								Integer.parseInt(headers.get("Content-Length")));
-						String ourResponse = SimpleBookmarkServer.http_response;
+						String ourResponse = SimpleBookmarkServer.HTTP_RESPONSE;
 						if (resource.equals("/IGBScript")) {
 							Map<String, String> form = parsedQuery(body);
 							runIGBScript(form.get("code"));

@@ -120,7 +120,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		//single instance?
         String[] args = CommonUtils.getInstance().getArgs(bundleContext);
 		if (CommonUtils.getInstance().getArg("-single_instance", args) != null && isIGBRunning()) {
-			System.out.println("\nPort "+SimpleBookmarkServer.default_server_port+" is in use! An IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
+			System.out.println("\nPort "+SimpleBookmarkServer.DEFAULT_SERVER_PORT+" is in use! An IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
 			System.exit(0);
 		}
 		super.start(bundleContext);
@@ -132,7 +132,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	 * @author davidnix*/
 	public boolean isIGBRunning(){
 		Socket sock = null;
-		int port = SimpleBookmarkServer.default_server_port;
+		int port = SimpleBookmarkServer.DEFAULT_SERVER_PORT;
 		try {
 		    sock = new Socket("localhost", port);
 		    if (sock.isBound()) {

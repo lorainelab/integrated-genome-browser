@@ -71,7 +71,7 @@ class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 		while (null != line && (0 < line.trim().length())) {
 			String[] word = line.split(": ");
 			if (2 <= word.length) {
-				StringBuffer b = new StringBuffer(word[1]);
+				StringBuilder b = new StringBuilder(word[1]);
 				int i = 2;
 				while (i < word.length) {
 					b.append(": ").append(word[i]);
@@ -194,14 +194,14 @@ class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 						} else {
 							parseAndGoToBookmark(resource);
 						}
-						output.write(SimpleBookmarkServer.http_response.getBytes());
+						output.write(SimpleBookmarkServer.HTTP_RESPONSE.getBytes());
 						output.flush();
 					} else if ("POST".equals(cmd)) {
 						Map<String, String> headers = getRequestHeaders(reader);
 						String resource = getResourceID(line);
 						String body = getRequestBody(reader,
 								Integer.parseInt(headers.get("Content-Length")));
-						String ourResponse = SimpleBookmarkServer.http_response;
+						String ourResponse = SimpleBookmarkServer.HTTP_RESPONSE;
 						if (resource.equals("/IGBScript")) {
 							Map<String, String> form = parsedQuery(body);
 							runIGBScript(form.get("code"));

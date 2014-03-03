@@ -92,7 +92,7 @@ public class SeqMapView extends JPanel
 		
 	private final static String SEQ_MODE = "SEQ_MODE";
 	public static final boolean default_auto_change_view = false;
-	public static final boolean default_show_prop_tooltip = true;
+	public static final boolean default_show_prop_tooltip = false;
 	
 	private static final boolean DEBUG_TIERS = false;
 	

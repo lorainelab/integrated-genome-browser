@@ -1,933 +1,933 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
-    <type>org.netbeans.modules.ant.freeform</type>
-    <configuration>
-        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
-            <name>IGB</name>
-        </general-data>
-        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
-            <!-- Do not use Project Properties customizer when editing this file manually. -->
-            <name>IGB</name>
-            <properties/>
-            <folders>
-                <source-folder>
-                    <label>IGB</label>
-                    <location>.</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/common/src</label>
-                    <type>java</type>
-                    <location>core/common/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/genometryImpl/src</label>
-                    <type>java</type>
-                    <location>core/genometryImpl/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/genoviz_sdk/src</label>
-                    <type>java</type>
-                    <location>core/genoviz_sdk/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/main/src</label>
-                    <type>java</type>
-                    <location>core/main/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/igb/src</label>
-                    <type>java</type>
-                    <location>core/igb/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/igb_service/src</label>
-                    <type>java</type>
-                    <location>core/igb_service/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/window_service/src</label>
-                    <type>java</type>
-                    <location>core/window_service/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/HeatmapEditor/src</label>
-                    <type>java</type>
-                    <location>core/HeatmapEditor/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/jar_extensions/sam/src</label>
-                    <type>java</type>
-                    <location>core/jar_extensions/sam/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/jar_extensions/tribble/src</label>
-                    <type>java</type>
-                    <location>core/jar_extensions/tribble/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/window_service_def/src</label>
-                    <type>java</type>
-                    <location>plugins/window_service_def/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/Bookmark/src</label>
-                    <type>java</type>
-                    <location>plugins/Bookmark/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/PropertyView/src</label>
-                    <type>java</type>
-                    <location>plugins/PropertyView/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SelectionInfo/src</label>
-                    <type>java</type>
-                    <location>plugins/SelectionInfo/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SearchView/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchView/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SearchModeIdOrProps/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchModeIdOrProps/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SearchModeLucene/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchModeLucene/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/KeyWordSearch/src</label>
-                    <type>java</type>
-                    <location>plugins/KeyWordSearch/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SearchModeSymmetryFilter/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchModeSymmetryFilter/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SequenceViewer/src</label>
-                    <type>java</type>
-                    <location>plugins/SequenceViewer/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/RestrictionsSites/src</label>
-                    <type>java</type>
-                    <location>plugins/RestrictionsSites/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/ExternalView/src</label>
-                    <type>java</type>
-                    <location>plugins/ExternalView/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/RestrictionSites/src</label>
-                    <type>java</type>
-                    <location>plugins/RestrictionSites/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/BigBedHandler/src</label>
-                    <type>java</type>
-                    <location>plugins/BigBedHandler/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/BigWigHandler/src</label>
-                    <type>java</type>
-                    <location>plugins/BigWigHandler/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/plugins_page/src</label>
-                    <type>java</type>
-                    <location>plugins/plugins_page/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/AnnotationTab/src</label>
-                    <type>java</type>
-                    <location>plugins/AnnotationTab/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/GraphTab/src</label>
-                    <type>java</type>
-                    <location>plugins/GraphTab/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/Thresholding/src</label>
-                    <type>java</type>
-                    <location>plugins/Thresholding/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/IGBScript/src</label>
-                    <type>java</type>
-                    <location>plugins/IGBScript/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/TranscriptIsoform/src</label>
-                    <type>java</type>
-                    <location>plugins/TranscriptIsoform/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/TableView/src</label>
-                    <type>java</type>
-                    <location>plugins/TableView/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/FindAnnotations/src</label>
-                    <type>java</type>
-                    <location>plugins/FindAnnotations/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/GeometricMean/src</label>
-                    <type>java</type>
-                    <location>plugins/GeometricMean/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/MergeAnnotationOperator/src</label>
-                    <type>java</type>
-                    <location>plugins/MergeAnnotationOperator/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/OverlapAnnotationOperator/src</label>
-                    <type>java</type>
-                    <location>plugins/OverlapAnnotationOperator/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/ParentOperators/src</label>
-                    <type>java</type>
-                    <location>plugins/ParentOperators/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/PythonScript/src</label>
-                    <type>java</type>
-                    <location>plugins/PythonScript/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/RubyScript/src</label>
-                    <type>java</type>
-                    <location>plugins/RubyScript/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SampleSelection/src</label>
-                    <type>java</type>
-                    <location>plugins/SampleSelection/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/TallyHandler/src</label>
-                    <type>java</type>
-                    <location>plugins/TallyHandler/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/Tutorial/src</label>
-                    <type>java</type>
-                    <location>plugins/Tutorial/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/TutorialHelper/src</label>
-                    <type>java</type>
-                    <location>plugins/TutorialHelper/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/Update/src</label>
-                    <type>java</type>
-                    <location>plugins/Update/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/Survey/src</label>
-                    <type>java</type>
-                    <location>plugins/Survey/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/BAMIndexer/src</label>
-                    <type>java</type>
-                    <location>plugins/BAMIndexer/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/ApolloLibrary/src</label>
-                    <type>java</type>
-                    <location>plugins/ApolloLibrary/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/NCBIBlast/src</label>
-                    <type>java</type>
-                    <location>plugins/NCBIBlast/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/NCBIPrimer/src</label>
-                    <type>java</type>
-                    <location>plugins/NCBIPrimer/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/ThousandGenomesServerType/src</label>
-                    <type>java</type>
-                    <location>plugins/ThousandGenomesServerType/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/DASRegistryServerType/src</label>
-                    <type>java</type>
-                    <location>plugins/DASRegistryServerType/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>das2_server/src</label>
-                    <type>java</type>
-                    <location>das2_server/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>protannot/src</label>
-                    <type>java</type>
-                    <location>protannot/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/genoviz_sdk/demo/src</label>
-                    <type>java</type>
-                    <location>core/genoviz_sdk/demo/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/genometryImpl/test</label>
-                    <type>java</type>
-                    <location>core/genometryImpl/test</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/genoviz_sdk/test</label>
-                    <type>java</type>
-                    <location>core/genoviz_sdk/test</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/igb/test</label>
-                    <type>java</type>
-                    <location>core/igb/test</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>das2_server/test</label>
-                    <type>java</type>
-                    <location>das2_server/test</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-            </folders>
-            <ide-actions>
-                <action name="build">
-                    <target>compile</target>
-                </action>
-                <action name="clean">
-                    <target>clean</target>
-                </action>
-                <action name="javadoc">
-                    <target>docs</target>
-                </action>
-                <action name="run">
-                    <target>run</target>
-                </action>
-                <action name="test">
-                    <target>test</target>
-                </action>
-                <action name="rebuild">
-                    <target>clean</target>
-                    <target>compile</target>
-                </action>
-                <action name="debug">
-                    <script>nbproject/ide-targets.xml</script>
-                    <target>debug-nb</target>
-                </action>
-                <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
-                    <target>run-selected-file-in-src</target>
-                    <context>
-                        <property>run.class</property>
-                        <folder>core/genoviz_sdk/demo/src</folder>
-                        <pattern>\.java$</pattern>
-                        <format>java-name</format>
-                        <arity>
-                            <one-file-only/>
-                        </arity>
-                    </context>
-                </action>
-                <action name="debug.single">
-                    <script>nbproject/ide-file-targets.xml</script>
-                    <target>debug-selected-file-in-src</target>
-                    <context>
-                        <property>debug.class</property>
-                        <folder>core/genoviz_sdk/demo/src</folder>
-                        <pattern>\.java$</pattern>
-                        <format>java-name</format>
-                        <arity>
-                            <one-file-only/>
-                        </arity>
-                    </context>
-                </action>
-                <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
-                    <target>run-selected-file-in-src</target>
-                    <context>
-                        <property>run.class</property>
-                        <folder>plugins/BAMIndexer/src</folder>
-                        <pattern>\.java$</pattern>
-                        <format>java-name</format>
-                        <arity>
-                            <one-file-only/>
-                        </arity>
-                    </context>
-                </action>
-            </ide-actions>
-            <export>
-                <type>folder</type>
-                <location>das2_server/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/genometryImpl/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/genoviz_sdk/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/igb/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/genoviz_sdk/demo</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/main/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/common/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/ExternalView/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/igb_service/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/plugins_page/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/RestrictionSites/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/window_service/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/window_service_def/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/PropertyView/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/SearchView/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/GraphAdjuster/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>bundles</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/Tutorial/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>plugins/TableView/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <view>
-                <items>
-                    <source-folder style="packages">
-                        <label>core/common/src</label>
-                        <location>core/common/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/genometryImpl/src</label>
-                        <location>core/genometryImpl/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/genoviz_sdk/src</label>
-                        <location>core/genoviz_sdk/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/main/src</label>
-                        <location>core/main/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/igb/src</label>
-                        <location>core/igb/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/igb_service/src</label>
-                        <location>core/igb_service/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/window_service/src</label>
-                        <location>core/window_service/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/HeatmapEditor/src</label>
-                        <location>core/HeatmapEditor/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/jar_extensions/sam/src</label>
-                        <location>core/jar_extensions/sam/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/jar_extensions/tribble/src</label>
-                        <location>core/jar_extensions/tribble/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/window_service_def/src</label>
-                        <location>plugins/window_service_def/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/Bookmark/src</label>
-                        <location>plugins/Bookmark/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/PropertyView/src</label>
-                        <location>plugins/PropertyView/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SelectionInfo/src</label>
-                        <location>plugins/SelectionInfo/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SearchView/src</label>
-                        <location>plugins/SearchView/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SearchModeIdOrProps/src</label>
-                        <location>plugins/SearchModeIdOrProps/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SearchModeLucene/src</label>
-                        <location>plugins/SearchModeLucene/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/KeyWordSearch/src</label>
-                        <location>plugins/KeyWordSearch/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SearchModeSymmetryFilter/src</label>
-                        <location>plugins/SearchModeSymmetryFilter/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SequenceViewer/src</label>
-                        <location>plugins/SequenceViewer/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/RestrictionsSites/src</label>
-                        <location>plugins/RestrictionsSites/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/ExternalView/src</label>
-                        <location>plugins/ExternalView/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/RestrictionSites/src</label>
-                        <location>plugins/RestrictionSites/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/BigBedHandler/src</label>
-                        <location>plugins/BigBedHandler/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/BigWigHandler/src</label>
-                        <location>plugins/BigWigHandler/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/plugins_page/src</label>
-                        <location>plugins/plugins_page/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/AnnotationTab/src</label>
-                        <location>plugins/AnnotationTab/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/GraphTab/src</label>
-                        <location>plugins/GraphTab/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/Thresholding/src</label>
-                        <location>plugins/Thresholding/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/IGBScript/src</label>
-                        <location>plugins/IGBScript/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/TranscriptIsoform/src</label>
-                        <location>plugins/TranscriptIsoform/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/TableView/src</label>
-                        <location>plugins/TableView/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/FindAnnotations/src</label>
-                        <location>plugins/FindAnnotations/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/GeometricMean/src</label>
-                        <location>plugins/GeometricMean/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/MergeAnnotationOperator/src</label>
-                        <location>plugins/MergeAnnotationOperator/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/OverlapAnnotationOperator/src</label>
-                        <location>plugins/OverlapAnnotationOperator/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/ParentOperators/src</label>
-                        <location>plugins/ParentOperators/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/PythonScript/src</label>
-                        <location>plugins/PythonScript/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/RubyScript/src</label>
-                        <location>plugins/RubyScript/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SampleSelection/src</label>
-                        <location>plugins/SampleSelection/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/TallyHandler/src</label>
-                        <location>plugins/TallyHandler/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/Tutorial/src</label>
-                        <location>plugins/Tutorial/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/TutorialHelper/src</label>
-                        <location>plugins/TutorialHelper/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/Update/src</label>
-                        <location>plugins/Update/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/Survey/src</label>
-                        <location>plugins/Survey/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/BAMIndexer/src</label>
-                        <location>plugins/BAMIndexer/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/ApolloLibrary/src</label>
-                        <location>plugins/ApolloLibrary/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/NCBIBlast/src</label>
-                        <location>plugins/NCBIBlast/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/NCBIPrimer/src</label>
-                        <location>plugins/NCBIPrimer/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/ThousandGenomesServerType/src</label>
-                        <location>plugins/ThousandGenomesServerType/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/DASRegistryServerType/src</label>
-                        <location>plugins/DASRegistryServerType/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>das2_server/src</label>
-                        <location>das2_server/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>protannot/src</label>
-                        <location>protannot/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/genoviz_sdk/demo/src</label>
-                        <location>core/genoviz_sdk/demo/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/genometryImpl/test</label>
-                        <location>core/genometryImpl/test</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/genoviz_sdk/test</label>
-                        <location>core/genoviz_sdk/test</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/igb/test</label>
-                        <location>core/igb/test</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>das2_server/test</label>
-                        <location>das2_server/test</location>
-                    </source-folder>
-                    <source-file>
-                        <location>build.xml</location>
-                    </source-file>
-                </items>
-                <context-menu>
-                    <ide-action name="build"/>
-                    <ide-action name="rebuild"/>
-                    <ide-action name="clean"/>
-                    <ide-action name="javadoc"/>
-                    <ide-action name="run"/>
-                    <ide-action name="test"/>
-                    <ide-action name="debug"/>
-                    <action>
-                        <label>Demos</label>
-                        <target>demos</target>
-                    </action>
-                    <action>
-                        <label>Protannot</label>
-                        <target>run_Protannot</target>
-                    </action>
-                    <action>
-                        <label>Debug Protannot</label>
-                        <target>debug-nb-protannot</target>
-                    </action>
-                    <action>
-                        <label>Deploy Das2</label>
-                        <target>deploy-das2server</target>
-                    </action>
-                </context-menu>
-            </view>
-            <subprojects/>
-        </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
-            <compilation-unit>
-                <package-root>das2_server/src</package-root>
-                <package-root>core/common/src</package-root>
-                <package-root>core/genometryImpl/src</package-root>
-                <package-root>core/genoviz_sdk/src</package-root>
-                <package-root>core/main/src</package-root>
-                <package-root>core/igb/src</package-root>
-                <package-root>core/igb_service/src</package-root>
-                <package-root>core/window_service/src</package-root>
-                <package-root>plugins/window_service_def/src</package-root>
-                <package-root>plugins/Bookmark/src</package-root>
-                <package-root>plugins/PropertyView/src</package-root>
-                <package-root>plugins/SelectionInfo/src</package-root>
-                <package-root>plugins/SearchView/src</package-root>
-                <package-root>plugins/RestrictionsSites/src</package-root>
-                <package-root>plugins/ExternalView/src</package-root>
-                <package-root>plugins/RestrictionSites/src</package-root>
-                <package-root>plugins/plugins_page/src</package-root>
-                <package-root>plugins/Tutorial/src</package-root>
-                <package-root>core/genoviz_sdk/demo/src</package-root>
-                <package-root>das2_server/test</package-root>
-                <package-root>core/genometryImpl/test</package-root>
-                <package-root>core/genoviz_sdk/test</package-root>
-                <package-root>core/igb/test</package-root>
-                <package-root>protannot/src</package-root>
-                <package-root>plugins/SearchModeIdOrProps/src</package-root>
-                <package-root>plugins/BigBedHandler/src</package-root>
-                <package-root>plugins/BigWigHandler/src</package-root>
-                <package-root>plugins/SearchModeSymmetryFilter/src</package-root>
-                <package-root>plugins/IGBScript/src</package-root>
-                <package-root>core/jar_extensions/sam/src</package-root>
-                <package-root>plugins/TableView/src</package-root>
-                <package-root>plugins/DASRegistryServerType/src</package-root>
-                <package-root>plugins/FindAnnotations/src</package-root>
-                <package-root>plugins/GeometricMean/src</package-root>
-                <package-root>plugins/MergeAnnotationOperator/src</package-root>
-                <package-root>plugins/OverlapAnnotationOperator/src</package-root>
-                <package-root>plugins/PythonScript/src</package-root>
-                <package-root>plugins/RubyScript/src</package-root>
-                <package-root>plugins/SampleSelection/src</package-root>
-                <package-root>plugins/TallyHandler/src</package-root>
-                <package-root>plugins/ThousandGenomesServerType/src</package-root>
-                <package-root>plugins/TranscriptIsoform/src</package-root>
-                <package-root>plugins/TutorialHelper/src</package-root>
-                <package-root>plugins/SearchModeLucene/src</package-root>
-                <package-root>plugins/Thresholding/src</package-root>
-                <package-root>plugins/AnnotationTab/src</package-root>
-                <package-root>plugins/GraphTab/src</package-root>
-                <package-root>plugins/KeyWordSearch/src</package-root>
-                <package-root>core/jar_extensions/tribble/src</package-root>
-                <package-root>core/HeatmapEditor/src</package-root>
-                <package-root>plugins/ParentOperators/src</package-root>
-                <package-root>plugins/Survey/src</package-root>
-                <package-root>plugins/BAMIndexer/src</package-root>
-                <package-root>plugins/NCBIBlast/src</package-root>
-                <package-root>plugins/ApolloLibrary/src</package-root>
-                <package-root>plugins/Update/src</package-root>
-                <package-root>plugins/NCBIPrimer/src</package-root>
-                <package-root>plugins/SequenceViewer/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.6.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:ext/lambdaj-2.4-with-dependencies.jar:ext/JGoogleAnalytics_0.4.jar:ext/commons-pool-1.6.jar:core/HeatmapEditor/lib/swingx-all-1.6.4.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:plugins/TableView/lib/TableView.jar:plugins/PythonScript/lib/jython.jar:plugins/RubyScript/lib/asm-2.2.3.jar:plugins/RubyScript/lib/backport-util-concurrent.jar:plugins/RubyScript/lib/jruby-engine.jar:plugins/RubyScript/lib/jruby.jar:plugins/ThousandGenomesServerType/lib/commons-io-2.4.jar:plugins/SearchModeLucene/lib/commons-httpclient-3.1.jar:plugins/SearchModeLucene/lib/commons-vfs2-2.0.jar:plugins/SearchModeLucene/lib/concurrent.jar:plugins/SearchModeLucene/lib/lucene-core-3.6.0.jar:plugins/Bookmark/lib/nanohttpd-webserver-2.0.5.jar:ext/commons-io-2.4.jar</classpath>
-                <built-to>das2_server/build</built-to>
-                <built-to>core/genometryImpl/build</built-to>
-                <built-to>core/genoviz_sdk/build</built-to>
-                <built-to>core/igb/build</built-to>
-                <built-to>core/genoviz_sdk/demo</built-to>
-                <built-to>core/main/build</built-to>
-                <built-to>core/common/build</built-to>
-                <built-to>plugins/ExternalView/build</built-to>
-                <built-to>core/igb_service/build</built-to>
-                <built-to>plugins/plugins_page/build</built-to>
-                <built-to>plugins/RestrictionSites/build</built-to>
-                <built-to>core/window_service/build</built-to>
-                <built-to>plugins/window_service_def/build</built-to>
-                <built-to>plugins/PropertyView/build</built-to>
-                <built-to>plugins/SearchView/build</built-to>
-                <built-to>plugins/GraphAdjuster/build</built-to>
-                <built-to>bundles</built-to>
-                <built-to>plugins/Tutorial/build</built-to>
-                <built-to>plugins/TableView/build</built-to>
-                <source-level>1.6</source-level>
-            </compilation-unit>
-        </java-data>
-        <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
-            <module name="org-netbeans-modules-editor-indent">
-                <node name="text">
-                    <node name="x-java">
-                        <node name="CodeStyle">
-                            <node name="project">
-                                <property name="spaces-per-tab" value="4"/>
-                                <property name="expand-tabs" value="false"/>
-                                <property name="text-limit-width" value="80"/>
-                                <property name="indent-shift-width" value="4"/>
-                                <property name="tab-size" value="4"/>
-                            </node>
-                        </node>
-                    </node>
-                </node>
-                <node name="CodeStyle">
-                    <node name="project">
-                        <property name="spaces-per-tab" value="4"/>
-                        <property name="expand-tabs" value="false"/>
-                        <property name="text-limit-width" value="80"/>
-                        <property name="indent-shift-width" value="4"/>
-                        <property name="tab-size" value="4"/>
-                    </node>
-                    <property name="usedProfile" value="project"/>
-                </node>
-            </module>
-            <module name="org-netbeans-modules-projectimport-eclipse-core"/>
-            <module name="org-netbeans-modules-html-editor-lib"/>
-        </preferences>
-        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
-            <word>Fasta</word>
-            <word>IGB</word>
-            <word>关于</word>
-            <word>反向互补</word>
-            <word>取消</word>
-            <word>基因版本</word>
-            <word>密码</word>
-            <word>局部核苷酸序列</word>
-            <word>工具</word>
-            <word>帮助</word>
-            <word>当前可视序列</word>
-            <word>总是用匿名登录</word>
-            <word>所有序列</word>
-            <word>文件</word>
-            <word>服务器</word>
-            <word>服务器验证</word>
-            <word>核苷酸序列</word>
-            <word>物种</word>
-            <word>用户名</word>
-            <word>登录</word>
-            <word>编辑</word>
-            <word>自动滚屏</word>
-            <word>视图</word>
-            <word>解锁</word>
-            <word>设置</word>
-            <word>锁定视图</word>
-        </spellchecker-wordlist>
-    </configuration>
+	<type>org.netbeans.modules.ant.freeform</type>
+	<configuration>
+		<general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+			<name>IGB</name>
+		</general-data>
+		<general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+			<!-- Do not use Project Properties customizer when editing this file manually. -->
+			<name>IGB</name>
+			<properties/>
+			<folders>
+				<source-folder>
+					<label>IGB</label>
+					<location>.</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/common/src</label>
+					<type>java</type>
+					<location>core/common/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/genometryImpl/src</label>
+					<type>java</type>
+					<location>core/genometryImpl/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/genoviz_sdk/src</label>
+					<type>java</type>
+					<location>core/genoviz_sdk/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/main/src</label>
+					<type>java</type>
+					<location>core/main/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/igb/src</label>
+					<type>java</type>
+					<location>core/igb/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/igb_service/src</label>
+					<type>java</type>
+					<location>core/igb_service/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/window_service/src</label>
+					<type>java</type>
+					<location>core/window_service/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/HeatmapEditor/src</label>
+					<type>java</type>
+					<location>core/HeatmapEditor/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/jar_extensions/sam/src</label>
+					<type>java</type>
+					<location>core/jar_extensions/sam/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/jar_extensions/tribble/src</label>
+					<type>java</type>
+					<location>core/jar_extensions/tribble/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/window_service_def/src</label>
+					<type>java</type>
+					<location>plugins/window_service_def/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/Bookmark/src</label>
+					<type>java</type>
+					<location>plugins/Bookmark/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/PropertyView/src</label>
+					<type>java</type>
+					<location>plugins/PropertyView/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SelectionInfo/src</label>
+					<type>java</type>
+					<location>plugins/SelectionInfo/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SearchView/src</label>
+					<type>java</type>
+					<location>plugins/SearchView/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SearchModeIdOrProps/src</label>
+					<type>java</type>
+					<location>plugins/SearchModeIdOrProps/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SearchModeLucene/src</label>
+					<type>java</type>
+					<location>plugins/SearchModeLucene/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/KeyWordSearch/src</label>
+					<type>java</type>
+					<location>plugins/KeyWordSearch/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SearchModeSymmetryFilter/src</label>
+					<type>java</type>
+					<location>plugins/SearchModeSymmetryFilter/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SequenceViewer/src</label>
+					<type>java</type>
+					<location>plugins/SequenceViewer/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/RestrictionsSites/src</label>
+					<type>java</type>
+					<location>plugins/RestrictionsSites/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/ExternalView/src</label>
+					<type>java</type>
+					<location>plugins/ExternalView/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/RestrictionSites/src</label>
+					<type>java</type>
+					<location>plugins/RestrictionSites/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/BigBedHandler/src</label>
+					<type>java</type>
+					<location>plugins/BigBedHandler/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/BigWigHandler/src</label>
+					<type>java</type>
+					<location>plugins/BigWigHandler/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/plugins_page/src</label>
+					<type>java</type>
+					<location>plugins/plugins_page/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/AnnotationTab/src</label>
+					<type>java</type>
+					<location>plugins/AnnotationTab/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/GraphTab/src</label>
+					<type>java</type>
+					<location>plugins/GraphTab/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/Thresholding/src</label>
+					<type>java</type>
+					<location>plugins/Thresholding/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/IGBScript/src</label>
+					<type>java</type>
+					<location>plugins/IGBScript/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/TranscriptIsoform/src</label>
+					<type>java</type>
+					<location>plugins/TranscriptIsoform/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/TableView/src</label>
+					<type>java</type>
+					<location>plugins/TableView/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/FindAnnotations/src</label>
+					<type>java</type>
+					<location>plugins/FindAnnotations/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/GeometricMean/src</label>
+					<type>java</type>
+					<location>plugins/GeometricMean/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/MergeAnnotationOperator/src</label>
+					<type>java</type>
+					<location>plugins/MergeAnnotationOperator/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/OverlapAnnotationOperator/src</label>
+					<type>java</type>
+					<location>plugins/OverlapAnnotationOperator/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/ParentOperators/src</label>
+					<type>java</type>
+					<location>plugins/ParentOperators/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/PythonScript/src</label>
+					<type>java</type>
+					<location>plugins/PythonScript/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/RubyScript/src</label>
+					<type>java</type>
+					<location>plugins/RubyScript/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/SampleSelection/src</label>
+					<type>java</type>
+					<location>plugins/SampleSelection/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/TallyHandler/src</label>
+					<type>java</type>
+					<location>plugins/TallyHandler/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/Tutorial/src</label>
+					<type>java</type>
+					<location>plugins/Tutorial/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/TutorialHelper/src</label>
+					<type>java</type>
+					<location>plugins/TutorialHelper/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/Update/src</label>
+					<type>java</type>
+					<location>plugins/Update/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/Survey/src</label>
+					<type>java</type>
+					<location>plugins/Survey/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/BAMIndexer/src</label>
+					<type>java</type>
+					<location>plugins/BAMIndexer/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/ApolloLibrary/src</label>
+					<type>java</type>
+					<location>plugins/ApolloLibrary/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/NCBIBlast/src</label>
+					<type>java</type>
+					<location>plugins/NCBIBlast/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/NCBIPrimer/src</label>
+					<type>java</type>
+					<location>plugins/NCBIPrimer/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/ThousandGenomesServerType/src</label>
+					<type>java</type>
+					<location>plugins/ThousandGenomesServerType/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>plugins/DASRegistryServerType/src</label>
+					<type>java</type>
+					<location>plugins/DASRegistryServerType/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>das2_server/src</label>
+					<type>java</type>
+					<location>das2_server/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>protannot/src</label>
+					<type>java</type>
+					<location>protannot/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/genoviz_sdk/demo/src</label>
+					<type>java</type>
+					<location>core/genoviz_sdk/demo/src</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/genometryImpl/test</label>
+					<type>java</type>
+					<location>core/genometryImpl/test</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/genoviz_sdk/test</label>
+					<type>java</type>
+					<location>core/genoviz_sdk/test</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>core/igb/test</label>
+					<type>java</type>
+					<location>core/igb/test</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+				<source-folder>
+					<label>das2_server/test</label>
+					<type>java</type>
+					<location>das2_server/test</location>
+					<encoding>UTF-8</encoding>
+				</source-folder>
+			</folders>
+			<ide-actions>
+				<action name="build">
+					<target>compile</target>
+				</action>
+				<action name="clean">
+					<target>clean</target>
+				</action>
+				<action name="javadoc">
+					<target>docs</target>
+				</action>
+				<action name="run">
+					<target>run</target>
+				</action>
+				<action name="test">
+					<target>test</target>
+				</action>
+				<action name="rebuild">
+					<target>clean</target>
+					<target>compile</target>
+				</action>
+				<action name="debug">
+					<script>nbproject/ide-targets.xml</script>
+					<target>debug-nb</target>
+				</action>
+				<action name="run.single">
+					<script>nbproject/ide-file-targets.xml</script>
+					<target>run-selected-file-in-src</target>
+					<context>
+						<property>run.class</property>
+						<folder>core/genoviz_sdk/demo/src</folder>
+						<pattern>\.java$</pattern>
+						<format>java-name</format>
+						<arity>
+							<one-file-only/>
+						</arity>
+					</context>
+				</action>
+				<action name="debug.single">
+					<script>nbproject/ide-file-targets.xml</script>
+					<target>debug-selected-file-in-src</target>
+					<context>
+						<property>debug.class</property>
+						<folder>core/genoviz_sdk/demo/src</folder>
+						<pattern>\.java$</pattern>
+						<format>java-name</format>
+						<arity>
+							<one-file-only/>
+						</arity>
+					</context>
+				</action>
+				<action name="run.single">
+					<script>nbproject/ide-file-targets.xml</script>
+					<target>run-selected-file-in-src</target>
+					<context>
+						<property>run.class</property>
+						<folder>plugins/BAMIndexer/src</folder>
+						<pattern>\.java$</pattern>
+						<format>java-name</format>
+						<arity>
+							<one-file-only/>
+						</arity>
+					</context>
+				</action>
+			</ide-actions>
+			<export>
+				<type>folder</type>
+				<location>das2_server/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/genometryImpl/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/genoviz_sdk/build</location>               
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/igb/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/genoviz_sdk/demo</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/main/build</location>               
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/common/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/ExternalView/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/igb_service/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/plugins_page/build</location>                
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/RestrictionSites/build</location>           
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>core/window_service/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/window_service_def/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/PropertyView/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/SearchView/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/GraphAdjuster/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>bundles</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/Tutorial/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<export>
+				<type>folder</type>
+				<location>plugins/TableView/build</location>
+				<build-target>compile</build-target>
+			</export>
+			<view>
+				<items>
+					<source-folder style="packages">
+						<label>core/common/src</label>
+						<location>core/common/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/genometryImpl/src</label>
+						<location>core/genometryImpl/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/genoviz_sdk/src</label>
+						<location>core/genoviz_sdk/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/main/src</label>
+						<location>core/main/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/igb/src</label>
+						<location>core/igb/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/igb_service/src</label>
+						<location>core/igb_service/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/window_service/src</label>
+						<location>core/window_service/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/HeatmapEditor/src</label>
+						<location>core/HeatmapEditor/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/jar_extensions/sam/src</label>
+						<location>core/jar_extensions/sam/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/jar_extensions/tribble/src</label>
+						<location>core/jar_extensions/tribble/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/window_service_def/src</label>
+						<location>plugins/window_service_def/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/Bookmark/src</label>
+						<location>plugins/Bookmark/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/PropertyView/src</label>
+						<location>plugins/PropertyView/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SelectionInfo/src</label>
+						<location>plugins/SelectionInfo/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SearchView/src</label>
+						<location>plugins/SearchView/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SearchModeIdOrProps/src</label>
+						<location>plugins/SearchModeIdOrProps/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SearchModeLucene/src</label>
+						<location>plugins/SearchModeLucene/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/KeyWordSearch/src</label>
+						<location>plugins/KeyWordSearch/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SearchModeSymmetryFilter/src</label>
+						<location>plugins/SearchModeSymmetryFilter/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SequenceViewer/src</label>
+						<location>plugins/SequenceViewer/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/RestrictionsSites/src</label>
+						<location>plugins/RestrictionsSites/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/ExternalView/src</label>
+						<location>plugins/ExternalView/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/RestrictionSites/src</label>
+						<location>plugins/RestrictionSites/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/BigBedHandler/src</label>
+						<location>plugins/BigBedHandler/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/BigWigHandler/src</label>
+						<location>plugins/BigWigHandler/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/plugins_page/src</label>
+						<location>plugins/plugins_page/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/AnnotationTab/src</label>
+						<location>plugins/AnnotationTab/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/GraphTab/src</label>
+						<location>plugins/GraphTab/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/Thresholding/src</label>
+						<location>plugins/Thresholding/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/IGBScript/src</label>
+						<location>plugins/IGBScript/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/TranscriptIsoform/src</label>
+						<location>plugins/TranscriptIsoform/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/TableView/src</label>
+						<location>plugins/TableView/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/FindAnnotations/src</label>
+						<location>plugins/FindAnnotations/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/GeometricMean/src</label>
+						<location>plugins/GeometricMean/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/MergeAnnotationOperator/src</label>
+						<location>plugins/MergeAnnotationOperator/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/OverlapAnnotationOperator/src</label>
+						<location>plugins/OverlapAnnotationOperator/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/ParentOperators/src</label>
+						<location>plugins/ParentOperators/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/PythonScript/src</label>
+						<location>plugins/PythonScript/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/RubyScript/src</label>
+						<location>plugins/RubyScript/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/SampleSelection/src</label>
+						<location>plugins/SampleSelection/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/TallyHandler/src</label>
+						<location>plugins/TallyHandler/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/Tutorial/src</label>
+						<location>plugins/Tutorial/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/TutorialHelper/src</label>
+						<location>plugins/TutorialHelper/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/Update/src</label>
+						<location>plugins/Update/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/Survey/src</label>
+						<location>plugins/Survey/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/BAMIndexer/src</label>
+						<location>plugins/BAMIndexer/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/ApolloLibrary/src</label>
+						<location>plugins/ApolloLibrary/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/NCBIBlast/src</label>
+						<location>plugins/NCBIBlast/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/NCBIPrimer/src</label>
+						<location>plugins/NCBIPrimer/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/ThousandGenomesServerType/src</label>
+						<location>plugins/ThousandGenomesServerType/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>plugins/DASRegistryServerType/src</label>
+						<location>plugins/DASRegistryServerType/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>das2_server/src</label>
+						<location>das2_server/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>protannot/src</label>
+						<location>protannot/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/genoviz_sdk/demo/src</label>
+						<location>core/genoviz_sdk/demo/src</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/genometryImpl/test</label>
+						<location>core/genometryImpl/test</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/genoviz_sdk/test</label>
+						<location>core/genoviz_sdk/test</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>core/igb/test</label>
+						<location>core/igb/test</location>
+					</source-folder>
+					<source-folder style="packages">
+						<label>das2_server/test</label>
+						<location>das2_server/test</location>
+					</source-folder>
+					<source-file>
+						<location>build.xml</location>
+					</source-file>
+				</items>
+				<context-menu>
+					<ide-action name="build"/>
+					<ide-action name="rebuild"/>
+					<ide-action name="clean"/>
+					<ide-action name="javadoc"/>
+					<ide-action name="run"/>
+					<ide-action name="test"/>
+					<ide-action name="debug"/>
+					<action>
+						<label>Demos</label>
+						<target>demos</target>
+					</action>
+					<action>
+						<label>Protannot</label>
+						<target>run_Protannot</target>
+					</action>
+					<action>
+						<label>Debug Protannot</label>
+						<target>debug-nb-protannot</target>
+					</action>
+					<action>
+						<label>Deploy Das2</label>
+						<target>deploy-das2server</target>
+					</action>
+				</context-menu>
+			</view>
+			<subprojects/>
+		</general-data>
+		<java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
+			<compilation-unit>
+				<package-root>das2_server/src</package-root>
+				<package-root>core/common/src</package-root>
+				<package-root>core/genometryImpl/src</package-root>
+				<package-root>core/genoviz_sdk/src</package-root>
+				<package-root>core/main/src</package-root>
+				<package-root>core/igb/src</package-root>
+				<package-root>core/igb_service/src</package-root>
+				<package-root>core/window_service/src</package-root>
+				<package-root>plugins/window_service_def/src</package-root>
+				<package-root>plugins/Bookmark/src</package-root>
+				<package-root>plugins/PropertyView/src</package-root>
+				<package-root>plugins/SelectionInfo/src</package-root>
+				<package-root>plugins/SearchView/src</package-root>
+				<package-root>plugins/RestrictionsSites/src</package-root>
+				<package-root>plugins/ExternalView/src</package-root>
+				<package-root>plugins/RestrictionSites/src</package-root>
+				<package-root>plugins/plugins_page/src</package-root>
+				<package-root>plugins/Tutorial/src</package-root>
+				<package-root>core/genoviz_sdk/demo/src</package-root>
+				<package-root>das2_server/test</package-root>
+				<package-root>core/genometryImpl/test</package-root>
+				<package-root>core/genoviz_sdk/test</package-root>
+				<package-root>core/igb/test</package-root>
+				<package-root>protannot/src</package-root>
+				<package-root>plugins/SearchModeIdOrProps/src</package-root>
+				<package-root>plugins/BigBedHandler/src</package-root>
+				<package-root>plugins/BigWigHandler/src</package-root>
+				<package-root>plugins/SearchModeSymmetryFilter/src</package-root>
+				<package-root>plugins/IGBScript/src</package-root>
+				<package-root>core/jar_extensions/sam/src</package-root>
+				<package-root>plugins/TableView/src</package-root>
+				<package-root>plugins/DASRegistryServerType/src</package-root>
+				<package-root>plugins/FindAnnotations/src</package-root>
+				<package-root>plugins/GeometricMean/src</package-root>
+				<package-root>plugins/MergeAnnotationOperator/src</package-root>
+				<package-root>plugins/OverlapAnnotationOperator/src</package-root>
+				<package-root>plugins/PythonScript/src</package-root>
+				<package-root>plugins/RubyScript/src</package-root>
+				<package-root>plugins/SampleSelection/src</package-root>
+				<package-root>plugins/TallyHandler/src</package-root>
+				<package-root>plugins/ThousandGenomesServerType/src</package-root>
+				<package-root>plugins/TranscriptIsoform/src</package-root>
+				<package-root>plugins/TutorialHelper/src</package-root>
+				<package-root>plugins/SearchModeLucene/src</package-root>
+				<package-root>plugins/Thresholding/src</package-root>
+				<package-root>plugins/AnnotationTab/src</package-root>
+				<package-root>plugins/GraphTab/src</package-root>
+				<package-root>plugins/KeyWordSearch/src</package-root>
+				<package-root>core/jar_extensions/tribble/src</package-root>
+				<package-root>core/HeatmapEditor/src</package-root>
+				<package-root>plugins/ParentOperators/src</package-root>
+				<package-root>plugins/Survey/src</package-root>
+				<package-root>plugins/BAMIndexer/src</package-root>
+				<package-root>plugins/NCBIBlast/src</package-root>
+				<package-root>plugins/ApolloLibrary/src</package-root>
+				<package-root>plugins/Update/src</package-root>
+				<package-root>plugins/NCBIPrimer/src</package-root>
+				<package-root>plugins/SequenceViewer/src</package-root>
+				<classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.6.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:ext/lambdaj-2.4-with-dependencies.jar:ext/JGoogleAnalytics_0.4.jar:ext/commons-pool-1.6.jar:core/HeatmapEditor/lib/swingx-all-1.6.4.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:plugins/TableView/lib/TableView.jar:plugins/PythonScript/lib/jython.jar:plugins/RubyScript/lib/asm-2.2.3.jar:plugins/RubyScript/lib/backport-util-concurrent.jar:plugins/RubyScript/lib/jruby-engine.jar:plugins/RubyScript/lib/jruby.jar:plugins/ThousandGenomesServerType/lib/commons-io-2.4.jar:plugins/SearchModeLucene/lib/commons-httpclient-3.1.jar:plugins/SearchModeLucene/lib/commons-vfs2-2.0.jar:plugins/SearchModeLucene/lib/concurrent.jar:plugins/SearchModeLucene/lib/lucene-core-3.6.0.jar:plugins/Bookmark/lib/nanohttpd-webserver-2.0.5.jar:ext/commons-io-2.4.jar</classpath>
+				<built-to>das2_server/build</built-to>
+				<built-to>core/genometryImpl/build</built-to>
+				<built-to>core/genoviz_sdk/build</built-to>
+				<built-to>core/igb/build</built-to>
+				<built-to>core/genoviz_sdk/demo</built-to>
+				<built-to>core/main/build</built-to>
+				<built-to>core/common/build</built-to>
+				<built-to>plugins/ExternalView/build</built-to>
+				<built-to>core/igb_service/build</built-to>
+				<built-to>plugins/plugins_page/build</built-to>
+				<built-to>plugins/RestrictionSites/build</built-to>
+				<built-to>core/window_service/build</built-to>
+				<built-to>plugins/window_service_def/build</built-to>
+				<built-to>plugins/PropertyView/build</built-to>
+				<built-to>plugins/SearchView/build</built-to>
+				<built-to>plugins/GraphAdjuster/build</built-to>
+				<built-to>bundles</built-to>
+				<built-to>plugins/Tutorial/build</built-to>
+				<built-to>plugins/TableView/build</built-to>
+				<source-level>1.6</source-level>
+			</compilation-unit>
+		</java-data>
+		<preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
+			<module name="org-netbeans-modules-editor-indent">
+				<node name="text">
+					<node name="x-java">
+						<node name="CodeStyle">
+							<node name="project">
+								<property name="spaces-per-tab" value="4"/>
+								<property name="expand-tabs" value="false"/>
+								<property name="text-limit-width" value="80"/>
+								<property name="indent-shift-width" value="4"/>
+								<property name="tab-size" value="4"/>
+							</node>
+						</node>
+					</node>
+				</node>
+				<node name="CodeStyle">
+					<node name="project">
+						<property name="spaces-per-tab" value="4"/>
+						<property name="expand-tabs" value="false"/>
+						<property name="text-limit-width" value="80"/>
+						<property name="indent-shift-width" value="4"/>
+						<property name="tab-size" value="4"/>
+					</node>
+					<property name="usedProfile" value="project"/>
+				</node>
+			</module>
+			<module name="org-netbeans-modules-projectimport-eclipse-core"/>
+			<module name="org-netbeans-modules-html-editor-lib"/>
+		</preferences>
+		<spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+			<word>Fasta</word>
+			<word>IGB</word>
+			<word>关于</word>
+			<word>反向互补</word>
+			<word>取消</word>
+			<word>基因版本</word>
+			<word>密码</word>
+			<word>局部核苷酸序列</word>
+			<word>工具</word>
+			<word>帮助</word>
+			<word>当前可视序列</word>
+			<word>总是用匿名登录</word>
+			<word>所有序列</word>
+			<word>文件</word>
+			<word>服务器</word>
+			<word>服务器验证</word>
+			<word>核苷酸序列</word>
+			<word>物种</word>
+			<word>用户名</word>
+			<word>登录</word>
+			<word>编辑</word>
+			<word>自动滚屏</word>
+			<word>视图</word>
+			<word>解锁</word>
+			<word>设置</word>
+			<word>锁定视图</word>
+		</spellchecker-wordlist>
+	</configuration>
 </project>

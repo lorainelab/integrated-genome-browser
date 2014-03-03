@@ -430,57 +430,57 @@
 			</ide-actions>
 			<export>
 				<type>folder</type>
-				<location>das2_server/build</location>
+				<location>das2_server/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/genometryImpl/build</location>
+				<location>core/genometryImpl/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/genoviz_sdk/build</location>
+				<location>core/genoviz_sdk/build</location>               
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/igb/build</location>
+				<location>core/igb/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/genoviz_sdk/demo</location>
+				<location>core/genoviz_sdk/demo</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/main/build</location>
+				<location>core/main/build</location>               
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/common/build</location>
+				<location>core/common/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>plugins/ExternalView/build</location>
+				<location>plugins/ExternalView/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>core/igb_service/build</location>
+				<location>core/igb_service/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>plugins/plugins_page/build</location>
+				<location>plugins/plugins_page/build</location>                
 				<build-target>compile</build-target>
 			</export>
 			<export>
 				<type>folder</type>
-				<location>plugins/RestrictionSites/build</location>
+				<location>plugins/RestrictionSites/build</location>           
 				<build-target>compile</build-target>
 			</export>
 			<export>

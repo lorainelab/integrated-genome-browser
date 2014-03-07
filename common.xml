@@ -16,10 +16,6 @@
 
 		<property name="server.deploy.dir"   value="/Applications/apache-tomcat-5.5.31/webapps" />
 
-		<condition property="build.version" value="${svn.info.rev}" else="${DSTAMP}">
-			<isset property="svn.info.rev" />
-		</condition>
-
 		<!-- file paths -->
 		<property name="gnomex.web.xml" value="${das2server}/web.xml" />
 		<property name="gnomex.context.xml" value="${das2server}/context.xml" />
@@ -73,7 +69,6 @@
 		<property name="igb.maxmem" value="1024m" />
 
 
-		<filter token="build.version"  value="${build.version}" />
 		<filter token="build.customization"  value="${build.customization}" />
 		<filter token="jnlp.version"  value="${jnlp.version}" />
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />

@@ -678,7 +678,7 @@
 		</java>
     </target>
 
-	<target name="release" depends="release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
+	<target name="release" depends="release-igb, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
 
 	<target name="release-igb" depends="exe">
 		<mkdir dir="${release.dir}/igb" />

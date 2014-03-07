@@ -7,8 +7,8 @@
 	<!--  classic  the data track files reside in a file system.        -->
 	<property name="das2_mode"    value="classic"/>
 
-	<target name="common-init" depends="init,compiler-def-args,svn-init">
-    <tstamp/>
+	<target name="common-init" depends="init,compiler-def-args,extras-init">
+		<tstamp/>
 
 		<!-- directory paths -->
 		<property name="flex.dir"     value="${basedir}/flex" />
@@ -169,30 +169,7 @@
 	</target>
 	
 	<target name="extras-init">
-		<exec executable="svn" outputproperty="svn.version">
-			<arg line="--version --quiet" />
-		</exec>
-		<!-- Not currently shipping with multiple svnant versions -->
-		<!--
-		<condition property="svnant.version" value="1.1.0-RC2">
-			<contains string="${svn.version}" substring="1.4." />
-		</condition>
-		<condition property="svnant.version" value="1.2.1">
-			<contains string="${svn.version}" substring="1.5." />
-		</condition>
-		-->
-		<condition property="svnant.version" value="1.3.0">
-			<contains string="${svn.version}" substring="1.6." />
-		</condition>
 
-		<path id="svn.path">
-			<fileset dir="${lib.dir}">
-				<include name="svnant-${svnant.version}/*.jar" />
-			</fileset>
-		</path>
-
-		<available classname="org.tigris.subversion.svnant.SvnTask" classpathref="svn.path" property="have.svnant" />
-		
 		<path id="contrib.path">
 			<fileset dir="${lib.dir}/ant-contrib-1.0b3">
 				<include name="*.jar" />
@@ -214,22 +191,6 @@
 		</path>
 
 		<available classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path" property="have.findbugs" />
-	</target>
-
-	<target name="svn-init" depends="extras-init" if="have.svnant" unless="run.svn-init">
-		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svn.path" />
-		<svn failonerror="false">
-			<info target="${basedir}" />
-		</svn>
-		
-		<exec executable="svn" outputproperty="svn.status.update">
-			<arg line="status -u" />
-		</exec>
-		<condition property="svn.update.available" value="-updateAvailable" else="">
-			<contains string="${svn.status.update}" substring="*" />
-		</condition>
-		
-		<property name="run.svn-init" value="true" />
 	</target>
 	
 

@@ -204,7 +204,7 @@
 	<target name="webstart" depends="jar, bundles_properties" description="Create webstart-compatible IGB jars">
 		<mkdir dir="${webstart.dir}" />
 
-		<delete file="${webstart.dir}/das2server.jar" />
+<!--		<delete file="${webstart.dir}/das2server.jar" />-->
 		
 		<copy file="${def.prefs.dir}/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
@@ -601,7 +601,6 @@
 			 <!-- <jvmarg value="-Dsun.java2d.trace=log"/>-->
 <!--			<jvmarg value="-splash:${jnlp.splashicon.path}" />-->
 			<jvmarg line="${apple.jvmargs}" />
-			<arg line="${svn.update.available}" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath refid="igb.classpath"/>

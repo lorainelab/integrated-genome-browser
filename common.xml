@@ -88,13 +88,13 @@
 		<!-- das2 modes. We need to set a boolean so that build targets can be -->
 		<!-- conditionally invoked. Use the das2_mode to set the flags.        -->
 		<condition property="das2gnomex">
-		  <matches string="${das2_mode}" pattern="gnomex"/>
+			<matches string="${das2_mode}" pattern="gnomex"/>
 		</condition>
 		<condition property="das2genopub">
-		  <matches string="${das2_mode}" pattern="genopub"/>
+			<matches string="${das2_mode}" pattern="genopub"/>
 		</condition>
 		<condition property="das2classic">
-		  <matches string="${das2_mode}" pattern="classic"/>
+			<matches string="${das2_mode}" pattern="classic"/>
 		</condition>
 
 		<!-- Use web.xml, context.xml for gnomex mode -->
@@ -215,16 +215,16 @@
 	<presetdef name="my.javac">
 		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}" includeantruntime="false">
 			<compilerarg compiler="modern" line="${compiler.args}" />
-    		</javac>
+		</javac>
 	</presetdef>
 
 	<presetdef name="my.javac_checker">
 		<!-- Be sure to name your new javac executable "javac_checker" -->
 		<javac fork="yes" executable="javac_checker" srcdir="${src.dir}" classpath="${classpath}">
 			<compilerarg value="-version"/>
-                	<compilerarg line="-processor checkers.nullness.NullnessChecker"/>
-                	<compilerarg value="-implicit:class"/>
-    		</javac>
+			<compilerarg line="-processor checkers.nullness.NullnessChecker"/>
+			<compilerarg value="-implicit:class"/>
+		</javac>
 	</presetdef>
 
 

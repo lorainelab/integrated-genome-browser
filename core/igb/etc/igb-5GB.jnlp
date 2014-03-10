@@ -26,9 +26,5 @@
 	<application-desc main-class="com.affymetrix.main.Main" name="IGB">
 		<argument>-prefs</argument>
 		<argument>@jnlp.codebase@/igb_prefs.xml</argument>
-		<argument>-href</argument>
-        <argument>*</argument>
-        <argument>-scriptfile</argument>
-        <argument>*</argument>
 	</application-desc>
 </jnlp>

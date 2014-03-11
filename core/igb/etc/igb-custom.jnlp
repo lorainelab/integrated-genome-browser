@@ -34,9 +34,9 @@
 		<argument>-prefs</argument>
 		<argument>http://bioviz.org/igb/releases/current/igb_prefs.xml</argument>
 		<!-- Wildcard values inserted to allow modifications after signing -->
-		<argument>-href</argument>
+		<argument>@jnlp.href.arg@</argument>
 		<argument>*</argument>
-		<argument>-scriptfile</argument>
-		<argument>*</argument>
+		<argument>@jnlp.script.arg@</argument>
+		<argument>@jnlp.wildcard.arg@</argument>
 	</application-desc>
 </jnlp>

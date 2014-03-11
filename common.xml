@@ -239,7 +239,7 @@
 	</presetdef>
 
 	<presetdef name="my.signjar">
-		<signjar alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
+		<signjar alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" tsaurl="http://timestamp.digicert.com" />
 	</presetdef>
 
 	<target name="pmd-init" depends="common-init,extras-init" if="have.pmd">

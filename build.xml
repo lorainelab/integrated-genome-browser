@@ -605,7 +605,6 @@
 			 <!-- <jvmarg value="-Dsun.java2d.trace=log"/>-->
 <!--			<jvmarg value="-splash:${jnlp.splashicon.path}" />-->
 			<jvmarg line="${apple.jvmargs}" />
-			<arg line="${svn.update.available}" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath refid="igb.classpath"/>

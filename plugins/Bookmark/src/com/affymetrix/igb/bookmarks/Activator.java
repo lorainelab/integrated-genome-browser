@@ -65,7 +65,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		String[] args = CommonUtils.getInstance().getArgs(bundleContext);
 		String url = CommonUtils.getInstance().getArg("-href", args);
 
-		if (url.equals(WILDCARD)) {
+		if (url != null && url.equals(WILDCARD)) {
 			url = null;
 		}
 		if (url != null && url.length() > 0) {

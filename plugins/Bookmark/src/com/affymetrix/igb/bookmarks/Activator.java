@@ -31,6 +31,7 @@ import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
+	private static final String WILDCARD = "*";
 
 	public Activator(){
 		super(IGBService.class);
@@ -64,14 +65,17 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 
         String[] args = CommonUtils.getInstance().getArgs(bundleContext);
 		String url = CommonUtils.getInstance().getArg("-href", args);
-		if (url != null && url.length() > 0) {
-			ourLogger.log(Level.INFO, "Loading bookmark {0}", url);
-			new BookMarkCommandLine(bundleContext, igbService, url, true);
-		}else{
-			url = CommonUtils.getInstance().getArg("-home", args);
+
+		if (!url.equals(WILDCARD)) {
 			if (url != null && url.length() > 0) {
-				ourLogger.log(Level.INFO, "Loading home {0}", url);
-				new BookMarkCommandLine(bundleContext, igbService, url, false);
+				ourLogger.log(Level.INFO, "Loading bookmark {0}", url);
+				new BookMarkCommandLine(bundleContext, igbService, url, true);
+			} else {
+				url = CommonUtils.getInstance().getArg("-home", args);
+				if (url != null && url.length() > 0) {
+					ourLogger.log(Level.INFO, "Loading home {0}", url);
+					new BookMarkCommandLine(bundleContext, igbService, url, false);
+				}
 			}
 		}
 		String portString = CommonUtils.getInstance().getArg("-port", args);

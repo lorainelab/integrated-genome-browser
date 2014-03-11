@@ -23,26 +23,30 @@ import javax.swing.JOptionPane;
 import com.affymetrix.common.ExtensionPointHandler;
 
 public class ScriptManager {
+
 	public final static String SCRIPTING = "scripting";
+	private final static String WILDCARD = "*";
 	private static final ScriptManager instance = new ScriptManager();
 	private List<Operation> operations = new ArrayList<Operation>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
 	private boolean mouseDown;
 	private InputHandler inputHandler;
-	
+
 	public static interface InputHandler {
+
 		public InputStream getInputStream(String fileName) throws Exception;
 	}
-	
+
 	public static ScriptManager getInstance() {
 		return instance;
 	}
+
 	private ScriptManager() {
 		super();
 		mouseDown = false;
 		long eventMask = AWTEvent.MOUSE_EVENT_MASK;
 
-		Toolkit.getDefaultToolkit().addAWTEventListener( new AWTEventListener() {
+		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 			public void eventDispatched(AWTEvent e) {
 				if (e.getID() == MouseEvent.MOUSE_PRESSED) {
 					mouseDown = true;
@@ -51,17 +55,17 @@ public class ScriptManager {
 					mouseDown = false;
 				}
 			}
-		}, eventMask);	
+		}, eventMask);
 	}
 
 	public boolean isMouseDown() {
 		return mouseDown;
 	}
 
-	public void setInputHandler(InputHandler inputHandler){
+	public void setInputHandler(InputHandler inputHandler) {
 		this.inputHandler = inputHandler;
 	}
-	
+
 	public void addWidget(JRPWidget widget) {
 		if (widgets.get(widget.getId()) != null) {
 //			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
@@ -122,8 +126,7 @@ public class ScriptManager {
 				return;
 			}
 			engine.eval(scriptText);
-		}
-		catch (ScriptException ex) {
+		} catch (ScriptException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -149,6 +152,9 @@ public class ScriptManager {
 	}
 
 	public void runScript(String fileName) {
+		if (fileName.equals(WILDCARD)) {
+			return;
+		}
 		try {
 			ScriptEngine engine = getScriptEngine(fileName);
 			if (engine == null) {
@@ -164,19 +170,18 @@ public class ScriptManager {
 					is = inputHandler.getInputStream(fileName);
 				}
 			} catch (Exception ex) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error getting input stream for script file "+fileName, ex);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error getting input stream for script file " + fileName, ex);
 				return;
 			}
-			
-			if(is == null){
+
+			if (is == null) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Input stream null for script file {0}", fileName);
 				return;
 			}
-			 
+
 			Reader reader = new InputStreamReader(is);
 			engine.eval(reader);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}

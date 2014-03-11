@@ -33,9 +33,10 @@
 		<!-- Point this at your own preferences file for customization -->
 		<argument>-prefs</argument>
 		<argument>http://bioviz.org/igb/releases/current/igb_prefs.xml</argument>
+		<!-- Wildcard values inserted to allow modifications after signing -->
 		<argument>-href</argument>
-        <argument>*</argument>
-        <argument>-scriptfile</argument>
-        <argument>*</argument>
+		<argument>*</argument>
+		<argument>-scriptfile</argument>
+		<argument>*</argument>
 	</application-desc>
 </jnlp>

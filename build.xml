@@ -192,7 +192,7 @@
 		<attribute name="temp.file" />
 		<sequential>
 			<copy file="${jnlp.dir}/@{jnlp.file}" tofile="${webstart.dir}/@{jnlp.file}" filtering="true" overwrite="true" />
-			<copy file="${webstart.dir}/@{jnlp.file}" tofile="${dist.dir}/JNLP-INF/APPLICATION.JNLP" overwrite="true"/>
+			<copy file="${webstart.dir}/@{jnlp.file}" tofile="${dist.dir}/JNLP-INF/APPLICATION_TEMPLATE.JNLP" overwrite="true"/>
 			<jar jarfile="${webstart.dir}/@{jar.file}" update="false" index="true" filesetmanifest="merge">
 				<fileset dir="${dist.dir}" includes="JNLP-INF/*"/>
 				<zipgroupfileset file="@{temp.file}" />

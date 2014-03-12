@@ -64,7 +64,7 @@ public final class SimpleBookmarkServer {
 				server_port = port;
 			} else {
 				ourLogger.log(Level.SEVERE,
-						"Invalid port number {0}, must be between 0 and 65535", port);
+						"Invalid port number {0}, must be between 0 and 65535", Integer.toString(port));
 			}
 		} catch (NumberFormatException x) {
 			ourLogger.log(Level.SEVERE, "Invalid number {0} for server_port", portString);
@@ -88,7 +88,7 @@ public final class SimpleBookmarkServer {
 
 			if (serverPort == NO_PORT) {
 				ourLogger.log(Level.SEVERE,
-						"Couldn't find an available port for IGB to listen to control requests on port {0}!\nTurning off IGB's URL-based control features", startPort);
+						"Couldn't find an available port for IGB to listen to control requests on port {0}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
 			} else {
 
 				Runnable r = new Runnable() {
@@ -142,14 +142,14 @@ public final class SimpleBookmarkServer {
 	 * @return boolean
 	 */
 	private static boolean isPortAvailable(int port) {
-		ourLogger.log(Level.INFO, "Testing port {0}", port);
+		ourLogger.log(Level.INFO, "Testing port {0}", Integer.toString(port));
 		Socket s = null;
 		try {
 			s = new Socket("localhost", port);
-			ourLogger.log(Level.INFO, "Port {0} is not available", port);
+			ourLogger.log(Level.INFO, "Port {0} is not available", Integer.toString(port));
 			return false;
 		} catch (IOException e) {
-			ourLogger.log(Level.INFO, "Port {0} is available", port);
+			ourLogger.log(Level.INFO, "Port {0} is available", Integer.toString(port));
 			return true;
 		} finally {
 			if (s != null) {

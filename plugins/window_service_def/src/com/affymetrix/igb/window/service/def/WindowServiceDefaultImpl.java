@@ -277,15 +277,38 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			tabs_menu.add(pluginMenu);
 		}
 		else {
-			int menuPosition = 0;
-			boolean tabItemFound = false;
-			while (menuPosition < tabs_menu.getItemCount() && ((tabMenuPositions.get(tabs_menu.getItem(menuPosition)) == null && !tabItemFound) || tabPanel.getPosition() > tabMenuPositions.get(tabs_menu.getItem(menuPosition)))) {
-				tabItemFound |= tabMenuPositions.get(tabs_menu.getItem(menuPosition)) != null;
-				menuPosition++;
-			}
+			int menuPosition = findMenuItemPosition(tabPanel);			
 			tabs_menu.insert(pluginMenu, menuPosition);
 		}
 		tabPanel.setComponentPopupMenu(popup);
+	}
+
+	private int findMenuItemPosition(final IGBTabPanel tabPanel) {
+		int menuPosition = 0;
+		for (int i = 0; i < tabs_menu.getItemCount(); i++) {
+			boolean menuPositionAvailable = isMenuPositionAvailable(tabPanel, i);
+			boolean withinValidRange = isWithinValidRange(tabPanel, i);
+			if (menuPositionAvailable || withinValidRange) {
+				if (tabMenuPositions.get(tabs_menu.getItem(i)) != null) {
+					menuPosition = i;
+					break;
+				}
+			}
+		}
+		return menuPosition;
+	}
+
+	private boolean isMenuPositionAvailable(final IGBTabPanel tabPanel, int i) {
+		boolean menuPositionAvailable = tabMenuPositions.get(tabs_menu.getItem(i)) == null;
+		return menuPositionAvailable;
+	}
+
+	private boolean isWithinValidRange(final IGBTabPanel tabPanel, int i) {
+		boolean validIndex = false;
+		if (tabMenuPositions.get(tabs_menu.getItem(i)) != null) {
+			validIndex = tabPanel.getPosition() > tabMenuPositions.get(tabs_menu.getItem(i));
+		}
+		return validIndex;
 	}
 
 	public void showTabs() {

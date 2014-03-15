@@ -38,9 +38,6 @@
 		<property name="jnlp.icon.path" value="${common}/resources/images/${jnlp.icon.name}" />
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />
 		<property name="jnlp.splashicon.path" value="${common}/resources/images/${jnlp.splashicon.name}" />
-		<property name="jnlp.href.arg" value="-href" />
-		<property name="jnlp.script.arg" value="-scriptfile" />
-		<property name="jnlp.wildcard.arg" value="*" />
 	
 		
 		<!-- FLEX -->
@@ -80,9 +77,6 @@
 		<filter token="igb.jar.name" value="${igb.jar.name}" />
 		<filter token="igb.jar.large.name" value="${igb.jar.large.name}" />
 		<filter token="igb.jar.5GB.name" value="${igb.jar.5GB.name}" />
-        <filter token="jnlp.href.arg" value="${jnlp.href.arg}" />
-		<filter token="jnlp.script.arg" value="${jnlp.script.arg}" />
-		<filter token="jnlp.wildcard.arg" value="${jnlp.wildcard.arg}" />
 		
 		<!-- The following ant section deals with the custom                   -->
 		<!-- compile and release requirements for the different                -->

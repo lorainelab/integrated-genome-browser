@@ -28,6 +28,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     private static final String GALAXY_REQUEST = "igbGalaxyDataView";
     private static final String DEFAULT_SCRIPT_EXTENSION = "igb";
     private static final String FAVICON_REQUEST = "favicon.ico";
+	private static final String IGB_STATUS_CHECK = "igbStatusCheck";
     private static final String FOCUS_IGB_COMMAND = "bringIGBToFront";
     private static final Logger ourLogger
             = Logger.getLogger(BookmarkHttpRequestHandler.class.getPackage().getName());
@@ -42,9 +43,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         Response response;
         Method method = session.getMethod();
         if (method.equals(Method.GET)) {
-            processRequest(session);
-            response = new Response(getWelcomeMessage());
-            response.setStatus(Response.Status.OK);
+            response = processRequest(session);            
         } else if (method.equals(Method.POST)) {            
 //            processPost(session);
 //            response = new Response(getWelcomeMessage());
@@ -95,17 +94,42 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         return msg.toString();
     }
 
-    private void processRequest(final IHTTPSession session) {
-        String contextRoot = session.getUri().substring(1); //removes prefixed /
-
-        if (contextRoot.equals(SERVLET_NAME_OLD) || contextRoot.equals(SERVLET_NAME)) {
-            parseAndGoToBookmark(session);
-        } else if (contextRoot.equals(GALAXY_REQUEST)) {
-            //This exist to allow custom pipeline for galaxy requests if desired
-            parseAndGoToBookmark(session);
-        } else if (contextRoot.equals(FAVICON_REQUEST)) {
-            //for now do nothing
-        }
+   private Response processRequest(final IHTTPSession session) {
+		String contextRoot = session.getUri().substring(1); //removes prefixed /
+		Response response;
+		if (contextRoot.equals(SERVLET_NAME_OLD) || contextRoot.equals(SERVLET_NAME)) {
+			parseAndGoToBookmark(session);
+			response = new Response(getWelcomeMessage());
+			response.setStatus(Response.Status.OK);
+			return response;
+		} else if (contextRoot.equals(GALAXY_REQUEST)) {
+			//This exist to allow custom pipeline for galaxy requests if desired
+			parseAndGoToBookmark(session);
+			response = new Response(getWelcomeMessage());
+			response.setStatus(Response.Status.OK);
+			return response;
+		} else if (contextRoot.equals(FAVICON_REQUEST)) {
+			//do nothing send back welcome message
+			response = new Response(getWelcomeMessage());
+			response.setStatus(Response.Status.OK);
+			return response;
+		} else if (contextRoot.equals(IGB_STATUS_CHECK)) {
+			response = new Response("IGB IS RUNNING");
+			response.setStatus(Response.Status.OK);
+			return response;
+		} else {			
+			response = new Response(getBadRequestMessage());
+			response.setStatus(Response.Status.BAD_REQUEST);
+			return response;
+		}
+	}
+   
+       private String getBadRequestMessage() {
+        StringBuilder msg = new StringBuilder("<html><body>");
+        msg.append("<h2 style='display:inline-block'>");
+        msg.append(" Invalid Request!</h2>");
+        msg.append("</body></html>\n");
+        return msg.toString();
     }
 
     //This code can be deleted once it is confirmed we have no need to support post

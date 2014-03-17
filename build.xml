@@ -227,6 +227,7 @@
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.name}.jar" jnlp.file="igb.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.large.name}.jar" jnlp.file="igb-large.jnlp" />
 		<webstart.jar temp.file="${temp.jar}" jar.file="${igb.jar.5GB.name}.jar" jnlp.file="igb-5GB.jnlp" />
+		<webstart.jar temp.file="${temp.jar}" jar.file="igb-custom.jar" jnlp.file="igb-test.jnlp" />
 
 		<delete dir="${dist.dir}/JNLP-INF" />
 		<delete file="${temp.jar}" />

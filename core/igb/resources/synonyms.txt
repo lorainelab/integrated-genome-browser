@@ -101,6 +101,7 @@ H_sapiens_Apr_2003	H_sapiens_Apr_2003_Encode	Human_Apr_2003	Human 10apr2003	Huma
 H_sapiens_Apr_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33/
 H_sapiens_Dec_2001	Human_Dec_2001	Human 22dec2001	Human_22dec2001	hs.NCBIv28	hg10	human_ncbi28	ncbi.v28	hs:Dec_2001	Hs:Dec_2001	hs:NCBIv28	Hs:NCBIv28	Hs;NCBIv28	Hs:NCBI28
 H_sapiens_Feb_2009	Human_Feb_2009	hs.NCBIv37	hg19	human_ncbi37	ncbi.v37	hs:Feb_2009	Hs:Feb_2009	hs:NCBIv37	Hs:NCBIv37	chado/chado-Hsa-19	human/19	Hs;NCBIv37	Hs:NCBI37	GRCh37	Hs:GRCh37	Homo_sapiens.GRCh37.reference
+H_sapiens_Dec_2013	Human_Dec_2013	hs.NCBIv38	hg38	human_ncbi38	ncbi.v38	hs:Dec_2013	Hs:Dec_2013	hs:NCBIv38	Hs:NCBIv38	chado/chado-Hsa-38	human/38	Hs;NCBIv38	Hs:NCBI38	GRCh38	Hs:GRCh38	Homo_sapiens.GRCh38.reference
 H_sapiens_Jul_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B34.1	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B34.1/
 H_sapiens_Jul_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B34.2	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B34.2/
 H_sapiens_Jul_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B34.3	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B34.3/

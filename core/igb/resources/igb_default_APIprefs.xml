@@ -19,6 +19,7 @@
 							<entry key="com.affymetrix.igb.action.LoadFileAction" value="ctrl O"/>
 							<entry key="com.affymetrix.igb.action.LoadURLAction" value="ctrl shift O"/>
 							<entry key="com.affymetrix.igb.action.PreferencesAction" value="alt P"/>
+							<entry key="com.affymetrix.igb.action.PrintFrameAction" value="ctrl P"/>
 							<entry key="com.affymetrix.igb.action.ExportFileAction" value="ctrl S"/>
                             <entry key="com.affymetrix.igb.action.ScrollDownAction" value="ctrl DOWN"/>
                             <entry key="com.affymetrix.igb.action.ScrollLeftAction" value="ctrl LEFT"/>

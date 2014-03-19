@@ -517,7 +517,7 @@ public final class IGB extends Application
 							+ " But action {1} exists with same keystroke \"{2}\"."
 							+ "\nUsing keystroke with latest action.", 
 							new Object[]{theAction.getId(), existingAction.getClass(), ks});
-					existingAction.putValue(Action.ACCELERATOR_KEY, KeyEvent.VK_UNDEFINED);
+					existingAction.putValue(Action.ACCELERATOR_KEY, null);
 					am.remove(existingObject);
 				}
 			}

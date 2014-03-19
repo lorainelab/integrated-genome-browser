@@ -53,7 +53,7 @@ public class OSGiHandler {
 	 * @return the OSGi cache directory
 	 */
 	private String getCacheDir() {
-		return getCacheFolder() + "v" + CommonUtils.getInstance().getAppVersionFull() + "-bundle-cache";
+		return getCacheFolder() + "v" + CommonUtils.getInstance().getAppVersion() + "-bundle-cache";
 	}
 
 	/**

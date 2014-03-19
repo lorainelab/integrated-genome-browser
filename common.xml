@@ -31,7 +31,6 @@
 
 		<!-- JNLP Webstart -->
 		<property name="jnlp.dir" value="${igb}/etc" />
-		<!-- property name="jnlp.version"   value="${build.version}" / -->
 		<property name="jnlp.version"   value="${appShortVersion}" />
 		<property name="jnlp.codebase"  value="http://bioviz.org/igb/releases/igb-8.0" />
 		<property name="jnlp.icon.name" value="igb.gif" />

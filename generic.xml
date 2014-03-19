@@ -24,8 +24,7 @@
 		<property name="jarfile"       value="${project}.jar" />
 		<property name="report.prefix" value="${project}." />
 
-		<!-- Filters -->
-		<filter token="build.version"  value="${build.version}" />
+		<!-- Filters -->		
 		<filter token="build.customization"  value="${build.customization}" />
 		<filter token="osgi.impl.file" value="${osgi.impl.file}" />
   </target>

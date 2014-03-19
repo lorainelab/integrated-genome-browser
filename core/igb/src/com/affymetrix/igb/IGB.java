@@ -280,7 +280,7 @@ public final class IGB extends Application
 	}
 	
 	private void printDetails(String[] args) {
-		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+		System.out.println("Starting: " + APP_NAME + " " + APP_VERSION);
 		System.out.println("UserAgent: " + USER_AGENT);
 		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
 		Runtime runtime = Runtime.getRuntime();

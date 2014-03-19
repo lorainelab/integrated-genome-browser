@@ -28,7 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
-import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
+import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -62,7 +62,7 @@ public class AboutIGBAction extends GenericAction {
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
 		about_text.setEditable(false);
-		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n"
+		String text = APP_NAME + ", version: " + APP_VERSION + "\n\n"
 				+ "IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n"
 				+ "which develops interactive visualization software for genomics.\n\n"
 				+ "If you use IGB to create images for publication, please cite the IGB\n"

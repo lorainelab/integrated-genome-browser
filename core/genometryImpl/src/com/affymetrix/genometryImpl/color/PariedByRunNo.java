@@ -26,6 +26,11 @@ public class PariedByRunNo extends ColorProvider {
 	}
 	
 	@Override
+	public String getName() {
+		return "paired_by_run_no";
+	}
+	
+	@Override
 	public boolean isFileTypeCategorySupported(FileTypeCategory fileTypeCategory) {
 		return fileTypeCategory == FileTypeCategory.Alignment;
 	}

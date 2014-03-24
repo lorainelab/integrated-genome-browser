@@ -230,9 +230,6 @@ public final class LazyChpSym extends ScoredContainerSym {
 				//     should have been converted in ChpParser to an Integer and populated in probeset_id2data ]
 				if (id != null) {
 					if (data == null && StringUtils.isNumeric(id)) {
-						// using a simple isAllDigits() method here, which will miss some
-						//    want to avoid needing try/catch unless most likely can parse as integer
-
 						Integer nid = Ints.tryParse(id);
 						if (nid != null) {
 							int index = -1;

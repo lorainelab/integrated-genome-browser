@@ -47,7 +47,7 @@ import javax.swing.event.DocumentListener;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.StringUtils;
+import com.affymetrix.genometryImpl.util.IgbStringUtils;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -350,7 +350,7 @@ public class IGBAuthenticator extends Authenticator {
 		JPanel messageContainer = new JPanel();
 		/* instantiante current simply to steal FontMetrics from it */
 		JLabel current = new JLabel();
-		String[] message = StringUtils.wrap(
+		String[] message = IgbStringUtils.wrap(
 				MessageFormat.format(
 				BUNDLE.getString(authOptional ? "authOptional" : "authRequired"),
 				serverName),

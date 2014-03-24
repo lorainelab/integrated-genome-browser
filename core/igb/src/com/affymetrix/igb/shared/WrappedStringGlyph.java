@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.StringUtils;
+import com.affymetrix.genometryImpl.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 import java.awt.FontMetrics;
@@ -58,7 +58,7 @@ public class WrappedStringGlyph extends StringGlyph {
 		int pbBuffer_x = 3;
 		int maxLines = (upperY - lowerY) / text_height;
 		if(maxLines == 0)  { return; }
-		String[] lines = StringUtils.wrap(label, fm, pixelbox.width - pbBuffer_x, maxLines);
+		String[] lines = IgbStringUtils.wrap(label, fm, pixelbox.width - pbBuffer_x, maxLines);
 		pixelbox.x += pbBuffer_x;
 		int height =  (upperY + lowerY - text_height*(lines.length - 2)) / 2;
 		for (String line : lines) {

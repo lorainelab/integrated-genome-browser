@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
 import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
-import com.affymetrix.genometryImpl.util.StringUtils;
+import com.affymetrix.genometryImpl.util.IgbStringUtils;
 import com.affymetrix.genometryImpl.IntId;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -229,7 +229,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 				//     NO, for now consider that a miss -- if id in CHP file _can_ be an integer,
 				//     should have been converted in ChpParser to an Integer and populated in probeset_id2data ]
 				if (id != null) {
-					if (data == null && StringUtils.isAllDigits(id)) {
+					if (data == null && IgbStringUtils.isAllDigits(id)) {
 						// using a simple isAllDigits() method here, which will miss some
 						//    want to avoid needing try/catch unless most likely can parse as integer
 						try {

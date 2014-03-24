@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.util.StringUtils;
+import com.affymetrix.genometryImpl.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -300,7 +300,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		if (maxLines <= 0 || pixelbox.width - (pbBuffer_x * 2) <= 0) {
 			return;
 		}
-		String[] lines = StringUtils.wrap(label, fm, pixelbox.width - (pbBuffer_x * 2), maxLines);
+		String[] lines = IgbStringUtils.wrap(label, fm, pixelbox.width - (pbBuffer_x * 2), maxLines);
 		//pixelbox.x += pbBuffer_x;
 		int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
 

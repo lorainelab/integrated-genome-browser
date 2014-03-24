@@ -3,11 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
@@ -24,31 +20,12 @@ public final class IgbStringUtilsTest {
 				"voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat " +
 				"non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-    public IgbStringUtilsTest() {
-    }
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
     @Before
     public void setUp() {
 		this.canvas = new Canvas();
     }
 
-    @After
-    public void tearDown() {
-		this.canvas = null;
-    }
-
-	@Test
-	public void testWrap(){
-		
-	}
+  
 	
 	/**
 	 * Test of wrap method, of class StringUtils.

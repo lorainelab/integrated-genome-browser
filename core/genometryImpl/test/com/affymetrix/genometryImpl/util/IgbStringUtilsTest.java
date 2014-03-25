@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -60,6 +61,7 @@ public final class IgbStringUtilsTest {
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
+	@Ignore
 	@Test
 	public void testWrap_4args() {
 		String toWrap = loremIpsum;

@@ -22,19 +22,6 @@ public final class IgbStringUtils {
 	private static final String SEPRATORS = "\\s/\\\\._";
 	private static final String SEPRATOR_REGEX = "(?<=["+SEPRATORS+"])";
 
-	public static boolean isAllDigits(CharSequence cseq) {
-		int char_count = cseq.length();
-		boolean all_digits = true;
-		for (int i=0; i<char_count; i++) {
-			char ch = cseq.charAt(i);
-			if (! Character.isDigit(ch)) {
-				all_digits = false;
-				break;
-			}
-		}
-		return all_digits;
-	}
-
 	/**
 	 * Wrap the given string into the given number of pixels.  This is a
 	 * convenience method that calls the 4-argument wrap function with the

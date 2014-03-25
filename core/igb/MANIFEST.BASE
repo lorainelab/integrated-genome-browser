@@ -115,4 +115,6 @@ Import-Package: affymetrix.calvin.data,
  org.hamcrest.core,
  cytoscape.visual.ui.editors.continuous,
  sun.reflect;resolution:=optional,
+ org.apache.commons.csv,
+ com.google.common.collect,
  com.sun.awt;resolution:=optional

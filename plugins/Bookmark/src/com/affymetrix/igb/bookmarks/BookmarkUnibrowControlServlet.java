@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -63,6 +65,7 @@ public final class BookmarkUnibrowControlServlet {
 	private static final BookmarkUnibrowControlServlet instance = new BookmarkUnibrowControlServlet();
 	private static final Logger ourLogger
 			= Logger.getLogger(BookmarkUnibrowControlServlet.class.getPackage().getName());
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
 	private BookmarkUnibrowControlServlet() {
 		super();
@@ -104,7 +107,7 @@ public final class BookmarkUnibrowControlServlet {
 	 */
 	public void goToBookmark(final IGBService igbService, final Map<String, String[]> parameters) throws NumberFormatException {
 		String batchFileStr = getStringParameter(parameters, IGBService.SCRIPTFILETAG);
-		if (batchFileStr != null && batchFileStr.length() > 0) {
+		if (StringUtils.isNotBlank(batchFileStr)) {
 			igbService.doActions(batchFileStr);
 			return;
 		}
@@ -142,6 +145,7 @@ public final class BookmarkUnibrowControlServlet {
 				if (missingString(new String[]{seqid, start_param, end_param})){				
 					boolean pickOne = false;
 					//get AnnotatedSeqGroup for bookmark
+					String preferredVersionName = LOOKUP.getPreferredName(version);
 					AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(version);
 					if (bookMarkGroup != null){
 						//same genome version as that in view?

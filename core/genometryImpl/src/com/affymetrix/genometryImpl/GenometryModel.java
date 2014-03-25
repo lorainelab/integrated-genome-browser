@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import org.apache.commons.lang3.StringUtils;
 
 
 public final class GenometryModel {
@@ -71,7 +72,8 @@ public final class GenometryModel {
 	}
 
 
-	/** Returns a Map of String names to AnnotatedSeqGroup objects. */
+	/** Returns a Map of String names to AnnotatedSeqGroup objects.
+	 * @return  */
 	public Map<String,AnnotatedSeqGroup> getSeqGroups() {
 		return Collections.unmodifiableMap(seq_groups);
 	}
@@ -83,7 +85,9 @@ public final class GenometryModel {
 	}
 
 	public AnnotatedSeqGroup getSeqGroup(String group_syn) {
-		if (group_syn == null) { return null; }
+		if (StringUtils.isBlank(group_syn)) {
+			return null;
+		}
 		AnnotatedSeqGroup group = seq_groups.get(group_syn);
 		if (group == null) {
 			// try and find a synonym
@@ -99,6 +103,7 @@ public final class GenometryModel {
 	/**
 	 *  Returns the seq group with the given id, creating a new one if there
 	 *  isn't an existing one.
+	 * @param group_id
 	 *  @return a non-null AnnotatedSeqGroup
 	 */
 	public synchronized AnnotatedSeqGroup addSeqGroup(String group_id) {
@@ -115,6 +120,8 @@ public final class GenometryModel {
 
 	/** The routine that actually creates a new AnnotatedSeqGroup.
 	 *  Override this to provide a specific subclass of AnnotatedSeqGroup.
+	 * @param group_id
+	 * @return 
 	 */
 	protected AnnotatedSeqGroup createSeqGroup(String group_id) {
 		return new AnnotatedSeqGroup(group_id);

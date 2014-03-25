@@ -28,7 +28,7 @@ public final class SimpleBookmarkServer {
 	public static final String HTTP_RESPONSE = "\nHTTP/1.1 204 No Content\nAccess-Control-Allow-Origin: *\n";
 	private static final int NO_PORT = -1;
 	public static final int DEFAULT_SERVER_PORT = 7085;
-	private static final int PORTS_TO_TRY = 5;
+	private static final int PORTS_TO_TRY = 1;
 	/**
 	 * The OLD name of the IGB servlet, "UnibrowControl".
 	 */

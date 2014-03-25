@@ -1,0 +1,8 @@
+1	chr1	CHR1
+1	one
+chr2		2
+chr3		null	3	chrIII
+chr3_random	3_random
+chrM	M	chrMT	mitochondria	mitochondrion
+R_norvegicus_Jan_2003	Rat_Jan_2003	Rat jan2003	rn2	rn:Jan_2003	Rn:Jan_2003
+H_sapiens_May_2004	Human_May_2004	hs.NCBIv35	hg17	human_ncbi35	ncbi.v35	hs:May_2004	Hs:May_2004	hs:NCBIv35	Hs:NCBIv35	ensembl1834	chado/chado-Hsa-17	human/17	Hs;NCBIv35	Hs:NCBI35

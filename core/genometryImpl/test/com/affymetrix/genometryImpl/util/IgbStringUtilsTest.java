@@ -3,8 +3,9 @@ package com.affymetrix.genometryImpl.util;
 import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import org.junit.Before;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -30,6 +31,7 @@ public final class IgbStringUtilsTest {
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
+	@Test
 	public void testWrap_3args() {
 		String toWrap = loremIpsum;
 		FontMetrics metrics = this.canvas.getFontMetrics(new Font("sansserif", Font.PLAIN, 12));
@@ -58,6 +60,7 @@ public final class IgbStringUtilsTest {
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
+	@Test
 	public void testWrap_4args() {
 		String toWrap = loremIpsum;
 		FontMetrics metrics = this.canvas.getFontMetrics(new Font("sansserif", Font.PLAIN, 12));

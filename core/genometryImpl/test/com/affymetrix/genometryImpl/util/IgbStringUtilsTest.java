@@ -32,6 +32,7 @@ public final class IgbStringUtilsTest {
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
+	@Ignore
 	@Test
 	public void testWrap_3args() {
 		String toWrap = loremIpsum;
@@ -61,7 +62,6 @@ public final class IgbStringUtilsTest {
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
-	@Ignore
 	@Test
 	public void testWrap_4args() {
 		String toWrap = loremIpsum;

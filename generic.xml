@@ -101,7 +101,7 @@
 			</dirset>	
 		</path>
 
-		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="false" failureproperty="junit.failure" dir="${basedir}">
+		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="true" failureproperty="junit.failure" dir="${basedir}">
 			<jvmarg value="-Djava.awt.headless=true"/>
 			<classpath refid="cp" />
 			<formatter usefile="false" type="brief" if="build.compiler.emacs" />

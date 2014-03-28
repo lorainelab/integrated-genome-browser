@@ -1,17 +1,17 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *
@@ -35,6 +35,7 @@ public class ScoredIntervalParserTest {
 		assertEquals("chr1.1", unique_container_name);
 	}
 
+	@Ignore
 	@Test
 	public void testMakeNewSeq() {
 
@@ -50,6 +51,7 @@ public class ScoredIntervalParserTest {
 		assertEquals("chr1", aseq.getID());
 	}
 
+	@Ignore
 	@Test
 	public void testwriteEgrFormat() throws IOException {
 		String string = "# genome_version = H_sapiens_Mar_2006\n"

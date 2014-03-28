@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class BpsParserTest {
 	
 	@Test
@@ -91,6 +93,7 @@ public class BpsParserTest {
 		assertEquals(89560, ((UcscPslSym)result.get(0)).getTargetMax());
 	}
 
+	
 	private void testIndexing2(String overlap, String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
 		SeqSpan overlap_span = Das2ServerUtils.getLocationSpan(seqid, overlap, group);
 		assertEquals(overlap_span.getBioSeq(), seq);

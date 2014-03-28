@@ -36,32 +36,15 @@ import org.xml.sax.SAXException;
  * @author auser
  */
 public class Das2FeatureSaxParserTest {
-	public static final String test_file_name_1 = "test/data/das2/test2.das2xml";
-    public Das2FeatureSaxParserTest() {
-    }
+	public static final String test_file_name_1 = "test2.das2xml";
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 		/**
 	 * Tests the parsing of the <LINK> elements
+	 * @throws org.xml.sax.SAXException
 	 */
 
 	@Test
-		public void testLinks() throws FileNotFoundException, SAXException {
-			assertTrue(new File(test_file_name_1).exists());
+		public void testLinks() throws SAXException {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 			boolean annot_seq =true;
 			Das2FeatureSaxParser ins=new Das2FeatureSaxParser();
@@ -69,7 +52,7 @@ public class Das2FeatureSaxParserTest {
 
             List<SeqSymmetry> results = null;
 			try {
-				InputStream istr = new FileInputStream(test_file_name_1);
+				InputStream istr = Das2FeatureSaxParserTest.class.getClassLoader().getResourceAsStream(test_file_name_1);
 				assertNotNull(istr);
 				InputSource isrc = new InputSource(istr);
 				assertNotNull(isrc);

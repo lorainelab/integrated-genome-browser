@@ -32,15 +32,6 @@ public class TwoBitParserTest {
 	String url = "http://test.bioviz.org/testdata/";
 	boolean runRemote = false;
 
-	@Before
-	public void setup() throws Exception
-	{
-		assertTrue(new File(noblocks_file).exists());
-		assertTrue(new File(nblocks_file).exists());
-		assertTrue(new File(maskblocks_file).exists());
-		assertTrue(new File(mnblocks_file).exists());
-	}
-
 	@Test
 	public void testCaseFiles() throws Exception{
 		if(!LocalUrlCacher.isValidURL(url)) {
@@ -70,7 +61,7 @@ public class TwoBitParserTest {
 
 	public void testOriginal() throws Exception
 	{
-		infile = new File(file);
+		infile = new File(TwoBitParserTest.class.getClassLoader().getResource(file).getFile());
 		BioSeq seq= TwoBitParser.parse(infile.toURI());
 		assertEquals(seq.getResidues(),residues);
 		//System.out.println(residues + "==" +seq.getResidues());
@@ -123,7 +114,7 @@ public class TwoBitParserTest {
 
 	public void testCase(int start, int end) throws Exception
 	{
-		infile = new File(file);
+		infile = new File(TwoBitParserTest.class.getClassLoader().getResource(file).getFile());
 		testACase(infile.toURI(), start, end);
 
 		if(runRemote){

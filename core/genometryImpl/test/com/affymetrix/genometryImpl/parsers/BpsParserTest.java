@@ -30,8 +30,8 @@ public class BpsParserTest {
 		InputStream istr = null;
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 		try {
-			String filename = "test/data/psl/test1.psl";
-			assertTrue(new File(filename).exists());
+			String filename = "test1.psl";
+			filename = BpsParserTest.class.getClassLoader().getResource(filename).getFile();
 			istr = new FileInputStream(filename);
 			assertNotNull(istr);
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
@@ -57,8 +57,8 @@ public class BpsParserTest {
 		}
 
 		try {
-			String filename = "test/data/bps/test1.bps";
-			assertTrue(new File(filename).exists());
+			String filename = "test1.bps";
+			filename = BpsParserTest.class.getClassLoader().getResource(filename).getFile();
 			istr = new FileInputStream(filename);
 			assertNotNull(istr);
 

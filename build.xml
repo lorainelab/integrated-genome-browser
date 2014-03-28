@@ -917,8 +917,9 @@
 	</target>
 
 	<target name="-extBundles">
+		<mkdir dir="${release.dir}/dev-plugins" />
 		<sequential>
-			<property name="igb.ext.bundle.dir" value="${ext.bundle.dir}" />
+			<property name="igb.ext.bundle.dir" value="${release.dir}/dev-plugins" />
 			<!-- Now compile external bundles -->
 			<iterate-non-plugins target="compile" />
 

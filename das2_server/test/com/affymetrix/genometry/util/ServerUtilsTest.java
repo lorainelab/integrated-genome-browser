@@ -25,14 +25,16 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
  * @author jnicol
  */
+@Ignore
 public class ServerUtilsTest {
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static String baseDir = "test/data/server/A_thaliana";
+	private static String baseDir = "data/server/A_thaliana";
 	private static String versionString = "A_thaliana_TAIR8";
 	AnnotatedSeqGroup genome = null;
 

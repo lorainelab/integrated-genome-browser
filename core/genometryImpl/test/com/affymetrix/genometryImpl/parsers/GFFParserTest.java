@@ -14,22 +14,12 @@ import java.util.*;
 
 public class GFFParserTest {
 
-	public GFFParserTest() {
-	}
-
-	@Before
-		public void setUp() throws Exception {
-		}
-
-	@After
-		public void tearDown() throws Exception {
-		}
-
 	@Test
 		public void testParse() throws Exception {
 			//System.out.println("parse");
 
-			String filename = "test/data/gff1/GFF1_example.gff";
+			String filename = "GFF1_example.gff";
+			filename = GFFParserTest.class.getClassLoader().getResource(filename).getFile();
 			assertTrue(new File(filename).exists());
 			InputStream istr = new FileInputStream(filename);
 			assertNotNull(istr);

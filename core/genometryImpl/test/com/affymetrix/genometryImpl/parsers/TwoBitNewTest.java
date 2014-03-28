@@ -18,26 +18,17 @@ import static org.junit.Assert.*;
  */
 public class TwoBitNewTest {
 	String noblocks = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
-	String noblocks_file = "test/data/2bit/noblocks.2bit";
+	String noblocks_file = "noblocks.2bit";
 	String nblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
-	String nblocks_file = "test/data/2bit/nblocks.2bit";
+	String nblocks_file = "nblocks.2bit";
 	String maskblocks = "acTGGgtctaAGTACTAGGAattccgtcatagcTAAa";
-	String maskblocks_file = "test/data/2bit/maskblocks.2bit";
+	String maskblocks_file = "maskblocks.2bit";
 	String mnblocks = "aNcTNGGNgtcNtaNAGNTACNTAGNGANaNttcNcgNNNNNtcNNNatNNagNNcTANNAaNN";
-	String mnblocks_file = "test/data/2bit/mnblocks.2bit";
+	String mnblocks_file = "mnblocks.2bit";
 	String residues, file;
 	File infile = null;
 	String url = "http://test.bioviz.org/testdata/";
 	boolean runRemote = false;
-
-	@Before
-	public void setup() throws Exception
-	{
-		assertTrue(new File(noblocks_file).exists());
-		assertTrue(new File(nblocks_file).exists());
-		assertTrue(new File(maskblocks_file).exists());
-		assertTrue(new File(mnblocks_file).exists());
-	}
 
 	@Test
 	public void testCaseFiles() throws Exception{
@@ -64,7 +55,7 @@ public class TwoBitNewTest {
 
 	public void testOriginal() throws Exception
 	{
-		infile = new File(file);
+		infile = new File(TwoBitNewTest.class.getClassLoader().getResource(file).getFile());
 		BioSeq seq= TwoBitParser.parse(infile.toURI());
 		assertEquals(seq.getResidues(),residues);
 		//System.out.println(residues + "==" +seq.getResidues());
@@ -117,7 +108,7 @@ public class TwoBitNewTest {
 
 	public void testCase(int start, int end) throws Exception
 	{
-		infile = new File(file);
+		infile = new File(TwoBitNewTest.class.getClassLoader().getResource(file).getFile());
 		testACase(infile.toURI(), start, end);
 
 		if(runRemote){

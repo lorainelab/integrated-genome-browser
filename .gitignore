@@ -135,3 +135,4 @@ tools/FindJunctions/build
 tools/LuceneIndexing/.classpath
 www/images/Thumbs.db
 www/release_notes/images/Thumbs.db
+/core/*/junitvmwatcher*

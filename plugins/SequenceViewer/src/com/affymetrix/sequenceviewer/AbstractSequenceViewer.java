@@ -83,7 +83,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	private boolean toggle_Reverse_Complement = false;
-	;
+	
 	List<CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
 	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
@@ -131,6 +131,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private void checkNegativeStrand(SeqSpan cdsSpan){
 		if(!cdsSpan.isForward()){
 			this.toggle_Reverse_Complement=true;
+			if(!revCompCBMenuItem.isSelected()){
+				revCompCBMenuItem.setSelected(true);
+			}
 		}			
 	}
 

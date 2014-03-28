@@ -29,9 +29,8 @@ public class SynonymLookupTest {
 	public void setUp() throws FileNotFoundException, IOException {
 		sl = new SynonymLookup();
 
-		String filename = "test/data/synonymLookup/synonymTestData1";
-		assertTrue(new File(filename).exists());
-		InputStream istr = new FileInputStream(filename);
+		String filename = "synonymTestData1";
+		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		sl.loadSynonyms(istr);
 		istr.close();
@@ -43,9 +42,8 @@ public class SynonymLookupTest {
 
 		boolean cs = true;
 
-		String filename = "test/data/synonymLookup/synonymTestData2";
-		assertTrue(new File(filename).exists());
-		InputStream istr = new FileInputStream(filename);
+		String filename = "synonymTestData2";
+		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		sl.loadSynonyms(istr);
 		istr.close();
@@ -75,9 +73,8 @@ public class SynonymLookupTest {
 	public void testCaseInsensitiveLookup() throws FileNotFoundException, IOException {
 		List<String> a = new ArrayList<String>();
 
-		String filename = "test/data/synonymLookup/synonymTestData3";
-		assertTrue(new File(filename).exists());
-		InputStream istr = new FileInputStream(filename);
+		String filename = "synonymTestData3";
+		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		sl.loadSynonyms(istr);
 		istr.close();

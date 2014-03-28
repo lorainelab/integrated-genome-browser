@@ -1,8 +1,0 @@
-##fileformat=VCFv4.1
-##fileDate=20120101
-##source=test
-##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
-##FORMAT=<ID=AR,Number=A,Type=Integer,Description="Alternate reads. Comma separated field, number of reads with the alternate base">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT
-1	2111110	.	T	C	.	.	.	GT:AR
-1	149802312	.	A	T	.	.	.	GT:AR

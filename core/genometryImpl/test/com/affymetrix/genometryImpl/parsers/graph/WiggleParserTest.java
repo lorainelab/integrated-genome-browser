@@ -6,20 +6,20 @@
  */
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
@@ -27,15 +27,11 @@ import java.util.*;
  */
 public class WiggleParserTest {
 
-	public WiggleParserTest() {
-	}
-
 	@Test
 	public void testParse() throws Exception {
-		String filename = "test/data/wiggle/wiggleExample.wig";
-		assertTrue(new File(filename).exists());
+		String filename = "wiggleExample.wig";
 
-		InputStream istr = new FileInputStream(filename);
+		InputStream istr = WiggleParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
@@ -88,11 +84,10 @@ public class WiggleParserTest {
 	//Test to see if one file is created.
 	@Test
 	public void testWiggle1() throws Exception {
-		String filename = "test/data/wiggle/wiggleExample.wig";
-		assertTrue(new File(filename).exists());
-
+		String filename = "wiggleExample.wig";
+		URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+		Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 		BioSeq aseq = seq_group.addSeq("chr19", 59310300);
 
 		List<GraphSym> results = wiggle.getGenome();
@@ -126,7 +121,7 @@ public class WiggleParserTest {
 //		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		String filelocation = new File(filename).toURI().toString();
+		String filelocation = url.toURI().toString();
 		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
 		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
 		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
@@ -177,15 +172,14 @@ public class WiggleParserTest {
 	//Test to see if multiple files are created.
 	@Test
 	public void testWiggle2() throws Exception{
-		String filename = "test/data/wiggle/wiggleExample2.wig";
-		assertTrue(new File(filename).exists());
-
+		String filename = "wiggleExample2.wig";
+		URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+		Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 
 		List<GraphSym> results = wiggle.getGenome();
 
-		testResults2(filename, results, true);
+		testResults2(url.getFile(), results, true);
 	}
 
 	public boolean testResults2(String filename, List<GraphSym> results, boolean checkId){
@@ -234,11 +228,10 @@ public class WiggleParserTest {
 	}
 	
 	public void testWriteBarFormat() throws Exception {
-		String filename = "test/data/wiggle/wiggleExample.wig";
-		assertTrue(new File(filename).exists());
-
+		String filename = "wiggleExample.wig";
+		URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+		Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 
 		List<GraphSym> results = wiggle.getGenome();
 
@@ -252,7 +245,7 @@ public class WiggleParserTest {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 		InputStream istr = new ByteArrayInputStream(outstream.toByteArray());
-		results = BarParser.parse(filename, istr,gmodel,seq_group,null,0,Integer.MAX_VALUE,"chr19",true,false);
+		results = BarParser.parse(url.getFile(), istr,gmodel,seq_group,null,0,Integer.MAX_VALUE,"chr19",true,false);
 
 		GraphSym gr1 = results.get(0);
 		assertEquals(gr0.getGraphSeq().getID(),gr1.getGraphSeq().getID());
@@ -262,15 +255,14 @@ public class WiggleParserTest {
 
 //	@Test
 	public void testWriteAnnotation() throws Exception {
-		String filename = "test/data/wiggle/wiggleExample2.wig";
-		assertTrue(new File(filename).exists());
-
+		String filename = "wiggleExample2.wig";
+		URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+		Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 
 		List<GraphSym> results = wiggle.getGenome();
 
-		testResults2(filename, results, true);
+		testResults2(url.getFile(), results, true);
 
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -280,9 +272,8 @@ public class WiggleParserTest {
 		Wiggle outwiggle = new Wiggle(outfile.toURI(), outfile.getName(), seq_group);
 		List<GraphSym> outresults = outwiggle.getGenome();
 
-		testResults2(filename, outresults, false);
-
-		File testFile = new File("test/data/wiggle/testFile.wig");
+		testResults2(url.getFile(), outresults, false);
+		File testFile = new File(WiggleParserTest.class.getClassLoader().getResource("testFile.wig").getFile());
 
 		FileInputStream fin = new FileInputStream(testFile);
 		byte fileContent[] = new byte[(int)testFile.length()];

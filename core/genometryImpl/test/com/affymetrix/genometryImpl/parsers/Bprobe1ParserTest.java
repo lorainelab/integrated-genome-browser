@@ -29,32 +29,14 @@ import static org.junit.Assert.*;
 //Bprobe1Parser parses and writes files in bp2 format
 public class Bprobe1ParserTest {
 
-	public Bprobe1ParserTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
-
 	@Test
 	//Tests the parse method
 	public void testParseFromFile() throws Exception {
 
 
 
-		String filename = "test/data/bp1/test.bp2";
+		String filename = "test.bp2";
+		filename = Bprobe1ParserTest.class.getClassLoader().getResource(filename).getFile();
 		assertTrue(new File(filename).exists());
 
 		InputStream istr = new FileInputStream(filename);

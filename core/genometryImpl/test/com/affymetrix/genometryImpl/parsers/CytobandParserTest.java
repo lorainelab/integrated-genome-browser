@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,10 +20,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,34 +29,13 @@ import static org.junit.Assert.*;
  */
 public class CytobandParserTest {
 
-	public CytobandParserTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
-
 	/**
 	 * Test of parse method, of class CytobandParser.
 	 */
 	@Test
 	public void testParse() throws Exception {
-		String filename = "test/data/cyt/test1.cyt";
-		assertTrue(new File(filename).exists());
-
-		InputStream istr = new FileInputStream(filename);
+		String filename = "test1.cyt";
+		InputStream istr = CytobandParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
@@ -125,7 +99,8 @@ public class CytobandParserTest {
 	public void testWriteCytobandFormat() throws Exception {
 		Writer out = new StringWriter();
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		String filename = "test/data/cyt/test1.cyt";
+		String filename = "test1.cyt";
+		filename = CytobandParserTest.class.getClassLoader().getResource(filename).getFile();
 		InputStream istr = new FileInputStream(filename);
 		assertNotNull(istr);
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");

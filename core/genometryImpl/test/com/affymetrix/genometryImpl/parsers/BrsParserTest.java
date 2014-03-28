@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author jnicol
  */
 public class BrsParserTest {
-	String filename = "test/data/brs/refseq.brs";
+	String filename = "refseq.brs";
 	String versionString = "genomeVersion";
 	AnnotatedSeqGroup genome = null;
 	private List<SeqSymmetry> results = null;
@@ -25,6 +25,7 @@ public class BrsParserTest {
 
 	@Before
 	public void setUp() {
+		filename = BrsParserTest.class.getClassLoader().getResource(filename).getFile();
 		FileInputStream istr = null;
 		try {
 			istr = new FileInputStream(filename);

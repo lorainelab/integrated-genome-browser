@@ -1,25 +1,24 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 
 import java.io.*;
+import java.net.URL;
 import java.util.List;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class GrParserTest {
 
 	@Test
 	public void testParseFromFile() throws IOException {
 
-		String filename = "test/data/gr/test1.gr";
-		assertTrue(new File(filename).exists());
+		String filename = "test1.gr";
 
-		InputStream istr = new FileInputStream(filename);
+		InputStream istr = GrParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
@@ -67,12 +66,10 @@ public class GrParserTest {
 
 	@Test
 	public void testGr() throws Exception {
-		String filename = "test/data/gr/test1.gr";
-		assertTrue(new File(filename).exists());
-
+		String filename = "test1.gr";
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-
-		Gr gr = new Gr(new File(filename).toURI(), filename, seq_group);
+		URL url = GrParserTest.class.getClassLoader().getResource(filename);
+		Gr gr = new Gr(url.toURI(), filename, seq_group);
 		
 		String stream_name = "test_file";
 		BioSeq aseq = seq_group.addSeq(stream_name, 948034);

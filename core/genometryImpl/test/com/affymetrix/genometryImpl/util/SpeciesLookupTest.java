@@ -5,14 +5,8 @@
 
 package com.affymetrix.genometryImpl.util;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -26,25 +20,6 @@ public class SpeciesLookupTest {
 	private static final String m_musculus = "Mus musculus";
 	private static final String p_pygmaeus_abelii = "Pongo pygmaeus abelii";
 
-    public SpeciesLookupTest() {
-    }
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
 	/**
 	 * Test of getSpeciesName method, of class SpeciesLookup.
 	 *
@@ -52,10 +27,9 @@ public class SpeciesLookupTest {
 	 */
 	@Test
 	public void testGetSpeciesName() throws IOException {
-		String filename = "test/data/speciesLookup/species.txt";
-		assertTrue(new File(filename).exists());
+		String filename = "species.txt";
 
-		InputStream istr = new FileInputStream(filename); 
+		InputStream istr = SpeciesLookupTest.class.getClassLoader().getResourceAsStream(filename); 
 		assertNotNull(istr);
 
 		SpeciesLookup.load(istr);

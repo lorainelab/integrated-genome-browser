@@ -9,8 +9,7 @@ import static org.junit.Assert.*;
  * @author jnicol1
  */
 public class NibbleResiduesParserTest {
-	public NibbleResiduesParserTest() {
-	}
+
 	@Test
 	public void testNibbleToBinaryAndBack() {
 		String testString = createTestString();

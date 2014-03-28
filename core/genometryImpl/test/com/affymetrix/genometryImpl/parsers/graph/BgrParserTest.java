@@ -52,21 +52,13 @@ public class BgrParserTest {
 	dos.close();
 	}
 	 **/
-	@Before
-	public void setUp() {
-	}
 
-	@After
-	public void tearDown() {
-	}
 
 	@Test
-	public void testParseFromFile() throws Exception {
+	public void ParseFromFile() throws Exception {
 
-		String filename = "test/data/bgr/test1.bgr";
-		assertTrue(new File(filename).exists());
-
-		InputStream istr = new FileInputStream(filename);
+		String filename = "test1.bgr";
+		InputStream istr = BgrParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
 		String stream_name = "test_file";
@@ -91,7 +83,7 @@ public class BgrParserTest {
 	}
 
 	@Test
-	public void testwriteBgrFormat() throws Exception {
+	public void WriteBgrFormat() throws Exception {
 		String string =
 				"16	948025	0.128646\n" +
 				"16	948026	0.363933\n";

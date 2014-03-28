@@ -21,57 +21,58 @@ import static org.junit.Assert.*;
  * @author hiralv
  */
 public class SAMParserTest {
+
 	@Test
-		public void testParseFromFile() throws Exception {
+	public void testParseFromFile() throws Exception {
 
-			String filename = "test/data/bam/combined_mapping_q.sorted.sam";
-			assertTrue(new File(filename).exists());
+		String filename = "combined_mapping_q.sorted.sam";
+		filename = SAMParserTest.class.getClassLoader().getResource(filename).getFile();
+		assertTrue(new File(filename).exists());
 
-			InputStream istr = new FileInputStream(filename);
-			DataInputStream dis = new DataInputStream(istr);
-			assertNotNull(dis);
+		InputStream istr = new FileInputStream(filename);
+		DataInputStream dis = new DataInputStream(istr);
+		assertNotNull(dis);
 
-			AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
-			BioSeq seq = group.addSeq("chr1", 197069962);
-			
-			SymLoader symL = new SAM(new File(filename).toURI(), "featureName", group);
-			assertNotNull(symL);
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
+		BioSeq seq = group.addSeq("chr1", 197069962);
 
-			List<? extends SeqSymmetry> result = symL.getChromosome(seq);
-			assertNotNull(result);
-			assertEquals(190, result.size());	// 190 alignments in sample file
+		SymLoader symL = new SAM(new File(filename).toURI(), "featureName", group);
+		assertNotNull(symL);
 
-			SeqSymmetry sym = result.get(0);	// first (positive) strand
-			assertEquals("0", sym.getID());
-			assertEquals(51119999, sym.getSpan(seq).getMin());
-			assertEquals(51120035, sym.getSpan(seq).getMax());
-			assertTrue(sym.getSpan(seq).isForward());
-			Object residues = ((SymWithProps)sym).getProperty("residues");
-			assertNotNull(residues);
-			assertEquals("CACTGCTTAAAAATCCTCTTTAAAGAGCAAGCAAAT",residues.toString());
+		List<? extends SeqSymmetry> result = symL.getChromosome(seq);
+		assertNotNull(result);
+		assertEquals(190, result.size());	// 190 alignments in sample file
 
-			sym = result.get(58);	// first negative strand
-			assertEquals("0", sym.getID());
-			assertEquals(51120691, sym.getSpan(seq).getMin());
-			assertEquals(51120727, sym.getSpan(seq).getMax());
-			assertFalse(sym.getSpan(seq).isForward());
-			residues = ((SymWithProps)sym).getProperty("residues");
-			assertNotNull(residues);
-			assertEquals("ACATTCATCTAATTCATGAATGGCAAAGACACGTCC",residues.toString());
+		SeqSymmetry sym = result.get(0);	// first (positive) strand
+		assertEquals("0", sym.getID());
+		assertEquals(51119999, sym.getSpan(seq).getMin());
+		assertEquals(51120035, sym.getSpan(seq).getMax());
+		assertTrue(sym.getSpan(seq).isForward());
+		Object residues = ((SymWithProps) sym).getProperty("residues");
+		assertNotNull(residues);
+		assertEquals("CACTGCTTAAAAATCCTCTTTAAAGAGCAAGCAAAT", residues.toString());
 
-			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120038, seq));
-			assertEquals(3, result.size());
+		sym = result.get(58);	// first negative strand
+		assertEquals("0", sym.getID());
+		assertEquals(51120691, sym.getSpan(seq).getMin());
+		assertEquals(51120727, sym.getSpan(seq).getMax());
+		assertFalse(sym.getSpan(seq).isForward());
+		residues = ((SymWithProps) sym).getProperty("residues");
+		assertNotNull(residues);
+		assertEquals("ACATTCATCTAATTCATGAATGGCAAAGACACGTCC", residues.toString());
 
-			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120039, seq));
-			assertEquals(3, result.size());
-			sym = result.get(0);	// first (positive) strand
-			assertEquals("0", sym.getID());
-			assertEquals(51119999, sym.getSpan(seq).getMin());
-			assertEquals(51120035, sym.getSpan(seq).getMax());
+		result = symL.getRegion(new SimpleSeqSpan(51120000, 51120038, seq));
+		assertEquals(3, result.size());
 
+		result = symL.getRegion(new SimpleSeqSpan(51120000, 51120039, seq));
+		assertEquals(3, result.size());
+		sym = result.get(0);	// first (positive) strand
+		assertEquals("0", sym.getID());
+		assertEquals(51119999, sym.getSpan(seq).getMin());
+		assertEquals(51120035, sym.getSpan(seq).getMax());
 
-			for(SeqSymmetry symOut : result) {
-				System.out.println(symOut.getID() + " " + symOut.getSpan(seq).getStart() + " " + symOut.getSpan(seq).getEnd());
-			}
+		for (SeqSymmetry symOut : result) {
+			System.out.println(symOut.getID() + " " + symOut.getSpan(seq).getStart() + " " + symOut.getSpan(seq).getEnd());
 		}
+	}
 }

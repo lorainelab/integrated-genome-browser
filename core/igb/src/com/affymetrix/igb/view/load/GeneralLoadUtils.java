@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.comparator.SortIgnoreCase;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
@@ -41,7 +40,10 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.SetMultimap;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,7 +60,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -99,8 +100,9 @@ public final class GeneralLoadUtils {
 	private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
 	private final static SeqMapView gviewer = Application.getSingleton().getMapView();
 	// versions associated with a given genome.
-	static final Map<String, List<GenericVersion>> species2genericVersionList =
-			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
+	static final SetMultimap<String, GenericVersion> species2genericVersionList
+			= Multimaps.synchronizedSetMultimap(LinkedHashMultimap.<String, GenericVersion>create());// the list of versions associated with the species
+
 	static final Map<String, String> versionName2species =
 			new HashMap<String, String>();	// the species associated with the given version.
 
@@ -108,7 +110,7 @@ public final class GeneralLoadUtils {
 		return versionName2species;
 	}
 
-	public static Map<String, List<GenericVersion>> getSpecies2Generic() {
+	public static SetMultimap<String,GenericVersion> getSpecies2Generic() {
 		return species2genericVersionList;
 	}
 	/**
@@ -184,27 +186,21 @@ public final class GeneralLoadUtils {
 		return gServer;
 	}
 
-	private static void removeServer(GenericServer server) {
-		Iterator<Map.Entry<String, List<GenericVersion>>> entryIterator = species2genericVersionList.entrySet().iterator();
-		Map.Entry<String, List<GenericVersion>> entry;
-		Iterator<GenericVersion> versionIterator;
-		GenericVersion version;
-
-		while (entryIterator.hasNext()) {
-			entry = entryIterator.next();
-			versionIterator = entry.getValue().iterator();
-
+	private static void removeServer(GenericServer server) {	
+		Set keySet = species2genericVersionList.keySet();
+		Iterator keyIterator = keySet.iterator();
+	
+		while (keyIterator.hasNext()) {
+			String key = (String) keyIterator.next();
+			Set<GenericVersion> versions = species2genericVersionList.get(key);
+			Iterator<GenericVersion> versionIterator = versions.iterator();
 			while (versionIterator.hasNext()) {
-				version = versionIterator.next();
-
+				GenericVersion version = versionIterator.next();
 				if (version.gServer == server) {
 					GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
 					version.clear();
 					versionIterator.remove();
 				}
-			}
-			if (entry.getValue().isEmpty()) {
-				entryIterator.remove();
 			}
 		}
 		server.setEnabled(false);
@@ -212,6 +208,7 @@ public final class GeneralLoadUtils {
 			IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
 		}
 	}
+	
 	private static final VersionDiscoverer versionDiscoverer = new VersionDiscoverer() {
 
 		@Override
@@ -355,7 +352,7 @@ public final class GeneralLoadUtils {
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(preferredVersionName); // returns existing group if found, otherwise creates a new group
 
 		GenericVersion gVersion = new GenericVersion(group, versionID, preferredVersionName, gServer, versionSourceObj);
-		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
+		Set<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 		versionName2species.put(preferredVersionName, speciesName);
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
@@ -370,15 +367,8 @@ public final class GeneralLoadUtils {
 	 * @param speciesName
 	 * @return list of versions for the given species.
 	 */
-	private static List<GenericVersion> getSpeciesVersionList(String speciesName) {
-		List<GenericVersion> gVersionList;
-		if (!species2genericVersionList.containsKey(speciesName)) {
-			gVersionList = new ArrayList<GenericVersion>();
-			species2genericVersionList.put(speciesName, gVersionList);
-		} else {
-			gVersionList = species2genericVersionList.get(speciesName);
-		}
-		return gVersionList;
+	private static Set<GenericVersion> getSpeciesVersionList(String speciesName) {
+		return species2genericVersionList.get(speciesName);
 	}
 
 	/**
@@ -1205,12 +1195,10 @@ public final class GeneralLoadUtils {
 	 * @param autoload
 	 */
 	public static void setFeatureAutoLoad(boolean autoload) {
-		for (List<GenericVersion> genericVersions : species2genericVersionList.values()) {
-			for (GenericVersion genericVersion : genericVersions) {
-				for (GenericFeature genericFeature : genericVersion.getFeatures()) {
-					if (autoload) {
-						genericFeature.setAutoload(autoload);
-					}
+		for (GenericVersion genericVersion : species2genericVersionList.values()) {
+			for (GenericFeature genericFeature : genericVersion.getFeatures()) {
+				if (autoload) {
+					genericFeature.setAutoload(autoload);
 				}
 			}
 		}
@@ -1228,7 +1216,7 @@ public final class GeneralLoadUtils {
 	}
 
 	public static List<String> getGenericVersions(final String speciesName) {
-		final List<GenericVersion> versionList = species2genericVersionList.get(speciesName);
+		final Set<GenericVersion> versionList = species2genericVersionList.get(speciesName);
 		final List<String> versionNames = new ArrayList<String>();
 		if (versionList != null) {
 			for (GenericVersion gVersion : versionList) {

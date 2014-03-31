@@ -67,7 +67,7 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
           setToolTipText("Separator");
         } else if (user_object instanceof Bookmark) {
           Bookmark b = (Bookmark) user_object;
-          if (b.isUnibrowControl()) {
+          if (b.isValidBookmarkFormat()) {
             setIcon(BookmarkIcon.UNIBROW_CONTROL_ICON);
           } else {
             setIcon(BookmarkIcon.EXTERNAL_ICON);

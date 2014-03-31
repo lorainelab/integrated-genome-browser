@@ -1244,8 +1244,7 @@ public final class GeneralLoadUtils {
 		if (gFeature == null) {
 			return;
 		}
-
-		if (gFeature != null) {
+		else{
 			addFeature(gFeature);
 		}
 	}

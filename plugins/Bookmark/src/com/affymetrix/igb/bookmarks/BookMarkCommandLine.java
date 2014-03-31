@@ -61,9 +61,8 @@ public class BookMarkCommandLine {
 
 		try {
 			final Bookmark bm = new Bookmark(null, "", url);
-			if (bm.isUnibrowControl()) {
+			if (bm.isValidBookmarkFormat()) {
 				SwingUtilities.invokeLater(new Runnable() {
-
 					@Override
 					public void run() {
 						ourLogger.log(Level.INFO, "Loading bookmark: {0}", url);

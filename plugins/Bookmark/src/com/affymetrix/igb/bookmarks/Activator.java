@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVER_PORT;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
@@ -126,7 +127,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		//single instance?
 		String[] args = CommonUtils.getInstance().getArgs(bundleContext);
 		if (CommonUtils.getInstance().getArg("-single_instance", args) != null && isIGBRunning()) {
-			System.out.println("\nPort " + SimpleBookmarkServer.DEFAULT_SERVER_PORT + " is in use! An IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
+			System.out.println("\nPort " + DEFAULT_SERVER_PORT + " is in use! An IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
 			System.exit(0);
 		}
 		super.start(bundleContext);
@@ -141,7 +142,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 	 */
 	public boolean isIGBRunning() {
 		Socket sock = null;
-		int port = SimpleBookmarkServer.DEFAULT_SERVER_PORT;
+		int port = DEFAULT_SERVER_PORT;
 		try {
 			sock = new Socket("localhost", port);
 			if (sock.isBound()) {

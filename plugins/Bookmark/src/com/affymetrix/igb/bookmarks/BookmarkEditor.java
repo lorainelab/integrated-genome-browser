@@ -15,12 +15,12 @@ import javax.swing.*;
 public class BookmarkEditor {
 
 	private static BookmarkEditor singleton;
-	private JTextField nameField;
-	private JTextArea commentField;
-	private JRadioButton positionOnlyB;
-	private JRadioButton positionDataB;
-	private JCheckBox useDefaultName;
-	private JOptionPane op;
+	private final JTextField nameField;
+	private final JTextArea commentField;
+	private final JRadioButton positionOnlyB;
+	private final JRadioButton positionDataB;
+	private final JCheckBox useDefaultName;
+	private final JOptionPane op;
 	private SeqSpan span;
 	
 	private static final boolean defaultUseDefaultName = true;

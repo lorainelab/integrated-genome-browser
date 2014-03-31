@@ -12,12 +12,17 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVLET_URL;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.VALID_CONTEXT_ROOT_VALUES;
+import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
+import org.apache.commons.lang3.StringUtils;
 
-import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
 
 /**
  *  Holds a bookmark, which is simply a name associated with a URL.
@@ -25,37 +30,24 @@ import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
 public final class Bookmark implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String SEQID = "seqid";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String VERSION = "version";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String START = "start";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String END = "end";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String CREATE = "create";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String MODIFIED = "modified";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String SELECTSTART = "selectstart";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String SELECTEND = "selectend";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
-	public static final String LOADRESIDUES = "loadresidues";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
+	
+	public static final String SEQID = "seqid";	
+	public static final String VERSION = "version";	
+	public static final String START = "start";	
+	public static final String END = "end";	
+	public static final String CREATE = "create";	
+	public static final String MODIFIED = "modified";	
+	public static final String SELECTSTART = "selectstart";	
+	public static final String SELECTEND = "selectend";	
+	public static final String LOADRESIDUES = "loadresidues";	
 	public static final String COMMENT = "comment";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
-	this one can occur 0,1, or more times in the URL of a UnibrowControlServlet bookmark. */
 	public static final String DATA_URL = "data_url";
-	/** for URLEncode, URLDecode */
 	public static final String ENC = "UTF-8";
 	public static final String DAS2_QUERY_URL = "das2_query";
 	public static final String DAS2_SERVER_URL = "das2_server";
 	public static final String QUERY_URL = "query_url";
 	public static final String SERVER_URL = "server_url";
-	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
-	this optional paramater can be used to give the filetype extensions, such as ".gff" of
+	/** Optional paramater can be used to give the filetype extensions, such as ".gff" of
 	each of the urls given with {@link #DATA_URL}.
 	If these parameters are not used, then the filetype will be guessed based on the
 	content type returned from the URLConnection, or from the file name in the URL.
@@ -111,7 +103,7 @@ public final class Bookmark implements Serializable {
 			return name;
 		}
 	};
-	private static final boolean DEBUG = false;
+
 	private String name;
 	private String comment;
 	private URL url;
@@ -138,9 +130,6 @@ public final class Bookmark implements Serializable {
 		String query = url.getQuery();
 		if (query != null) {
 			parseParametersFromQuery(map, query, true);
-		}
-		if (DEBUG) {
-			System.out.println("Finished parsing");
 		}
 		return map;
 	}
@@ -180,12 +169,7 @@ public final class Bookmark implements Serializable {
 					e.printStackTrace();
 				}
 			}
-
 			addToMap(map, key, value);
-
-			if (DEBUG) {
-				System.out.println("Bookmark.parseParameters: Key  ->  " + key + ",  value -> " + value);
-			}
 		}
 	}
 
@@ -225,7 +209,7 @@ public final class Bookmark implements Serializable {
 	 *  key=value pair, with the same key name.)
 	 */
 	public static String constructURL(Map<String, Object> props) {
-		return constructURL(SimpleBookmarkServer.DEFAULT_SERVLET_URL, props);
+		return constructURL(DEFAULT_SERVLET_URL, props);
 	}
 
 	/** Constructs a GENERIC Bookmark URL based on the properties
@@ -256,9 +240,6 @@ public final class Bookmark implements Serializable {
 			}
 			appendTag(sb, tag, val);
 			first_tag = false;
-		}
-		if (DEBUG) {
-			System.out.println("Constructed URL: " + sb);
 		}
 		return sb.toString();
 	}
@@ -307,12 +288,18 @@ public final class Bookmark implements Serializable {
 	 *  {@link SimpleBookmarkServer#SERVLET_NAME} or
 	 *  {@link SimpleBookmarkServer#SERVLET_NAME_OLD} and
 	 *  the Host is "localhost". 
+	 * @return 
 	 */
-	public boolean isUnibrowControl() {
+	public boolean isValidBookmarkFormat() {
 		String host = getURL().getHost();
 		String path = getURL().getPath();
-		return (("localhost".equals(host) || "127.0.0.1".equals(host))
-				&& (path.equals("/" + SimpleBookmarkServer.SERVLET_NAME) || path.equals("/" + SimpleBookmarkServer.SERVLET_NAME_OLD)));
+		String contextRoot = path.substring(1);
+		if (StringUtils.equalsIgnoreCase(host, "localhost") || StringUtils.equals(host, "127.0.0.1")) {
+			if (VALID_CONTEXT_ROOT_VALUES.contains(contextRoot)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

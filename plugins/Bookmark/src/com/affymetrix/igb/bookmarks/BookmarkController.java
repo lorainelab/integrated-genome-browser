@@ -464,8 +464,8 @@ public abstract class BookmarkController {
 		String default_name = MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, version, aseq.getID(), span.getMin(), span.getMax());
 		mark_sym.setProperty(Bookmark.VERSION, version);
 		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
-		mark_sym.setProperty(Bookmark.START, Integer.valueOf(span.getMin()));
-		mark_sym.setProperty(Bookmark.END, Integer.valueOf(span.getMax()));
+		mark_sym.setProperty(Bookmark.START, span.getMin());
+		mark_sym.setProperty(Bookmark.END, span.getMax());
 		mark_sym.setProperty(Bookmark.LOADRESIDUES, Boolean.toString(aseq.isComplete()));
 //		props.put(Bookmark.USER, new String[]{System.getProperty("user.name")});
 		mark_sym.setProperty(Bookmark.CREATE, DATE_FORMAT.format(date));

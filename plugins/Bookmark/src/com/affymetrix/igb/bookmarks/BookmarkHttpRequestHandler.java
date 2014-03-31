@@ -9,8 +9,11 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import static com.affymetrix.igb.bookmarks.SimpleBookmarkServer.SERVLET_NAME;
-import static com.affymetrix.igb.bookmarks.SimpleBookmarkServer.SERVLET_NAME_OLD;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SCRIPT_EXTENSION;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
 import com.affymetrix.igb.osgi.service.IGBService;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
@@ -24,10 +27,7 @@ import org.apache.commons.io.IOUtils;
 
 class BookmarkHttpRequestHandler extends NanoHTTPD {
 
-    private final IGBService igbService;
-    private static final String GALAXY_REQUEST = "igbGalaxyDataView";
-    private static final String DEFAULT_SCRIPT_EXTENSION = "igb";
-    private static final String FAVICON_REQUEST = "favicon.ico";
+    private final IGBService igbService;    
 	private static final String IGB_STATUS_CHECK = "igbStatusCheck";
     private static final String FOCUS_IGB_COMMAND = "bringIGBToFront";
     private static final Logger ourLogger

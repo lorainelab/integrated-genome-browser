@@ -30,24 +30,23 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-
+import java.awt.Color;
 import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.awt.Color;
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 
 /**
@@ -67,7 +66,7 @@ public abstract class BookmarkController {
 	 *  bookmark, it will be opened in an external browser.
 	 */
 	public static void viewBookmark(IGBService igbService, Bookmark bm) {
-		if (bm.isUnibrowControl()) {
+		if (bm.isValidBookmarkFormat()) {
 			try {
 				Map<String, String[]> props = Bookmark.parseParameters(bm.getURL());
 				BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, props);
@@ -83,7 +82,8 @@ public abstract class BookmarkController {
 	public static void applyProperties(IGBService igbService, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
 		double default_ypos = GraphState.DEFAULT_YPOS;
 		double default_yheight = GraphState.DEFAULT_YHEIGHT;
-		Color default_col = GraphState.DEFAULT_COL;
+		Color defaultForegroundColor = Color.decode("0x0247FE");
+		Color defaultBackgroundColor = Color.WHITE;
 		boolean default_float = GraphState.DEFAULT_FLOAT;
 		boolean default_show_label = GraphState.DEFAULT_SHOW_LABEL;
 		boolean default_show_axis = GraphState.DEFAULT_SHOW_AXIS;
@@ -134,14 +134,14 @@ public abstract class BookmarkController {
 
 				double ypos = (sym_ypos == null) ? default_ypos : Double.parseDouble(sym_ypos);
 				double yheight = (sym_height == null) ? default_yheight : Double.parseDouble(sym_height);
-				Color col = default_col;
-				Color bg_col = Color.BLACK;
+				Color foregroundColor = defaultForegroundColor;
+				Color backgroundColor = defaultBackgroundColor;
 				if (sym_col != null) {
 					try {
 						// Color.decode() can handle colors in plain integer format
 						// as well as hex format: "-20561" == "#FFAFAF" == "0xFFAFAF" == "16756655"
 						// We now write in the hex format, but can still read the older int format.
-						col = Color.decode(sym_col);
+						foregroundColor = Color.decode(sym_col);
 					} catch (NumberFormatException nfe) {
 						ErrorHandler.errorPanel("Couldn't parse graph color from '" + sym_col + "'\n"
 								+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
@@ -149,7 +149,7 @@ public abstract class BookmarkController {
 				}
 				if (sym_bg_col != null) {
 					try {
-						bg_col = Color.decode(sym_bg_col);
+						backgroundColor = Color.decode(sym_bg_col);
 					} catch (NumberFormatException nfe) {
 						ErrorHandler.errorPanel("Couldn't parse graph background color from '" + sym_bg_col + "'\n"
 								+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
@@ -224,7 +224,7 @@ public abstract class BookmarkController {
 					style.setTrackName(sym_name);
 				}
 
-				applyStyleProperties(style, col, bg_col, ypos, yheight);
+				applyStyleProperties(style, foregroundColor, backgroundColor, ypos, yheight);
 
 			}
 
@@ -358,7 +358,7 @@ public abstract class BookmarkController {
 			if (combo_style != null) {
 				Integer combo_style_num = combo_styles.get(combo_style);
 				if (combo_style_num == null) {
-					combo_style_num = Integer.valueOf(combo_styles.size() + 1);
+					combo_style_num = combo_styles.size() + 1;
 					combo_styles.put(combo_style, combo_style_num);
 				}
 				mark_sym.setProperty(GRAPH.COMBO.toString() + i, combo_style_num.toString());
@@ -464,8 +464,8 @@ public abstract class BookmarkController {
 		String default_name = MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, version, aseq.getID(), span.getMin(), span.getMax());
 		mark_sym.setProperty(Bookmark.VERSION, version);
 		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
-		mark_sym.setProperty(Bookmark.START, Integer.valueOf(span.getMin()));
-		mark_sym.setProperty(Bookmark.END, Integer.valueOf(span.getMax()));
+		mark_sym.setProperty(Bookmark.START, span.getMin());
+		mark_sym.setProperty(Bookmark.END, span.getMax());
 		mark_sym.setProperty(Bookmark.LOADRESIDUES, Boolean.toString(aseq.isComplete()));
 //		props.put(Bookmark.USER, new String[]{System.getProperty("user.name")});
 		mark_sym.setProperty(Bookmark.CREATE, DATE_FORMAT.format(date));

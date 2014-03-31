@@ -19,12 +19,12 @@ import java.util.Map;
 
 /** Basic implementation of ITrackStyle. */
 public class DefaultTrackStyle implements ITrackStyle {
-	Color fg = Color.WHITE;
-	Color bg = Color.BLACK;
+	Color fg = Color.decode("0x0247FE");;
+	Color bg = Color.WHITE;
 	boolean show = true;
 	boolean collapsed = false;
 	boolean expandable = true;
-	int max_depth = 0;
+	int max_depth = 10;
 	protected String unique_name = "";
 	String human_name = "";
 	double height = 60;

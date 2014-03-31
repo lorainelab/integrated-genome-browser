@@ -32,6 +32,8 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -101,18 +104,19 @@ public final class BookmarkUnibrowControlServlet {
 	}
 
 	/** Loads a bookmark.
+	 * @param igbService
 	 *  @param parameters Must be a Map where the only values are String and String[]
 	 *  objects.  For example, this could be the Map returned by
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
-	public void goToBookmark(final IGBService igbService, final Map<String, String[]> parameters) throws NumberFormatException {
+	public void goToBookmark(final IGBService igbService, final Map<String, String[]> parameters) {
 		String batchFileStr = getStringParameter(parameters, IGBService.SCRIPTFILETAG);
 		if (StringUtils.isNotBlank(batchFileStr)) {
 			igbService.doActions(batchFileStr);
 			return;
 		}
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("goToBookmark") {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading Galaxy Data") {
 
 			@Override
 			protected Object runInBackground() {				
@@ -146,22 +150,21 @@ public final class BookmarkUnibrowControlServlet {
 					boolean pickOne = false;
 					//get AnnotatedSeqGroup for bookmark
 					String preferredVersionName = LOOKUP.getPreferredName(version);
-					AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(version);
+					AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(preferredVersionName);
 					if (bookMarkGroup != null){
 						//same genome version as that in view?
 						SeqMapViewI currentSeqMap = igbService.getSeqMapView();
 						if (currentSeqMap != null){
 							//get visible span
 							SeqSpan currentSpan = currentSeqMap.getVisibleSpan();
-							if (currentSpan != null){
-								//check genome version, if same then set coordinates
+							if (currentSpan != null && currentSpan.getBioSeq() != null) {
+								//check genome version, if same then set coordinates								
 								AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
-								if (currentGroup.equals(bookMarkGroup)){
+								if (currentGroup!=null && currentGroup.equals(bookMarkGroup)) {
 									start = currentSpan.getStart();
 									end = currentSpan.getEnd();
 									seqid = currentSpan.getBioSeq().getID();
-								}
-								else {
+								} else {
 									pickOne = true;
 								}
 							}
@@ -194,19 +197,17 @@ public final class BookmarkUnibrowControlServlet {
 				
 				//attempt to parse from bookmark?
 				if (start == 0 && end == 0){
-					int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
-					start = values[0];
-					end = values[1];
+					ImmutableList<Integer> intValues = initializeIntValues(start_param, end_param, select_start_param, select_end_param);
+					start = intValues.get(0);
+					end = intValues.get(1);
 				}
 
 				String[] server_urls = parameters.get(Bookmark.SERVER_URL);
 				String[] query_urls = parameters.get(Bookmark.QUERY_URL);
 				GenericServer[] gServers = null;
-
-				if (server_urls == null || query_urls == null
-						|| query_urls.length == 0 || server_urls.length != query_urls.length) {
+				if (ArrayUtils.isEmpty(server_urls) || ArrayUtils.isEmpty(query_urls) || !ArrayUtils.isSameLength(server_urls, query_urls)) {
 					loaddata = false;
-				} else {
+				} else {					
 					gServers = loadServers(igbService, server_urls);
 				}
 
@@ -215,7 +216,7 @@ public final class BookmarkUnibrowControlServlet {
 
 				GenericServer[] gServers2 = null;
 
-				if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
+				if (ArrayUtils.isEmpty(das2_server_urls) || ArrayUtils.isEmpty(das2_query_urls) || !ArrayUtils.isSameLength(das2_server_urls, das2_query_urls)) {
 					loaddas2data = false;
 				} 
 				else {
@@ -224,7 +225,7 @@ public final class BookmarkUnibrowControlServlet {
 				
 				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
-				if (null == seq) {
+				if (seq == null) {
 					if(loaddata){
 						AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
 						if(seqGroup == null || !seqGroup.isSynonymous(version)){
@@ -266,9 +267,7 @@ public final class BookmarkUnibrowControlServlet {
 							}
 						}
 						
-						for (int i = 0; i < gFeatures.length; i++) {
-							final GenericFeature feature = gFeatures[i];
-
+						for (final GenericFeature feature : gFeatures) {
 							if (feature != null && graph_urls.contains(feature.getURI().toString())) {
 								ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
@@ -310,13 +309,14 @@ public final class BookmarkUnibrowControlServlet {
 		CThreadHolder.getInstance().execute(parameters, worker);
 	}
 
-	/**Checks for nulls or Strings with zero length.*/
+	/**Checks for nulls or Strings with zero length.
+	 * 
+	 * @param params
+	 * @return 
+	 */
 	public static boolean missingString(String[] params){
 		for (String s : params){
-			if (s == null) {
-				return true;
-			}
-			if (s.trim().length() == 0) {
+			if (StringUtils.isBlank(s)) {
 				return true;
 			}
 		}
@@ -412,8 +412,7 @@ public final class BookmarkUnibrowControlServlet {
 
 	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls){
 		GenericFeature[] gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
-		for (int i = 0; i < gFeatures.length; i++) {
-			GenericFeature gFeature = gFeatures[i];
+		for (GenericFeature gFeature : gFeatures) {
 			if (gFeature != null) {
 				igbService.loadChromosomes(gFeature);
 			}
@@ -508,32 +507,37 @@ public final class BookmarkUnibrowControlServlet {
 		}
 	}
 
-	private int[] parseValues(String start_param, String end_param,
-			String select_start_param, String select_end_param)
-			throws NumberFormatException {
+	private ImmutableList<Integer> initializeIntValues(String start_param, String end_param,
+			String select_start_param, String select_end_param) {
 
-		int start = 0;
-		int end = 0;
-		if (start_param == null || start_param.length() == 0) {
-			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
-					"No start value found in the bookmark URL. Setting start={0}", start);
-		} else {
-			start = Integer.parseInt(start_param);
+		Integer start = 0;
+		Integer end = 0;
+		if (StringUtils.isNotBlank(start_param)) {
+			start = Ints.tryParse(start_param);
+			if (start == null) {
+				start = 0;
+			}
 		}
-		if (end_param == null || end_param.length() == 0) {
-			end = start + 100000;
-			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
-					"No end value found in the bookmark URL. Setting end={0}", end);
-		} else {
-			end = Integer.parseInt(end_param);
+		if (StringUtils.isNotBlank(end_param)) {
+			end = Ints.tryParse(end_param);
+			if (end == null) {
+				end = 0;
+			}
 		}
-		int selstart = -1;
-		int selend = -1;
-		if (select_start_param != null && select_end_param != null && select_start_param.length() > 0 && select_end_param.length() > 0) {
-			selstart = Integer.parseInt(select_start_param);
-			selend = Integer.parseInt(select_end_param);
+		Integer selstart = -1;
+		Integer selend = -1;
+		if (StringUtils.isNotBlank(select_start_param) && StringUtils.isNotBlank(select_end_param)){
+			selstart = Ints.tryParse(select_start_param);
+			selend = Ints.tryParse(select_end_param);
+			if (selstart == null) {
+				selstart = -1;
+			}
+			if (selend == null) {
+				selend = -1;
+			}
 		}
-		return new int[]{start, end, selstart, selend};
+		ImmutableList<Integer> intValues = ImmutableList.<Integer>builder().add(start).add(end).add(selstart).add(selend).build();
+		return intValues;
 	}
 	
 

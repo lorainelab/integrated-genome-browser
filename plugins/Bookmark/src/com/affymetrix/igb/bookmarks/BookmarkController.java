@@ -358,7 +358,7 @@ public abstract class BookmarkController {
 			if (combo_style != null) {
 				Integer combo_style_num = combo_styles.get(combo_style);
 				if (combo_style_num == null) {
-					combo_style_num = Integer.valueOf(combo_styles.size() + 1);
+					combo_style_num = combo_styles.size() + 1;
 					combo_styles.put(combo_style, combo_style_num);
 				}
 				mark_sym.setProperty(GRAPH.COMBO.toString() + i, combo_style_num.toString());

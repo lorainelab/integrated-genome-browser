@@ -14,8 +14,6 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import static com.affymetrix.igb.shared.TrackConstants.default_foreground;
-import static com.affymetrix.igb.shared.TrackConstants.default_background;
 import java.awt.Color;
 import java.util.Map;
 
@@ -32,8 +30,8 @@ public class GraphState {
 	
 	public static final double DEFAULT_YPOS = 30;
 	public static final double DEFAULT_YHEIGHT = 60;
-	public static final Color DEFAULT_FOREGROUND_COLOR = default_foreground;
-	public static final Color DEFAULT_BACKGROUND_COLOR = default_background;
+	public static final Color DEFAULT_FOREGROUND_COLOR = Color.decode("0x0247FE"); //Blue Color;;
+	public static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
 	public static final boolean DEFAULT_FLOAT = false;
 	public static final boolean DEFAULT_SHOW_LABEL = false; // Consisten with prefs resetting
 	public static final boolean DEFAULT_SHOW_AXIS = true;   // That is show label not axis

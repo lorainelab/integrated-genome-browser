@@ -6,7 +6,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants;
 
 public abstract class SetDirectionStyleActionA extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;

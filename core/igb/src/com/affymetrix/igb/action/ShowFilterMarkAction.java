@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.IGBStateProvider;
-import com.affymetrix.igb.shared.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.event.ActionEvent;
 import static javax.swing.Action.SELECTED_KEY;
 

@@ -14,7 +14,7 @@ import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.shared.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 public class ChangeFontSizeAction extends SeqMapViewActionA {

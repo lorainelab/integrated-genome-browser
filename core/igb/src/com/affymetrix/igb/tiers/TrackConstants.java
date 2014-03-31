@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.tiers;
 
 import java.awt.Color;
 import java.util.regex.Pattern;

@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb;
 
-import com.affymetrix.igb.shared.TrackConstants;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;

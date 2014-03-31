@@ -2,6 +2,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
+import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;

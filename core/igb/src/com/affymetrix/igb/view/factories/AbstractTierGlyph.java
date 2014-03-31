@@ -32,7 +32,7 @@ import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;

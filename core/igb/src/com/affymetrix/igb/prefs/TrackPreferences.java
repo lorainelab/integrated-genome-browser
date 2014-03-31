@@ -11,7 +11,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.shared.StyledJTable;
-import com.affymetrix.igb.shared.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.combobox.ColorExComboBox;
 import java.awt.Color;

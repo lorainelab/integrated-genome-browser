@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.igb.shared.TrackConstants;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;

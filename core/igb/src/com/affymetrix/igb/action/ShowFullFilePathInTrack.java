@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
-import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.shared.TrackConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;

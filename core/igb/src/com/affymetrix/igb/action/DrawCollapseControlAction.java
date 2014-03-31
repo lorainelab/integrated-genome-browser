@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.IGBStateProvider;
-import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.shared.TrackConstants;
 
 /**
  *

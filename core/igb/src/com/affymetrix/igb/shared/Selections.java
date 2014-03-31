@@ -22,7 +22,6 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.tiers.CoordinateStyle;
-import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 

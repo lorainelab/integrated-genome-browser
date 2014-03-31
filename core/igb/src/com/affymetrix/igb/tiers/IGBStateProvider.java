@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.igb.shared.TrackConstants;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

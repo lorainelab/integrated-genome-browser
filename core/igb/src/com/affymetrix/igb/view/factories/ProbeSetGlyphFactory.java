@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.shared.TrackConstants;
 
 
 /**

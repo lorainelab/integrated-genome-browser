@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.shared.TrackConstants.DIRECTION_TYPE;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;

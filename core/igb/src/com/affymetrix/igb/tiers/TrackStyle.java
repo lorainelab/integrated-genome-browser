@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.igb.shared.TrackConstants;
 import java.awt.Color;
 import java.io.File;
 import java.util.*;

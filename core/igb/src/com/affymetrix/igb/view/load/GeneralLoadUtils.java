@@ -41,6 +41,7 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.google.common.collect.Ordering;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -1223,10 +1224,7 @@ public final class GeneralLoadUtils {
 	}
 
 	public static List<String> getSpeciesList() {
-		final List<String> speciesList = new ArrayList<String>();
-		speciesList.addAll(species2genericVersionList.keySet());
-		Collections.sort(speciesList, new SortIgnoreCase());
-		return speciesList;
+		return Ordering.from(String.CASE_INSENSITIVE_ORDER).immutableSortedCopy(species2genericVersionList.keySet());
 	}
 
 	public static List<String> getGenericVersions(final String speciesName) {

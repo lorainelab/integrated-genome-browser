@@ -15,11 +15,9 @@ import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.google.common.collect.ListMultimap;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -156,8 +154,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         String params = session.getQueryParameterString();
         ourLogger.log(Level.FINE, "Command = {0}", params);
         //TODO refactor all of this code... there is no need to manually parse the request
-        Map<String, String[]> paramMap = new HashMap<String, String[]>();
-        Bookmark.parseParametersFromQuery(paramMap, params, true);
+        ListMultimap<String, String> paramMap =Bookmark.parseParametersFromQuery(params);
         if (paramMap.containsKey(FOCUS_IGB_COMMAND)) {
             JFrame f = igbService.getFrame();
             boolean tmp = f.isAlwaysOnTop();

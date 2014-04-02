@@ -14,7 +14,12 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import java.io.*;
+import com.google.common.collect.ListMultimap;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -259,8 +264,7 @@ class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 		int index = command.indexOf('?');
 		if (index >= 0 && index < command.length()) {
 			String params = command.substring(index + 1);
-			Map<String, String[]> paramMap = new HashMap<String, String[]>();
-			Bookmark.parseParametersFromQuery(paramMap, params, true);
+			ListMultimap<String, String> paramMap =Bookmark.parseParametersFromQuery(params);
 			BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap);
 		}
 	}

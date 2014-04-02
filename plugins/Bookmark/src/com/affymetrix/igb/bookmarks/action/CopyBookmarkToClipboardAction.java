@@ -13,6 +13,7 @@ import com.affymetrix.igb.bookmarks.BookmarkController;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
+import java.io.UnsupportedEncodingException;
 
 public class CopyBookmarkToClipboardAction extends BookmarkAction {
 
@@ -39,8 +40,7 @@ public class CopyBookmarkToClipboardAction extends BookmarkAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		try {
-			Bookmark bookmark = BookmarkController.getCurrentBookmark(true,
-					igbService.getSeqMapView().getVisibleSpan());
+			Bookmark bookmark = BookmarkController.getCurrentBookmark(true, igbService.getSeqMapView().getVisibleSpan());
 			if (bookmark != null) {
 				StringSelection data = new StringSelection(bookmark.getURL().toString());
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -50,6 +50,8 @@ public class CopyBookmarkToClipboardAction extends BookmarkAction {
 			}
 		} catch (MalformedURLException m) {
 			ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
+		} catch (UnsupportedEncodingException ex) {
+			ErrorHandler.errorPanel("Couldn't add bookmark", ex, Level.SEVERE);
 		}
 	}
 }

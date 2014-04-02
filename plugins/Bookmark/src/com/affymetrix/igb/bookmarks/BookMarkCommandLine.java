@@ -65,8 +65,14 @@ public class BookMarkCommandLine {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						ourLogger.log(Level.INFO, "Loading bookmark: {0}", url);
-						BookmarkController.viewBookmark(igbService, bm);
+						try {
+							//sleep thread to allow time for osgi bundles to completely load
+							Thread.sleep(5000);
+							ourLogger.log(Level.INFO, "Loading bookmark: {0}", url);
+							BookmarkController.viewBookmark(igbService, bm);
+						} catch (InterruptedException ex) {
+							ourLogger.log(Level.SEVERE, "Thread Interrupted", ex.getMessage());
+						}
 					}
 				});
 			} else {

@@ -106,4 +106,26 @@
 		</junit>
 		<fail if="test.failed" message="Tests failed!"/>
 	</target>
+	<target name="test-bookmarks" description="Run individual Unit tests" depends="compile">
+		<fail unless="testclass">Must set property 'classname'</fail>
+		<loadproperties srcFile="plugins/Bookmark/ant.properties"/>
+		<mkdir dir="plugins/Bookmark/build-test"/>
+		<javac srcdir="plugins/Bookmark/test" destdir="plugins/Bookmark/build-test" includeantruntime="false" classpath="${junit.jar}:${test.classpath}">
+			<compilerarg  value="-Xlint:none" />
+		</javac>
+		<path id="cp">
+			<pathelement path="${junit.jar}:${test.classpath}" />
+			<dirset dir="plugins/Bookmark/test/resources">
+				<include name="**/*"/>
+			</dirset>		
+		</path>
+		<junit errorProperty="test.failed" failureproperty="test.failed" fork="yes" haltonfailure="yes" printsummary="yes" showoutput="yes">
+			<jvmarg value="-Djava.awt.headless=true"/>
+			<formatter type="plain" usefile="false"/>
+			<classpath refid="cp"/>
+			<test name="${testclass}" todir="plugins/Bookmark/build-test"/>
+			
+		</junit>
+		<fail if="test.failed" message="Tests failed!"/>
+	</target>
 </project>

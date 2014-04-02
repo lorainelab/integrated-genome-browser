@@ -17,15 +17,35 @@ import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
+import com.google.common.collect.ImmutableListMultimap;
 import java.awt.Container;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.DropMode;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
@@ -35,7 +55,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.AbstractDocument;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
 
 /**
@@ -666,7 +690,7 @@ public final class BookmarkManagerView {
 		private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
 			Bookmark bm = (Bookmark) bl.getUserObject();
 			if (bm == null) {
-				model.setValuesFromMap(Collections.<String, String[]>emptyMap());
+				model.setValuesFromMap(ImmutableListMultimap.<String, String>builder().build());
 			} else {
 				URL url = bm.getURL();
 				model.setValuesFromMap(Bookmark.parseParameters(url));

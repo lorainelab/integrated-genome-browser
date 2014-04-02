@@ -13,11 +13,14 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import java.awt.*;
-import java.util.Map;
-
-import javax.swing.*;
-import javax.swing.tree.*;
+import com.google.common.collect.ListMultimap;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import javax.swing.Icon;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  *
@@ -93,16 +96,16 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
 
   private String getToolTip(Bookmark bm) {
     StringBuilder toolTipSB = new StringBuilder();
-    Map<String, String[]> parameters = Bookmark.parseParameters(bm.getURL());
+    ListMultimap<String, String> parameters = Bookmark.parseParameters(bm.getURL());
     BookmarkUnibrowControlServlet bucs = BookmarkUnibrowControlServlet.getInstance();
-	String seqid = bucs.getStringParameter(parameters, Bookmark.SEQID);
+	String seqid = bucs.getFirstValueEntry(parameters, Bookmark.SEQID);
 	if (seqid != null) {
 		toolTipSB.append(seqid);
-		String start_param = bucs.getStringParameter(parameters, Bookmark.START);
+		String start_param = bucs.getFirstValueEntry(parameters, Bookmark.START);
 		if (start_param != null) {
 			toolTipSB.append(" : ");
 			toolTipSB.append(start_param);
-			String end_param = bucs.getStringParameter(parameters, Bookmark.END);
+			String end_param = bucs.getFirstValueEntry(parameters, Bookmark.END);
 			if (end_param != null) {
 				toolTipSB.append(" - ");
 				toolTipSB.append(end_param);

@@ -1,16 +1,5 @@
 package com.affymetrix.igb.bookmarks;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
@@ -29,6 +18,17 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 
@@ -69,7 +69,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 		if (url != null && url.equals(WILDCARD)) {
 			url = null;
 		}
-		if (url != null && url.length() > 0) {
+		if (StringUtils.isNotBlank(url)) {
 			ourLogger.log(Level.INFO, "Loading bookmark {0}", url);
 			new BookMarkCommandLine(bundleContext, igbService, url, true);
 		} else {

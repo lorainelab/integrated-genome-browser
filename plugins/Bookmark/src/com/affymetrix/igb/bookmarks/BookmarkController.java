@@ -36,7 +36,10 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -45,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -68,8 +72,8 @@ public abstract class BookmarkController {
 	public static void viewBookmark(IGBService igbService, Bookmark bm) {
 		if (bm.isValidBookmarkFormat()) {
 			try {
-				Map<String, String[]> props = Bookmark.parseParameters(bm.getURL());
-				BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, props);
+				ListMultimap<String, String> props = Bookmark.parseParameters(bm.getURL());
+				BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, props);				
 			} catch (Exception e) {
 				String message = e.getClass().getName() + ": " + e.getMessage();
 				ErrorHandler.errorPanel("Error opening bookmark.\n" + message);
@@ -79,7 +83,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-	public static void applyProperties(IGBService igbService, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
+	public static void applyProperties(IGBService igbService, final BioSeq seq, final ListMultimap<String, String> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
 		double default_ypos = GraphState.DEFAULT_YPOS;
 		double default_yheight = GraphState.DEFAULT_YHEIGHT;
 		Color defaultForegroundColor = Color.decode("0x0247FE");
@@ -96,14 +100,14 @@ public abstract class BookmarkController {
 		int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
 
 		try {
-			for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
-				String feature_path = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.FEATURE_URL.toString() + i);
+			for (int i = 0; !map.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
+				String feature_path = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.FEATURE_URL.toString() + i);
 
 				if (gFeature == null || !feature_path.equals(gFeature.getURI().toString())) {
 					continue;
 				}
 
-				String method = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.METHOD.toString() + i);
+				String method = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.METHOD.toString() + i);
 
 				SeqSymmetry sym = seq.getAnnotation(method);
 
@@ -117,20 +121,20 @@ public abstract class BookmarkController {
 
 				// for some parameters, testing more than one parameter name because how some params used to have
 				//    slightly different names, and we need to support legacy bookmarks
-				String sym_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.NAME.toString() + i);
-				String sym_ypos = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.YPOS.toString() + i);
-				String sym_height = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.YHEIGHT.toString() + i);
+				String sym_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.NAME.toString() + i);
+				String sym_ypos = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.YPOS.toString() + i);
+				String sym_height = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.YHEIGHT.toString() + i);
 
 				// sym_col is String rep of RGB integer
-				String sym_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.COL.toString() + i);
-				String sym_bg_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.BG.toString() + i);
+				String sym_col = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.COL.toString() + i);
+				String sym_bg_col = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.BG.toString() + i);
 				// sym_bg_col will often be null
 
 				//        int graph_min = (graph_visible_min == null) ?
-				String graph_style = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.STYLE.toString() + i);
-				String heatmap_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.HEATMAP.toString() + i);
+				String graph_style = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.STYLE.toString() + i);
+				String heatmap_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.HEATMAP.toString() + i);
 
-				String combo_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.COMBO.toString() + i);
+				String combo_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.COMBO.toString() + i);
 
 				double ypos = (sym_ypos == null) ? default_ypos : Double.parseDouble(sym_ypos);
 				double yheight = (sym_height == null) ? default_yheight : Double.parseDouble(sym_height);
@@ -163,16 +167,16 @@ public abstract class BookmarkController {
 				ITrackStyleExtended style = null;
 
 				if (sym instanceof GraphSym) {
-					String graph_float = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.FLOAT.toString() + i);
-					String show_labelstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
-					String show_axisstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_AXIS.toString() + i);
-					String minvis_str = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MINVIS.toString() + i);
-					String maxvis_str = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MAXVIS.toString() + i);
-					String score_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SCORE_THRESH.toString() + i);
-					String maxgap_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MAXGAP_THRESH.toString() + i);
-					String minrun_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MINRUN_THRESH.toString() + i);
-					String show_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_THRESH.toString() + i);
-					String thresh_directionstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.THRESH_DIRECTION.toString() + i);
+					String graph_float = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.FLOAT.toString() + i);
+					String show_labelstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.SHOW_LABEL.toString() + i);
+					String show_axisstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.SHOW_AXIS.toString() + i);
+					String minvis_str = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.MINVIS.toString() + i);
+					String maxvis_str = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.MAXVIS.toString() + i);
+					String score_threshstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.SCORE_THRESH.toString() + i);
+					String maxgap_threshstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.MAXGAP_THRESH.toString() + i);
+					String minrun_threshstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.MINRUN_THRESH.toString() + i);
+					String show_threshstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.SHOW_THRESH.toString() + i);
+					String thresh_directionstr = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, GRAPH.THRESH_DIRECTION.toString() + i);
 
 					boolean use_floating_graphs =
 							(graph_float == null) ? default_float : (graph_float.equals("true"));
@@ -396,15 +400,15 @@ public abstract class BookmarkController {
 	 * @param sym The symmetry to generate the bookmark properties from
 	 * @return a map of bookmark properties
 	 */
-	private static Map<String, Object> constructBookmarkProperties(SeqSymmetry sym) {
+	private static  ListMultimap<String, String> constructBookmarkProperties(SeqSymmetry sym) {
 		SeqSpan span = sym.getSpan(0);
 		BioSeq seq = span.getBioSeq();
-		Map<String, Object> props = new LinkedHashMap<String, Object>();
-		props.put(Bookmark.SEQID, seq.getID());
-		props.put(Bookmark.VERSION, seq.getVersion());
-		props.put(Bookmark.START, Integer.toString(span.getMin()));
-		props.put(Bookmark.END, Integer.toString(span.getMax()));
-		return props;
+		ImmutableListMultimap.Builder<String,String> builder = ImmutableListMultimap.<String,String>builder();
+		builder.put(Bookmark.SEQID, seq.getID());
+		builder.put(Bookmark.VERSION, seq.getVersion());
+		builder.put(Bookmark.START, Integer.toString(span.getMin()));
+		builder.put(Bookmark.END, Integer.toString(span.getMax()));
+		return builder.build();
 	}
 
 	/**
@@ -417,8 +421,8 @@ public abstract class BookmarkController {
 	 * @return the bookmark for the symmetry
 	 * @throws MalformedURLException if the URL specifies an unknown protocol
 	 */
-	public static Bookmark makeBookmark(SeqSymmetry sym, String name) throws MalformedURLException {
-		Map<String, Object> props = constructBookmarkProperties(sym);
+	public static Bookmark makeBookmark(SeqSymmetry sym, String name) throws MalformedURLException, UnsupportedEncodingException {
+		ListMultimap<String, String> props = constructBookmarkProperties(sym);
 		String url = Bookmark.constructURL(props);
 		return new Bookmark(name, "", url);
 	}
@@ -449,7 +453,7 @@ public abstract class BookmarkController {
 	}
 
 	public static Bookmark getCurrentBookmark(boolean include_sym_and_props, SeqSpan span)
-			throws MalformedURLException {
+			throws MalformedURLException, UnsupportedEncodingException {
 		BioSeq aseq = span.getBioSeq();
 		if (aseq == null) {
 			return null;
@@ -479,8 +483,33 @@ public abstract class BookmarkController {
 		}
 		bookmarks.set(mark_sym);
 		
-		String url = Bookmark.constructURL(mark_sym.getProperties());
+		
+		String url = Bookmark.constructURL(convertSymPropMapToMultiMap(mark_sym.getProperties()));
 		return new Bookmark(default_name, "", url);
+	}
+	
+	private static ListMultimap<String, String> convertSymPropMapToMultiMap(Map<String, Object> symPropertyMap) {
+		ImmutableListMultimap.Builder<String, String> builder = ImmutableListMultimap.<String, String>builder();
+		for (Map.Entry<String, Object> entry : symPropertyMap.entrySet()) {
+			String key = entry.getKey();
+			if (entry.getValue() instanceof String) {
+				builder.put(key, String.class.cast(entry.getValue()));
+			} else if (entry.getValue() instanceof Integer) {
+				Integer value = (Integer) entry.getValue();
+				builder.put(key, value.toString());
+			} else if (entry.getValue() instanceof List){
+				List<String> valueList = (List<String>) entry.getValue();
+				for (String value: valueList) {
+					builder.put(key, value);	
+				}
+			} else if (entry.getValue() instanceof String[]) {
+				String[] valueList = (String[]) entry.getValue();
+				for (String value : valueList) {
+					builder.put(key, value);
+				}
+			}
+		}
+		return builder.build();
 	}
 
 	public static boolean hasSymmetriesOrGraphs() {

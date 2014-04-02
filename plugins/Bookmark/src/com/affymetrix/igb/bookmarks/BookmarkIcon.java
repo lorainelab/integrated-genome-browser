@@ -13,8 +13,10 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import javax.swing.Icon;
 
 /** An Icon to represent a bookmark.  There is one visual form
  *  for a UnibrowControl bookmark that opens in Unibrow and another

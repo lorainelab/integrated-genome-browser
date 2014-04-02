@@ -12,7 +12,7 @@ package com.affymetrix.igb.bookmarks;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVER_PORT;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.io.IOException;
-import java.net.*;
+import java.net.Socket;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;

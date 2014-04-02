@@ -7,6 +7,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.google.common.base.Charsets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -71,7 +72,7 @@ public class LoadSessionAction extends GenericAction {
 			}
 		}
 
-		String url = URLDecoder.decode(bk_url, Bookmark.ENC);
+		String url = URLDecoder.decode(bk_url, Charsets.UTF_8.displayName());
 		if (url != null && url.trim().length() > 0) {
 			BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
 		}

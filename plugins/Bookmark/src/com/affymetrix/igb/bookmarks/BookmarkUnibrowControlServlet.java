@@ -33,6 +33,7 @@ import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,7 +44,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -80,27 +80,11 @@ public final class BookmarkUnibrowControlServlet {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
-	/** Convenience method for retrieving a String parameter from a parameter map
-	 *  of an HttpServletRequest.
-	 *  @param map Should be a Map, such as from {@link javax.servlet.ServletRequest#getParameterMap()},
-	 *  where the only keys are String and String[] objects.
-	 *  @param key Should be a key where you only want a single String object as result.
-	 *  If the value in the map is a String[], only the first item in the array will
-	 *  be returned.
-	 */
-	String getStringParameter(Map<String, ?> map, String key) {
-		Object o = map.get(key);
-		if (o instanceof String) {
-			return (String) o;
-		} else if (o instanceof String[]) {
-			return ((String[]) o)[0];
-		} else if (o != null) {
-			// This is a temporary case, for handling Integer objects holding start and end
-			// in the old BookMarkAction.java class.  The new version of that class
-			// puts everything into String[] objects, so this case can go away.
-			return o.toString();
+	String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
+		if (multimap.get(key).isEmpty()) {
+			return null;
 		}
-		return null;
+		return multimap.get(key).get(0);
 	}
 
 	/** Loads a bookmark.
@@ -109,25 +93,25 @@ public final class BookmarkUnibrowControlServlet {
 	 *  objects.  For example, this could be the Map returned by
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
-	public void goToBookmark(final IGBService igbService, final Map<String, String[]> parameters) {
-		String batchFileStr = getStringParameter(parameters, IGBService.SCRIPTFILETAG);
+	public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters) {
+		String batchFileStr = getFirstValueEntry(parameters, IGBService.SCRIPTFILETAG);
 		if (StringUtils.isNotBlank(batchFileStr)) {
 			igbService.doActions(batchFileStr);
 			return;
 		}
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading Galaxy Data") {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading Data") {
 
 			@Override
 			protected Object runInBackground() {				
-				String seqid = getStringParameter(parameters, Bookmark.SEQID);
-				String version = getStringParameter(parameters, Bookmark.VERSION);
-				String start_param = getStringParameter(parameters, Bookmark.START);
-				String end_param = getStringParameter(parameters, Bookmark.END);
+				String seqid = getFirstValueEntry(parameters, Bookmark.SEQID);
+				String version = getFirstValueEntry(parameters, Bookmark.VERSION);
+				String start_param = getFirstValueEntry(parameters, Bookmark.START);
+				String end_param = getFirstValueEntry(parameters, Bookmark.END);
 //				String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
-				String select_start_param = getStringParameter(parameters, Bookmark.SELECTSTART);
-				String select_end_param = getStringParameter(parameters, Bookmark.SELECTEND);
-				boolean loadResidue = Boolean.valueOf(getStringParameter(parameters, Bookmark.LOADRESIDUES));
+				String select_start_param = getFirstValueEntry(parameters, Bookmark.SELECTSTART);
+				String select_end_param = getFirstValueEntry(parameters, Bookmark.SELECTEND);
+				boolean loadResidue = Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.LOADRESIDUES));
 				// For historical reasons, there are two ways of specifying graphs in a bookmark
 				// Eventually, they should be treated more similarly, but for now some
 				// differences remain
@@ -202,21 +186,21 @@ public final class BookmarkUnibrowControlServlet {
 					end = intValues.get(1);
 				}
 
-				String[] server_urls = parameters.get(Bookmark.SERVER_URL);
-				String[] query_urls = parameters.get(Bookmark.QUERY_URL);
-				GenericServer[] gServers = null;
-				if (ArrayUtils.isEmpty(server_urls) || ArrayUtils.isEmpty(query_urls) || !ArrayUtils.isSameLength(server_urls, query_urls)) {
+				List<String> server_urls = parameters.get(Bookmark.SERVER_URL);
+				List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
+				List<GenericServer> gServers = null;
+				if (server_urls.isEmpty() ||query_urls.isEmpty() || server_urls.size()!=query_urls.size()) {
 					loaddata = false;
 				} else {					
 					gServers = loadServers(igbService, server_urls);
 				}
 
-				String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
-				String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+				List<String> das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
+				List<String> das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
 
-				GenericServer[] gServers2 = null;
+				List<GenericServer> gServers2 = null;
 
-				if (ArrayUtils.isEmpty(das2_server_urls) || ArrayUtils.isEmpty(das2_query_urls) || !ArrayUtils.isSameLength(das2_server_urls, das2_query_urls)) {
+				if (das2_server_urls.isEmpty() || das2_query_urls.isEmpty() || das2_server_urls.size()!=das2_query_urls.size()) {
 					loaddas2data = false;
 				} 
 				else {
@@ -242,14 +226,14 @@ public final class BookmarkUnibrowControlServlet {
 						end -= 1;
 					}
 					
-					GenericFeature[] gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
+					List<GenericFeature> gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
 
 					if (has_properties) {
 						List<String> graph_urls = getGraphUrls(parameters);
 						final Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
 						
-						for (int i = 0; parameters.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
-							String combo_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(parameters, Bookmark.GRAPH.COMBO.toString() + i);
+						for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
+							String combo_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, Bookmark.GRAPH.COMBO.toString() + i);
 							if (combo_name != null) {
 								ITrackStyleExtended combo_style = combos.get(combo_name);
 								if (combo_style == null) {
@@ -289,7 +273,7 @@ public final class BookmarkUnibrowControlServlet {
 				//String[] data_urls = parameters.get(Bookmark.DATA_URL);
 				//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
 				//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
-				String selectParam = getStringParameter(parameters, "select");
+				String selectParam = getFirstValueEntry(parameters, "select");
 				if (selectParam != null) {
 					igbService.performSelection(selectParam);
 				}
@@ -323,18 +307,19 @@ public final class BookmarkUnibrowControlServlet {
 		return false;
 	}
 
-	public List<String> getGraphUrls(Map<String, String[]> map) {
+	public List<String> getGraphUrls(ListMultimap<String, String> multimap) {
 		List<String> graph_paths = new ArrayList<String>();
-		for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
-			graph_paths.add(getStringParameter(map, SYM.FEATURE_URL.toString() + i));
+		for (int i = 0; !multimap.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
+			graph_paths.add(getFirstValueEntry(multimap, SYM.FEATURE_URL.toString() + i));
 		}
 		return graph_paths;
 	}
 
-	private void loadOldBookmarks(final IGBService igbService, GenericServer[] gServers, String[] das2_query_urls, int start, int end) {
+	private void loadOldBookmarks(final IGBService igbService, List<GenericServer> gServers, List<String> das2_query_urls, int start, int end) {
 		List<String> opaque_requests = new ArrayList<String>();
-		for (int i = 0; i < das2_query_urls.length; i++) {
-			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
+		int i = 0;
+		for (String url : das2_query_urls) {
+			String das2_query_url = GeneralUtils.URLDecode(url);
 			String seg_uri = null;
 			String type_uri = null;
 			String overstr = null;
@@ -377,10 +362,11 @@ public final class BookmarkUnibrowControlServlet {
 				continue;
 			}
 
-			GenericFeature feature = getFeature(igbService, gmodel.getSelectedSeqGroup(), gServers[i], type_uri);
+			GenericFeature feature = getFeature(igbService, gmodel.getSelectedSeqGroup(), gServers.get(i), type_uri);
 			if (feature != null) {
 				loadFeature(igbService, feature, start, end);
 			}
+			i++;
 		}
 
 		if (!opaque_requests.isEmpty()) {
@@ -392,15 +378,16 @@ public final class BookmarkUnibrowControlServlet {
 		}
 	}
 
-	private GenericFeature[] loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls, int start, int end) {
+	private List<GenericFeature> loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
-		for (int i = 0; i < query_urls.length; i++) {
-			gFeatures[i] = getFeature(igbService, seqGroup, gServers[i], query_urls[i]);
+		ImmutableList.Builder<GenericFeature> builder = ImmutableList.<GenericFeature>builder();
+		int i = 0;
+		for (String queryUrl : query_urls) {
+			builder.add(getFeature(igbService, seqGroup, gServers.get(i), queryUrl));
+			i++;
 		}
-
-		for (int i = 0; i < gFeatures.length; i++) {
-			GenericFeature gFeature = gFeatures[i];
+		ImmutableList<GenericFeature> gFeatures = builder.build();
+		for (GenericFeature gFeature : gFeatures) {
 			if (gFeature != null) {
 				loadFeature(igbService, gFeature, start, end);
 			}
@@ -410,8 +397,8 @@ public final class BookmarkUnibrowControlServlet {
 		return gFeatures;
 	}
 
-	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls){
-		GenericFeature[] gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
+	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls){
+		List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
 		for (GenericFeature gFeature : gFeatures) {
 			if (gFeature != null) {
 				igbService.loadChromosomes(gFeature);
@@ -419,19 +406,23 @@ public final class BookmarkUnibrowControlServlet {
 		}
 	}
 	
-	private GenericFeature[] getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls){
-		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
+	private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls){
+		List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
+		
 		boolean show_message = false;
-		for (int i = 0; i < query_urls.length; i++) {
-			gFeatures[i] = getFeature(igbService, seqGroup, gServers[i], query_urls[i]);
-			if(gFeatures[i] != null){
-				gFeatures[i].setVisible();
-				gFeatures[i].setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-				if(gFeatures[i].getLoadStrategy() == LoadStrategy.VISIBLE /*||
+		int i = 0;
+		for (String query_url : query_urls) {
+			GenericFeature gFeature = getFeature(igbService, seqGroup, gServers.get(i), query_url);
+			gFeatures.add(gFeature);
+			if(gFeature != null){
+				gFeature.setVisible();
+				gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+				if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
 					gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME*/){
 					show_message = true;
 				}	
 			}
+			i++;
 		}
 
 		igbService.updateGeneralLoadView();
@@ -479,15 +470,14 @@ public final class BookmarkUnibrowControlServlet {
 		igbService.loadAndDisplaySpan(overlap, gFeature);
 	}
 
-	private GenericServer[] loadServers(IGBService igbService, String[] server_urls) {
-		GenericServer[] gServers = new GenericServer[server_urls.length];
+	private List<GenericServer> loadServers(IGBService igbService, List<String> server_urls) {
+		final ImmutableList.Builder<GenericServer> builder =  ImmutableList.<GenericServer>builder();
 
-		for (int i = 0; i < server_urls.length; i++) {
-			String server_url = server_urls[i];
-			gServers[i] = igbService.loadServer(server_url);
+		for (String server_url : server_urls) {
+			builder.add(igbService.loadServer(server_url));
 		}
 
-		return gServers;
+		return builder.build();
 	}
 
 	private void loadDataFromURLs(final IGBService igbService, final String[] data_urls, final String[] extensions, final String[] tier_names) {

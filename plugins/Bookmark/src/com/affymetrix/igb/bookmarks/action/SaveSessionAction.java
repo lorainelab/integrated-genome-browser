@@ -7,6 +7,7 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.google.common.base.Charsets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -57,7 +58,7 @@ public class SaveSessionAction extends GenericAction {
 		Bookmark bookmark = BookmarkController.getCurrentBookmark(true,
 				igbService.getSeqMapView().getVisibleSpan());
 		if (bookmark != null) {
-			String bk = URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC);
+			String bk = URLEncoder.encode(bookmark.getURL().toString(), Charsets.UTF_8.displayName());
 			if (bk.length() < Preferences.MAX_VALUE_LENGTH) {
 				PreferenceUtils.getSessionPrefsNode().put("bookmark", bk);
 			} else {

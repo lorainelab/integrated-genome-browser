@@ -2,14 +2,15 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.shared.StyledJTable;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -52,13 +53,16 @@ public class BookmarkPropertiesGUI extends JFrame {
 					}
 
 					// record the modified time
-					Map<String, String[]> props = propertyModel.getValuesAsMap();
-					props.put(Bookmark.MODIFIED, new String[]{BookmarkController.DATE_FORMAT.format(new Date())});
+					ListMultimap<String, String> props = propertyModel.getValuesAsMap();
+					props.put(Bookmark.MODIFIED, BookmarkController.DATE_FORMAT.format(new Date()));
 
-					String str = Bookmark.constructURL(url_base, props);
+					
 					try {
+						String str = Bookmark.constructURL(url_base, props);
 						url = new URL(str);
 					} catch (MalformedURLException ex) {
+						ourLogger.log(Level.SEVERE, "Malformed URL", ex);
+					}catch (UnsupportedEncodingException ex) {
 						ourLogger.log(Level.SEVERE, "Malformed URL", ex);
 					}
 					bm.setURL(url);
@@ -96,7 +100,7 @@ public class BookmarkPropertiesGUI extends JFrame {
 	private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
 		Bookmark bm = (Bookmark) bl.getUserObject();
 		if (bm == null) {
-			model.setValuesFromMap(Collections.<String, String[]>emptyMap());
+			model.setValuesFromMap(ImmutableListMultimap.<String, String>builder().build());
 		} else {
 			URL url = bm.getURL();
 			model.setValuesFromMap(Bookmark.parseParameters(url));

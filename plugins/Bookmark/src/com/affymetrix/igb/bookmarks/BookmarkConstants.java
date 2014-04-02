@@ -42,6 +42,6 @@ public class BookmarkConstants {
 	 * backwards-compatibility with versions of IGB 4.56 and earlier, the old
 	 * name {@link #SERVLET_NAME_OLD} is used.
 	 */
-	public static final String DEFAULT_SERVLET_URL = "http://localhost:" + DEFAULT_SERVER_PORT + "/" + SERVLET_NAME_OLD;
+	public static final String DEFAULT_SERVLET_URL = "http://localhost:" + DEFAULT_SERVER_PORT + "/" + SERVLET_NAME;
 
 }

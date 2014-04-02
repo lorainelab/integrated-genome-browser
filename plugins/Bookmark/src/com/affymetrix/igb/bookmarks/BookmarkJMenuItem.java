@@ -13,7 +13,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
-
 import java.awt.Font;
 
 /**

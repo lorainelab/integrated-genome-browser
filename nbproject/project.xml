@@ -946,7 +946,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>plugins/SequenceViewer</package-root>
-                <classpath mode="compile">plugins/SequenceViewer/src:plugins/SequenceViewer/test</classpath>
+                <classpath mode="compile">plugins/SequenceViewer/src:plugins/SequenceViewer/test:core/genometryImpl/src:core/common/src:core/genoviz_sdk/src:core/igb/src:core/main/src:core/window_service/src:core/igb_service/src:ext/felix.jar</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>

@@ -363,6 +363,12 @@
                     <location>das2_server/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>plugins/Bookmark/test</label>
+                    <type>java</type>
+                    <location>plugins/Bookmark/test</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -414,12 +420,25 @@
                         </arity>
                     </context>
                 </action>
-				<action name="test.single">
+                <action name="test.single">
                     <script>nbproject/ide-file-targets.xml</script>
                     <target>test-das2Server</target>
                     <context>
                         <property>testclass</property>
                         <folder>das2_server/test</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="test.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>test-bookmarks</target>
+                    <context>
+                        <property>testclass</property>
+                        <folder>plugins/Bookmark/test</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
@@ -788,6 +807,10 @@
                         <label>das2_server/test</label>
                         <location>das2_server/test</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>plugins/Bookmark/test</label>
+                        <location>plugins/Bookmark/test</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -919,6 +942,16 @@
                 <package-root>das2_server/test</package-root>
                 <unit-tests/>
                 <classpath mode="compile">das2_server/src:ext/junit.jar:core/genometryImpl/src</classpath>
+                <source-level>1.6</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>plugins/SequenceViewer</package-root>
+                <classpath mode="compile">plugins/SequenceViewer/src:plugins/SequenceViewer/test</classpath>
+                <source-level>1.6</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>plugins/Bookmark/test</package-root>
+                <classpath mode="compile">ext/junit.jar:plugins/Bookmark/src:plugins/Bookmark/test:ext/commons-lang3-3.1.jar:ext/guava-16.0.1.jar</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
         </java-data>

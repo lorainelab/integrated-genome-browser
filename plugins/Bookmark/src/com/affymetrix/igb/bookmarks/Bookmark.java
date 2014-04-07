@@ -21,8 +21,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.Resources;
-import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -31,7 +29,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,6 +1,8 @@
 package com.affymetrix.genometryImpl.thread;
 
+import com.google.common.collect.Range;
 import javax.swing.SwingWorker;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -10,18 +12,20 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	private static final boolean DEBUG = false;
 	private final String message;
 	private final int priority;
+	private static final Range VALID_PRIORITY_RANGE = Range.closed(Thread.MIN_PRIORITY, Thread.MAX_PRIORITY);
 	
 	public CThreadWorker(String msg){
 		this(msg, Thread.NORM_PRIORITY);
 	}
 
-	public CThreadWorker(String msg, int priority){
+	public CThreadWorker(String message, int priority){
 		super();
-		if(msg == null || msg.length() == 0){
+		if(StringUtils.isBlank(message)){
 			throw new IllegalArgumentException("Invalid Statusbar Message");
 		}
-		message = msg;
-		if(priority < Thread.MIN_PRIORITY || priority > Thread.MAX_PRIORITY){
+		this.message = message;
+
+		if(!VALID_PRIORITY_RANGE.contains(priority)){
 			throw new IllegalArgumentException("Invalid Thread priority " + priority);
 		}
 		this.priority = priority;

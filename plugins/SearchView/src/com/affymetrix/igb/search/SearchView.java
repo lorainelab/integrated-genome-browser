@@ -312,7 +312,7 @@ public final class SearchView extends IGBTabPanel implements
 		pan1.add(Box.createRigidArea(new Dimension(2, 0)));
 
 		pan1.add(optionCheckBox);
-		pan1.add(customButton);
+		//pan1.add(customButton);
 		
 		if (group == null) {
 			searchCB.setEnabled(false);

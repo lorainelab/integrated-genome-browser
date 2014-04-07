@@ -387,13 +387,21 @@ public final class BookmarkUnibrowControlServlet {
 			i++;
 		}
 		ImmutableList<GenericFeature> gFeatures = builder.build();
+		boolean show_message = false;
 		for (GenericFeature gFeature : gFeatures) {
 			if (gFeature != null) {
 				loadFeature(igbService, gFeature, start, end);
+				if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE || gFeature.getLoadStrategy() == LoadStrategy.NO_LOAD) {
+					show_message = true;
+				}
 			}
 		}
 		igbService.updateGeneralLoadView();
-
+		
+		if(show_message){
+			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE, 
+					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+		}
 		return gFeatures;
 	}
 
@@ -429,7 +437,7 @@ public final class BookmarkUnibrowControlServlet {
 		
 		// Show message on how to load
 		if(show_message){
-			igbService.infoPanel(GenericFeature.howtoloadmsg, 
+			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE, 
 					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 		}
 		

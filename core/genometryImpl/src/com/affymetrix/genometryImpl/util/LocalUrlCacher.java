@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FILE_PROTOCOL;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.logging.Logger;
 import net.sf.samtools.seekablestream.SeekableFileStream;
 import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.seekablestream.SeekableStream;
+import org.apache.commons.lang3.StringUtils;
 
 
 public final class LocalUrlCacher {
@@ -18,8 +20,8 @@ public final class LocalUrlCacher {
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
 	private static final String HTTP_LOCATION_HEADER = "Location";
 	private static final int HTTP_TEMP_REDIRECT = 307;
-	private static boolean DEBUG_CONNECTION = false;
-	private static boolean CACHE_FILE_URLS = false;
+	private static final boolean DEBUG_CONNECTION = false;
+	private static final boolean CACHE_FILE_URLS = false;
 	public static final int IGNORE_CACHE = 100;
 	public static final int ONLY_CACHE = 101;
 	public static final int NORMAL_CACHE = 102;
@@ -71,22 +73,19 @@ public final class LocalUrlCacher {
 
 	/** Determines whether the given URL string represents a file URL. */
 	private static boolean isFile(String url) {
-		if (url == null || url.length() < 5) {
+		if (url == null || url.length() < 4) {
 			return false;
 		}
-		return (url.substring(0, 5).compareToIgnoreCase("file:") == 0);
+		return (url.substring(0, 4).compareToIgnoreCase(FILE_PROTOCOL) == 0);
 	}
 
-	public static boolean isFile(URI uri){
-		if(uri.getScheme() == null || uri.getScheme().length() == 0 || uri.getScheme().equalsIgnoreCase("file")) {
-			return true;
-		}
-
-		return false;
+	public static boolean isLocalFile(URI uri){
+		String scheme = uri.getScheme();
+		return StringUtils.equalsIgnoreCase(scheme, FILE_PROTOCOL);
 	}
 
-	public static SeekableStream getSeekableStream(URI uri) throws FileNotFoundException, MalformedURLException{
-		if (LocalUrlCacher.isFile(uri)) {
+	public static SeekableStream getSeekableStream(URI uri) throws FileNotFoundException, MalformedURLException, IOException {
+		if (LocalUrlCacher.isLocalFile(uri)) {
 			File f = new File(uri.getPath());
 			return new SeekableFileStream(f);
 		}
@@ -636,7 +635,7 @@ public final class LocalUrlCacher {
 		if (uri.getScheme() == null) {
 			// attempt to find a local file
 		}
-		if (isFile(uri)) {
+		if (isLocalFile(uri)) {
 			File f = new File(uri);
 			if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
 				try {

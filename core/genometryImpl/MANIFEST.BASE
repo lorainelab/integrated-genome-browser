@@ -52,6 +52,7 @@ Import-Package: affymetrix.calvin.data,
  javax.xml.transform,
  javax.xml.transform.stream,
  com.google.common.collect,
+ com.google.common.io, 
  org.apache.commons.csv,
  javax.xml.validation
 Export-Package: com.affymetrix.genometryImpl,

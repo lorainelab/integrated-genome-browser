@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.google.common.collect.ImmutableList;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
  * @version $Id: GenericFeature.java 10112 2012-02-02 16:24:42Z imnick $
  */
 public final class GenericFeature {
-	public static final String howtoloadmsg = GenometryConstants.BUNDLE.getString("howtoloadmessage");
+	public static final String LOAD_WARNING_MESSAGE = GenometryConstants.BUNDLE.getString("howtoloadmessage");
 	public static final String show_how_to_load = GenometryConstants.BUNDLE.getString("show_how_to_load");
 	public static final boolean default_show_how_to_load = true;
 	
@@ -53,13 +54,15 @@ public final class GenericFeature {
 	public final Object typeObj;    // Das2Type, ...?
 	public final SymLoader symL;
 	private final Set<String> methods = new HashSet<String>();
-	private static final List<LoadStrategy> standardLoadChoices = new ArrayList<LoadStrategy>();
+	
 	private final boolean loadAsTrack;
 	
+	private static final List<LoadStrategy> standardLoadChoices;
 	static {
-		standardLoadChoices.add(LoadStrategy.NO_LOAD);
-		standardLoadChoices.add(LoadStrategy.VISIBLE);
-		standardLoadChoices.add(LoadStrategy.GENOME);
+		standardLoadChoices = ImmutableList.<LoadStrategy>builder()
+				.add(LoadStrategy.NO_LOAD)
+				.add(LoadStrategy.VISIBLE)
+				.add(LoadStrategy.GENOME).build();		
 	}
 	
 	// Requests that have been made for this feature (to avoid overlaps)

@@ -40,6 +40,7 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
+import static com.affymetrix.igb.view.load.FileExtensionContants.*;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
@@ -91,6 +92,7 @@ public final class GeneralLoadUtils {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	// File name storing directory name associated with server on a cached server.
 	public static final String SERVER_MAPPING = "/serverMapping.txt";
+	private static final String LOADING_FEATURE_MESSAGE = IGBConstants.BUNDLE.getString("loadFeature");
 	/**
 	 * Location of synonym file for correlating versions to species. The file
 	 * lookup is done using {@link Class#getResourceAsStream(String)}. The
@@ -713,10 +715,11 @@ public final class GeneralLoadUtils {
 	}
 
 	static void iterateSeqList(final GenericFeature feature) {
+		
 
 		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(
-				MessageFormat.format(IGBConstants.BUNDLE.getString("loadFeature"), feature.featureName)) {
-			
+				MessageFormat.format(LOADING_FEATURE_MESSAGE, feature.featureName)) {
+
 			@Override
 			protected Void runInBackground() {
 				Timer timer = new Timer();
@@ -734,8 +737,9 @@ public final class GeneralLoadUtils {
 						return multiThreadedLoad(chrList);
 					}
 					return singleThreadedLoad(chrList);
-				} catch (Exception ex) {
-					((QuickLoadSymLoader) feature.symL).logException(ex);
+				} catch (Throwable ex) {
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, 
+							"Error while loading feature", ex);			
 					return null;
 				} finally {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Loaded {0} in {1} secs", new Object[]{feature.featureName, (double)timer.read()/1000f});
@@ -884,6 +888,8 @@ public final class GeneralLoadUtils {
 					if(ex instanceof FileNotFoundException){
 						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
 					}
+				} catch (Throwable t) {
+					t.printStackTrace();
 				}
 				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 			}
@@ -1328,7 +1334,7 @@ public final class GeneralLoadUtils {
 				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 				if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
 						 gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
-					Application.infoPanel(GenericFeature.howtoloadmsg,
+					Application.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
 							GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 				}
 			}
@@ -1403,18 +1409,19 @@ public final class GeneralLoadUtils {
 		String extension = GeneralUtils.getExtension(unzippedStreamName);
 		boolean getNewVersion = false;
 		
-		if (extension.equals(".bam")) {
+		if (extension.equals(BAM_EXT)) {
+			
 			if (!handleBam(uri)) {
 				ErrorHandler.errorPanel("Cannot open file", "Failed to authenticate to server", Level.WARNING);
 				version = null;
 			}
-		} else if (extension.equals(".useq")) {
+		} else if (extension.equals(USEQ_EXT)) {
 			loadGroup = handleUseq(uri, loadGroup);
 			getNewVersion = true;
-		} else if (extension.equals(".bar")) {
+		} else if (extension.equals(BAR_EXT)) {
 			loadGroup = handleBar(uri, loadGroup);
 			getNewVersion = true;
-		} else if (extension.equals(".bp1") || extension.equals(".bp2")) {
+		} else if (extension.equals(BP1_EXT) || extension.equals(BP2_EXT)) {
 			loadGroup = handleBp(uri, loadGroup);
 			getNewVersion = true;
 		}

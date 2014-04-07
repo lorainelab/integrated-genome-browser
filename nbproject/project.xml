@@ -835,10 +835,6 @@
                         <label>Debug Protannot</label>
                         <target>debug-nb-protannot</target>
                     </action>
-                    <action>
-                        <label>Deploy Das2</label>
-                        <target>deploy-das2server</target>
-                    </action>
                 </context-menu>
             </view>
             <subprojects/>

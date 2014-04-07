@@ -10,6 +10,6 @@ import java.io.IOException;
 public class SeekableStreamFactory {
 	
 	public static SeekableStream getStreamFor(String uriString) throws IOException {
-		return new SeekableStream(net.sf.samtools.seekablestream.SeekableStreamFactory.getStreamFor(uriString));
+		return new SeekableStream(net.sf.samtools.seekablestream.SeekableStreamFactory.getInstance().getStreamFor(uriString));
 	}
 }

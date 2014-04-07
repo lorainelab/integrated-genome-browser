@@ -63,14 +63,14 @@ public final class BAM extends XAM {
 		File indexFile = null;
 		SAMFileReader samFileReader = null;
 		String scheme = uri.getScheme().toLowerCase();
-		if (StringUtils.equals(scheme, FILE_PROTOCOL.getValue())) {
+		if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 			// BAM is file.
 			//indexFile = new File(uri.)
 			File f = new File(uri);
 			indexFile = findIndexFile(f);
 			samFileReader = new SAMFileReader(f, indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
-		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL.getValue())) {
+		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL)) {
 			String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
 				
 			if(reachable_url == null){

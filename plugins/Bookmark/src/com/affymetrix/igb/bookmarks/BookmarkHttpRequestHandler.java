@@ -96,13 +96,13 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 		String contextRoot = session.getUri().substring(1); //removes prefixed /
 		Response response;
 		if (contextRoot.equals(SERVLET_NAME_OLD) || contextRoot.equals(SERVLET_NAME)) {
-			parseAndGoToBookmark(session);
+			parseAndGoToBookmark(session, false);
 			response = new Response(getWelcomeMessage());
 			response.setStatus(Response.Status.OK);
 			return response;
 		} else if (contextRoot.equals(GALAXY_REQUEST)) {
 			//This exist to allow custom pipeline for galaxy requests if desired
-			parseAndGoToBookmark(session);
+			parseAndGoToBookmark(session, true);
 			response = new Response(getWelcomeMessage());
 			response.setStatus(Response.Status.OK);
 			return response;
@@ -150,7 +150,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     }
 
     
-    private void parseAndGoToBookmark(final IHTTPSession session) throws NumberFormatException {
+    private void parseAndGoToBookmark(final IHTTPSession session, boolean isGalaxyBookmark) throws NumberFormatException {
         String params = session.getQueryParameterString();
         ourLogger.log(Level.FINE, "Command = {0}", params);
         //TODO refactor all of this code... there is no need to manually parse the request
@@ -164,7 +164,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
             f.repaint();
             f.setAlwaysOnTop(tmp);
         } else {
-            BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap);
+            BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap, isGalaxyBookmark);
         }
 
     }

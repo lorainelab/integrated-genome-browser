@@ -1,6 +1,10 @@
 package com.affymetrix.genometryImpl.util;
 
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTP_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.IGB_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.SUPPORTED_PROTOCOLS;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -15,8 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public final class LocalUrlCacher {
 
-	private static final String cache_content_root = PreferenceUtils.getAppDataDirectory() + "cache/";
-	private static final String cache_header_root = cache_content_root + "headers/";
+	private static final String CACHE_CONTENT_ROOT = PreferenceUtils.getAppDataDirectory() + "cache/";
+	private static final String CACHE_HEADER_ROOT = CACHE_CONTENT_ROOT + "headers/";
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
 	private static final String HTTP_LOCATION_HEADER = "Location";
 	private static final int HTTP_TEMP_REDIRECT = 307;
@@ -49,8 +53,8 @@ public final class LocalUrlCacher {
 	public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 	public static final String URL_NOT_REACHABLE = "URL_NOT_REACHABLE";
 
-	public static final int CONNECT_TIMEOUT = 20000;	// If you can't connect in 20 seconds, fail.
-	public static final int READ_TIMEOUT = 60000;		// If you can't read any data in 1 minute, fail.
+	public static final int CONNECT_TIMEOUT = 8000;	// If you can't connect in 8 seconds, fail.
+	public static final int READ_TIMEOUT = 20000;		// If you can't read any data in 20 seconds, fail.
 
 	private static boolean offline = false;
 
@@ -176,8 +180,8 @@ public final class LocalUrlCacher {
 		//      if content is returned, check last-modified header just to be sure (some servers might ignore
 		//        if-modified-since header?)
 		InputStream result_stream = null;
-		File cache_file = getCacheFile(cache_content_root, url);
-		File header_cache_file = getCacheFile(cache_header_root, url);
+		File cache_file = getCacheFile(CACHE_CONTENT_ROOT, url);
+		File header_cache_file = getCacheFile(CACHE_HEADER_ROOT, url);
 		long local_timestamp = -1;
 		
 		// special-case when one cache file exists, but the other doesn't or is zero-length. Shouldn't happen, really.
@@ -389,14 +393,14 @@ public final class LocalUrlCacher {
 	 * @param url
 	 */
 	public static void invalidateCacheFile(String url) {
-		File cache_file = getCacheFile(cache_content_root, url);
+		File cache_file = getCacheFile(CACHE_CONTENT_ROOT, url);
 		if (cache_file.exists()) {
 			if (!cache_file.delete()) {
 				cache_file.deleteOnExit();	// something went wrong.  Try to delete it later
 			}
 		}
 
-		File header_cache_file = getCacheFile(cache_header_root, url);
+		File header_cache_file = getCacheFile(CACHE_HEADER_ROOT, url);
 		if (header_cache_file.exists()) {
 			if (!header_cache_file.delete()) {
 				header_cache_file.deleteOnExit();	// something went wrong.  Try to delete it later
@@ -534,8 +538,8 @@ public final class LocalUrlCacher {
 	 */
 	public static void clearCache() {
 		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Clearing cache");
-		DeleteFilesInDirectory(cache_header_root);
-		DeleteFilesInDirectory(cache_content_root);
+		DeleteFilesInDirectory(CACHE_HEADER_ROOT);
+		DeleteFilesInDirectory(CACHE_CONTENT_ROOT);
 	}
 
 	private static void DeleteFilesInDirectory(String filename) {
@@ -551,7 +555,7 @@ public final class LocalUrlCacher {
 	 * @return the location of the root directory of the cache.
 	 */
 	public static String getCacheRoot() {
-		return cache_content_root;
+		return CACHE_CONTENT_ROOT;
 	}
 
 	/**
@@ -651,7 +655,7 @@ public final class LocalUrlCacher {
 			return f;
 		}
 		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
+		if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 			InputStream istr = null;
 			try {
 				String uriStr = uri.toString();
@@ -687,9 +691,9 @@ public final class LocalUrlCacher {
 	public static BufferedInputStream convertURIToBufferedUnzippedStream(URI uri) throws Exception{
 		String scheme = uri.getScheme().toLowerCase();
 		InputStream is = null;
-		if (scheme.length() == 0 || scheme.equals("file")) {
+		if (scheme.length() == 0 || scheme.equals(FILE_PROTOCOL)) {
 			is = new FileInputStream(new File(uri));
-		} else if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
+		} else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 			is = LocalUrlCacher.getInputStream(uri.toString());
 		} else {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
@@ -712,9 +716,9 @@ public final class LocalUrlCacher {
 		String scheme = uri.getScheme().toLowerCase();
 		InputStream is = null;
 		try {
-			if (scheme.length() == 0 || scheme.equals("file")) {
+			if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 				is = new FileInputStream(new File(uri));
-			} else if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
+			} else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 				is = LocalUrlCacher.getInputStream(uri.toString());
 			} else {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
@@ -733,21 +737,16 @@ public final class LocalUrlCacher {
 	}
 
 	public static boolean isURL(String url){
-		if(url != null && url.length() != 0){
-			char fc = url.charAt(0);
-			if((fc == 'h' && (url.startsWith("http:") || url.startsWith("https:"))) 
-					|| (fc == 'f' && url.startsWith("ftp:"))){
-				return true;
-			}
+		if (StringUtils.isNotBlank(url)) {
+			String scheme = StringUtils.substringBefore(url, ":");
+			return SUPPORTED_PROTOCOLS.contains(scheme);
 		}
 		return false;
 	}
 	
 	public static boolean isValidURL(String url){
-		URI uri = null;
-
 		try {
-			uri = new URI(url);
+			URI uri = new URI(url);
 			return isValidURI(uri);
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, null, "Invalid url :" + url);
@@ -757,26 +756,25 @@ public final class LocalUrlCacher {
 	}
 	
 	public static boolean isValidURI(URI uri){
-		String scheme = null;
+		String scheme;
 		try {
 			scheme = uri.getScheme().toLowerCase();
 		} catch (NullPointerException ex) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Check if Url {0} is proper. No schema found", uri.toString());
 			return false;
 		}
-		if (scheme.length() == 0 || scheme.equals("file")) {
+		if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 			File f = new File(uri);
-			if(f != null && f.exists()){
+			if(f.exists()){
 				return true;
 			}
 		}
 
-		if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
+		if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 			InputStream istr = null;
-			URLConnection conn = null;
 			try {
 
-				conn = uri.toURL().openConnection();
+				URLConnection conn = uri.toURL().openConnection();
 				conn.setConnectTimeout(CONNECT_TIMEOUT);
 				conn.setReadTimeout(READ_TIMEOUT);
 				istr = conn.getInputStream();
@@ -788,34 +786,29 @@ public final class LocalUrlCacher {
   
 			}catch(MalformedURLException ex){
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Malformed Invalid uri :{0}", uri.toString());
-			}catch(IOException ex){	
+			}catch(IOException ex){
+				//do nothing
 			}finally{ 
 				GeneralUtils.safeClose(istr);
 			}
 		}
 
-		if (scheme.startsWith("igb")) { // special case - programatical url processing
-			return true;
-		}
-
-		return false;
+		return scheme.startsWith(IGB_PROTOCOL);
 	}
 	
 	public static String getReachableUrl(String urlString) {
-		if (urlString.startsWith("file")) {
+		if (urlString.startsWith(FILE_PROTOCOL)) {
 			File f = new File(urlString);
-			if (f != null && f.exists()) {
+			if (f.exists()) {
 				return urlString;
 			}
 		}
 
-		if (urlString.startsWith("http") || urlString.startsWith("ftp")) {
+		if (urlString.startsWith(HTTP_PROTOCOL) || urlString.startsWith(FTP_PROTOCOL)) {
 			InputStream istr = null;
-			URLConnection conn = null;
 			try {
 
-				conn = connectToUrl(urlString, null, -1);
-
+				URLConnection conn = connectToUrl(urlString, null, -1);
 
 				if (conn instanceof HttpURLConnection) {
 					String reachable_url = urlString;

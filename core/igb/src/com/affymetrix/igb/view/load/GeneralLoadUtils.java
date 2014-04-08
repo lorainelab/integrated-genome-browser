@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.BAM.BamIndexNotFoundException;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
@@ -1410,10 +1411,13 @@ public final class GeneralLoadUtils {
 		boolean getNewVersion = false;
 		
 		if (extension.equals(BAM_EXT)) {
-			
-			if (!handleBam(uri)) {
-				ErrorHandler.errorPanel("Cannot open file", "Failed to authenticate to server", Level.WARNING);
-				version = null;
+			try{
+				if (!handleBam(uri)) {
+					ErrorHandler.errorPanel("Cannot open file", "Failed to authenticate to server", Level.WARNING);
+					version = null;
+				}
+			} catch (BamIndexNotFoundException ex) {
+				ErrorHandler.errorPanel("Cannot open file", "Bam Index file not found", Level.WARNING);
 			}
 		} else if (extension.equals(USEQ_EXT)) {
 			loadGroup = handleUseq(uri, loadGroup);
@@ -1441,7 +1445,7 @@ public final class GeneralLoadUtils {
 		return version;
 	}
 
-	private static boolean handleBam(URI uri) {
+	private static boolean handleBam(URI uri) throws BamIndexNotFoundException {
 		try {
 			return BAM.hasIndex(uri);
 		} catch (IOException ex) {

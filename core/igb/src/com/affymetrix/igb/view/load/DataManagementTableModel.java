@@ -321,7 +321,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					vFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)){
 					return vFeature.getFeature().featureName;
 				} else if (style == null) {
-					return "";
+					if (vFeature.getFeature().getMethods().size() > 1) {
+						return "";
+					} else {
+						return vFeature.getFeature().featureName;
+					}
 				}
 				return style.getTrackName();
 			case FOREGROUND_COLUMN:
@@ -371,10 +375,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
 			return false;
 		} else if (style != null && style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
-			if (col == HIDE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN || col == DELETE_FEATURE_COLUMN) {
-				return true;
-			}
-			return false;
+			return col == HIDE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN || col == DELETE_FEATURE_COLUMN;
 		} 
 //		else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 //				&& !vFeature.isPrimary()) {
@@ -549,8 +550,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			currentStyleList.addAll(stylemap.values());
 		}
 		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyleList.size());
-		for (int i = 0; i < currentStyleList.size(); i++) {
-			TrackStyle the_style = currentStyleList.get(i);
+		for (TrackStyle the_style : currentStyleList) {
 			if (the_style.getCustomizable()) {
 				customizables.add(the_style);
 			}
@@ -583,6 +583,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		this.glv.changeVisibleDataButtonIfNecessary(features);
 	}
 
+	@Override
 	public void stateChanged(ChangeEvent evt) {//????
 		Object src = evt.getSource();
 		if (src instanceof GenericFeature) {

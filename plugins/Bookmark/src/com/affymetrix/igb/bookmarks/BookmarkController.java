@@ -73,7 +73,7 @@ public abstract class BookmarkController {
 		if (bm.isValidBookmarkFormat()) {
 			try {
 				ListMultimap<String, String> props = Bookmark.parseParameters(bm.getURL());
-				BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, props);				
+				BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, props, false);				
 			} catch (Exception e) {
 				String message = e.getClass().getName() + ": " + e.getMessage();
 				ErrorHandler.errorPanel("Error opening bookmark.\n" + message);

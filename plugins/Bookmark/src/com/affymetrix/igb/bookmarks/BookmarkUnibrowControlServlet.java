@@ -93,14 +93,19 @@ public final class BookmarkUnibrowControlServlet {
 	 *  objects.  For example, this could be the Map returned by
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
-	public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters) {
+	public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
 		String batchFileStr = getFirstValueEntry(parameters, IGBService.SCRIPTFILETAG);
 		if (StringUtils.isNotBlank(batchFileStr)) {
 			igbService.doActions(batchFileStr);
 			return;
 		}
+		
+		String threadDescription = "Loading Bookmark Data";
+		if (isGalaxyBookmark) {
+			threadDescription = "Loading Your Galaxy Data";
+		}
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading Data") {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(threadDescription) {
 
 			@Override
 			protected Object runInBackground() {				
@@ -144,7 +149,7 @@ public final class BookmarkUnibrowControlServlet {
 							if (currentSpan != null && currentSpan.getBioSeq() != null) {
 								//check genome version, if same then set coordinates								
 								AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
-								if (currentGroup!=null && currentGroup.equals(bookMarkGroup)) {
+								if (!isGalaxyBookmark &&(currentGroup!=null && currentGroup.equals(bookMarkGroup))) {
 									start = currentSpan.getStart();
 									end = currentSpan.getEnd();
 									seqid = currentSpan.getBioSeq().getID();
@@ -162,7 +167,7 @@ public final class BookmarkUnibrowControlServlet {
 						}
 					}
 					//pick something, only works if version was loaded.
-					if (pickOne){
+					if (pickOne & !isGalaxyBookmark){
 						BioSeq bs = bookMarkGroup.getSeq(0);
 						if (bs != null){
 							int len = bs.getLength();
@@ -380,18 +385,18 @@ public final class BookmarkUnibrowControlServlet {
 
 	private List<GenericFeature> loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		ImmutableList.Builder<GenericFeature> builder = ImmutableList.<GenericFeature>builder();
+		List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
 		int i = 0;
 		for (String queryUrl : query_urls) {
-			builder.add(getFeature(igbService, seqGroup, gServers.get(i), queryUrl));
+			gFeatures.add(getFeature(igbService, seqGroup, gServers.get(i), queryUrl));
 			i++;
 		}
-		ImmutableList<GenericFeature> gFeatures = builder.build();
 		boolean show_message = false;
 		for (GenericFeature gFeature : gFeatures) {
 			if (gFeature != null) {
 				loadFeature(igbService, gFeature, start, end);
-				if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE || gFeature.getLoadStrategy() == LoadStrategy.NO_LOAD) {
+				if (!show_message && (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE)) {
+					gFeature.setVisible();
 					show_message = true;
 				}
 			}
@@ -469,6 +474,10 @@ public final class BookmarkUnibrowControlServlet {
 
 	private void loadFeature(IGBService igbService, GenericFeature gFeature, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		//a bit of a hack to force track creation since with no overlap there is currently no track being created.
+		if (end == 0) {
+			end = 1;
+		}
 		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
 		gFeature.setVisible();
 		gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);

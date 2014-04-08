@@ -265,7 +265,7 @@ class BookmarkGetAndPostHttpRequestHandler implements Runnable {
 		if (index >= 0 && index < command.length()) {
 			String params = command.substring(index + 1);
 			ListMultimap<String, String> paramMap =Bookmark.parseParametersFromQuery(params);
-			BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap);
+			BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap, false);
 		}
 	}
 }

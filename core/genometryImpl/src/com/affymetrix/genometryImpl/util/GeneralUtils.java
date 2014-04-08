@@ -189,7 +189,6 @@ public final class GeneralUtils {
 	public static File convertStreamToFile(InputStream istr, String streamName) {
 		// Output the InputStream to a temporary file, and read that as a FileInputStream.
 		OutputStream out = null;
-		FileInputStream fis = null;
 		try {
 			String unzippedStreamName = stripEndings(streamName);
 			String extension = getExtension(unzippedStreamName);
@@ -203,13 +202,12 @@ public final class GeneralUtils {
 				out.write(bytes, 0, read);
 			}
 			return f;
-		}  catch (Exception ex) {
+		}  catch (IOException ex) {
 			ex.printStackTrace();
 			return null;
 		}
 		finally {
 			GeneralUtils.safeClose(out);
-			GeneralUtils.safeClose(fis);
 		}
 	}
 
@@ -607,9 +605,7 @@ public final class GeneralUtils {
 	
 	public static void copyToClipboard(String content) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringBuffer hackbuf = new StringBuffer(content);
-		String hackstr = new String(hackbuf);
-		StringSelection data = new StringSelection(hackstr);
+		StringSelection data = new StringSelection(content);
 		clipboard.setContents(data, null);
 	}
 

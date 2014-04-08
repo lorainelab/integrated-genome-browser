@@ -670,7 +670,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		bar.add(showMenu);
 		bar.add(colorMenu);
 		bar.add(showcDNAButton);
-		bar.add(showNumberingButton);
+//		bar.add(showNumberingButton);
 //		bar.add(reverseColorsButton);
 		dock.setJMenuBar(bar);
 		return dock;

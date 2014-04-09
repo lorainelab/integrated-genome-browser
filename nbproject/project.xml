@@ -310,12 +310,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/SequenceViewer</label>
-                    <type>java</type>
-                    <location>plugins/SequenceViewer</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/ThousandGenomesServerType/src</label>
                     <type>java</type>
                     <location>plugins/ThousandGenomesServerType/src</location>
@@ -346,15 +340,15 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>core/genometryImpl/test</label>
+                    <label>plugins/SequenceViewer/test</label>
                     <type>java</type>
-                    <location>core/genometryImpl/test</location>
+                    <location>plugins/SequenceViewer/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>core/igb/test</label>
+                    <label>plugins/Bookmark/test</label>
                     <type>java</type>
-                    <location>core/igb/test</location>
+                    <location>plugins/Bookmark/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -364,9 +358,15 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/Bookmark/test</label>
+                    <label>core/igb/test</label>
                     <type>java</type>
-                    <location>plugins/Bookmark/test</location>
+                    <location>core/igb/test</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>core/genometryImpl/test</label>
+                    <type>java</type>
+                    <location>core/genometryImpl/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -568,11 +568,6 @@
                 <location>plugins/TableView/build</location>
                 <build-target>compile</build-target>
             </export>
-            <export>
-                <type>folder</type>
-                <location>core/genometryImpl/build-test</location>
-                <build-target>compile</build-target>
-            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -772,10 +767,6 @@
                         <location>plugins/NCBIPrimer/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/SequenceViewer</label>
-                        <location>plugins/SequenceViewer</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/ThousandGenomesServerType/src</label>
                         <location>plugins/ThousandGenomesServerType/src</location>
                     </source-folder>
@@ -796,20 +787,24 @@
                         <location>core/genoviz_sdk/demo/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>core/genometryImpl/test</label>
-                        <location>core/genometryImpl/test</location>
+                        <label>plugins/SequenceViewer/test</label>
+                        <location>plugins/SequenceViewer/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>core/igb/test</label>
-                        <location>core/igb/test</location>
+                        <label>plugins/Bookmark/test</label>
+                        <location>plugins/Bookmark/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>das2_server/test</label>
                         <location>das2_server/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/Bookmark/test</label>
-                        <location>plugins/Bookmark/test</location>
+                        <label>core/igb/test</label>
+                        <location>core/igb/test</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>core/genometryImpl/test</label>
+                        <location>core/genometryImpl/test</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -860,10 +855,7 @@
                 <package-root>plugins/plugins_page/src</package-root>
                 <package-root>plugins/Tutorial/src</package-root>
                 <package-root>core/genoviz_sdk/demo/src</package-root>
-                <package-root>das2_server/test</package-root>
-                <package-root>core/genometryImpl/test</package-root>
                 <package-root>core/genoviz_sdk/test</package-root>
-                <package-root>core/igb/test</package-root>
                 <package-root>protannot/src</package-root>
                 <package-root>plugins/SearchModeIdOrProps/src</package-root>
                 <package-root>plugins/BigBedHandler/src</package-root>
@@ -922,32 +914,31 @@
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>core/genometryImpl/test</package-root>
+                <package-root>plugins/SequenceViewer/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">ext/junit.jar:core/genometryImpl/src:ext/commons-csv-1.0.jar:ext/guava-16.0.1.jar:core/genometryImpl/test</classpath>
-                <built-to>core/genometryImpl/build-test</built-to>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>core/igb/test</package-root>
+                <package-root>plugins/Bookmark/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">ext/junit.jar</classpath>
+                <classpath mode="compile">ext/guava-16.0.1.jar:ext/junit.jar:core/genometryImpl/src:plugins/Bookmark/src</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>das2_server/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">das2_server/src:ext/junit.jar:core/genometryImpl/src</classpath>
+                <classpath mode="compile">core/genometryImpl/src:ext/guava-16.0.1.jar:ext/junit.jar:das2_server/src</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>plugins/SequenceViewer</package-root>
-                <classpath mode="compile">plugins/SequenceViewer/src:plugins/SequenceViewer/test:core/genometryImpl/src:core/common/src:core/genoviz_sdk/src:core/igb/src:core/main/src:core/window_service/src:core/igb_service/src:ext/felix.jar</classpath>
+                <package-root>core/igb/test</package-root>
+                <unit-tests/>
                 <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>plugins/Bookmark/test</package-root>
-                <classpath mode="compile">ext/junit.jar:plugins/Bookmark/src:plugins/Bookmark/test:ext/commons-lang3-3.1.jar:ext/guava-16.0.1.jar</classpath>
+                <package-root>core/genometryImpl/test</package-root>
+                <unit-tests/>
+                <classpath mode="compile">core/genometryImpl/src:ext/commons-lang3-3.1.jar:ext/guava-16.0.1.jar:ext/junit.jar</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
         </java-data>

@@ -9,6 +9,40 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.util.*;
+
+import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import static com.affymetrix.igb.IGBConstants.*;
+import com.affymetrix.igb.general.Persistence;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.prefs.WebLinkUtils;
+import com.affymetrix.igb.tiers.IGBStateProvider;
+import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.IGBAuthenticator;
+import com.affymetrix.igb.util.IGBTrustManager;
+import com.affymetrix.igb.util.MainMenuUtil;
+import com.affymetrix.igb.util.StatusBarOutput;
+import com.affymetrix.igb.view.AltSpliceView;
+import com.affymetrix.igb.view.IGBToolBar;
+import com.affymetrix.igb.view.SeqGroupViewGUI;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
+import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
+import com.affymetrix.igb.window.service.IMenuCreator;
+import com.affymetrix.igb.window.service.IWindowService;
+import com.boxysystems.jgoogleanalytics.FocusPoint;
+import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
+import com.boxysystems.jgoogleanalytics.LoggingAdapter;
+import com.jidesoft.plaf.LookAndFeelFactory;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -26,40 +60,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.*;
-
-import com.jidesoft.plaf.LookAndFeelFactory;
-import com.affymetrix.common.CommonUtils;
-
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.util.*;
-
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-
-import com.affymetrix.igb.general.Persistence;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.tiers.IGBStateProvider;
-import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.IGBAuthenticator;
-import com.affymetrix.igb.util.IGBTrustManager;
-import com.affymetrix.igb.util.MainMenuUtil;
-import com.affymetrix.igb.util.StatusBarOutput;
-import com.affymetrix.igb.view.AltSpliceView;
-import com.affymetrix.igb.view.IGBToolBar;
-import com.affymetrix.igb.view.SeqGroupViewGUI;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
-import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
-import com.affymetrix.igb.window.service.IMenuCreator;
-import com.affymetrix.igb.window.service.IWindowService;
-import com.affymetrix.igb.prefs.WebLinkUtils;
-import static com.affymetrix.igb.IGBConstants.*;
 
 /**
  * Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -298,9 +298,22 @@ public final class IGB extends Application
 	}
 
 	private void notifyCounter(){
-//		JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
-//				IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
-//		tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
+		JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
+				IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
+		LoggingAdapter loggingAdapter = new LoggingAdapter() {
+
+			@Override
+			public void logError(String error) {
+				ourLogger.log(Level.FINE, "Google Analytics Error Message: {0}", error);
+			}
+
+			@Override
+			public void logMessage(String message) {
+				ourLogger.log(Level.FINE, "Google Analytics Response Message: {0}", message);
+			}
+		};
+		tracker.setLoggingAdapter(loggingAdapter);
+		tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
 		LocalUrlCacher.isValidURL(COUNTER_URL);
 	}
 	

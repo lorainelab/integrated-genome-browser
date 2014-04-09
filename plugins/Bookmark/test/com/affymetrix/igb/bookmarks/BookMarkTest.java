@@ -9,9 +9,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import static org.junit.Assert.*;
 import org.junit.Test;
 

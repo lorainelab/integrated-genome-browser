@@ -41,8 +41,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	private static final ImageIcon errorIcon = CommonUtils.getInstance().getIcon("16x16/actions/stop_hex.gif");
 	private static final ImageIcon warningIcon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 	private static final ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.gif");
-	private static final Color warningColor = new Color(255,127,36);
-	private static final Color infoColor = new Color(0,100,0);
 	private final JLabel status_ta, messageIcon;
 	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel;
@@ -63,6 +61,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 //		selectionPanel.add(selLabel);
 //		selectionPanel.add(selField);
 		status_ta = new JLabel("");
+		status_ta.setForeground(Color.black);
 		progressPanel = new JPanel();
 		progressBar = new JProgressBar();
 		memory_item = new MemoryStatusBarItem();
@@ -203,15 +202,12 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	public void showError(String title, String message, List<GenericAction> actions, Level level) {
 		final String tempMessage = message;
 		if(level.equals(Level.SEVERE)){
-			status_ta.setForeground(Color.red);
 			messageIcon.setIcon(errorIcon);
 		}
 		else if(level.equals(Level.WARNING))	{
-			status_ta.setForeground(warningColor);
 			messageIcon.setIcon(warningIcon);
 		}
 		else if(level.equals(Level.INFO)){
-			status_ta.setForeground(infoColor);
 			messageIcon.setIcon(infoIcon);
 		}
 		messageIcon.setVisible(true);
@@ -220,8 +216,7 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 		final Timer timer= new Timer();
 		timer.schedule(new TimerTask() {
             public void run() {
-				messageIcon.setVisible(false);
-				status_ta.setForeground(Color.black);
+				messageIcon.setVisible(false);				
 				setStatus(null);
 				timer.cancel();
             }

@@ -54,6 +54,10 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         }
         return response;
     }
+	
+	private String getIgbJs() {
+        return "var igbIsRunning = true";
+	}
 
     private String getWelcomeMessage() {
         StringBuilder msg = new StringBuilder("<html>");
@@ -112,10 +116,10 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 			response.setStatus(Response.Status.OK);
 			return response;
 		} else if (contextRoot.equals(IGB_STATUS_CHECK)) {
-			response = new Response("IGB IS RUNNING");
+			response = new Response(getIgbJs());
 			response.setStatus(Response.Status.OK);
 			return response;
-		} else {			
+		} else {
 			response = new Response(getBadRequestMessage());
 			response.setStatus(Response.Status.BAD_REQUEST);
 			return response;

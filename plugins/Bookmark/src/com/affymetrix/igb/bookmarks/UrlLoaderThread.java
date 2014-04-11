@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
+import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
@@ -121,7 +122,7 @@ public final class UrlLoaderThread extends Thread {
 					try {
 						parseDataFromURL(url, file_extension, tier_name);
 					} finally {
-						igbService.removeNotLockedUpMsg("Loading data set " + tier_name);
+						igbService.removeNotLockedUpMsg(LOADING_MESSAGE_PREFIX + tier_name);
 					}
 				} catch (IOException ioe) {
 					handleException(ioe);

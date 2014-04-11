@@ -26,7 +26,6 @@ import javax.swing.SwingUtilities;
  */
 public final class SimpleBookmarkServer {
 
-	public static final String HTTP_RESPONSE = "\nHTTP/1.1 204 No Content\nAccess-Control-Allow-Origin: *\n";
 	private static final int NO_PORT = -1;
 	private static final int PORTS_TO_TRY = 1;
 	private static int server_port = NO_PORT;
@@ -62,7 +61,7 @@ public final class SimpleBookmarkServer {
 		startServerSocket(igbService, DEFAULT_SERVER_PORT);
 		if (server_port != NO_PORT) {
 			startServerSocket(igbService, server_port);
-		}
+		}		
 	}
 
 	public static void startServerSocket(final IGBService igbService, int startPort) {

@@ -14,6 +14,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class is the implementation of bookmark editor panel.
@@ -121,7 +122,7 @@ public class BookmarkEditor {
 				String name = nameField.getText();
 				String comment = commentField.getText();
 
-				if (name.trim().length() == 0) {
+				if (StringUtils.isBlank(name)) {
 					name = "IGB BOOKMARK";
 				}
 				bookmark.setName(name);

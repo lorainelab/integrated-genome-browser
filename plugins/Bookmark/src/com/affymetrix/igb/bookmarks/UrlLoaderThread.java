@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -221,7 +222,7 @@ public final class UrlLoaderThread extends Thread {
 		} catch (Exception e) {
 			// do nothing.  Just use the default string value
 		}
-		if (value == null || value.length() == 0) {
+		if (StringUtils.isBlank(value)) {
 			value = default_value;
 		}
 		return value;

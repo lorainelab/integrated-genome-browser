@@ -186,7 +186,7 @@ public final class BookmarkUnibrowControlServlet {
 				
 				//attempt to parse from bookmark?
 				if (start == 0 && end == 0){
-					ImmutableList<Integer> intValues = initializeIntValues(start_param, end_param, select_start_param, select_end_param);
+					List<Integer> intValues = initializeIntValues(start_param, end_param, select_start_param, select_end_param);
 					start = intValues.get(0);
 					end = intValues.get(1);
 				}
@@ -514,7 +514,7 @@ public final class BookmarkUnibrowControlServlet {
 		}
 	}
 
-	private ImmutableList<Integer> initializeIntValues(String start_param, String end_param,
+	private List<Integer> initializeIntValues(String start_param, String end_param,
 			String select_start_param, String select_end_param) {
 
 		Integer start = 0;
@@ -587,7 +587,7 @@ public final class BookmarkUnibrowControlServlet {
 		// hopefully setting gmodel's selected seq group above triggered population of seqs
 		//   for group if not already populated
 		BioSeq book_seq;
-		if (seqid == null || "unknown".equals(seqid) || seqid.trim().length() == 0) {
+		if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {
 			book_seq = gmodel.getSelectedSeq();
 			if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 				book_seq = gmodel.getSelectedSeqGroup().getSeq(0);

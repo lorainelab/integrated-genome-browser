@@ -119,7 +119,7 @@ public final class Bookmark implements Serializable {
 	public Bookmark(String name, String comment, String url) throws MalformedURLException {
 		this.name = name;
 		this.comment = comment;
-		if (this.name == null || this.name.length() == 0) {
+		if (StringUtils.isBlank(name)) {
 			this.name = "bookmark";
 		}
 		this.url = new URL(url);

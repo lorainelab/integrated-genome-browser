@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of
@@ -160,7 +161,7 @@ public abstract class BookmarkController {
 					}
 				}
 
-				if (sym_name == null || sym_name.trim().length() == 0) {
+				if (StringUtils.isBlank(sym_name)) {
 					sym_name = feature_path;
 				}
 

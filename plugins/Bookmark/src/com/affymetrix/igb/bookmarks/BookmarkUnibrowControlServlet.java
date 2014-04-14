@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.bookmarks;
 
@@ -47,8 +44,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *  A way of allowing IGB to be controlled via hyperlinks.
- *  (This used to be an implementation of HttpServlet, but it isn't now.)
+ * A way of allowing IGB to be controlled via hyperlinks. (This used to be an
+ * implementation of HttpServlet, but it isn't now.)
  * <pre>
  *  Can specify:
  *      genome version
@@ -61,7 +58,7 @@ import org.apache.commons.lang3.StringUtils;
  *      ask the user before switching.
  *
  * @version $Id: UnibrowControlServlet.java 7505 2011-02-10 20:27:35Z hiralv $
- *</pre>
+ * </pre>
  */
 public final class BookmarkUnibrowControlServlet {
 
@@ -71,7 +68,6 @@ public final class BookmarkUnibrowControlServlet {
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
 	private BookmarkUnibrowControlServlet() {
-		super();
 	}
 
 	public static final BookmarkUnibrowControlServlet getInstance() {
@@ -80,18 +76,13 @@ public final class BookmarkUnibrowControlServlet {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
-	String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
-		if (multimap.get(key).isEmpty()) {
-			return null;
-		}
-		return multimap.get(key).get(0);
-	}
-
-	/** Loads a bookmark.
+	/**
+	 * Loads a bookmark.
+	 *
 	 * @param igbService
-	 *  @param parameters Must be a Map where the only values are String and String[]
-	 *  objects.  For example, this could be the Map returned by
-	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
+	 * @param parameters Must be a Map where the only values are String and
+	 * String[] objects. For example, this could be the Map returned by
+	 * {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
 	public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
 		String batchFileStr = getFirstValueEntry(parameters, IGBService.SCRIPTFILETAG);
@@ -99,7 +90,7 @@ public final class BookmarkUnibrowControlServlet {
 			igbService.doActions(batchFileStr);
 			return;
 		}
-		
+
 		String threadDescription = "Loading Bookmark Data";
 		if (isGalaxyBookmark) {
 			threadDescription = "Loading Your Galaxy Data";
@@ -108,7 +99,7 @@ public final class BookmarkUnibrowControlServlet {
 		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(threadDescription) {
 
 			@Override
-			protected Object runInBackground() {				
+			protected Object runInBackground() {
 				String seqid = getFirstValueEntry(parameters, Bookmark.SEQID);
 				String version = getFirstValueEntry(parameters, Bookmark.VERSION);
 				String start_param = getFirstValueEntry(parameters, Bookmark.START);
@@ -133,59 +124,57 @@ public final class BookmarkUnibrowControlServlet {
 				boolean loaddas2data = true;
 				int start = 0;
 				int end = 0;
-				
+
 				//missing seqid or start or end? Attempt to set to current view
-				if (missingString(new String[]{seqid, start_param, end_param})){				
+				if (missingString(new String[]{seqid, start_param, end_param})) {
 					boolean pickOne = false;
 					//get AnnotatedSeqGroup for bookmark
 					String preferredVersionName = LOOKUP.getPreferredName(version);
 					AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(preferredVersionName);
-					if (bookMarkGroup != null){
+					if (bookMarkGroup != null) {
 						//same genome version as that in view?
 						SeqMapViewI currentSeqMap = igbService.getSeqMapView();
-						if (currentSeqMap != null){
+						if (currentSeqMap != null) {
 							//get visible span
 							SeqSpan currentSpan = currentSeqMap.getVisibleSpan();
 							if (currentSpan != null && currentSpan.getBioSeq() != null) {
 								//check genome version, if same then set coordinates								
 								AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
-								if (!isGalaxyBookmark &&(currentGroup!=null && currentGroup.equals(bookMarkGroup))) {
+								if (!isGalaxyBookmark && (currentGroup != null && currentGroup.equals(bookMarkGroup))) {
 									start = currentSpan.getStart();
 									end = currentSpan.getEnd();
 									seqid = currentSpan.getBioSeq().getID();
 								} else {
 									pickOne = true;
 								}
-							}
-							else {
+							} else {
 								pickOne = true;
 							}
-						}
-						//pick first chromosome and 1M span
+						} //pick first chromosome and 1M span
 						else {
 							pickOne = true;
 						}
 					}
 					//pick something, only works if version was loaded.
-					if (pickOne & !isGalaxyBookmark){
+					if (pickOne & !isGalaxyBookmark) {
 						BioSeq bs = bookMarkGroup.getSeq(0);
-						if (bs != null){
+						if (bs != null) {
 							int len = bs.getLength();
 							seqid = bs.getID();
-							start = len/3 - 500000;
+							start = len / 3 - 500000;
 							if (start < 0) {
 								start = 0;
 							}
 							end = start + 500000;
 							if (end > len) {
-								end = len-1;
+								end = len - 1;
 							}
 						}
 					}
 				}
-				
+
 				//attempt to parse from bookmark?
-				if (start == 0 && end == 0){
+				if (start == 0 && end == 0) {
 					List<Integer> intValues = initializeIntValues(start_param, end_param, select_start_param, select_end_param);
 					start = intValues.get(0);
 					end = intValues.get(1);
@@ -194,9 +183,9 @@ public final class BookmarkUnibrowControlServlet {
 				List<String> server_urls = parameters.get(Bookmark.SERVER_URL);
 				List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
 				List<GenericServer> gServers = null;
-				if (server_urls.isEmpty() ||query_urls.isEmpty() || server_urls.size()!=query_urls.size()) {
+				if (server_urls.isEmpty() || query_urls.isEmpty() || server_urls.size() != query_urls.size()) {
 					loaddata = false;
-				} else {					
+				} else {
 					gServers = loadServers(igbService, server_urls);
 				}
 
@@ -205,38 +194,38 @@ public final class BookmarkUnibrowControlServlet {
 
 				List<GenericServer> gServers2 = null;
 
-				if (das2_server_urls.isEmpty() || das2_query_urls.isEmpty() || das2_server_urls.size()!=das2_query_urls.size()) {
+				if (das2_server_urls.isEmpty() || das2_query_urls.isEmpty() || das2_server_urls.size() != das2_query_urls.size()) {
 					loaddas2data = false;
-				} 
-				else {
+				} else {
 					gServers2 = loadServers(igbService, das2_server_urls);
 				}
-				
+
 				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
 				if (seq == null) {
-					if(loaddata){
+					if (loaddata) {
 						AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
-						if(seqGroup == null || !seqGroup.isSynonymous(version)){
+						if (seqGroup == null || !seqGroup.isSynonymous(version)) {
 							seqGroup = gmodel.addSeqGroup(version);
 						}
 						loadChromosomesFor(igbService, seqGroup, gServers, query_urls);
 					}
 					return null; /* user cancelled the change of genome, or something like that */
+
 				}
 
 				if (loaddata) {
 					// TODO: Investigate edge case at max
-					if(seq.getMin() == start && seq.getMax() == end){
+					if (seq.getMin() == start && seq.getMax() == end) {
 						end -= 1;
 					}
-					
+
 					List<GenericFeature> gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
 
 					if (has_properties) {
 						List<String> graph_urls = getGraphUrls(parameters);
 						final Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
-						
+
 						for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
 							String combo_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, Bookmark.GRAPH.COMBO.toString() + i);
 							if (combo_name != null) {
@@ -255,7 +244,7 @@ public final class BookmarkUnibrowControlServlet {
 								}
 							}
 						}
-						
+
 						for (final GenericFeature feature : gFeatures) {
 							if (feature != null && graph_urls.contains(feature.getURI().toString())) {
 								ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
@@ -298,13 +287,14 @@ public final class BookmarkUnibrowControlServlet {
 		CThreadHolder.getInstance().execute(parameters, worker);
 	}
 
-	/**Checks for nulls or Strings with zero length.
-	 * 
+	/**
+	 * Checks for nulls or Strings with zero length.
+	 *
 	 * @param params
-	 * @return 
+	 * @return
 	 */
-	public static boolean missingString(String[] params){
-		for (String s : params){
+	public static boolean missingString(String[] params) {
+		for (String s : params) {
 			if (StringUtils.isBlank(s)) {
 				return true;
 			}
@@ -402,15 +392,15 @@ public final class BookmarkUnibrowControlServlet {
 			}
 		}
 		igbService.updateGeneralLoadView();
-		
-		if(show_message){
-			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE, 
+
+		if (show_message) {
+			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
 					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 		}
 		return gFeatures;
 	}
 
-	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls){
+	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
 		List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
 		for (GenericFeature gFeature : gFeatures) {
 			if (gFeature != null) {
@@ -418,37 +408,37 @@ public final class BookmarkUnibrowControlServlet {
 			}
 		}
 	}
-	
-	private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls){
+
+	private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
 		List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
-		
+
 		boolean show_message = false;
 		int i = 0;
 		for (String query_url : query_urls) {
 			GenericFeature gFeature = getFeature(igbService, seqGroup, gServers.get(i), query_url);
 			gFeatures.add(gFeature);
-			if(gFeature != null){
+			if (gFeature != null) {
 				gFeature.setVisible();
 				gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-				if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
-					gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME*/){
+				if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
+						 gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
 					show_message = true;
-				}	
+				}
 			}
 			i++;
 		}
 
 		igbService.updateGeneralLoadView();
-		
+
 		// Show message on how to load
-		if(show_message){
-			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE, 
+		if (show_message) {
+			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
 					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
 		}
-		
+
 		return gFeatures;
 	}
-	
+
 	private GenericFeature getFeature(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer gServer, final String query_url) {
 
 		if (gServer == null) {
@@ -461,7 +451,6 @@ public final class BookmarkUnibrowControlServlet {
 		//if (!LocalUrlCacher.isValidURL(query_url)) {
 		//	return null;
 		//}
-
 		GenericFeature feature = igbService.getFeature(seqGroup, gServer, query_url, false);
 
 		if (feature == null) {
@@ -488,7 +477,7 @@ public final class BookmarkUnibrowControlServlet {
 	}
 
 	private List<GenericServer> loadServers(IGBService igbService, List<String> server_urls) {
-		final ImmutableList.Builder<GenericServer> builder =  ImmutableList.<GenericServer>builder();
+		final ImmutableList.Builder<GenericServer> builder = ImmutableList.<GenericServer>builder();
 
 		for (String server_url : server_urls) {
 			builder.add(igbService.loadServer(server_url));
@@ -533,7 +522,7 @@ public final class BookmarkUnibrowControlServlet {
 		}
 		Integer selstart = -1;
 		Integer selend = -1;
-		if (StringUtils.isNotBlank(select_start_param) && StringUtils.isNotBlank(select_end_param)){
+		if (StringUtils.isNotBlank(select_start_param) && StringUtils.isNotBlank(select_end_param)) {
 			selstart = Ints.tryParse(select_start_param);
 			selend = Ints.tryParse(select_end_param);
 			if (selstart == null) {
@@ -546,20 +535,19 @@ public final class BookmarkUnibrowControlServlet {
 		ImmutableList<Integer> intValues = ImmutableList.<Integer>builder().add(start).add(end).add(selstart).add(selend).build();
 		return intValues;
 	}
-	
 
-	/** Loads the sequence and goes to the specified location.
-	 *  If version doesn't match the currently-loaded version,
-	 *  asks the user if it is ok to proceed.
-	 *  NOTE:  This schedules events on the AWT event queue.  If you want
-	 *  to make sure that everything has finished before you do something
-	 *  else, then you have to schedule that something else to occur
-	 *  on the AWT event queue.
-	 *  @param graph_files it is ok for this parameter to be null.
-	 *  @return true indicates that the action succeeded
+	/**
+	 * Loads the sequence and goes to the specified location. If version doesn't
+	 * match the currently-loaded version, asks the user if it is ok to proceed.
+	 * NOTE: This schedules events on the AWT event queue. If you want to make
+	 * sure that everything has finished before you do something else, then you
+	 * have to schedule that something else to occur on the AWT event queue.
+	 *
+	 * @param graph_files it is ok for this parameter to be null.
+	 * @return true indicates that the action succeeded
 	 */
 	private BioSeq goToBookmark(final IGBService igbService, final String seqid, final String version, int start, int end) {
-		
+
 		final AnnotatedSeqGroup book_group = igbService.determineAndSetGroup(version);
 		if (book_group == null) {
 			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n"
@@ -589,12 +577,19 @@ public final class BookmarkUnibrowControlServlet {
 		BioSeq book_seq;
 		if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {
 			book_seq = gmodel.getSelectedSeq();
-			if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+			if (book_seq == null && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 				book_seq = gmodel.getSelectedSeqGroup().getSeq(0);
 			}
 		} else {
 			book_seq = group.getSeq(seqid);
 		}
 		return book_seq;
+	}
+
+	private String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
+		if (multimap.get(key).isEmpty()) {
+			return null;
+		}
+		return multimap.get(key).get(0);
 	}
 }

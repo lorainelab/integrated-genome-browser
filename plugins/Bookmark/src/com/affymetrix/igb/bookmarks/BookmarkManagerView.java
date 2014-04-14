@@ -199,7 +199,8 @@ public final class BookmarkManagerView {
 			return;
 		}
 		
-		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
+		//DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
+		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_model.getRoot();
 
 		if (tree_node == null) {
 			return;
@@ -277,13 +278,15 @@ public final class BookmarkManagerView {
 	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
 	public void importBookmarks() {
-		BookmarkList bookmark_list = new BookmarkList("Import");
+		StringBuilder title = new StringBuilder();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		String createdTime = dateFormat.format(Calendar.getInstance().getTime());
-		bookmark_list.setComment("Created Time: " + createdTime);
-		
-		
+		title.append("Import_");
+		title.append(createdTime);		
 		JFileChooser chooser = getJFileChooser(false);
+		BookmarkList bookmark_list = new BookmarkList(title.toString());
+		bookmark_list.setComment("Created Time: " + createdTime);
+
 		chooser.setDialogTitle("Import");
 		chooser.setCurrentDirectory(getLoadDirectory());
 		int option = chooser.showOpenDialog(null);

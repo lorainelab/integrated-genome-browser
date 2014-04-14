@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.igb.util.OptionChooserImpl;
 import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author jnicol
@@ -109,15 +110,15 @@ public final class LoadURLAction extends OpenURIAction {
 		if (pane.getValue() != null && pane.getValue() instanceof Integer) {
 			result = (Integer) pane.getValue();
 		}
-		
-		if(urlStr == null && urlStr.length() > 0 || result!=JOptionPane.OK_OPTION){
-			return;
-		}
-		
-		urlStr = urlStr.trim();
 		URL url;
 		URI uri;
+
 		try {
+			if (StringUtils.isBlank(urlStr) || result != JOptionPane.OK_OPTION) {
+				throw new Exception();
+			}
+
+			urlStr = urlStr.trim();
 			url = new URL(urlStr);
 			uri = url.toURI();
 		} catch (Exception ex) {
@@ -125,9 +126,9 @@ public final class LoadURLAction extends OpenURIAction {
 			ErrorHandler.errorPanel("Invalid URL", "The URL " + urlStr + " is not valid.  Please enter a valid URL", Level.SEVERE);
 			return;
 		}
-		
+
 		String friendlyName = getFriendlyName(urlStr);
-		
+
 		if ((!all_known_types.accept(new File(friendlyName)))) {
 			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
 			return;

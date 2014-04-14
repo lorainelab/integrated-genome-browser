@@ -138,6 +138,6 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DivideMathTransform(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.MultiplyMathTransform(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.SubtractMathTransform(), null);
-		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FindMateOperator(), null);
+//	bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FindMateOperator(), null);
 	}
 }

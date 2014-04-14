@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @version $Id: ServiceUtils.java 7505 2011-02-10 20:27:35Z hiralv $
@@ -36,6 +37,7 @@ import java.util.logging.Logger;
 public final class ServiceUtils {
 
 	private static final ServiceUtils instance = new ServiceUtils();
+	private static final String UNKNOWN_GENOME_VERSION = "unknown";
 
 	private ServiceUtils() {
 		super();
@@ -110,7 +112,7 @@ public final class ServiceUtils {
 	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
 		final AnnotatedSeqGroup group;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		if (version == null || "unknown".equals(version) || version.trim().length() == 0) {
+		if (StringUtils.isBlank(version) || UNKNOWN_GENOME_VERSION.equals(version)) {
 			group = gmodel.getSelectedSeqGroup();
 		} else {
 			group = gmodel.getSeqGroup(version);
@@ -133,7 +135,7 @@ public final class ServiceUtils {
 	 */
 	public void performSelection(String selectParam) {
 
-		if (selectParam == null || selectParam.length() == 0) {
+		if (StringUtils.isBlank(selectParam)) {
 			return;
 		}
 
@@ -155,7 +157,7 @@ public final class ServiceUtils {
 
 	public void selectFeatureAndCenterZoomStripe(String selectParam) {
 
-		if (selectParam == null || selectParam.length() == 0) {
+		if (StringUtils.isBlank(selectParam)) {
 			return;
 		}
 

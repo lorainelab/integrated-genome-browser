@@ -386,7 +386,7 @@ public class IGBScriptEngine implements ScriptEngine {
 	}
 
 	private void goToGenome(String genomeVersion) {
-		AnnotatedSeqGroup group = igbService.determineAndSetGroup(genomeVersion);
+		AnnotatedSeqGroup group = igbService.determineAndSetGroup(genomeVersion).orNull();
 		if (group == null) {
 			return;
 		}

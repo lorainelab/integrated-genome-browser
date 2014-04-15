@@ -50,7 +50,7 @@ public class OpenURIAction extends SeqMapViewActionA {
 		igbService = IGBServiceImpl.getInstance();
 	}
 			
-	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
+	public void openURI(URI uri, final String fileName, final boolean mergeSelected, 
 		final AnnotatedSeqGroup loadGroup, final String speciesName, boolean loadAsTrack) {
 		
 		if(ScriptManager.getInstance().isScript(uri.toString())){
@@ -99,6 +99,10 @@ public class OpenURIAction extends SeqMapViewActionA {
 		}
 		
 		return filters;
+	}
+	
+	public static AnnotatedSeqGroup retrieveSeqGroup(String name) {
+		return gmodel.addSeqGroup(name);
 	}
 	
 }

@@ -24,6 +24,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,7 @@ public final class ServiceUtils {
 		return gServer;
 	}
 
-	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
+	public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
 		final AnnotatedSeqGroup group;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		if (StringUtils.isBlank(version) || UNKNOWN_GENOME_VERSION.equals(version)) {
@@ -121,7 +122,7 @@ public final class ServiceUtils {
 			GeneralLoadView.getLoadView().initVersion(version);
 			gmodel.setSelectedSeqGroup(group);
 		}
-		return group;
+		return Optional.fromNullable(group);
 	}
 
 	/**
@@ -134,7 +135,7 @@ public final class ServiceUtils {
 	 * @param selectParam The select parameter passed in through the API
 	 */
 	public void performSelection(String selectParam) {
-
+		
 		if (StringUtils.isBlank(selectParam)) {
 			return;
 		}

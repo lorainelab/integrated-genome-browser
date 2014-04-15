@@ -290,9 +290,7 @@ public class SynonymLookup {
 	 * @return the preferred name of the synonym.
 	 */
 	public String getPreferredName(String synonym, boolean cs) {
-		synchronized (preferredNames) {
-			return this.findMatchingSynonym(preferredNames, synonym, cs, false);
-		}
+		return this.findMatchingSynonym(preferredNames, synonym, cs, false);
 	}
 
 	/**

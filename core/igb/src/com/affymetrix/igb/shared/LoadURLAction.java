@@ -1,4 +1,4 @@
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 
 import com.affymetrix.igb.util.OptionChooserImpl;
-import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import org.apache.commons.lang3.StringUtils;
 /**

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.shared.LoadURLAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import com.affymetrix.genometryImpl.event.GenericAction;

@@ -15,7 +15,11 @@ Import-Package: javax.swing,
  com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.util,
  com.affymetrix.genoviz.widget,
+ org.apache.commons.lang3,
+ org.apache.commons.lang3.mutable,
+ com.google.common.primitives,
+ com.google.common.collect,
+ com.google.common.base,
  org.osgi.framework,
  org.osgi.util.tracker;version="1.4.0"
 Export-Package: com.affymetrix.igb.osgi.service
-

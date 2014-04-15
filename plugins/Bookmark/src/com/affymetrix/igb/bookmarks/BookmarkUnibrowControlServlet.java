@@ -29,10 +29,15 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.affymetrix.igb.shared.LoadURLAction;
+import com.affymetrix.igb.shared.OpenURIAction;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,17 +67,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class BookmarkUnibrowControlServlet {
 
-	private static final BookmarkUnibrowControlServlet instance = new BookmarkUnibrowControlServlet();
+	
 	private static final Logger ourLogger
 			= Logger.getLogger(BookmarkUnibrowControlServlet.class.getPackage().getName());
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
 	private BookmarkUnibrowControlServlet() {
 	}
-
-	public static final BookmarkUnibrowControlServlet getInstance() {
-		return instance;
-	}
+    
+    public static BookmarkUnibrowControlServlet getInstance() {
+        return BookmarkUnibrowControlServletHolder.INSTANCE;
+    }
+    
+    private static class BookmarkUnibrowControlServletHolder {
+        private static final BookmarkUnibrowControlServlet INSTANCE = new BookmarkUnibrowControlServlet();
+    }
+	
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
@@ -200,10 +210,14 @@ public final class BookmarkUnibrowControlServlet {
 					gServers2 = loadServers(igbService, das2_server_urls);
 				}
 
-				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
+				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end).orNull();
 
 				if (seq == null) {
-					if (loaddata) {
+					if (isGalaxyBookmark) {
+						loadUnknownData(parameters);
+						return null; 
+					}
+					else if (loaddata) {
 						AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
 						if (seqGroup == null || !seqGroup.isSynonymous(version)) {
 							seqGroup = gmodel.addSeqGroup(version);
@@ -546,13 +560,16 @@ public final class BookmarkUnibrowControlServlet {
 	 * @param graph_files it is ok for this parameter to be null.
 	 * @return true indicates that the action succeeded
 	 */
-	private BioSeq goToBookmark(final IGBService igbService, final String seqid, final String version, int start, int end) {
-
-		final AnnotatedSeqGroup book_group = igbService.determineAndSetGroup(version);
+	private Optional<BioSeq> goToBookmark(IGBService igbService, String seqid, String version, int start, int end) {
+		AnnotatedSeqGroup book_group = null;
+		try{
+		 book_group = igbService.determineAndSetGroup(version).orNull();
+		}catch(Throwable ex){
+			ourLogger.log(Level.SEVERE, "info", ex);
+		}
+		
 		if (book_group == null) {
-			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n"
-					+ "You may need to choose a different server.");
-			return null; // cancel
+			return Optional.fromNullable(null);
 		}
 
 		final BioSeq book_seq = determineSeq(seqid, book_group);
@@ -567,8 +584,7 @@ public final class BookmarkUnibrowControlServlet {
 			}
 		}
 		igbService.getSeqMapView().setRegion(start, end, book_seq);
-
-		return book_seq;
+		return Optional.fromNullable(book_seq);
 	}
 
 	public static BioSeq determineSeq(String seqid, AnnotatedSeqGroup group) {
@@ -586,10 +602,24 @@ public final class BookmarkUnibrowControlServlet {
 		return book_seq;
 	}
 
-	private String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
+	String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
 		if (multimap.get(key).isEmpty()) {
 			return null;
 		}
 		return multimap.get(key).get(0);
+	}
+	
+	private void loadUnknownData(final ListMultimap<String, String> parameters) {
+		List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
+		//These bookmarks should only contain one url
+		if (!query_urls.isEmpty()) {
+			try {
+				String urlToLoad = query_urls.get(0);
+				AnnotatedSeqGroup loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
+				LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", true);
+			} catch (URISyntaxException ex) {
+				ourLogger.log(Level.SEVERE, "Invalid bookmark syntax.", ex);
+			}
+		}
 	}
 }

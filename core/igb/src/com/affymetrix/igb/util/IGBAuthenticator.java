@@ -53,7 +53,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An Authenticator class for IGB. It is designed to make it easier for a user
@@ -153,7 +153,7 @@ public class IGBAuthenticator extends Authenticator {
 				username.setEnabled(auth.isSelected());
 				password.setEnabled(auth.isSelected());
 				showPassword.setEnabled(auth.isSelected());
-				if (auth.isSelected() && (username.getText().length() == 0 || password.getPassword().length == 0)) {
+				if (auth.isSelected() && (StringUtils.isBlank(username.getText()) || password.getPassword().length == 0)) {
 					login.setEnabled(false);
 					tryAgain.setEnabled(false);
 				}

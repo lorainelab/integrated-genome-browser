@@ -47,6 +47,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Optional;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -185,7 +186,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
+	public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
 		return ServiceUtils.getInstance().determineAndSetGroup(version);
 	}
 

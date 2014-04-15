@@ -14,7 +14,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-
+import com.google.common.base.Optional;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -95,7 +95,7 @@ public interface IGBService {
 	public void runScriptString(String line, String ext);
 	public void performSelection(String selectParam);
 	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url, boolean showErrorForUnsupported);
-	public AnnotatedSeqGroup determineAndSetGroup(final String version);
+	public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();
 	public Color getDefaultForegroundColor();
 	// for SearchView

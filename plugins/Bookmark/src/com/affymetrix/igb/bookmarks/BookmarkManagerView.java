@@ -61,6 +61,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A panel for viewing and re-arranging bookmarks in a hierarchy.
@@ -666,7 +667,7 @@ public final class BookmarkManagerView {
 			String name = name_text_field.getText();
 			String comment = comment_text_area.getText();
 			
-			if (name == null || name.length() == 0) {
+			if (StringUtils.isBlank(name)) {
 				return;
 			}
 			Object user_object = selected_bl.getUserObject();

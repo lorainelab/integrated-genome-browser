@@ -112,8 +112,9 @@ public abstract class Glyph implements GlyphI  {
 
 	public void setDrawOrder(int order) {
 		if ((draw_order == DRAW_SELF_FIRST) ||
-				(draw_order == DRAW_CHILDREN_FIRST))
+				(draw_order == DRAW_CHILDREN_FIRST)) {
 			draw_order = order;
+		}
 	}
 
 	public int getDrawOrder() {
@@ -352,8 +353,10 @@ public abstract class Glyph implements GlyphI  {
 	 *    of itself.
 	 */
 	public void addChild(GlyphI glyph, int position) {
-		if (this==glyph) throw new IllegalArgumentException(
-				"Illegal to add a Glyph as a child of itself!");
+		if (this==glyph) {
+			throw new IllegalArgumentException(
+   "Illegal to add a Glyph as a child of itself!");
+		}
 		GlyphI prev_parent = glyph.getParent();
 		if (prev_parent != null) {
 			prev_parent.removeChild(glyph);
@@ -399,7 +402,7 @@ public abstract class Glyph implements GlyphI  {
 	public void removeChild(GlyphI glyph)  {
 		if (children != null) {
 			children.remove(glyph);
-			if (children.size() == 0) { children = null; }
+			if (children.isEmpty()) { children = null; }
 		}
 		// null out the scene if glyph is removed
 		glyph.setScene(null);
@@ -483,11 +486,11 @@ public abstract class Glyph implements GlyphI  {
 	 */
 	public void setCoords(double x, double y, double width, double height)  {
 		if (width < 0) {
-			x = x + width;
+			x += width;
 			width = -width;
 		}
 		if (height < 0) {
-			y = y + height;
+			y += height;
 			height = -height;
 		}
 		coordbox.setRect(x, y, width, height);
@@ -685,7 +688,9 @@ public abstract class Glyph implements GlyphI  {
 	 * @param selectability
 	 */
 	public void setSelectable(boolean selectability) {
-		if (!selectability) setSelected(false);
+		if (!selectability) {
+			setSelected(false);
+		}
 		this.selectable = selectability;
 	}
 
@@ -704,7 +709,9 @@ public abstract class Glyph implements GlyphI  {
 	 * false otherwise.
 	 */
 	public void setSelected(boolean selected) {
-		if (this.selectable) this.selected = selected;
+		if (this.selectable) {
+			this.selected = selected;
+		}
 	}
 
 	/**

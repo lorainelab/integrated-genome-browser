@@ -185,18 +185,23 @@ public class ResourceWrapper implements Bundle {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ResourceWrapper other = (ResourceWrapper) obj;
 		if (resource == null) {
-			if (other.resource != null)
+			if (other.resource != null) {
 				return false;
-		} else if (!resource.equals(other.resource))
+			}
+		} else if (!resource.equals(other.resource)) {
 			return false;
+		}
 		return true;
 	}
 

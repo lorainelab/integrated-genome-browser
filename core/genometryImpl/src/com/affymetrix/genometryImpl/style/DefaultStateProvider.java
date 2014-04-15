@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import java.util.*;
 
 public class DefaultStateProvider implements StateProvider {

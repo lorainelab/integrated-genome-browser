@@ -410,14 +410,18 @@ public class ABITraceParser implements ContentParser {
 	private List<Integer> getBaseList (char base) {
 		List<Integer> correct_vector = null;
 
-		if (base == 'A')
+		if (base == 'A') {
 			correct_vector = A_list;
-		else if (base == 'C')
+		}
+		else if (base == 'C') {
 			correct_vector = C_list;
-		else if (base == 'G')
+		}
+		else if (base == 'G') {
 			correct_vector = G_vector;
-		else if (base == 'T')
+		}
+		else if (base == 'T') {
 			correct_vector = T_vector;
+		}
 
 		return correct_vector;
 	}
@@ -445,27 +449,35 @@ public class ABITraceParser implements ContentParser {
 
 	private void setBaseStrength (int signal_strength, char base) {
 
-		if (base == 'A')
+		if (base == 'A') {
 			A_strength = signal_strength;
-		else if (base == 'C')
+		}
+		else if (base == 'C') {
 			C_strength = signal_strength;
-		else if (base == 'G')
+		}
+		else if (base == 'G') {
 			G_strength = signal_strength;
-		else if (base == 'T')
+		}
+		else if (base == 'T') {
 			T_strength = signal_strength;
+		}
 	}
 
 	private int getBaseStrength (char base) {
 		int correct_strength = 0;
 
-		if (base == 'A')
+		if (base == 'A') {
 			correct_strength = A_strength ;
-		else if (base == 'C')
+		}
+		else if (base == 'C') {
 			correct_strength = C_strength ;
-		else if (base == 'G')
+		}
+		else if (base == 'G') {
 			correct_strength = G_strength ;
-		else if (base == 'T')
+		}
+		else if (base == 'T') {
 			correct_strength = T_strength ;
+		}
 
 		return correct_strength;
 	}

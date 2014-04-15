@@ -532,7 +532,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
 				} else {
 					String msg = MessageFormat.format(PluginsView.BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
-					StringBuffer sb = new StringBuffer(msg);
+					StringBuilder sb = new StringBuilder(msg);
 					sb.append(" -> ");
 					boolean started = false;
 					for (Requirement req : resolver.getUnsatisfiedRequirements()) {
@@ -732,7 +732,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				// The 'Repository' column in 'Plug-ins' tab will be set to empty after plug-in installed
 				// The following code is trying to find the installed bundles in repository by comparing the symbolic name and version,
 				// use the name from repository for 'Repository' column if a matched record found
-				if(repository.equals("")) {
+				if(repository.length() == 0) {
 					for(Bundle b : repositoryBundles) {
 						if(b!=null && b.getLocation()!=null && bundle.getSymbolicName().equals(b.getSymbolicName()) && bundle.getVersion().equals(b.getVersion())) {
 							for (String name : repositories.keySet()) {

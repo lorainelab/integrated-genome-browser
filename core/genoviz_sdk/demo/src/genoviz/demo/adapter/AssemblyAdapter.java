@@ -119,7 +119,6 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 	 * NeoDataAdapterI interface
 	 */
 	public void setScene(Scene scene) {
-		return;
 	}
 
 }

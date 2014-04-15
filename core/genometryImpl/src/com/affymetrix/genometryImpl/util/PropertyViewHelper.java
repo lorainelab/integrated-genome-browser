@@ -55,16 +55,19 @@ public class PropertyViewHelper implements MouseListener, MouseMotionListener {
 		private boolean isURLField(int row, int column){
 
 			if(row > table.getRowCount() || column > table.getColumnCount() ||
-					row < 0 || column < 0)
-				return false;
+					row < 0 || column < 0) {
+			return false;
+		}
 			
 			String value = (String) table.getValueAt(row, column);
 
-			if(value.length() <= 0)
-				return false;
+			if(value.length() <= 0) {
+			return false;
+		}
 
-			if(value.startsWith("<html>"))
-				return true;
+			if(value.startsWith("<html>")) {
+			return true;
+		}
 
 			return false;
 		};

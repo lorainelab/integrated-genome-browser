@@ -46,7 +46,9 @@ public class USeq2Text {
 
 			else {
 				String extension = ".txt";
-				if (printBedFormat) extension = ".bed";
+				if (printBedFormat) {
+						extension = ".bed";
+					}
 				File txtFile = new File (useqArchives[i].getParentFile(), USeqUtilities.removeExtension(useqArchives[i].getName())+extension);
 				print2TextFile(useqArchives[i], txtFile, printBedFormat, convertScoresToBedFormat);
 			}
@@ -70,7 +72,9 @@ public class USeq2Text {
 
 			//make an ArchiveInfo object on the first element in the zip archive
 			ZipEntry ze = e.nextElement();
-			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
+			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
+				throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
+			}
 			ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
 
 			//write out ai info as comments
@@ -88,44 +92,80 @@ public class USeq2Text {
 				if (printOuputInBedFormat){
 					//call appropriate maker
 					//Position
-					if (USeqUtilities.POSITION.matcher(extension).matches()) new PositionData (dis, si).writeBed(out);
+					if (USeqUtilities.POSITION.matcher(extension).matches()) {
+						new PositionData (dis, si).writeBed(out);
+					}
 					//PositionScore
-					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) new PositionScoreData (dis, si).writeBed(out, fixBedScores);
+					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+						new PositionScoreData (dis, si).writeBed(out, fixBedScores);
+					}
 					//PositionText
-					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) new PositionTextData (dis, si).writeBed(out);
+					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+						new PositionTextData (dis, si).writeBed(out);
+					}
 					//PositionScoreText
-					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) new PositionScoreTextData (dis, si).writeBed(out, fixBedScores);
+					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+						new PositionScoreTextData (dis, si).writeBed(out, fixBedScores);
+					}
 					//Region
-					else if (USeqUtilities.REGION.matcher(extension).matches()) new RegionData (dis, si).writeBed(out);
+					else if (USeqUtilities.REGION.matcher(extension).matches()) {
+						new RegionData (dis, si).writeBed(out);
+					}
 					//RegionScore
-					else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) new RegionScoreData (dis, si).writeBed(out, fixBedScores);
+					else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
+						new RegionScoreData (dis, si).writeBed(out, fixBedScores);
+					}
 					//RegionText
-					else if (USeqUtilities.REGION_TEXT.matcher(extension).matches())  new RegionTextData (dis, si).writeBed(out);
+					else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
+						new RegionTextData (dis, si).writeBed(out);
+					}
 					//RegionScoreText
-					else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) new RegionScoreTextData (dis, si).writeBed(out, fixBedScores);
-					else  throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+					else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
+						new RegionScoreTextData (dis, si).writeBed(out, fixBedScores);
+					}
+					else {
+						throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+					}
 				}
 
 				//print native minimal format
 				else {
 					//call appropriate maker
 					//Position
-					if (USeqUtilities.POSITION.matcher(extension).matches()) new PositionData (dis, si).writeNative(out);
+					if (USeqUtilities.POSITION.matcher(extension).matches()) {
+						new PositionData (dis, si).writeNative(out);
+					}
 					//PositionScore
-					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) new PositionScoreData (dis, si).writeNative(out);
+					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+						new PositionScoreData (dis, si).writeNative(out);
+					}
 					//PositionText
-					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) new PositionTextData (dis, si).writeNative(out);
+					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+						new PositionTextData (dis, si).writeNative(out);
+					}
 					//PositionScoreText
-					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) new PositionScoreTextData (dis, si).writeNative(out);
+					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+						new PositionScoreTextData (dis, si).writeNative(out);
+					}
 					//Region
-					else if (USeqUtilities.REGION.matcher(extension).matches()) new RegionData (dis, si).writeNative(out);
+					else if (USeqUtilities.REGION.matcher(extension).matches()) {
+						new RegionData (dis, si).writeNative(out);
+					}
 					//RegionScore
-					else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) new RegionScoreData (dis, si).writeNative(out);
+					else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
+						new RegionScoreData (dis, si).writeNative(out);
+					}
 					//RegionText
-					else if (USeqUtilities.REGION_TEXT.matcher(extension).matches())  new RegionTextData (dis, si).writeNative(out);
+					else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
+						new RegionTextData (dis, si).writeNative(out);
+					}
 					//RegionScoreText
-					else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) new RegionScoreTextData (dis, si).writeNative(out);
-					else  throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+					else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
+						new RegionScoreTextData (dis, si).writeNative(out);
+					}
+					else {
+						throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+					}
 				}
 				dis.close();
 			}
@@ -142,9 +182,15 @@ public class USeq2Text {
 		//add required header
 		StringBuilder header = new StringBuilder();
 		String graphType = ai.getValue(ArchiveInfo.GRAPH_STYLE_KEY);
-		if (graphType == null) throw new IOException("\nFailed to identify a graph type.\n");
-		if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_HEATMAP) || graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_STAIRSTEP)) header.append("track type=bedGraph");
-		else header.append("track type=wiggle_0");
+		if (graphType == null) {
+			throw new IOException("\nFailed to identify a graph type.\n");
+		}
+		if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_HEATMAP) || graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_STAIRSTEP)) {
+			header.append("track type=bedGraph");
+		}
+		else {
+			header.append("track type=wiggle_0");
+		}
 
 		//name
 		String name = inputUseqArchive.getName().replaceAll(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
@@ -172,13 +218,17 @@ public class USeq2Text {
 		String hexColor = ai.getValue(ArchiveInfo.COLOR_KEY);
 		if (hexColor!=null) {
 			String rgb = USeqUtilities.convertHexadecimal2RGB(hexColor, ",");
-			if (rgb == null) throw new IOException("\nFailed to convert the hex color code '"+hexColor+"' to rgb. \n");
+			if (rgb == null) {
+				throw new IOException("\nFailed to convert the hex color code '"+hexColor+"' to rgb. \n");
+			}
 			header.append(" color=");
 			header.append(rgb);
 		}
 
 		//dot graph type?
-		if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_DOT)) header.append(" graphType=points");
+		if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_DOT)) {
+			header.append(" graphType=points");
+		}
 
 		return header.toString();
 	}
@@ -193,11 +243,15 @@ public class USeq2Text {
 
 			//make an ArchiveInfo object on the first element in the zip archive
 			ZipEntry ze = e.nextElement();
-			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
+			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
+				throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
+			}
 			ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
 
 			//graph data?
-			if (ai.isRegionData()) throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
+			if (ai.isRegionData()) {
+				throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
+			}
 
 			//write out ai info as comments
 			out.println("# This wig file was generated by converting the '"+inputUseqArchive+"' archive with the USeq2Text application.");
@@ -209,7 +263,9 @@ public class USeq2Text {
 			//should this be saved as a bedGraph?
 			boolean bedGraphFormat = false;
 			String graphType = ai.getValue(ArchiveInfo.GRAPH_STYLE_KEY);
-			if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_STAIRSTEP) || graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_HEATMAP)) bedGraphFormat = true;
+			if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_STAIRSTEP) || graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_HEATMAP)) {
+				bedGraphFormat = true;
+			}
 
 			//write data slices
 			if (bedGraphFormat){
@@ -225,7 +281,9 @@ public class USeq2Text {
 					DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)));
 					String extension = si.getBinaryType();
 					//correct strand?
-					if (strand != null && strand.equals(si.getStrand()) == false) continue;
+					if (strand != null && strand.equals(si.getStrand()) == false) {
+						continue;
+					}
 					//add new chromosome line?
 					if (si.getChromosome().equals(chromosome) == false) {
 						chromosome = si.getChromosome();
@@ -233,14 +291,24 @@ public class USeq2Text {
 					}
 					//call appropriate maker
 					//Position
-					if (USeqUtilities.POSITION.matcher(extension).matches()) new PositionData (dis, si).writePositionScore(out);
+					if (USeqUtilities.POSITION.matcher(extension).matches()) {
+						new PositionData (dis, si).writePositionScore(out);
+					}
 					//PositionScore
-					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) new PositionScoreData (dis, si).writePositionScore(out);
+					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+						new PositionScoreData (dis, si).writePositionScore(out);
+					}
 					//PositionText
-					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) new PositionTextData (dis, si).writePositionScore(out);
+					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+						new PositionTextData (dis, si).writePositionScore(out);
+					}
 					//PositionScoreText
-					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) new PositionScoreTextData (dis, si).writePositionScore(out);
-					else  throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
+					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+						new PositionScoreTextData (dis, si).writePositionScore(out);
+					}
+					else {
+						throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
+					}
 					dis.close();
 				}
 			}
@@ -264,9 +332,13 @@ public class USeq2Text {
 			DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)));
 			String extension = si.getBinaryType();
 			//correct strand?
-			if (strand != null && strand.equals(si.getStrand()) == false) continue;
+			if (strand != null && strand.equals(si.getStrand()) == false) {
+				continue;
+			}
 			//new chromosome line?
-			if (chromosome == null) chromosome = si.getChromosome();
+			if (chromosome == null) {
+				chromosome = si.getChromosome();
+			}
 			else if (si.getChromosome().equals(chromosome) == false) {
 				//merge
 				PositionScoreData merged = PositionScoreData.merge(psAL);
@@ -276,11 +348,15 @@ public class USeq2Text {
 				//write paired blocks that have the same score
 				for (int i=0; i< scores.length; i++){
 					int next = i+1;
-					if (next == scores.length) break;
+					if (next == scores.length) {
+						break;
+					}
 					//same score?
 					if (scores[i] == scores[next]){
 						//zero?
-						if (skipZeroBlockBedGraphs && scores[i] == 0) continue;
+						if (skipZeroBlockBedGraphs && scores[i] == 0) {
+							continue;
+						}
 						out.print(chromosome); out.print(tab); 
 						out.print(positions[i]); out.print(tab); 
 						out.print(positions[next]+1); out.print(tab); 
@@ -292,7 +368,9 @@ public class USeq2Text {
 						//look to see if next position is one off
 						if ((positions[next]-1) == positions[i]){
 							//zero?
-							if (skipZeroBlockBedGraphs && scores[i] == 0) continue;
+							if (skipZeroBlockBedGraphs && scores[i] == 0) {
+								continue;
+							}
 							out.print(chromosome); out.print(tab); 
 							out.print(positions[i]); out.print(tab); 
 							out.print(positions[i]+1); out.print(tab); 
@@ -316,7 +394,9 @@ public class USeq2Text {
 				PositionScoreTextData p = new PositionScoreTextData (dis, si);
 				psAL.add(new PositionScoreData (p.getBasePositions(), p.getBaseScores(), si));
 			}
-			else  throw new IOException("\nThis USeq archive lacks score information thus it cannot be made into a bed graph!  Use the native text or bed file output option. \n");
+			else {
+				throw new IOException("\nThis USeq archive lacks score information thus it cannot be made into a bed graph!  Use the native text or bed file output option. \n");
+			}
 			dis.close();
 		}
 		
@@ -329,11 +409,15 @@ public class USeq2Text {
 		//write paired blocks that have the same score
 		for (int i=0; i< scores.length; i++){
 			int next = i+1;
-			if (next == scores.length) break;
+			if (next == scores.length) {
+				break;
+			}
 			//same score?
 			if (scores[i] == scores[next]){
 				//zero?
-				if (skipZeroBlockBedGraphs && scores[i] == 0) continue;
+				if (skipZeroBlockBedGraphs && scores[i] == 0) {
+					continue;
+				}
 				out.print(chromosome); out.print(tab); 
 				out.print(positions[i]); out.print(tab); 
 				out.print(positions[next]+1); out.print(tab); 
@@ -375,7 +459,9 @@ public class USeq2Text {
 			}
 		}
 		//pull files
-		if (useqArchives == null || useqArchives.length == 0) USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
+		if (useqArchives == null || useqArchives.length == 0) {
+			USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
+		}
 
 	}	
 

@@ -11,9 +11,6 @@ import java.util.List;
 
 public class FastaParserTest {
 
-	public FastaParserTest() {
-	}
-
 	@Test
 		public void testGenerateNewHeader() throws Exception {
 			String chrom_name = "chrC";
@@ -26,8 +23,9 @@ public class FastaParserTest {
 			String expected_string = "chrC range:0-1,000 interbase genome:A_thaliana_TAIR8\n";
 			byte[] expected_result = new byte[expected_string.length() +1];
 			expected_result[0]='>';
-			for (int i=0;i<expected_string.length();i++)
+			for (int i=0;i<expected_string.length();i++) {
 				expected_result[i+1] = (byte)expected_string.charAt(i);
+			}
 
 			/*for (int i=0;i<result.length;i++)
 			  System.out.print(":" + (char)result[i]);
@@ -44,12 +42,14 @@ public class FastaParserTest {
 
 	@Test
 		public void testParseAll() throws Exception {
-			String filename_1 = "test/data/fasta/FASTA_chrQ.fasta";
+			String filename_1 = "FASTA_chrQ.fasta";
+			filename_1 = FastaParserTest.class.getClassLoader().getResource(filename_1).getFile();
 			assertTrue(new File(filename_1).exists());
 			InputStream istr_1 = new FileInputStream(filename_1);
 			assertNotNull(istr_1);
 
-			String filename_2 = "test/data/fasta/FASTA_small_genome.fasta";
+			String filename_2 = "FASTA_small_genome.fasta";
+			filename_2 = FastaParserTest.class.getClassLoader().getResource(filename_2).getFile();
 			assertTrue(new File(filename_2).exists());
 			InputStream istr_2 = new FileInputStream(filename_2);
 			assertNotNull(istr_2);
@@ -84,7 +84,8 @@ public class FastaParserTest {
 
 	@Test
 		public void testParse() throws Exception {
-			String filename = "test/data/fasta/FASTA_chrQ.fasta";
+			String filename = "FASTA_chrQ.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 			assertTrue(new File(filename).exists());
 
 			InputStream istr = new FileInputStream(filename);
@@ -102,8 +103,8 @@ public class FastaParserTest {
 
 	@Test
 		public void testReadFASTA() throws Exception {
-			String filename = "test/data/fasta/FASTA_obey_70.fasta";
-			assertTrue(new File(filename).exists());
+			String filename = "FASTA_obey_70.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 
 			char [] expected_fasta = null;
 			byte[] fasta = null;
@@ -134,7 +135,8 @@ public class FastaParserTest {
 
 	@Test
 		public void testReadBadFASTA_1() throws Exception {
-			String filename = "test/data/fasta/FASTA_not_obey_70.fasta";
+			String filename = "FASTA_not_obey_70.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 			assertTrue(new File(filename).exists());
 
 			char [] expected_fasta = null;
@@ -151,7 +153,8 @@ public class FastaParserTest {
 
 	@Test
 		public void testReadBadFASTA_2() throws Exception {
-			String filename = "test/data/fasta/FASTA_not_obey_70.fasta";
+			String filename = "FASTA_not_obey_70.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 			assertTrue(new File(filename).exists());
 
 			char [] expected_fasta = null;
@@ -169,7 +172,8 @@ public class FastaParserTest {
 
 	@Test
 		public void testSkipFastaHeader() throws Exception {
-			String filename = "test/data/fasta/chrC.fasta";
+			String filename = "chrC.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 			DataInputStream dis = new DataInputStream(new FileInputStream(filename));
 			BufferedInputStream bis = new BufferedInputStream(dis);
 			byte[] fasta = FastaParser.skipFASTAHeader(filename, bis);
@@ -188,7 +192,8 @@ public class FastaParserTest {
 	 */
 	@Test
 		public void testChrCfailure() throws Exception {
-			String filename = "test/data/fasta/chrC.fasta";
+			String filename = "chrC.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 			int start=8020,end=8021;
 			//System.out.println("ChrCfailure: Testing " + filename + " from [" + start + ":" + end + "]");
 			assertTrue(new File(filename).exists());
@@ -204,7 +209,8 @@ public class FastaParserTest {
 	 */
 	@Test
 		public void testChrCfailure2() throws Exception {
-			String filename = "test/data/fasta/chrC.fasta";
+			String filename = "chrC.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 			int start=200000,end=200001; // file size < 200000.
 			//System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
 			assertTrue(new File(filename).exists());
@@ -224,7 +230,8 @@ public class FastaParserTest {
 	 */
 	@Test
 		public void testChrC_OK() throws Exception {
-			String filename = "test/data/fasta/chrC.fasta";
+			String filename = "chrC.fasta";
+			filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
 
 			char[] expected_fasta = "ATGG".toCharArray();
 			byte[] fasta = null;

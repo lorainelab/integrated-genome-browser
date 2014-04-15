@@ -165,7 +165,7 @@ public final class Das2ServerInfo  {
 			//   HACK: Affy das2 server has problems  w/ a trailing slash, but URI resolution
 			//      doesn't work without trailing slash, so adding it back in here.
 			if (!das_query.endsWith("/")) {
-				das_query = das_query + "/";
+				das_query += "/";
 			}
 			System.out.println("Initializing " + server_uri);
 			Document doc = XMLUtils.getDocument(response);
@@ -214,8 +214,9 @@ public final class Das2ServerInfo  {
 	 *         else actual server's URL.
 	 */
 	private String getLoadURL(){
-		if(!isLoadingFromPrimary())
+		if(!isLoadingFromPrimary()) {
 			return server_uri.toString();
+		}
 
 		return primary_uri.toString() + "/" + Constants.GENOME_SEQ_ID+XML;
 	}
@@ -244,7 +245,7 @@ public final class Das2ServerInfo  {
 			}
 			String cookie = headers.get("set-cookie");
 			if (cookie != null) {
-				sessionId = cookie.substring(0, cookie.indexOf(";"));
+				sessionId = cookie.substring(0, cookie.indexOf(';'));
 			} 
 		} catch (IOException ex) {
 			System.out.println("Failed server login test:");
@@ -367,7 +368,7 @@ public final class Das2ServerInfo  {
 			if (pnode instanceof Element) {
 				Element el = (Element)pnode;
 				String xbase = el.getAttribute("xml:base");
-				if (xbase != null && !xbase.equals("")) { xml_bases.push(xbase); }
+				if (xbase != null && xbase.length() != 0) { xml_bases.push(xbase); }
 			}
 			pnode = pnode.getParentNode();
 		}

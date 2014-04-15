@@ -17,16 +17,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
-import com.affymetrix.genometry.genopub.DictionaryHelper;
-import com.affymetrix.genometry.genopub.GenoPubSecurity;
-import com.affymetrix.genometry.genopub.GenomeVersion;
-import com.affymetrix.genometry.genopub.Institute;
-import com.affymetrix.genometry.genopub.Owned;
-import com.affymetrix.genometry.genopub.User;
-import com.affymetrix.genometry.genopub.UserGroup;
-import com.affymetrix.genometry.genopub.Util;
-import com.affymetrix.genometry.genopub.Visibility;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 public class Annotation implements Serializable, Owned {
@@ -169,7 +159,7 @@ public class Annotation implements Serializable, Owned {
 
 		GenomeVersion genomeVersion = dh.getGenomeVersion(this.getIdGenomeVersion());
 		if (genomeVersion == null) {
-			Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE,"Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
+			Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE, "Unable to find genome version {0} for annotation {1}", new Object[]{this.getIdGenomeVersion(), this.getName()});
 			throw new Exception("Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
 		}
 
@@ -412,7 +402,7 @@ public class Annotation implements Serializable, Owned {
 					File f = new File(fileName);
 					boolean success = f.delete();
 					if (!success) {
-						Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete file " + fileName);
+						Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete file {0}", fileName);
 					}
 				}
 
@@ -421,7 +411,7 @@ public class Annotation implements Serializable, Owned {
 			// Delete the annotation directory
 			boolean success = dir.delete();	    	
 			if (!success) {
-				Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete directory " + filePath);
+				Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete directory {0}", filePath);
 			}
 		}
 	}
@@ -523,7 +513,7 @@ public class Annotation implements Serializable, Owned {
 	}
 
 	public String getQualifiedFileName(String data_root) {
-		if (this.getFileName() == null || this.getFileName().equals("")) {
+		if (this.getFileName() == null || this.getFileName().length() == 0) {
 			return "";
 		}
 		
@@ -565,7 +555,7 @@ public class Annotation implements Serializable, Owned {
 
 	public String getDirectory(String data_root) {
 	  String dataPath = null;
-	  if (this.getDataPath() != null && !this.getDataPath().equals("")) {
+	  if (this.getDataPath() != null && this.getDataPath().length() != 0) {
       dataPath = this.getDataPath();
     } else {
       dataPath = data_root;

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.shared.LoadURLAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -62,8 +63,8 @@ public class MainMenuUtil {
 		//MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_loadRefTrack", LoadRefTrackAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_newGenome", NewGenomeAction.getAction()));
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_print", PrintAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_printFrame", PrintFrameAction.getAction()));
+//		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_print", PrintAction.getAction()));
+		//MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_printFrame", PrintFrameAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportImage", ExportImageAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportFile", ExportFileAction.getAction()));
 //		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportAnnotations", ExportSelectedAnnotationFileAction.getAction()));
@@ -101,12 +102,9 @@ public class MainMenuUtil {
 //		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showPlus", ShowPlusStrandAction.getAction()));
 //		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showMinus", ShowMinusStrandAction.getAction()));
 //		view_menu.add(strands_menu);
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewGenomicSequenceInSeqViewer", ViewGenomicSequenceInSeqViewerAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_viewAlignmentSequenceInSeqViewer", ViewReadSequenceInSeqViewerAction.getAction()));
-		ViewReadSequenceInSeqViewerAction.getAction().setEnabled(false);
 //		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
 //		NextSearchSpanAction.getAction().setEnabled(false);
-		view_menu.addSeparator();
+//		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem(id + "_main_viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_clampView", ClampViewAction.getAction()));
@@ -152,6 +150,7 @@ public class MainMenuUtil {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_start_autoscroll", StartAutoScrollAction.getAction()));
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction()));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction()));
 		tools_menu.addSeparator();
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));

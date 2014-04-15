@@ -167,26 +167,6 @@ public final class GenericServer implements GenericServerPref, Comparable<Generi
 		return friendlyIcon;
 	}
 
-	private static URL determineFriendlyURL(String URL, ServerTypeI serverType) {
-		if (URL == null) {
-			return null;
-		}
-		String tempURL = URL;
-		URL tempFriendlyURL = null;
-		if (tempURL.endsWith("/")) {
-			tempURL = tempURL.substring(0, tempURL.length() - 1);
-		}
-		if (serverType != null) {
-			tempURL = serverType.adjustURL(tempURL);
-		}
-		try {
-			tempFriendlyURL = new URL(tempURL);
-		} catch (Exception ex) {
-			// Ignore an exception here, since this is only for making a pretty UI.
-		}
-		return tempFriendlyURL;
-	}
-
 	public void setServerStatus(ServerStatus serverStatus) {
 		this.serverStatus = serverStatus;
 	}
@@ -283,6 +263,13 @@ public final class GenericServer implements GenericServerPref, Comparable<Generi
 		return this.serverType.compareTo(gServer.serverType);
 	}
 
+	public void clean(){
+		if(serverType != null) {
+			serverType.removeServer(this);
+		}
+		setEnabled(false);
+	}
+	
 	/**
 	 * React to modifications of the Java preferences. This should probably fire
 	 * an event notifying listeners that this generic server has changed.

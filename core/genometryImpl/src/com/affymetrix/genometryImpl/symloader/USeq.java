@@ -51,7 +51,9 @@ public class USeq extends SymLoader {
 	}
 
 	public void init() throws Exception  {
-		if (this.isInitialized) return;
+		if (this.isInitialized) {
+			return;
+		}
 		try{			
 			//for getRegion()
 			useqArchive = new USeqArchive(LocalUrlCacher.convertURIToFile(uri));
@@ -106,15 +108,18 @@ public class USeq extends SymLoader {
 		try {
 			init();
 			//fetch region, this may be stranded
-			if(!chromosomeList.containsKey(span.getBioSeq()))
+			if(!chromosomeList.containsKey(span.getBioSeq())) {
 				return null;
+			}
 
 			int start = span.getStart();
 			int stop = span.getEnd();
 			String chrom = chromosomeList.get(span.getBioSeq());
 			USeqData[] useqData = useqArchive.fetch(chrom, start, stop);
 			//any data?
-			if (useqData == null) return null;
+			if (useqData == null) {
+				return null;
+			}
 			//is it a graph dataset?
 			if (useqArchive.getArchiveInfo().getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
 				USeqGraphParser gp = new USeqGraphParser();

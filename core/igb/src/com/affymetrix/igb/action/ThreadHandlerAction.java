@@ -2,7 +2,6 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
@@ -55,8 +54,9 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		int size = setCancelPopup();
-		if(size == 0 )
+		if(size == 0 ) {
 			return;
+		}
 		
 		JFrame frame = Application.getSingleton().getFrame();
 		final int x = (int) frame.getAlignmentX();

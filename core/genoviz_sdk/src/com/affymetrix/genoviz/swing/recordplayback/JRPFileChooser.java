@@ -62,7 +62,7 @@ public class JRPFileChooser extends JFileChooser implements JRPWidget {
 					}
 				}
 				else {
-					StringBuffer selectedFiles = new StringBuffer();
+					StringBuilder selectedFiles = new StringBuilder();
 					selectedFiles.append("new File[]{");
 					boolean first = true;
 					for (File file : getSelectedFiles()) {
@@ -72,7 +72,7 @@ public class JRPFileChooser extends JFileChooser implements JRPWidget {
 						else {
 							selectedFiles.append(",");
 						}
-						selectedFiles.append("new File(\"" + file.getAbsolutePath() + "\")");
+						selectedFiles.append("new File(\"").append(file.getAbsolutePath()).append("\")");
 					}
 					selectedFiles.append("}");
 					ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setSelectedFiles(\"" + selectedFiles.toString() + "\")"));

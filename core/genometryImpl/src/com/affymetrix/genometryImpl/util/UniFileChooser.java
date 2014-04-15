@@ -13,10 +13,7 @@
 
 package com.affymetrix.genometryImpl.util;
 
-import java.io.*;
-import java.util.*;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 

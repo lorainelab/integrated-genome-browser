@@ -26,8 +26,9 @@ public class ExpandSymPacker {
 			child = parent.getChild(i);
 			span = child.getSpan(seq);
 			
-			if(span == null || span.getLength() == 0)
+			if(span == null || span.getLength() == 0) {
 				continue;
+			}
 			
 			double child_min = span.getMinDouble();
 			double child_max = span.getMaxDouble();

@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -9,6 +8,7 @@ import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 public class SgrParserTest {
@@ -16,10 +16,8 @@ public class SgrParserTest {
 	@Test
 	public void testParseFromFile() throws Exception {
 
-		String filename = "test/data/sgr/test1.sgr";
-		assertTrue(new File(filename).exists());
-
-		InputStream istr = new FileInputStream(filename);
+		String filename = "test1.sgr";
+		InputStream istr = SgrParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
@@ -66,11 +64,10 @@ public class SgrParserTest {
 
 	@Test
 	public void testSgr() throws Exception{
-		String filename = "test/data/sgr/test4.sgr";
-		assertTrue(new File(filename).exists());
+		String filename = "test4.sgr";
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-
-		Sgr sgr = new Sgr(new File(filename).toURI(), filename, seq_group);
+		URL url = SgrParserTest.class.getClassLoader().getResource(filename);
+		Sgr sgr = new Sgr(url.toURI(), filename, seq_group);
 
 		List<GraphSym> results = sgr.getGenome();
 

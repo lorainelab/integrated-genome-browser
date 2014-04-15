@@ -114,7 +114,7 @@ public class SequenceMap0 extends SimpleMap4 {
 	{
 		int token;
 		theTokens.eolIsSignificant(false);
-		StringBuffer sb = new StringBuffer("");
+		StringBuilder sb = new StringBuilder("");
 		while (StreamTokenizer.TT_WORD == (token = theTokens.nextToken()))
 		{
 			sb.append(theTokens.sval);

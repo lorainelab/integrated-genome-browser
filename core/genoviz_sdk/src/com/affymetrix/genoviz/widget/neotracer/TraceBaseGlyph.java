@@ -138,7 +138,9 @@ public class TraceBaseGlyph extends Glyph  {
 		end = (int)(viewbox.x + viewbox.width);
 		if (end < getCoordBox().x ) { end++; }
 		if (beg < 0) { beg = 0; }
-		if ( beg < getCoordBox().x ) beg = (int)getCoordBox().x;
+		if ( beg < getCoordBox().x ) {
+			beg = (int)getCoordBox().x;
+		}
 
 		char theBase;
 		int baseID;

@@ -60,8 +60,9 @@ public class TextStroke implements Stroke {
 		int currentChar = 0;
 		int length = glyphVector.getNumGlyphs();
 
-		if ( length == 0 )
-            return result;
+		if ( length == 0 ) {
+			return result;
+		}
 
         float factor = stretchToFit ? measurePathLength( shape )/(float)glyphVector.getLogicalBounds().getWidth() : 1.0f;
         float nextAdvance = 0;
@@ -107,8 +108,9 @@ public class TextStroke implements Stroke {
 						result.append( t.createTransformedShape( glyph ), false );
 						next += (advance+nextAdvance) * factor;
 						currentChar++;
-						if ( repeat )
-							currentChar %= length;
+						if ( repeat ) {
+						currentChar %= length;
+					}
 					}
 				}
                 next -= distance;

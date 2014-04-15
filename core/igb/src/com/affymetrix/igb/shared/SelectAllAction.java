@@ -2,12 +2,12 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.SeqMapViewActionA;
+import java.util.EnumMap;
 
 public class SelectAllAction extends SeqMapViewActionA {
 
@@ -17,7 +17,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 			FileTypeCategory.Graph, FileTypeCategory.Mismatch, FileTypeCategory.ProbeSet,
 			FileTypeCategory.Sequence});
 	private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION =
-			new HashMap<FileTypeCategory, SelectAllAction>();
+			new EnumMap<FileTypeCategory, SelectAllAction>(FileTypeCategory.class);
 	private FileTypeCategory[] categories;
 
 	static {

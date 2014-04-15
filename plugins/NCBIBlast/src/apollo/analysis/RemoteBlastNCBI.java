@@ -256,7 +256,7 @@ public class RemoteBlastNCBI {
 		putBuf.append(URLEncoder.encode(strand == 1 ? seq.getResidues() : seq.getReverseComplement(), ENCODING));
 		putBuf.append("&DATABASE=nr&");
 		putBuf.append("QUERY_BELIEVE_DEFLINE=no&");
-		putBuf.append("PROGRAM=" + type.toString() + "&");
+		putBuf.append("PROGRAM=").append(type.toString()).append("&");
 		putBuf.append("CMD=Put");
 		//URL putUrl = new URL(putBuf.toString());
 		URL url = new URL(BLAST_URL);
@@ -309,10 +309,10 @@ public class RemoteBlastNCBI {
 	}
 
 	private String createGetUrl(RemoteBlastNCBI.BlastRequest req, boolean setRequestFormat, boolean getText) {
-		StringBuffer getBuf = new StringBuffer(BLAST_URL);
-		getBuf.append("RID=" + req.rid + "&");
+		StringBuilder getBuf = new StringBuilder(BLAST_URL);
+		getBuf.append("RID=").append(req.rid).append("&");
 		if(setRequestFormat){
-			getBuf.append("FORMAT_TYPE=" + (getText ? "Text&" : "XML&"));
+			getBuf.append("FORMAT_TYPE=").append(getText ? "Text&" : "XML&");
 		}
 		getBuf.append("CMD=Get");
 		return getBuf.toString();
@@ -320,7 +320,7 @@ public class RemoteBlastNCBI {
 
 	private void closeRequest(RemoteBlastNCBI.BlastRequest req) throws MalformedURLException, IOException {
 		StringBuilder deleteBuf = new StringBuilder(BLAST_URL);
-		deleteBuf.append("RID=" + req.rid + "&");
+		deleteBuf.append("RID=").append(req.rid).append("&");
 		deleteBuf.append("CMD=Delete");
 		URL deleteUrl = new URL(deleteBuf.toString());
 		deleteUrl.openConnection();
@@ -365,8 +365,8 @@ public class RemoteBlastNCBI {
 			buf.append("FILTER=m&");
 		}
 		buf.append(URLEncoder.encode("GAPCOSTS=" + opts.getGapOpenCost() + " " + opts.getGapExtendCost() + "&", ENCODING));
-		buf.append("GENETIC_CODE=" + opts.getGeneticCode() + "&");
-		buf.append("HITLIST_SIZE=" + opts.getNumberOfHits() + "&");
+		buf.append("GENETIC_CODE=").append(opts.getGeneticCode()).append("&");
+		buf.append("HITLIST_SIZE=").append(opts.getNumberOfHits()).append("&");
 	}
 
 	private boolean checkResponse(InputStream is) throws IOException {

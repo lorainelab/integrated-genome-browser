@@ -26,10 +26,8 @@ public class UseqParserTest {
 	public void testRegionFileParsing() throws IOException{
 		//test region parsing
 		String stream_name = "chr17";
-		String filename = "test/data/useq/chr17_H_sapiens_Mar_2006_Region.useq";
-		File f = new File(filename);
-		assertTrue(f.exists());
-		InputStream istr = new FileInputStream(f);
+		String filename = "chr17_H_sapiens_Mar_2006_Region.useq";
+		InputStream istr = UseqParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
 		USeqRegionParser up = new USeqRegionParser();
@@ -66,11 +64,9 @@ public class UseqParserTest {
 	@Test
 	public void testGraphFileParsing() throws IOException{
 		//test graph parsing
-		String filename = "test/data/useq/chr17_H_sapiens_Mar_2006_Graph.useq";
-		File f = new File (filename);
+		String filename = "chr17_H_sapiens_Mar_2006_Graph.useq";
 		String stream_name = "chr17";
-		assertTrue(f.exists());
-		InputStream istr = new FileInputStream(f);
+		InputStream istr = UseqParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
@@ -107,11 +103,10 @@ public class UseqParserTest {
 	@Test
 	public void testWritingRegionsToFile() throws Exception {
 		//read in data
-		String filename = "test/data/useq/chr17_H_sapiens_Mar_2006_Region.useq";
-		File regionFile = new File(filename);
+		String filename = "chr17_H_sapiens_Mar_2006_Region.useq";		
+		File regionFile = new File(UseqParserTest.class.getClassLoader().getResource(filename).getFile());
 		assertTrue(regionFile.exists());
 		USeqArchive archive = new USeqArchive(regionFile);
-		assertTrue(archive != null);
 		
 		//write some slices
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -127,11 +122,10 @@ public class UseqParserTest {
 	@Test
 	public void testWritingGraphToFile() throws Exception {
 		//read in data
-		String filename = "test/data/useq/chr17_H_sapiens_Mar_2006_Graph.useq";
-		File file = new File(filename);
+		String filename = "chr17_H_sapiens_Mar_2006_Graph.useq";
+		File file = new File(UseqParserTest.class.getClassLoader().getResource(filename).getFile());
 		assertTrue(file.exists());
 		USeqArchive archive = new USeqArchive(file);
-		assertTrue(archive != null);
 		
 		//write some slices
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -12,15 +12,22 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import java.io.*;
-import java.util.*;
-import java.net.MalformedURLException;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.util.List;
+import java.util.Stack;
 
 /**
  *  A class for reading and parsing a file of Bookmarks.
@@ -85,7 +92,7 @@ public final class BookmarksParser {
 		String str = html.trim();
 		String str_uc = str.toUpperCase();
 		if (str_uc.startsWith("<DT><H")) { // usually <DT><H3>
-			int ind1 = 1 + str_uc.indexOf(">", 7);
+			int ind1 = 1 + str_uc.indexOf('>', 7);
 			int ind2 = str_uc.indexOf("</H", ind1);
 			result = str.substring(ind1, ind2);
 		}
@@ -131,7 +138,7 @@ public final class BookmarksParser {
 			}
 
 			// Now get the Name
-			int ind1 = 1 + str_uc.indexOf(">", 7);
+			int ind1 = 1 + str_uc.indexOf('>', 7);
 			int ind2 = str_uc.indexOf("</A", ind1);
 			if (ind1 > -1 && ind2 > ind1) {
 				name = str.substring(ind1, ind2);
@@ -322,7 +329,7 @@ public final class BookmarksParser {
 				int uindex = line.indexOf("http://");
 				if (uindex >= 0) {
 					int qstart = uindex;
-					int qend = line.indexOf("\"", qstart);
+					int qend = line.indexOf('"', qstart);
 					String query_string;
 					if (qend < 0) {
 						query_string = line.substring(qstart);
@@ -342,7 +349,7 @@ public final class BookmarksParser {
 					if (DEBUG) {
 						System.out.println("bookmark query_string = " + query_string);
 					}
-					int cstart = line.indexOf(">", qend) + 1;
+					int cstart = line.indexOf('>', qend) + 1;
 					int cend = line.indexOf("</A>", cstart);
 					String label_string = line.substring(cstart, cend);
 					if (DEBUG) {

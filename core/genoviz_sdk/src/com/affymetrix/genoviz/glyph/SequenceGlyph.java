@@ -105,7 +105,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				full_rect.setSelected(false);
 			}
 			else {
-				if (show_background) full_rect.drawTraversal(view);
+				if (show_background) {
+					full_rect.drawTraversal(view);
+				}
 			}
 
 			// 2.) draw any child glyphs
@@ -140,7 +142,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 		visible_ref_end =  (int)(coordclipbox.y + coordclipbox.height);
 		// adding 1 to visible ref_end to make sure base is drawn if only
 		// part of it is visible
-		visible_ref_end = visible_ref_end+1;
+		visible_ref_end += 1;
 
 		// ******** determine first base and last base displayed ********
 		visible_seq_beg = (seq_beg < visible_ref_beg) ? visible_ref_beg : seq_beg;
@@ -211,7 +213,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 		visible_ref_end =  (int)(coordclipbox.x + coordclipbox.width);
 		// adding 1 to visible ref_end to make sure base is drawn if only
 		// part of it is visible
-		visible_ref_end = visible_ref_end+1;
+		visible_ref_end += 1;
 
 		// ******** determine first base and last base displayed ********
 		visible_seq_beg = (seq_beg < visible_ref_beg) ? visible_ref_beg : seq_beg;

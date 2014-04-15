@@ -132,10 +132,12 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
      * @return The size (number of possible bins) of the given level.
      */
     public int getLevelSize(final int levelNumber) {
-        if(levelNumber == getNumIndexLevels())
-            return MAX_BINS+1-LEVEL_STARTS[levelNumber];
-        else
-            return LEVEL_STARTS[levelNumber+1]-LEVEL_STARTS[levelNumber];
+        if(levelNumber == getNumIndexLevels()) {
+			return MAX_BINS+1-LEVEL_STARTS[levelNumber];
+		}
+        else {
+			return LEVEL_STARTS[levelNumber+1]-LEVEL_STARTS[levelNumber];
+		}
     }
 
     /**
@@ -144,11 +146,13 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
      * @return the level associated with the given bin number.
      */
     public int getLevelForBin(final Bin bin) {
-        if(bin.getBinNumber() >= MAX_BINS)
-            throw new SAMException("Tried to get level for invalid bin.");
+        if(bin.getBinNumber() >= MAX_BINS) {
+			throw new SAMException("Tried to get level for invalid bin.");
+		}
         for(int i = getNumIndexLevels()-1; i >= 0; i--) {
-            if(bin.getBinNumber() >= LEVEL_STARTS[i])
-                return i;
+            if(bin.getBinNumber() >= LEVEL_STARTS[i]) {
+				return i;
+			}
         }
         throw new SAMException("Unable to find correct bin for bin "+bin);
     }
@@ -340,8 +344,9 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
         if (regionLinearBinStart < nLinearBins) {
             linearIndexEntries = new long[actualStop-regionLinearBinStart+1];
             skipBytes(8 * regionLinearBinStart);
-            for(int linearBin = regionLinearBinStart; linearBin <= actualStop; linearBin++)
-                linearIndexEntries[linearBin-regionLinearBinStart] = readLong();
+            for(int linearBin = regionLinearBinStart; linearBin <= actualStop; linearBin++) {
+				linearIndexEntries[linearBin-regionLinearBinStart] = readLong();
+			}
         }
 
         final LinearIndex linearIndex = new LinearIndex(referenceSequence,regionLinearBinStart,linearIndexEntries);
@@ -397,11 +402,21 @@ public abstract class AbstractBAMFileIndex_ implements BAMIndex {
         int k;
         final BitSet bitSet = new BitSet(MAX_BINS);
         bitSet.set(0);
-        for (k =    1 + (start>>26); k <=    1 + (end>>26); ++k) bitSet.set(k);
-        for (k =    9 + (start>>23); k <=    9 + (end>>23); ++k) bitSet.set(k);
-        for (k =   73 + (start>>20); k <=   73 + (end>>20); ++k) bitSet.set(k);
-        for (k =  585 + (start>>17); k <=  585 + (end>>17); ++k) bitSet.set(k);
-        for (k = 4681 + (start>>14); k <= 4681 + (end>>14); ++k) bitSet.set(k);
+        for (k =    1 + (start>>26); k <=    1 + (end>>26); ++k) {
+			bitSet.set(k);
+		}
+        for (k =    9 + (start>>23); k <=    9 + (end>>23); ++k) {
+			bitSet.set(k);
+		}
+        for (k =   73 + (start>>20); k <=   73 + (end>>20); ++k) {
+			bitSet.set(k);
+		}
+        for (k =  585 + (start>>17); k <=  585 + (end>>17); ++k) {
+			bitSet.set(k);
+		}
+        for (k = 4681 + (start>>14); k <= 4681 + (end>>14); ++k) {
+			bitSet.set(k);
+		}
         return bitSet;
     }
 

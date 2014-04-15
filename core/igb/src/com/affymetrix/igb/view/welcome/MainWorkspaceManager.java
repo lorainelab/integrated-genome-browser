@@ -5,22 +5,17 @@ import be.pwnt.jflow.event.ShapeEvent;
 import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPJPanel;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.JPanel;
@@ -83,8 +78,9 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 					CargoPicture pic = (CargoPicture) e.getShape();
 					Object obj = pic.getCargo();
 
-					if(obj == null)
+					if(obj == null) {
 						return;
+					}
 
 					String speciesName = (String)obj;
 					final List<String> versionNames = SeqGroupView.getInstance().getAllVersions(speciesName);
@@ -126,8 +122,9 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null)
+		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null) {
 			return;
+		}
 		
 		CardLayout layout = (CardLayout) getLayout();
 //		System.out.println("MainWorkspaceManager:itemStateChanged hit");

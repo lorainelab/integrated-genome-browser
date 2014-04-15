@@ -77,10 +77,12 @@ final class FutureResult {
 
   /** internal utility: either get the value or throw the exception **/
   private Object doGet() throws InvocationTargetException {
-    if (exception_ != null) 
-      throw exception_;
-    else
-      return value_; 
+    if (exception_ != null) {
+			throw exception_;
+		}
+    else {
+			return value_;
+		} 
   }
 
   /**
@@ -92,7 +94,9 @@ final class FutureResult {
    **/
   synchronized Object get() 
     throws InterruptedException, InvocationTargetException {
-    while (!ready_) wait();
+    while (!ready_) {
+			wait();
+		}
     return doGet();
   }
 

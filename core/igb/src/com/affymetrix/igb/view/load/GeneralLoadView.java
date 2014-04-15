@@ -4,20 +4,9 @@
  */
 package com.affymetrix.igb.view.load;
 
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.List;
-
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -26,6 +15,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
@@ -33,22 +23,32 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.view.SeqGroupView;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.view.SeqGroupView;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
+import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -503,6 +503,17 @@ public final class GeneralLoadView {
 		return (String) SeqGroupView.getInstance().getSpeciesCB().getSelectedItem();
 	}
 
+	public GenericFeature createFeature(String featureName, SymLoader loader) {		
+		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), getSelectedSpecies());
+		GenericFeature feature = new GenericFeature(featureName, null, version, loader, null, false);
+		version.addFeature(feature);
+		feature.setVisible(); // this should be automatically checked in the feature tree
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true);
+		refreshDataManagementView();
+		
+		return feature;
+	}
+		
 	public void addFeature(final GenericFeature feature) {
 		feature.setVisible();
 
@@ -518,7 +529,7 @@ public final class GeneralLoadView {
 
 	public static void addFeatureTier(final GenericFeature feature) {
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading data set " + feature.featureName, Thread.MIN_PRIORITY) {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.featureName, Thread.MIN_PRIORITY) {
 
 			@Override
 			protected Object runInBackground() {

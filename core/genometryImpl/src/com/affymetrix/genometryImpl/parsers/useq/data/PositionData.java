@@ -41,7 +41,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	public int[] getBasePositions(){
 		if (basePositions == null){
 			basePositions = new int[sortedPositions.length];
-			for (int i=0; i<basePositions.length; i++) basePositions[i] = sortedPositions[i].position;
+			for (int i=0; i<basePositions.length; i++) {
+				basePositions[i] = sortedPositions[i].position;
+			}
 		}
 		return basePositions;
 	}
@@ -54,7 +56,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		Arrays.sort(pdArray);
 		//fetch total size of Position[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositions.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositions.length;
+		}
 		//concatinate
 		Position[] concatinate = new Position[num];
 		int index = 0;
@@ -74,14 +78,20 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionData> a = new ArrayList<PositionData>(num);
-		for (int i=0; i< num; i++) a.add((PositionData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 
 	/**By position, smallest to largest, assumes same chromosome strand.*/
 	public int compareTo (PositionData other){
-		if (sortedPositions[0].position <other.sortedPositions[0].position) return -1;
-		if (sortedPositions[0].position >other.sortedPositions[0].position) return 1;
+		if (sortedPositions[0].position <other.sortedPositions[0].position) {
+			return -1;
+		}
+		if (sortedPositions[0].position >other.sortedPositions[0].position) {
+			return 1;
+		}
 		return 0;
 	}
 
@@ -106,7 +116,9 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition");
-			for (int i=0; i< sortedPositions.length; i++) out.println(chrom+"\t"+sortedPositions[i].position);
+			for (int i=0; i< sortedPositions.length; i++) {
+				out.println(chrom+"\t"+sortedPositions[i].position);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tStrand");
@@ -152,8 +164,12 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -222,8 +238,12 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		}
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -320,9 +340,13 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<Position> al = new ArrayList<Position>();
 		for (int i=0; i< sortedPositions.length; i++){
-			if (sortedPositions[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositions[i]);
+			if (sortedPositions[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositions[i]);
+			}
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedPositions = new Position[al.size()];
 		al.toArray(sortedPositions);
 		updateSliceInfo(sortedPositions, sliceInfo);

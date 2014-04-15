@@ -154,7 +154,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	public void destroy() {
 
 		super.destroy();
-		if (canvas != null) remove ( canvas );
+		if (canvas != null) {
+			remove ( canvas );
+		}
 		if (scroller != null) {
 			if ( scroller[0] != null ) {
 				scroller[0].removeAdjustmentListener(this);
@@ -393,7 +395,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 *  have the same effect but will be more efficient
 	 */
 	public void updateWidget(boolean full_update) {
-		if (canvas == null) return; // in case destroy() was called.
+		if (canvas == null) {
+			return;
+		} // in case destroy() was called.
 		if (full_update) {
 			scene.maxDamage();
 		}
@@ -403,7 +407,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
 	public void setRubberBandBehavior(boolean activate) {
-		if (canvas == null) return; // in case destroy() was called.
+		if (canvas == null) {
+			return;
+		} // in case destroy() was called.
 		if (activate && !rbActivated) {
 			// rubberband listens to canvas for MOUSE_DOWN, MOUSE_DRAG, MOUSE_UP events
 			canvas.addMouseListener(rband);
@@ -434,7 +440,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	/** This is the only place <code>pixel_*</code> should change. */
 	protected void setPixelBounds() {
-		if (canvas == null) return; // in case destroy() was called.
+		if (canvas == null) {
+			return;
+		} // in case destroy() was called.
 		pixel_beg[X] = 0;
 		pixel_beg[Y] = 0;
 		pixel_size[X] = canvas.getSize().width;
@@ -653,13 +661,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
     else {
       if (DEBUG_SCROLLER_VALUES) {
-        if (id == Y)  System.out.println(
-            "Setting Y scroll for " +
-            GeneralUtils.toObjectString(this) +
-            ", value: " + (int)coord_offset +
-            ", visible: " + (int)visible_coords +
-            ", min: " + (int)coord_beg +
-            ", max: " + (int)coord_end );
+        if (id == Y) {
+					System.out.println(
+		  "Setting Y scroll for " +
+		  GeneralUtils.toObjectString(this) +
+		  ", value: " + (int)coord_offset +
+		  ", visible: " + (int)visible_coords +
+		  ", min: " + (int)coord_beg +
+		  ", max: " + (int)coord_end );
+				}
       }
       scroller[id].getModel().setRangeProperties(
         (int) coord_offset, (int) visible_coords,
@@ -864,8 +874,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 	public void setZoomBehavior(int axisid, int constraint, double coord) {
-		if (CONSTRAIN_COORD != constraint)
+		if (CONSTRAIN_COORD != constraint) {
 			throw new IllegalArgumentException("Invalid constraint.");
+		}
 		zoom_behavior[axisid] = constraint;
 		zoom_coord[axisid] = coord;
 	}

@@ -153,8 +153,9 @@ class Actions {
 				Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
 				if (props != null && props.length == 1) {
 					copy_action.setEnabled(props[0].containsKey("protein sequence"));
-				}else
+				}else {
 					copy_action.setEnabled(false);
+				}
 			}
 		};
 		ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);

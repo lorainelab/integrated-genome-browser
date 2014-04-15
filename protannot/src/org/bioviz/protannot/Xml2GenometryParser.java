@@ -488,10 +488,12 @@ final class Xml2GenometryParser {
 	private static String getAminoAcid(TypeContainerAnnot m2gSym){
 		String residue = (String) m2gSym.getProperty("protein sequence");
 
-		if(residue == null)
+		if(residue == null) {
 			return "";
-		else
+		}
+		else {
 			residue += end_codon;
+		}
 
 		return residue;
 	}
@@ -786,15 +788,17 @@ final class Xml2GenometryParser {
 	 * @return - left-justified String
 	 */
 	private static String processAminoAcid(String residue){
-		if(residue.isEmpty())
+		if(residue.isEmpty()) {
 			return residue;
+		}
 		
 		char[] amino_acid = new char[residue.length()*3];
 		for(int i=0; i < amino_acid.length; i++ ){
 			if(i % 3 == 0){
 				amino_acid[i] = residue.charAt(i/3);
-			}else
+			}else {
 				amino_acid[i] = ' ';
+			}
 		}
 		return String.valueOf(amino_acid);
 	}
@@ -825,7 +829,8 @@ final class Xml2GenometryParser {
             }
         }
 
-        if(length % 3 != 0)
-            System.out.println("WARNING:  Translation length is " + length + " and remainder modulo 3 is " + length % 3);
+        if(length % 3 != 0) {
+			System.out.println("WARNING:  Translation length is " + length + " and remainder modulo 3 is " + length % 3);
+		}
     }
 }

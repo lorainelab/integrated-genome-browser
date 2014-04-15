@@ -44,7 +44,9 @@ public class RegionScoreTextData extends USeqData{
 		int lastBase = -1;
 		for (RegionScoreText r : sortedRegionScoreTexts){
 			int end = r.getStop();
-			if (end > lastBase) lastBase = end;
+			if (end > lastBase) {
+				lastBase = end;
+			}
 		}
 		return lastBase;
 	}
@@ -56,12 +58,20 @@ public class RegionScoreTextData extends USeqData{
 			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionScoreTexts[i].text);
 			if (fixScore){
 				int score = USeqUtilities.fixBedScore(sortedRegionScoreTexts[i].score);
-				if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-				else out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ score +"\t"+strand);
+				if (tokens.length == 7) {
+					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				}
+				else {
+					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ score +"\t"+strand);
+				}
 			}
 			else {
-				if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-				else out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
+				if (tokens.length == 7) {
+					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				}
+				else {
+					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
+				}
 			}
 		}
 	}
@@ -72,11 +82,15 @@ public class RegionScoreTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop\tScore\t(Text(s)");
-			for (int i=0; i< sortedRegionScoreTexts.length; i++) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text);
+			for (int i=0; i< sortedRegionScoreTexts.length; i++) {
+				out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text);
+			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tScore\tText(s)\tStrand");
-			for (int i=0; i< sortedRegionScoreTexts.length; i++) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text+"\t"+strand);
+			for (int i=0; i< sortedRegionScoreTexts.length; i++) {
+				out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text+"\t"+strand);
+			}
 		}
 	}
 
@@ -115,10 +129,18 @@ public class RegionScoreTextData extends USeqData{
 
 		//make and put file type/extension in SliceInfo object
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType = fileType+ USeqUtilities.SHORT;
-		else fileType = fileType+ USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		fileType = fileType+ USeqUtilities.FLOAT + USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
@@ -229,7 +251,9 @@ public class RegionScoreTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of RegionScoreText[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegionScoreTexts.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedRegionScoreTexts.length;
+		}
 		//concatinate
 		RegionScoreText[] concatinate = new RegionScoreText[num];
 		int index = 0;
@@ -249,7 +273,9 @@ public class RegionScoreTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionScoreTextData> a = new ArrayList<RegionScoreTextData>(num);
-		for (int i=0; i< num; i++) a.add((RegionScoreTextData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((RegionScoreTextData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 
@@ -285,10 +311,18 @@ public class RegionScoreTextData extends USeqData{
 
 		//make and put file type/extension in SliceInfo object
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType = fileType+ USeqUtilities.SHORT;
-		else fileType = fileType+ USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		fileType = fileType+ USeqUtilities.FLOAT + USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
@@ -466,9 +500,13 @@ public class RegionScoreTextData extends USeqData{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<RegionScoreText> al = new ArrayList<RegionScoreText>();
 		for (int i=0; i< sortedRegionScoreTexts.length; i++){
-			if (sortedRegionScoreTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegionScoreTexts[i]);
+			if (sortedRegionScoreTexts[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegionScoreTexts[i]);
+			}
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedRegionScoreTexts = new RegionScoreText[al.size()];
 		al.toArray(sortedRegionScoreTexts);
 		updateSliceInfo(sortedRegionScoreTexts, sliceInfo);

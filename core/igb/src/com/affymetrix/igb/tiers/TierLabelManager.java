@@ -8,16 +8,19 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.MultiGlyphDragger;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
+import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
+import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 
@@ -48,24 +51,35 @@ public final class TierLabelManager implements PropertyHolder {
 	private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
-	
-	private void setCurrentCursor(Cursor cursor) {
-		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
-	}
-	private void restoreCursor() {
-		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
-	}
+	private final NeoGlyphDragListener dragListener = new NeoGlyphDragListener() {
+		@Override
+		public void heardGlyphDrag(NeoGlyphDragEvent evt) {
+			if (evt.getID() == NeoGlyphDragEvent.DRAG_ENDED) {
+				List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
+				Collections.sort(label_glyphs, tier_sorter);
 
+				List<TierGlyph> tiers = tiermap.getTiers();
+				tiers.clear();
+				for (TierLabelGlyph label : label_glyphs) {
+					TierGlyph tier = (TierGlyph) label.getInfo();
+					tiers.add(tier);
+				}
+
+				updatePositions();
+				// then repack of course (tiermap repack also redoes labelmap glyph coords...)
+				tiermap.packTiers(false, true, true);
+				tiermap.updateWidget();
+			}
+		}
+	};
+			
 	/**
 	 * For moving tiers around and adjusting their sizes.
 	 * Use Swing for the future. Otherwise could have used AWT's MouseAdapter.
 	 * Actual dragging around is delegated to a GlyphDragger and a GlyphResizer.
 	 * This is why the mouseDragged method is not implemented.
 	 */
-	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
-
-		TierLabelGlyph dragging_label = null;
-		
+	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {		
 //		@Override
 //		public void mouseMoved(MouseEvent evt) {
 //			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
@@ -121,8 +135,16 @@ public final class TierLabelManager implements PropertyHolder {
 						preserve_selections = true;
 					}
 				}
-				if (!preserve_selections) {
+				if (!preserve_selections && (labelmap.getSelected().size() == 1 || (topgl != null && !topgl.isSelected()))) {
 					labelmap.clearSelected();
+					// Deselect graphglyph selected in the tiermap
+					List<GlyphI> deselect = new ArrayList<GlyphI>();
+					for(GlyphI selected : tiermap.getSelected()) {
+						if(selected instanceof StyledGlyph) {
+							deselect.add(selected);
+						}
+					}
+					tiermap.deselect(deselect);
 				}
 				labelmap.select(selected_glyphs);
 				
@@ -136,13 +158,15 @@ public final class TierLabelManager implements PropertyHolder {
 					doPopup(evt);
 				} else if (selected_glyphs.size() > 0) {
 					// take glyph at end of selected, just in case there is more
-					//    than .	
-					TierLabelGlyph gl = (TierLabelGlyph) selected_glyphs.get(selected_glyphs.size() - 1);
-					labelmap.toFront(gl);
-					dragLabel(gl, nevt);					
-					if(selected_glyphs.size() == 1){
-						transformTier(gl);
-					}			
+					//    than .
+					TierLabelGlyph[] gls = labelmap.getSelected().toArray(new TierLabelGlyph[1]);
+					for(TierLabelGlyph gl : gls){
+						labelmap.toFront(gl);
+					}
+					dragLabel(gls, nevt);					
+//					if(selected_glyphs.size() == 1){
+//						transformTier(gl);
+//					}			
 				}
 				tiermap.updateWidget();
 			}
@@ -154,13 +178,6 @@ public final class TierLabelManager implements PropertyHolder {
 		 */
 		@Override
 		public void mouseReleased(MouseEvent evt) {
-			if (evt.getSource() == labelmap && dragging_label != null) {
-				// A tier has been dragged.
-				// So, try to sort out rearrangement of tiers in the tiermap 
-				// based on the new positions of labels in the labelmap.
-				rearrangeTiers();
-				dragging_label = null;
-			}
 			// Start trying to set the vertical zoom point appropriately.
 			// First try, just set it at this place.
 			if (evt instanceof NeoMouseEvent) {
@@ -174,11 +191,11 @@ public final class TierLabelManager implements PropertyHolder {
 			// gs.startscroll(gl);
 		}
 		
-		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
-			dragging_label = gl;
-			GlyphDragger dragger = new GlyphDragger((NeoAbstractWidget) nevt.getSource());
+		private void dragLabel(TierLabelGlyph[] gl, NeoMouseEvent nevt) {
+			MultiGlyphDragger dragger = new MultiGlyphDragger((NeoAbstractWidget) nevt.getSource(), gl);
+			dragger.addGlyphDragListener(dragListener);
 			dragger.setUseCopy(false);
-			dragger.startDrag(gl, nevt);
+			dragger.startDrag(nevt);
 			dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 		}
 
@@ -249,8 +266,9 @@ public final class TierLabelManager implements PropertyHolder {
 			if(!(glyph.getAnnotStyle().isGraphTier())){
 				Map<String, Object> props = getTierProperties(glyph);
 
-			if(props != null)
-				propList.add(props);
+			if(props != null) {
+					propList.add(props);
+				}
 			}
 		}
 
@@ -300,16 +318,18 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	/** Returns a list of all TierGlyph items. */
-	public List<TierGlyph> getAllTierGlyphs() {
+	public List<TierGlyph> getAllTierGlyphs(boolean allTiers) {
 		List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
-			if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
+			if (allTiers) {
+				allTierGlyphs.add(tierlabel.getReferenceTier());
+			} else if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
 				allTierGlyphs.add(tierlabel.getReferenceTier());
 			}
 		}
 		return allTierGlyphs;
 	}
-
+	
 	/** Returns a list of visible TierGlyph items. */
 	public List<TierGlyph> getVisibleTierGlyphs() {
 		List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
@@ -523,20 +543,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 * Rearrange tiers in case mouse is dragged.
 	 */
 	void rearrangeTiers(){
-		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
-		Collections.sort(label_glyphs, tier_sorter);
-
-		List<TierGlyph> tiers = tiermap.getTiers();
-		tiers.clear();
-		for (TierLabelGlyph label : label_glyphs) {
-			TierGlyph tier = (TierGlyph) label.getInfo();
-			tiers.add(tier);
-		}
-
-		updatePositions();
-		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
-		tiermap.packTiers(false, true, true);
-		tiermap.updateWidget();
+		
 	}
 
 	private void updatePositions(){
@@ -607,14 +614,17 @@ public final class TierLabelManager implements PropertyHolder {
 	private void setPopuptitle(){
 		List<TierGlyph> tiers = getSelectedTiers();
 
-		if(tiers.isEmpty())
+		if(tiers.isEmpty()) {
 			return;
+		}
 
 		String label;
-		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getTrackName() != null)
+		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getTrackName() != null) {
 			label = tiers.get(0).getAnnotStyle().getTrackName();
-		else
+		}
+		else {
 			label = tiers.size() + " Selections";
+		}
 
 		if (label != null && label.length() > 30) {
 			label = label.substring(0, 30) + " ...";
@@ -741,4 +751,11 @@ public final class TierLabelManager implements PropertyHolder {
 		return props;
 	}
 
+	private void setCurrentCursor(Cursor cursor) {
+		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
+	}
+	
+	private void restoreCursor() {
+		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+	}
 }

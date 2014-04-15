@@ -44,7 +44,7 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 		SymLoader symL = getDataFileSymLoader();
 		@SuppressWarnings("unchecked")
 		List<SeqSymmetry> symList = (List<SeqSymmetry>)symL.getRegion(span);
-		if (symList.size() == 0) {
+		if (symList.isEmpty()) {
 			return 0.0f;
 		}
 		Operator depthOperator = new DepthOperator(FileTypeCategory.Alignment);

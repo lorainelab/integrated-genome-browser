@@ -433,7 +433,7 @@ public class BED extends SymLoader implements LineProcessor {
 			try {
 				c = TrackLineParser.reformatColor(itemRgb);
 			} catch (Exception e) {
-				Logger.getLogger(BED.class.getName()).log(Level.SEVERE, "Could not parse a color from String '" + itemRgb + "'");
+				Logger.getLogger(BED.class.getName()).log(Level.SEVERE, "Could not parse a color from String ''{0}''", itemRgb);
 			}
 			if (c != null) {
 				bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
@@ -454,8 +454,9 @@ public class BED extends SymLoader implements LineProcessor {
 
 	/** Converts the data in the score field, if present, to a floating-point number. */
 	private static float parseScore(String s) {
-		if(s == null || s.length() == 0 || s.equals(".") || s.equals("-"))
+		if(s == null || s.length() == 0 || s.equals(".") || s.equals("-")) {
 			return 0.0f;
+		}
 		return Float.parseFloat(s);
 	}
 

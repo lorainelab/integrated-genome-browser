@@ -496,8 +496,9 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	}
 	
 	public final void copyChildren(TierGlyph temp) {
-		if(temp == null)
+		if(temp == null) {
 			return;
+		}
 		
 		List<GlyphI> childrens = new ArrayList<GlyphI>();
 		childrens.addAll(temp.getChildren());
@@ -572,7 +573,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph{
 	public final double getChildHeight(){
 		double child_height = MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
 		child_height = useLabel(getAnnotStyle()) ? child_height * 2 : child_height;
-		child_height = child_height + getSpacing() * 2;
+		child_height += getSpacing() * 2;
 		return child_height;
 	}
 	

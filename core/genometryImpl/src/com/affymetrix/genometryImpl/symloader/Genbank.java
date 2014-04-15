@@ -242,8 +242,9 @@ public final class Genbank extends SymLoader {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			br = new BufferedReader(new InputStreamReader(bis));
 			String first_line = getCurrentData(br);
-			if(first_line == null)
+			if(first_line == null) {
 				return false;
+			}
 			
 			String[] vals = first_line.split("\\s+");
 			
@@ -326,7 +327,7 @@ public final class Genbank extends SymLoader {
 				boolean chrFound = false;
 				for (String tag : tagValues.keySet()) {
 					String value = current_feature.getValue(tag);
-					if (value != null && !value.equals("")) {
+					if (value != null && value.length() != 0) {
 						if (tag.equals("chromosome")) {
 							seq = this.group.getSeq(value);
 							if (seq == null) {
@@ -383,8 +384,9 @@ public final class Genbank extends SymLoader {
 	public List<GenbankSym> parse(BufferedReader input, BioSeq seq, int min, int max) {
 		Map<String,GenbankSym> id2sym = new HashMap<String,GenbankSym>(1000);
 
-		if (getCurrentData(input) == null) 
+		if (getCurrentData(input) == null) {
 			return Collections.<GenbankSym>emptyList();
+		}
 		
 		//if (beginEntry() != null) {
 		readFeature(input, id2sym, seq, min, max);
@@ -490,8 +492,8 @@ public final class Genbank extends SymLoader {
 		}
 		boolean within_html = true;
 		while (within_html) {
-			int html1 = current_line.indexOf("<");
-			int html2 = current_line.indexOf(">") + 1;
+			int html1 = current_line.indexOf('<');
+			int html2 = current_line.indexOf('>') + 1;
 			within_html = (html1 >= 0 && html2 > 0 && html2 > html1);
 			// Is this REALLY html, or is it < or > indicating incomplete 5' or 3' end?
 			// (don't want to get rid of those!!)
@@ -644,7 +646,7 @@ public final class Genbank extends SymLoader {
 				Map<String, List<String>> tagValues = current_feature.getTagValues();
 				for (String tag : tagValues.keySet()) {
 					String value = current_feature.getValue(tag);
-					if (value != null && !value.equals("")) {
+					if (value != null && value.length() != 0) {
 						if (tag.equals("chromosome")) {
 							currentSeq = this.group.getSeq(value);
 						} else if (tag.equals("organism")) {
@@ -682,11 +684,11 @@ public final class Genbank extends SymLoader {
 					|| key.equals("snRNA")
 					|| key.equals("snoRNA")) {
 				String value = current_feature.getValue("gene");
-				if (value != null && !value.equals("")) {
+				if (value != null && value.length() != 0) {
 					annotation.setProperty("name",value);
 				}
 				value = current_feature.getValue("locus_tag");
-				if (value != null && !value.equals("")) {
+				if (value != null && value.length() != 0) {
 					annotation.setID(value);
 				}
 				// What are the spans associated with this key?
@@ -731,9 +733,9 @@ public final class Genbank extends SymLoader {
 
 	private static GenbankSym buildAnnotation(BioSeq seq, String type, GenbankFeature pub_feat, Map<String,GenbankSym> id2sym, int min, int max) {
 		String id = getAnnotationId(pub_feat);
-		if (id == null || id.equals("")) {
+		if (id == null || id.length() == 0) {
 			id = pub_feat.getValue("protein_id");
-			if (id == null || id.equals("")) {
+			if (id == null || id.length() == 0) {
 				Logger.getLogger(Genbank.class.getName()).log(
 						Level.WARNING, "no id for {0}", pub_feat.toString());
 				id = NONAME;
@@ -742,7 +744,7 @@ public final class Genbank extends SymLoader {
 		}
 
 		String name = getAnnotationName(pub_feat);
-		if (name == null || name.equals("")) {
+		if (name == null || name.length() == 0) {
 			name = id;
 		}
 
@@ -774,7 +776,7 @@ public final class Genbank extends SymLoader {
 			id2sym.put(id, annotation);
 		}
 		setDescription(annotation, pub_feat);
-		if (!pub_feat.getValue("pseudo").equals("")) {
+		if (pub_feat.getValue("pseudo").length() != 0) {
 			annotation.setProperty("pseudogene", "true");
 		}
 		return annotation;
@@ -782,7 +784,7 @@ public final class Genbank extends SymLoader {
 
 	private static String getFeatureId(GenbankFeature pub_feat, List<String> tags) {
 		String id = "";
-		for (int i = 0; i < tags.size() && (id == null || id.equals("")); i++) {
+		for (int i = 0; i < tags.size() && (id == null || id.length() == 0); i++) {
 			String tag = tags.get(i);
 			id = pub_feat.getValue(tag);
 		}
@@ -791,7 +793,7 @@ public final class Genbank extends SymLoader {
 
 	private static String getAnnotationId(GenbankFeature pub_feat) {
 		String id = getFeatureId(pub_feat, annot_id_tags);
-		if (id == null || id.equals("")) {
+		if (id == null || id.length() == 0) {
 			id = getFeatureId(pub_feat, annot_name_tags);
 		}
 		return id;
@@ -807,7 +809,7 @@ public final class Genbank extends SymLoader {
     Map<String,List<String>> tagValues = pub_feat.getTagValues();
 	for (String tag : tagValues.keySet()) {
       String value = pub_feat.getValue(tag);
-      if (value != null && !value.equals("")) {
+      if (value != null && value.length() != 0) {
        if (tag.equals("chromosome")) {
        //   curation.setChromosome(value);
 		  }
@@ -858,8 +860,9 @@ final class GenbankFeature {
   }
 
   private void init(){
-	if (initialized)
-		return;
+	if (initialized) {
+			return;
+		}
 	  
     initialized = true;
     initSynonyms();
@@ -916,8 +919,9 @@ final class GenbankFeature {
       int val_count = all_vals.size();
       for (int i = 0; i < val_count; i++) {
         val.append(all_vals.get(i));
-        if (i < val_count-1)
-          val.append(" ");
+        if (i < val_count-1) {
+					val.append(" ");
+				}
       }
     }
     return val.toString();
@@ -956,8 +960,9 @@ final class GenbankFeature {
       note_vec.removeElementAt(0);
       note_vec.addElement(prefix + suffix);*/
     }
-    if (syns != null)
-      tagValues.put("synonyms", syns);
+    if (syns != null) {
+			tagValues.put("synonyms", syns);
+		}
   }
 
   private void setTagValue(String content) {
@@ -968,7 +973,7 @@ final class GenbankFeature {
     //String synonyms = null;
 
     if (content.charAt(0) == '/') {
-      int index = content.indexOf("=");
+      int index = content.indexOf('=');
       if (index >= 0) {
         tag = content.substring(1, index);
         value = content.substring(index + "=".length());
@@ -1008,7 +1013,7 @@ final class GenbankFeature {
 			  current_vec = new ArrayList<String>();
 			  tagValues.put(tag, current_vec);
 		  }
-		  if (!value.equals("") && !value.equals(".")) {
+		  if (value.length() != 0 && !value.equals(".")) {
 			  current_vec.add(value);
 		  }
 	  }
@@ -1025,14 +1030,17 @@ final class GenbankFeature {
   }
 
 	static String stripQuotes(String value) {
-    if (value.length() == 0)
-      return value;
+    if (value.length() == 0) {
+			return value;
+		}
 
-    if (value.charAt(0) == '\"')
-      value = value.substring(1);
+    if (value.charAt(0) == '\"') {
+			value = value.substring(1);
+		}
 
-    if (value.length() >= 1 && value.charAt(value.length() - 1) == '\"')
-      return value.substring(0, value.length() - 1);
+    if (value.length() >= 1 && value.charAt(value.length() - 1) == '\"') {
+			return value.substring(0, value.length() - 1);
+		}
 
 	return value;
   }
@@ -1061,7 +1069,7 @@ final class GenbankFeature {
      *
      **/
   private void parseLocations(String location_str, List<int[]> locs) {
-    if (location_str != null && !location_str.equals("")) {
+    if (location_str != null && location_str.length() != 0) {
       String operation_str = null;
       int index_start = 0;
       int index_end = 0;
@@ -1111,8 +1119,9 @@ final class GenbankFeature {
         else if (location_str.indexOf(':') > 0) {
           parseLocations(location_str.substring(location_str.indexOf(':')+1), locs);
         }
-        else
-          parseLocations(location_str.substring(1), locs);
+        else {
+					parseLocations(location_str.substring(1), locs);
+				}
       }
       else {
         index_start = 0;
@@ -1142,11 +1151,12 @@ final class GenbankFeature {
                                           index_start, index_end);
               high = Integer.parseInt(pos_str);
               if (high != low) {
-                low = low + ((high - low + 1) / 2);
+                  low += ((high - low + 1) / 2);
                 high = low + 1;
               }
-              else
-                high++;
+              else {
+								high++;
+							}
             } else {
               index_start++;
               if (location_str.charAt(index_start) == '>') {
@@ -1168,19 +1178,21 @@ final class GenbankFeature {
         }
       }
       int index_comma = (index_end < location_str.length() ?
-			 location_str.indexOf(",", index_end) : -1);
+			 location_str.indexOf(',', index_end) : -1);
       int next_locs = (index_comma >= 0 ?
 		       index_comma + 1 : 0);
-      if (next_locs > 0 && next_locs < location_str.length())
-        parseLocations(location_str.substring(next_locs), locs);
+      if (next_locs > 0 && next_locs < location_str.length()) {
+				parseLocations(location_str.substring(next_locs), locs);
+			}
     }
   }
 
   private static int indexOfNextNonDigit(String location_str, int index_start) {
     int index_end = index_start;
     while (index_end < location_str.length() &&
-           Character.isDigit(location_str.charAt(index_end)))
-      index_end++;
+           Character.isDigit(location_str.charAt(index_end))) {
+		  index_end++;
+	  }
     return index_end;
   }
 
@@ -1202,12 +1214,15 @@ final class GenbankFeature {
     int open_paren_count = 1;
     while (index_end < location_str.length() &&
            open_paren_count != 0) {
-      if (location_str.charAt(index_end) == ')')
-        open_paren_count--;
-      else if (location_str.charAt(index_end) == '(')
-        open_paren_count++;
-      if (open_paren_count != 0)
-        index_end++;
+      if (location_str.charAt(index_end) == ')') {
+				open_paren_count--;
+			}
+      else if (location_str.charAt(index_end) == '(') {
+				open_paren_count++;
+			}
+      if (open_paren_count != 0) {
+				index_end++;
+			}
     }
     return index_end;
   }

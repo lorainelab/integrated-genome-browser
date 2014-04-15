@@ -3,7 +3,6 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +19,9 @@ final public class Bookmarks {
     private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
 
 	public boolean add(GenericFeature feature, boolean isGraph){
-		if(feature == null)
+		if(feature == null) {
 			return false;
+		}
 
 		addToSyms(feature, isGraph);
 
@@ -80,8 +80,8 @@ final public class Bookmarks {
 			}
         }
 		
-		mark_sym.setProperty(Bookmark.QUERY_URL, queries.toArray(new String[queries.size()]));
-	    mark_sym.setProperty(Bookmark.SERVER_URL, servers.toArray(new String[servers.size()]));
+		mark_sym.setProperty(Bookmark.QUERY_URL, queries);
+	    mark_sym.setProperty(Bookmark.SERVER_URL, servers);
 
     }
 

@@ -111,9 +111,7 @@ public class TabDelimitedParser implements Parser {
 				line = br.readLine();
 				String[] cols = line_splitter.split(line);
 				col_names = new ArrayList<String>(cols.length);
-				for (int i=0; i<cols.length; i++) {
-					col_names.add(cols[i]);
-				}
+				col_names.addAll(Arrays.asList(cols));
 			}
 			while ((line = br.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
 				String[] cols = line_splitter.split(line);

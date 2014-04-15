@@ -459,7 +459,6 @@ class HeatMapSliderUI extends BasicSliderUI {
                     break;
 
                 default:
-                    return;
             }
         }
     }

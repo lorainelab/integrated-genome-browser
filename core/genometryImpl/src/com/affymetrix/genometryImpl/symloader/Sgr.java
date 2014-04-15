@@ -96,7 +96,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 		try {
 			File file = chrList.get(seq);
 			if (file == null) {
-				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
 				return Collections.<GraphSym>emptyList();
 			}
 

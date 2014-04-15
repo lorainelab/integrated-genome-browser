@@ -60,8 +60,9 @@ final public class MouseShortCut implements MouseListener{
 
 	private void processDoubleClick(MouseEvent e) {
 
-		if(e.getClickCount() != 2)
+		if(e.getClickCount() != 2) {
 			return;
+		}
 
 		//AffyLabelledTierMap
 		if (e.getSource() instanceof AffyLabelledTierMap) {
@@ -92,8 +93,9 @@ final public class MouseShortCut implements MouseListener{
 				
 			}
 
-			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof GraphGlyph)
+			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof GraphGlyph) {
 				return;
+			}
 			
 			//Zoom to glyphs.
 			smv.zoomToGlyphs(glyphs);

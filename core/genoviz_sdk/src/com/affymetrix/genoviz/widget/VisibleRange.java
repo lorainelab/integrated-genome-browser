@@ -78,11 +78,15 @@ public class VisibleRange implements Cloneable {
 	 * i.e. the interval <code>(n, n+1)</code> is selected where <code>n &gt;= thePlace &lt;= n+1</code>.
 	 */
 	public void setSpot( double thePlace ) {
-		if ( debug ) new RuntimeException ("setSpot in VisibleRange: " + (int)thePlace).printStackTrace();
+		if ( debug ) {
+			new RuntimeException ("setSpot in VisibleRange: " + (int)thePlace).printStackTrace();
+		}
 		double before = Math.floor( thePlace );
 		setBeginning( before );
 		double after = Math.ceil( thePlace );
-		if ( before == after ) after++;
+		if ( before == after ) {
+			after++;
+		}
 		setEnd( after );
 		notifyListeners();
 	}

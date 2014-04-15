@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -40,20 +41,19 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.util.ExportDialog;
 import com.affymetrix.igb.util.ServiceUtils;
+import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Optional;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.print.PrinterException;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
@@ -186,7 +186,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
+	public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
 		return ServiceUtils.getInstance().determineAndSetGroup(version);
 	}
 
@@ -301,7 +301,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
 	@Override
 	public List<Glyph> getAllTierGlyphs() {
-		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs();
+		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
@@ -481,16 +481,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	
 	@Override
 	public Component determineSlicedComponent() {
-		return ExportDialog.determineSlicedComponent();
+		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+		if (slice_view == null) {
+			return null;
+		}
+
+		return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 	
 	@Override
-	public void setComponent(Component c) {
-		ExportDialog.setComponent(c);
-	}
-	
-	@Override
-	public void exportScreenshot (File f, String ext, boolean isScript) throws IOException {
-		ExportDialog.exportScreenshot(f, ext, isScript);
+	public GenericFeature createFeature(String featureName, SymLoader loader) {	
+		return GeneralLoadView.getLoadView().createFeature(featureName, loader);
 	}
 }

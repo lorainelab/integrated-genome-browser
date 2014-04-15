@@ -4,9 +4,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.event.MouseInputAdapter;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.tiers.AccordionTierResizer;
-import com.affymetrix.igb.tiers.TierResizer;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -51,8 +48,9 @@ public class ToggleTrackResizingAction extends SeqMapViewActionA {
 	}
 	
 	private void toggle(TrackResizingAction trackResizingAction){
-		if(trackResizingAction == null || trackResizingAction == selectedAction)
+		if(trackResizingAction == null || trackResizingAction == selectedAction) {
 			return;
+		}
 		
 		if(selectedAction != null){
 			selectedAction.putValue(SELECTED_KEY, false);

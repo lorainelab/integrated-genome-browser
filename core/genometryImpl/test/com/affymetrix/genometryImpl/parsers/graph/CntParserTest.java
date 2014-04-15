@@ -1,7 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,24 +17,12 @@ public class CntParserTest {
 
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	public CntParserTest() {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
-
 	@Test
 	public void testParseFromFile() throws IOException {
 
-		String filename = "test/data/cnt/test1.cnt";
-		assertTrue(new File(filename).exists());
+		String filename = "test1.cnt";
 
-		InputStream istr = new FileInputStream(filename);
+		InputStream istr = CntParserTest.class.getClassLoader().getResourceAsStream(filename);
 		DataInputStream dis = new DataInputStream(istr);
 		assertNotNull(dis);
 

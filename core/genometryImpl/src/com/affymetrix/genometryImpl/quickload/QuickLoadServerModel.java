@@ -73,8 +73,9 @@ public final class QuickLoadServerModel {
 	private QuickLoadServerModel(String url, String pri_url, GenericServer priServer) {
 		url = ServerUtils.formatURL(url, ServerTypeI.QuickLoad);
 
-		if(pri_url != null)
+		if(pri_url != null) {
 			pri_url = ServerUtils.formatURL(pri_url, ServerTypeI.QuickLoad);
+		}
 		
 		root_url = url;
 		primary_url = pri_url;
@@ -121,6 +122,10 @@ public final class QuickLoadServerModel {
 	 */
 	public static synchronized void removeQLModelForURL(String url){
 		if(url2quickload.get(url) != null){
+			QuickLoadServerModel model = url2quickload.get(url);
+			if(model != null){
+				model.clean();
+			}
 			url2quickload.remove(url);
 		}
 	}
@@ -381,15 +386,12 @@ public final class QuickLoadServerModel {
 			}
 			
 			if (lift_stream != null) {
-				LiftParser.parse(lift_stream, group, annot_contigs);
-				success = true;
+				success = LiftParser.parse(lift_stream, group, annot_contigs);
 			} else if (ginfo_stream != null ){
-				ChromInfoParser.parse(ginfo_stream, group);
-				success = true;
+				success = ChromInfoParser.parse(ginfo_stream, group, getLoadURL());
 			}else if (cinfo_stream != null) {
-				ChromInfoParser.parse(cinfo_stream, group);
-				success = true;
-			} 
+				success = ChromInfoParser.parse(cinfo_stream, group, getLoadURL());
+			}
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Error loading data for genome '" + genome_name + "'", ex, Level.SEVERE);
 		} finally {
@@ -426,9 +428,7 @@ public final class QuickLoadServerModel {
 			}
 
 			if (istr == null) {
-				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
-						Level.SEVERE,"Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
-				return;
+				throw new FileNotFoundException(MessageFormat.format("Could not load QuickLoad contents from\n{0}{1}", new Object[]{getLoadURL(), contentsTxt}));
 			}
 
 			ireader = new InputStreamReader(istr);
@@ -554,6 +554,15 @@ public final class QuickLoadServerModel {
 		}
 			
 		return primary_url;
+	}
+	
+	private void clean() {
+		for (String genome : getGenomeNames()) {
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(genome);
+			if (group != null) {
+				group.removeSeqsForUri(root_url);
+			}
+		}
 	}
 	
 	@Override

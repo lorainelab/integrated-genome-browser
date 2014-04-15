@@ -548,8 +548,9 @@ public class NeoTracerDemo extends Applet
 
 	@Override
 	public AppletContext getAppletContext() {
-		if(isApplication)
-		return null;
+		if(isApplication) {
+			return null;
+		}
 		return super.getAppletContext();
 	}
 

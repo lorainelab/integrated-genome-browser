@@ -308,16 +308,16 @@ public class TutorialTracer extends Applet implements ActionListener {
 			String traceString = this.trace.getActiveBaseCalls().getBaseString();
 			String searchOption = searchChoice.getSelectedItem();
 			int basenum = -1;
-			if (searchOption == "First") {
+			if ("First".equals(searchOption)) {
 				basenum = traceString.indexOf(searchString);
 			}
-			else if (searchOption == "Last") {
+			else if ("Last".equals(searchOption)) {
 				basenum = traceString.lastIndexOf(searchString);
 			}
-			else if (searchOption == "Next") {
+			else if ("Next".equals(searchOption)) {
 				basenum = traceString.indexOf(searchString, prevSearchPosition+1);
 			}
-			else if (searchOption == "Prev") {
+			else if ("Prev".equals(searchOption)) {
 				basenum = traceString.lastIndexOf(searchString, prevSearchPosition-1);
 			}
 			if (basenum == -1) {

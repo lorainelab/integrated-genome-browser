@@ -193,13 +193,20 @@ public class Trace implements TraceI {
 			setPeaks();
 		}
 		int candidate = Arrays.binarySearch(peak, thePoint);
-		if (0 <= candidate) // exact match was found.
+		if (0 <= candidate) {
 			return candidate;
+		}
 		// Exact match was not found.
 		int j = -(candidate + 1), i = j - 1;
-		if (i < 0) return j;
-		if (peak.length <= j) return i;
-		if (thePoint < (peak[i] + peak[j]) / 2) return i;
+		if (i < 0) {
+			return j;
+		}
+		if (peak.length <= j) {
+			return i;
+		}
+		if (thePoint < (peak[i] + peak[j]) / 2) {
+			return i;
+		}
 		return j;
 	}
 
@@ -315,10 +322,10 @@ public class Trace implements TraceI {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("Trace\n");
-		sb.append("sampleVector.size(): " + sampleVector.size() + "\n");
-		sb.append("baseVector.size(): " + baseVector.size() + "\n");
+		sb.append("sampleVector.size(): ").append(sampleVector.size()).append("\n");
+		sb.append("baseVector.size(): ").append(baseVector.size()).append("\n");
 		int i = 0;
 		for (BaseCall cb : baseVector) {
 			sb.append(cb.getBase());

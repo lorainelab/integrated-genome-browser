@@ -17,15 +17,35 @@ import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
+import com.google.common.collect.ImmutableListMultimap;
 import java.awt.Container;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.DropMode;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
@@ -35,8 +55,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.AbstractDocument;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A panel for viewing and re-arranging bookmarks in a hierarchy.
@@ -175,7 +200,8 @@ public final class BookmarkManagerView {
 			return;
 		}
 		
-		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
+		//DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
+		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_model.getRoot();
 
 		if (tree_node == null) {
 			return;
@@ -253,13 +279,15 @@ public final class BookmarkManagerView {
 	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
 	public void importBookmarks() {
-		BookmarkList bookmark_list = new BookmarkList("Import");
+		StringBuilder title = new StringBuilder();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		String createdTime = dateFormat.format(Calendar.getInstance().getTime());
-		bookmark_list.setComment("Created Time: " + createdTime);
-		
-		
+		title.append("Import_");
+		title.append(createdTime);		
 		JFileChooser chooser = getJFileChooser(false);
+		BookmarkList bookmark_list = new BookmarkList(title.toString());
+		bookmark_list.setComment("Created Time: " + createdTime);
+
 		chooser.setDialogTitle("Import");
 		chooser.setCurrentDirectory(getLoadDirectory());
 		int option = chooser.showOpenDialog(null);
@@ -440,7 +468,7 @@ public final class BookmarkManagerView {
 				public void approveSelection() {
 					File f = getSelectedFile();
 					String path;
-					if ((f.getAbsolutePath().indexOf(".")) < 0) {
+					if ((f.getAbsolutePath().indexOf('.')) < 0) {
 						if (static_chooser.getFileFilter().equals(ff)) {
 							path = f.getAbsolutePath() + ".txt";
 						} else {
@@ -639,7 +667,7 @@ public final class BookmarkManagerView {
 			String name = name_text_field.getText();
 			String comment = comment_text_area.getText();
 			
-			if (name == null || name.length() == 0) {
+			if (StringUtils.isBlank(name)) {
 				return;
 			}
 			Object user_object = selected_bl.getUserObject();
@@ -666,7 +694,7 @@ public final class BookmarkManagerView {
 		private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
 			Bookmark bm = (Bookmark) bl.getUserObject();
 			if (bm == null) {
-				model.setValuesFromMap(Collections.<String, String[]>emptyMap());
+				model.setValuesFromMap(ImmutableListMultimap.<String, String>builder().build());
 			} else {
 				URL url = bm.getURL();
 				model.setValuesFromMap(Bookmark.parseParameters(url));

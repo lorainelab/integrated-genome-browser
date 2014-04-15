@@ -24,11 +24,13 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @version $Id: ServiceUtils.java 7505 2011-02-10 20:27:35Z hiralv $
@@ -36,6 +38,7 @@ import java.util.logging.Logger;
 public final class ServiceUtils {
 
 	private static final ServiceUtils instance = new ServiceUtils();
+	private static final String UNKNOWN_GENOME_VERSION = "unknown";
 
 	private ServiceUtils() {
 		super();
@@ -107,10 +110,10 @@ public final class ServiceUtils {
 		return gServer;
 	}
 
-	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
+	public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
 		final AnnotatedSeqGroup group;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
+		if (StringUtils.isBlank(version) || UNKNOWN_GENOME_VERSION.equals(version)) {
 			group = gmodel.getSelectedSeqGroup();
 		} else {
 			group = gmodel.getSeqGroup(version);
@@ -119,7 +122,7 @@ public final class ServiceUtils {
 			GeneralLoadView.getLoadView().initVersion(version);
 			gmodel.setSelectedSeqGroup(group);
 		}
-		return group;
+		return Optional.fromNullable(group);
 	}
 
 	/**
@@ -132,8 +135,8 @@ public final class ServiceUtils {
 	 * @param selectParam The select parameter passed in through the API
 	 */
 	public void performSelection(String selectParam) {
-
-		if (selectParam == null || selectParam.length() == 0) {
+		
+		if (StringUtils.isBlank(selectParam)) {
 			return;
 		}
 
@@ -155,7 +158,7 @@ public final class ServiceUtils {
 
 	public void selectFeatureAndCenterZoomStripe(String selectParam) {
 
-		if (selectParam == null || selectParam.length() == 0) {
+		if (StringUtils.isBlank(selectParam)) {
 			return;
 		}
 

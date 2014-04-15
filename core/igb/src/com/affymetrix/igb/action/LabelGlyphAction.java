@@ -1,7 +1,6 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -35,8 +34,9 @@ public class LabelGlyphAction extends SeqMapViewActionA implements ParameteredAc
 	
 	@Override
 	public void performAction(Object... parameters) {
-		if(parameters.length < 1 || parameters[0].getClass() != String.class)
+		if(parameters.length < 1 || parameters[0].getClass() != String.class) {
 			return;
+		}
 		
 		setLabel((String)parameters[0]);
 	}

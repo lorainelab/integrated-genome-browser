@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.util.logging.Level;
 
 
 /**
@@ -153,7 +154,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 		int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
 		// adding 1 to visible ref_end to make sure base is drawn if only
 		// part of it is visible
-		visible_ref_end = visible_ref_end + 1;
+		visible_ref_end += 1;
 		int visible_seq_end = Math.min(seq_end, visible_ref_end);
 		int visible_seq_span = visible_seq_end - visible_seq_beg;
 		if (visible_seq_span > 0) {
@@ -167,7 +168,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
 			}
 			if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
 				// something's gone wrong.  Ignore.
-				Logger.getLogger(AbstractAlignedTextGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
+				Logger.getLogger(AbstractAlignedTextGlyph.class.getName()).log(Level.FINE, "Invalid string: {0},{1}", new Object[]{seq_beg_index, seq_end_index});
 				return;
 			}
 			int seq_pixel_offset = getPixelBox().x;

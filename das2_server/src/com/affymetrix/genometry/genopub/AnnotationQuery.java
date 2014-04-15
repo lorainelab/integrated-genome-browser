@@ -3,10 +3,10 @@ package com.affymetrix.genometry.genopub;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.dom4j.Document;
@@ -57,10 +57,10 @@ public class AnnotationQuery {
 		StringBuffer queryBuf = new StringBuffer();
 		queryBuf.append(" SELECT     u  ");
 		queryBuf.append(" FROM       UnloadAnnotation as u  ");
-		queryBuf.append(" WHERE      u.idGenomeVersion = " + genomeVersion.getIdGenomeVersion());
+		queryBuf.append(" WHERE      u.idGenomeVersion = ").append(genomeVersion.getIdGenomeVersion());
 		
 		if (genoPubSecurity != null && !genoPubSecurity.isAdminRole()) {
-			queryBuf.append(" AND u.idUser = " + genoPubSecurity.getIdUser());		
+			queryBuf.append(" AND u.idUser = ").append(genoPubSecurity.getIdUser());		
 		}
 
 		queryBuf.append(" ORDER BY   u.idUnloadAnnotation");
@@ -71,7 +71,7 @@ public class AnnotationQuery {
 	}
 	
 	public AnnotationQuery() {
-		if (scopeLevel == null || scopeLevel.equals("")) {
+		if (scopeLevel == null || scopeLevel.length() == 0) {
 			scopeLevel = GenoPubSecurity.ALL_SCOPE_LEVEL;
 		}		
 	}
@@ -86,7 +86,7 @@ public class AnnotationQuery {
 		this.isVisibilityInstitute = Util.getFlagParameter(req, "isVisibilityInstitute");
 		this.isVisibilityPublic = Util.getFlagParameter(req, "isVisibilityPublic");
 		
-		if (scopeLevel == null || scopeLevel.equals("")) {
+		if (scopeLevel == null || scopeLevel.length() == 0) {
 			scopeLevel = GenoPubSecurity.ALL_SCOPE_LEVEL;
 		}		
 	}
@@ -96,14 +96,14 @@ public class AnnotationQuery {
 	  // Run query to get annotation groupings, organized under
 	  // organism and genome version
 	  StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
-	  Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
+	  Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation grouping query: {0}", queryBuf.toString());
 	  Query query = sess.createQuery(queryBuf.toString());
 	  List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 
 	  // Run query to get annotation grouping and annotations, organized under
 	  // organism and genome version
 	  queryBuf = this.getAnnotationQuery(genoPubSecurity);
-	  Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
+	  Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation query: {0}", queryBuf.toString());
 	  query = sess.createQuery(queryBuf.toString());
 	  List<Object[]> annotationRows = (List<Object[]>)query.list();
 
@@ -126,14 +126,14 @@ public class AnnotationQuery {
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
 		StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
-		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation grouping query: {0}", queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 		
 		// Run query to get annotations, organized under annotation grouping,
 		// organism, and genome version
 		queryBuf = this.getAnnotationQuery(genoPubSecurity);    	
-		Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Annotation query: {0}", queryBuf.toString());
     	query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationRows = (List<Object[]>)query.list();
 		
@@ -206,7 +206,7 @@ public class AnnotationQuery {
 
 			if (!genoPubSecurity.isAdminRole()) {
 				this.AND();
-				queryBuf.append(" a.idUser = " + genoPubSecurity.getIdUser());		
+				queryBuf.append(" a.idUser = ").append(genoPubSecurity.getIdUser());		
 			}
 
 			queryBuf.append(")");
@@ -676,7 +676,7 @@ public class AnnotationQuery {
 	
 	private String concatenateTypePrefix(String typePrefix, String groupingName, boolean showGroupingLevel) {
 		if (showGroupingLevel) {
-			if (typePrefix == null || typePrefix.equals("")) {
+			if (typePrefix == null || typePrefix.length() == 0) {
 				return groupingName;
 			} else {
 				return typePrefix + "/" + groupingName;
@@ -740,7 +740,7 @@ public class AnnotationQuery {
 					boolean prune = true;
 					// Public folders
 					if (groupingNode.getName().equals("AnnotationGrouping") &&
-						(folderIdUserGroup == null || folderIdUserGroup.equals(""))) {
+						(folderIdUserGroup == null || folderIdUserGroup.length() == 0)) {
 						// If we are not filtering by user group,
 						// always show empty public empty folders
 						if (this.idUserGroup == null) {
@@ -754,7 +754,7 @@ public class AnnotationQuery {
 					// User group folders
 					else if (groupingNode.getName().equals("AnnotationGrouping") &&
 							    folderIdUserGroup != null && 
-							    !folderIdUserGroup.equals("") &&
+							    folderIdUserGroup.length() != 0 &&
 							  	(genoPubSecurity.belongsToGroup(new Integer(folderIdUserGroup)))) {
 						if (this.idUserGroup == null) {
 							// If we are not filtering by user group, then always
@@ -826,9 +826,9 @@ public class AnnotationQuery {
 			this.AND();
 			queryBuf.append("(");
 			if (joinLevel == ANNOTATION_LEVEL) {
-				queryBuf.append(" a.idUserGroup = " + this.idUserGroup);
+				queryBuf.append(" a.idUserGroup = ").append(this.idUserGroup);
 			} else if (joinLevel == ANNOTATION_GROUPING_LEVEL) {
-				queryBuf.append(" ag.idUserGroup = " + this.idUserGroup);
+				queryBuf.append(" ag.idUserGroup = ").append(this.idUserGroup);
 				queryBuf.append(" OR ");
 				queryBuf.append(" ag.idUserGroup is NULL");
 			}

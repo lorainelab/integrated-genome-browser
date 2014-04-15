@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -31,6 +30,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.EnumMap;
 
 public abstract class AbstractExportFileAction
 extends GenericAction implements SymSelectionListener {
@@ -48,7 +48,7 @@ extends GenericAction implements SymSelectionListener {
 			boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 		model = new ExportFileModel();
-		preferredFilters = new HashMap<FileTypeCategory, UniFileFilter>();
+		preferredFilters = new EnumMap<FileTypeCategory, UniFileFilter>(FileTypeCategory.class);
 	}
 
 	/**

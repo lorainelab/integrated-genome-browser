@@ -1,11 +1,9 @@
 package com.affymetrix.igb.action;
 
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genoviz.swing.MenuUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;

@@ -18,7 +18,6 @@ import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
@@ -33,7 +32,6 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.swing.*;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
@@ -246,8 +244,9 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 		ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
 		sourceTableModel.init();
-		if(server.isEnabled())
+		if(server.isEnabled()) {
 			return true;
+		}
 		return false;
 	}
 

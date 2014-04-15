@@ -67,7 +67,6 @@ public class SimpleMap2 extends SimpleMap0 {
 			}
 			else { // not a keyword.
 				System.err.println("\"" + keyword + "\" is not a keyword.");
-				return;
 			}
 		}
 	}

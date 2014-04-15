@@ -38,8 +38,9 @@ public class ParentSummaryOperator extends AbstractAnnotationTransformer impleme
 
 	@Override
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-		if(symList.isEmpty())
+		if(symList.isEmpty()) {
 			return new SimpleSymWithProps();
+		}
 		
 		SeqSymmetry topSym = symList.get(0);
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();

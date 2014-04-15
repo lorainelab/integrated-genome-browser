@@ -225,7 +225,7 @@ public class FileTypeHolder {
 				public Parser getParser() { return new LinkPSLParser(); }
 				@Override
 				public IndexWriter getIndexWriter(String stream_name) {
-					int sindex = stream_name.lastIndexOf("/");
+					int sindex = stream_name.lastIndexOf('/');
 					String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 					PSLParser parser = new PSLParser();
 					if (type_prefix != null) {
@@ -263,7 +263,7 @@ public class FileTypeHolder {
 					public Parser getParser() { return new PSLParser(); }
 					@Override
 					public IndexWriter getIndexWriter(String stream_name) {
-						int sindex = stream_name.lastIndexOf("/");
+						int sindex = stream_name.lastIndexOf('/');
 						String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 						PSLParser iWriter = new PSLParser();
 						if (type_prefix != null) {
@@ -383,8 +383,7 @@ public class FileTypeHolder {
 						return parserClass.getConstructor().newInstance();
 					}
 					catch (Exception x) {
-						Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE,
-							"Failed to create Parser " + parserClass.getName() + " reason = " + (x.getCause() == null ? x.getMessage() : x.getCause().getMessage()));
+						Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "Failed to create Parser {0} reason = {1}", new Object[]{parserClass.getName(), x.getCause() == null ? x.getMessage() : x.getCause().getMessage()});
 						return null;
 					}
 				}
@@ -407,8 +406,7 @@ public class FileTypeHolder {
 						return (SymLoader)con.newInstance(uri, featureName, group);
 					}
 					catch (Exception x) {
-						Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE,
-							"Failed to create SymLoader " + symLoaderClass.getName() + " reason = " + (x.getCause() == null ? x.getMessage() : x.getCause().getMessage()));
+						Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "Failed to create SymLoader {0} reason = {1}", new Object[]{symLoaderClass.getName(), x.getCause() == null ? x.getMessage() : x.getCause().getMessage()});
 						return null;
 					}
 				}
@@ -553,9 +551,7 @@ public class FileTypeHolder {
 				extensions = new ArrayList<String>();
 				nameToExtensionMap.put(name, extensions);
 			}
-			for (String ext : fileTypeHandler.getExtensions()) {
-				extensions.add(ext);
-			}
+			extensions.addAll(Arrays.asList(fileTypeHandler.getExtensions()));
 		}
 		return nameToExtensionMap;
 	}

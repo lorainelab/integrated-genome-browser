@@ -196,8 +196,9 @@ public final class Das2VersionedSource {
 
 		Set<String> formats = new HashSet<String>();
 		for(Das2Type type : Localtypes){
-			for(String format : type.getFormats().keySet())
+			for(String format : type.getFormats().keySet()) {
 				formats.add(format.toLowerCase());
+			}
 		}
 
 		return formats;
@@ -241,7 +242,7 @@ public final class Das2VersionedSource {
 			}
 			// GAH 10-24-2007  temporary hack to weed out bad seqs that are somehow
 			//   getting added to segments response from Affy DAS/2 server
-			if ((region_id.indexOf("|") >= 0) || (region_id.charAt(region_id.length() - 1) == '.')) {
+			if ((region_id.indexOf('|') >= 0) || (region_id.charAt(region_id.length() - 1) == '.')) {
 				Logger.getLogger(Das2ServerInfo.class.getName()).log(
 					Level.WARNING, "@@@@@@@@@@@@@ caught bad seq id: {0}", region_id);
 				continue;
@@ -346,7 +347,7 @@ public final class Das2VersionedSource {
 					formatid = fnode.getAttribute(ID);
 				}
 				String mimetype = fnode.getAttribute("mimetype");
-				if (mimetype == null || mimetype.equals("")) {
+				if (mimetype == null || mimetype.length() == 0) {
 					mimetype = "unknown";
 				}
 				formats.put(formatid, mimetype);

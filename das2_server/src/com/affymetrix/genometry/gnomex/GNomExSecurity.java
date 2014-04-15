@@ -21,6 +21,7 @@ import org.hibernate.Session;
 import com.affymetrix.genometry.genopub.Constants;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometry.AnnotSecurity;
+import java.util.logging.Level;
 
 
 public class GNomExSecurity implements AnnotSecurity, Serializable {
@@ -44,7 +45,7 @@ public class GNomExSecurity implements AnnotSecurity, Serializable {
 	public void setDataTrackInfoURL(String serverName, String portNumber) {
 	  if (portNumber == null) {
       portNumber = "";
-    } else if (!portNumber.equals("")) {
+    } else if (portNumber.length() != 0) {
       portNumber = ":" + portNumber;           
     }
 	  String gnomexFlexApp = this.secAdvisor.isGuest() ? Constants.GNOMEX_GUEST_FLEX_APP : Constants.GNOMEX_FLEX_APP;
@@ -143,7 +144,7 @@ public class GNomExSecurity implements AnnotSecurity, Serializable {
 
 		// If the dataTrack id is not provided, block access
 		if (dataTrackId == null) {
-			Logger.getLogger(GNomExSecurity.class.getName()).warning("Unable to find dataTrack id for " + dataTrackName + ".  Blocking access.");
+			Logger.getLogger(GNomExSecurity.class.getName()).log(Level.WARNING, "Unable to find dataTrack id for {0}.  Blocking access.", dataTrackName);
 		}
 
 		// Get the hash map of dataTrack ids this user is authorized to view

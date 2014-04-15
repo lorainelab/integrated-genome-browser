@@ -101,8 +101,9 @@ public class Das2ServerType implements ServerTypeI {
 	 * @return true if file may not exist else false.
 	 */
 	private boolean getFileAvailability(String fileName){
-		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))
+		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
 			return true;
+		}
 
 		return false;
 	}
@@ -126,11 +127,13 @@ public class Das2ServerType implements ServerTypeI {
 
 			fileName += Constants.xml_ext;
 
-			if((file == null && !fileMayNotExist))
+			if((file == null && !fileMayNotExist)) {
 				return false;
+			}
 
-			if(!GeneralUtils.moveFileTo(file,fileName,local_path))
+			if(!GeneralUtils.moveFileTo(file,fileName,local_path)) {
 				return false;
+			}
 		}
 
 		return true;
@@ -139,8 +142,9 @@ public class Das2ServerType implements ServerTypeI {
 	@Override
 	public boolean processServer(GenericServer gServer, String path) {
 		File file = GeneralUtils.getFile(gServer.URL, false);
-		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, path))
+		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, path)) {
 			return false;
+		}
 		
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
@@ -399,7 +403,7 @@ public class Das2ServerType implements ServerTypeI {
                 String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
 
-				content_subtype = content_type.substring(content_type.indexOf("/") + 1);
+				content_subtype = content_type.substring(content_type.indexOf('/') + 1);
 				int sindex = content_subtype.indexOf(';');
 				if (sindex >= 0) {
 					content_subtype = content_subtype.substring(0, sindex);
@@ -650,6 +654,11 @@ public class Das2ServerType implements ServerTypeI {
 		return false;
 	}
 
+	@Override
+	public void removeServer(GenericServer server) {
+		// Do Nothing for now
+	}
+	
 	@Override
 	public boolean isSaveServersInPrefs() {
 		return true;

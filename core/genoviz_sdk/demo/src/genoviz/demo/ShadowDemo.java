@@ -14,11 +14,9 @@
 package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import java.applet.*;
 import java.awt.event.*;
 import java.util.Vector;
 
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.event.*;
@@ -367,11 +365,13 @@ public class ShadowDemo extends JApplet
 
 		// Make sure this is a NeoMouseEvent at work
 
-		if (!(e instanceof NeoMouseEvent) || (e.getSource() != mapview))
+		if (!(e instanceof NeoMouseEvent) || (e.getSource() != mapview)) {
 			return;
+		}
 
-		if (!shadowActive)
+		if (!shadowActive) {
 			return;
+		}
 
 		// Try to move the shadowRect relatively, in the X axis only.
 
@@ -383,13 +383,15 @@ public class ShadowDemo extends JApplet
 		// the bounds
 
 		if ((((shadowRect.getCoordBox()).x + mouse_offset) < 0.0) ||
-				(((shadowRect.getCoordBox()).x + mouse_offset) > (mapview.getCoordBounds()).width))
+				(((shadowRect.getCoordBox()).x + mouse_offset) > (mapview.getCoordBounds()).width)) {
 			return;
+		}
 
 		// The above was not sufficient -- additional bounds check
 		double newShadowLoc = mouseCurrentLoc - mouse_offset;
-		if (newShadowLoc < 0.0 || newShadowLoc > (mapview.getCoordBounds()).width)
+		if (newShadowLoc < 0.0 || newShadowLoc > (mapview.getCoordBounds()).width) {
 			return;
+		}
 
 
 		shadowRect.getCoordBox().x = newShadowLoc;
@@ -420,8 +422,9 @@ public class ShadowDemo extends JApplet
 		// Make sure this is a NeoMouseEvent at work
 
 		if (!(e instanceof NeoMouseEvent) ||
-				(e.getSource() != mapview))
+				(e.getSource() != mapview)) {
 			return;
+		}
 
 		NeoMouseEvent nmEvent    = (NeoMouseEvent) e;
 		List glyphsIntersected = nmEvent.getItems();
@@ -437,8 +440,9 @@ public class ShadowDemo extends JApplet
 		// Make sure this is a NeoMouseEvent at work
 
 		if (!(e instanceof NeoMouseEvent) ||
-				(e.getSource() != mapview))
+				(e.getSource() != mapview)) {
 			return;
+		}
 		shadowActive = false;
 	}
 
@@ -460,8 +464,9 @@ public class ShadowDemo extends JApplet
 
 		// Make sure that it's the shadowRect calling this
 
-		if (nre.getSource() != shadowRect)
+		if (nre.getSource() != shadowRect) {
 			return;
+		}
 
 		seqview.scrollSequence((int) nre.getVisibleStart());
 		seqview.updateWidget();

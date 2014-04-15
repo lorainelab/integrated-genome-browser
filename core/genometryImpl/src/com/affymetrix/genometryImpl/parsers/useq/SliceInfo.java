@@ -46,7 +46,9 @@ public class SliceInfo {
 	/**Rips and loads the info from the slice name into this object.  Throws and IOException if the name is malformed*/
 	public void parseSliceName(String sliceName) throws IOException {
 		Matcher mat = SLICE_NAME_SPLITTER.matcher(sliceName);
-		if (mat.matches() == false) throw new IOException ("Malformed slice name! Failed to parse the slice info from -> "+sliceName);
+		if (mat.matches() == false) {
+			throw new IOException ("Malformed slice name! Failed to parse the slice info from -> "+sliceName);
+		}
 		chromosome = mat.group(1);
 		strand = mat.group(2);
 		//no need to catch NumberFormatException, this is checked by the NAME_SPLITTER Pattern
@@ -116,7 +118,9 @@ public class SliceInfo {
 		this.binaryType = binaryType;
 	}
 	public boolean isContainedBy(int beginningBP, int endingBP) {
-		if (firstStartPosition >= beginningBP && firstStartPosition < endingBP && lastStartPosition >= beginningBP && lastStartPosition < endingBP) return true;
+		if (firstStartPosition >= beginningBP && firstStartPosition < endingBP && lastStartPosition >= beginningBP && lastStartPosition < endingBP) {
+			return true;
+		}
 		return false;
 	}
 }

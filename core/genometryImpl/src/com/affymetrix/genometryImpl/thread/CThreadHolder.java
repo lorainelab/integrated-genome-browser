@@ -66,17 +66,23 @@ public class CThreadHolder {
 	}
 
 	public void notifyStartThread(CThreadWorker<?,?> worker) {
-		if (DEBUG) System.out.println("))))) notifyStartThread CThreadWorker = " + worker.getMessage());
+		if (DEBUG) {
+			System.out.println("))))) notifyStartThread CThreadWorker = " + worker.getMessage());
+		}
 		synchronized (RUNNING_CTHREADWORKERS) {
 			RUNNING_CTHREADWORKERS.add(worker);
 			fireThreadEvent(worker, CThreadEvent.STARTED);
 		}
-		if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.add Thread = " + Thread.currentThread() + "=" + worker.getMessage());
+		if (DEBUG) {
+			System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.add Thread = " + Thread.currentThread() + "=" + worker.getMessage());
+		}
 	}
 
 	public void notifyEndThread (CThreadWorker<?,?> worker){
 		synchronized (RUNNING_CTHREADWORKERS) {
-			if (DEBUG) System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.remove Thread = " + Thread.currentThread() + "=" + worker.getMessage());
+			if (DEBUG) {
+				System.out.println("))))) notifyBackgroundDone RUNNING_CTHREADWORKERS.remove Thread = " + Thread.currentThread() + "=" + worker.getMessage());
+			}
 			RUNNING_CTHREADWORKERS.remove(worker);
 			fireThreadEvent(worker, CThreadEvent.ENDED);
 		}

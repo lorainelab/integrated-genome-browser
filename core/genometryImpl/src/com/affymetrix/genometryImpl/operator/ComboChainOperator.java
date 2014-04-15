@@ -38,7 +38,7 @@ public class ComboChainOperator implements Operator, IParameters {
 			int categoryCount = (checkCategory == category) ? 1 : 0;
 			boolean ok = after.getOperandCountMin(checkCategory) <= categoryCount;
 			if (!ok) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "incompatible operands, " + before.getDisplay() + " cannot pass output to " + after.getDisplay());
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "incompatible operands, {0} cannot pass output to {1}", new Object[]{before.getDisplay(), after.getDisplay()});
 			}
 			isCompatible &= ok;
 		}
@@ -47,7 +47,7 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public String getName() {
-		StringBuffer name = new StringBuffer(BASE_NAME);
+		StringBuilder name = new StringBuilder(BASE_NAME);
 		for (Operator operator : operators) {
 			name.append("_");
 			name.append(operator.getName());
@@ -57,7 +57,7 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public String getDisplay() {
-		StringBuffer name = new StringBuffer(GenometryConstants.BUNDLE.getString("operator_" + BASE_NAME));
+		StringBuilder name = new StringBuilder(GenometryConstants.BUNDLE.getString("operator_" + BASE_NAME));
 		for (Operator operator : operators) {
 			if (BASE_NAME.equals(name.toString())) {
 				name.append(" ");
@@ -91,12 +91,12 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return operators.size() == 0 ? 0 : operators.get(0).getOperandCountMin(category);
+		return operators.isEmpty() ? 0 : operators.get(0).getOperandCountMin(category);
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return operators.size() == 0 ? 0 : operators.get(0).getOperandCountMax(category);
+		return operators.isEmpty() ? 0 : operators.get(0).getOperandCountMax(category);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class ComboChainOperator implements Operator, IParameters {
 	
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();
+		return operators.isEmpty() ? null :  operators.get(operators.size() - 1).getOutputCategory();
 	}
 
 	@Override

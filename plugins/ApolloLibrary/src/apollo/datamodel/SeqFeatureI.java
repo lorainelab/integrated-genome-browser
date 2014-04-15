@@ -1,7 +1,6 @@
 package apollo.datamodel;
 
 import java.util.*;
-import apollo.util.FeatureListI;
 
 public interface SeqFeatureI extends RangeI {
   public String      getId();

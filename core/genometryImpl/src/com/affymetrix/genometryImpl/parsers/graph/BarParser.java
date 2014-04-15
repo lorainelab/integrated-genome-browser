@@ -768,7 +768,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 					//      seqversion
 					//      groupname + ":" + seqversion
 					if ((seqversion == null && groupname == null)
-							|| (((seqversion == null) || seqversion.equals("")) && ((groupname == null) || groupname.equals("")))) {
+							|| (((seqversion == null) || seqversion.length() == 0) && ((groupname == null) || groupname.length() == 0))) {
 						seq = testseq;
 						break;
 					} else {

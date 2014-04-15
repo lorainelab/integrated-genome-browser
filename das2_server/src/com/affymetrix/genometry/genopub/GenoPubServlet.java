@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -296,8 +295,6 @@ public class GenoPubServlet extends HttpServlet {
 
 			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
 
-			return;
-
 		} catch (Exception e) {
 			e.printStackTrace();		
 			this.reportError(res, e.toString());
@@ -311,7 +308,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			// If idAnnotation was provided, make sure the user has permission
 			// to read this annotation.
-			if (request.getParameter("idAnnotation") != null && !request.getParameter("idAnnotation").equals("")) {
+			if (request.getParameter("idAnnotation") != null && request.getParameter("idAnnotation").length() != 0) {
 				sess = HibernateUtil.getSessionFactory().openSession();
 				Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
@@ -406,7 +403,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
-			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
+			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").length() == 0) {
 				throw new Exception("idAnnotation request to get Annotation");
 			}
 			Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
@@ -453,18 +450,18 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter an organism DAS2 name.");
 			}
-			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").equals("")) {
+			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism binomial name.");
 			}
-			if (request.getParameter("commonName") == null || request.getParameter("commonName").equals("")) {
+			if (request.getParameter("commonName") == null || request.getParameter("commonName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism common name.");
 			}
 
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The organism DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -536,18 +533,18 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter an organism DAS2 name.");
 			}
-			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").equals("")) {
+			if (request.getParameter("binomialName") == null || request.getParameter("binomialName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism binomial name.");
 			}
-			if (request.getParameter("commonName") == null || request.getParameter("commonName").equals("")) {
+			if (request.getParameter("commonName") == null || request.getParameter("commonName").length() == 0) {
 				throw new InvalidNameException("Please enter an organism common name.");
 			}
 
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The organism DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -654,7 +651,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
-			if (request.getParameter("idGenomeVersion") == null || request.getParameter("idGenomeVersion").equals("")) {
+			if (request.getParameter("idGenomeVersion") == null || request.getParameter("idGenomeVersion").length() == 0) {
 				throw new Exception("idGenomeVersion request to get Genome Version");
 			}
 
@@ -695,11 +692,11 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter the genome version name.");
 			}
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -785,11 +782,11 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new InvalidNameException("Please enter the genome version name.");
 			}
 			// Make sure that the DAS2 name has no spaces or special characters
-			if (request.getParameter("name").indexOf(" ") >= 0) {
+			if (request.getParameter("name").indexOf(' ') >= 0) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have spaces.");
 			}
 			Pattern pattern = Pattern.compile("\\W");
@@ -827,7 +824,7 @@ public class GenoPubServlet extends HttpServlet {
 				for(Iterator<?> i1 = segmentsDoc.getRootElement().elementIterator(); i1.hasNext();) {
 					Element segmentNode = (Element)i1.next();
 					String idSegment = segmentNode.attributeValue("idSegment");
-					if (idSegment != null && !idSegment.equals("")) {
+					if (idSegment != null && idSegment.length() != 0) {
 						if (segment.getIdSegment().equals(new Integer(idSegment))) {
 							found = true;
 							break;
@@ -850,12 +847,12 @@ public class GenoPubServlet extends HttpServlet {
 				String sortOrder = segmentNode.attributeValue("sortOrder");
 
 				Segment s = null;
-				if (idSegment != null && !idSegment.equals("")) {
+				if (idSegment != null && idSegment.length() != 0) {
 					s = Segment.class.cast(sess.load(Segment.class, new Integer(idSegment)));
 
 					s.setName(segmentNode.attributeValue("name"));
-					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
-					s.setSortOrder(sortOrder != null && !sortOrder.equals("") ? new Integer(sortOrder) : null);
+					s.setLength(len != null && len.length() != 0 ? new Integer(len) : null);
+					s.setSortOrder(sortOrder != null && sortOrder.length() != 0 ? new Integer(sortOrder) : null);
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 
 
@@ -863,8 +860,8 @@ public class GenoPubServlet extends HttpServlet {
 					s = new Segment();		
 
 					s.setName(segmentNode.attributeValue("name"));
-					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
-					s.setSortOrder(sortOrder != null && !sortOrder.equals("") ? new Integer(sortOrder) : null);
+					s.setLength(len != null && len.length() != 0 ? new Integer(len) : null);
+					s.setSortOrder(sortOrder != null && sortOrder.length() != 0 ? new Integer(sortOrder) : null);
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 
 					sess.save(s);
@@ -883,7 +880,7 @@ public class GenoPubServlet extends HttpServlet {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
 				if (!file.delete()) {
-					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete sequence file " + file.getName() + " for genome version " + genomeVersion.getName());
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete sequence file {0} for genome version {1}", new Object[]{file.getName(), genomeVersion.getName()});
 				}
 			}            
 
@@ -1013,7 +1010,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			String line;
 			int count = 1;
-			if (chromosomeInfo != null && !chromosomeInfo.equals("")) {
+			if (chromosomeInfo != null && chromosomeInfo.length() != 0) {
 				Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 				GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
 
@@ -1123,7 +1120,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (fileExtensions.length() > 0) {
 					fileExtensions.append(";");
 				}
-				fileExtensions.append("*" + Constants.SEQUENCE_FILE_EXTENSIONS[x]);
+				fileExtensions.append("*").append(Constants.SEQUENCE_FILE_EXTENSIONS[x]);
 			}
 
 			res.setContentType("application/xml");
@@ -1264,7 +1261,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the annotation folder name.");
 			}
 
@@ -1364,7 +1361,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		try {
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the annotation folder name.");
 			}
 
@@ -1682,10 +1679,10 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter an annotation name.");
 			}
-			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").equals("")) {
+			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").length() == 0) {
 				throw new Exception("Please select the visibility for this annotation.");
 			}
 			if (!request.getParameter("codeVisibility").equals(Visibility.PUBLIC)) {
@@ -1835,10 +1832,10 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter an annotation name.");
 			}
-			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").equals("")) {
+			if (request.getParameter("codeVisibility") == null || request.getParameter("codeVisibility").length() == 0) {
 				throw new Exception("Please select the visibility for this annotation.");
 			}
 			if (!request.getParameter("codeVisibility").equals(Visibility.PUBLIC)) {
@@ -1889,7 +1886,7 @@ public class GenoPubServlet extends HttpServlet {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
 				if (!file.delete()) {
-					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file " + file.getName() + " for annotation " + annotation.getName());
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file {0} for annotation {1}", new Object[]{file.getName(), annotation.getName()});
 				}
 			}       
 
@@ -1903,7 +1900,7 @@ public class GenoPubServlet extends HttpServlet {
 				for(Iterator<?> i1 = propsDoc.getRootElement().elementIterator(); i1.hasNext();) {
 					Element propNode = (Element)i1.next();
 					String idAnnotationProperty = propNode.attributeValue("idAnnotationProperty");
-					if (idAnnotationProperty != null && !idAnnotationProperty.equals("")) {
+					if (idAnnotationProperty != null && idAnnotationProperty.length() != 0) {
 						if (ap.getIdAnnotationProperty().equals(new Integer(idAnnotationProperty))) {
 							found = true;
 							break;
@@ -1930,7 +1927,7 @@ public class GenoPubServlet extends HttpServlet {
 				String idAnnotationProperty = node.attributeValue("idAnnotationProperty");
 
 				AnnotationProperty ap = null;
-				if (idAnnotationProperty == null || idAnnotationProperty.equals("")) {
+				if (idAnnotationProperty == null || idAnnotationProperty.length() == 0) {
 					ap = new AnnotationProperty();
 					ap.setIdProperty(Integer.valueOf(node.attributeValue("idProperty")));
 				} else {
@@ -1940,7 +1937,7 @@ public class GenoPubServlet extends HttpServlet {
 				ap.setValue(node.attributeValue("value"));
 				ap.setIdAnnotation(annotation.getIdAnnotation());
 
-				if (idAnnotationProperty == null || idAnnotationProperty.equals("")) {
+				if (idAnnotationProperty == null || idAnnotationProperty.length() == 0) {
 					sess.save(ap);
 					sess.flush();
 				}
@@ -1954,7 +1951,7 @@ public class GenoPubServlet extends HttpServlet {
 							Element n = (Element)i2.next();
 							if (n.getName().equals("AnnotationPropertyValue")) {
 								String idAnnotationPropertyValue = n.attributeValue("idAnnotationPropertyValue");
-								if (idAnnotationPropertyValue != null && !idAnnotationPropertyValue.equals("")) {
+								if (idAnnotationPropertyValue != null && idAnnotationPropertyValue.length() != 0) {
 									if (av.getIdAnnotationPropertyValue().equals(new Integer(idAnnotationPropertyValue))) {
 										found = true;
 										break;
@@ -1980,7 +1977,7 @@ public class GenoPubServlet extends HttpServlet {
 						if (value != null && value.equals("Enter URL here...")) {
 							continue;
 						}
-						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.equals("")) {
+						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.length() == 0) {
 							av = new AnnotationPropertyValue();
 							av.setIdAnnotationProperty(ap.getIdAnnotationProperty());
 						} else {
@@ -1988,7 +1985,7 @@ public class GenoPubServlet extends HttpServlet {
 						}
 						av.setValue(n.attributeValue("value"));
 
-						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.equals("")) {
+						if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.length() == 0) {
 							sess.save(av);
 						}
 					}
@@ -2073,7 +2070,7 @@ public class GenoPubServlet extends HttpServlet {
 			tx = sess.beginTransaction();
 
 			// Make sure that the required fields are filled in
-			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
+			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").length() == 0) {
 				throw new Exception("idAnnotation required.");
 			}
 
@@ -2165,13 +2162,17 @@ public class GenoPubServlet extends HttpServlet {
 			//colaborators?
 			TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
 			Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
-			while (cIt.hasNext()) collaborators.add((User)cIt.next());
+			while (cIt.hasNext()) {
+				collaborators.add((User)cIt.next());
+			}
 			dup.setCollaborators(collaborators);
 
 			//groupings?
 			Set<AnnotationGrouping>  annotationGroupings= new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
 			Iterator<?> aIt = sourceAnnot.getAnnotationGroupings().iterator();
-			while (aIt.hasNext()) annotationGroupings.add((AnnotationGrouping)aIt.next());
+			while (aIt.hasNext()) {
+				annotationGroupings.add((AnnotationGrouping)aIt.next());
+			}
 			dup.setAnnotationGroupings(annotationGroupings);
 
 			//is this needed?
@@ -2420,7 +2421,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (remainingAnnotationGroupings.length() > 0) {
 					remainingAnnotationGroupings.append(",\n");					
 				}
-				remainingAnnotationGroupings.append("    '" + ag.getName() + "'");
+				remainingAnnotationGroupings.append("    '").append(ag.getName()).append("'");
 				agCount++;
 
 			}
@@ -2662,11 +2663,11 @@ public class GenoPubServlet extends HttpServlet {
 
 			Element row   = table.addElement("TR");
 			row.addElement("TD").addText("Summary").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getSummary() != null && !annotation.getSummary().equals("") ? annotation.getSummary() : "&nbsp;");
+			row.addElement("TD").addCDATA(annotation.getSummary() != null && annotation.getSummary().length() != 0 ? annotation.getSummary() : "&nbsp;");
 
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Description").addAttribute("CLASS", "label");
-			if (annotation.getDescription() == null || annotation.getDescription().equals("")) {
+			if (annotation.getDescription() == null || annotation.getDescription().length() == 0) {
 				row.addElement("TD").addCDATA("&nbsp;");
 			} else {
 				String description = annotation.getDescription().replaceAll("\\n", "<br>");
@@ -2705,11 +2706,11 @@ public class GenoPubServlet extends HttpServlet {
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
 			String instituteName = dh.getInstituteName(annotation.getIdInstitute());
-			row.addElement("TD").addCDATA(instituteName != null && !instituteName.equals("" )? instituteName : "&nbsp;");
+			row.addElement("TD").addCDATA(instituteName != null && instituteName.length() != 0? instituteName : "&nbsp;");
 
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && !annotation.getCodeVisibility().equals("") ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
+			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && annotation.getCodeVisibility().length() != 0 ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
 
 			for(AnnotationProperty ap : (Set<AnnotationProperty>)annotation.getAnnotationProperties()) {
 				row   = table.addElement("TR");     
@@ -2725,14 +2726,14 @@ public class GenoPubServlet extends HttpServlet {
 					row.addElement("TD").addCDATA(value.length() > 0 ? value.toString() : "&nbsp;");
 
 				} else {
-					row.addElement("TD").addCDATA(ap.getValue() != null && !ap.getValue().equals("") ? ap.getValue() : "&nbsp;");
+					row.addElement("TD").addCDATA(ap.getValue() != null && ap.getValue().length() != 0 ? ap.getValue() : "&nbsp;");
 
 				}
 
 			}
 
 			String publishedBy = "&nbsp;";
-			if (annotation.getCreatedBy() != null && !annotation.getCreatedBy().equals("")) {
+			if (annotation.getCreatedBy() != null && annotation.getCreatedBy().length() != 0) {
 				publishedBy = annotation.getCreatedBy();
 
 				if (annotation.getCreateDate() != null) {
@@ -2815,7 +2816,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (fileExtensions.length() > 0) {
 					fileExtensions.append(";");
 				}
-				fileExtensions.append("*" + Constants.ANNOTATION_FILE_EXTENSIONS[x]);
+				fileExtensions.append("*").append(Constants.ANNOTATION_FILE_EXTENSIONS[x]);
 			}
 
 
@@ -2879,11 +2880,11 @@ public class GenoPubServlet extends HttpServlet {
 					} else if (name.equals("idGenomeVersion")) {
 						idGenomeVersion = new Integer(value);
 					} else if (name.equals("idAnnotationGrouping")) {
-						if (value != null && !value.equals("")) {
+						if (value != null && value.length() != 0) {
 							idAnnotationGrouping = new Integer(value);
 						}
 					} else if (name.equals("idUserGroup")) {
-						if (value != null && !value.equals("")) {
+						if (value != null && value.length() != 0) {
 							idUserGroup = new Integer(value);
 						}
 					}
@@ -2948,7 +2949,7 @@ public class GenoPubServlet extends HttpServlet {
 								uploadBulkAnnotations(sess, tempBulkUploadFile, annotation, ag, res);
 								if (tempBulkUploadFile.exists()) { 
 									if (!tempBulkUploadFile.delete()) {
-										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + tempBulkUploadFile.getName() + " during bulk upload.");
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file {0} during bulk upload.", tempBulkUploadFile.getName());
 									}
 									break;
 								}
@@ -2976,7 +2977,7 @@ public class GenoPubServlet extends HttpServlet {
 								//check size of text files
 								if (Util.tooManyLines(file)){
 									if (!file.delete()) {
-										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file {0}.", file.getName());
 									}
 									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
 											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form (xxx.bar).");
@@ -2986,7 +2987,7 @@ public class GenoPubServlet extends HttpServlet {
 									String error = checkBamFile(file);
 									if (error != null ) {
 										if (!file.delete()) {
-											Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
+											Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file {0}.", file.getName());
 										}
 										throw new MalformedBamFileException("Errors found with bam file -> "+fileName+". Aborting upload. "+error);
 									}
@@ -3082,7 +3083,7 @@ public class GenoPubServlet extends HttpServlet {
 			StringBuilder badChroms = new StringBuilder();
 			boolean badMito = false;
 			for (SAMSequenceRecord r: chroms){
-				if (oneTwoDigit.matcher(r.getSequenceName()).matches()) badChroms.append(r.getSequenceName()+" ");
+				if (oneTwoDigit.matcher(r.getSequenceName()).matches()) badChroms.append(r.getSequenceName()).append(" ");
 				if (r.getSequenceName().equals("chrMT")) badMito = true;
 			}
 			if (badChroms.length() !=0) throw new Exception("\nYour bam file contains chromosomes that are 1-2 letters/ numbers long. For DAS compatibility they should start with 'chr' for chromosomes and something longish for contigs/ unassembled segments, see -> "+badChroms+"\n");
@@ -3120,35 +3121,35 @@ public class GenoPubServlet extends HttpServlet {
 				//parse name, fileName, summary, description
 				Matcher mat = BULK_UPLOAD_LINE_SPLITTER.matcher(line);
 				if (mat.matches() == false) { 
-					errors.append("Malformed data line -> " + line+" . \n");
+					errors.append("Malformed data line -> ").append(line).append(" . \n");
 					continue;
 				}
 				//name is required
 				String name = mat.group(1).trim();
 				if (name.length()==0) {
-					errors.append("Missing name -> " + line+" . \n");
+					errors.append("Missing name -> ").append(line).append(" . \n");
 				}
 				//check file
 				File dataFile = new File (mat.group(2).trim());
 				if (dataFile.canRead() == false || dataFile.canWrite() == false) {
-					errors.append("Cannot find/modify file -> " + line+" . \n");
+					errors.append("Cannot find/modify file -> ").append(line).append(" . \n");
 				}
 				//check live file
 				else {
 					//check file extension
 					String fileName = dataFile.toString();
 					if (Util.isValidAnnotationFileType(fileName) == false) {
-						errors.append("Unsupported file type ->  " + line+" . \n");
+						errors.append("Unsupported file type ->  ").append(line).append(" . \n");
 					}
 					else {
 						//too many lines in txt file?
-						if (Util.tooManyLines(dataFile)) errors.append("Too many lines in file ->  " + line+" . Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html).\n");
+						if (Util.tooManyLines(dataFile)) errors.append("Too many lines in file ->  ").append(line).append(" . Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html).\n");
 						//bam or bai?
 						if (fileName.endsWith(".bam") || fileName.endsWith(".bai")) bamBaiFiles.add(name+"__"+fileName);
 						//check bam file
 						if (fileName.endsWith(".bam")) {
 							String log = checkBamFile(dataFile);
-							if (log != null) errors.append("Problems were found with this bam file ->  " + line+" . "+log);
+							if (log != null) errors.append("Problems were found with this bam file ->  ").append(line).append(" . ").append(log);
 						}
 					}
 				}
@@ -3159,13 +3160,13 @@ public class GenoPubServlet extends HttpServlet {
 				if (f.endsWith(".bam")) {
 					String bai1 = f.substring(0, f.length()-4)+".bai";
 					String bai2 = f+".bai";
-					if (bamBaiFiles.contains(bai1) == false && bamBaiFiles.contains(bai2) == false) errors.append("Missing xxx.bai index file for ->  " + f+" . \n");
+					if (bamBaiFiles.contains(bai1) == false && bamBaiFiles.contains(bai2) == false) errors.append("Missing xxx.bai index file for ->  ").append(f).append(" . \n");
 				}
 				else {
 					//else bai, might be .bam.bai
 					String bam = f.substring(0, f.length()-4);
 					if (bam.endsWith(".bam") == false) bam += ".bam";
-					if (bamBaiFiles.contains(bam) == false) errors.append("Missing xxx.bam alignment file for ->  " + f+" . \n");
+					if (bamBaiFiles.contains(bam) == false) errors.append("Missing xxx.bam alignment file for ->  ").append(f).append(" . \n");
 				}
 			}
 			if (errors.length() != 0) {
@@ -3226,9 +3227,9 @@ public class GenoPubServlet extends HttpServlet {
 				// the the directory structure embedded in the name;
 				String annotationName = "";
 				AnnotationGrouping ag = null;
-				if (name.lastIndexOf("/") >= 0) {
-					annotationName = name.substring(name.lastIndexOf("/") + 1);
-					ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf("/")));
+				if (name.lastIndexOf('/') >= 0) {
+					annotationName = name.substring(name.lastIndexOf('/') + 1);
+					ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf('/')));
 				} else {
 					annotationName = name;
 					ag = defaultAnnotationGrouping;
@@ -3441,7 +3442,9 @@ public class GenoPubServlet extends HttpServlet {
 		//collaborators?
 		TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
 		Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
-		while (cIt.hasNext()) collaborators.add((User)cIt.next());
+		while (cIt.hasNext()) {
+			collaborators.add((User)cIt.next());
+		}
 		dup.setCollaborators(collaborators);
 
 		//is this needed?
@@ -3563,12 +3566,12 @@ public class GenoPubServlet extends HttpServlet {
 
 		// Get the parameter that tells us if we are handling a large download.
 		ArchiveHelper archiveHelper = new ArchiveHelper();
-		if (req.getParameter("mode") != null && !req.getParameter("mode").equals("")) {
+		if (req.getParameter("mode") != null && req.getParameter("mode").length() != 0) {
 			archiveHelper.setMode(req.getParameter("mode"));
 		}
 
 		try {
-			if (keys == null || keys.equals("")) {
+			if (keys == null || keys.length() == 0) {
 				throw new Exception("Cannot perform download due to empty keys parameter.");
 			}
 			sess = HibernateUtil.getSessionFactory().openSession();
@@ -3720,7 +3723,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 
 
-			if (keys == null || keys.equals("")) {
+			if (keys == null || keys.length() == 0) {
 				throw new Exception("Cannot perform download due to empty keys parameter.");
 			}
 
@@ -4271,11 +4274,11 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if ((request.getParameter("firstName") == null || request.getParameter("firstName").equals("")) &&
-					(request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
+			if ((request.getParameter("firstName") == null || request.getParameter("firstName").length() == 0) &&
+					(request.getParameter("lastName") == null || request.getParameter("lastName").length() == 0)) {
 				throw new Exception("Please enter first or last name.");
 			}
-			if (request.getParameter("userName") == null || request.getParameter("userName").equals("")) {
+			if (request.getParameter("userName") == null || request.getParameter("userName").length() == 0) {
 				throw new Exception("Please enter the user name.");
 			}
 
@@ -4419,14 +4422,14 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure that the required fields are filled in
-			if ((request.getParameter("firstName") == null || request.getParameter("firstName").equals("")) &&
-					(request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
+			if ((request.getParameter("firstName") == null || request.getParameter("firstName").length() == 0) &&
+					(request.getParameter("lastName") == null || request.getParameter("lastName").length() == 0)) {
 				throw new Exception("Please enter first or last name.");
 			}
-			if (request.getParameter("userName") == null || request.getParameter("userName").equals("")) {
+			if (request.getParameter("userName") == null || request.getParameter("userName").length() == 0) {
 				throw new Exception("Please enter the user name.");
 			}
-			if (request.getParameter("role") == null || request.getParameter("role").equals("")) {
+			if (request.getParameter("role") == null || request.getParameter("role").length() == 0) {
 				throw new Exception("Please select a role (admin, user, guest).");
 			}
 
@@ -4468,7 +4471,7 @@ public class GenoPubServlet extends HttpServlet {
 					user.setPassword(digestedPassword);       			    
 				} catch (Exception e) {
 					e.printStackTrace();
-					Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unabled to get digested password {0}", e.toString());
 				}
 			}
 
@@ -4542,14 +4545,14 @@ public class GenoPubServlet extends HttpServlet {
 			User user = User.class.cast(sess.load(User.class, this.genoPubSecurity.getIdUser()));
 
 			// Encrypt the password
-			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && !request.getParameter("password").equals("")) {
+			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && request.getParameter("password").length() != 0) {
 				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
 				try {
 					String digestedPassword = getDigestedPassword(pw);
 					user.setPassword(digestedPassword);                 
 				} catch (Exception e) {
 					e.printStackTrace();
-					Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unabled to get digested password {0}", e.toString());
 				}		
 			}
 
@@ -4599,7 +4602,7 @@ public class GenoPubServlet extends HttpServlet {
 				throw new InsufficientPermissionException("Insufficient permissions to add groups.");
 			}
 			// Make sure required fields are filled in.
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the group name.");
 			}
 
@@ -4717,7 +4720,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Make sure required fields are filled in.
-			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
+			if (request.getParameter("name") == null || request.getParameter("name").length() == 0) {
 				throw new Exception("Please enter the group name.");
 			}
 
@@ -4967,7 +4970,7 @@ public class GenoPubServlet extends HttpServlet {
 					for(Iterator<?> i1 = optionsDoc.getRootElement().elementIterator(); i1.hasNext();) {
 						Element optionNode = (Element)i1.next();
 						String idPropertyOption = optionNode.attributeValue("idPropertyOption");
-						if (idPropertyOption != null && !idPropertyOption.equals("")) {
+						if (idPropertyOption != null && idPropertyOption.length() != 0) {
 							if (option.getIdPropertyOption().equals(new Integer(idPropertyOption))) {
 								found = true;
 								break;
@@ -5220,7 +5223,7 @@ public class GenoPubServlet extends HttpServlet {
 					// Make sure that genome versions with annotations or sequence have at least
 					// one segment.
 					if (annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).size() > 0 || gv.hasSequence(this.genometry_genopub_dir)) {
-						if (segments == null || segments.size() == 0) {
+						if (segments == null || segments.isEmpty()) {
 							if (invalidGenomeVersions.length() > 0) {
 								invalidGenomeVersions.append(", ");
 							}
@@ -5235,7 +5238,7 @@ public class GenoPubServlet extends HttpServlet {
 							if (emptyAnnotations.length() > 0) {
 								emptyAnnotations.append("\n");
 							}
-							emptyAnnotations.append(gv.getName() + ":  ");
+							emptyAnnotations.append(gv.getName()).append(":  ");
 							break;
 						}
 					}
@@ -5256,7 +5259,7 @@ public class GenoPubServlet extends HttpServlet {
 						}
 					}
 					List<UnloadAnnotation> unloadAnnotations = AnnotationQuery.getUnloadedAnnotations(sess, genoPubSecurity, gv);
-					unloadCount = unloadCount + unloadAnnotations.size();
+					unloadCount += unloadAnnotations.size();
 
 				}
 			}
@@ -5266,10 +5269,10 @@ public class GenoPubServlet extends HttpServlet {
 
 			if (loadCount > 0 || unloadCount > 0) {
 				if (loadCount > 0) {
-					confirmMessage.append(loadCount + " annotation(s) and ready to load to DAS/2.\n\n");
+					confirmMessage.append(loadCount).append(" annotation(s) and ready to load to DAS/2.\n\n");
 				}
 				if (unloadCount > 0) {
-					confirmMessage.append(unloadCount + " annotation(s) ready to unload from DAS/2.\n\n");
+					confirmMessage.append(unloadCount).append(" annotation(s) ready to unload from DAS/2.\n\n");
 				} 
 				confirmMessage.append("Do you wish to continue?\n\n");					
 			} else {
@@ -5280,14 +5283,10 @@ public class GenoPubServlet extends HttpServlet {
 			if (invalidGenomeVersions.length() > 0 || emptyAnnotations.length() > 0) {
 
 				if (invalidGenomeVersions.length() > 0) {
-					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n" + 
-							invalidGenomeVersions.toString() +  
-					".\n\n");			
+					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n").append(invalidGenomeVersions.toString()).append(".\n\n");			
 				}
 				if (emptyAnnotations.length() > 0) {
-					message.append("The following empty annotations will be bypassed:\n" + 
-							emptyAnnotations.toString() +  
-					".\n\n");			
+					message.append("The following empty annotations will be bypassed:\n").append(emptyAnnotations.toString()).append(".\n\n");			
 				}
 				message.append(confirmMessage.toString());
 				this.reportError(res, message.toString()); 
@@ -5358,7 +5357,7 @@ public class GenoPubServlet extends HttpServlet {
 		genometry_genopub_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 
 		// Make sure we have the parameter
-		if (genometry_genopub_dir == null || genometry_genopub_dir.equals("")) {
+		if (genometry_genopub_dir == null || genometry_genopub_dir.length() == 0) {
 			Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter " + Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 			return false;
 		}
@@ -5367,7 +5366,7 @@ public class GenoPubServlet extends HttpServlet {
 		if (!new File(genometry_genopub_dir).exists()) {
 			boolean success = (new File(genometry_genopub_dir)).mkdir();
 			if (!success) {
-				Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_genopub_dir);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to create directory {0}", genometry_genopub_dir);
 				return false;
 			}
 		}
@@ -5379,7 +5378,7 @@ public class GenoPubServlet extends HttpServlet {
 		//set web app dir for UCSC hot links
 		genoPubWebAppDir = new File (context.getRealPath("/"));
 
-		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "genometry_genopub_dir = {0}", genometry_genopub_dir);
 
 		return true;
 	}
@@ -5611,14 +5610,16 @@ public class GenoPubServlet extends HttpServlet {
 		//fetch hashSet
 		if (urlLinkFileExtensions == null){
 			urlLinkFileExtensions = new HashSet<String>();
-			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
+			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) {
+				urlLinkFileExtensions.add(ext);
+			}
 		}
 		File useq = null;
 		File bigFile = null;
 		
 		ArrayList<File> filesAL = new ArrayList<File>();
 		for (File f: files){
-			int index = f.getName().lastIndexOf(".");
+			int index = f.getName().lastIndexOf('.');
 			if (index > 0) {
 				String ext = f.getName().substring(index);			
 				if (ext.equals(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)) useq = f;
@@ -5639,7 +5640,7 @@ public class GenoPubServlet extends HttpServlet {
 			//c.start(); //separate thread!
 		}
 
-		if (filesAL.size() !=0){
+		if (!filesAL.isEmpty()){
 			//stranded?
 			boolean stranded = false;
 			if (convertedUSeqFiles != null) {
@@ -5677,13 +5678,15 @@ public class GenoPubServlet extends HttpServlet {
 	private UCSCLinkFiles fetchUCSCLinkFiles(List<File> files) throws Exception{
 		if (urlLinkFileExtensions == null){
 			urlLinkFileExtensions = new HashSet<String>();
-			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
+			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) {
+				urlLinkFileExtensions.add(ext);
+			}
 		}
 		File useq = null;
 		boolean converting = false;
 		ArrayList<File> filesAL = new ArrayList<File>();
 		for (File f: files){
-			int index = f.getName().lastIndexOf(".");
+			int index = f.getName().lastIndexOf('.');
 			if (index > 0) {
 				String ext = f.getName().substring(index);
 				//System.out.println("\nFile Extension "+ ext+" "+f.getName());
@@ -5693,7 +5696,7 @@ public class GenoPubServlet extends HttpServlet {
 		}
 
 		//convert useq archive?  If a xxx.useq file is found and autoConvertUSeqArchives == true, then the file is converted using a separate thread.
-		if (filesAL.size()==0 && useq !=null && autoConvertUSeqArchives){
+		if (filesAL.isEmpty() && useq !=null && autoConvertUSeqArchives){
 			//this can consume alot of resources and take 1-10min
 			USeq2UCSCBig c = new USeq2UCSCBig(ucscWig2BigWigExe, ucscBed2BigBedExe, useq);
 			filesAL = c.fetchConvertedFileNames();
@@ -5702,7 +5705,7 @@ public class GenoPubServlet extends HttpServlet {
 			//c.start(); //separate thread!
 		}
 
-		if (filesAL.size() !=0){
+		if (!filesAL.isEmpty()){
 			File[] toReturn = new File[filesAL.size()];
 			filesAL.toArray(toReturn);
 			//stranded?

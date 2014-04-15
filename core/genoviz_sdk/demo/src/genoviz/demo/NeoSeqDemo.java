@@ -43,7 +43,6 @@ import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Toolkit;
 import java.awt.Window;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -229,10 +228,12 @@ public class NeoSeqDemo extends Applet
 	}
 
 	private void hideFrames() {
-		if (null != this.propframe)
+		if (null != this.propframe) {
 			this.propframe.setVisible(false);
-		if (null != mapframe)
+		}
+		if (null != mapframe) {
 			mapframe.setVisible(false);
+		}
 	}
 
 
@@ -414,8 +415,9 @@ public class NeoSeqDemo extends Applet
 			InputStream istream = seq_URL.openStream();
 			BufferedInputStream bistream = new BufferedInputStream(istream);
 			model = (Sequence)parser.importContent(istream);
-			if ( null == model.getID() || model.getID().equals( "" ) )
+			if ( null == model.getID() || model.getID().length() == 0 ) {
 				model.setID( "NeoSeqDemo" );
+			}
 			bistream.close();
 			istream.close();
 		}
@@ -629,7 +631,9 @@ public class NeoSeqDemo extends Applet
 		Font f = defaultFontCBMenuItem.getFont();
 		if ( null != f ) {
 			String fontName = f.getName();
-			if (null == fontName) fontName = "";
+			if (null == fontName) {
+				fontName = "";
+			}
 			int fontSize = defaultFontCBMenuItem.getFont().getSize();
 			f = new Font( fontName, Font.ITALIC, fontSize );
 			defaultFontCBMenuItem.setFont(f);
@@ -978,8 +982,9 @@ public class NeoSeqDemo extends Applet
 	@Override
 	public AppletContext getAppletContext()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return null;
+		}
 		return super.getAppletContext();
 	}
 
@@ -987,16 +992,18 @@ public class NeoSeqDemo extends Applet
 	@Override
 	public URL getDocumentBase()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return getCodeBase();
+		}
 		return super.getDocumentBase();
 	}
 
 	@Override
 	public String getParameter(String name)
 	{
-		if(isApplication)
+		if(isApplication) {
 			return parameters.get(name);
+		}
 		return super.getParameter(name);
 	}
 

@@ -89,8 +89,9 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
     public SeqSymmetry operate(BioSeq bioseq, List<SeqSymmetry> list) {
 		
 		SimpleSymWithProps container = new SimpleSymWithProps();
-		if(list.isEmpty())
+		if(list.isEmpty()) {
 			return container;
+		}
 		SeqSymmetry topSym = list.get(0);
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
 		for(int i=0; i<topSym.getChildCount(); i++){
@@ -127,8 +128,9 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 	
 	@Override
     public boolean setParametersValue(Map<String, Object> map) {
-        if(map.size() <= 0)
-            return false;
+        if(map.size() <= 0) {
+			return false;
+		}
 		
 		boolean ret = true;
         for(Entry<String, Object> entry : map.entrySet()){
@@ -139,8 +141,9 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
 	@Override
 	public Object getParameterValue(String key) {
-		if(key == null || key.length() == 0)
+		if(key == null || key.length() == 0) {
 			return null;
+		}
 		
 		if(key.equalsIgnoreCase(THRESHOLD)) {
 			return threshold;

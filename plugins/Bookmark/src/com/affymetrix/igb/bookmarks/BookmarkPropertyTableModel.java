@@ -1,6 +1,13 @@
 package com.affymetrix.igb.bookmarks;
 
-import java.util.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -37,24 +44,24 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 	/**
 	 * Fills the table model with data from the Map. Some extra empty rows may
 	 * also be appended to the table to allow room for extra data.
+	 * @param multimap
 	 */
-	public void setValuesFromMap(Map<String, String[]> map) {
-		if (map == null) {
+	public void setValuesFromMap(ListMultimap<String, String> multimap) {
+		if (multimap == null) {
 			throw new IllegalArgumentException("Map was null");
 		}
 		duples.clear();
-		for (Map.Entry<String, String[]> entry : map.entrySet()) {
-			String key = entry.getKey();
-			String[] value = entry.getValue();
-			if (shouldInclude(key)) {
-				if (value.length == 0) {
-					duples.add(new Duple(key, ""));
-				} else {
-					for (int i = 0; i < value.length; i++) {
-						Duple duple = new Duple(key, value[i]);
-						duples.add(duple);
-					}
-				}
+		
+		Set<String> keySet = multimap.keySet();
+		Iterator<String> keyIterator = keySet.iterator();
+		while (keyIterator.hasNext()) {
+			String key = keyIterator.next();
+			List<String> values = multimap.get(key);
+			Iterator<String> valueIterator = values.iterator();
+			while (valueIterator.hasNext()) {
+				String value = valueIterator.next();
+				Duple duple = new Duple(key, value);
+				duples.add(duple);
 			}
 		}
 		for (int i = EXTRA_ROWS; i > 0; i--) {
@@ -69,14 +76,15 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 	 *  {@link #setValuesFromMap(Map)}. Any item with an empty key or value will
 	 * not be included in the Map.
 	 */
-	Map<String, String[]> getValuesAsMap() {
+	ListMultimap<String, String> getValuesAsMap() {
+		ListMultimap<String, String> toReturn = ArrayListMultimap.<String, String>create();
 		Map<String, String[]> m = new LinkedHashMap<String, String[]>();
 		for (int i = 0; i < getRowCount(); i++) {
 			String key = (String) getValueAt(i, 0);
 			String value = (String) getValueAt(i, 1);
-			Bookmark.addToMap(m, key, value);
+			toReturn.put(key, value);
 		}
-		return m;
+		return toReturn;
 	}
 
 	public int getColumnCount() {

@@ -190,7 +190,7 @@ public final class DasServerInfo {
 				das_source.add(sourceid);
 			}
 		} catch (MalformedURLException ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "MalformedURLException in DasServerInfo.parseDSNElement() " + ex.getMessage());
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "MalformedURLException in DasServerInfo.parseDSNElement() {0}", ex.getMessage());
 		}
 		if (REPORT_SOURCES) {
 			System.out.println("sourceid = " + sourceid + ", mapmaster = " + master_url);
@@ -222,8 +222,9 @@ public final class DasServerInfo {
 	}
 
 	private URL getLoadURL() throws MalformedURLException{
-		if (!isLoadingFromPrimary())
+		if (!isLoadingFromPrimary()) {
 			return serverURL;
+		}
 		
 		return new URL(primaryURL.toExternalForm() +"/dsn.xml");
 	}

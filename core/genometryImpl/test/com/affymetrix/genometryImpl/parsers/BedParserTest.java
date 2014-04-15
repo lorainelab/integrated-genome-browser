@@ -9,29 +9,17 @@ import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 
 import java.io.*;
 import java.util.*;
-import org.junit.After;
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
 
 public class BedParserTest {
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	public BedParserTest() {
-	}
-
-	@Before
-		public void setUp() {
-		}
-
-	@After
-		public void tearDown() {
-		}
-
 	@Test
 		public void testParseFromFile() throws IOException, Exception {
 
-			String filename = "test/data/bed/bed_01.bed";
+			String filename = "bed_01.bed";
+			filename = BedParserTest.class.getClassLoader().getResource(filename).getFile();
 			assertTrue(new File(filename).exists());
 
 			InputStream istr = new FileInputStream(filename);
@@ -365,7 +353,8 @@ public class BedParserTest {
 
 	@Test
 	public void testBEDParseFromFile() throws Exception {
-		String filename = "test/data/bed/bed_02.bed";
+		String filename = "bed_02.bed";
+		filename = BedParserTest.class.getClassLoader().getResource(filename).getFile();
 		assertTrue(new File(filename).exists());
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		BioSeq seq = group.addSeq("chr2L", 1965498);

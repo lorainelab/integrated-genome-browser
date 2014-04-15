@@ -155,11 +155,7 @@
 		<!-- compiler defaults passed to javac -->
 		<property name="debug"         value="on" />
 		<property name="deprecation"   value="off"/>
-
-		<!-- Since the source is still not updated for Java 7, add extra option to ignore those warnings -->
-		<condition property="compiler.args" value="-Xlint:all,-serial,-path -Werror" else="-Xlint:all,-serial,-path,-options,-rawtypes,-unchecked -Werror">
-			<equals arg1="${ant.java.version}" arg2="1.6"/>
-		</condition>
+		<property name="compiler.args" value="-Xlint:all,-serial,-path"/>
 	</target>
 	
 	<target name="extras-init">

@@ -202,7 +202,7 @@ public class Activator implements BundleActivator {
 		try {
 			for (String k : p.keys()) {
 				String preferredKeyStroke = p.get(k, "");
-				if (preferredKeyStroke.equals("")) { // then this ain't our concern.
+				if (preferredKeyStroke.length() == 0) { // then this ain't our concern.
 					continue;
 				}
 				GenericActionHolder h = GenericActionHolder.getInstance();
@@ -337,6 +337,9 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.NewFindJunctionOperator(false), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.NewFindJunctionOperator(true), null);
+
 	}
 	
 	private void initColorProvider(final BundleContext bundleContext) {
@@ -358,6 +361,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.NoIntronFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.UniqueLocationFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.NotUniqueLocationFilter(), null);
+		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.ReadAlignmentsStrandFilter(), null);	
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MismatchFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MatchFilter(), null);
 		bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.QualityScoreFilter(), null);

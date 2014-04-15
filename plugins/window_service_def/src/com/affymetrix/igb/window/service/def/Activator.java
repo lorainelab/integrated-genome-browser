@@ -64,7 +64,7 @@ public class Activator implements BundleActivator {
 			String key = bundleKeys.nextElement();
 			String value = BUNDLE.getString(key);
 			if (value.contains(TAB_PANEL_CATEGORY)) {
-				tabPanels.add(key.substring(0, key.indexOf(";")));
+				tabPanels.add(key.substring(0, key.indexOf(';')));
 			}
 		}
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, null);

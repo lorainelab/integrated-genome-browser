@@ -25,14 +25,18 @@ public class Region implements Comparable<Region>, Serializable {
 	}
 	/**Assumes coordinates are interbase.*/
 	public boolean intersects (int start, int stop){
-		if (stop <= this.start || start >= this.stop) return false;
+		if (stop <= this.start || start >= this.stop) {
+			return false;
+		}
 		return true;
 	}
 
 	/**Checks to see if each start is <= the stop*/
 	public static boolean checkStartStops(Region[] ss){
 		for (int i=0; i< ss.length; i++){
-			if (ss[i].start> ss[i].stop) return false;
+			if (ss[i].start> ss[i].stop) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -42,21 +46,31 @@ public class Region implements Comparable<Region>, Serializable {
 		ArrayList<Region> ss = new ArrayList<Region>();
 		//find first non zero base
 		int i=0;
-		for (; i< baseHitCount.length; i++) if (baseHitCount[i]!=0) break;
-		if (i == baseHitCount.length) return null;
+		for (; i< baseHitCount.length; i++) {
+			if (baseHitCount[i]!=0) {
+				break;
+			}
+		}
+		if (i == baseHitCount.length) {
+			return null;
+		}
 		int start = i;
 		int val = baseHitCount[start];
 		//find different base
 		for (; i< baseHitCount.length; i++){
 			if (baseHitCount[i]!=val) {
 				//make SS
-				if (val!=0) ss.add(new Region(start,i));
+				if (val!=0) {
+					ss.add(new Region(start,i));
+				}
 				start = i;
 				val = baseHitCount[start];
 			}
 		}
 		//add last
-		if (val!=0) ss.add(new Region(start,i));
+		if (val!=0) {
+			ss.add(new Region(start,i));
+		}
 		Region[] ssA = new Region[ss.size()];
 		ss.toArray(ssA);
 		return ssA;
@@ -64,20 +78,30 @@ public class Region implements Comparable<Region>, Serializable {
 
 	/**Sorts by start base, then by length, smaller to larger for both.*/
 	public int compareTo(Region se){
-		if (start<se.start) return -1;
-		if (start>se.start) return 1;
+		if (start<se.start) {
+			return -1;
+		}
+		if (start>se.start) {
+			return 1;
+		}
 		// if same start, sort by length, smaller to larger
 		int len = stop-start;
 		int otherLen = se.stop-se.start;
-		if (len<otherLen) return -1;
-		if (len>otherLen) return 1;
+		if (len<otherLen) {
+			return -1;
+		}
+		if (len>otherLen) {
+			return 1;
+		}
 		return 0;
 	}
 
 	/**Returns the total number of bases, assumes interbase coordinates.*/
 	public static int totalBP (Region[] ss){
 		int total = 0;
-		for (int i=0; i< ss.length; i++) total += ss[i].getLength();
+		for (int i=0; i< ss.length; i++) {
+			total += ss[i].getLength();
+		}
 		return total;
 	}
 
@@ -108,7 +132,9 @@ public class Region implements Comparable<Region>, Serializable {
 	}
 
 	public boolean isContainedBy(int beginningBP, int endingBP) {
-		if (start >= beginningBP && stop < endingBP) return true;
+		if (start >= beginningBP && stop < endingBP) {
+			return true;
+		}
 		return false;
 	}
 	/**Parses a tab delimited file (chr, start, stop, ...), zip/ gz OK. 
@@ -126,28 +152,42 @@ public class Region implements Comparable<Region>, Serializable {
 			//chrom, start, stop
 			while ((line = in.readLine()) !=null) {
 				line = line.trim();
-				if (line.length() ==0 || line.startsWith("#")) continue;
+				if (line.length() ==0 || line.startsWith("#")) {
+					continue;
+				}
 				tokens = line.split("\\s+");
-				if (tokens.length < 3) continue;
+				if (tokens.length < 3) {
+					continue;
+				}
 				//does chrom already exist?
-				if (ss.containsKey(tokens[0])) al = ss.get(tokens[0]);
+				if (ss.containsKey(tokens[0])) {
+					al = ss.get(tokens[0]);
+				}
 				else {
 					al = new ArrayList<Region>();
 					ss.put(tokens[0], al);
 				}
 				int start = Integer.parseInt(tokens[1]);
 				int stop = Integer.parseInt(tokens[2]);
-				if (start > stop) throw new Exception("\nFound a start that is greater than stop!  Cannot parse file "+bedFile+", bad line->\n\t"+line);
-				if (start < 0) throw new Exception("\nFound a start with a negative value!  Cannot parse file "+bedFile+", bad line->\n\t"+line);
+				if (start > stop) {
+					throw new Exception("\nFound a start that is greater than stop!  Cannot parse file "+bedFile+", bad line->\n\t"+line);
+				}
+				if (start < 0) {
+					throw new Exception("\nFound a start with a negative value!  Cannot parse file "+bedFile+", bad line->\n\t"+line);
+				}
 				int length = stop-start;
-				if (length < minSize) continue;
+				if (length < minSize) {
+					continue;
+				}
 				al.add(new Region(start-subStart, stop- subEnd));
 			}
 		}catch (Exception e){
 			e.printStackTrace();
 			return null;
 		}
-		if (ss.size() == 0) return null;
+		if (ss.isEmpty()) {
+			return null;
+		}
 		//make hashmap
 		HashMap<String,Region[]> ssReal = new HashMap<String,Region[]>();
 		Iterator<String> it = ss.keySet().iterator();
@@ -164,7 +204,9 @@ public class Region implements Comparable<Region>, Serializable {
 	
 	
 	public int getMiddle(){
-		if (start == stop) return start;
+		if (start == stop) {
+			return start;
+		}
 		double length = stop - start;
 		double halfLength = length/2.0;
 		return (int)Math.round(halfLength) + start;
@@ -173,7 +215,9 @@ public class Region implements Comparable<Region>, Serializable {
 	public static int findLastBase(Region[] r){
 		int lastBase = -1;
 		for (int i=0; i< r.length; i++){
-			if (r[i].stop> lastBase) lastBase = r[i].stop;
+			if (r[i].stop> lastBase) {
+				lastBase = r[i].stop;
+			}
 		}
 		return lastBase;
 	}

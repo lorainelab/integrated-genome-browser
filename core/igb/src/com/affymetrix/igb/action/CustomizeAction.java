@@ -10,9 +10,7 @@ import javax.swing.JFrame;
 
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.tiers.TrackConstants;
 
 public class CustomizeAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;

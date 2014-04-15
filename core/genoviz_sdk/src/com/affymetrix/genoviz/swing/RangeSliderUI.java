@@ -672,7 +672,6 @@ class RangeSliderUI extends BasicSliderUI {
 					break;
 
 				default:
-					return;
 			}
 		}
 
@@ -731,7 +730,6 @@ class RangeSliderUI extends BasicSliderUI {
 					break;
 
 				default:
-					return;
 			}
 		}
 

@@ -1,20 +1,17 @@
 package com.affymetrix.igb.bookmarks.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.google.common.base.Charsets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.prefs.Preferences;
 
@@ -61,7 +58,7 @@ public class SaveSessionAction extends GenericAction {
 		Bookmark bookmark = BookmarkController.getCurrentBookmark(true,
 				igbService.getSeqMapView().getVisibleSpan());
 		if (bookmark != null) {
-			String bk = URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC);
+			String bk = URLEncoder.encode(bookmark.getURL().toString(), Charsets.UTF_8.displayName());
 			if (bk.length() < Preferences.MAX_VALUE_LENGTH) {
 				PreferenceUtils.getSessionPrefsNode().put("bookmark", bk);
 			} else {

@@ -874,7 +874,8 @@ public class NeoMap extends NeoWidget implements
 			axis.setCoords(scene.getCoordBox().x, offset - 10,
 					scene.getCoordBox().width, 20);
 		}
-		axis.setForegroundColor(Color.black);
+		//Modified from default  black to prevent black rectangle over the white background during loading
+		axis.setForegroundColor(Color.white);
 		scene.getGlyph().addChild(axis);
 		axes.add(axis);
 		return axis;

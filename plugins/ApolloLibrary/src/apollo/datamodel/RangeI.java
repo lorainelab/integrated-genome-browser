@@ -1,7 +1,5 @@
 package apollo.datamodel;
 
-import java.util.*;
-
 public interface RangeI extends java.io.Serializable, Cloneable {
   /**
    * The type String to use for features that have no other name.

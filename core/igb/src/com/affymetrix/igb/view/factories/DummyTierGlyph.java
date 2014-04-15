@@ -1,7 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.FasterExpandPacker;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.HeadLessExport;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -377,15 +378,15 @@ public class IGBScriptEngine implements ScriptEngine {
 					c = igbService.determineSlicedComponent();
 					break;
 			}
-			igbService.setComponent(c);
-			igbService.exportScreenshot(f, ext, true);
+			HeadLessExport hle = new HeadLessExport();
+			hle.exportScreenshot(c, f, ext, true);
 		} catch (Exception ex) {
 			Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
 	private void goToGenome(String genomeVersion) {
-		AnnotatedSeqGroup group = igbService.determineAndSetGroup(genomeVersion);
+		AnnotatedSeqGroup group = igbService.determineAndSetGroup(genomeVersion).orNull();
 		if (group == null) {
 			return;
 		}

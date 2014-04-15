@@ -13,7 +13,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
-
 import java.awt.Font;
 
 /**
@@ -31,7 +30,7 @@ public final class BookmarkJMenuItem extends JRPMenuItem {
 	public BookmarkJMenuItem(String id, Bookmark b) {
 		super(id, b.getName());
 		Font f = this.getFont();
-		Font f2 = new Font(f.getName(), b.isUnibrowControl() ? Font.BOLD : Font.ITALIC, f.getSize());
+		Font f2 = new Font(f.getName(), b.isValidBookmarkFormat() ? Font.BOLD : Font.ITALIC, f.getSize());
 		setFont(f2);
 		this.bookmark = b;
 	}

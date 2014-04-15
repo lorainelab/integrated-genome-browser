@@ -80,7 +80,9 @@ public class TierMapRubberBand extends RubberBand {
 	// start, end and stretch methods overide rubberband methods.
 
 	public void start(int x, int y , int height, int width){
-		if (tiermap !=null) bufferTiers();
+		if (tiermap !=null) {
+			bufferTiers();
+		}
 
 		if (tiers.length > 1) {
 			pixelbox = new Rectangle(x, y,height, width);
@@ -90,7 +92,9 @@ public class TierMapRubberBand extends RubberBand {
 			started = true;
 
 			startedTier = 1; // to avoid and index of -1 after decrement below.
-			while ( (tiers.length-1) > startedTier && tiers[startedTier] < y ) startedTier++;
+			while ( (tiers.length-1) > startedTier && tiers[startedTier] < y ) {
+				startedTier++;
+			}
 			startedTier--;
 			current = startedTier;
 			tier = startedTier;
@@ -117,8 +121,12 @@ public class TierMapRubberBand extends RubberBand {
 	// start, end and stretch methods overide rubberband methods
 
 	public void stretch(int x, int y){
-		if (somethingToErase) drawXOR(); // remove what we've drawn before
-		else somethingToErase=true; // next time, there will be somethingToErase
+		if (somethingToErase) {
+			drawXOR();
+		} // remove what we've drawn before
+		else {
+			somethingToErase=true;
+		} // next time, there will be somethingToErase
 		Rectangle b = comp.getBounds();
 		pixelbox.x = 0;
 		pixelbox.width = b.width;
@@ -134,8 +142,12 @@ public class TierMapRubberBand extends RubberBand {
 	protected int current = -1;
 
 	protected void swap( int from, int to){
-		if ( to > from ) to--;
-		if ( to == from ) return;
+		if ( to > from ) {
+			to--;
+		}
+		if ( to == from ) {
+			return;
+		}
 
 		AbstractTieredMap atm;
 		final int size = other_maps.size();

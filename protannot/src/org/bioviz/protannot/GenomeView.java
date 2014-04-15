@@ -93,8 +93,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
         {
             Map<String,Color> defaults = new HashMap<String,Color>();
 
-            for(COLORS C : values())
-                defaults.put(C.toString(), C.defaultColor());
+            for(COLORS C : values()) {
+				defaults.put(C.toString(), C.defaultColor());
+			}
 
             return defaults;
         }
@@ -669,7 +670,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
 	 */
 	 private static void colorByFrame(GlyphI gl, int genome_codon_start) {
 
-        genome_codon_start = genome_codon_start % 3;
+        genome_codon_start %= 3;
         if (genome_codon_start == 0) {
             gl.setColor(col_frame0);
         } else if (genome_codon_start == 1) {
@@ -702,7 +703,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
             exon_codon_start = 1;
         }
         genome_codon_start += exon_codon_start;
-        genome_codon_start = genome_codon_start % 3;
+        genome_codon_start %= 3;
         if (genome_codon_start == 0) {
             gl.setColor(col_frame0);
         } else if (genome_codon_start == 1) {
@@ -771,10 +772,12 @@ final public class GenomeView extends JPanel implements MouseListener, Component
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
                 LabelledRectGlyph cglyph = new LabelledRectGlyph();
-				if(i%2 == 0)
+				if(i%2 == 0) {
 					cglyph.setColor(color);
-				else
+				}
+				else {
 					cglyph.setColor(color.darker());
+				}
 
 				String spanno = "Span " + String.valueOf(i+1) + " of ";
 				String interpro = (String) ((SymWithProps)annot2protein).getProperty("InterPro Name");
@@ -917,8 +920,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
 
         showProperties();
 
-		if(hairline != null)
+		if(hairline != null) {
 			hairline.setRange((int)nme.getCoordX(), (int)nme.getCoordX() + 1);
+		}
 
         if (e.isPopupTrigger()) {
             popup.show(this, e.getX(), e.getY());
@@ -961,8 +965,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
                     candidate = gl.getParent().getInfo();
                     if (candidate instanceof SymWithProps) {
                         info = (SymWithProps) candidate;
-                        for(Entry<Object,Object> E: props.entrySet())
-                            info.setProperty( (String) E.getKey(),E.getValue());
+                        for(Entry<Object,Object> E: props.entrySet()) {
+							info.setProperty( (String) E.getKey(),E.getValue());
+						}
                     }
                 }
             }
@@ -972,7 +977,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
                 }
             }
         }
-		Properties[] prop_array = propvec.toArray(new Properties[0]);
+		Properties[] prop_array = propvec.toArray(new Properties[propvec.size()]);
         table_view.showProperties(prop_array);
     }
 

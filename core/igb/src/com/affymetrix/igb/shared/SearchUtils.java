@@ -92,8 +92,9 @@ public final class SearchUtils {
 		int childCount = sym.getChildCount();
 		Thread current_thread = Thread.currentThread();
 		for (int i = 0; i < childCount; i++) {
-			if(current_thread.isInterrupted())
+			if(current_thread.isInterrupted()) {
 				break;
+			}
 			
 			findIDsInSym(syms, sym.getChild(i), match);
 		}

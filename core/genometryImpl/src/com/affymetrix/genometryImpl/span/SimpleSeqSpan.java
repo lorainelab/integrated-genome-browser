@@ -102,22 +102,29 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		SimpleSeqSpan other = (SimpleSeqSpan) obj;
-		if (end != other.end)
+		if (end != other.end) {
 			return false;
+		}
 		if (seq == null) {
-			if (other.seq != null)
+			if (other.seq != null) {
 				return false;
-		} else if (!seq.equals(other.seq))
+			}
+		} else if (!seq.equals(other.seq)) {
 			return false;
-		if (start != other.start)
+		}
+		if (start != other.start) {
 			return false;
+		}
 		return true;
 	}
 

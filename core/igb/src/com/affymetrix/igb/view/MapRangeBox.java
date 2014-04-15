@@ -73,8 +73,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	private List<SeqSpan> foundSpans;
 	private int spanPointer;
 	private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
-
-//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 	
+//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 
+	
 	// Use the ENGLISH locale here because we want the user to be able to
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
@@ -479,7 +479,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
 	private List<TypeContainerAnnot> getTrackSyms() {
 		List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
-		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs();
+		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs(false);
 		for (GlyphI selectedTierGlyph : tierGlyphs) {
 			Object info = selectedTierGlyph.getInfo();
 			if (info instanceof TypeContainerAnnot) {
@@ -552,7 +552,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
 		BioSeq newSeq = group.getSeq(chrom_text);
 		if (newSeq == null) {
-			Logger.getLogger(MapRangeBox.class.getName()).severe("Couldn't find chromosome " + chrom_text + " in group " + group.getID());
+			Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, "Couldn''t find chromosome {0} in group {1}", new Object[]{chrom_text, group.getID()});
 			return;
 		}
 

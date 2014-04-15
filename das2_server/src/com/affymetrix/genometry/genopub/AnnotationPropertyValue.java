@@ -1,8 +1,5 @@
 package com.affymetrix.genometry.genopub;
 
-import java.util.Set;
-
-import com.affymetrix.genometry.genopub.Owned;
 
 public class AnnotationPropertyValue {
     

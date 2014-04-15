@@ -42,7 +42,6 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.CoordFloaterGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
-import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.*;
@@ -61,7 +60,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
@@ -1970,10 +1968,6 @@ public class SeqMapView extends JPanel
 		select_parent_action.setIcon(null);
 		JMenuItem zoom_on_selected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());
 		zoom_on_selected.setIcon(null);
-		JMenuItem view_genomic_sequence_action = new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction());
-		view_genomic_sequence_action.setIcon(null);
-		JMenuItem view_read_sequence_action = new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction());
-		view_read_sequence_action.setIcon(null);
 		JMenuItem load_partial_sequence = new JMenuItem(LoadPartialSequenceAction.getAction());
 		load_partial_sequence.setIcon(null);
 		JMenuItem copy_residues_action = new JMenuItem(CopyResiduesAction.getAction());
@@ -1994,10 +1988,7 @@ public class SeqMapView extends JPanel
 			popup.add(zoom_on_selected);
 			// Disable view seq in seq viewer option for insertion
 			//ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();
-			view_genomic_sequence_action.setEnabled(selected_glyphs.size() > 1 || (!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph)));
-			popup.add(view_genomic_sequence_action);
-			//popup.add(new JMenuItem(viewGenomicSequenceInSeqViewerAction));
-			popup.add(view_read_sequence_action);
+//			view_genomic_sequence_action.setEnabled(selected_glyphs.size() > 1 || (!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph)));
 			//popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
 			
 //			JMenuItem delete_sym_action = new JMenuItem(new AbstractAction("Delete Sym"){
@@ -2034,9 +2025,7 @@ public class SeqMapView extends JPanel
 						//popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
 						//popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
 						popup.add(copy_residues_action);
-						view_genomic_sequence_action.setEnabled(true);
-						popup.add(view_genomic_sequence_action);
-						popup.add(view_read_sequence_action);
+//						view_genomic_sequence_action.setEnabled(true);	
 					}
 				}
 
@@ -2082,8 +2071,9 @@ public class SeqMapView extends JPanel
 			return false;
 		}
 		
-		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null))
+		if(categories == null || categories.length == 0 || (categories.length == 1 && categories[0] == null)) {
 			return true;
+		}
 		
 		for(FileTypeCategory category : categories){
 			if(rootSeqSymmetry.getCategory() == category){
@@ -2652,7 +2642,7 @@ public class SeqMapView extends JPanel
 			gl.setInfo(result);
 			gl.setColor(hitColor);
 			double pos = forward ? 27 : 32;
-			gl.setCoords(result.getStart(), pos, result.getLength(), 10);
+			gl.setCoords(result.getMin(), pos, result.getLength(), 10);
 			resultGlyphs.add(gl);
 		}
 		ThreadUtils.runOnEventQueue(new Runnable(){
@@ -2665,7 +2655,14 @@ public class SeqMapView extends JPanel
 		});
 		return resultGlyphs;
 	}
-		
+	
+	@Override
+	public void setBackGroundProvider(ViewI.BackGroundProvider bgp, ViewI.BackGroundProvider labelbgp){
+		seqmap.getView().setBackGroundProvider(bgp);
+		((AffyLabelledTierMap)seqmap).getLabelMap().getView().setBackGroundProvider(labelbgp);
+		seqmap.updateWidget();
+	}
+	
 	public void updateStart(int start, SeqSymmetry sym) {
 		GlyphI glyph = getSeqMap().getItemFromTier(sym);
 		Rectangle2D.Double originalCoordBox = glyph.getCoordBox();

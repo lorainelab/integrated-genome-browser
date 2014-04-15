@@ -37,14 +37,18 @@ public class Wig2USeq {
 
 				//what kind of wig file?
 				String type =  parseWigFileType();
-				if (type == null) USeqUtilities.printExit("\nCould not parse the file type from this file, aborting. -> "+workingWigFile+"\n\t" +
-				"Looking for a line containing 'type=bedGraph' or starting with 'fixedStep' or 'variableStep'.");
+				if (type == null) {
+					USeqUtilities.printExit("\nCould not parse the file type from this file, aborting. -> "+workingWigFile+"\n\t" +
+  "Looking for a line containing 'type=bedGraph' or starting with 'fixedStep' or 'variableStep'.");
+				}
 
 				//make save directory
 				saveDirectory = USeqUtilities.makeDirectory(workingWigFile, ".TempDelMe");
 
 				//parse file and write to save directory
-				if (type.equals("variableStep")) parseVariableStepWigFile();
+				if (type.equals("variableStep")) {
+					parseVariableStepWigFile();
+				}
 				else if (type.equals("fixedStep")) {
 					graphStyle =1;
 					parseFixedStepWigFile();
@@ -53,7 +57,9 @@ public class Wig2USeq {
 					graphStyle =1;
 					parseBedGraphFile();
 				}
-				else USeqUtilities.printExit("Not implemented "+type);
+				else {
+					USeqUtilities.printExit("Not implemented "+type);
+				}
 
 				//write the read me
 				writeReadMeTxt();
@@ -88,9 +94,13 @@ public class Wig2USeq {
 			//set text file source
 			ai.setOriginatingDataSource(workingWigFile.toString());
 			//set color
-			if (color != null) ai.setInitialColor(color);
+			if (color != null) {
+				ai.setInitialColor(color);
+			}
 			//set description?
-			if (description != null) ai.setDescription(description);
+			if (description != null) {
+				ai.setDescription(description);
+			}
 			//write
 			File readme = ai.writeReadMeFile(saveDirectory);
 			files2Zip.add(0,readme);
@@ -107,7 +117,9 @@ public class Wig2USeq {
 		int counter = 0;
 		while ((line=in.readLine())!=null){
 			line = line.trim();
-			if (line.length()==0) continue;
+			if (line.length()==0) {
+				continue;
+			}
 			//bedGraph?
 			if (line.contains("type=bedGraph")){
 				type = "bedGraph";
@@ -122,7 +134,9 @@ public class Wig2USeq {
 				break;
 			}
 			counter++;
-			if (counter > 1000) return null;
+			if (counter > 1000) {
+				return null;
+			}
 		}
 		in.close();
 		return type;
@@ -150,7 +164,9 @@ public class Wig2USeq {
 		//advance until hitting data
 		while ((line=in.readLine())!=null){
 			line = line.trim();
-			if (line.length()==0) continue;
+			if (line.length()==0) {
+				continue;
+			}
 			if (line.contains("type=bedGraph")){
 				break;
 			}
@@ -159,14 +175,20 @@ public class Wig2USeq {
 		while ((line=in.readLine())!=null){
 			//chr1	94	97	5
 			tokens = space.split(line);
-			if (tokens.length!=4) continue;
+			if (tokens.length!=4) {
+				continue;
+			}
 			else {
 				score = Float.parseFloat(tokens[3]);
 				//check score?
 				if (skipValue != Float.MIN_VALUE){
-					if (score > skipValue || score < negativeSkipValue ) break;
+					if (score > skipValue || score < negativeSkipValue ) {
+						break;
+					}
 				}
-				else break;
+				else {
+					break;
+				}
 			}
 		}
 		//parse data line
@@ -178,7 +200,9 @@ public class Wig2USeq {
 		//set zero value?
 		if (score != 0){
 			int pos = start-1;
-			if (pos <0) pos=0;
+			if (pos <0) {
+				pos=0;
+			}
 			al.add(new PositionScore(pos, 0));
 		}
 		//add block
@@ -189,12 +213,18 @@ public class Wig2USeq {
 		while ((line=in.readLine())!=null){
 			//chr1	94	97	5
 			tokens = space.split(line);
-			if (tokens.length!=4) continue;
+			if (tokens.length!=4) {
+				continue;
+			}
 			//check chrom, if different then close and write chrom to file
 			if (tokens[0].equals(currentChromosome) == false){
 				//check if it exists
-				if (chroms.contains(tokens[0])) throw new IOException("This file is not sorted by chromosome! "+tokens[0]+" has been parsed before! Aborting");
-				else chroms.add(tokens[0]);
+				if (chroms.contains(tokens[0])) {
+					throw new IOException("This file is not sorted by chromosome! "+tokens[0]+" has been parsed before! Aborting");
+				}
+				else {
+					chroms.add(tokens[0]);
+				}
 				//write it out
 				System.out.println("\t\t"+currentChromosome+"\t"+al.size());
 				PositionScore[] ps = new PositionScore[al.size()];
@@ -211,7 +241,9 @@ public class Wig2USeq {
 			score = Float.parseFloat(tokens[3]);
 			//check score?
 			if (skipValue != Float.MIN_VALUE){
-				if (score <= skipValue && score >= negativeSkipValue ) continue;
+				if (score <= skipValue && score >= negativeSkipValue ) {
+					continue;
+				}
 			}
 			int newStart = Integer.parseInt(tokens[1]); 
 			//check if there is a gap
@@ -266,21 +298,29 @@ public class Wig2USeq {
 		//for each line
 		while ((line=in.readLine())!=null){
 			line = line.trim();
-			if (line.length()==0) continue;
+			if (line.length()==0) {
+				continue;
+			}
 			//start with a number?
 			mat = number.matcher(line);
 			if (mat.find()){
 				tokens = space.split(line);
-				if (tokens.length !=2) throw new Exception("Problem with parsing position:value from "+workingWigFile+" line -> "+line);
+				if (tokens.length !=2) {
+					throw new Exception("Problem with parsing position:value from "+workingWigFile+" line -> "+line);
+				}
 				float value = Float.parseFloat(tokens[1]);
-				if (value != Float.MIN_VALUE) ps.add(new PositionScore(Integer.parseInt(tokens[0])-1, value));
+				if (value != Float.MIN_VALUE) {
+					ps.add(new PositionScore(Integer.parseInt(tokens[0])-1, value));
+				}
 			}
 			//variableStep
 			else if (line.startsWith("variableStep")){
 				//parse chrom
 				tokens = space.split(line);
 				tokens = equal.split(tokens[1]);
-				if (tokens.length !=2) throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line); 
+				if (tokens.length !=2) {
+					throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line);
+				} 
 				//first one or old
 				if (chromosome != null) {
 					System.out.println("\t\t"+chromosome+"\t"+ps.size());
@@ -296,7 +336,9 @@ public class Wig2USeq {
 			}
 		}
 
-		if (chromosome == null) throw new Exception ("No 'variableStep chrom=...' line found in "+workingWigFile);
+		if (chromosome == null) {
+			throw new Exception ("No 'variableStep chrom=...' line found in "+workingWigFile);
+		}
 		//save last chromosome
 		System.out.println("\t\t"+chromosome+"\t"+ps.size());
 		PositionScore[] psArray = new PositionScore[ps.size()];
@@ -337,7 +379,9 @@ public class Wig2USeq {
 		while ((line=in.readLine())!=null){
 			line = line.trim();
 			//empty?
-			if (line.length() == 0) continue;
+			if (line.length() == 0) {
+				continue;
+			}
 			//start with a number?
 			mat = number.matcher(line);
 			if (mat.find()){
@@ -345,7 +389,9 @@ public class Wig2USeq {
 				//skip it?
 				if (value != skipValue) {
 					//set to very low value so it will be displayed in stair step graph
-					if (value == 0) value = 0.0000000001f;
+					if (value == 0) {
+						value = 0.0000000001f;
+					}
 					ps.add(new PositionScore(startPosition, value));
 				}
 				//increment position
@@ -363,12 +409,18 @@ public class Wig2USeq {
 				}
 				//split line and check 'fixedStep chrom=chrY start=668 step=1'
 				tokens = space.split(line);
-				if (tokens.length !=4) throw new Exception("Problem with parsing fixedStep line from "+workingWigFile+" line -> "+line);
+				if (tokens.length !=4) {
+					throw new Exception("Problem with parsing fixedStep line from "+workingWigFile+" line -> "+line);
+				}
 				//parse chrom
 				String[] chromTokens = equal.split(tokens[1]);
-				if (chromTokens.length !=2) throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line); 
+				if (chromTokens.length !=2) {
+					throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line);
+				} 
 				//first one or old
-				if (chromosome == null) chromosome = chromTokens[1];
+				if (chromosome == null) {
+					chromosome = chromTokens[1];
+				}
 				if (chromosome != null) {
 					//different chromosome?
 					if (chromosome.equals(chromTokens[1]) == false){
@@ -382,26 +434,38 @@ public class Wig2USeq {
 						PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
 						PositionScoreData.updateSliceInfo(psArray, sliceInfo);
 						data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
-						if (chroms.contains(chromosome) == false) chroms.add(chromosome);
-						else USeqUtilities.printExit("\nWig file is not sorted by chromosome! Aborting.\n");
+						if (chroms.contains(chromosome) == false) {
+							chroms.add(chromosome);
+						}
+						else {
+							USeqUtilities.printExit("\nWig file is not sorted by chromosome! Aborting.\n");
+						}
 						chromosome = chromTokens[1];
 					}
 				}
 				//set start
 				String[] startTokens = equal.split(tokens[2]);
-				if (startTokens.length !=2) throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
+				if (startTokens.length !=2) {
+					throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
+				}
 				startPosition = Integer.parseInt(startTokens[1]) -1;
 				//set step
 				String[] stepTokens = equal.split(tokens[3]);
-				if (stepTokens.length !=2) throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
+				if (stepTokens.length !=2) {
+					throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
+				}
 				stepSize = Integer.parseInt(stepTokens[1]);
 				//set zero position
 				int pos = startPosition-1;
 				//set zero?
-				if (pos > 0) ps.add(new PositionScore(pos, 0.0f));
+				if (pos > 0) {
+					ps.add(new PositionScore(pos, 0.0f));
+				}
 			}
 		}
-		if (chromosome == null) throw new Exception ("No 'fixedStep chrom=...' line found in "+workingWigFile);
+		if (chromosome == null) {
+			throw new Exception ("No 'fixedStep chrom=...' line found in "+workingWigFile);
+		}
 
 		//zero last position
 		int sizePS = ps.size();
@@ -451,12 +515,16 @@ public class Wig2USeq {
 						break;
 					}
 					//otherwise its the same so do nothing
-					else i++;
+					else {
+						i++;
+					}
 				}
 			}
 		}
 		//add last value?
-		if (lastSetIndex != (ps.length-1)) al.add(ps[ps.length-1]);
+		if (lastSetIndex != (ps.length-1)) {
+			al.add(ps[ps.length-1]);
+		}
 		//return
 		ps = new PositionScore[al.size()];
 		al.toArray(ps);
@@ -500,7 +568,9 @@ public class Wig2USeq {
 		}
 
 		//parse files and genome version
-		if (file == null) USeqUtilities.printExit("\nError: cannot find your xxx.wig file(s)?");
+		if (file == null) {
+			USeqUtilities.printExit("\nError: cannot find your xxx.wig file(s)?");
+		}
 		File[][] tot = new File[6][];
 		tot[0] = USeqUtilities.extractFiles(file,".wig");
 		tot[1] = USeqUtilities.extractFiles(file,".wig.zip");
@@ -510,18 +580,24 @@ public class Wig2USeq {
 		tot[5] = USeqUtilities.extractFiles(file,".bedGraph4.gz");
 
 		files = USeqUtilities.collapseFileArray(tot);
-		if (files == null || files.length == 0) USeqUtilities.printExit("\nError: cannot find your xxx.wig/bedGraph4 file(s)?");
-		if (versionedGenome == null) USeqUtilities.printExit("\nError: you must supply a genome version. Goto http://genome.ucsc.edu/cgi-" +
-		"bin/hgGateway load your organism to find the associated genome version.\n");
+		if (files == null || files.length == 0) {
+			USeqUtilities.printExit("\nError: cannot find your xxx.wig/bedGraph4 file(s)?");
+		}
+		if (versionedGenome == null) {
+			USeqUtilities.printExit("\nError: you must supply a genome version. Goto http://genome.ucsc.edu/cgi-" +
+"bin/hgGateway load your organism to find the associated genome version.\n");
+		}
 
 		//set negative skip value?
-		if (skipValue != Float.MIN_VALUE) negativeSkipValue = skipValue * -1;
+		if (skipValue != Float.MIN_VALUE) {
+			negativeSkipValue = skipValue * -1;
+		}
 	}	
 
 	public static void printDocs(){ 
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i< Text2USeq.GRAPH_STYLES.length; i++){
-			sb.append("      "+i+"\t"+Text2USeq.GRAPH_STYLES[i]+"\n");
+			sb.append("      ").append(i).append("\t").append(Text2USeq.GRAPH_STYLES[i]).append("\n");
 		}
 		System.out.println("\n" +
 				"**************************************************************************************\n" +

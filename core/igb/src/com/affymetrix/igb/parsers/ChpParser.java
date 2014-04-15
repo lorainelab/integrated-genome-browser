@@ -359,7 +359,7 @@ public final class ChpParser {
 			String name = psqData.getName();
 			// if name property is empty, then it's a CHP file for exon array results
 			//    otherwise it's a CHP file for 3' IVT array results
-			if (name == null || name.equals("")) {
+			if (name == null || name.length() == 0) {
 				is_exon_chp = true;
 				System.out.println("Exon CHP file");
 			} else {
@@ -413,7 +413,7 @@ public final class ChpParser {
 				// try to match up id to one previously seen
 				// must deal with possibility that sym ids used ".n" postfixing to uniquify
 				findSyms(group, id, syms, true); // not sure if should allow match to name, or always require full id match
-				if (syms.size() == 0) {
+				if (syms.isEmpty()) {
 					// couldn't find match with just name, so trying full id
 					id = array_type + ":" + id;
 					findSyms(group, id, syms, true);

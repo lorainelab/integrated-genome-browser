@@ -4,7 +4,6 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.general.IParameters;
 import com.affymetrix.genometryImpl.general.NewInstance;
-import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
 import com.affymetrix.genometryImpl.util.IDComparator;

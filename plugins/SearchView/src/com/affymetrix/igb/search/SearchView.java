@@ -89,7 +89,8 @@ public final class SearchView extends IGBTabPanel implements
 //			SearchView.this.searchTF.setEnabled(true);
 
 			initOptionCheckBox();
-
+			initCustomButton();
+			
 			if (selectedSearchMode instanceof SearchModeResidue) {
 				setModel(new GlyphSearchResultsTableModel(null, null));
 			}
@@ -98,15 +99,13 @@ public final class SearchView extends IGBTabPanel implements
 			}
 
 			SearchView.this.searchTF.setToolTipText(selectedSearchMode.getTooltip());
-
-			return;
 		}
 	}
 	private SearchModeAction searchModeAction = new SearchModeAction();
 	
 	private static String unQuoteString(String quotedString){
 		return quotedString.replaceAll("\\\\Q|\\\\E", "");
-	}//tkanapar
+	}
 	public class SearchAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 
@@ -232,6 +231,7 @@ public final class SearchView extends IGBTabPanel implements
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
 	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView_searchCB");
 	private final JRPCheckBox optionCheckBox = new JRPCheckBox("SearchView_optionCheckBox", "");
+	private final JRPButton customButton = new JRPButton("SearchView_optionCheckBox");
 	private final Icon infoIcon = MenuUtil.getIcon("16x16/actions/info.png");
 	private final JRPButton infoButton = new JRPButton("SearchView_infoButton", infoIcon);
 	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("16x16/actions/search.png"));
@@ -312,7 +312,8 @@ public final class SearchView extends IGBTabPanel implements
 		pan1.add(Box.createRigidArea(new Dimension(2, 0)));
 
 		pan1.add(optionCheckBox);
-
+		//pan1.add(customButton);
+		
 		if (group == null) {
 			searchCB.setEnabled(false);
 			searchTF.setEnabled(false);
@@ -355,8 +356,9 @@ public final class SearchView extends IGBTabPanel implements
 		String searchMode = (String) searchCB.getSelectedItem();
 		selectedSearchMode = searchModeMap.get(searchMode);
 		
-		if(selectedSearchMode == null)
+		if(selectedSearchMode == null) {
 			return;
+		}
 		
 		if(selectedSearchMode instanceof ISearchModeExtended){
 			ISearchModeExtended extenedSearch = (ISearchModeExtended)selectedSearchMode;
@@ -376,6 +378,28 @@ public final class SearchView extends IGBTabPanel implements
 		
 	}
 
+	private void initCustomButton() {
+		String searchMode = (String) searchCB.getSelectedItem();
+		selectedSearchMode = searchModeMap.get(searchMode);
+		
+		if(selectedSearchMode == null) {
+			return;
+		}
+		
+		if(selectedSearchMode instanceof ISearchModeExtended){
+			ISearchModeExtended extenedSearch = (ISearchModeExtended)selectedSearchMode;
+			Action action = extenedSearch.getCustomAction();
+			if(action != null){
+				customButton.setAction(action);
+				customButton.setEnabled(true);
+			} else {
+				customButton.setEnabled(false);
+			}
+		}else{
+			customButton.setEnabled(false);
+		}
+	}
+	
 	private void initSequenceCB() {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
@@ -627,7 +651,7 @@ public final class SearchView extends IGBTabPanel implements
 		setSequenceCBValue();
 	}
 
-	private void setStatus(final SearchResults searchResults){//tK
+	private void setStatus(final SearchResults searchResults){
 		infoButton.setAction(new AbstractAction(){
 			@Override
 			public void actionPerformed(ActionEvent e) {

@@ -14,6 +14,7 @@ import java.util.List;
  * @author hiralv
  */
 public class PairedFilter extends SymmetryFilter {
+
 	private static enum SHOW {
 		READ_WITH_MATES("Read with mates only", Boolean.TRUE), READ_WITHOUT_MATES("Read without mates only", Boolean.FALSE);
 		

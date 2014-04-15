@@ -269,16 +269,16 @@ public class NeoQuallerDemo extends Applet
 			String seqString = read_conf.getBaseString();
 			String searchOption = searchChoice.getSelectedItem();
 			int basenum = -1;
-			if (searchOption == "First") {
+			if ("First".equals(searchOption)) {
 				basenum = seqString.indexOf(searchString);
 			}
-			else if (searchOption == "Last") {
+			else if ("Last".equals(searchOption)) {
 				basenum = seqString.lastIndexOf(searchString);
 			}
-			else if (searchOption == "Next") {
+			else if ("Next".equals(searchOption)) {
 				basenum = seqString.indexOf(searchString, prevSearchPosition+1);
 			}
-			else if (searchOption == "Prev") {
+			else if ("Prev".equals(searchOption)) {
 				basenum = seqString.lastIndexOf(searchString, prevSearchPosition-1);
 			}
 			if (basenum == -1) {
@@ -337,8 +337,9 @@ public class NeoQuallerDemo extends Applet
 	@Override
 	public AppletContext getAppletContext()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return null;
+		}
 		return super.getAppletContext();
 	}
 
@@ -346,16 +347,18 @@ public class NeoQuallerDemo extends Applet
 	@Override
 	public URL getDocumentBase()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return getCodeBase();
+		}
 		return super.getDocumentBase();
 	}
 
 	@Override
 	public String getParameter(String name)
 	{
-		if(isApplication)
+		if(isApplication) {
 			return parameters.get(name);
+		}
 		return super.getParameter(name);
 	}
 

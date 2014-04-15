@@ -38,10 +38,16 @@ public class USeqGraphParser {
 		List<GraphSym> graphs = new ArrayList<GraphSym>();
 
 		//open streams
-		if (istr instanceof ZipInputStream) zis = (ZipInputStream)istr;
+		if (istr instanceof ZipInputStream) {
+			zis = (ZipInputStream)istr;
+		}
 		else {
-			if (istr instanceof BufferedInputStream) bis = (BufferedInputStream)istr;
-			else bis = new BufferedInputStream(istr);
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream)istr;
+			}
+			else {
+				bis = new BufferedInputStream(istr);
+			}
 			zis = new ZipInputStream(bis);
 		}
 		DataInputStream dis = new DataInputStream(zis); 
@@ -92,7 +98,9 @@ public class USeqGraphParser {
 					}
 					al.add(pd);
 				}
-				else throw new IOException ("\nIncorrect file type for graph generation -> "+si.getBinaryType()+" . Aborting USeq graph loading.\n");
+				else {
+					throw new IOException ("\nIncorrect file type for graph generation -> "+si.getBinaryType()+" . Aborting USeq graph loading.\n");
+				}
 			}
 
 			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
@@ -204,23 +212,35 @@ public class USeqGraphParser {
 		checkSeqLength(chromosomeBS, xcoords);
 		//make GraphSym changing stream name if needed for strand
 		String id = stream_name;
-		if (strand.equals(".") == false) id = id+strand;
+		if (strand.equals(".") == false) {
+			id += strand;
+		}
 		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());
 		//set strand
-		if (strand.equals(".") ) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);						
-		else if (strand.equals("+")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-		else if (strand.equals("-")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);	
+		if (strand.equals(".") ) {						
+			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
+		}						
+		else if (strand.equals("+")) {
+			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+		}
+		else if (strand.equals("-")) {
+			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+		}	
 		//check if an initialGraphStyle has been set, hate to hard code this 
-		if (graf.getProperties().containsKey("initialGraphStyle") == false) graf.getProperties().put("initialGraphStyle", "Bar");
+		if (graf.getProperties().containsKey("initialGraphStyle") == false) {
+			graf.getProperties().put("initialGraphStyle", "Bar");
+		}
 		return graf;
 	}
 
 	/**Sets new length if it exceeds the existing BioSeq length.*/
 	public static void checkSeqLength(BioSeq seq, int[] xcoords) {
 		int xcount = xcoords.length;
-		if (xcoords[xcount-1] > seq.getLength()) seq.setLength(xcoords[xcount-1]);
+		if (xcoords[xcount-1] > seq.getLength()) {
+			seq.setLength(xcoords[xcount-1]);
+		}
 	}
 	/**Adds all tag values to GraphSym tag values.*/
 	public static void copyProps(GraphSym graf, HashMap<String,String> tagvals) {
@@ -250,7 +270,9 @@ public class USeqGraphParser {
 			}
 		}
 		//if still null them make new
-		if (seq == null)  seq = seq_group.addSeq(chromosome, 1000);
+		if (seq == null) {
+			seq = seq_group.addSeq(chromosome, 1000);
+		}
 		return seq;
 	}
 
@@ -260,9 +282,13 @@ public class USeqGraphParser {
 		//attempt to find versionedGenome:versionedGenome
 		group = gmodel.getSeqGroup(versionedGenome + ":" + versionedGenome);
 		//attempt to find versionedGenome
-		if (group == null)  group = gmodel.getSeqGroup(versionedGenome);
+		if (group == null) {
+			group = gmodel.getSeqGroup(versionedGenome);
+		}
 		// if no group found, create a new one using versionedGenome
-		if (group == null)   group = gmodel.addSeqGroup(versionedGenome);
+		if (group == null) {
+			group = gmodel.addSeqGroup(versionedGenome);
+		}
 		//add group
 
 		return group;

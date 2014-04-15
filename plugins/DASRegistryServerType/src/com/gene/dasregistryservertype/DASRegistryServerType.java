@@ -119,7 +119,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 		if (featureList != null) {
 			for (String url : featureList.keySet()) {
 				Map<String, Object> featureProps = featureList.get(url);
-				if (DEBUG) System.out.println("!!! DAS Registry add feature " + gVersion.gServer.URL + " - " + url); System.out.flush();
+				if (DEBUG) {
+					System.out.println("!!! DAS Registry add feature " + gVersion.gServer.URL + " - " + url);
+				} System.out.flush();
 				int pos = url.lastIndexOf('/');
 				String featureName = (String)featureProps.get("title");
 				if (featureName == null) {
@@ -206,7 +208,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 				if (featureMap == null) {
 					featureMap = new HashMap<String, Map<String, Object>>();
 					featuresMap.put(serverURL, featureMap);
-					if (DEBUG) System.out.println("!!! DAS Registry new server " + serverURL); System.out.flush();
+					if (DEBUG) {
+						System.out.println("!!! DAS Registry new server " + serverURL);
+					} System.out.flush();
 				}
 				else if (featureMap.keySet().contains(url)) {
 					return;
@@ -234,18 +238,22 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 					}
 					featureMap.put(url, featureProps);
 				}
-				if (DEBUG) System.out.println("!!! DAS Registry new feature " + url); System.out.flush();
+				if (DEBUG) {
+					System.out.println("!!! DAS Registry new feature " + url);
+				} System.out.flush();
 				return;
 			}
 		}
-		Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "invalid uri " + feature_uri);
+		Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "invalid uri {0}", feature_uri);
 	}
 
 	private void addServer(final String serverURL) {
 		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("add DAS Registry feature " + serverURL) {
 			@Override
 			protected Void runInBackground() {
-				if (DEBUG) System.out.println("!!! DAS Registry add server " + serverURL); System.out.flush();
+				if (DEBUG) {
+					System.out.println("!!! DAS Registry add server " + serverURL);
+				} System.out.flush();
 				GenericServer gServer = igbService.addServer(DASRegistryServerType.this, serverURL, serverURL, Integer.MAX_VALUE);
 				synchronized (serverMap) {
 					serverMap.put(serverURL, gServer);
@@ -275,7 +283,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 		List<String> types = null;
 		InputStream is = null;
 		try {
-			if (DEBUG) System.out.println("!!! DAS Registry processing types URL " + types_uri); System.out.flush();
+			if (DEBUG) {
+				System.out.println("!!! DAS Registry processing types URL " + types_uri);
+			} System.out.flush();
 			is = new URL(types_uri).openConnection().getInputStream();
 			Document dom = XMLUtils.getDocument(is);
 			NodeList nl1 = dom.getChildNodes();
@@ -300,8 +310,12 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 					}
 				}
 			}
-			if (DEBUG) System.out.println("!!! DAS Registry CONTENT types URL "); System.out.flush();
-			if (DEBUG) printXML(dom); System.out.flush();
+			if (DEBUG) {
+				System.out.println("!!! DAS Registry CONTENT types URL ");
+			} System.out.flush();
+			if (DEBUG) {
+				printXML(dom);
+			} System.out.flush();
 		}
 		catch (Exception x) {
 			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "failed to load types URL " + types_uri, x);
@@ -383,15 +397,21 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 	private void loadSourcesURL(String url, boolean loadSub) {
 		InputStream is = null;
 		try {
-			if (DEBUG) System.out.println("!!! DAS Registry processing source URL " + url); System.out.flush();
+			if (DEBUG) {
+				System.out.println("!!! DAS Registry processing source URL " + url);
+			} System.out.flush();
 			is = new URL(url).openConnection().getInputStream();
 			Document dom = XMLUtils.getDocument(is);
 			NodeList nl = dom.getElementsByTagName("SOURCE");
 			for (int i = 0; i < nl.getLength(); i++) {
 				processSourceNode(nl.item(i), loadSub);
 			}
-			if (DEBUG) System.out.println("!!! DAS Registry CONTENT sources URL "); System.out.flush();
-			if (DEBUG) printXML(dom); System.out.flush();
+			if (DEBUG) {
+				System.out.println("!!! DAS Registry CONTENT sources URL ");
+			} System.out.flush();
+			if (DEBUG) {
+				printXML(dom);
+			} System.out.flush();
 		}
 		catch (Exception x) {
 			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "failed to load sources URL " + url, x);
@@ -435,7 +455,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 	 */
 	public void setGroup(AnnotatedSeqGroup group) {
 		Date start = new Date();
-		if (DEBUG) System.out.println("!!! DAS Registry start groupSelectionChanged()");
+		if (DEBUG) {
+			System.out.println("!!! DAS Registry start groupSelectionChanged()");
+		}
 		String organism = "";
 		try  {
 			for (GenericServer gServer : serverMap.values()) {
@@ -445,7 +467,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 			featuresMap.clear();
 			currentGroup = group;
 			if (currentGroup == null) {
-				if (DEBUG) System.out.println("!!! DAS Registry end groupSelectionChanged() - no group");
+				if (DEBUG) {
+					System.out.println("!!! DAS Registry end groupSelectionChanged() - no group");
+				}
 				return;
 			}
 			organism = currentGroup.getOrganism();
@@ -457,7 +481,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 				ncbiCode = "0000";
 			}
 			if ("0000".equals(ncbiCode)) {
-				if (DEBUG) System.out.println("!!! DAS Registry end groupSelectionChanged() - no ncbi code for " + organism);
+				if (DEBUG) {
+					System.out.println("!!! DAS Registry end groupSelectionChanged() - no ncbi code for " + organism);
+				}
 				return;
 			}
 			String ncbiVersion = getNCBIVersion(group);
@@ -477,10 +503,14 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 		for (String serverURL : featuresMap.keySet()) {
 			addServer(serverURL);
 			count++;
-			if (count >= 5) break;
+			if (count >= 5) {
+				break;
+			}
 		}
 		Date end = new Date();
-		if (DEBUG) System.out.println("!!! DAS Registry end groupSelectionChanged() " + ((end.getTime() - start.getTime()) / 1000.0) + " seconds");
+		if (DEBUG) {
+			System.out.println("!!! DAS Registry end groupSelectionChanged() " + ((end.getTime() - start.getTime()) / 1000.0) + " seconds");
+		}
 	}
 
 	@Override
@@ -525,7 +555,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 			return super.loadFeatures(span, feature);
 		}
 		catch (Exception x) {
-			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load " + feature.featureName + ", " + x.getMessage());
+			Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load {0}, {1}", new Object[]{feature.featureName, x.getMessage()});
 		}
 		return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 	}

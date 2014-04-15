@@ -3,13 +3,18 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.SeekableFTPStream;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.SeekableFTPStream;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -21,18 +26,18 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFormatException;
+import net.sf.samtools.SAMRecord;
 import net.sf.samtools.seekablestream.SeekableBufferedStream;
 import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.util.CloseableIterator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author jnicol
@@ -54,18 +59,18 @@ public final class BAM extends XAM {
 		strategyList.add(LoadStrategy.AUTOLOAD);
 	}
 
-	private SAMFileReader getSAMFileReader() throws Exception {
+	private SAMFileReader getSAMFileReader() throws IOException, BamIndexNotFoundException {
 		File indexFile = null;
-		SAMFileReader samFileReader;
+		SAMFileReader samFileReader = null;
 		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.length() == 0 || scheme.equals("file")) {
+		if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 			// BAM is file.
 			//indexFile = new File(uri.)
 			File f = new File(uri);
 			indexFile = findIndexFile(f);
 			samFileReader = new SAMFileReader(f, indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
-		} else if (scheme.startsWith("http")) {
+		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL)) {
 			String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
 				
 			if(reachable_url == null){
@@ -73,28 +78,13 @@ public final class BAM extends XAM {
 				this.isInitialized = false;
 				return null;
 			}
-			
-			// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
-			String baiUriStr = findIndexFile(uri.toString());
-			// Guess at the location of the .bai URL as BAM URL + ".bai"	
-			if (baiUriStr == null) {
-				ErrorHandler.errorPanel("No BAM index file",
-						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
-				this.isInitialized = false;
-				return null;
-			}
+			String baiUriStr = getBamIndexUriStr(uri);
 			indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-			samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url))), indexFile, false);
+			SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
+			samFileReader = new SAMFileReader(seekableStream, indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
 		} else if(scheme.startsWith("ftp")){
-			String baiUriStr = findIndexFile(uri.toString());
-			// Guess at the location of the .bai URL as BAM URL + ".bai"	
-			if (baiUriStr == null) {
-				ErrorHandler.errorPanel("No BAM index file",
-						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
-				this.isInitialized = false;
-				return null;
-			}
+			String baiUriStr = getBamIndexUriStr(uri);
 			indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
 			samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
@@ -106,8 +96,21 @@ public final class BAM extends XAM {
 		return samFileReader;
 	}
 
+	private String getBamIndexUriStr(URI uri) throws BamIndexNotFoundException {
+		// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
+		String baiUriStr = findIndexFile(uri.toString());
+		// Guess at the location of the .bai URL as BAM URL + ".bai"	
+		if (StringUtils.isBlank(baiUriStr)) {
+			ErrorHandler.errorPanel("No BAM index file",
+					"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
+			this.isInitialized = false;
+			return null;
+		}
+		return baiUriStr;
+	}
+
 	@Override
-	public void init() throws Exception  {
+	public void init() throws IOException, BamIndexNotFoundException  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -148,10 +151,10 @@ public final class BAM extends XAM {
 		Object compressedInputStreamValue = privateCompressedInputStreamField.get(mReaderValue);
 		Field privateBlockAddressField = compressedInputStreamValue.getClass().getDeclaredField("mBlockAddress");
 		privateBlockAddressField.setAccessible(true);
-                    long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue)).longValue();
+                    long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue));
 		Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
 		privateCurrentOffsetField.setAccessible(true);
-		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue)).intValue();;
+		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue));;
 		return new BlockCompressedStreamPosition(blockAddressValue, currentOffsetValue);
 	}
 
@@ -186,8 +189,8 @@ public final class BAM extends XAM {
 					}
 				}
 			}
-		} catch (Exception ex){
-			throw ex;
+		} catch (Throwable ex){
+			throw new Exception(ex);
 		} finally {
 			if (iter != null) {
 				iter.close();
@@ -211,7 +214,9 @@ public final class BAM extends XAM {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		if (reader != null) {
 			for (final SAMRecord sr: reader){
-				if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
+				if (skipUnmapped && sr.getReadUnmappedFlag()) {
+					continue;
+				}
 				symList.add(convertSAMRecordToSymWithProps(sr, seq, method));
 			}
 		}
@@ -261,28 +266,27 @@ public final class BAM extends XAM {
 			//write out records to file
 			//TODO: is this hack necessary with updated picard.jar?
 			reader.getFileHeader().setSortOrder(net.sf.samtools.SAMFileHeader.SortOrder.coordinate); // A hack to prevent error caused by picard tool.
-			if (iter != null) {
-				net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
-				if (BAMWriter) {
+
+			net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
+			if (BAMWriter) {
 					// BAM files cannot be written to the stream one line at a time.
-					// Rather, a tempfile is created, and later read into the stream.
-					try {
-						tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");						
-						tempBAMFile.deleteOnExit();
-					} catch (IOException ex) {
-						Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
-						System.err.println("Cannot create temporary BAM file! \n"+ex.getStackTrace());
-						return; // Can't create the temporary file! 
-					}
-					sfw = sfwf.makeBAMWriter(header, true, tempBAMFile);
-				} else {
-					sfw = sfwf.makeSAMWriter(header, true, dos);
+				// Rather, a tempfile is created, and later read into the stream.
+				try {
+					tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");
+					tempBAMFile.deleteOnExit();
+				} catch (IOException ex) {
+					Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
+					System.err.println("Cannot create temporary BAM file! \n" + ex.getStackTrace());
+					return; // Can't create the temporary file! 
 				}
-				
-				// read each record, and add to the SAMFileWriter
-				for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-					sfw.addAlignment(sr);
-				}
+				sfw = sfwf.makeBAMWriter(header, true, tempBAMFile);
+			} else {
+				sfw = sfwf.makeSAMWriter(header, true, dos);
+			}
+
+			// read each record, and add to the SAMFileWriter
+			for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
+				sfw.addAlignment(sr);
 			}
 		} catch(Exception ex){
 			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,"SAM exception A SAMFormatException has been thrown by the Picard tools.\n" +
@@ -319,19 +323,21 @@ public final class BAM extends XAM {
 		//look for xxx.bam.bai
 		String path = bamfile.getPath();
 		File f = new File(path+".bai");
-		if (f.exists())
+		if (f.exists()) {
 			return f;
+		}
 
 		//look for xxx.bai
 		path = path.substring(0, path.length()-3)+"bai";
 		f = new File(path);
-		if (f.exists())
-				return f;
+		if (f.exists()) {
+			return f;
+		}
 
 		return null;
 	}
 
-	static public String findIndexFile(String bamfile) {
+	static public String findIndexFile(String bamfile) throws BamIndexNotFoundException {
 		// Guess at the location of the .bai URL as BAM URL + ".bai"
 		String baiUriStr = bamfile + ".bai";
 
@@ -342,19 +348,18 @@ public final class BAM extends XAM {
 		baiUriStr = bamfile.substring(0, bamfile.length() - 3) + "bai";
 
 		//look for xxx.bai
-		if(LocalUrlCacher.isValidURL(baiUriStr)){
+		if (LocalUrlCacher.isValidURL(baiUriStr)) {
 			return baiUriStr;
 		}
-		
-		return null;
+		throw new BamIndexNotFoundException();
 	}
 
-	public static boolean hasIndex(URI uri) throws IOException{
+	public static boolean hasIndex(URI uri) throws IOException, BamIndexNotFoundException{
 		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.length() == 0 || scheme.equals("file")) {
+		if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 			File f = findIndexFile(new File(uri));
 			return f != null;
-		}else if(scheme.startsWith("http") || scheme.startsWith("ftp")) {
+		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL) || StringUtils.equals(scheme, FTP_PROTOCOL)) {
 			String uriStr = findIndexFile(uri.toString());
 			return uriStr != null;
 		}
@@ -373,8 +378,9 @@ public final class BAM extends XAM {
 			return null;
 		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("Creating new bam index file -> "+indexfile);
+		}
 
 		String input = "INPUT=" + bamfile.getAbsolutePath();
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
@@ -394,7 +400,9 @@ public final class BAM extends XAM {
 		bamfile.deleteOnExit();
 		BAM bam = new BAM(bamfile.toURI(),featureName, group);
 		//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
-		if (uri.getScheme().equals("http")) return bam.parseAll(overlap_span.getBioSeq(), uri.toString());
+		if (uri.getScheme().equals("http")) {
+			return bam.parseAll(overlap_span.getBioSeq(), uri.toString());
+		}
 		return bam.getRegion(overlap_span);
 	}
 
@@ -458,5 +466,18 @@ public final class BAM extends XAM {
 			return null;
 		}
 		
+	}
+	
+	public static class BamIndexNotFoundException extends Exception {
+
+		private static final long serialVersionUID = -3711705910840303497L;
+		
+		public BamIndexNotFoundException() {
+			super("Could not find Bam Index File.");
+		}
+
+		public BamIndexNotFoundException(String message) {
+			super(message);
+		}
 	}
 }

@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -182,13 +183,16 @@ public class BioSeq implements SearchableCharIterator {
 	public int getMax() { return end; }
 
 	public int getAnnotationCount() {
-		if (null != annots) return annots.size();
+		if (null != annots) {
+			return annots.size();
+		}
 		return 0;
 	}
 
 	public /*@Nullable*/ RootSeqSymmetry getAnnotation(int index) {
-		if (null != annots && index < annots.size())
+		if (null != annots && index < annots.size()) {
 			return annots.get(index);
+		}
 		return null;
 	}
 	/**
@@ -264,7 +268,6 @@ public class BioSeq implements SearchableCharIterator {
 		if (type != null)  {
 			// add as child to the top-level container
 			addAnnotation(sym, type, ext, index); // side-effect calls notifyModified()
-			return;
 		}
 		else  {
 			throw new RuntimeException(
@@ -416,7 +419,7 @@ public class BioSeq implements SearchableCharIterator {
 		}
 		int residue_length = this.getLength();
 		if (start < 0 || residue_length <= 0) {
-			Logger.getLogger(BioSeq.class.getName()).fine("Invalid arguments: " + start + "," + end + "," + residue_length);
+			Logger.getLogger(BioSeq.class.getName()).log(Level.FINE, "Invalid arguments: {0},{1},{2}", new Object[]{start, end, residue_length});
 			return "";
 		}
 
@@ -647,7 +650,9 @@ public class BioSeq implements SearchableCharIterator {
 			int residue_start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
 			int residue_end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;
-			SingletonSymWithProps info = new SingletonSymWithProps(residue_start, residue_end, seq);
+			SingletonSymWithProps info = forward ? new SingletonSymWithProps(residue_start, residue_end, seq) : 
+					new SingletonSymWithProps(residue_end, residue_start, seq);
+			info.setProperty("method", "Search term:"+regex.pattern());
 			info.setProperty("direction", forward ? "forward" : "reverse");
 			info.setProperty("match", matcher.group(0));
 			info.setProperty("pattern", regex.pattern());
@@ -724,22 +729,29 @@ public class BioSeq implements SearchableCharIterator {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		BioSeq other = (BioSeq) obj;
-		if (end != other.end)
+		if (end != other.end) {
 			return false;
+		}
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
-		if (start != other.start)
+		}
+		if (start != other.start) {
 			return false;
+		}
 		return true;
 	}
 }

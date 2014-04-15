@@ -9,17 +9,6 @@ public class BioSeqTest {
 static final BioSeq seq         = new BioSeq("seq", "version", 0);
 	static final BioSeq seq_len     = new BioSeq("len", "version", 500);
 
-	public BioSeqTest() {
-	}
-
-	@Before
-		public void setUp() {
-		}
-
-	@After
-		public void tearDown() {
-		}
-
 	/**
 	 * Test if CompositeNegSeq(String) will accept a null string.
 	 */

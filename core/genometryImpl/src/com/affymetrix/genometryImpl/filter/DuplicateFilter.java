@@ -14,6 +14,7 @@ import java.util.List;
  * @author hiralv
  */
 public class DuplicateFilter extends SymmetryFilter {
+
 	private static enum SHOW {
 		DUPLICATES("Duplicates only", Boolean.TRUE), NON_DUPLICATES("Non-Duplicates only", Boolean.FALSE);
 		

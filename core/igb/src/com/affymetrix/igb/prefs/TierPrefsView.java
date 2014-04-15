@@ -12,7 +12,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
-import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -671,8 +670,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 			refreshSeqMapViewAndSlicedView();
 			smv.getPopup().refreshMap(false, true);
-			if(previousSelectedRows.length >= 1)
+			if(previousSelectedRows.length >= 1) {
 				table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
+			}
 		}
 	}
 

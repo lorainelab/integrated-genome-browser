@@ -119,6 +119,23 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 * @return true if residues loaded, false otherwise
 	 */
 	public boolean getResidues(GenericVersion version, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span);
+	
+	/**
+	 * Removes server and cleans up anything that was added by it.
+	 * @return 
+	 */
+	public void removeServer(GenericServer server);
+	
+	public boolean isSaveServersInPrefs();
+	public String getFriendlyURL(GenericServer gServer);
+	
+	/**
+	 * Determines should mirror url be used or not.
+	 * @param gServer
+	 * @return 
+	 */
+	public boolean useMirrorSite(GenericServer gServer);
+	
 	// the following method is required by the CacheScript class
 	// this method does not need to be implemented unless there are
 	// servers of this server type that will be cached.
@@ -130,9 +147,5 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 * @return true if successful, false otherwise
 	 */
 	public boolean processServer(GenericServer gServer, String path);
-	public boolean isSaveServersInPrefs();
 	
-	public String getFriendlyURL(GenericServer gServer);
-	
-	public boolean useMirrorSite(GenericServer gServer);
 }

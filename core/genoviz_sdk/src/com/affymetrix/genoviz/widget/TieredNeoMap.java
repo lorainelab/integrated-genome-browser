@@ -75,8 +75,9 @@ public class TieredNeoMap extends AbstractTieredMap {
 	 * @param ontop determines whether tier goes above or below existing tiers
 	 */
 	public void addTier(MapTierGlyph mtg, boolean ontop) {
-		if (mtg == null)
+		if (mtg == null) {
 			return;
+		}
 		int evtid;
 		this.addItem(mtg);
 		// Use packTiers() rather than repack(), 'cause repack would
@@ -103,8 +104,9 @@ public class TieredNeoMap extends AbstractTieredMap {
 	 */
 	public void heardTierEvent(TierEvent evt) {
 		// We only care if this came from a TieredLabelMap
-		if (!(evt.getSource() instanceof TieredLabelMap))
+		if (!(evt.getSource() instanceof TieredLabelMap)) {
 			return;
+		}
 
 		// Distill info from the event
 
@@ -146,7 +148,6 @@ public class TieredNeoMap extends AbstractTieredMap {
 				this.updateWidget();
 				break;
 			default:
-				return;
 		}
 	}
 

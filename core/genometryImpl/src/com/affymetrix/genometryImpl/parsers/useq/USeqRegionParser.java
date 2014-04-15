@@ -57,7 +57,7 @@ public final class USeqRegionParser implements GraphParser {
 		try {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
-			if (group.getAllVersions().size() != 0 && group.isSynonymous(genomeVersion) == false){
+			if (!group.getAllVersions().isEmpty() && group.isSynonymous(genomeVersion) == false){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 
@@ -66,29 +66,51 @@ public final class USeqRegionParser implements GraphParser {
 			//for each USeqData set, +/-/.
 			for (int i=0; i< useqData.length; i++){
 				//any data?
-				if (useqData[i] == null) continue;
+				if (useqData[i] == null) {
+					continue;
+				}
 				SliceInfo sliceInfo = useqData[i].getSliceInfo();
 				//set strand orientation
-				if (sliceInfo.getStrand().equals("-")) forwardStrand = false;
-				else forwardStrand = true;
+				if (sliceInfo.getStrand().equals("-")) {
+					forwardStrand = false;
+				}
+				else {
+					forwardStrand = true;
+				}
 				//set the BioSeq
 				setBioSeq(sliceInfo.getChromosome());
 				//Region
-				if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData((RegionData) useqData[i]);
+				if (USeqUtilities.REGION.matcher(dataType).matches()) {
+					parseRegionData((RegionData) useqData[i]);
+				}
 				//RegionScore
-				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData((RegionScoreData) useqData[i]);
+				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
+					parseRegionScoreData((RegionScoreData) useqData[i]);
+				}
 				//RegionText
-				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData((RegionTextData) useqData[i]);
+				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
+					parseRegionTextData((RegionTextData) useqData[i]);
+				}
 				//RegionScoreText
-				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData((RegionScoreTextData) useqData[i]);
+				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
+					parseRegionScoreTextData((RegionScoreTextData) useqData[i]);
+				}
 				//Position
-				else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData((PositionData) useqData[i]);
+				else if(USeqUtilities.POSITION.matcher(dataType).matches()) {
+					parsePositionData((PositionData) useqData[i]);
+				}
 				//PositionScore
-				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData((PositionScoreData) useqData[i]);
+				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
+					parsePositionScoreData((PositionScoreData) useqData[i]);
+				}
 				//PositionText
-				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData((PositionTextData) useqData[i]);
+				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
+					parsePositionTextData((PositionTextData) useqData[i]);
+				}
 				//PositionScoreText
-				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData((PositionScoreTextData) useqData[i]);
+				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
+					parsePositionScoreTextData((PositionScoreTextData) useqData[i]);
+				}
 				//unknown!
 				else {
 					throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from "+nameOfTrack +"\n");
@@ -111,10 +133,16 @@ public final class USeqRegionParser implements GraphParser {
 		BufferedInputStream bis = null;
 		ZipInputStream zis = null;
 
-		if (istr instanceof ZipInputStream) zis = (ZipInputStream)istr;
+		if (istr instanceof ZipInputStream) {
+			zis = (ZipInputStream)istr;
+		}
 		else {
-			if (istr instanceof BufferedInputStream) bis = (BufferedInputStream)istr;
-			else bis = new BufferedInputStream(istr);
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream)istr;
+			}
+			else {
+				bis = new BufferedInputStream(istr);
+			}
 			zis = new ZipInputStream(bis);
 		}
 
@@ -137,7 +165,7 @@ public final class USeqRegionParser implements GraphParser {
 
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
-			if (group.getAllVersions().size() != 0 && group.isSynonymous(genomeVersion) == false){
+			if (!group.getAllVersions().isEmpty() && group.isSynonymous(genomeVersion) == false){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 
@@ -148,26 +176,46 @@ public final class USeqRegionParser implements GraphParser {
 				SliceInfo sliceInfo = new SliceInfo (ze.getName());
 				String dataType = sliceInfo.getBinaryType();
 				//set strand orientation
-				if (sliceInfo.getStrand().equals("-")) forwardStrand = false;
-				else forwardStrand = true;
+				if (sliceInfo.getStrand().equals("-")) {
+					forwardStrand = false;
+				}
+				else {
+					forwardStrand = true;
+				}
 				//set the BioSeq
 				setBioSeq(sliceInfo.getChromosome());
 				//Region
-				if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData(new RegionData (dis, sliceInfo));
+				if (USeqUtilities.REGION.matcher(dataType).matches()) {
+					parseRegionData(new RegionData (dis, sliceInfo));
+				}
 				//RegionScore
-				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData(new RegionScoreData (dis, sliceInfo));
+				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
+					parseRegionScoreData(new RegionScoreData (dis, sliceInfo));
+				}
 				//RegionText
-				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData(new RegionTextData (dis, sliceInfo));
+				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
+					parseRegionTextData(new RegionTextData (dis, sliceInfo));
+				}
 				//RegionScoreText
-				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData(new RegionScoreTextData (dis, sliceInfo));
+				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
+					parseRegionScoreTextData(new RegionScoreTextData (dis, sliceInfo));
+				}
 				//Position
-				else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData(new PositionData (dis, sliceInfo));
+				else if(USeqUtilities.POSITION.matcher(dataType).matches()) {
+					parsePositionData(new PositionData (dis, sliceInfo));
+				}
 				//PositionScore
-				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData(new PositionScoreData (dis, sliceInfo));
+				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
+					parsePositionScoreData(new PositionScoreData (dis, sliceInfo));
+				}
 				//PositionText
-				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData(new PositionTextData (dis, sliceInfo));
+				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
+					parsePositionTextData(new PositionTextData (dis, sliceInfo));
+				}
 				//PositionScoreText
-				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData(new PositionScoreTextData (dis, sliceInfo));
+				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
+					parsePositionScoreTextData(new PositionScoreTextData (dis, sliceInfo));
+				}
 				//unknown!
 				else {
 					throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from  -> '"+ze.getName()+"' in "+nameOfTrack +"\n");
@@ -189,10 +237,14 @@ public final class USeqRegionParser implements GraphParser {
 			int start = r[i].getPosition();
 			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getPosition()+1);
+		}
 	}
 
 	private void parsePositionScoreData(PositionScoreData pd){
@@ -203,10 +255,14 @@ public final class USeqRegionParser implements GraphParser {
 			int start = r[i].getPosition();
 			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, null, r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getPosition()+1);
+		}
 	}
 
 	private void parsePositionTextData(PositionTextData pd) {
@@ -218,10 +274,14 @@ public final class USeqRegionParser implements GraphParser {
 			int start = r[i].getPosition();
 			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, r[i].getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getPosition()+1);
+		}
 	}
 
 	private void parsePositionScoreTextData(PositionScoreTextData pd) {
@@ -232,10 +292,14 @@ public final class USeqRegionParser implements GraphParser {
 			int start = r[i].getPosition();
 			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, r[i].getText(), r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getPosition()+1);
+		}
 	}
 
 	private void parseRegionData(RegionData pd) {
@@ -246,10 +310,14 @@ public final class USeqRegionParser implements GraphParser {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
 			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getStop());
+		}
 	}
 
 	private void parseRegionScoreData(RegionScoreData pd) {
@@ -259,10 +327,14 @@ public final class USeqRegionParser implements GraphParser {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
 			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), null, r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getStop());
+		}
 	}
 
 	private void parseRegionTextData(RegionTextData pd) {
@@ -307,10 +379,14 @@ public final class USeqRegionParser implements GraphParser {
 				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), r[i].getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			}
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getStop());
+		}
 	}
 
 	private void parseRegionScoreTextData(RegionScoreTextData pd) {
@@ -353,10 +429,14 @@ public final class USeqRegionParser implements GraphParser {
 				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), r[i].getText(), r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			}
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
+			if (addAnnotationsToSeq) {
+				bioSeq.addAnnotation(bedline_sym);
+			}
 		}
 		//set max
-		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) {
+			bioSeq.setLength(r[r.length-1].getStop());
+		}
 	}
 
 	/*find BioSeq or make a new one*/

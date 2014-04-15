@@ -33,12 +33,16 @@ public class USeq2UCSCBig extends Thread{
 			//for each archive
 			for (File u : useqArchives){
 				workingUSeqArchiveFile = u;
-				if (verbose) System.out.println("Processing: "+workingUSeqArchiveFile.getName());
+				if (verbose) {
+					System.out.println("Processing: "+workingUSeqArchiveFile.getName());
+				}
 
 				convert();
 
 			}
-			if (verbose) System.out.println("\nDone!\n");
+			if (verbose) {
+				System.out.println("\nDone!\n");
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,10 +69,14 @@ public class USeq2UCSCBig extends Thread{
 			writeChromLengths();
 
 			//convert graph data
-			if (workingUSeqArchive.getArchiveInfo().isGraphData()) return convertGraphData();
+			if (workingUSeqArchive.getArchiveInfo().isGraphData()) {
+				return convertGraphData();
+			}
 
 			//convert region data
-			else return convertRegionData();
+			else {
+				return convertRegionData();
+			}
 
 		} catch (Exception e){
 			e.printStackTrace();
@@ -92,10 +100,14 @@ public class USeq2UCSCBig extends Thread{
 		workingUSeqArchive = new USeqArchive(workingUSeqArchiveFile);
 		
 		//convert graph data
-		if (workingUSeqArchive.getArchiveInfo().isGraphData()) return fetchConvertedGraphNames();
+		if (workingUSeqArchive.getArchiveInfo().isGraphData()) {
+			return fetchConvertedGraphNames();
+		}
 
 		//convert region data
-		else return fetchConvertRegionNames();
+		else {
+			return fetchConvertRegionNames();
+		}
 	}
 
 	private ArrayList<File> fetchConvertRegionNames(){
@@ -214,7 +226,9 @@ public class USeq2UCSCBig extends Thread{
 	private void executeUCSCCommand(String[] command) throws Exception{
 		if (verbose) {
 			System.out.println("\nUnix Command:");
-			for (String c : command) System.out.println(c);
+			for (String c : command) {
+				System.out.println(c);
+			}
 			System.out.println();
 		}
 		//execute ucsc converter, nothing should come back for wigToBigWig and sort
@@ -226,7 +240,9 @@ public class USeq2UCSCBig extends Thread{
 			for (String c : results) {
 				sb.append("\n");
 				sb.append(c);
-				if (c.contains("millis") == false) ok = false;
+				if (c.contains("millis") == false) {
+					ok = false;
+				}
 			}
 			if (ok != true) {
 				deleteAllFiles();
@@ -251,12 +267,20 @@ public class USeq2UCSCBig extends Thread{
 
 	public void deleteAllFiles(){
 		deleteTempFiles();
-		if (convertedFile != null) convertedFile.delete();
+		if (convertedFile != null) {
+			convertedFile.delete();
+		}
 	}
 	public void deleteTempFiles(){
-		if (tempFile!= null) tempFile.delete();
-		if (chromLengths!= null) chromLengths.delete();
-		if (tempFileSorted!= null) tempFileSorted.delete();
+		if (tempFile!= null) {
+			tempFile.delete();
+		}
+		if (chromLengths!= null) {
+			chromLengths.delete();
+		}
+		if (tempFileSorted!= null) {
+			tempFileSorted.delete();
+		}
 	}
 
 	public static void main(String[] args) {
@@ -270,7 +294,9 @@ public class USeq2UCSCBig extends Thread{
 	/**This method will process each argument and assign new variables*/
 	public void processArgs(String[] args){
 		Pattern pat = Pattern.compile("-[a-z]");
-		if (verbose) System.out.println("\nArguments: "+USeqUtilities.stringArrayToString(args, " ")+"\n");
+		if (verbose) {
+			System.out.println("\nArguments: "+USeqUtilities.stringArrayToString(args, " ")+"\n");
+		}
 		File ucscDir = null;
 		for (int i = 0; i<args.length; i++){
 			String lcArg = args[i].toLowerCase();
@@ -291,14 +317,22 @@ public class USeq2UCSCBig extends Thread{
 			}
 		}
 		//make files
-		if (ucscDir == null || ucscDir.isDirectory() == false) USeqUtilities.printExit("\nCannot find your directory containing the UCSC wig2BigWig and bed2BigBed apps -> "+ucscDir);
+		if (ucscDir == null || ucscDir.isDirectory() == false) {
+			USeqUtilities.printExit("\nCannot find your directory containing the UCSC wig2BigWig and bed2BigBed apps -> "+ucscDir);
+		}
 		ucscWig2BigWig = new File( ucscDir, "wigToBigWig");
 		ucscBed2BigBed = new File( ucscDir, "bedToBigBed");
 
 		//check files
-		if (useqArchives == null || useqArchives.length == 0) USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
-		if (ucscWig2BigWig.canExecute() == false) USeqUtilities.printExit("\nCannot find or execute -> "+ucscWig2BigWig+"\n");
-		if (ucscBed2BigBed.canExecute() == false) USeqUtilities.printExit("\nCannot find or execute -> "+ucscBed2BigBed+"\n");
+		if (useqArchives == null || useqArchives.length == 0) {
+			USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
+		}
+		if (ucscWig2BigWig.canExecute() == false) {
+			USeqUtilities.printExit("\nCannot find or execute -> "+ucscWig2BigWig+"\n");
+		}
+		if (ucscBed2BigBed.canExecute() == false) {
+			USeqUtilities.printExit("\nCannot find or execute -> "+ucscBed2BigBed+"\n");
+		}
 
 	}	
 

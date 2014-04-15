@@ -4,11 +4,9 @@ import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
@@ -228,10 +226,7 @@ public final class ServerList {
 		GenericServer server = url2server.get(url);
 		url2server.remove(url);
 		if (server != null) {
-			server.setEnabled(false);
-			if (server.serverType == ServerTypeI.QuickLoad) {
-				QuickLoadServerModel.removeQLModelForURL(url);
-			}
+			server.clean();
 			fireServerInitEvent(server, ServerStatus.NotResponding, true); // remove it from our lists.
 		}
 	}
@@ -499,11 +494,11 @@ public final class ServerList {
 			if (!removedManually) {
 				String errorText;
 				if (server.serverType != null && server.serverType == ServerTypeI.QuickLoad) {
-					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
-					errorText = siteOK
-							? MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
-							: MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
-						ErrorHandler.errorPanelWithReportBug(server.serverName, errorText, Level.SEVERE);
+//					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
+//					errorText = siteOK
+//							? MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
+//							: MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
+					ErrorHandler.errorPanelWithReportBug(server.serverName, MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName), Level.SEVERE);
 				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.serverName);

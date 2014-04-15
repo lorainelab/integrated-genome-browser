@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +131,11 @@ public class LocalFilesServerType implements ServerTypeI {
 		return false;
 	}
 
+	@Override
+	public void removeServer(GenericServer server) {
+		// Do Nothing for now
+	}
+	
 	@Override
 	public boolean isSaveServersInPrefs() {
 		return false;

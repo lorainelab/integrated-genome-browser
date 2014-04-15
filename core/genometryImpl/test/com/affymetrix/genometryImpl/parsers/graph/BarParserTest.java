@@ -1,31 +1,26 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser.BarFileHeader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser.BarFileHeader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import java.util.List;
-
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -45,11 +40,9 @@ public class BarParserTest {
 	public void TestParseFromFile() throws IOException {
 	
 
-		String filename = "test/data/bar/small.bar";
+		String filename = "small.bar";
 
-		assertTrue(new File(filename).exists());
-
-		InputStream istr = new FileInputStream(filename);
+		InputStream istr = this.getClass().getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -97,8 +90,8 @@ public class BarParserTest {
     @Test
 		public void TestParseBarHeader()  throws Exception {
 			int[] a = new int []{2,1};
-			String filename = "test/data/bar/small.bar";
-			FileInputStream istr = new FileInputStream(filename);
+			String filename = "small.bar";
+			InputStream istr = this.getClass().getClassLoader().getResourceAsStream(filename);
 			BufferedInputStream bis =new BufferedInputStream(istr);
 			DataInputStream dis = new DataInputStream(bis);
 			BarFileHeader h =BarParser.parseBarHeader(dis);
@@ -117,10 +110,11 @@ public class BarParserTest {
 		
 			@Test
 		  public void TestGetSlice() throws Exception{
-			String filename = "test/data/bar/small.bar";
+			String filename = "small.bar";
+			URL url = BarParserTest.class.getClassLoader().getResource(filename);
 			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test_group");
 			BioSeq aseq = seq_group.addSeq("chr15_random",1881177);
-			GraphSym gr0 = BarParser.getRegion(filename, new SimpleSeqSpan(1880135,1880205,aseq));
+			GraphSym gr0 = BarParser.getRegion(url.getFile(), new SimpleSeqSpan(1880135,1880205,aseq));
 		  assertEquals("chr15_random", gr0.getGraphSeq().getID());
 		  assertEquals(2, gr0.getPointCount());
 		  assertEquals(0.2127714902162552, gr0.getGraphYCoord(0), 0.01);

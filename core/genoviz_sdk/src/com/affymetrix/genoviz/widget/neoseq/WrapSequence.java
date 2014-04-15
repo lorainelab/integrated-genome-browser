@@ -138,8 +138,9 @@ public class WrapSequence extends WrapGlyph {
 			Font fnt, Color col, boolean showArray[]) {
 
 		// if sequence doesn't exist, nothing to do here.
-		if ((seq == null) || (seq.getLength() < 1))
+		if ((seq == null) || (seq.getLength() < 1)) {
 			return;
+		}
 
 		// if sequence isn't visible, don't need to draw anything
 		if (end < first_visible_residue || start > last_visible_residue) {
@@ -249,8 +250,9 @@ public class WrapSequence extends WrapGlyph {
 					yposition = line_yposition + offsets[j];
 
 					String translation = ((NASequence)seq).getTranslation(j);
-					if ((translation == null) || (translation.length() < 1))
+					if ((translation == null) || (translation.length() < 1)) {
 						continue;
+					}
 
 					res_string = translation.substring(first_drawn_residue,
 							last_drawn_residue+1);

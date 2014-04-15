@@ -5,6 +5,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.comparator.AlphanumComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymIdComparator;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
@@ -59,12 +60,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -374,7 +378,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			public Comparator<?> getComparator(int column) {
 				if (column == 0) {
-					return String.CASE_INSENSITIVE_ORDER;
+					return new BioSeqAlphanumComparator();
 				}
 				return new SeqLengthComparator();
 			}
@@ -382,8 +386,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		selected_seq = null;
 		seqtable.setModel(mod);
-		seqtable.setRowSorter(sorter);
-
+		//Disabled for now
+		//seqtable.setRowSorter(sorter);
+		sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
+		
 		TableColumn c = seqtable.getColumnModel().getColumn(1);
 		c.setCellRenderer(new ColumnRenderer());
 
@@ -719,7 +725,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	public List<String> getAllVersions(final String speciesName) {
-		final List<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
+		final Set<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
 		final List<String> versionNames = new ArrayList<String>();
 		if (versionList != null) {
 			for (GenericVersion gVersion : versionList) {
@@ -973,5 +979,17 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	public JComboBox getVersionCB() {
 		return versionCB;
+	}
+	
+	private static class BioSeqAlphanumComparator extends AlphanumComparator {
+		@Override
+		public int compare(Object o1, Object o2) {
+			if(o1.toString().equals("genome")) {
+				return 1;
+			} else if (o2.toString().equals("genome")) {
+				return -1;
+			}
+			return super.compare(o1, o2);
+		}
 	}
 }

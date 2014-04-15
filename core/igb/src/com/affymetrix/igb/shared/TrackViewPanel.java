@@ -17,14 +17,17 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
 	 * Creates new form TrackViewPanel
 	 */
 	public TrackViewPanel(IGBService igbService, String displayName, String title, String tooltip, boolean focus, int position) {
-		super(igbService, displayName, title, tooltip ,focus, position);
+		super(igbService, displayName, title, tooltip, focus, position);
 		initComponents();
-		
+
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(componentPanel);
 		componentPanel.setLayout(layout);
 		horizonatalGroup = layout.createSequentialGroup();
 		verticalGroup = layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE);
-		
+		clearButton.setEnabled(false);
+		deleteButton.setEnabled(false);
+		restoreButton.setEnabled(false);
+		saveButton.setEnabled(false);
 		layout.setHorizontalGroup(horizonatalGroup);
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(verticalGroup));
 		Selections.addRefreshSelectionListener(this);

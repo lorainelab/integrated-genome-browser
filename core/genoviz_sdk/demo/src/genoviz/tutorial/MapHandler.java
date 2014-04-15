@@ -491,7 +491,7 @@ public class MapHandler extends DefaultHandler implements ContentParser {
 	 * Escape a string for printing.
 	 */
 	String escape(char ch[], int offset, int length) {
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder();
 
 		for (int i = 0; i < length; i++) {
 			switch (ch[offset + i]) {

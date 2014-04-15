@@ -250,14 +250,14 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 		if (pass_filter) {
 			if (pass_filter_hash != null) {
 				pass_filter_hash.remove(feature_type);
-				if (pass_filter_hash.size() == 0) {
+				if (pass_filter_hash.isEmpty()) {
 					pass_filter_hash = null;
 				}
 			}
 		} else {
 			if (fail_filter_hash != null) {
 				fail_filter_hash.remove(feature_type);
-				if (fail_filter_hash.size() == 0) {
+				if (fail_filter_hash.isEmpty()) {
 					fail_filter_hash = null;
 				}
 			}
@@ -758,7 +758,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 					m.put(tag, the_object);
 					vals.clear();
 				} // rare case -- if no value for the tag, hash the tag to itself...
-				else if (vals.size() == 0) {
+				else if (vals.isEmpty()) {
 					m.put(tag, tag);
 					vals.clear();
 				} // not-so-common case where there's multiple values for a tag,
@@ -827,7 +827,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 				} else {
 					if (obj instanceof String) {
 						gff3_id_hash.put(featid, TWO);
-						featid = featid + "_1";
+						featid += "_1";
 					} else if (obj instanceof Integer) {
 						Integer iobj = (Integer) obj;
 						int fcount = iobj.intValue();

@@ -138,7 +138,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			super.addChild(glyph, last_removed_position);
 			last_removed_position = -1;
 		}
-		else super.addChild ( glyph );
+		else {
+			super.addChild ( glyph );
+		}
 		gsn.addGlyph(glyph);
 	}
 
@@ -154,8 +156,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		List kids = this.getChildren();
 
 		if (kids != null) {
-			for (int i=0; i < kids.size(); i++)
+			for (int i=0; i < kids.size(); i++) {
 				this.removeChild((GlyphI)kids.get(i));
+			}
 		}
 		gsn.removeChildren();
 		// CLH: This is a hack. Instead of removing gsn,
@@ -244,10 +247,14 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			// outline be drawn outside the rectangle, so it will
 			// get written-over by top pixel of the tier below, but
 			// for the bottom tier, we must draw the bottom outline inside
-			if (bottomTier) g.drawRect(getPixelBox().x, getPixelBox().y,
-					getPixelBox().width-1, getPixelBox().height-1);
-			else g.drawRect(getPixelBox().x, getPixelBox().y,
-					getPixelBox().width-1, getPixelBox().height);
+			if (bottomTier) {
+				g.drawRect(getPixelBox().x, getPixelBox().y,
+		getPixelBox().width-1, getPixelBox().height-1);
+			}
+			else {
+				g.drawRect(getPixelBox().x, getPixelBox().y,
+				   getPixelBox().width-1, getPixelBox().height);
+			}
 		}
 		if (label_color != null && label != null && showLabel && getPixelBox().height > 4) {
 			// No font is readable at less than 5 pixels!
@@ -267,10 +274,14 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			g.setColor(label_color);
 			g.drawString(label, textXPos, textYPos);
 			if ( moreStrings != null ) {
-				if ( label_spacing == -1 ) label_spacing = fontSize + 2;
+				if ( label_spacing == -1 ) {
+					label_spacing = fontSize + 2;
+				}
 				for (int i = 0; i < moreStrings.size(); i++) {
 					textYPos += label_spacing;
-					if ( textYPos >= bottom ) break;
+					if ( textYPos >= bottom ) {
+						break;
+					}
 					g.drawString (moreStrings.get(i), textXPos, textYPos);
 				}
 			}
@@ -287,7 +298,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	}
 
 	public void addLineToLabel ( String s ) {
-		if ( moreStrings == null ) moreStrings = new ArrayList<String>();
+		if ( moreStrings == null ) {
+			moreStrings = new ArrayList<String>();
+		}
 		moreStrings.add( s );
 	}
 
@@ -320,9 +333,13 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	public void setStrand(int theStrand) {
 		if (strand == FORWARD_STRAND ||
 				strand == REVERSE_STRAND ||
-				strand == STRAND_INSENSITIVE) this.strand = theStrand;
-		else throw new IllegalArgumentException(
-				"Bad argument to setStrand: "+theStrand);
+				strand == STRAND_INSENSITIVE) {
+			this.strand = theStrand;
+		}
+		else {
+			throw new IllegalArgumentException(
+			   "Bad argument to setStrand: "+theStrand);
+		}
 	}
 
 	/**
@@ -339,14 +356,20 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 */
 	public void setState(int newstate) {
 		// terminate any pingponging if state is already same
-		if (state == newstate) return;
+		if (state == newstate) {
+			return;
+		}
 
-		if (newstate==HIDDEN && state != HIDDEN)
-			stateBeforeHidden = state; // used by restoreState();
+		if (newstate==HIDDEN && state != HIDDEN) {
+			stateBeforeHidden = state;
+		} // used by restoreState();
 
-		if (newstate==COLLAPSED || newstate==EXPANDED || newstate==HIDDEN)
+		if (newstate==COLLAPSED || newstate==EXPANDED || newstate==HIDDEN) {
 			state = newstate;
-		else state = FIXED_SIZE;
+		}
+		else {
+			state = FIXED_SIZE;
+		}
 
 		if (state == EXPANDED) {
 			setPacker(expand_packer);
@@ -378,15 +401,18 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 * Otherwise, do nothing.
 	 */
 	public void restoreState() {
-		if (state==HIDDEN) setState(stateBeforeHidden);
+		if (state==HIDDEN) {
+			setState(stateBeforeHidden);
+		}
 	}
 
 	@Override
 	public boolean hit (Rectangle pixel_hitbox, ViewI view) {
 		calcPixels(view);
 
-		if (!isVisible() || !isHitable())
+		if (!isVisible() || !isHitable()) {
 			return false;
+		}
 
 		return pixel_hitbox.intersects (this.getPixelBox());
 	}
@@ -429,7 +455,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	/** Equivalent to {@link #setBackgroundColor(Color)}. */
 	public void setFillColor(Color col) {
 		fill_color = col;
-		if (col != null) super.setBackgroundColor(col);
+		if (col != null) {
+			super.setBackgroundColor(col);
+		}
 	}
 
 	/** Equivalent to {@link #getBackgroundColor()}. */
@@ -483,7 +511,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 */
 	public void setLabelColor(Color color) {
 		label_color = color;
-		if (label_color != null) super.setForegroundColor(color);
+		if (label_color != null) {
+			super.setForegroundColor(color);
+		}
 	}
 
 	/**

@@ -25,19 +25,8 @@ import javax.xml.stream.XMLStreamException;
  */
 public class DASFeatureParserTest {
 
-	public static final String test_file_name_1 = "test/data/das1/das1-sample-hg18.dasxml";
-	public static final String test_file_name_2 = "test/data/das1/das1-sample-hg10.dasxml";
-
-	public DASFeatureParserTest() {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
+	public static final String test_file_name_1 = "das1-sample-hg18.dasxml";
+	public static final String test_file_name_2 = "das1/das1-sample-hg10.dasxml";
 
 	/**
 	 * Tests the parsing of the <LINK> elements
@@ -48,7 +37,7 @@ public class DASFeatureParserTest {
 	@Test
 	public void testLinks() throws FileNotFoundException, XMLStreamException {
 		InputStream istr = null;
-		assertTrue(new File(test_file_name_1).exists());
+		assertTrue(new File(DASFeatureParserTest.class.getClassLoader().getResource(test_file_name_1).getFile()).exists());
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		DASFeatureParser parser = new DASFeatureParser();
@@ -56,7 +45,7 @@ public class DASFeatureParserTest {
 
 		List<DASSymmetry> results = null;
 		try {
-			istr = new FileInputStream(test_file_name_1);
+			istr = DASFeatureParserTest.class.getClassLoader().getResourceAsStream(test_file_name_1);
 			assertNotNull(istr);
 
 			results = parser.parse(istr, group);
@@ -94,7 +83,7 @@ public class DASFeatureParserTest {
 	@Test
 	public void testParse() throws FileNotFoundException, XMLStreamException {
 		InputStream istr = null;
-		assertTrue(new File(test_file_name_2).exists());
+		assertTrue(new File(DASFeatureParserTest.class.getClassLoader().getResource(test_file_name_2).getFile()).exists());
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		DASFeatureParser parser = new DASFeatureParser();
@@ -102,7 +91,7 @@ public class DASFeatureParserTest {
 
 		Collection<DASSymmetry> results = null;
 		try {
-			istr = new FileInputStream(test_file_name_2);
+			istr = DASFeatureParserTest.class.getClassLoader().getResourceAsStream(test_file_name_2);
 			assertNotNull(istr);
 
 			results = parser.parse(istr, group);

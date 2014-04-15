@@ -472,6 +472,11 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 
 	@Override
+	public void removeServer(GenericServer server) {
+		QuickLoadServerModel.removeQLModelForURL(server.URL);
+	}
+	
+	@Override
 	public boolean isSaveServersInPrefs() {
 		return true;
 	}
@@ -493,8 +498,7 @@ public class QuickloadServerType implements ServerTypeI {
 	
 	@Override
 	public boolean useMirrorSite(GenericServer gServer) {
-		if (gServer.mirrorURL != null && gServer.mirrorURL.length() > 0
-				&& gServer.mirrorURL != gServer.serverObj && LocalUrlCacher.isValidURL(gServer.mirrorURL)) {
+		if (gServer.mirrorURL != null && gServer.mirrorURL != gServer.serverObj && LocalUrlCacher.isValidURL(gServer.mirrorURL)) {
 			return true;
 		}
 		return false;

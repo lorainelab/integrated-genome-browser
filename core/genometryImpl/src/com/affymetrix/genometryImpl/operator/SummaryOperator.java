@@ -4,10 +4,8 @@ package com.affymetrix.genometryImpl.operator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -34,8 +32,9 @@ public class SummaryOperator  extends AbstractAnnotationTransformer implements O
 
 	@Override
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-		if(symList.isEmpty())
+		if(symList.isEmpty()) {
 			return new SimpleSymWithProps();
+		}
 		
 		SeqSymmetry topSym = symList.get(0);
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();

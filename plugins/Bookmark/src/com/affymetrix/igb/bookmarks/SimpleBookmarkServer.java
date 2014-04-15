@@ -9,9 +9,10 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVER_PORT;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.io.IOException;
-import java.net.*;
+import java.net.Socket;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -25,27 +26,8 @@ import javax.swing.SwingUtilities;
  */
 public final class SimpleBookmarkServer {
 
-	public static final String HTTP_RESPONSE = "\nHTTP/1.1 204 No Content\nAccess-Control-Allow-Origin: *\n";
 	private static final int NO_PORT = -1;
-	public static final int DEFAULT_SERVER_PORT = 7085;
-	private static final int PORTS_TO_TRY = 5;
-	/**
-	 * The OLD name of the IGB servlet, "UnibrowControl".
-	 */
-	public final static String SERVLET_NAME_OLD = "UnibrowControl";
-	/**
-	 * The current name of the IGB servlet, "IGBControl". Current versions of
-	 * IGB will respond to both this and {@link #SERVLET_NAME_OLD}, but versions
-	 * up to and including 4.56 will respond ONLY to the old name.
-	 */
-	public static final String SERVLET_NAME = "IGBControl";
-	/**
-	 * The basic localhost URL that starts a call to IGB; for
-	 * backwards-compatibility with versions of IGB 4.56 and earlier, the old
-	 * name {@link #SERVLET_NAME_OLD} is used.
-	 */
-	public static final String DEFAULT_SERVLET_URL = "http://localhost:"
-			+ DEFAULT_SERVER_PORT + "/" + SERVLET_NAME_OLD;
+	private static final int PORTS_TO_TRY = 1;
 	private static int server_port = NO_PORT;
 	private static final Logger ourLogger
 			= Logger.getLogger(SimpleBookmarkServer.class.getPackage().getName());
@@ -79,7 +61,7 @@ public final class SimpleBookmarkServer {
 		startServerSocket(igbService, DEFAULT_SERVER_PORT);
 		if (server_port != NO_PORT) {
 			startServerSocket(igbService, server_port);
-		}
+		}		
 	}
 
 	public static void startServerSocket(final IGBService igbService, int startPort) {

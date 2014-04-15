@@ -15,13 +15,22 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.BpsParser;
+import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
-import java.io.*;
+import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -32,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -113,7 +123,7 @@ public final class UrlLoaderThread extends Thread {
 					try {
 						parseDataFromURL(url, file_extension, tier_name);
 					} finally {
-						igbService.removeNotLockedUpMsg("Loading data set " + tier_name);
+						igbService.removeNotLockedUpMsg(LOADING_MESSAGE_PREFIX + tier_name);
 					}
 				} catch (IOException ioe) {
 					handleException(ioe);
@@ -212,7 +222,7 @@ public final class UrlLoaderThread extends Thread {
 		} catch (Exception e) {
 			// do nothing.  Just use the default string value
 		}
-		if (value == null || value.length() == 0) {
+		if (StringUtils.isBlank(value)) {
 			value = default_value;
 		}
 		return value;

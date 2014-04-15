@@ -30,8 +30,9 @@ public class NotUniqueLocationFilter extends SymmetryFilter {
 			return false;
 		}
 		int currentNH = (Integer)(((BAMSym)ss).getProperty("NH"));
-        if(currentNH <= 1)
-            return false;
+        if(currentNH <= 1) {
+			return false;
+		}
         return true;
     }
     

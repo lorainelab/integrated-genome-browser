@@ -383,7 +383,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			}
 
 			// set default thresh to average thresh of selected graphs
-			avg_of_score_vals = avg_of_score_vals / gcount;
+			avg_of_score_vals /= gcount;
 
 			float val_range = abs_max_val - abs_min_val;
 			//    sliders_per_score = 1000.0f/val_range;
@@ -429,7 +429,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				max_of_score_vals = Math.max(max_of_score_vals, percent);
 				avg_of_score_vals += percent;
 			}
-			avg_of_score_vals = avg_of_score_vals / gcount;
+			avg_of_score_vals /= gcount;
 			if (min_of_score_vals == max_of_score_vals) {
 				score_perT.setText(per_format.format(min_of_score_vals));
 			} else {
@@ -629,7 +629,7 @@ public final class GraphScoreThreshSetter extends JPanel
 					System.out.println(BUNDLE.getString("threshholdBetweenNotImplementedError"));
 				}
 			}
-			avg_per = avg_per / gcount;
+			avg_per /= gcount;
 			widg.updateWidget();
 
 			// set values
@@ -687,7 +687,7 @@ public final class GraphScoreThreshSetter extends JPanel
 					System.out.println(BUNDLE.getString("threshholdBetweenNotImplementedError"));
 				}
 			}
-			avg_val = avg_val / gcount;
+			avg_val /= gcount;
 			widg.updateWidget();
 
 			// set percentages

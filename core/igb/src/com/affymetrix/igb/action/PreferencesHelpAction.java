@@ -5,7 +5,6 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class PreferencesHelpAction extends HelpActionA {

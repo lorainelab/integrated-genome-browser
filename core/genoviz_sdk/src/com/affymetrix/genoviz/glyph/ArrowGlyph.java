@@ -50,7 +50,9 @@ public class ArrowGlyph extends DirectedGlyph  {
 	 */
 	private void setStemWidth(int theWidth) {
 		this.stemWidth = Math.max( Math.min( theWidth, MAX_STEM_WIDTH ), 1 );
-		if ( 0 == this.stemWidth % 2 ) this.stemWidth--;
+		if ( 0 == this.stemWidth % 2 ) {
+			this.stemWidth--;
+		}
 		this.headY = 2*this.stemWidth+4;
 		this.headX = this.headY/2;
 	}
@@ -58,7 +60,7 @@ public class ArrowGlyph extends DirectedGlyph  {
 	public void draw(ViewI view) {
 		double hold_y = getCoordBox().y;
 
-		getCoordBox().y = getCoordBox().y + (getCoordBox().height / 2);
+		getCoordBox().y += (getCoordBox().height / 2);
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		int offset_center = getPixelBox().y;
 		getCoordBox().y = hold_y;

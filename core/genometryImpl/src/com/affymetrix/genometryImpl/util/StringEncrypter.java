@@ -38,11 +38,13 @@ public class StringEncrypter
 	public StringEncrypter(String encryptionScheme, String encryptionKey)
 	        throws EncryptionException {
 
-		if (encryptionKey == null)
+		if (encryptionKey == null) {
 			throw new IllegalArgumentException("encryption key was null");
-		if (encryptionKey.trim().length() < 24)
+		}
+		if (encryptionKey.trim().length() < 24) {
 			throw new IllegalArgumentException(
-			        "encryption key was less than 24 characters");
+					"encryption key was less than 24 characters");
+		}
 
 		try {
 			byte[] keyAsBytes = encryptionKey.getBytes(UNICODE_FORMAT);
@@ -72,9 +74,10 @@ public class StringEncrypter
 	}
 
 	public String encrypt(String unencryptedString) throws IllegalArgumentException  {
-		if (unencryptedString == null || unencryptedString.trim().length() == 0)
+		if (unencryptedString == null || unencryptedString.trim().length() == 0) {
 			throw new IllegalArgumentException(
-			        "unencrypted string was null or empty");
+					"unencrypted string was null or empty");
+		}
 
 		try {
 			SecretKey key = keyFactory.generateSecret(keySpec);
@@ -97,9 +100,10 @@ public class StringEncrypter
 	}
 
 	public String decrypt(String encryptedString) throws IllegalArgumentException {
-		if (encryptedString == null || encryptedString.trim().length() <= 0)
+		if (encryptedString == null || encryptedString.trim().length() <= 0) {
 			throw new IllegalArgumentException(
-			        "encrypted string was null or empty");
+					"encrypted string was null or empty");
+		}
 
 		try {
 			SecretKey key = keyFactory.generateSecret(keySpec);

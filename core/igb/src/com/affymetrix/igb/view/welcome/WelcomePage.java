@@ -40,7 +40,7 @@ import javax.swing.UIManager;
 public class WelcomePage extends javax.swing.JPanel {
 
 	private static final long serialVersionUID = 1L;
-	static final double SHIFT_BY = 0.3333333333333333;
+	static final double SHIFT_BY = -0.3333333333333333;
 	final JFlowPanel flow_panel;
 	private boolean scrollLeft;
 	private Timer timer = new Timer(100, new ActionListener() {

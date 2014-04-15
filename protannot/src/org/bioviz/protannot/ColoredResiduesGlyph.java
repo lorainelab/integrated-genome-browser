@@ -66,7 +66,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
         visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
         // adding 1 to visible ref_end to make sure base is drawn if only
         // part of it is visible
-        visible_ref_end = visible_ref_end + 1;
+        visible_ref_end += 1;
 
         // ******** determine first base and last base displayed ********
         visible_seq_beg = (seq_beg < visible_ref_beg) ? visible_ref_beg : seq_beg;
@@ -114,8 +114,9 @@ class ColoredResiduesGlyph extends SequenceGlyph {
             int pixelStart) {
         int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 
-		if(drawRect)
+		if(drawRect) {
 			drawResidueRectangles(g, pixelsPerBase, str);
+		}
         drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
     }
 

@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,8 +118,9 @@ public class DasServerType implements ServerTypeI {
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
 			file = GeneralUtils.getFile(fileDet.getKey(), false);
 
-			if((file == null || !GeneralUtils.moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError)
+			if((file == null || !GeneralUtils.moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError) {
 				return false;
+			}
 
 		}
 
@@ -130,8 +130,9 @@ public class DasServerType implements ServerTypeI {
 	@Override
 	public boolean processServer(GenericServer gServer, String path) {
 		File file = GeneralUtils.getFile(gServer.URL, false);
-		if(!GeneralUtils.moveFileTo(file,dsn,path))
+		if(!GeneralUtils.moveFileTo(file,dsn,path)) {
 			return false;
+		}
 		
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String, DasSource> sources = server.getDataSources();
@@ -380,6 +381,11 @@ public class DasServerType implements ServerTypeI {
 		return false;
 	}
 
+	@Override
+	public void removeServer(GenericServer server) {
+		// Do Nothing for now
+	}
+	
 	@Override
 	public boolean isSaveServersInPrefs() {
 		return true;

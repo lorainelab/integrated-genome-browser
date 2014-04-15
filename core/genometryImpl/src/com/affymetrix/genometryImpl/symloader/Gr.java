@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -76,8 +77,9 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	private void sort() throws Exception  {
 		unnamed = group.getSeq(UNNAMED);
 
-		if(unnamed == null)
+		if(unnamed == null) {
 			unnamed = new BioSeq(UNNAMED, null, 0);
+		}
 
 		GraphSym sym = parse(unnamed, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
@@ -96,8 +98,9 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		}
 		isSorted = true;
 
-		if(unnamed.getLength() < sym.getMaxXCoord())
+		if(unnamed.getLength() < sym.getMaxXCoord()) {
 			unnamed.setLength(sym.getMaxXCoord());
+		}
 
 	}
 	
@@ -186,10 +189,12 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		
 		try {
 
-			if(tempFile != null)
+			if(tempFile != null) {
 				fis = new FileInputStream(tempFile);
-			else
+			}
+			else {
 				fis = new FileInputStream(this.f);
+			}
 
 			is = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
@@ -240,8 +245,8 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 						x = Integer.parseInt(line.substring(0, indexOfDelimiter));
 						y = Float.parseFloat(line.substring(indexOfDelimiter + 1));
 					} else {
-						Logger.getLogger(Gr.class.getName()).warning(
-								"Line " + line + " doesn't match... ignoring");
+						Logger.getLogger(Gr.class.getName()).log(
+								Level.WARNING, "Line {0} doesn''t match... ignoring", line);
 						continue;
 					}
 				}

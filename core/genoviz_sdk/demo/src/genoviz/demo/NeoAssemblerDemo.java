@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.net.URL;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -29,15 +28,12 @@ import java.awt.Label;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
-import java.awt.Panel;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import javax.swing.JScrollBar;
 
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
@@ -55,7 +51,6 @@ import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
 import java.awt.Container;
-import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import javax.swing.JApplet;
@@ -302,7 +297,7 @@ public class NeoAssemblerDemo extends JApplet
 		align_length = Math.abs(align_end-align_start)+1;
 
 		String seq_string = align.getSequence().getResidues();
-		StringBuffer sb = new StringBuffer(align_length);
+		StringBuilder sb = new StringBuilder(align_length);
 		for (int i=0; i<align_length; i++) {
 			sb.append(' ');
 		}
@@ -730,12 +725,15 @@ public class NeoAssemblerDemo extends JApplet
 	}
 
 	private void hideFrames() {
-		if (null != propframe)
+		if (null != propframe) {
 			propframe.setVisible(false);
-		if (null != zoomframe)
+		}
+		if (null != zoomframe) {
 			zoomframe.setVisible(false);
-		if (null != mapframe)
+		}
+		if (null != mapframe) {
 			mapframe.setVisible(false);
+		}
 	}
 
 	@Override
@@ -986,14 +984,16 @@ public class NeoAssemblerDemo extends JApplet
 	}
 
 	public String getSelectedResidues ( AlignmentGlyph theGlyph ) {
-		if ( ! (theGlyph.isSelected() ) ) return( "" );
+		if ( ! (theGlyph.isSelected() ) ) {
+			return( "" );
+		}
 		Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
 		Mapping glyphMap = theGlyph.getMapping();
 		SequenceI glyphSeq = theGlyph.getSequence();
 		int begSeq = (int)selectedBox.x;
 		int endSeq = (int) ( selectedBox.x + selectedBox.width );
 		int seqPos = 0;
-		StringBuffer retSeq = new StringBuffer( "" );
+		StringBuilder retSeq = new StringBuilder( "" );
 		for ( int i = begSeq; i < endSeq; i++ ) {
 			seqPos = glyphMap.mapToMapped(i); //seqPos = glyphMap.mapToSequence( i );
 			char c = glyphSeq.getResidue( seqPos );
@@ -1023,13 +1023,17 @@ public class NeoAssemblerDemo extends JApplet
 	protected AlignmentGlyph getSelectedGlyph ( NeoAssembler theAssembler ) {
 		AlignmentGlyph oneGlyph;
 		oneGlyph = (AlignmentGlyph)theAssembler.getConsensusGlyph();
-		if (oneGlyph.isSelected() ) return oneGlyph;
+		if (oneGlyph.isSelected() ) {
+			return oneGlyph;
+		}
 		else {
 			List<GlyphI> theGlyphs = theAssembler.getAlignmentGlyphs();
 
 			for ( int i  = 0; i < theGlyphs.size(); i++ ) {
 				oneGlyph = (AlignmentGlyph)theGlyphs.get ( i );
-				if (oneGlyph.isSelected() ) return oneGlyph;
+				if (oneGlyph.isSelected() ) {
+					return oneGlyph;
+				}
 			}
 		}
 		return ( null );
@@ -1048,8 +1052,9 @@ public class NeoAssemblerDemo extends JApplet
 	@Override
 	public AppletContext getAppletContext()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return null;
+		}
 		return super.getAppletContext();
 	}
 
@@ -1057,16 +1062,18 @@ public class NeoAssemblerDemo extends JApplet
 	@Override
 	public URL getDocumentBase()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return getCodeBase();
+		}
 		return super.getDocumentBase();
 	}
 
 	@Override
 	public String getParameter(String name)
 	{
-		if(isApplication)
+		if(isApplication) {
 			return parameters.get(name);
+		}
 		return super.getParameter(name);
 	}
 

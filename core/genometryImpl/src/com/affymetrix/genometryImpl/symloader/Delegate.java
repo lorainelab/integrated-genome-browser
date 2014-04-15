@@ -95,19 +95,22 @@ public class Delegate extends QuickLoadSymLoader {
 		List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		
-		if(dps.isEmpty())
+		if(dps.isEmpty()) {
 			return result;
+		}
 		
 		for(DelegateParent dp : dps){
-			if(overlapSpan.getBioSeq().getAnnotation(dp.name) == null)
+			if(overlapSpan.getBioSeq().getAnnotation(dp.name) == null) {
 				return result;
+			}
 			
 			syms.add(dp.getSeqSymmetry(overlapSpan.getBioSeq()));
 		}
 		
 		SymWithProps sym = (SymWithProps) operator.operate(overlapSpan.getBioSeq(), syms);
-		if(sym == null)
+		if(sym == null) {
 			return result;
+		}
 		
 		if(!(sym instanceof RootSeqSymmetry)){
 			if(operator.getOutputCategory() == FileTypeCategory.Alignment ||

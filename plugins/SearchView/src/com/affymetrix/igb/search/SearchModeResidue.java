@@ -1,23 +1,43 @@
 package com.affymetrix.igb.search;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.color.RGB;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -25,7 +45,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
-import com.affymetrix.igb.util.ColorUtils;
 
 public class SearchModeResidue implements ISearchModeExtended, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -53,6 +72,47 @@ public class SearchModeResidue implements ISearchModeExtended,
 	private IGBService igbService;
 	private int color = 0;
 	private boolean optionSelected;
+	
+	private final Action createTrackAction = new AbstractAction("Create Track"){
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final String trackId = GeneralUtils.URLEncode("SearchTrack://"+Calendar.getInstance().getTime().toString());
+			CThreadWorker worker = new CThreadWorker("Creating track"){
+
+				@Override
+				protected Object runInBackground() {
+					for(GlyphI glyph : glyphs) {
+						SingletonSymWithProps info = (SingletonSymWithProps) glyph.getInfo();
+						if(info != null) {
+							BioSeq seq = info.getSpanSeq(0);
+							info.setProperty("method", trackId);
+							info.setProperty(TrackLineParser.ITEM_RGB, glyph.getColor());
+							seq.addAnnotation(info);
+						}
+					}
+					return null;
+				}
+
+				@Override
+				protected void finished() {
+					try {
+						ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(trackId, "Search Track", null, null);
+						style.setColorProvider(new RGB());
+						style.setLabelField("match");
+						style.setSeparate(false);
+						
+						GenericFeature feature = igbService.createFeature(trackId, new DummySymLoader(trackId, "Search Track", GenometryModel.getGenometryModel().getSelectedSeqGroup()));
+						igbService.loadAndDisplayAnnotations(feature);
+					} catch (URISyntaxException ex) {
+						Logger.getLogger(SearchModeResidue.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+				
+			};
+			CThreadHolder.getInstance().execute(SearchModeResidue.this, worker);
+		}
+	};
 	
 	public SearchModeResidue(IGBService igbService) {
 		super();
@@ -231,8 +291,9 @@ public class SearchModeResidue implements ISearchModeExtended,
 		Thread current_thread = Thread.currentThread();
 		
 		for(int i=visibleSpan.getMin(); i<visibleSpan.getMax(); i+=MAX_RESIDUE_LEN_SEARCH){
-			if(current_thread.isInterrupted())
+			if(current_thread.isInterrupted()) {
 				break;
+			}
 			
 			int start = Math.max(i-search_text.length(), 0);
 			int end = Math.min(i+MAX_RESIDUE_LEN_SEARCH, residuesLength);
@@ -260,5 +321,29 @@ public class SearchModeResidue implements ISearchModeExtended,
 		});
 		color++;
 		return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), statusStr, glyphs);
+	}
+
+	@Override
+	public Action getCustomAction() {
+		return createTrackAction;
+	}
+	
+	static class DummySymLoader extends QuickLoadSymLoader {
+
+		private static final List<LoadUtils.LoadStrategy> strategyList = new ArrayList<LoadUtils.LoadStrategy>();
+		static {
+			strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
+			strategyList.add(LoadUtils.LoadStrategy.VISIBLE);
+
+		}
+
+		public DummySymLoader(String trackId, String featureName, AnnotatedSeqGroup group) throws URISyntaxException {
+			super(new URI(trackId), featureName, group);
+		}
+		
+		@Override
+		public List<LoadUtils.LoadStrategy> getLoadChoices() {
+			return strategyList;
+		}
 	}
 }

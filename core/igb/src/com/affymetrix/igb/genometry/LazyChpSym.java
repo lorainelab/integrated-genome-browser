@@ -3,8 +3,17 @@ package com.affymetrix.igb.genometry;
 import affymetrix.calvin.data.ProbeSetQuantificationData;
 import affymetrix.calvin.data.ProbeSetQuantificationDetectionData;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.IntId;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
+import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
+import com.affymetrix.genometryImpl.das2.Das2Region;
+import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symmetry.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.symmetry.IndexedSym;
@@ -12,25 +21,17 @@ import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
-
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
-import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
-import com.affymetrix.genometryImpl.util.StringUtils;
-import com.affymetrix.genometryImpl.IntId;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.das2.Das2Region;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2Type;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.IgbStringUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.google.common.primitives.Ints;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  Want to automatically load location data for probesets on chip
@@ -195,7 +196,6 @@ public final class LazyChpSym extends ScoredContainerSym {
 		List<SeqSymmetry> id_sym_hits = new ArrayList<SeqSymmetry>(10000);
 		int id_hit_count = 0;
 		int str_hit_count = 0;
-	    int all_digit_not_int = 0;
 		loadTypes(aseq, matched_types, symlist);
 
 		// should the syms be sorted here??
@@ -229,11 +229,9 @@ public final class LazyChpSym extends ScoredContainerSym {
 				//     NO, for now consider that a miss -- if id in CHP file _can_ be an integer,
 				//     should have been converted in ChpParser to an Integer and populated in probeset_id2data ]
 				if (id != null) {
-					if (data == null && StringUtils.isAllDigits(id)) {
-						// using a simple isAllDigits() method here, which will miss some
-						//    want to avoid needing try/catch unless most likely can parse as integer
-						try {
-							int nid = Integer.parseInt(id);
+					if (data == null && StringUtils.isNumeric(id)) {
+						Integer nid = Ints.tryParse(id);
+						if (nid != null) {
 							int index = -1;
 							if (quant_detect_comp != null) {
 								quant_detect.setId(nid);
@@ -246,8 +244,6 @@ public final class LazyChpSym extends ScoredContainerSym {
 								data = int_entries.get(index);
 								id_hit_count++;
 							}
-						} catch (Exception ex) { // can't parse as an integer (even though all chars are digits)
-							all_digit_not_int++;
 						}
 					}
 				}
@@ -347,7 +343,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 				//  fix problem with name matching when name has a path prefix...
 				String name = type.getName();
 				String tname = name;
-				int sindex = name.lastIndexOf("/");
+				int sindex = name.lastIndexOf('/');
 				if (sindex >= 0) { tname = name.substring(sindex+1); }
 				if (tname.startsWith(synonym) || tname.startsWith(lcsyn)) {
 					matched_types.add(type);

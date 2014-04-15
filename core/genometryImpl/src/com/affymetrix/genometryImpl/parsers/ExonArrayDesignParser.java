@@ -587,8 +587,9 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 
 			for (File gfile : gfiles) {
 
-				if(Thread.currentThread().isInterrupted())
+				if(Thread.currentThread().isInterrupted()) {
 					break;
+				}
 
 				System.out.println("parsing gff file: " + gfile.getPath());
 

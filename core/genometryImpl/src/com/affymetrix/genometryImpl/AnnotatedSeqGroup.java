@@ -4,14 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
@@ -62,13 +58,15 @@ public class AnnotatedSeqGroup {
 	}
 
 	final public String getOrganism() {
-		if(organism != null && !("".equals(organism)))
+		if(organism != null && !("".equals(organism))) {
 			return organism;
+		}
 
 		String org = SpeciesLookup.getSpeciesName(id);
 
-		if(org != null && !("".equals(org)))
+		if(org != null && !("".equals(org))) {
 			this.organism = org;
+		}
 
 		return organism;
 	}
@@ -92,8 +90,9 @@ public class AnnotatedSeqGroup {
 
 	final public GenericVersion getVersionOfServer(GenericServer gServer){
 		for(GenericVersion v : gVersions){
-			if(v.gServer.equals(gServer))
+			if(v.gServer.equals(gServer)) {
 				return v;
+			}
 		}
 		return null; // No Associated version with provided server.
 	}

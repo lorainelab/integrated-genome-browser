@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 public class BigWigSymLoader extends SymLoader {
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();

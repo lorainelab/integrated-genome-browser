@@ -41,7 +41,9 @@ public class Das2Demo {
 			//get a list of available species
 			Map<String, Das2Source> das2Sources = dsi.getSources();
 			System.out.println("\nSpecies:");
-			for (String speciesName : das2Sources.keySet()) System.out.println("\t"+speciesName);
+			for (String speciesName : das2Sources.keySet()) {
+				System.out.println("\t"+speciesName);
+			}
 
 			//get a list of available genome builds offered for each species
 			System.out.println("\nSpecies and genome builds:");
@@ -49,7 +51,9 @@ public class Das2Demo {
 				System.out.println("\t"+speciesName);
 				Das2Source ds = das2Sources.get(speciesName);
 				Map<String, Das2VersionedSource> das2VersionedSources = ds.getVersions();
-				for (String genomeBuild : das2VersionedSources.keySet()) System.out.println("\t\t"+genomeBuild);
+				for (String genomeBuild : das2VersionedSources.keySet()) {
+					System.out.println("\t\t"+genomeBuild);
+				}
 			}
 			
 			//work with versionedSource H_sapiens_Mar_2006
@@ -59,12 +63,16 @@ public class Das2Demo {
 			//get a list of available segments (aka chromosomes) for H_sapiens_Mar_2006, assuming that a Das2VersionedSource for this genome was found			
 			Map<String,Das2Region> segmentsHSapiensMar2006 = versionedSourceHSapiensMar2006.getSegments();
 			System.out.println("\nChromosomes for H_sapiens_Mar_2006:");
-			for (String chromosome : segmentsHSapiensMar2006.keySet()) System.out.println("\t"+chromosome);
+			for (String chromosome : segmentsHSapiensMar2006.keySet()) {
+				System.out.println("\t"+chromosome);
+			}
 			
 			//get a list of available types (aka data tracks, data sets)
 			Map<String,Das2Type> typesHSapiensMar2006 = versionedSourceHSapiensMar2006.getTypes();
 			System.out.println("\nTypes/ datasets for H_sapiens_Mar_2006:");
-			for (String typeName : typesHSapiensMar2006.keySet()) System.out.println("\t"+typeName);
+			for (String typeName : typesHSapiensMar2006.keySet()) {
+				System.out.println("\t"+typeName);
+			}
 			
 			//work with an example dataset, the http://bioserver.hci.utah.edu:8080/DAS2DB/genome/H_sapiens_Mar_2006/ENCODE/USeq/CTCF+Broad/Peak+Calls/All+Peaks+Summed+Scores type dataset
 			Das2Type dataset = typesHSapiensMar2006.get("http://bioserver.hci.utah.edu:8080/DAS2DB/genome/H_sapiens_Mar_2006/ENCODE/USeq/CTCF+Broad/Peak+Calls/All+Peaks+Summed+Scores");
@@ -72,12 +80,16 @@ public class Das2Demo {
 			//print the dataset's properties, if any
 			Map<String,String> properties = dataset.getProps();
 			System.out.println("\nProperties for example dataset:");
-			for (String key : properties.keySet()) System.out.println("\t"+key+" = "+properties.get(key));
+			for (String key : properties.keySet()) {
+				System.out.println("\t"+key+" = "+properties.get(key));
+			}
 			
 			//print what formats the dataset can be returned as, this isn't really used and can be left out of a feature request
 			Map<String,String> formats = dataset.getFormats();
 			System.out.println("\nFormats for example dataset:");
-			for (String key : formats.keySet()) System.out.println("\t"+key+" = "+properties.get(key));
+			for (String key : formats.keySet()) {
+				System.out.println("\t"+key+" = "+properties.get(key));
+			}
 			
 			//download some of the data to file
 			
@@ -125,7 +137,9 @@ public class Das2Demo {
 			zis.getNextEntry();
 			in = new BufferedReader(new InputStreamReader(zis));
 		}
-		else in = new BufferedReader(new InputStreamReader(is));
+		else {
+			in = new BufferedReader(new InputStreamReader(is));
+		}
 		return in;
 	}
 

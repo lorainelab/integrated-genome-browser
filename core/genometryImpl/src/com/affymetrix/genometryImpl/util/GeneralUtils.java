@@ -189,7 +189,6 @@ public final class GeneralUtils {
 	public static File convertStreamToFile(InputStream istr, String streamName) {
 		// Output the InputStream to a temporary file, and read that as a FileInputStream.
 		OutputStream out = null;
-		FileInputStream fis = null;
 		try {
 			String unzippedStreamName = stripEndings(streamName);
 			String extension = getExtension(unzippedStreamName);
@@ -203,13 +202,12 @@ public final class GeneralUtils {
 				out.write(bytes, 0, read);
 			}
 			return f;
-		}  catch (Exception ex) {
+		}  catch (IOException ex) {
 			ex.printStackTrace();
 			return null;
 		}
 		finally {
 			GeneralUtils.safeClose(out);
-			GeneralUtils.safeClose(fis);
 		}
 	}
 
@@ -338,12 +336,14 @@ public final class GeneralUtils {
 	}
 
 	public static GenericFeature findFeatureWithURI(Collection<GenericFeature> features, URI uri) {
-		if(uri == null || features.isEmpty())
+		if(uri == null || features.isEmpty()) {
 			return null;
+		}
 		
 		for (GenericFeature feature : features) {
-			if(uri.equals(feature.getURI()))
+			if(uri.equals(feature.getURI())) {
 				return feature;
+			}
 		}
 		
 		return null;	// couldn't find it
@@ -525,7 +525,7 @@ public final class GeneralUtils {
 	public static long getUriLength(URI uri) {
 		long uriLength = -1;
 		try {
-			SeekableStream seekableStream = SeekableStreamFactory.getStreamFor(GeneralUtils.fixFileName(uri.toString()));
+			SeekableStream seekableStream = SeekableStreamFactory.getInstance().getStreamFor(GeneralUtils.fixFileName(uri.toString()));
 			uriLength = seekableStream.length();
 			seekableStream.close();
 			// very, very gross approximation
@@ -534,7 +534,7 @@ public final class GeneralUtils {
 			}
 		}
 		catch (IOException x) {
-			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can't get length of uri " + uri);
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can''t get length of uri {0}", uri);
 		}
 		return uriLength;
 	}
@@ -605,9 +605,7 @@ public final class GeneralUtils {
 	
 	public static void copyToClipboard(String content) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringBuffer hackbuf = new StringBuffer(content);
-		String hackstr = new String(hackbuf);
-		StringSelection data = new StringSelection(hackstr);
+		StringSelection data = new StringSelection(content);
 		clipboard.setContents(data, null);
 	}
 
@@ -619,8 +617,8 @@ public final class GeneralUtils {
 	public static String getExtension(String stream_name) {
 		if (stream_name.endsWith(".link.psl")) {
 			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
-		} else if (stream_name.lastIndexOf(".") >= 0) {
-			return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
+		} else if (stream_name.lastIndexOf('.') >= 0) {
+			return stream_name.substring(stream_name.lastIndexOf('.'), stream_name.length());
 		} else {
 			return "";
 		}

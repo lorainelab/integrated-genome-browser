@@ -10,8 +10,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.affymetrix.genometry.genopub.Annotation;
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
 
 public class AnnotationGrouping implements Serializable {
     

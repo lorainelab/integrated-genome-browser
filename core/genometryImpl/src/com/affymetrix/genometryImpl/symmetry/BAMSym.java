@@ -292,7 +292,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 					}
 					averageQualityScore += quality;
 				}
-				averageQualityScore = averageQualityScore/blockMins.length;
+				averageQualityScore /= blockMins.length;
 			} else {
 				averageQualityScore = getAverageQuality(getBaseQuality());
 			}
@@ -374,8 +374,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 		start = Math.max(start, txMin);
 		end = Math.min(txMax, end);
 
-		start = start - min;
-		end = end - min;
+		start -= min;
+		end -= min;
 
 		if (start > end) {
 			return "";

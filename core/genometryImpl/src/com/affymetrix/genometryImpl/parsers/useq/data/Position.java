@@ -17,8 +17,12 @@ public class Position implements Comparable<Position> {
 
 	/**Sorts by position base, smaller to larger.*/
 	public int compareTo(Position other){
-		if (position<other.position) return -1;
-		if (position>other.position) return 1;
+		if (position<other.position) {
+			return -1;
+		}
+		if (position>other.position) {
+			return 1;
+		}
 		return 0;
 	}
 
@@ -32,7 +36,9 @@ public class Position implements Comparable<Position> {
 	}
 
 	public boolean isContainedBy(int beginningBP, int endingBP) {
-		if (position >= beginningBP && position < endingBP) return true;
+		if (position >= beginningBP && position < endingBP) {
+			return true;
+		}
 		return false;
 	}
 

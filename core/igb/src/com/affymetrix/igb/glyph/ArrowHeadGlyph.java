@@ -46,15 +46,16 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 	public void draw(ViewI view) {
 		double hold_y = getCoordBox().y;
 
-		getCoordBox().y = getCoordBox().y + (getCoordBox().height / 2);
+		getCoordBox().y += (getCoordBox().height / 2);
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		int offset_center = getPixelBox().y;
 		getCoordBox().y = hold_y;
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		calHead();
 		if(headY < 8 || getPixelBox().x + getPixelBox().width/2 + headX/2 + buffer_pixel> getPixelBox().x + getPixelBox().width || 
-				getPixelBox().x + getPixelBox().width/2 - headX/2 - buffer_pixel< getPixelBox().x)
+				getPixelBox().x + getPixelBox().width/2 - headX/2 - buffer_pixel< getPixelBox().x) {
 			return;
+		}
 		
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());

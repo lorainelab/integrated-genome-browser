@@ -79,8 +79,9 @@ public class QuickLoadSymLoader extends SymLoader {
 	@Override
 	public boolean isResidueLoader(){
 		init();
-		if(symL != null)
+		if(symL != null) {
 			return symL.isResidueLoader();
+		}
 		
 		return isResidueLoader;
 	}
@@ -91,7 +92,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		String ext = GeneralUtils.getExtension(unzippedStreamName);
 
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
-		String strippedName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+		String strippedName = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
 		String friendlyName = strippedName.substring(0, strippedName.toLowerCase().indexOf(ext));
 		return friendlyName;
 	}
@@ -305,11 +306,13 @@ public class QuickLoadSymLoader extends SymLoader {
 		String loggerName = QuickLoadSymLoader.class.getName();
 		Level level = Level.SEVERE;
 		
-		if (symL != null) 
+		if (symL != null) {
 			loggerName = symL.getClass().getName();
+		}
 		
-		if(ex instanceof RuntimeException) 
+		if(ex instanceof RuntimeException) {
 			level = Level.WARNING;
+		}
 		
 		Logger.getLogger(loggerName).log(level, ex.getMessage(), ex);
 	}

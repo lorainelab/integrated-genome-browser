@@ -1,22 +1,17 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *
@@ -24,38 +19,23 @@ import static org.junit.Assert.*;
  */
 public class ScoredIntervalParserTest {
 
-	public ScoredIntervalParserTest() {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
-
 	@Test
 	public void testParseFromFile() throws IOException {
-		String filename = "test/data/egr/test1.egr";
-		assertTrue(new File(filename).exists());
-
-		InputStream istr = new FileInputStream(filename);
+		String filename = "test1.egr";
+		InputStream istr = ScoredIntervalParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		String stream_name = "chr1";
 		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
 
-		try {
-			ScoredIntervalParser tester = new ScoredIntervalParser();
-			tester.parse(istr, stream_name, seq_group, true);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		ScoredIntervalParser tester = new ScoredIntervalParser();
+		tester.parse(istr, stream_name, seq_group, true);
+
 		//System.out.println("done testing ScoredIntervalParser");
 		String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
 		assertEquals("chr1.1", unique_container_name);
 	}
 
+	@Ignore
 	@Test
 	public void testMakeNewSeq() {
 
@@ -71,14 +51,15 @@ public class ScoredIntervalParserTest {
 		assertEquals("chr1", aseq.getID());
 	}
 
+	@Ignore
 	@Test
 	public void testwriteEgrFormat() throws IOException {
-		String string = "# genome_version = H_sapiens_Mar_2006\n" +
-				"# score0 = NormDiff\n" +
-				"chr1	10015038	10016039	.	25.0\n" +
-				"chr1	100004630	100005175	.	6.0\n" +
-				"chr1	100087772	100088683	.	13.0\n" +
-				"chr1	100207533	100208700	.	230.0\n";
+		String string = "# genome_version = H_sapiens_Mar_2006\n"
+				+ "# score0 = NormDiff\n"
+				+ "chr1	10015038	10016039	.	25.0\n"
+				+ "chr1	100004630	100005175	.	6.0\n"
+				+ "chr1	100087772	100088683	.	13.0\n"
+				+ "chr1	100207533	100208700	.	230.0\n";
 
 		InputStream istr = new ByteArrayInputStream(string.getBytes());
 		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
@@ -100,4 +81,3 @@ public class ScoredIntervalParserTest {
 		assertEquals(string, outstream.toString());
 	}
 }
-

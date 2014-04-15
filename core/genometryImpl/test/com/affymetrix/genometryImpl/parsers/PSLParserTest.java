@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import java.io.FileNotFoundException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -97,11 +96,8 @@ public class PSLParserTest {
 
 	@Test
 	public void testFiles() throws Exception {
-		File file = new File("test/data/psl/test1.psl");
-		testFile(file);
-
-		file = new File("test/data/pslx/test.pslx");
-		testFile(file);
+		testFile("test1.psl");
+		testFile("test.pslx");
 	}
 
 	/**
@@ -123,16 +119,18 @@ public class PSLParserTest {
 		return results;
 	}
 
-	private void testFile(File file) throws Exception {
-		InputStream istr = GeneralUtils.getInputStream(file, new StringBuffer());
+	private void testFile(String filename) throws Exception {
+		
+		InputStream istr = PSLParserTest.class.getClassLoader().getResourceAsStream(filename);
+		assertNotNull(istr);
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		BioSeq seq = null;
 
 		PSLParser instance = new PSLParser();
-		List<UcscPslSym> syms = instance.parse(istr, file.getName(), null, group, true, true);
+		List<UcscPslSym> syms = instance.parse(istr, filename, null, group, true, true);
 		Collections.sort(syms, new UcscPslComparator());
 		
-		PSL psl = new PSL(file.toURI(), file.getName(), group, null, null,
+		PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), filename, group, null, null,
 				true, true, false);
 		List<BioSeq> seqs = psl.getChromosomeList();
 

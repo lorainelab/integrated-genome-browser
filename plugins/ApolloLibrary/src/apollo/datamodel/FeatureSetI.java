@@ -1,7 +1,5 @@
 package apollo.datamodel;
 
-import java.util.Vector;
-import java.util.HashMap;
 
 import apollo.util.FeatureListI;
 

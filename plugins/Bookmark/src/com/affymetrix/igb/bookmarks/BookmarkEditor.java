@@ -3,10 +3,18 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class is the implementation of bookmark editor panel.
@@ -16,12 +24,12 @@ import javax.swing.*;
 public class BookmarkEditor {
 
 	private static BookmarkEditor singleton;
-	private JTextField nameField;
-	private JTextArea commentField;
-	private JRadioButton positionOnlyB;
-	private JRadioButton positionDataB;
-	private JCheckBox useDefaultName;
-	private JOptionPane op;
+	private final JTextField nameField;
+	private final JTextArea commentField;
+	private final JRadioButton positionOnlyB;
+	private final JRadioButton positionDataB;
+	private final JCheckBox useDefaultName;
+	private final JOptionPane op;
 	private SeqSpan span;
 	
 	private static final boolean defaultUseDefaultName = true;
@@ -114,7 +122,7 @@ public class BookmarkEditor {
 				String name = nameField.getText();
 				String comment = commentField.getText();
 
-				if (name.trim().length() == 0) {
+				if (StringUtils.isBlank(name)) {
 					name = "IGB BOOKMARK";
 				}
 				bookmark.setName(name);
@@ -123,6 +131,9 @@ public class BookmarkEditor {
 				
 			} catch (MalformedURLException m) {
 				ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
+			}
+			catch (UnsupportedEncodingException ex) {
+				ErrorHandler.errorPanel("Couldn't add bookmark", ex, Level.SEVERE);
 			}
 		}
 	}

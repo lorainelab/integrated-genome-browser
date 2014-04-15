@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.factories;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.graphTypes.*;
 import com.affymetrix.igb.shared.*;
+import java.util.EnumMap;
 
 public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
@@ -25,7 +25,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
 	public final static Map<GraphType, Class<? extends GraphGlyph.GraphStyle>> type2Style;
 	static{
-		type2Style = new HashMap<GraphType, Class<? extends GraphGlyph.GraphStyle>>();
+		type2Style = new EnumMap<GraphType, Class<? extends GraphGlyph.GraphStyle>>(GraphType.class);
 		type2Style.put(GraphType.EMPTY_BAR_GRAPH, EmptyBarGraphType.class);
 		type2Style.put(GraphType.DOT_GRAPH, DotGraphType.class);
 		type2Style.put(GraphType.FILL_BAR_GRAPH, FillBarGraphType.class);

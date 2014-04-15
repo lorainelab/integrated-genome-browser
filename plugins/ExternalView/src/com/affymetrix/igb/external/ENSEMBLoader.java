@@ -89,7 +89,7 @@ class ENSEMBLoader extends BrowserLoader {
 		}
 		String chr = loc.chr.replaceAll("chr", "");
 		String url = urlMap.get(loc.db).url + "/Location/View?r=" + chr + ":" + (loc.start+1) + "-" + loc.end; //ensembl = 1 based
-		Logger.getLogger(ENSEMBLoader.class.getName()).log(Level.FINE, "url was : " + url);
+		Logger.getLogger(ENSEMBLoader.class.getName()).log(Level.FINE, "url was : {0}", url);
 		return url;
 	}
 	
@@ -113,7 +113,7 @@ class ENSEMBLoader extends BrowserLoader {
 		if(url.startsWith("http")){
 			String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
 			String session = cookies.get(EnsemblView.ENSEMBLSESSION);
-			if(session != null && !session.equals("")){
+			if(session != null && session.length() != 0){
 				cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
 			}
 			url = getImageUrl(url, cookie, new ENSEMBLURLFinder());
@@ -152,7 +152,7 @@ class ENSEMBLURLFinder implements URLFinder {
 			} else {
 				Matcher m = imagePattern.matcher(inputLine);
 				if (m.find()) {
-					Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "found fileName " + inputLine);
+					Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "found fileName {0}", inputLine);
 					String fileName = m.group(1);
 					return "http://"+redirectedURL.getHost() + "/img-tmp" + fileName;
 				}

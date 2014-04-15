@@ -117,18 +117,23 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		SimpleSymWithProps other = (SimpleSymWithProps) obj;
 		if (props == null) {
-			if (other.props != null)
+			if (other.props != null) {
 				return false;
-		} else if (!props.equals(other.props))
+			}
+		} else if (!props.equals(other.props)) {
 			return false;
+		}
 		return true;
 	}
 

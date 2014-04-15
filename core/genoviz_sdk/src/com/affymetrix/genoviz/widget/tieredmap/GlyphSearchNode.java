@@ -183,14 +183,20 @@ public class GlyphSearchNode implements Cloneable {
 			b = t;
 		}
 		if ( ( a <= m && m < b ) || m <= minimum_m ) {
-			if ( children != null ) children.remove ( g );
+			if ( children != null ) {
+				children.remove ( g );
+			}
 			glyphsInSearchTree.remove(g);
 		}
 		else if (a > m) {
-			if ( r != null )  r.removeGlyph ( g );
+			if ( r != null ) {
+				r.removeGlyph ( g );
+			}
 		}
 		else if (b < m) {
-			if ( l != null ) l.removeGlyph ( g );
+			if ( l != null ) {
+				l.removeGlyph ( g );
+			}
 		}
 	}
 

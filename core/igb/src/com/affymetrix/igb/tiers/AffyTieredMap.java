@@ -82,9 +82,9 @@ public class AffyTieredMap extends NeoMap {
 		this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
 		this.getView().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		this.getView().setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_plus));
-		ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_minus));
-		ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_mixed));
+		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, show_plus);
+		ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, show_minus);
+		ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, show_mixed);
 	}
 
 	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
@@ -240,7 +240,7 @@ public class AffyTieredMap extends NeoMap {
 			// need to call moveAbsolute to trigger recursive move of
 			//   all children
 			mtg.moveAbsolute(mtg.getCoordBox().x, offset);
-			offset = offset + height;
+			offset += height;
 		}
 
 		if (stretch_map) {

@@ -30,8 +30,6 @@ import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -379,7 +377,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 				ErrorHandler.errorPanel("file version not supported " + format);
 				throw new UnsupportedOperationException("file version not supported " + format);
 			}
-			Logger.getLogger("com.affymetrix.genometryImpl.symloader").log(Level.INFO, "vcf file version " + version);
+			Logger.getLogger("com.affymetrix.genometryImpl.symloader").log(Level.INFO, "vcf file version {0}", version);
 		}
 		else if (line.startsWith("format=")) {
 			String format = line.substring("format=".length());
@@ -437,7 +435,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 	}
 
 	private String getMultiple(char c, int count) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < count; i++) {
 			sb.append(c);
 		}
@@ -537,7 +535,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 		if (samples.length > 0) {
 			if (fields.length < samples.length + 9) {
 				Logger.getLogger(this.getClass().getName()).log(
-					Level.WARNING, "vcf line " + line_count + " has " + (fields.length - 9) + " genotype records, but header has " + samples.length);
+					Level.WARNING, "vcf line {0} has {1} genotype records, but header has {2}", new Object[]{line_count, fields.length - 9, samples.length});
 			}
 			else if (fields.length > samples.length + 9) {
 				throw new IllegalStateException("vcf format error, line " + line_count + " has " + (fields.length - 9) + " genotype records, but header has " + samples.length);

@@ -54,12 +54,20 @@ public class PositionScoreTextData extends USeqData{
 			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedPositionScoreTexts[i].text);
 			if (fixScore){
 				int score = USeqUtilities.fixBedScore(sortedPositionScoreTexts[i].score);
-				if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-				else out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+score+"\t"+strand);
+				if (tokens.length == 7) {
+					out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				}
+				else {
+					out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+score+"\t"+strand);
+				}
 			}
 			else {
-				if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-				else out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand);
+				if (tokens.length == 7) {
+					out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				}
+				else {
+					out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand);
+				}
 			}
 		}
 	}
@@ -70,7 +78,9 @@ public class PositionScoreTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tScore\tText(s)");
-			for (int i=0; i< sortedPositionScoreTexts.length; i++) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+sortedPositionScoreTexts[i].score+"\t"+sortedPositionScoreTexts[i].text);
+			for (int i=0; i< sortedPositionScoreTexts.length; i++) {
+				out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+sortedPositionScoreTexts[i].score+"\t"+sortedPositionScoreTexts[i].text);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tScore\tText(s)\tStrand");
@@ -118,9 +128,13 @@ public class PositionScoreTextData extends USeqData{
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
-		else fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
-		fileType = fileType + USeqUtilities.TEXT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
+		}
+		else {
+			fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
+		}
+		fileType += USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -197,9 +211,13 @@ public class PositionScoreTextData extends USeqData{
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
-		else fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
-		fileType = fileType + USeqUtilities.TEXT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
+		}
+		else {
+			fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
+		}
+		fileType += USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -259,7 +277,9 @@ public class PositionScoreTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of PositionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionScoreTexts.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositionScoreTexts.length;
+		}
 		//concatinate
 		PositionScoreText[] concatinate = new PositionScoreText[num];
 		int index = 0;
@@ -279,7 +299,9 @@ public class PositionScoreTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionScoreTextData> a = new ArrayList<PositionScoreTextData>(num);
-		for (int i=0; i< num; i++) a.add((PositionScoreTextData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionScoreTextData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 
@@ -335,9 +357,13 @@ public class PositionScoreTextData extends USeqData{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<PositionScoreText> al = new ArrayList<PositionScoreText>();
 		for (int i=0; i< sortedPositionScoreTexts.length; i++){
-			if (sortedPositionScoreTexts[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositionScoreTexts[i]);
+			if (sortedPositionScoreTexts[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositionScoreTexts[i]);
+			}
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedPositionScoreTexts = new PositionScoreText[al.size()];
 		al.toArray(sortedPositionScoreTexts);
 		updateSliceInfo(sortedPositionScoreTexts, sliceInfo);
@@ -356,7 +382,9 @@ public class PositionScoreTextData extends USeqData{
 		return basePositions;
 	}
 	public float[] getBaseScores(){
-		if (scores== null) getBasePositions();
+		if (scores== null) {
+			getBasePositions();
+		}
 		return scores;
 	}
 }

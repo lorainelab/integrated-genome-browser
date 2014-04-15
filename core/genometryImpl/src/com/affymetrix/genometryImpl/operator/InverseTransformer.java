@@ -1,8 +1,5 @@
 package com.affymetrix.genometryImpl.operator;
 
-import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
-import com.affymetrix.genometryImpl.operator.Operator;
-
 public final class InverseTransformer extends AbstractFloatTransformer implements Operator {
 	final String paramPrompt;
 	final String name;

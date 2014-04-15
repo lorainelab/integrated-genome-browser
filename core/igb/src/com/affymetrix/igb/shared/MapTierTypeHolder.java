@@ -2,7 +2,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import java.util.EnumMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -18,7 +18,7 @@ public class ReplaceInputStream extends InputStream {
 		    StringBuilder sb = new StringBuilder();
 		    String line = null;
 		    while ((line = reader.readLine()) != null) {
-		      sb.append(line + "\n");
+		      	sb.append(line).append("\n");
 		    }
 		    in.close();
 		    String orig = sb.toString();

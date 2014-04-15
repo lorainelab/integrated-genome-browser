@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import org.junit.Test;
@@ -25,8 +24,9 @@ public class BAMParserTest {
 
 	@Test
 		public void testParseFromFile() throws Exception {
-
-			String filename = "test/data/bam/combined_mapping_q.sorted.bam";
+			
+			String filename = "combined_mapping_q.sorted.bam";
+			filename = BAMParserTest.class.getClassLoader().getResource(filename).getFile();
 			assertTrue(new File(filename).exists());
 
 			InputStream istr = new FileInputStream(filename);

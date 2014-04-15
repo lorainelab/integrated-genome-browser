@@ -43,7 +43,9 @@ public class RegionData extends USeqData{
 		int lastBase = -1;
 		for (Region r : sortedRegions){
 			int end = r.getStop();
-			if (end > lastBase) lastBase = end;
+			if (end > lastBase) {
+				lastBase = end;
+			}
 		}
 		return lastBase;
 	}
@@ -64,11 +66,15 @@ public class RegionData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop");
-			for (int i=0; i< sortedRegions.length; i++) out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop);
+			for (int i=0; i< sortedRegions.length; i++) {
+				out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop);
+			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tStrand");
-			for (int i=0; i< sortedRegions.length; i++) out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+strand);
+			for (int i=0; i< sortedRegions.length; i++) {
+				out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+strand);
+			}
 		}
 	}
 
@@ -105,10 +111,18 @@ public class RegionData extends USeqData{
 		}
 		//make and put file type/extension 
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType = fileType+ USeqUtilities.SHORT;
-		else fileType = fileType+ USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -202,7 +216,9 @@ public class RegionData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of Region[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegions.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedRegions.length;
+		}
 		//concatinate
 		Region[] concatinate = new Region[num];
 		int index = 0;
@@ -222,7 +238,9 @@ public class RegionData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionData> a = new ArrayList<RegionData>(num);
-		for (int i=0; i< num; i++) a.add((RegionData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((RegionData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 
@@ -257,10 +275,18 @@ public class RegionData extends USeqData{
 		}
 		//make and put file type/extension 
 		String fileType;
-		if (useShortBeginning) fileType = USeqUtilities.SHORT;
-		else fileType = USeqUtilities.INT;
-		if (useShortLength) fileType = fileType+ USeqUtilities.SHORT;
-		else fileType = fileType+ USeqUtilities.INT;
+		if (useShortBeginning) {
+			fileType = USeqUtilities.SHORT;
+		}
+		else {
+			fileType = USeqUtilities.INT;
+		}
+		if (useShortLength) {
+			fileType += USeqUtilities.SHORT;
+		}
+		else {
+			fileType += USeqUtilities.INT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -422,9 +448,13 @@ public class RegionData extends USeqData{
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<Region> al = new ArrayList<Region>();
 		for (int i=0; i< sortedRegions.length; i++){
-			if (sortedRegions[i].isContainedBy(beginningBP, endingBP)) al.add(sortedRegions[i]);
+			if (sortedRegions[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegions[i]);
+			}
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedRegions = new Region[al.size()];
 		al.toArray(sortedRegions);
 		updateSliceInfo(sortedRegions, sliceInfo);

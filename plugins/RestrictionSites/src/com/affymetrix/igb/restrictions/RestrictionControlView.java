@@ -276,7 +276,7 @@ public final class RestrictionControlView extends IGBTabPanel
 				for (JLabel label : labelList) {
 					String site_name = label.getText();
 					// done when hit first non-labelled JLabel
-					if (site_name == null || site_name.equals("")) {
+					if (site_name == null || site_name.length() == 0) {
 						break;
 					}
 					String site_residues = site_hash.get(site_name);

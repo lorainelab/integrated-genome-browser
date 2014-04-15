@@ -37,11 +37,11 @@ public class Span {
 	 * @param d index of the last residue in the reference sequence.
 	 */
 	public Span ( int a, int b, int c, int d ) {
+		super();
 		seq_start = a;
 		seq_end = b;
 		ref_start = c;
 		ref_end = d;
-		return;
 	}
 
 	/** @return a string representation of the Span. */

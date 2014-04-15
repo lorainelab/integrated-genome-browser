@@ -13,10 +13,16 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 /**
  * Holds a list of bookmarks.

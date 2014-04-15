@@ -13,7 +13,6 @@
 
 package genoviz.demo;
 
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
@@ -273,8 +272,9 @@ public class NeoAssemblerDemo2 extends JApplet
 	@Override
 	public AppletContext getAppletContext()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return null;
+		}
 		return super.getAppletContext();
 	}
 
@@ -282,16 +282,18 @@ public class NeoAssemblerDemo2 extends JApplet
 	@Override
 	public URL getDocumentBase()
 	{
-		if(isApplication)
+		if(isApplication) {
 			return getCodeBase();
+		}
 		return super.getDocumentBase();
 	}
 
 	@Override
 	public String getParameter(String name)
 	{
-		if(isApplication)
+		if(isApplication) {
 			return parameters.get(name);
+		}
 		return super.getParameter(name);
 	}
 
@@ -368,14 +370,16 @@ public class NeoAssemblerDemo2 extends JApplet
 	}
 
 	public String getSelectedResidues ( AlignmentGlyph theGlyph ) {
-		if ( ! (theGlyph.isSelected() ) ) return( "" );
+		if ( ! (theGlyph.isSelected() ) ) {
+			return( "" );
+		}
 		Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
 		Mapping glyphMap = theGlyph.getMapping();
 		SequenceI glyphSeq = theGlyph.getSequence();
 		int begSeq = (int)selectedBox.x;
 		int endSeq = (int) ( selectedBox.x + selectedBox.width );
 		int seqPos = 0;
-		StringBuffer retSeq = new StringBuffer( "" );
+		StringBuilder retSeq = new StringBuilder( "" );
 		for ( int i = begSeq; i < endSeq; i++ ) {
 			seqPos = glyphMap.mapToMapped(i); //seqPos = glyphMap.mapToSequence( i );
 			char c = glyphSeq.getResidue( seqPos );
@@ -405,13 +409,17 @@ public class NeoAssemblerDemo2 extends JApplet
 	protected AlignmentGlyph getSelectedGlyph ( NeoAssembler theAssembler ) {
 		AlignmentGlyph oneGlyph;
 		oneGlyph = (AlignmentGlyph)theAssembler.getConsensusGlyph();
-		if (oneGlyph.isSelected() ) return oneGlyph;
+		if (oneGlyph.isSelected() ) {
+			return oneGlyph;
+		}
 		else {
 			List<GlyphI> theGlyphs = theAssembler.getAlignmentGlyphs();
 
 			for ( int i  = 0; i < theGlyphs.size(); i++ ) {
 				oneGlyph = (AlignmentGlyph)theGlyphs.get ( i );
-				if (oneGlyph.isSelected() ) return oneGlyph;
+				if (oneGlyph.isSelected() ) {
+					return oneGlyph;
+				}
 			}
 		}
 		return ( null );

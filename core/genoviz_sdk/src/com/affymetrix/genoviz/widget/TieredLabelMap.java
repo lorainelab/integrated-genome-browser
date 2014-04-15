@@ -47,8 +47,9 @@ public class TieredLabelMap extends AbstractTieredMap {
 	public void heardTierEvent(TierEvent evt) {
 
 		// We only care if this came from a TieredNeoMap
-		if (!(evt.getSource() instanceof TieredNeoMap))
+		if (!(evt.getSource() instanceof TieredNeoMap)) {
 			return;
+		}
 
 		// Distill info from the event
 
@@ -56,8 +57,9 @@ public class TieredLabelMap extends AbstractTieredMap {
 		MapTierGlyph mtg = evt.getTier();
 		int type         = evt.getType();
 
-		if ( getReshapeBehavior(NeoAbstractWidget.Y) != tnm.getReshapeBehavior(NeoAbstractWidget.Y) )
+		if ( getReshapeBehavior(NeoAbstractWidget.Y) != tnm.getReshapeBehavior(NeoAbstractWidget.Y) ) {
 			throw new RuntimeException( "TieredLabelMap and LabelMap do not have the same reshape behavior." );
+		}
 
 		if (debug_events)  {
 			String tierlabel = "null";
@@ -95,13 +97,13 @@ public class TieredLabelMap extends AbstractTieredMap {
 				break;
 
 			default:
-				return;
 		}
 	}
 
 	private void addTier(MapTierGlyph mtg, boolean ontop) {
-		if (mtg == null)
+		if (mtg == null) {
 			return;
+		}
 
 		this.addItem(mtg);
 
@@ -125,16 +127,20 @@ public class TieredLabelMap extends AbstractTieredMap {
 	 */
 	private MapTierGlyph makeLabelTierFor (MapTierGlyph mtg) {
 
-		if (mtg == null)
+		if (mtg == null) {
 			return null;
+		}
 
 		Color mtgLabelColor = mtg.getLabelColor();
 
-		if (mtgLabelColor == null)
+		if (mtgLabelColor == null) {
 			mtgLabelColor = Color.black;
+		}
 
 		MapTierGlyph labelMTG = new MapTierGlyph();
-		if (uniform_label_font != null) labelMTG.setFont(uniform_label_font);
+		if (uniform_label_font != null) {
+			labelMTG.setFont(uniform_label_font);
+		}
 		labelMTG.setHitable(true);
 		labelMTG.setSpacer(5);
 		labelMTG.setState(mtg.getState());
@@ -154,7 +160,9 @@ public class TieredLabelMap extends AbstractTieredMap {
 		labelMTG.setSelectable ( isSubSelectionAllowed() );
 
 		List<String> v = mtg.getMoreStrings();
-		if ( v != null ) labelMTG.setMoreStrings( v );
+		if ( v != null ) {
+			labelMTG.setMoreStrings( v );
+		}
 
 		return labelMTG;
 	}

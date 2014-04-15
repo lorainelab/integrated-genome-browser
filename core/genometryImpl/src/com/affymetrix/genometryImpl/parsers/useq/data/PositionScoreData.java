@@ -35,7 +35,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	public PositionScoreData(int[] positions, float[] scoreArray, SliceInfo sliceInfo){
 		this.sliceInfo = sliceInfo;
 		sortedPositionScores = new PositionScore[basePositions.length];
-		for (int i=0; i< sortedPositionScores.length; i++) sortedPositionScores[i] = new PositionScore(positions[i], scoreArray[i]);
+		for (int i=0; i< sortedPositionScores.length; i++) {
+			sortedPositionScores[i] = new PositionScore(positions[i], scoreArray[i]);
+		}
 	}
 
 	//methods
@@ -81,7 +83,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 			File savedFile = pd.write(saveDirectory, true);
 			files2Zip.add(savedFile);
 			//at the end of the data?
-			if (endIndex == numberPositions) break;
+			if (endIndex == numberPositions) {
+				break;
+			}
 		}
 	}
 
@@ -93,8 +97,12 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	}
 	/**By position, smallest to largest, assumes same chromosome strand.*/
 	public int compareTo (PositionScoreData other){
-		if (sortedPositionScores[0].position <other.sortedPositionScores[0].position) return -1;
-		if (sortedPositionScores[0].position >other.sortedPositionScores[0].position) return 1;
+		if (sortedPositionScores[0].position <other.sortedPositionScores[0].position) {
+			return -1;
+		}
+		if (sortedPositionScores[0].position >other.sortedPositionScores[0].position) {
+			return 1;
+		}
 		return 0;
 	}
 
@@ -110,7 +118,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		return basePositions;
 	}
 	public float[] getBaseScores(){
-		if (scores== null) getBasePositions();
+		if (scores== null) {
+			getBasePositions();
+		}
 		return scores;
 	}
 
@@ -123,7 +133,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		Arrays.sort(pdArray);
 		//fetch total size of PositionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionScores.length;
+		for (int i=0; i< pdArray.length; i++) {
+			num += pdArray[i].sortedPositionScores.length;
+		}
 		//concatinate
 		PositionScore[] concatinate = new PositionScore[num];
 		int index = 0;
@@ -143,7 +155,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionScoreData> a = new ArrayList<PositionScoreData>(num);
-		for (int i=0; i< num; i++) a.add((PositionScoreData) useqDataAL.get(i));
+		for (int i=0; i< num; i++) {
+			a.add((PositionScoreData) useqDataAL.get(i));
+		}
 		return merge (a);
 	}
 	
@@ -162,7 +176,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 				int score = USeqUtilities.fixBedScore(sortedPositionScores[i].score);
 				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+score+"\t"+strand);
 			}
-			else out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+sortedPositionScores[i].score+"\t"+strand);
+			else {
+				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+sortedPositionScores[i].score+"\t"+strand);
+			}
 		}
 	}
 	
@@ -172,7 +188,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tScore");
-			for (int i=0; i< sortedPositionScores.length; i++) out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score);
+			for (int i=0; i< sortedPositionScores.length; i++) {
+				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score);
+			}
 		}
 		else {
 			out.println("#Chr\tPosition\tScore\tStrand");
@@ -227,8 +245,12 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
-		else fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
+		}
+		else {
+			fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
@@ -303,8 +325,12 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 
 		//make and put file type/extension in header
 		String fileType;
-		if (useShort) fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
-		else fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
+		if (useShort) {
+			fileType = USeqUtilities.SHORT + USeqUtilities.FLOAT;
+		}
+		else {
+			fileType = USeqUtilities.INT + USeqUtilities.FLOAT;
+		}
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
@@ -403,9 +429,13 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<PositionScore> al = new ArrayList<PositionScore>();
 		for (int i=0; i< sortedPositionScores.length; i++){
-			if (sortedPositionScores[i].isContainedBy(beginningBP, endingBP)) al.add(sortedPositionScores[i]);
+			if (sortedPositionScores[i].isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositionScores[i]);
+			}
 		}
-		if (al.size() == 0) return false;
+		if (al.isEmpty()) {
+			return false;
+		}
 		sortedPositionScores = new PositionScore[al.size()];
 		al.toArray(sortedPositionScores);
 		updateSliceInfo(sortedPositionScores, sliceInfo);

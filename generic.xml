@@ -17,6 +17,7 @@
 		<property name="test.src.dir"    value="${basedir}/test" />
 		<property name="test.build.dir"  value="${basedir}/build-test" />
 		<property name="test.report.dir" value="${test.build.dir}" />
+		<property name="test.resources.dir" value="${basedir}/test/resources" />
 
 		<!-- property list file -->
 		<property file="${basedir}/ant.properties" />
@@ -83,7 +84,6 @@
 
 	<target name="test" depends="compile-tests">
 		<mkdir dir="${test.report.dir}" />
-
 		<condition property="junit.printsummary" value="false" else="true">
 			<and>
 				<isset property="build.compiler.emacs" />
@@ -94,10 +94,16 @@
 				<isset property="build.compiler.emacs" />
 			</and>
 		</condition>
+		<path id="cp">
+			<pathelement path="${junit.jar}:${test.classpath}" />
+			<dirset dir="${test.resources.dir}">
+				<include name="**/*"/>
+			</dirset>	
+		</path>
 
-		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="false" failureproperty="junit.failure" dir="${basedir}">
+		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="true" failureproperty="junit.failure" dir="${basedir}">
 			<jvmarg value="-Djava.awt.headless=true"/>
-			<classpath path="${junit.jar}:${test.classpath}" />
+			<classpath refid="cp" />
 			<formatter usefile="false" type="brief" if="build.compiler.emacs" />
 			<formatter type="xml" />
 			<batchtest todir="${test.build.dir}" >

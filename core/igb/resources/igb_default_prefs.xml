@@ -41,11 +41,6 @@
 
 
 <!-- Any RefSeq mRNA alignment -->
-  <annotation_url annot_type_regex=".*NCBI EST.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
-	type="default"
-  />
   <annotation_url annot_type_regex="(EST)|(mRNA)|(RefGene)|(RefSeq)" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
@@ -61,12 +56,7 @@
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
     type="default"
   />
-  <!-- Match Arabidopsis insertion lines, not yet used -->
-  <annotation_url annot_type_regex="^insert$" 
-    name="arabidopsis.org"
-    url="http://www.arabidopsis.org/servlets/SeedSearcher?action=detail&amp;stock_number=$$"
-	type="default"
-  />
+
 
 <!-- slime mold -->
   <annotation_url annot_id_regex="^DDB_G\d+$"
@@ -88,30 +78,11 @@
   />
 
 
-  <!-- Match Phytozome entries -->
-  <annotation_url annot_type_regex=".*gene models from Phytozome.*" 
-    name="Phytozome"
-    url="http://www.phytozome.net/genePage.php?crown&amp;method=0&amp;search=1&amp;searchText=$$&amp;detail=1"
-    type="default"
-  />
-
-  <!-- Match Metazome entry for N. vectensis -->
-  <annotation_url annot_type_regex="^N. vectensis gene models$" 
-    name="Metazome"
-    url="http://www.metazome.net/genePage.php?crown&amp;method=2221&amp;search=1&amp;searchText=$$&amp;detail=1"
-    type="default"
-  />
-
   <!-- corn -->
   <!-- annotation titles should be something like "Maize Transcripts 5b release" -->
   <annotation_url annot_type_regex=".*Maize Transcripts.*"
     name="MaizeSequence.org"
     url="http://www.maizesequence.org/Zea_mays/Transcript/Transcript?t=$$"
-    type="default"
-  />
-  <annotation_url annot_type_regex=".*Maize Transcripts.*"
-    name="Phytozome"
-    url="http://www.phytozome.net/genePage.php?crown&amp;method=0&amp;search=1&amp;searchText=$$&amp;detail=1"
     type="default"
   />
 

@@ -19,7 +19,6 @@ public class StyledJComboBox extends JComboBox {
         setRenderer(new ItemRenderer());
     }
 
-    @SuppressWarnings("unchecked")
     public void initModel(String[] list) {
         ArrayList<Item> model = new ArrayList<Item>();
         String actualValue = "";

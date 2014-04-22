@@ -13,9 +13,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-import com.affymetrix.genoviz.util.Idable;
+import com.affymetrix.igb.swing.JRPWidget;
+import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.util.Idable;
+
 
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel>, JRPWidget, Idable {
 	private static final long serialVersionUID = 1L;

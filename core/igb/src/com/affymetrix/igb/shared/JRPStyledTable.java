@@ -4,8 +4,8 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.swing.JRPWidget;
+import com.affymetrix.igb.swing.ScriptManager;
 import java.util.Vector;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;

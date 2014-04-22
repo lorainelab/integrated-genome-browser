@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genometryImpl.util.StatusAlert;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.action.ThreadHandlerAction;
 import java.awt.FontMetrics;

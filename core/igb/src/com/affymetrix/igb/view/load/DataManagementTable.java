@@ -15,10 +15,14 @@ import com.jidesoft.combobox.ColorExComboBox;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.ComboBoxRenderer;
+import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 
-import com.affymetrix.genoviz.swing.*;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
+import com.affymetrix.igb.swing.JRPTextField;
+import com.affymetrix.igb.swing.JRPTextFieldTableCellRenderer;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;

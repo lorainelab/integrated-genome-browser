@@ -5,6 +5,7 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.NumericFilter;
@@ -113,7 +114,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         trackNameTextField = new javax.swing.JTextField();
         annotationsPanel = new javax.swing.JPanel();
         stackDepthLabel = new javax.swing.JLabel();
-        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
+        stackDepthTextField = new JRPTextField("trackPreference_maxDepth");
         ((AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         labelFieldLabel = new javax.swing.JLabel();
         labelFieldComboBox = new javax.swing.JComboBox();

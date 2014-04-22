@@ -10,7 +10,7 @@ import java.util.prefs.PreferenceChangeListener;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
+import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.util.ThresholdReader;

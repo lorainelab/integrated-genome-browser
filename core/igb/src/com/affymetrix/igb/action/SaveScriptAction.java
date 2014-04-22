@@ -3,10 +3,10 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
+import com.affymetrix.igb.swing.JRPFileChooser;
+import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.ScriptProcessor;
+import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 

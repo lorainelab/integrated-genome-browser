@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;

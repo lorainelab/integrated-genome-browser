@@ -6,7 +6,7 @@ import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.recordplayback.JRPJPanel;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqGroupView;

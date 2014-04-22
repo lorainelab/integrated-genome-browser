@@ -34,9 +34,9 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
 import com.affymetrix.genometryImpl.util.*;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPTextField;
 
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;

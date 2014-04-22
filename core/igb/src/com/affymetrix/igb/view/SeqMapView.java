@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.swing.MenuUtil;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -43,8 +44,6 @@ import com.affymetrix.genoviz.glyph.CoordFloaterGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -70,7 +69,7 @@ import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
  * Despite it's name this is actually a panel and not a {@link ViewI}.
  */
 public class SeqMapView extends JPanel
-		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
+		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, com.affymetrix.igb.swing.JRPWidget {
 	private static final long serialVersionUID = 1L;
 	public static enum MapMode {
 
@@ -107,8 +106,8 @@ public class SeqMapView extends JPanel
 	boolean show_edge_matches = PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
 	private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip);
 	private MapMode mapMode;
-	private JRPToggleButton select_mode_button;
-	private JRPToggleButton scroll_mode_button;
+	private com.affymetrix.igb.swing.JRPToggleButton select_mode_button;
+	private com.affymetrix.igb.swing.JRPToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
@@ -188,12 +187,12 @@ public class SeqMapView extends JPanel
 	protected TierLabelManager tier_manager;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
-	protected JRPButton zoomInXB;
-	protected JRPButton zoomInYB;
-	protected JRPButton zoomOutXB;
-	protected JRPButton zoomOutYB;
+	protected com.affymetrix.igb.swing.JRPButton zoomInXB;
+	protected com.affymetrix.igb.swing.JRPButton zoomInYB;
+	protected com.affymetrix.igb.swing.JRPButton zoomOutXB;
+	protected com.affymetrix.igb.swing.JRPButton zoomOutYB;
 	protected MapRangeBox map_range_box;
-	protected JRPButton partial_residuesB;
+	protected com.affymetrix.igb.swing.JRPButton partial_residuesB;
 	public static final Font axisFont = NeoConstants.default_bold_font;
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
@@ -332,7 +331,7 @@ public class SeqMapView extends JPanel
 	public SeqMapView(boolean add_popups, String theId) {
 		super();
 		this.id = theId;
-		ScriptManager.getInstance().addWidget(this);
+		com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(this);
 		seqmap = createAffyTieredMap();
 
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
@@ -357,7 +356,7 @@ public class SeqMapView extends JPanel
 		Adjustable xzoomer = getXZoomer(this.id);
 
 		((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
-		Adjustable yzoomer = new RPAdjustableJSlider(this.id + "_yzoomer", Adjustable.VERTICAL);
+		Adjustable yzoomer = new com.affymetrix.igb.swing.RPAdjustableJSlider(this.id + "_yzoomer", Adjustable.VERTICAL);
 		((JSlider) yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
@@ -422,14 +421,14 @@ public class SeqMapView extends JPanel
 
 		xzoombox.add(map_range_box.range_box);
 
-		select_mode_button = new JRPToggleButton(this.id + "_select_mode_button",
+		select_mode_button = new com.affymetrix.igb.swing.JRPToggleButton(this.id + "_select_mode_button",
 				new MapModeSelectAction(this.id));
 		select_mode_button.setText("");
 		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
 		select_mode_button.setMargin(new Insets(2,4,2,4));
 		xzoombox.add(select_mode_button);
 
-		scroll_mode_button = new JRPToggleButton(this.id + "_scroll_mode_button",
+		scroll_mode_button = new com.affymetrix.igb.swing.JRPToggleButton(this.id + "_scroll_mode_button",
 				new MapModeScrollAction(this.id));
 		scroll_mode_button.setText("");
 		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
@@ -505,7 +504,7 @@ public class SeqMapView extends JPanel
 	}
 	
 	protected void addZoomInXButton(String id) {
-		zoomInXB = new JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
+		zoomInXB = new com.affymetrix.igb.swing.JRPButton(id + "_zoomInX_button", ZoomInXAction.getIconOnlyAction());
 		zoomInXB.setToolTipText(BUNDLE.getString("horizontalZoomerPlusButtonTooltip"));
 		zoomInXB.setMargin(new Insets(0,0,0,0));
 		zoomInXB.addMouseListener(continuousActionListener);
@@ -513,7 +512,7 @@ public class SeqMapView extends JPanel
 	}
 
 	protected void addZoomOutXButton(String id) {
-		zoomOutXB = new JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
+		zoomOutXB = new com.affymetrix.igb.swing.JRPButton(id + "_zoomOutX_button", ZoomOutXAction.getIconOnlyAction());
 		zoomOutXB.setToolTipText(BUNDLE.getString("horizontalZoomerMinusButtonTooltip"));
 		zoomOutXB.setMargin(new Insets(0,0,0,0));
 		zoomOutXB.addMouseListener(continuousActionListener);
@@ -521,7 +520,7 @@ public class SeqMapView extends JPanel
 	}
 
 	protected void addZoomInYButton(String id) {
-		zoomInYB = new JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
+		zoomInYB = new com.affymetrix.igb.swing.JRPButton(id + "_zoomInY_button", ZoomInYAction.getIconOnlyAction());
 		zoomInYB.setToolTipText(BUNDLE.getString("verticalZoomerPlusButtonTooltip"));
 		zoomInYB.setAlignmentX(CENTER_ALIGNMENT);
 		zoomInYB.setMargin(new Insets(0,0,0,0));
@@ -530,7 +529,7 @@ public class SeqMapView extends JPanel
 	}
 
 	protected void addZoomOutYButton(String id) {
-		zoomOutYB = new JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
+		zoomOutYB = new com.affymetrix.igb.swing.JRPButton(id + "_zoomOutYX_button", ZoomOutYAction.getIconOnlyAction());
 		zoomOutYB.setToolTipText(BUNDLE.getString("verticalZoomerMinusButtonTooltip"));
 		zoomOutYB.setAlignmentX(CENTER_ALIGNMENT);
 		zoomOutYB.setMargin(new Insets(0,0,0,0));
@@ -539,7 +538,7 @@ public class SeqMapView extends JPanel
 	}
 
 	protected void addRefreshButton(String id) {
-		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
+		com.affymetrix.igb.swing.JRPButton refresh_button = new com.affymetrix.igb.swing.JRPButton(id + "_refresh_button", refreshDataAction);
 //		refresh_button.setText("");
 		refresh_button.setIcon(MenuUtil.getIcon("16x16/actions/refresh.png"));
 		refresh_button.setMargin(new Insets(2,4,2,4));
@@ -547,7 +546,7 @@ public class SeqMapView extends JPanel
 	}
 	
 	protected void addLoadResidueButton(String id) {
-		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadPartialSequenceAction.getAction());
+		partial_residuesB = new com.affymetrix.igb.swing.JRPButton("DataAccess_sequenceInView", LoadPartialSequenceAction.getAction());
 		partial_residuesB.setToolTipText(MessageFormat.format(IGBConstants.BUNDLE.getString("load"), IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
 		partial_residuesB.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/dna.gif"));
 		partial_residuesB.setText("Load Sequence");
@@ -556,7 +555,7 @@ public class SeqMapView extends JPanel
 	}
 	
 	protected void addSearchButton(String id) {
-		JRPButton searchButton = new JRPButton(this.id + "_search_button",
+		com.affymetrix.igb.swing.JRPButton searchButton = new com.affymetrix.igb.swing.JRPButton(this.id + "_search_button",
 				new GenericAction(null, BUNDLE.getString("magnifyGlassTolltip"),
 				"16x16/actions/system-search.png",
 				null, //"22x22/actions/system-search.png",
@@ -2542,7 +2541,7 @@ public class SeqMapView extends JPanel
 		return map_range_box;
 	}
 	
-	public JRPButton getPartial_residuesButton() {
+	public com.affymetrix.igb.swing.JRPButton getPartial_residuesButton() {
 		return partial_residuesB;
 	}
 

@@ -26,8 +26,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
+import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.ScriptProcessorHolder;
 
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.osgi.service.IGBService;

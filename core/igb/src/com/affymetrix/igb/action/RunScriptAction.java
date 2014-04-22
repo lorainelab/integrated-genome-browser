@@ -24,9 +24,9 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
+import com.affymetrix.igb.swing.JRPFileChooser;
+import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 

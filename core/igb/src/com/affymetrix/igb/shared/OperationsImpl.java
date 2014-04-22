@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.osgi.service.IGBService;

@@ -16,7 +16,7 @@ import javax.swing.text.AbstractDocument;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.AutoScroll;
 import com.affymetrix.igb.view.SeqMapView;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

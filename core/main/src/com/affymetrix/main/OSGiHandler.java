@@ -157,7 +157,7 @@ public class OSGiHandler {
     		uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
     		installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
     		for (Bundle bundle : bundleContext.getBundles()) {
-    			bundle.start();
+				bundle.start();
     		}
 			ourLogger.log(Level.INFO, "OSGi is started with {0} version {1}",
 					new Object[]{m_fwk.getSymbolicName(), m_fwk.getVersion()});
@@ -169,7 +169,7 @@ public class OSGiHandler {
 					"Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
-
+	
 	private void uninstallBundles(BundleContext bundleContext, String uninstall_bundle) throws BundleException {
 		if (uninstall_bundle != null) {
 			for (Bundle bundle : bundleContext.getBundles()) {

@@ -38,12 +38,12 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.CCPUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPCheckBox;
+import com.affymetrix.igb.swing.JRPTable;
+import com.affymetrix.igb.swing.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;

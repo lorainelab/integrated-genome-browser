@@ -29,3 +29,4 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
 Bundle-ClassPath: .,
  resources/,
  lib/commons-io-2.4.jar
+Tool: Bnd-1.50.0

@@ -15,11 +15,12 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.symmetry,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.bioviews,
- com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.swing,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  javax.swing,
  javax.swing.event,
  javax.swing.table,
@@ -29,4 +30,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: List information about items selected in the display
-
+Tool: Bnd-1.50.0

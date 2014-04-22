@@ -1,7 +1,7 @@
 package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;

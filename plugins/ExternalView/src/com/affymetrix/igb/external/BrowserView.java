@@ -1,6 +1,6 @@
 package com.affymetrix.igb.external;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;

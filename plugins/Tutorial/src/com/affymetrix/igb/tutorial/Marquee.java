@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.genoviz.swing.recordplayback.SubRegionFinder;
+import com.affymetrix.igb.swing.SubRegionFinder;
 import furbelow.AbstractComponentDecorator;
 import java.awt.*;
 import java.util.Timer;

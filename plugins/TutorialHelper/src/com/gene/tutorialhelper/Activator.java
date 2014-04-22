@@ -3,7 +3,7 @@ package com.gene.tutorialhelper;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
+import com.affymetrix.igb.swing.JRPWidgetDecorator;
 import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 

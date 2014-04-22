@@ -14,7 +14,8 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genoviz.bioviews,
- com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.genoviz.util,
  com.affymetrix.genoviz.widget,
  javax.swing,
@@ -25,4 +26,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: Search for restriction enzyme sites in genomic DNA.
-

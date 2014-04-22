@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenu;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;

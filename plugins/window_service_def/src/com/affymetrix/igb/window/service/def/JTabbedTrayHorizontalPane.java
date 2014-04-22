@@ -8,8 +8,8 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
+import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**

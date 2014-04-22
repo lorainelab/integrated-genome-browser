@@ -10,7 +10,8 @@ Import-Package: com.affymetrix.common;version="[7.0.0,@appVersion@]",
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.osgi.service,
  javax.swing,
  javax.xml.parsers,
@@ -20,3 +21,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: Bundle to help conduct a survey.
+Tool: Bnd-1.50.0

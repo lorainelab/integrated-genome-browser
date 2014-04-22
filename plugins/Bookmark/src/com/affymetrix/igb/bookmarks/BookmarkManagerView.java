@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 import com.google.common.collect.ImmutableListMultimap;

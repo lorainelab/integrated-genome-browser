@@ -5,7 +5,7 @@ import org.osgi.framework.BundleActivator;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.window.service.WindowActivator;
 import org.osgi.framework.BundleContext;
 

@@ -2,8 +2,8 @@ package com.gene.igbscript;
 
 import javax.script.ScriptEngineFactory;
 
-import com.affymetrix.genoviz.swing.recordplayback.Operation;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
+import com.affymetrix.igb.swing.Operation;
+import com.affymetrix.igb.swing.ScriptProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 public class IGBScriptProcessor implements ScriptProcessor {

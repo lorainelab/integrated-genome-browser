@@ -13,11 +13,11 @@
 package com.affymetrix.igb.thresholding;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
-import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
+import com.affymetrix.igb.swing.JRPRadioButton;
+import com.affymetrix.igb.swing.JRPSlider;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.genometryImpl.operator.Operator;

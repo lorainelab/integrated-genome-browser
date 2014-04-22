@@ -19,9 +19,11 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.symmetry,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.window.service,
  javax.swing,
  javax.swing.table,
  org.apache.commons.lang3,
  org.osgi.framework;version="1.5.0"
-
+Tool: Bnd-1.50.0

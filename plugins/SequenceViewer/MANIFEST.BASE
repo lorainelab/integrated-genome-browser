@@ -19,11 +19,12 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genoviz.datamodel,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.widget,
  com.affymetrix.genoviz.util,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.window.service,
  com.jidesoft.hints,
  javax.swing,
@@ -36,4 +37,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: Plugin to allow to view sequence in a sequence viewer.
-
+Tool: Bnd-1.50.0

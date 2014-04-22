@@ -2,7 +2,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.stylesheet.AssociationElement;

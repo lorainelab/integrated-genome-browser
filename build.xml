@@ -17,7 +17,6 @@
 		<!-- Locations of subprojects -->
 		<property name="main"                value="${basedir}/core/main" />
 		<property name="common"              value="${basedir}/core/common" />
-		<property name="genoviz"             value="${basedir}/core/genoviz_sdk" />
 		<property name="genometry"           value="${basedir}/core/genometryImpl" />
 		<property name="igb"                 value="${basedir}/core/igb" />
 		<property name="igb-18n"             value="${basedir}/core/igb-i18n" />
@@ -26,7 +25,6 @@
 		<property name="HeatmapEditor"		 value="${basedir}/core/HeatmapEditor" />
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
 		<property name="das2server"          value="${basedir}/das2_server" />
-		<property name="protannot"           value="${basedir}/protannot" />
 
 		<!-- Locations of optional bundle subprojects -->
 		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
@@ -56,27 +54,20 @@
 		<property name="release.dir"		 value="${dist.dir}/release" />
 		<property name="lib.dir"			 value="${basedir}/ext" />
 		<property name="etc.dir"			 value="${basedir}/etc" />
-		<property name="demos.dir"			 value="${genoviz}/demo" />
 		<property name="docs.dir"			 value="${basedir}/doc/api" />
 		<property name="report.dir"			 value="${basedir}/reports" />
 		<property name="bundle.dir"			 value="${basedir}/bundles" />
 		<property name="igb.ant.dir"		 value="${basedir}/plugins/ant" />
-		<property name="jar_extensions"		 value="${basedir}/core/jar_extensions" />
 		<property name="def.prefs.dir"       value="${basedir}/core/igb/resources" />
 		
 		<!-- list the libraries to create bundle -->
-		<property name="include.lib" value="affx_fusion,be.pwnt.jflow_1.0.0,freehep-2.1.1,jdom-1.1.3,colt,commons-net-2.0,image4j,jide,jlfgr-1_0,log4j-1.2.11,picard,swing-layout,ant-1.7.1,lambdaj-2.4-with-dependencies,JGoogleAnalytics_0.4,commons-io-2.4,commons-csv-1.0,guava-16.0.1"/>
-
-		<!-- list the libraries to extend bundle -->
-		<property name="sam"				 value="${jar_extensions}/sam" />
-		<property name="tribble"			 value="${jar_extensions}/tribble" />
-		<property name="icons"				 value="${jar_extensions}/icons" />
-		
+		<property name="include.lib" value="affx_fusion,be.pwnt.jflow_1.0.0,freehep-2.1.1,jdom-1.1.3,colt,commons-net-2.0,image4j,jide,jlfgr-1_0,log4j-1.2.11,picard,swing-layout,ant-1.7.1,lambdaj-2.4-with-dependencies,JGoogleAnalytics_0.4,commons-io-2.4,commons-csv-1.0,guava-16.0.1,genoviz-1.0,igbSwingExt-1.0"/>
+	
 		<!-- list the libraries to copy -->
 		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1,commons-pool-1.6,commons-compress-1.6"/>
 		
 		<property name="osgi.impl"   value="${osgi.impl.dir}${osgi.impl.file}"/>
-		<property name="javadoc.src.path"   value="${common}/src:${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
+		<property name="javadoc.src.path"   value="${common}/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
 		<property file="${common}/resources/common.properties"/>
 	</target>
 
@@ -107,15 +98,6 @@
 		      version-revision="0"
 		      history="false"
 		      output="${webapp.dir}"/>
-	</target>
-
-	<target name="demos" depends="jar" description="Compile genoviz demos">
-		<!--<ant antfile="${basedir}/generic.xml" dir="${basedir}/genoviz_sdk" target="docs">
-			<property name="docs.dir"   value="${basedir}/genoviz_sdk/docs" />
-		</ant>-->
-		<my.javac srcdir="${demos.dir}/src" destdir="${demos.dir}" classpath="${genoviz}/build" />
-
-		<copy file="${dist.dir}/genoviz.jar" todir="${demos.dir}" />
 	</target>
 
 	<target name="compile-tests" depends="common-init">
@@ -452,7 +434,6 @@
 			<fileset dir="${dist.dir}" />
 			<fileset dir="${webstart.dir}" />
 			<fileset dir="${webapp.dir}" />
-			<fileset dir="${demos.dir}/genoviz" />
 			<fileset dir="${report.dir}" />
 			<fileset dir="${basedir}/build" />
 			<fileset dir="${work.dir}" />
@@ -461,9 +442,6 @@
 			<fileset file="${igb.jar.name}.jar" />
 			<fileset file="${igb.jar.large.name}.jar" />
 			<fileset file="${igb.jar.5GB.name}.jar" />
-			<fileset file="protannot_exe.jar" />
-			<fileset file="${genoviz}/genoviz.jar" />
-			<fileset file="${demos.dir}/genoviz.jar" />
 		</delete>
 		<iterate target="clean" />
 		<iterate-non-plugins target="clean" />
@@ -535,36 +513,9 @@
 			</fileset>
 		</jar>
 	</presetdef>
-
-	<target name="protannot_exe" depends="jar" description="Create a single-jar Protannot application">
-		<jar jarfile="protannot_exe.jar" update="false">
-			<manifest>
-				<attribute name="Main-Class" value="org.bioviz.protannot.ProtAnnotMain"/>
-			</manifest>
-			<zipgroupfileset dir="${dist.dir}">
-				<include name="common.jar"/>
-				<include name="genometry.jar"/>
-				<include name="genoviz.jar"/>
-				<include name="protannot.jar"/>
-			</zipgroupfileset>
-			<zipgroupfileset dir="${lib.dir}">
-				<include name="freehep-2.1.1.jar"/>
-				<include name="jlfgr-1_0.jar"/>
-				<include name="tango-icon-theme-0.8.90.jar"/>
-				<include name="colt.jar" />
-				<include name="sam.jar" />
-			</zipgroupfileset>
-		</jar>
-	</target>
 	
 	<target name="cache_exe" depends="common-init" description="Create a single-jar Protannot application">
 		<sequential>
-			<subant	target="jar" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
-				<dirset dir="${jar_extensions}">
-					<include name="sam" />
-					<include name="tribble" />
-				</dirset>
-			</subant>
 			<subant target="jar" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}/core">
@@ -642,46 +593,12 @@
 				<dirset dir="${basedir}">
 					<include name="common/build" />
 					<include name="genometryImpl/build" />
-					<include name="genoviz_sdk/build" />
-					<include name="protannot/build" />
 				</dirset>
 			</classpath>
 		</java>
 	</target>
-	
-	<target name="debug-nb-protannot" depends="compile" description="debug protannot" >
-        <nbjpdastart addressproperty="jpda.address" name="protannot" transport="dt_socket">
-            <classpath>
-				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
-				<fileset dir="${lib.dir}" includes="jlfgr-1_0.jar"/>
-				<fileset dir="${lib.dir}" includes="colt.jar" />
-				<fileset dir="${lib.dir}" includes="sam.jar" />
-				<dirset dir="${basedir}">
-					<include name="common/build" />
-					<include name="genometryImpl/build" />
-					<include name="genoviz_sdk/build" />
-					<include name="protannot/build" />
-				</dirset>
-			</classpath>
-        </nbjpdastart>
-        <java fork="true" classname="org.bioviz.protannot.ProtAnnotMain">
-			<classpath>
-				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
-				<fileset dir="${lib.dir}" includes="colt.jar" />
-				<fileset dir="${lib.dir}" includes="sam.jar" />
-				<dirset dir="${basedir}">
-					<include name="common/build" />
-					<include name="genometryImpl/build" />
-					<include name="genoviz_sdk/build" />
-					<include name="protannot/build" />
-				</dirset>
-			</classpath>
-			<jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
-		</java>
-    </target>
 
-	<target name="release" depends="release-igb, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
+	<target name="release" depends="release-igb, release-igb-webstart" description="Package IGB for Release" />
 
 	<target name="release-igb" depends="exe">
 		<mkdir dir="${release.dir}/igb" />
@@ -793,25 +710,6 @@
 		</zip>
 	</target>
 
-	<target  name="release-genoviz-sdk" depends="jar, demos">
-		<mkdir dir="${release.dir}/genoviz-sdk" />
-		<copy todir="${release.dir}/genoviz-sdk/genoviz-sdk/">
-			<fileset file="${dist.dir}/genoviz.jar" />
-			<fileset dir="${basedir}">
-				<include name="NOTICES.txt" />
-				<include name="RELEASES.txt" />
-				<include name="LICENSE.html" />
-			</fileset>
-			<fileset dir="${genoviz}">
-				<include name="index.html" />
-				<include name="demo/**" />
-			</fileset>
-		</copy>
-		<zip destfile="${release.dir}/genoviz-sdk.zip" basedir="${release.dir}" >
-			<include name="genoviz-sdk/**" />
-		</zip>
-	</target>
-
 	<target name="profile-nb" if="netbeans.home">
 		<ant target="profile-nb" antfile="nbproject/ide-targets.xml" />
 	</target>
@@ -846,18 +744,10 @@
 	<macrodef name="iterate-core">
 		<attribute name="target" default=""/>
 		<sequential>
-			<subant	target="@{target}" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
-				<dirset dir="${jar_extensions}">
-					<include name="sam" />
-					<include name="tribble" />
-					<include name="icons" />
-				</dirset>
-			</subant>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}/core">
 					<include name="common" />
-					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
 				</dirset>
 				<dirset dir="${basedir}/core">
@@ -947,7 +837,6 @@
    <target name="umljavadocs" depends="jar" description="Build HTML including UML diagrams from JavaDoc. Requires graphviz for the UML diagrams.">
 	   <path id="uml.source.path">
            <pathelement path="${basedir}/igb/src/"/>
-           <pathelement path="${basedir}/genoviz_sdk/src/"/>
 		   <pathelement path="${basedir}/genometryImpl/src/"/>
 		   <pathelement path="${basedir}/main/src/"/>
 		   <pathelement path="${basedir}/common/src/"/>

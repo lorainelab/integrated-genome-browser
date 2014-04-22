@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.Selections;

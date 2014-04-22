@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.swing.ScriptManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

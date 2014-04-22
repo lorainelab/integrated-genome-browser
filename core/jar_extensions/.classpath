@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="sam/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar" sourcepath="/picard-1.5.3/src/java"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/log4j-1.2.11.jar"/>
-	<classpathentry kind="output" path="build"/>
-</classpath>

@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
+import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;

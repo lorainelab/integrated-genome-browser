@@ -11,8 +11,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.RangeSlider;
-import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPRadioButton;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.BorderLayout;
 import java.awt.Container;

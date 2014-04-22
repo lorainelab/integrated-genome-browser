@@ -22,7 +22,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 

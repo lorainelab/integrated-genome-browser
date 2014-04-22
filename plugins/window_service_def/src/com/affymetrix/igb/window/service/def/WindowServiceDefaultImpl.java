@@ -28,10 +28,10 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
-import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
+import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;

@@ -9,10 +9,11 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.igb.window.service,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.util,
  javax.swing,
  javax.swing.event,
@@ -21,4 +22,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: IGB window service default implementation
-

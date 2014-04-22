@@ -9,7 +9,8 @@ Bundle-Description: plugin to allow the user to run Ruby scripts in IGB
 Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/RubyScript-1.0.0/RubyScript.html
 Bundle-Vendor: Genentech
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
- com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.osgi.service,
  javax.management,
  javax.script,
@@ -20,4 +21,3 @@ Bundle-ClassPath: lib/jruby.jar,
  lib/asm-2.2.3.jar,
  lib/backport-util-concurrent.jar,
  .
-

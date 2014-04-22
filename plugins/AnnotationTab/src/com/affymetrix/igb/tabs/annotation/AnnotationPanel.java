@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tabs.annotation;
 
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.swing.NumericFilter;
 
 /**
@@ -37,14 +38,14 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         strandsReverseColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         stackHeightPanel = new javax.swing.JPanel();
-        stackDepthTextField = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_maxDepth");
+        stackDepthTextField = new JRPTextField("trackPreference_maxDepth");
         ((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         stackDepthGoButton = new javax.swing.JButton();
         stackDepthAllButton = new javax.swing.JButton();
         trackHeightPanel = new javax.swing.JPanel();
         lockTierHeightCheckBox = new javax.swing.JCheckBox();
         setHeightInPxLabel = new javax.swing.JLabel();
-        setPxHeightTextBox = new com.affymetrix.genoviz.swing.recordplayback.JRPTextField("trackPreference_tierHeight");
+        setPxHeightTextBox = new JRPTextField("trackPreference_tierHeight");
         ((javax.swing.text.AbstractDocument)setPxHeightTextBox.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
         pxGoButton = new javax.swing.JButton();
 

@@ -9,7 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**

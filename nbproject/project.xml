@@ -28,12 +28,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>core/genoviz_sdk/src</label>
-                    <type>java</type>
-                    <location>core/genoviz_sdk/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>core/main/src</label>
                     <type>java</type>
                     <location>core/main/src</location>
@@ -334,12 +328,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>core/genoviz_sdk/demo/src</label>
-                    <type>java</type>
-                    <location>core/genoviz_sdk/demo/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/SequenceViewer/test</label>
                     <type>java</type>
                     <location>plugins/SequenceViewer/test</location>
@@ -372,43 +360,36 @@
             </folders>
             <ide-actions>
                 <action name="build">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>compile</target>
                 </action>
                 <action name="clean">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                 </action>
                 <action name="javadoc">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>docs</target>
                 </action>
                 <action name="run">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run</target>
                 </action>
                 <action name="test">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test</target>
                 </action>
                 <action name="rebuild">
+                    <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
                     <target>compile</target>
                 </action>
                 <action name="debug">
-                    <script>nbproject/ide-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>debug-nb</target>
                 </action>
-                <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
-                    <target>run-selected-file-in-src</target>
-                    <context>
-                        <property>run.class</property>
-                        <folder>core/genoviz_sdk/demo/src</folder>
-                        <pattern>\.java$</pattern>
-                        <format>java-name</format>
-                        <arity>
-                            <one-file-only/>
-                        </arity>
-                    </context>
-                </action>
                 <action name="test.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test-genometryImpl</target>
                     <context>
                         <property>testclass</property>
@@ -421,7 +402,7 @@
                     </context>
                 </action>
                 <action name="test.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test-das2Server</target>
                     <context>
                         <property>testclass</property>
@@ -434,7 +415,7 @@
                     </context>
                 </action>
                 <action name="test.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>test-bookmarks</target>
                     <context>
                         <property>testclass</property>
@@ -446,21 +427,8 @@
                         </arity>
                     </context>
                 </action>
-                <action name="debug.single">
-                    <script>nbproject/ide-file-targets.xml</script>
-                    <target>debug-selected-file-in-src</target>
-                    <context>
-                        <property>debug.class</property>
-                        <folder>core/genoviz_sdk/demo/src</folder>
-                        <pattern>\.java$</pattern>
-                        <format>java-name</format>
-                        <arity>
-                            <one-file-only/>
-                        </arity>
-                    </context>
-                </action>
                 <action name="run.single">
-                    <script>nbproject/ide-file-targets.xml</script>
+                    <script>nbproject/nbjdk.xml</script>
                     <target>run-selected-file-in-src</target>
                     <context>
                         <property>run.class</property>
@@ -476,96 +444,103 @@
             <export>
                 <type>folder</type>
                 <location>das2_server/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>core/genometryImpl/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/genoviz_sdk/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>core/igb/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>core/genoviz_sdk/demo</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>core/main/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>core/common/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/ExternalView/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>core/igb_service/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/plugins_page/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/RestrictionSites/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>core/window_service/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/window_service_def/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/PropertyView/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/SearchView/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/GraphAdjuster/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>bundles</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/Tutorial/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
                 <location>plugins/TableView/build</location>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <view>
@@ -577,10 +552,6 @@
                     <source-folder style="packages">
                         <label>core/genometryImpl/src</label>
                         <location>core/genometryImpl/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/genoviz_sdk/src</label>
-                        <location>core/genoviz_sdk/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>core/main/src</label>
@@ -783,10 +754,6 @@
                         <location>protannot/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>core/genoviz_sdk/demo/src</label>
-                        <location>core/genoviz_sdk/demo/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/SequenceViewer/test</label>
                         <location>plugins/SequenceViewer/test</location>
                     </source-folder>
@@ -818,18 +785,6 @@
                     <ide-action name="run"/>
                     <ide-action name="test"/>
                     <ide-action name="debug"/>
-                    <action>
-                        <label>Demos</label>
-                        <target>demos</target>
-                    </action>
-                    <action>
-                        <label>Protannot</label>
-                        <target>run_Protannot</target>
-                    </action>
-                    <action>
-                        <label>Debug Protannot</label>
-                        <target>debug-nb-protannot</target>
-                    </action>
                 </context-menu>
             </view>
             <subprojects/>
@@ -839,7 +794,6 @@
                 <package-root>das2_server/src</package-root>
                 <package-root>core/common/src</package-root>
                 <package-root>core/genometryImpl/src</package-root>
-                <package-root>core/genoviz_sdk/src</package-root>
                 <package-root>core/main/src</package-root>
                 <package-root>core/igb/src</package-root>
                 <package-root>core/igb_service/src</package-root>
@@ -854,8 +808,6 @@
                 <package-root>plugins/RestrictionSites/src</package-root>
                 <package-root>plugins/plugins_page/src</package-root>
                 <package-root>plugins/Tutorial/src</package-root>
-                <package-root>core/genoviz_sdk/demo/src</package-root>
-                <package-root>core/genoviz_sdk/test</package-root>
                 <package-root>protannot/src</package-root>
                 <package-root>plugins/SearchModeIdOrProps/src</package-root>
                 <package-root>plugins/BigBedHandler/src</package-root>
@@ -891,12 +843,10 @@
                 <package-root>plugins/Update/src</package-root>
                 <package-root>plugins/NCBIPrimer/src</package-root>
                 <package-root>plugins/SequenceViewer/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.6.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:ext/lambdaj-2.4-with-dependencies.jar:ext/JGoogleAnalytics_0.4.jar:ext/commons-pool-1.6.jar:core/HeatmapEditor/lib/swingx-all-1.6.4.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:plugins/TableView/lib/TableView.jar:plugins/PythonScript/lib/jython.jar:plugins/RubyScript/lib/asm-2.2.3.jar:plugins/RubyScript/lib/backport-util-concurrent.jar:plugins/RubyScript/lib/jruby-engine.jar:plugins/RubyScript/lib/jruby.jar:plugins/ThousandGenomesServerType/lib/commons-io-2.4.jar:plugins/SearchModeLucene/lib/commons-httpclient-3.1.jar:plugins/SearchModeLucene/lib/commons-vfs2-2.0.jar:plugins/SearchModeLucene/lib/concurrent.jar:plugins/SearchModeLucene/lib/lucene-core-3.6.0.jar:plugins/Bookmark/lib/nanohttpd-webserver-2.0.5.jar:ext/commons-io-2.4.jar:ext/commons-csv-1.0.jar:ext/guava-16.0.1.jar:ext/concurrentlinkedhashmap-lru-1.4.jar</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.6.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:ext/lambdaj-2.4-with-dependencies.jar:ext/JGoogleAnalytics_0.4.jar:ext/commons-pool-1.6.jar:core/HeatmapEditor/lib/swingx-all-1.6.4.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:plugins/TableView/lib/TableView.jar:plugins/PythonScript/lib/jython.jar:plugins/RubyScript/lib/asm-2.2.3.jar:plugins/RubyScript/lib/backport-util-concurrent.jar:plugins/RubyScript/lib/jruby-engine.jar:plugins/RubyScript/lib/jruby.jar:plugins/ThousandGenomesServerType/lib/commons-io-2.4.jar:plugins/SearchModeLucene/lib/commons-httpclient-3.1.jar:plugins/SearchModeLucene/lib/commons-vfs2-2.0.jar:plugins/SearchModeLucene/lib/concurrent.jar:plugins/SearchModeLucene/lib/lucene-core-3.6.0.jar:plugins/Bookmark/lib/nanohttpd-webserver-2.0.5.jar:ext/commons-io-2.4.jar:ext/commons-csv-1.0.jar:ext/guava-16.0.1.jar:ext/concurrentlinkedhashmap-lru-1.4.jar:ext/igbSwingExt-1.0.jar:ext/genoviz-1.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>core/genometryImpl/build</built-to>
-                <built-to>core/genoviz_sdk/build</built-to>
                 <built-to>core/igb/build</built-to>
-                <built-to>core/genoviz_sdk/demo</built-to>
                 <built-to>core/main/build</built-to>
                 <built-to>core/common/build</built-to>
                 <built-to>plugins/ExternalView/build</built-to>

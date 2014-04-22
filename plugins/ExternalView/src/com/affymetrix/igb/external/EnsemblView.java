@@ -1,9 +1,9 @@
 package com.affymetrix.igb.external;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPComboBox;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 import java.awt.BorderLayout;

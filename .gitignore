@@ -18,8 +18,6 @@ core/genometryImpl/test/data/bgn/testOUT.bgn
 core/genometryImpl/test/data/bps/mRNA1_test.mm.bps
 core/genometryImpl/test/data/psl/RT_U34TEST.link.psl
 core/genometryImpl/test/data/server/A_thaliana/A_thaliana_TAIR8/mRNA_INDEX_TEST.psl
-core/genoviz_sdk/META-INF/MANIFEST.MF
-core/genoviz_sdk/build-test
 core/igb-i18n/build-test
 core/igb/META-INF/MANIFEST.MF
 core/igb/build-test

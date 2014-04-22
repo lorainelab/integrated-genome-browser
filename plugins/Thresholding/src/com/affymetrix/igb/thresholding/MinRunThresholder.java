@@ -13,8 +13,8 @@
 
 package com.affymetrix.igb.thresholding;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPSlider;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
 

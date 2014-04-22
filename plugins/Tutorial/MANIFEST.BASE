@@ -12,8 +12,9 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.general,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
  javax.swing,
@@ -27,5 +28,3 @@ Bundle-ClassPath: .,
  lib/furbelow.jar
 Bundle-Description: Plugin to run IGB tutorials
 Bundle-Vendor: Genentech
-
-

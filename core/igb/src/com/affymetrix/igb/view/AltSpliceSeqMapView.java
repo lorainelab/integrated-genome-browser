@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
+import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;

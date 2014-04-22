@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;

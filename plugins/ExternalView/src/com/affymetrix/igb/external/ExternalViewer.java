@@ -5,7 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
+import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 

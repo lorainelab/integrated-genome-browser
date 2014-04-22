@@ -9,11 +9,11 @@ Bundle-Description: plugin to allow the user to run Python scripts in IGB
 Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/PythonScript-1.0.0/PythonScript.html
 Bundle-Vendor: Genentech
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
- com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.osgi.service,
  javax.script,
  org.osgi.framework,
  org.osgi.util.tracker
 Bundle-ClassPath: lib/jython.jar,
  .
-

@@ -1,9 +1,9 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
+import com.affymetrix.igb.swing.JRPTextField;
 
 public abstract class Operations extends javax.swing.JPanel {
 	protected boolean is_listening = true; // used to turn on and off listening to GUI events

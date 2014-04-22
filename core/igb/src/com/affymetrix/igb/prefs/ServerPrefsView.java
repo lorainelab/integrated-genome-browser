@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;

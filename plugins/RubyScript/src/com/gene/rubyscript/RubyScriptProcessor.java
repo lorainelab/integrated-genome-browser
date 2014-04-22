@@ -4,8 +4,8 @@ import javax.script.ScriptEngineFactory;
 
 import com.sun.script.jruby.JRubyScriptEngineFactory;
 
-import com.affymetrix.genoviz.swing.recordplayback.Operation;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
+import com.affymetrix.igb.swing.Operation;
+import com.affymetrix.igb.swing.ScriptProcessor;
 
 public class RubyScriptProcessor implements ScriptProcessor {
 	private static final String EXTENSION = "rb";
@@ -20,7 +20,7 @@ public class RubyScriptProcessor implements ScriptProcessor {
 		return "require \"java\"\n" +
 		"include_package com.affymetrix.main\n" +
 		"bundleContext = OSGiHandler.getInstance().getBundleContext()\n" +
-		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.ScriptManager\")\n" +
+		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.igb.swing.ScriptManager\")\n" +
 		"sm = bundleContext.getService(serviceReference)\n";
 	}
 

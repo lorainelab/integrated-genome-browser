@@ -1,8 +1,8 @@
 package com.affymetrix.igb.tabs.annotation;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import static com.affymetrix.igb.shared.Selections.annotSyms;
 import com.affymetrix.igb.shared.TrackViewPanel;
-import static com.affymetrix.igb.shared.Selections.*;
 
 /**
  *

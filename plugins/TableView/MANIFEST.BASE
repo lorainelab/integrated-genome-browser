@@ -8,7 +8,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://transvar.org/TableView.html
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.osgi.service,
  javax.swing,
  javax.swing.event,
@@ -27,5 +28,3 @@ Bundle-ClassPath: .,
  lib/TableView.jar
 Bundle-Description: Plugin to view data in TableView
 Bundle-Vendor: Bioviz
-
-

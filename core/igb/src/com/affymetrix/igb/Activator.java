@@ -1,21 +1,8 @@
 package com.affymetrix.igb;
 
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-import javax.swing.*;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -29,34 +16,43 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
-
 import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
-import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.ScriptProcessor;
+import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.igb.util.UpdateStatusAlert;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.AxisGlyphFactory;
-//import com.affymetrix.igb.view.factories.CytoBandGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import javax.swing.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * OSGi Activator for igb bundle
@@ -64,6 +60,7 @@ import com.affymetrix.igb.window.service.IWindowService;
 public class Activator implements BundleActivator {
     private String commandLineBatchFileStr;
 	String[] args;
+	private ServiceRegistration<ScriptManager> scriptManagerServiceReference;
 
 	private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
 	
@@ -118,6 +115,8 @@ public class Activator implements BundleActivator {
 			if (CommonUtils.getInstance().isExit(bundleContext)) {
 	    		return;
 	    	}
+			
+			scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
     		commandLineBatchFileStr = CommonUtils.getInstance().getArg(
 					"-" + IGBService.SCRIPTFILETAG, args);
     		// Force loading of prefs if hasn't happened yet.
@@ -155,7 +154,12 @@ public class Activator implements BundleActivator {
 	}
 
 	@Override
-	public void stop(BundleContext _bundleContext) throws Exception {}
+	public void stop(BundleContext _bundleContext) throws Exception {
+		if (scriptManagerServiceReference != null) {
+			scriptManagerServiceReference.unregister();
+			scriptManagerServiceReference = null;
+		}
+	}
 
 	/**
 	 * method to start IGB, called when the window service is available,

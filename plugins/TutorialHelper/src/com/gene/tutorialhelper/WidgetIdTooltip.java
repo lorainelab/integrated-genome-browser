@@ -5,8 +5,8 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
+import com.affymetrix.igb.swing.JRPWidget;
+import com.affymetrix.igb.swing.JRPWidgetDecorator;
 
 public class WidgetIdTooltip implements JRPWidgetDecorator {
 

@@ -32,7 +32,7 @@ import javax.swing.event.ChangeListener;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.EventUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
+import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;

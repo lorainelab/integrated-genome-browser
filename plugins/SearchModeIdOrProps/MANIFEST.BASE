@@ -19,6 +19,8 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genoviz.widget,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"
-
+Tool: Bnd-1.50.0

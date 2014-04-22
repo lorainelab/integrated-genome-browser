@@ -21,7 +21,7 @@
 			<classpath location="${env.IGB_WORKSPACE}/core/common/build" />
 			<classpath location="${env.IGB_WORKSPACE}/core/igb/build" />
 			<classpath location="${env.IGB_WORKSPACE}/core/genometryImpl/build" />
-			<classpath location="${env.IGB_WORKSPACE}/core/genoviz_sdk/build" />
+			<classpath location="${env.IGB_WORKSPACE}/ext/genoviz-1.0.jar" />
 			<classpath location="${env.IGB_WORKSPACE}/core/igb_service/build" />
 			<classpath location="${env.IGB_WORKSPACE}/core/window_service/build" />
 			<classpath location="${env.IGB_WORKSPACE}/plugins/SearchModeSymmetryFilter/build" />

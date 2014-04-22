@@ -4,8 +4,8 @@ import javax.script.ScriptEngineFactory;
 
 import org.python.jsr223.PyScriptEngineFactory;
 
-import com.affymetrix.genoviz.swing.recordplayback.Operation;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
+import com.affymetrix.igb.swing.Operation;
+import com.affymetrix.igb.swing.ScriptProcessor;
 
 public class PythonScriptProcessor implements ScriptProcessor {
 	private static final String EXTENSION = "py";
@@ -19,7 +19,7 @@ public class PythonScriptProcessor implements ScriptProcessor {
 	public String getHeader() {
 		return "from com.affymetrix.main import OSGiHandler\n" +
 		"bundleContext = OSGiHandler.getInstance().getBundleContext()\n" +
-		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.ScriptManager\")\n" +
+		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.igb.swing.ScriptManager\")\n" +
 		"sm = bundleContext.getService(serviceReference)\n" +
 		"serviceReferenceWHF = bundleContext.getServiceReference(\"com.affymetrix.genometryImpl.thread.WaitHelperI\")\n" +
 		"whf = bundleContext.getService(serviceReferenceWHF)\n";

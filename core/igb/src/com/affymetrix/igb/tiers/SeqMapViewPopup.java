@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.util.IDComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;

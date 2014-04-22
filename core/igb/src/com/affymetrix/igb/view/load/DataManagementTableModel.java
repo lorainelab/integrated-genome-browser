@@ -10,7 +10,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;

@@ -23,11 +23,12 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.quickload,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.widget,
  com.affymetrix.genoviz.util,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.window.service,
  com.jidesoft.hints,
  javax.swing,
@@ -40,4 +41,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: Use this panel to search for genes, alignments and sequences.
-

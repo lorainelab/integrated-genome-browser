@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
@@ -41,7 +40,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		@Override
 		public void menuSelected(MenuEvent e) {
 			advanceStep();
-			((JRPMenu) e.getSource()).removeMenuListener(this);
+			((com.affymetrix.igb.swing.JRPMenu) e.getSource()).removeMenuListener(this);
 		}
 
 		@Override
@@ -57,7 +56,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			advanceStep();
-			((JRPMenuItem) e.getSource()).removeActionListener(this);
+			((com.affymetrix.igb.swing.JRPMenuItem) e.getSource()).removeActionListener(this);
 		}
 	};
 	private int stepIndex = 0;
@@ -123,14 +122,14 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	private JComponent getWidget(String widgetId) {
 		int pos = widgetId.indexOf('.');
 		if (pos == -1) {
-			return (JComponent) ScriptManager.getInstance().getWidget(widgetId);
+			return (JComponent) com.affymetrix.igb.swing.ScriptManager.getInstance().getWidget(widgetId);
 		} else {
 			String mainWidgetId = widgetId.substring(0, pos);
-			return (JComponent) ScriptManager.getInstance().getWidget(mainWidgetId);
+			return (JComponent) com.affymetrix.igb.swing.ScriptManager.getInstance().getWidget(mainWidgetId);
 		}
 	}
 
-	private SubRegionFinder getSubRegionFinder(String widgetId) {
+	private com.affymetrix.igb.swing.SubRegionFinder getSubRegionFinder(String widgetId) {
 		JComponent mainWidget = getWidget(widgetId);
 		if (mainWidget == null) {
 			return null;
@@ -139,12 +138,12 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		if (pos == -1) {
 			return null;
 		}
-		if (!(mainWidget instanceof JRPHierarchicalWidget)) {
+		if (!(mainWidget instanceof com.affymetrix.igb.swing.JRPHierarchicalWidget)) {
 			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, widget " + widgetId + " is incorrect, not hierarchical.", Level.WARNING);
 			return null;
 		}
 		String subId = widgetId.substring(pos + 1);
-		return ((JRPHierarchicalWidget) mainWidget).getSubRegionFinder(subId);
+		return ((com.affymetrix.igb.swing.JRPHierarchicalWidget) mainWidget).getSubRegionFinder(subId);
 	}
 
 	private boolean highlightWidget(String[] widgetId) {
@@ -153,7 +152,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			if (widget == null) {
 				return false;
 			}
-			SubRegionFinder subRegionFinder = getSubRegionFinder(s);
+			com.affymetrix.igb.swing.SubRegionFinder subRegionFinder = getSubRegionFinder(s);
 			Marquee m = new Marquee(widget, subRegionFinder);
 			decoratorMap.put(s, m);
 		}
@@ -232,11 +231,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			return false;
 		} else {
 			String waitForItem = step.getWaitFor();
-			JRPWidget widget = ScriptManager.getInstance().getWidget(waitForItem);
-			if (widget instanceof JRPMenu) {
-				((JRPMenu) widget).addMenuListener(menuListener);
-			} else if (widget instanceof JRPMenuItem) {
-				((JRPMenuItem) widget).addActionListener(menuItemListener);
+			com.affymetrix.igb.swing.JRPWidget widget = com.affymetrix.igb.swing.ScriptManager.getInstance().getWidget(waitForItem);
+			if (widget instanceof com.affymetrix.igb.swing.JRPMenu) {
+				((com.affymetrix.igb.swing.JRPMenu) widget).addMenuListener(menuListener);
+			} else if (widget instanceof com.affymetrix.igb.swing.JRPMenuItem) {
+				((com.affymetrix.igb.swing.JRPMenuItem) widget).addActionListener(menuItemListener);
 			} else {
 				waitFor = waitForItem;
 			}
@@ -315,11 +314,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	public void addJComponent(String id, JComponent comp) {
-		ScriptManager.getInstance().addWidget(new JRPWrapper(id, comp));
+		com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(new com.affymetrix.igb.swing.JRPWrapper(id, comp));
 	}
 
 	public void removeJComponent(String id) {
-		ScriptManager.getInstance().removeWidget(id);
+		com.affymetrix.igb.swing.ScriptManager.getInstance().removeWidget(id);
 	}
 
 	@Override

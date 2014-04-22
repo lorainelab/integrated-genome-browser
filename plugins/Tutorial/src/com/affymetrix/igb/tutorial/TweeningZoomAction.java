@@ -2,8 +2,8 @@ package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
+import com.affymetrix.igb.swing.RPAdjustableJSlider;
+import com.affymetrix.igb.swing.ScriptManager;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingWorker;
 

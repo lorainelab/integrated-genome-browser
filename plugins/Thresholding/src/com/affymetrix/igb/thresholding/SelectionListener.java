@@ -1,6 +1,6 @@
 package com.affymetrix.igb.thresholding;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 import static com.affymetrix.igb.shared.Selections.*;
 

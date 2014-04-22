@@ -18,10 +18,11 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.symmetry,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.swing,
- com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.util,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
  com.affymetrix.igb.window.service,
  com.jidesoft.grid,
  javax.crypto,
@@ -43,3 +44,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: A panel for viewing and re-arranging bookmarks in a hierarchy.
+Tool: Bnd-1.50.0

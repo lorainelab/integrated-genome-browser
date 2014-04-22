@@ -50,7 +50,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IgbStringUtils;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
 import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;

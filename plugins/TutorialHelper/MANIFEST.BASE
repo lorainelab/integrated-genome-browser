@@ -11,4 +11,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.affymetrix.common;version="6.7.0",
  com.affymetrix.igb.osgi.service,
  javax.swing,
+ com.affymetrix.igb.swing,
  org.osgi.framework

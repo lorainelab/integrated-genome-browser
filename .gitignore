@@ -24,10 +24,6 @@ core/igb/build-test
 core/igb/src/com/affymetrix/igb/action/.ShowStrandAction.java.swp
 core/igb_service/META-INF/MANIFEST.MF
 core/igb_service/build-test
-core/jar_extensions/build
-core/jar_extensions/icons/build
-core/jar_extensions/sam/build
-core/jar_extensions/tribble/build
 core/main/build-test
 core/window_service/META-INF/MANIFEST.MF
 core/window_service/build-test

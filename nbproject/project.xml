@@ -58,18 +58,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>core/jar_extensions/sam/src</label>
-                    <type>java</type>
-                    <location>core/jar_extensions/sam/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>core/jar_extensions/tribble/src</label>
-                    <type>java</type>
-                    <location>core/jar_extensions/tribble/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/window_service_def/src</label>
                     <type>java</type>
                     <location>plugins/window_service_def/src</location>
@@ -574,14 +562,6 @@
                         <location>core/HeatmapEditor/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>core/jar_extensions/sam/src</label>
-                        <location>core/jar_extensions/sam/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>core/jar_extensions/tribble/src</label>
-                        <location>core/jar_extensions/tribble/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/window_service_def/src</label>
                         <location>plugins/window_service_def/src</location>
                     </source-folder>
@@ -814,7 +794,6 @@
                 <package-root>plugins/BigWigHandler/src</package-root>
                 <package-root>plugins/SearchModeSymmetryFilter/src</package-root>
                 <package-root>plugins/IGBScript/src</package-root>
-                <package-root>core/jar_extensions/sam/src</package-root>
                 <package-root>plugins/TableView/src</package-root>
                 <package-root>plugins/DASRegistryServerType/src</package-root>
                 <package-root>plugins/FindAnnotations/src</package-root>
@@ -833,7 +812,6 @@
                 <package-root>plugins/AnnotationTab/src</package-root>
                 <package-root>plugins/GraphTab/src</package-root>
                 <package-root>plugins/KeyWordSearch/src</package-root>
-                <package-root>core/jar_extensions/tribble/src</package-root>
                 <package-root>core/HeatmapEditor/src</package-root>
                 <package-root>plugins/ParentOperators/src</package-root>
                 <package-root>plugins/Survey/src</package-root>

@@ -156,29 +156,6 @@
 		<my.javadoc sourcepath="${src.dir}" classpath="${classpath}" />
 	</target>
 
-	<target name="pmd" depends="common-init,pmd-init" if="have.pmd" description="run pmd static analysis program">
-		<mkdir dir="${report.dir}/xml" />
-		<my.pmd />
-		<xslt in="${report.dir}/xml/${report.prefix}pmd.xml" style="${etc.dir}/pmd-nicerhtml.xsl" out="${report.dir}/${report.prefix}pmd.html" />
-	</target>
-
-	<target name="cpd" depends="common-init,cpd-init" if="have.cpd" description="run pmd's cut and paste detection">
-		<mkdir dir="${report.dir}/xml" />
-		<my.cpd>
-			<!-- for some reason, ${src.dir} will not work here -->
-			<fileset dir="src" includes="**/*.java" />
-		</my.cpd>
-		<xslt in="${report.dir}/xml/${report.prefix}cpd.xml" style="${etc.dir}/cpdhtml.xslt" out="${report.dir}/${report.prefix}cpd.html" />
-	</target>
-
-	<target name="findbugs" depends="compile,common-init,findbugs-init">
-		<mkdir dir="${report.dir}/xml" />
-		<my.findbugs >
-			<class location="${build.dir}" />
-		</my.findbugs>
-		<xslt in="${report.dir}/xml/${report.prefix}findbugs.xml" style="${findbugs.dir}/src/xsl/fancy.xsl" out="${report.dir}/${report.prefix}findbugs.html" />
-	</target>
-
 	<target name="clean-manifest" depends="manifest-exists" if="manifest.present">
 		<delete file="${basedir}/META-INF/MANIFEST.MF"/> <!-- generated in mani-vers task -->
 	</target>

@@ -1,1 +1,0 @@
-java -cp /path/to/tomcat/webapps/das2genopub/WEB-INF/lib/das2server.jar com.affymetrix.genometry.genopub.FDTUploadDaemon  >> ~/genopub_fdt_daemon.log $* &

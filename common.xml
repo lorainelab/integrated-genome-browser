@@ -1,31 +1,11 @@
 <project>
 	
-	<!-- Set the das2_mode to either "gnomex", "genopub" or "classic".  -->
-	<!--  gnomex   data tracks are managed in the gnomex application    -->
-	<!--  genopub  data tracks are managed using a flex tool (genopub)  -->
-	<!--           that keeps the data track info local mysql database. -->
-	<!--  classic  the data track files reside in a file system.        -->
-	<property name="das2_mode"    value="classic"/>
-
 	<target name="common-init" depends="init,compiler-def-args,extras-init">
 		<tstamp/>
 
 		<!-- directory paths -->
-		<property name="flex.dir"     value="${basedir}/flex" />
 		<property name="root.dir"     value="${basedir}" />
-
-		<property name="server.deploy.dir"   value="/Applications/apache-tomcat-5.5.31/webapps" />
-
-		<!-- file paths -->
-		<property name="gnomex.web.xml" value="${das2server}/web.xml" />
-		<property name="gnomex.context.xml" value="${das2server}/context.xml" />
-		<property name="genopub.web.xml" value="${das2server}/web_genopub.xml" />
-		<property name="genopub.context.xml" value="${das2server}/context_genopub.xml" />
-		<property name="classic.web.xml" value="${das2server}/web_classic.xml" />
-		<property name="classic.context.xml" value="${das2server}/context_classic.xml" />
-		<property name="das2.resources" value="${das2server}/resources" />
-		<property name="das2.UCSCExecutables" value="${das2server}/UCSCExecutables" />
-
+		
 		<taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" classpathref="contrib.path" />
 		<propertyregex property="appShortVersion" input="${appVersion}" regexp="(\d+\.\d+)" select="\1" defaultValue="${appVersion}" />
 
@@ -38,9 +18,6 @@
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />
 		<property name="jnlp.splashicon.path" value="${common}/resources/images/${jnlp.splashicon.name}" />
 	
-		
-		<!-- FLEX -->
-		<property name="FLEX_HOME"              value="${lib.dir}/flex_sdk/"/>
 
 		<!-- global compiler defaults -->
 		<property name="build.compiler"         value="modern" />
@@ -55,8 +32,6 @@
 		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
 
 		<!-- javadoc defaults -->
-		<property name="javadoc.j2se.url"    value="http://java.sun.com/javase/6/docs/api/" />
-		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/6/docs/api/" />
 		<property name="javadoc.src.version" value="6" />
 
 		<!-- Location of JUnit -->
@@ -76,79 +51,7 @@
 		<filter token="igb.jar.name" value="${igb.jar.name}" />
 		<filter token="igb.jar.large.name" value="${igb.jar.large.name}" />
 		<filter token="igb.jar.5GB.name" value="${igb.jar.5GB.name}" />
-		
-		<!-- The following ant section deals with the custom                   -->
-		<!-- compile and release requirements for the different                -->
-		<!-- das2 modes. We need to set a boolean so that build targets can be -->
-		<!-- conditionally invoked. Use the das2_mode to set the flags.        -->
-		<condition property="das2gnomex">
-			<matches string="${das2_mode}" pattern="gnomex"/>
-		</condition>
-		<condition property="das2genopub">
-			<matches string="${das2_mode}" pattern="genopub"/>
-		</condition>
-		<condition property="das2classic">
-			<matches string="${das2_mode}" pattern="classic"/>
-		</condition>
 
-		<!-- Use web.xml, context.xml for gnomex mode -->
-		<condition property="web.xml" value="${gnomex.web.xml}" >
-			<istrue value="${das2gnomex}" />
-		</condition>
-		<condition property="context.xml" value="${gnomex.context.xml}">
-			<istrue value="${das2gnomex}" />
-		</condition>
-		<!-- Use web_genopub.xml, context_genopub.xml for genopub mode -->
-		<condition property="web.xml" value="${genopub.web.xml}" >
-			<istrue value="${das2genopub}" />
-		</condition>
-		<condition property="context.xml" value="${genopub.context.xml}" >
-			<istrue value="${das2genopub}" />
-		</condition>
-		<!-- Use web_classic.xml, context_classic.xml for classic mode -->
-		<condition property="web.xml" value="${classic.web.xml}">
-			<istrue value="${das2classic}" />
-		</condition>
-		<condition property="context.xml" value="${classic.context.xml}">
-			<istrue value="${das2classic}" />
-		</condition>
-
-		<!-- Call the release das2server-gnomex if gnomex mode -->
-		<condition property="das2_release" value="das2server-gnomex">
-			<istrue value="${das2gnomex}" />
-		</condition>
-		<!-- Call the release das2server-genopub if genopub mode -->
-		<condition property="das2_release" value="das2server-genopub">
-			<istrue value="${das2genopub}" />
-		</condition>
-		<!-- Call the release das2server if classic mode -->
-		<condition property="das2_release" value="das2server">
-			<istrue value="${das2classic}" />
-		</condition>
-		
-		<!-- Call the web app das2gnomex if genopub mode -->
-		<condition property="das2_webapp" value="das2gnomex">
-			<istrue value="${das2gnomex}" />
-		</condition>
-		<!-- Call the web app das2genopub if genopub mode -->
-		<condition property="das2_webapp" value="das2genopub" >
-			<istrue value="${das2genopub}" />
-		</condition>
-		<!-- Call the webapp das2 if classic mode -->
-		<condition property="das2_webapp" value="das2">
-			<istrue value="${das2classic}" />
-		</condition>
-
-		<!-- Grab the correct install notes depending on the mode -->
-		<condition property="das2_install_notes" value="INSTALL.txt" >
-			<istrue value="${das2gnomex}" />
-		</condition>
-		<condition property="das2_install_notes" value="INSTALL_genopub.txt" >
-			<istrue value="${das2genopub}" />
-		</condition>
-		<condition property="das2_install_notes" value="INSTALL_classic.txt">
-			<istrue value="${das2classic}" />
-		</condition>
 	</target>
 
 	<target name="compiler-def-args">
@@ -159,49 +62,13 @@
 	</target>
 	
 	<target name="extras-init">
-
 		<path id="contrib.path">
 			<fileset dir="${lib.dir}/ant-contrib-1.0b3">
 				<include name="*.jar" />
 			</fileset>
 		</path>
-			
-		<path id="pmd.path">
-			<fileset dir="${lib.dir}/pmd-4.2.5">
-				<include name="*.jar" />
-			</fileset>
-		</path>
-
-		<available classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.path" property="have.pmd" />
-		<available classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.path" property="have.cpd" />
-
-		<property name="findbugs.dir" value="${lib.dir}/findbugs-1.3.9" />
-		<path id="findbugs.path">
-			<fileset file="${findbugs.dir}/lib/findbugs-ant.jar" />
-		</path>
-
-		<available classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path" property="have.findbugs" />
 	</target>
-	
-
-	<!-- Only compile file flex das2 server will run in genopub mode and the flex app is not up-to-date -->
-	<condition property="should_compile_flex">
-		<and>
-			<!-- Is the das2 mode genopub? -->
-			<istrue value="${das2genopub}"/>
-			
-			<!-- Is the flex app not already up-to-date? -->
-			<not>
-				<uptodate property="flex_up_to_date" targetfile="${basedir}/dist/GenoPub.swf">
-					<srcfiles dir="${das2server}/flex">
-						<include name="**/*.as"/>
-						<include name="**/*.mxml"/>
-					</srcfiles>
-				</uptodate>
-			</not>
-		</and>
-	</condition>
-  
+	 
 	<presetdef name="my.javac">
 		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}" includeantruntime="false">
 			<compilerarg compiler="modern" line="${compiler.args}" />
@@ -220,8 +87,6 @@
 
 	<presetdef name="my.javadoc">
 		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name}" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
-			<link href="${javadoc.j2se.url}"/>
-			<link href="${javadoc.j2ee.url}"/>
 			<doctitle><![CDATA[<h1>${name}</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
 		</javadoc>
@@ -231,34 +96,4 @@
 		<signjar alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}"  />
 	</presetdef>
 
-	<target name="pmd-init" depends="common-init,extras-init" if="have.pmd">
-		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.path" />
-
-		<presetdef name="my.pmd">
-			<pmd shortFilenames="true" classpath="${etc.dir}/pmd-cfg.xml" rulesetfiles="${etc.dir}/pmd-cfg.xml">
-				<formatter type="xml" toFile="${report.dir}/xml/${report.prefix}pmd.xml" />
-				<!-- for some reason, ${src.dir} will not work here -->
-				<fileset dir="src" includes="**/*.java" />
-			</pmd>
-		</presetdef>
-	</target>
-
-	<target name="cpd-init" depends="common-init,extras-init" if="have.cpd">
-		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.path" />
-
-		<presetdef name="my.cpd">
-			<cpd encoding="UTF-8" minimumTokenCount="50" format="xml" outputFile="${report.dir}/xml/${report.prefix}cpd.xml" />
-		</presetdef>
-	</target>
-
-	<target name="findbugs-init" depends="common-init,extras-init" if="have.findbugs">
-		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path" />
-
-		<presetdef name="my.findbugs">
-			<findbugs home="${findbugs.dir}" output="xml:withMessages" outputFile="${report.dir}/xml/${report.prefix}findbugs.xml" jvmargs="-Xmx512m">
-				<auxClasspath path="${report.classpath}" />
-				<sourcePath path="${src.dir}" />
-			</findbugs>
-		</presetdef>
-	</target>
 </project>

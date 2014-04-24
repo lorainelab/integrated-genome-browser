@@ -1,18 +1,7 @@
 This software may be distributed along with software developed 
 by third-parties, covered by separate licenses.
 
-A)   This product may include portions of the Jetty package 
-     from Mort Bay Consulting.
-     (Starting with IGB 5.12, only the das2_server code relies on Jetty.)
-     http://jetty.mortbay.org/jetty/
-
-     Jetty also uses the Apache license found at
-     http://www.apache.org/licenses/LICENSE-2.0    
-
-     The files from the Jetty project included with this product include: 
-     org.mortbay.jetty.jar, javax.servlet.jar
-
-B)   This product includes a copy of the Fusion SDK from 
+A)   This product includes a copy of the Fusion SDK from 
      Affymetrix, Inc. (pure Java version).
      http://www.affymetrix.com/support/developer/fusion/index.affx
 
@@ -24,7 +13,7 @@ B)   This product includes a copy of the Fusion SDK from
      The GenoViz project disclaims all copyright interest in the "Fusion SDK".
      This copy of the fusion sdk is stored in the file affx_fusion.jar
 
-C)   This product may include the Java look and feel Graphics Repository
+B)   This product may include the Java look and feel Graphics Repository
      Copyright 1994-2006 Sun Microsystems, Inc.
      http://java.sun.com/developer/techDocs/hi/repository/
 
@@ -34,7 +23,7 @@ C)   This product may include the Java look and feel Graphics Repository
      IGB can be used with or without this jar file.
 
 
-D)   This product includes portions of the Vector Graphics software library 
+C)   This product includes portions of the Vector Graphics software library 
      developed by the FreeHEP project, which is covered by the 
      GNU Lesser General Public License, version 2.1.
 
@@ -43,7 +32,7 @@ D)   This product includes portions of the Vector Graphics software library
      The files from this project are bundled together in freehep.jar
      A copy of the license is included in the file FREEHEP_LICENSE_LGPL.txt.
 
-E)   This product includes portions of the Picard software library
+D)   This product includes portions of the Picard software library
      developed by the Picard SourceForge project, which is covered by the
      Apache License, version 2.0.
 
@@ -51,7 +40,7 @@ E)   This product includes portions of the Picard software library
 
      The files from this project are bundled together in sam*.jar.
 
-F)   This product includes portions of the JIDE software library
+E)   This product includes portions of the JIDE software library
      developed by JIDE software, which is covered by a commercial
      license. This is NOT open source.
 
@@ -60,7 +49,7 @@ F)   This product includes portions of the JIDE software library
      The files from the JIDE software library included with this product include: 
      jide-grids.jar, jide-commons.jar, jide-components.jar
 
-G)   This product includes portions of the Apache Felix software library
+F)   This product includes portions of the Apache Felix software library
      developed by the Apache Felix project, which is covered by the
      Apache License, version 2.0.
 
@@ -72,7 +61,7 @@ G)   This product includes portions of the Apache Felix software library
      org.apache.felix.obr*.jar, org.apache.felix.bundlerepository*.jar,
      bindex.jar.
 
-H)   This product includes portions of the Apache commons software libraries
+G)   This product includes portions of the Apache commons software libraries
      developed by the Apache commons projects, which are covered by the
      Apache License, version 2.0.
 
@@ -80,15 +69,7 @@ H)   This product includes portions of the Apache commons software libraries
 
      The files from this project are bundled together in various commons-*.jar.
 
-I)   This product includes portions of the O'Reilly servlet libraries
-     developed by the Jason Hunter.
-
-     http://www.servlets.com/index.tea
-
-     The files from this project are bundled together in cos.jar.
-     The license file is included in the "ext" directory.
-
-J)   This product includes portions of the EMMA software library
+H)   This product includes portions of the EMMA software library
      developed by the EMMA SourceForge project, which is covered by the
      Common Public License v1.0.
 
@@ -96,20 +77,20 @@ J)   This product includes portions of the EMMA software library
 
      The files from this project are bundled together in emma.jar, emma_ant.jar
 
-K)   This product includes portions of the antlr software library
+I)   This product includes portions of the antlr software library
      developed by Terence Parr, which is covered by the BSD License.
 
      http://www.antlr.org/
 
      The files from this project are bundled together in antlr.jar
 
-L)   This product includes portions of the Jackson JSON Processor
+J)   This product includes portions of the Jackson JSON Processor
 
      http://jackson.codehaus.org/
 
      The files from this project are bundled together in jackson-all-xxx.jar
 
-M)   This product includes portions of the furbelow project of Rabbit Hole
+K)   This product includes portions of the furbelow project of Rabbit Hole
 
      http://rabbit-hole.blogspot.com/2006/04/decoratingoverpainting-swing.html
 

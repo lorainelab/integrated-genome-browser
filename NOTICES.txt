@@ -69,28 +69,13 @@ G)   This product includes portions of the Apache commons software libraries
 
      The files from this project are bundled together in various commons-*.jar.
 
-H)   This product includes portions of the EMMA software library
-     developed by the EMMA SourceForge project, which is covered by the
-     Common Public License v1.0.
-
-     http://emma.sourceforge.net/index.html
-
-     The files from this project are bundled together in emma.jar, emma_ant.jar
-
-I)   This product includes portions of the antlr software library
-     developed by Terence Parr, which is covered by the BSD License.
-
-     http://www.antlr.org/
-
-     The files from this project are bundled together in antlr.jar
-
-J)   This product includes portions of the Jackson JSON Processor
+H)   This product includes portions of the Jackson JSON Processor
 
      http://jackson.codehaus.org/
 
      The files from this project are bundled together in jackson-all-xxx.jar
 
-K)   This product includes portions of the furbelow project of Rabbit Hole
+I)   This product includes portions of the furbelow project of Rabbit Hole
 
      http://rabbit-hole.blogspot.com/2006/04/decoratingoverpainting-swing.html
 

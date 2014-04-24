@@ -15,12 +15,11 @@ import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import com.affymetrix.igb.shared.HeadLessExport;
 import com.affymetrix.igb.util.GraphicsUtil;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB
@@ -37,8 +36,8 @@ public class ExportDialog extends HeadLessExport {
 
 	private static ExportDialog singleton;
 	static float FONT_SIZE = 13.0f;
-	static final String TITLE = "Export Image";
-	static final String DEFAULT_FILE = "export.png";
+	static final String TITLE = BUNDLE.getString("exportDialogTitle");
+	static final String DEFAULT_FILE = BUNDLE.getString("defaultExportFileName")+".png";
 	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
 	static final Object[] UNIT = {"pixels", "inches"};
 	static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
@@ -355,7 +354,7 @@ public class ExportDialog extends HeadLessExport {
 	 */
 	public void browseButtonActionPerformed(JPanel panel) {
 		if (fileFilter == null) {
-			fileFilter = new File(defaultDir, "export");
+			fileFilter = new File(defaultDir, BUNDLE.getString("defaultExportFileName"));
 		}
 
 		if (extFilter == null) {

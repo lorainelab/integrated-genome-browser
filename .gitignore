@@ -131,3 +131,4 @@ www/images/Thumbs.db
 www/release_notes/images/Thumbs.db
 /core/*/junitvmwatcher*
 /igb_exe.jar
+/nbproject/genfiles.properties

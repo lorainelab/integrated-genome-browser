@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.*;
 
@@ -107,6 +108,9 @@ public abstract class SeqUtils {
 	}
 
 	public static void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
+		checkNotNull(sym, "sym cannot be null");
+		checkNotNull(seq, "seq cannot be null");
+		checkNotNull(leafs, "SeqSpan Collection cannot be null");
 		int childCount = sym.getChildCount();
 		if (childCount == 0) {
 			SeqSpan span = sym.getSpan(seq);

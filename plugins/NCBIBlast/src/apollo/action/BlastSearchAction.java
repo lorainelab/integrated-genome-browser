@@ -55,7 +55,7 @@ public abstract class BlastSearchAction extends GenericAction {
 						String url = blast.runAnalysis(sf, seq, 1);
 						
 						GeneralUtils.browse(url);
-					} catch (Exception ex) {
+					} catch (Throwable ex) {
 						ArrayList<Throwable> exs = new ArrayList<Throwable>(1);
 						exs.add(ex);
 						ErrorHandler.errorPanel("Error", ex.getMessage(), exs, Level.SEVERE);

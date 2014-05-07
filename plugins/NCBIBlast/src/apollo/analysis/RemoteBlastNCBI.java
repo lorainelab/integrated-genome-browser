@@ -1,24 +1,21 @@
 package apollo.analysis;
 
+import apollo.datamodel.SequenceI;
+import apollo.datamodel.StrandedFeatureSetI;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.xml.sax.SAXException;
-
-import apollo.datamodel.SequenceI;
-import apollo.datamodel.StrandedFeatureSetI;
 
 /**
  * Sends and retrieves a BLAST request to NCBI's qBLAST service.
@@ -29,7 +26,7 @@ import apollo.datamodel.StrandedFeatureSetI;
 public class RemoteBlastNCBI {
 
 	private static final String ENCODING = "UTF-8";
-	private static final String BLAST_URL = "http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?";
+	private static final String BLAST_URL = "http://blast.ncbi.nlm.nih.gov/Blast.cgi?";
 	private static final int SLEEP = 3000;
 	private static final Pattern RID_PATTERN = Pattern.compile("^\\s*RID\\s*=\\s*(\\w+)$");
 	private static final Pattern RTOE_PATTERN = Pattern.compile("^\\s*RTOE\\s*=\\s*(\\d+)$");
@@ -260,10 +257,13 @@ public class RemoteBlastNCBI {
 		putBuf.append("CMD=Put");
 		//URL putUrl = new URL(putBuf.toString());
 		URL url = new URL(BLAST_URL);
-		URLConnection conn = url.openConnection();
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
-		OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-		wr.write(putBuf.toString());
+		conn.setRequestMethod("POST");
+		
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		System.out.println(putBuf.toString());
+		wr.writeBytes(putBuf.toString());
 		wr.flush();
 		wr.close();
 		//return parseRequest(putUrl.openStream());
@@ -332,6 +332,7 @@ public class RemoteBlastNCBI {
 		RemoteBlastNCBI.BlastRequest res = new RemoteBlastNCBI.BlastRequest();
 		String line;
 		while ((line = br.readLine()) != null) {
+			System.out.println(line);
 			if (res.rid != null && res.rtoe > 0) {
 				break;
 			}

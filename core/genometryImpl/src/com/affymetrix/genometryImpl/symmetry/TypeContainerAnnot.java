@@ -184,17 +184,19 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 					swp = (SymWithProps) seq;
 
 					// Iterate through each properties.
-					for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
-						if(current_thread.isInterrupted() || count > size) {
-							break;
-						}
-						
-						if (prop.getValue() != null) {
-							match = prop.getValue().toString();
-							matcher.reset(match);
-							if (matcher.matches()) {
-								results.add(seq);
-								count++;
+					if (swp.getProperties() != null) {
+						for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
+							if (current_thread.isInterrupted() || count > size) {
+								break;
+							}
+
+							if (prop.getValue() != null) {
+								match = prop.getValue().toString();
+								matcher.reset(match);
+								if (matcher.matches()) {
+									results.add(seq);
+									count++;
+								}
 							}
 						}
 					}

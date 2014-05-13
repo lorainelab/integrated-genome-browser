@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="6.0+" version="@jnlpVersion@" codebase="@jnlpCodebase@">
+    <information>
+        <title>IGB @jnlpVersion@</title>
+        <vendor>Genoviz Project</vendor>
+        <homepage href="http://genoviz.sourceforge.net/" />
+        <description>Integrated Genome Browser (@jnlpVersion@)</description>
+        <icon href="igb.gif"/>
+<!--		<icon href="igb_splash.gif" kind="splash" />-->
+        <offline-allowed/>
+        <shortcut online="true">
+            <desktop/>
+            <menu submenu="IGB" />
+        </shortcut>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <java version="1.6+" initial-heap-size="32m" max-heap-size="@maxHeapSize@m"/>
+        <jar href="@igbJarName@.jar" main="true" />
+        <!-- jar href="igb-i18n.jar" / -->
+        <property name="apple.laf.useScreenMenuBar" value="true" />
+        <property name="http.agent" value="IGB/@jnlpVersion@ (Webstart)" />
+    </resources>
+    <application-desc main-class="com.affymetrix.main.Main" name="IGB">
+        <argument>-prefs</argument>
+        <argument>@jnlpCodebase@/igb_prefs.xml</argument>
+        <!-- Wildcard values inserted to allow modifications after signing -->
+        <argument>-href</argument>
+        <argument>*</argument>
+        <argument>-scriptfile</argument>
+        <argument>*</argument>
+    </application-desc>
+</jnlp>

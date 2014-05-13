@@ -1,0 +1,181 @@
+<project>
+	<import file="common.xml" />
+
+  <target name="init">
+
+		<!-- directory paths -->
+		<property name="lib.dir"            value="${basedir}/../../ext" />
+		<property name="etc.dir"            value="${basedir}/../../etc" />
+		<property name="src.dir"            value="${basedir}/src "/>
+		<property name="rsrc.dir"           value="${basedir}/resources" />
+		<property name="build.dir"          value="${basedir}/build" />
+		<property name="docs.dir"           value="${basedir}/docs" />
+		<property name="reports.dir"        value="${basedir}/reports" />
+		<property name="proj.lib.dir"       value="${basedir}/lib" />
+
+		<!-- JUnit test configuration -->
+		<property name="test.src.dir"    value="${basedir}/test" />
+		<property name="test.build.dir"  value="${basedir}/build-test" />
+		<property name="test.report.dir" value="${test.build.dir}" />
+		<property name="test.resources.dir" value="${basedir}/test/resources" />
+
+		<!-- property list file -->
+		<property file="${basedir}/ant.properties" />
+
+		<property name="jarfile"       value="${project}.jar" />
+		<property name="report.prefix" value="${project}." />
+
+		<!-- Filters -->		
+		<filter token="build.customization"  value="${build.customization}" />
+		<filter token="osgi.impl.file" value="${osgi.impl.file}" />
+  </target>
+
+  <target name="proj-lib-exists">
+		<available file="${proj.lib.dir}" property="lib.present"/>
+  </target>
+
+  <target name="manifest-exists">
+		<available file="${basedir}/MANIFEST.BASE" property="manifest.present"/>
+  </target>
+
+  <target name="mani-vers" depends="manifest-exists" if="manifest.present">
+		<copy file="${basedir}/MANIFEST.BASE" tofile="${basedir}/META-INF/MANIFEST.MF" overwrite="true" >
+			<filterchain>
+				<replacetokens>
+					<token key="appVersion" value="${appVersion}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+  </target>
+
+  <target name="do-if-proj-lib" depends="proj-lib-exists" if="lib.present">
+		<copy todir="${build.dir}/lib" filtering="false">
+			<fileset dir="${proj.lib.dir}" /> 
+		</copy>
+  </target> 
+
+  <target name="compile" depends="init,do-if-proj-lib">
+		<mkdir dir="${build.dir}" />
+		<my.javac destdir="${build.dir}" />
+		<copy todir="${build.dir}" filtering="true">
+			<fileset dir="${rsrc.dir}" excludes="**/*.gif,**/*.png"/>
+		</copy>
+		<!-- Necessary to copy binary files separately, as filtering can corrupt them.  See http://ant.apache.org/manual/CoreTasks/copy.html for details. -->
+		<copy todir="${build.dir}" filtering="false">
+			<fileset dir="${rsrc.dir}"> 
+			<include name="**/*.gif"/>
+			<include name="**/*.png"/>
+			</fileset>
+		</copy>
+
+		<antcall target="check-create-jar" />
+  </target>
+
+  <target name="check-create-jar" if="plugin-jar">
+	  <antcall target="create-jar" >
+		  <param name="dist.dir" value="${bundle.dir}" />
+	  </antcall>
+  </target>
+
+  <target name="compile-tests" depends="compile">
+	  <mkdir dir="${test.build.dir}" />
+	  <my.javac srcdir="${test.src.dir}" destdir="${test.build.dir}" classpath="${junit.jar}:${test.classpath}" />
+  </target>
+
+	<target name="test" depends="compile-tests">
+		<mkdir dir="${test.report.dir}" />
+		<condition property="junit.printsummary" value="false" else="true">
+			<and>
+				<isset property="build.compiler.emacs" />
+			</and>
+		</condition>
+		<condition property="junit.showoutput" else="false">
+			<and>
+				<isset property="build.compiler.emacs" />
+			</and>
+		</condition>
+		<path id="cp">
+			<pathelement path="${junit.jar}:${test.classpath}" />
+			<dirset dir="${test.resources.dir}">
+				<include name="**/*"/>
+			</dirset>	
+		</path>
+
+		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="true" failureproperty="junit.failure" dir="${basedir}">
+			<jvmarg value="-Djava.awt.headless=true"/>
+			<classpath refid="cp" />
+			<formatter usefile="false" type="brief" if="build.compiler.emacs" />
+			<formatter type="xml" />
+			<batchtest todir="${test.build.dir}" >
+				<fileset dir="${test.build.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${test.report.dir}">
+			<fileset dir="${test.build.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${test.report.dir}" />
+		</junitreport>
+
+		<!--<fail if="junit.failure" /> -->
+	</target>
+
+  <target name="copy-jar" if="plugin-jar">
+	<mkdir dir="${dist.dir}" />
+
+	<copy todir="${dist.dir}" filtering="false">
+		<fileset file="${bundle.dir}/${jarfile}" />
+	</copy>
+
+	<available file="${igb}/build/${jarfile}" property="unavailable-jar"/>
+  </target>
+  
+	<target name="jar" depends="compile, copy-jar" unless="unavailable-jar">
+		<antcall target="create-jar" />
+	</target>
+
+	<target name="create-jar" depends="mani-vers">
+		<mkdir dir="${dist.dir}" />
+		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
+			<fileset dir="${build.dir}" />
+		</jar>
+	</target>
+
+	<target name="webapp" depends="jar">
+		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
+		<copy file="${dist.dir}/${jarfile}" todir="${webapp.dir}/WEB-INF/lib" />
+	</target>
+
+	<target name="all" depends="jar" />
+
+	<target name="docs" depends="common-init" description="Builds javadocs">
+		<mkdir dir="${docs.dir}"/>
+		<my.javadoc sourcepath="${src.dir}" classpath="${classpath}" />
+	</target>
+
+	<target name="clean-manifest" depends="manifest-exists" if="manifest.present">
+		<delete file="${basedir}/META-INF/MANIFEST.MF"/> <!-- generated in mani-vers task -->
+	</target>
+
+	<target name="clean" depends="init">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${docs.dir}"/>
+			<fileset dir="${dist.dir}" />
+			<fileset dir="${report.dir}" />
+			<fileset dir="${test.build.dir}" />
+			<fileset dir="${test.report.dir}" />
+			<fileset file="${component}.jar" />
+		</delete>
+		<antcall target="clean-manifest" />
+	</target>
+
+	<target name="check-nullness" description="Check for nullness errors." depends="clean">
+		<mkdir dir="${build.dir}" />
+		<my.javac_checker destdir="${build.dir}"/>
+	</target>
+
+</project>

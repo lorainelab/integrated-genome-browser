@@ -14,6 +14,9 @@ def mavenTargetDir = 'main/target'
 def webStartDir = mavenTargetDir + '/webstart'
 def signedLibDir = webStartDir+ '/signed'
 def resourceDir = 'main/src/main/resources'
+ext.props = new Properties() 
+ext.props.load(new FileInputStream(System.getProperty("user.home")+'/build.properties')) 
+project.setProperty('props', ext.props) 
 
 description = "Small Project to bootstrap IGB's OSGI runtime"
 
@@ -202,7 +205,9 @@ task copyToLib(type: Copy) {
     from configurations.runtime
 }
 
+
 task signBundles(dependsOn: [copyToLib]) << {
+    def props =  project.getProperties().get('props')    
     new File(signedLibDir).mkdirs()
     def libFiles = files { file(webStartDir + '/lib').listFiles() }
     libFiles.each {
@@ -218,11 +223,11 @@ task signBundles(dependsOn: [copyToLib]) << {
         }
         ant.signjar(
             destDir: signedLibDir,
-            alias: System.env.keyStoreAlias,
+            alias: props.get('keyStoreAlias'),
             jar: it,
-            keystore: System.getProperty("user.home")+'/.keystore', //TODO replace
-            storepass: System.env.keypass, 
-            keypass: System.env.keypass,
+            keystore: System.getProperty("user.home")+'/.keystore',
+            storepass: props.get('keypass'),
+            keypass: props.get('keypass'),
             preservelastmodified: 'true')
     }
 }
@@ -387,16 +392,17 @@ task copyWebstartResources(type: Copy) {
 }
 
 task signWebstartJars(dependsOn: [webstartSmallJar, webstartMediumJar, webstartLargeJar]) << {
+    def props =  project.getProperties().get('props')
     FileTree webStartJars = fileTree(dir: webStartDir)  
     webStartJars.include 'igb_exe*.jar'
     webStartJars.each {File file ->
         ant.signjar(
             destDir: webStartDir,
-            alias: System.env.keyStoreAlias,
+            alias: props.get('keyStoreAlias'),
             jar: file,
-            keystore: System.getProperty("user.home")+'/.keystore', //TODO replace
-            storepass: System.env.keypass,
-            keypass: System.env.keypass,
+            keystore: System.getProperty("user.home")+'/.keystore', 
+            storepass: props.get('keypass'),
+            keypass: props.get('keypass'),
             preservelastmodified: 'true')
     }   
 }

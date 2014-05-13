@@ -1,0 +1,60 @@
+package com.gene.searchmodelucene;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.igb.shared.ISearchHints;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.apache.lucene.document.Document;
+
+/**
+ *
+ * @author hiralv
+ */
+public class SearchHints implements ISearchHints {
+
+    private final LuceneSearch<String> luceneSearch = new LuceneSearch<String>() {
+        String[] search_fields = new String[]{"id", "name", "gene name"};
+
+        @Override
+        public String processSearch(Document doc) {
+            for (String search_field : search_fields) {
+                String value = doc.get(search_field);
+                if (value != null) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+//		@Override
+//		protected String massageSearchTerm(String searchTerm) {
+//			String query = MessageFormat.format("{1}:{0} OR {2}:{0} OR {3}:{0}", 
+//					searchTerm, search_fields[0], search_fields[1], search_fields[2]);
+//			return super.massageSearchTerm(query);
+//		}
+    };
+
+    public Set<String> search(String search_term) {
+        Set<String> syms = new HashSet<String>();
+        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        for (GenericVersion gVersion : group.getEnabledVersions()) {
+            if (gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+                for (GenericFeature feature : gVersion.getFeatures()) {
+                    if (feature.isVisible() && feature.symL != null) {
+                        List<String> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_term, MAX_HITS);
+                        if (results != null) {
+                            syms.addAll(results);
+                        }
+                    }
+                }
+            }
+        }
+        return syms;
+    }
+
+}

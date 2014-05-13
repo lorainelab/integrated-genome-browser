@@ -1,5 +1,6 @@
 package cytoscape.visual.ui.editors.continuous;
 
+import com.google.common.base.Optional;
 import java.awt.Color;
 
 public abstract class ColorInterpolator {
@@ -7,6 +8,7 @@ public abstract class ColorInterpolator {
 	
 	protected ColorInterpolator(VirtualRange virtualRange){
 		this.virtualRange = virtualRange;
+                Optional<Integer> possible = Optional.of(5);
 	}
 	
 	public Color[] getColorRange(int range){	

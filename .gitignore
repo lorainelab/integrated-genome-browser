@@ -180,4 +180,5 @@ www/release_notes/images/Thumbs.db
 /plugins/NCBIBlast/target/
 /plugins/NCBIPrimer/target/
 /target/
-./gradle/
+.gradle/
+.gradle/1.12/

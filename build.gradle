@@ -1,0 +1,418 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.api.file.FileTree
+import org.gradle.api.file.FileCollection
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.affymetrix'
+version = '8.2'
+
+//Location to store webstart jars
+libsDirName = '../main/target/webstart'
+def mavenTargetDir = 'main/target'
+def webStartDir = mavenTargetDir + '/webstart'
+def signedLibDir = webStartDir+ '/signed'
+def resourceDir = 'main/src/main/resources'
+
+description = "Small Project to bootstrap IGB's OSGI runtime"
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+ext.mainClassName = "com.affymetrix.main.Main"
+ext.applicationDefaultJvmArgs = ["-Xmx1g"]
+ext.appleJvmArgs = ["-Xdock:name=IGB", "-Dapple.laf.useScreenMenuBar=true"]
+
+repositories {
+    mavenLocal()
+    maven { url "http://eos.transvar.org/nexus/content/repositories/releases" }
+    maven { url "http://eos.transvar.org/nexus/content/repositories/freehep-maven/" }
+    maven { url "http://eos.transvar.org/nexus/content/repositories/central/" }
+}
+dependencies {
+    compile(group: 'com.affymetrix', name: 'affymetrix-common', version:version) {
+        exclude(module: '*')
+    }
+    compile(group: 'com.affymetrix', name: 'igb', version:version) {
+        exclude(module: '*')
+    }
+    compile(group: 'org.apache.felix', name: 'org.apache.felix.framework', version:'4.2.1') {
+        exclude(module: '*')
+    }
+    compile(group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.0-rc1') {
+        exclude(module: '*')
+    }
+    compile group: 'org.apache.commons', name: 'commons-csv', version:'1.0-SNAPSHOT'
+    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+    compile group: 'org.broad', name: 'bigwig', version:'1.0'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.6'
+    runtime(group: 'com.affymetrix', name: 'igb-service', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'sharedLibWrapper', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'heatmap-editor', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'genometryImpl', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'igbSwingExt', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'window-service', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'genoviz', version:'1.0') {
+        exclude(module: '*')
+    }
+    runtime(group: 'org.apache.felix', name: 'org.apache.felix.main', version:'4.2.1') {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'apollo-library', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'annotation-tab', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'bigBedHandler', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'bigWigHandler', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'bookmark', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'externalView', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'graphTab', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'igbScript', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'keyWordSearch', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'ncbiBlast', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'ncbiPrimer', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'propertyView', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'restrictionSites', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'searchModelIdOrProps', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'searchModeLucene', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'searchView', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'sequenceViewer', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'survey', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'thresholding', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'tutorial', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'update', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'pluginsPage', version:version) {
+        exclude(module: '*')
+    }
+    runtime(group: 'com.affymetrix', name: 'windowsServiceDef', version:version){
+        exclude(module: '*')
+    }
+    runtime(group: 'com.google.guava', name: 'guava', version:'16.0.1') {
+        exclude(module: '*')
+    }
+    runtime(group: 'org.apache.commons', name: 'commons-lang3', version:'3.1') {
+        exclude(module: '*')
+    }
+    runtime(group: 'org.apache.commons', name: 'commons-compress', version:'1.2') {
+        exclude(module: '*')
+    }
+    runtime(group: 'commons-pool', name: 'commons-pool', version:'1.6') {
+        exclude(module: '*')
+    }
+}
+
+clean{
+    delete webStartDir
+}
+
+task checkOS() {
+    ext.osName = System.properties['os.name'].toLowerCase()
+    if (osName.contains('mac')) {
+        applicationDefaultJvmArgs.addAll(appleJvmArgs)
+    } 
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'main/src/main/java'
+        }
+        resources {
+            srcDir resourceDir
+            exclude '**/JNLP-INF/*'
+        }
+    }
+}
+
+task run(dependsOn: classes, type: JavaExec) {
+    main = mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    jvmArgs = applicationDefaultJvmArgs
+}
+
+task(runDebug, dependsOn: 'classes', type: JavaExec) {
+    main = mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787"]
+}
+
+task cbc(dependsOn: classes, type: JavaExec) {
+    main = "com.affymetrix.main.ClearBundleCache" 
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+
+task copyToLib(type: Copy) {
+    new File(webStartDir + '/lib').mkdirs()
+    into webStartDir + '/lib'
+    from configurations.runtime
+}
+
+task signBundles(dependsOn: [copyToLib]) << {
+    new File(signedLibDir).mkdirs()
+    def libFiles = files { file(webStartDir + '/lib').listFiles() }
+    libFiles.each {
+        
+        println "Signing: " + it
+        //ant.jar to add Trusted-Library may not be needed
+        ant.jar(destfile: it, update: true) {
+            delegate.manifest {
+                attribute(name: 'Trusted-Library', value: 'true')
+                attribute(name: 'Permissions', value: 'all-permissions')
+                attribute(name: 'Codebase', value: '*')
+            }
+        }
+        ant.signjar(
+            destDir: signedLibDir,
+            alias: 'server',
+            jar: it,
+            keystore: System.getProperty("user.home")+'/keystore.jks', //TODO replace
+            storepass: 'limo162;tent', //TODO replace
+            keypass: 'limo162;tent',
+            preservelastmodified: 'true')
+    }
+}
+
+task generateSmallJnlp(type: Copy){
+    from resourceDir + '/JNLP-INF'
+    into webStartDir
+    include('jnlpTemplate.xml')
+    rename('jnlpTemplate.xml','igb.jnlp')
+    // Use some of the filters provided by Ant
+    filter(ReplaceTokens, tokens: [
+            jnlpVersion: version, 
+            jnlpCodebase: 'http://eos.transvar.org/igb', 
+            igbJarName:'igb_exe', 
+            maxHeapSize: '1024'])
+}
+
+task generateMediumJnlp(type: Copy) {
+    from resourceDir + '/JNLP-INF'
+    into webStartDir
+    include('jnlpTemplate.xml')
+    rename('jnlpTemplate.xml','igb-large.jnlp')
+    // Use some of the filters provided by Ant
+    filter(ReplaceTokens, tokens: [
+            jnlpVersion: version, 
+            jnlpCodebase: 'http://eos.transvar.org/igb', 
+            igbJarName:'igb_exe-large', 
+            maxHeapSize: '2048'])
+}
+
+task generateLargeJnlp(type: Copy) {
+    from resourceDir + '/JNLP-INF'
+    into webStartDir
+    include('jnlpTemplate.xml')
+    rename('jnlpTemplate.xml','igb-5GB.jnlp')
+    // Use some of the filters provided by Ant
+    filter(ReplaceTokens, tokens: [
+            jnlpVersion: version, 
+            jnlpCodebase: 'http://eos.transvar.org/igb', 
+            igbJarName:'igb_exe-5GB', 
+            maxHeapSize: '5120'])
+}
+
+task generateSmallJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
+    File dest = new File(webStartDir + '/tmp/smallJar/JNLP-INF')
+    from webStartDir
+    include 'igb.jnlp'
+    rename('igb.jnlp', 'APPLICATION_TEMPLATE.JNLP')
+    into webStartDir + '/tmp/smallJar/JNLP-INF'
+}
+task generateMediumJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
+    File dest = new File(webStartDir + '/tmp/mediumJar/JNLP-INF')
+    from webStartDir
+    include 'igb-large.jnlp'
+    rename('igb-large.jnlp', 'APPLICATION_TEMPLATE.JNLP')
+    into dest
+}
+task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
+    File dest = new File(webStartDir + '/tmp/largeJar/JNLP-INF')
+    from webStartDir
+    include 'igb-5GB.jnlp'
+    rename('igb-5GB.jnlp', 'APPLICATION_TEMPLATE.JNLP')
+    into dest
+}
+
+task webstartSmallJar(type: Jar, dependsOn: [classes, signBundles, generateSmallJnlpTemplate]) {
+    archiveName = 'igb_exe.jar'
+    from fileTree(dir: webStartDir + '/tmp/smallJar/')
+    from 'build/classes/main'
+    from 'build/resources/main'
+    from signedLibDir
+    exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
+    from zipTree(signedLibDir + '/affymetrix-common-'+version+'.jar')
+    exclude "META-INF/**"
+    from zipTree(signedLibDir + '/org.apache.felix.main-4.2.1.jar')
+    exclude "META-INF/**" 
+    metaInf{
+        from (resourceDir+'/META-INF/services')
+        into 'services'
+    }
+    manifest{
+        attributes(
+         "Main-Class": mainClassName,
+         "Application-Name": "IGB",
+         "Permissions":"all-permissions",
+         "Trusted-Library":"true",
+         "Codebase":"*",
+         "Caller-Allowable-Codebase":"*",
+         "Application-Library-Allowable-Codebase":"*",
+         "Created-By":"Loraine lab",
+         "Built-By":"Gradle 1.12"
+        )
+    }
+}
+task webstartMediumJar(type: Jar, dependsOn: [classes, signBundles, generateMediumJnlpTemplate]) {
+    archiveName = 'igb_exe-large.jar'
+    from fileTree(dir: webStartDir + '/tmp/mediumJar/')
+    from 'build/classes/main'
+    from 'build/resources/main'
+    from signedLibDir
+    exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
+    from zipTree(signedLibDir + '/affymetrix-common-' + version + '.jar')
+    exclude "META-INF/**"
+    from zipTree(signedLibDir + '/org.apache.felix.main-4.2.1.jar')
+    exclude "META-INF/**" 
+    metaInf{
+        from (resourceDir+'/META-INF/services')
+        into 'services'
+    }
+    manifest{
+        attributes(
+         "Main-Class": mainClassName,
+         "Application-Name": "IGB",
+         "Permissions":"all-permissions",
+         "Trusted-Library":"true",
+         "Codebase":"*",
+         "Caller-Allowable-Codebase":"*",
+         "Application-Library-Allowable-Codebase":"*",
+         "Created-By":"Loraine lab",
+         "Built-By":"Gradle 1.12"
+        )
+    }
+}
+
+task webstartLargeJar(type: Jar, dependsOn: [classes, signBundles, generateLargeJnlpTemplate]) {
+    archiveName = 'igb_exe-5GB.jar'
+    from fileTree(dir: webStartDir + '/tmp/largeJar/')
+    from 'build/classes/main'
+    from 'build/resources/main'
+    from signedLibDir
+    exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
+    from zipTree(signedLibDir + '/affymetrix-common-' + version + '.jar')
+    exclude "META-INF/**"
+    from zipTree(signedLibDir + '/org.apache.felix.main-4.2.1.jar')
+    exclude "META-INF/**" 
+    metaInf{
+        from (resourceDir+'/META-INF/services')
+        into 'services'
+    }
+    manifest{
+        attributes(
+         "Main-Class": mainClassName,
+         "Application-Name": "IGB",
+         "Permissions":"all-permissions",
+         "Trusted-Library":"true",
+         "Codebase":"*",
+         "Caller-Allowable-Codebase":"*",
+         "Application-Library-Allowable-Codebase":"*",
+         "Created-By":"Loraine lab",
+         "Built-By":"Gradle 1.12"
+        )
+    }
+}
+
+task copyWebstartResources(type: Copy) {
+    from 'core/common/src/main/resources/images/'
+    include 'igb.gif'
+    from 'core/igb/src/main/resources/'
+    include 'igb_default_prefs.xml'
+    rename('igb_default_prefs.xml','igb_prefs.xml')
+    into webStartDir
+}
+
+task signWebstartJars(dependsOn: [webstartSmallJar, webstartMediumJar, webstartLargeJar]) << {
+    FileTree webStartJars = fileTree(dir: webStartDir)  
+    webStartJars.include 'igb_exe*.jar'
+    webStartJars.each {File file ->
+        ant.signjar(
+            destDir: webStartDir,
+            alias: 'server',
+            jar: file,
+            keystore: System.getProperty("user.home")+'/keystore.jks', //TODO replace
+            storepass: 'limo162;tent',
+             keypass: 'limo162;tent',
+            preservelastmodified: 'true')
+    }   
+}
+
+task generateJnlps(type: Copy, dependsOn: [generateSmallJnlp, generateMediumJnlp, generateLargeJnlp]) {
+    println 'Generating jnlp files...'
+    new File('main/target').mkdir()
+}
+
+task generateWebstart(dependsOn: [signBundles, webstartSmallJar, webstartMediumJar, webstartLargeJar, generateJnlps, copyWebstartResources, signWebstartJars]){
+    println 'Generating Webstart Artifacts'
+}
+
+task packageRelease(type: Zip){
+    archiveName 'igb.zip'
+    from '.'
+    fileMode 0755
+    include 'NOTICES.txt', 'LICENSE.html', 'README.txt', 'run_*', 'igb_exe.jar'
+}

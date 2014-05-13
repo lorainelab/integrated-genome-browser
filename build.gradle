@@ -218,11 +218,11 @@ task signBundles(dependsOn: [copyToLib]) << {
         }
         ant.signjar(
             destDir: signedLibDir,
-            alias: 'server',
+            alias: System.env.keyStoreAlias,
             jar: it,
-            keystore: System.getProperty("user.home")+'/keystore.jks', //TODO replace
-            storepass: 'limo162;tent', //TODO replace
-            keypass: 'limo162;tent',
+            keystore: System.getProperty("user.home")+'/.keystore', //TODO replace
+            storepass: System.env.keypass, 
+            keypass: System.env.keypass,
             preservelastmodified: 'true')
     }
 }
@@ -392,11 +392,11 @@ task signWebstartJars(dependsOn: [webstartSmallJar, webstartMediumJar, webstartL
     webStartJars.each {File file ->
         ant.signjar(
             destDir: webStartDir,
-            alias: 'server',
+            alias: System.env.keyStoreAlias,
             jar: file,
-            keystore: System.getProperty("user.home")+'/keystore.jks', //TODO replace
-            storepass: 'limo162;tent',
-             keypass: 'limo162;tent',
+            keystore: System.getProperty("user.home")+'/.keystore', //TODO replace
+            storepass: System.env.keypass,
+            keypass: System.env.keypass,
             preservelastmodified: 'true')
     }   
 }

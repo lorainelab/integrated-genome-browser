@@ -1,7 +1,0 @@
-This is a subproject designed to make it easier to run
-and test IGB under Eclipse. 
-
-It also provides a useful reference for how IGB uses OSGi
-during startup.
-
-Questions? Contact Lance Frohman: lfrohman@gmail.com

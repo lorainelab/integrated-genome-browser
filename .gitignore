@@ -195,6 +195,8 @@ www/release_notes/images/Thumbs.db
 /developmentPlugins/ThousandGenomesServerType/target/
 /developmentPlugins/TranscriptIsoform/target/
 /developmentPlugins/TutorialHelper/target/
+/tools/FindJunctions/nbproject/private/
+
 /target/
 .gradle/
 .gradle/1.12/

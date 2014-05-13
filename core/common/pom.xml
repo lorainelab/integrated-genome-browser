@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.affymetrix</groupId>
+        <artifactId>igb-project</artifactId>
+        <version>8.2</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <groupId>com.affymetrix</groupId>
+    <artifactId>affymetrix-common</artifactId>
+    
+    <name>Affymetrix Common</name>
+
+    <packaging>bundle</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.freedesktop.tango</groupId>
+            <artifactId>tango-icon-theme</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.jlfgr</groupId>
+            <artifactId>jlfgr</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genoviz</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Include-Resource>
+                            {maven-resources}, {maven-dependencies}
+                        </Include-Resource>       
+                        <Import-Package>*;resolution:=optional</Import-Package>
+                        <Bundle-Activator>com.affymetrix.common.Activator</Bundle-Activator>
+                        <Export-Package>
+                            com.affymetrix.common
+                        </Export-Package>
+                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>                      
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

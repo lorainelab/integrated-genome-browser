@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GeometricMean
+Bundle-SymbolicName: com.gene.geometricmean.GeometricMean
+Bundle-Version: 1.2.0
+Bundle-Activator: com.gene.geometricmean.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: operation to compute Geometric Mean on selected graph tracks
+Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/GeometricMean-1.2.0/GeometricMean.html
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.genometryImpl.operator,
+ com.affymetrix.igb.osgi.service,
+ org.osgi.framework;version="1.5.0"
+Tool: Bnd-1.50.0

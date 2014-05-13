@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TutorialHelper
+Bundle-SymbolicName: com.gene.tutorialhelper.TutorialHelper
+Bundle-Description: plugin to allow the user to see widget ids to help develop tutorials
+Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/TutorialHelper-0.0.9/TutorialHelper.html
+Bundle-Version: 0.0.9
+Bundle-Activator: com.gene.tutorialhelper.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.affymetrix.common;version="6.7.0",
+ com.affymetrix.igb.osgi.service,
+ javax.swing,
+ com.affymetrix.igb.swing,
+ org.osgi.framework

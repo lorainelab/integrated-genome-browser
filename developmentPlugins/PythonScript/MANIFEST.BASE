@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PythonScript
+Bundle-SymbolicName: com.gene.pythonscript.PythonScript
+Bundle-Version: 1.0.0
+Bundle-Activator: com.gene.pythonscript.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: plugin to allow the user to run Python scripts in IGB
+Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/PythonScript-1.0.0/PythonScript.html
+Bundle-Vendor: Genentech
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.igb.swing,
+ com.affymetrix.igb.swing.util,
+ com.affymetrix.igb.osgi.service,
+ javax.script,
+ org.osgi.framework,
+ org.osgi.util.tracker
+Bundle-ClassPath: lib/jython.jar,
+ .

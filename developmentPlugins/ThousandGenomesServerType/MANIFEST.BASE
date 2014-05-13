@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ThousandGenomesServerType
+Bundle-SymbolicName: com.gene.thousandgenomesservertype.ThousandGenomesServerType
+Bundle-Version: 0.0.9
+Bundle-Activator: com.gene.thousandgenomesservertype.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: plugin to allow the user to load ftp sites as servers 
+Bundle-DocURL: http://research-pub.gene.com/igb_plugins/docs/ThousandGenomesServerType-0.0.9/ThousandGenomesServerType.html
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.parsers,
+ com.affymetrix.genometryImpl.symloader,
+ com.affymetrix.genometryImpl.util,
+ com.affymetrix.genometryImpl.quickload,
+ com.affymetrix.igb.osgi.service,
+ org.osgi.framework;version="1.5.0",
+ org.osgi.util.tracker;version="1.4.0"
+Tool: Bnd-1.50.0

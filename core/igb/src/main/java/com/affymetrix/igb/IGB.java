@@ -153,9 +153,7 @@ public final class IGB extends Application
 		// to accept or reject untrusted (self-signed) certificates
 		// when connecting to server over HTTPS
 		IGBTrustManager.installTrustManager();
-
-		// Configure HTTP User agent
-		System.setProperty("http.agent", USER_AGENT);
+	
 
 		// Initialize the ConsoleView right off, so that ALL output will
 		// be captured there.
@@ -280,7 +278,6 @@ public final class IGB extends Application
 	
 	private void printDetails(String[] args) {
 		System.out.println("Starting: " + APP_NAME + " " + APP_VERSION);
-		System.out.println("UserAgent: " + USER_AGENT);
 		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
 		Runtime runtime = Runtime.getRuntime();
 		System.out.println("Locale: " + Locale.getDefault());

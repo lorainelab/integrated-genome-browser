@@ -6,7 +6,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'com.affymetrix'
-version = '8.2'
+version = '8.2' //TODO read this from common.properties
 
 //Location to store webstart jars
 libsDirName = '../main/target/webstart'

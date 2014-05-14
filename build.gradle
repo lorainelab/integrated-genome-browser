@@ -207,29 +207,30 @@ task copyToLib(type: Copy) {
 
 
 task signBundles(dependsOn: [copyToLib]) << {
-    def props =  project.getProperties().get('props')    
+//    def props =  project.getProperties().get('props')    
     new File(signedLibDir).mkdirs()
-    def libFiles = files { file(webStartDir + '/lib').listFiles() }
-    libFiles.each {
-        
-        println "Signing: " + it
-        //ant.jar to add Trusted-Library may not be needed
-        ant.jar(destfile: it, update: true) {
-            delegate.manifest {
-                attribute(name: 'Trusted-Library', value: 'true')
-                attribute(name: 'Permissions', value: 'all-permissions')
-                attribute(name: 'Codebase', value: '*')
-            }
-        }
-        ant.signjar(
-            destDir: signedLibDir,
-            alias: props.get('keyStoreAlias'),
-            jar: it,
-            keystore: System.getProperty("user.home")+'/.keystore',
-            storepass: props.get('keypass'),
-            keypass: props.get('keypass'),
-            preservelastmodified: 'true')
-    }
+//    def libFiles = files { file(webStartDir + '/lib').listFiles() }
+
+//    libFiles.each {
+//        
+//        println "Signing: " + it
+//        //ant.jar to add Trusted-Library may not be needed
+//        ant.jar(destfile: it, update: true) {
+//            delegate.manifest {
+//                attribute(name: 'Trusted-Library', value: 'true')
+//                attribute(name: 'Permissions', value: 'all-permissions')
+//                attribute(name: 'Codebase', value: '*')
+//            }
+//        }
+//        ant.signjar(
+//            destDir: signedLibDir,
+//            alias: props.get('keyStoreAlias'),
+//            jar: it,
+//            keystore: System.getProperty("user.home")+'/.keystore',
+//            storepass: props.get('keypass'),
+//            keypass: props.get('keypass'),
+//            preservelastmodified: 'true')
+//    }
 }
 
 task generateSmallJnlp(type: Copy){
@@ -298,11 +299,11 @@ task webstartSmallJar(type: Jar, dependsOn: [classes, signBundles, generateSmall
     from fileTree(dir: webStartDir + '/tmp/smallJar/')
     from 'build/classes/main'
     from 'build/resources/main'
-    from signedLibDir
+    from webStartDir+'/lib'
     exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
-    from zipTree(signedLibDir + '/affymetrix-common-'+version+'.jar')
+    from zipTree(webStartDir+'/lib' + '/affymetrix-common-'+version+'.jar')
     exclude "META-INF/**"
-    from zipTree(signedLibDir + '/org.apache.felix.main-4.2.1.jar')
+    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-4.2.1.jar')
     exclude "META-INF/**" 
     metaInf{
         from (resourceDir+'/META-INF/services')
@@ -327,11 +328,11 @@ task webstartMediumJar(type: Jar, dependsOn: [classes, signBundles, generateMedi
     from fileTree(dir: webStartDir + '/tmp/mediumJar/')
     from 'build/classes/main'
     from 'build/resources/main'
-    from signedLibDir
+    from webStartDir+'/lib'
     exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
-    from zipTree(signedLibDir + '/affymetrix-common-' + version + '.jar')
+    from zipTree(webStartDir+'/lib' + '/affymetrix-common-' + version + '.jar')
     exclude "META-INF/**"
-    from zipTree(signedLibDir + '/org.apache.felix.main-4.2.1.jar')
+    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-4.2.1.jar')
     exclude "META-INF/**" 
     metaInf{
         from (resourceDir+'/META-INF/services')
@@ -357,11 +358,11 @@ task webstartLargeJar(type: Jar, dependsOn: [classes, signBundles, generateLarge
     from fileTree(dir: webStartDir + '/tmp/largeJar/')
     from 'build/classes/main'
     from 'build/resources/main'
-    from signedLibDir
+    from webStartDir+'/lib'
     exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
-    from zipTree(signedLibDir + '/affymetrix-common-' + version + '.jar')
+    from zipTree(webStartDir+'/lib' + '/affymetrix-common-' + version + '.jar')
     exclude "META-INF/**"
-    from zipTree(signedLibDir + '/org.apache.felix.main-4.2.1.jar')
+    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-4.2.1.jar')
     exclude "META-INF/**" 
     metaInf{
         from (resourceDir+'/META-INF/services')

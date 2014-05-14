@@ -207,30 +207,28 @@ task copyToLib(type: Copy) {
 
 
 task signBundles(dependsOn: [copyToLib]) << {
-//    def props =  project.getProperties().get('props')    
+    def props =  project.getProperties().get('props')    
     new File(signedLibDir).mkdirs()
-//    def libFiles = files { file(webStartDir + '/lib').listFiles() }
+    def libFiles = files { file(webStartDir + '/lib').listFiles() }
 
-//    libFiles.each {
-//        
-//        println "Signing: " + it
-//        //ant.jar to add Trusted-Library may not be needed
-//        ant.jar(destfile: it, update: true) {
-//            delegate.manifest {
-//                attribute(name: 'Trusted-Library', value: 'true')
-//                attribute(name: 'Permissions', value: 'all-permissions')
-//                attribute(name: 'Codebase', value: '*')
-//            }
-//        }
-//        ant.signjar(
-//            destDir: signedLibDir,
-//            alias: props.get('keyStoreAlias'),
-//            jar: it,
-//            keystore: System.getProperty("user.home")+'/.keystore',
-//            storepass: props.get('keypass'),
-//            keypass: props.get('keypass'),
-//            preservelastmodified: 'true')
-//    }
+    libFiles.each {
+    //    println "Signing: " + it
+        //ant.jar to add Trusted-Library may not be needed
+        ant.jar(destfile: it, update: true) {
+            delegate.manifest {
+                attribute(name: 'Trusted-Library', value: 'true')
+            }
+        }
+    }
+    //        ant.signjar(
+    //            destDir: signedLibDir,
+    //            alias: props.get('keyStoreAlias'),
+    //            jar: it,
+    //            keystore: System.getProperty("user.home")+'/.keystore',
+    //            storepass: props.get('keypass'),
+    //            keypass: props.get('keypass'),
+    //            preservelastmodified: 'true')
+    //    }
 }
 
 task generateSmallJnlp(type: Copy){

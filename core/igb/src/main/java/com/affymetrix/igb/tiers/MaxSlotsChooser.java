@@ -39,13 +39,19 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 				initComponents();
 				pack();
 			}
-		});
-	}
+        });
+    }
 
-	@Override
-	public String toString() {
-		return this.maxSlots.getText();
-	}
+    @Override
+    public String toString() {
+        String maxSlotString = "";
+        try {
+            maxSlotString = maxSlots.getText();
+        } catch (Exception ex) {
+            //do nothing
+        }
+        return maxSlotString;
+    }
 	
 	/**
 	 * This method is called from within the constructor to initialize the form.

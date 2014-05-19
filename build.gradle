@@ -278,13 +278,12 @@ task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
     into dest
 }
 
-task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate]) {
+task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate, copyToLib]) {
     archiveName = 'igb_exe.jar'
     from fileTree(dir: webStartDir + '/tmp/smallJar/')
     from 'build/classes/main'
     from 'build/resources/main'
     from webStartDir+'/lib'
-    exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
     from zipTree(webStartDir+'/lib' + '/affymetrix-common-'+version+'.jar')
     exclude "META-INF/**"
     from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
@@ -303,16 +302,15 @@ task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate]
     }
 }
 
-task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplate]) {
+task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplate, copyToLib]) {
     archiveName = 'igb_exe-large.jar'
     from fileTree(dir: webStartDir + '/tmp/mediumJar/')
     from 'build/classes/main'
     from 'build/resources/main'
     from webStartDir+'/lib'
-    exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
     from zipTree(webStartDir+'/lib' + '/affymetrix-common-' + version + '.jar')
     exclude "META-INF/**"
-    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-4.2.1.jar')
+    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
     exclude "META-INF/**" 
     metaInf{
         from (resourceDir+'/META-INF/services')
@@ -328,16 +326,15 @@ task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplat
     }
 }
 
-task webstartLargeJar(type: Jar, dependsOn: [classes, generateLargeJnlpTemplate]) {
+task webstartLargeJar(type: Jar, dependsOn: [classes, generateLargeJnlpTemplate, copyToLib]) {
     archiveName = 'igb_exe-5GB.jar'
     from fileTree(dir: webStartDir + '/tmp/largeJar/')
     from 'build/classes/main'
     from 'build/resources/main'
     from webStartDir+'/lib'
-    exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
     from zipTree(webStartDir+'/lib' + '/affymetrix-common-' + version + '.jar')
     exclude "META-INF/**"
-    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-4.2.1.jar')
+    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
     exclude "META-INF/**" 
     metaInf{
         from (resourceDir+'/META-INF/services')

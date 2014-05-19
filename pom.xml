@@ -19,7 +19,7 @@
         <commonsCsvVersion>1.0-SNAPSHOT</commonsCsvVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
         <genovizVersion>1.0</genovizVersion>
-        <felixMainVersion>4.2.1</felixMainVersion>
+        <felixMainVersion>4.2.2</felixMainVersion>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0</fusionVersion>
         <bigWigVersion>1.0</bigWigVersion>
@@ -29,6 +29,7 @@
         <tribbleVersion>1.110</tribbleVersion>
         <samVersion>1.110</samVersion>
         <commonsVfsVersion>2.0</commonsVfsVersion>
+        <jide.version>3.5.15</jide.version>
     </properties>
 	
     <modules>
@@ -503,31 +504,9 @@
                 <version>0.8.90</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.framework</artifactId>        
-                <version>${felixMainVersion}</version>    
-                <type>jar</type>
-            </dependency>
-            
-            <dependency>
                 <groupId>com.jidesoft</groupId>
-                <artifactId>jide</artifactId>
-                <version>3.3.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jidesoft</groupId>
-                <artifactId>commons</artifactId>
-                <version>3.3.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jidesoft</groupId>
-                <artifactId>jide-components</artifactId>
-                <version>3.3.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jidesoft</groupId>
-                <artifactId>jide-grids</artifactId>
-                <version>3.3.8</version>
+                <artifactId>jide-ultimate</artifactId>
+                <version>${jide.version}</version>
             </dependency>
             <dependency>
                 <groupId>fi.iki.elonen</groupId>

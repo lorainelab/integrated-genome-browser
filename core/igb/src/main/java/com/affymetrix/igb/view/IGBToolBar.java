@@ -127,6 +127,11 @@ public class IGBToolBar extends JToolBar {
         button.setHideActionText(true);
         //button.setBorder(new LineBorder(Color.BLACK));
         button.setMargin(new Insets(0, 0, 0, 0));
+        if ("Nimbus".equals(UIManager.getLookAndFeel().getName())){
+            UIDefaults def = new UIDefaults();
+            def.put("Button.contentMargins", new Insets(4, 4, 4, 4));
+            button.putClientProperty("Nimbus.Overrides", def);
+        }
         if (genericAction instanceof ContinuousAction) {
             button.addMouseListener(continuousActionListener);
         }

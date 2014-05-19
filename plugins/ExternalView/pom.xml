@@ -64,8 +64,9 @@
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
-                        <Bundle-Category>IGBTabPanel-com.affymetrix.igb.external.ExternalViewer</Bundle-Category>
+                        <Bundle-Category>IGBTabPanel-com.affymetrix.igb.externall.ExternalViewer</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Activator>com.affymetrix.igb.external.Activator</Bundle-Activator>
                         <Bundle-SymbolicName>com.affymetrix.igb.ExternalView</Bundle-SymbolicName>
                     </instructions>
                 </configuration>

@@ -330,10 +330,7 @@ public class OSGiHandler {
                         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                     }
 
-                } else if (IS_MAC) {
-                    String lnf = UIManager.getSystemLookAndFeelClassName();
-                    UIManager.setLookAndFeel(lnf);
-                }
+                } 
             } catch (Exception ulfe) {
                 // Windows look and feel is only supported on Windows, and only in
                 // some version of the jre.  That is perfectly ok.

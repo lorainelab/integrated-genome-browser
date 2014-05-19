@@ -49,10 +49,6 @@
             <artifactId>colt</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphicsio-svg</artifactId>
         </dependency>
@@ -89,6 +85,7 @@
                                 <include>felix.jar</include>
                                 <include>org.apache.felix*.jar</include>
                                 <include>bigwig*.jar</include>
+                                <include>jide-ultimate*.jar</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
@@ -150,21 +147,6 @@
                                     <version>${felixMainVersion}</version>
                                     <destFileName>felix.jar</destFileName>
                                 </artifactItem>
-                                <!--                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.framework</artifactId>
-                                    <version>${felixMainVersion}</version> 
-                                </artifactItem>-->
-                                <!--                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.osgi.service.obr</artifactId>
-                                    <version>${osgiObrServiceVersion}</version>
-                                </artifactItem>-->
-                                <!--                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.framework</artifactId>
-                                    <version>${felixMainVersion}</version> 
-                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.broad</groupId>
                                     <artifactId>bigwig</artifactId>
@@ -185,30 +167,17 @@
                                     <artifactId>commons-pool</artifactId>
                                     <version>${commonsPoolVersion}</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.jidesoft</groupId>
+                                    <artifactId>jide-ultimate</artifactId>
+                                    <version>${jide.version}</version>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
-                    <!--                    <execution>
-                        <id>copyMain</id>
-                        <phase></phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.affymetrix</groupId>
-                                    <artifactId>sharedLibWrapper</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>-->
                 </executions>
             </plugin> 
             <plugin>
@@ -240,7 +209,6 @@
                             org.jdom.*,
                             org.broad.tribble,
                             org.broad.tribble.*,
-                            com.jidesoft.*,
                             org.freehep,
                             org.freehep.*,
                             org.jdesktop.*,

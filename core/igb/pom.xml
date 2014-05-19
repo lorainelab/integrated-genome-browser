@@ -36,12 +36,12 @@
         </dependency>
         <dependency>
             <groupId>com.jidesoft</groupId>
-            <artifactId>jide</artifactId>
+            <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency>  
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
+            <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -118,6 +118,7 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>
+                            com.jidesoft.*,
                             com.apple.eawt;resolution:=optional,
                             com.sun.java.swing.plaf.windows;resolution:=optional,
                             sun.reflect;resolution:=optional,

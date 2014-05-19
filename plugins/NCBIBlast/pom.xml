@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
+            <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

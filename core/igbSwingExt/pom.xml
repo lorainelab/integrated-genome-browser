@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
+            <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -28,6 +28,11 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genoviz</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

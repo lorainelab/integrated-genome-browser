@@ -66,12 +66,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
+            <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.jidesoft</groupId>
-            <artifactId>jide</artifactId>
+            <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -92,7 +92,7 @@
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>*;resolution:=optional</Import-Package>
+                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.bookmarks.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.bookmarks.BookmarkManagerViewGUI</Bundle-Category>

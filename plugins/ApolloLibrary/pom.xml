@@ -32,7 +32,7 @@
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>*;resolution:=optional</Import-Package>
+                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package>
                             apollo.datamodel,
                             apollo.util

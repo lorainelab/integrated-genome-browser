@@ -30,6 +30,7 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
      * http://www.jroller.com/santhosh/date/20050617#adobe_like_tabbedpane_in_swing
      *
      */
+    @Override
     protected JRPTabbedPane createTabbedPane(String id, int tabPlacement) {
         if (isMac()) {
             return new JRPTabbedPane(id, tabPlacement);
@@ -37,11 +38,15 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
         Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
+        if (tabInsets == null) {
+            tabInsets = new Insets(0, 0, 0, 0);
+        }
         UIManager.put("TabbedPane.textIconGap", new Integer(1));
         UIManager.put("TabbedPane.tabInsets", new Insets(tabInsets.left, tabInsets.top, tabInsets.right, tabInsets.bottom));
         JRPTabbedPane tabPane = new JRPTabbedPane(id, tabPlacement) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void insertTab(String title, Icon icon, Component component, String tip, int index) {
                 super.insertTab(null, new VerticalTextIcon(" " + title + " ", tabPlacement == JTabbedPane.RIGHT), component, tip, index);
             }

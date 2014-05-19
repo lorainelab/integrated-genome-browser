@@ -15,14 +15,8 @@
     <resources>
         <java version="1.6+" initial-heap-size="64m" max-heap-size="@jnlp.maxHeapSize@"/>
         <jar href="@jnlp.jarName@.jar" main="true" />
-    </resources>
-    <resources os="Mac\ OS\ X" arch="x86_64" >  
-        <java version="1.6+" initial-heap-size="64m" max-heap-size="@jnlp.maxHeapSize@" java-vm-args="-Dcom.apple.macos.useScreenMenuBar=true -Xdock:name=IGB"/>
-        <jar href="@jnlp.jarName@.jar" main="true" />
-    </resources>
-    <resources os="Mac\ OS\ X" arch="i386 x86">  
-        <java version="1.6+" initial-heap-size="64m" max-heap-size="@jnlp.maxHeapSize@" java-vm-args="-Dcom.apple.macos.useScreenMenuBar=true -Xdock:name=IGB"/>
-        <jar href="@jnlp.jarName@.jar" main="true" />
+        <property name="apple.laf.useScreenMenuBar" value="true" />
+        <property name="http.agent" value="IGB/@jnlp.version@ (Webstart)" />
     </resources>
     <application-desc main-class="com.affymetrix.main.Main">
         <argument>-prefs</argument>

@@ -44,14 +44,4 @@
             <exec.executable>java</exec.executable>
         </properties>
     </action>
-     <action>
-            <actionName>CUSTOM-webstart</actionName>
-            <displayName>webstart</displayName>
-            <goals>
-                <goal>package</goal>
-            </goals>
-            <activatedProfiles>
-                <activatedProfile>webstart</activatedProfile>
-            </activatedProfiles>
-        </action>
 </actions>

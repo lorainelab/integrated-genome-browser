@@ -14,9 +14,6 @@
     
     <properties>
         <name>main</name>
-        <jar.sign.keystore.pass>limo162;tent</jar.sign.keystore.pass>
-        <jar.sign.alias>server</jar.sign.alias>
-        <jar.sign.keystore>keystore.jks</jar.sign.keystore>
     </properties>
     
     <dependencies>
@@ -66,7 +63,7 @@
         </dependency>     
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
+            <artifactId>org.apache.felix.main</artifactId>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -173,10 +170,6 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency> 
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
         </dependency>
         <dependency>
             <groupId>org.broad</groupId>
@@ -444,19 +437,12 @@
             <artifactId>windowsServiceDef</artifactId>
             <scope>runtime</scope>
         </dependency> 
-        <!--End of plugin module dependencies-->
-        
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
+        <dependency> 
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-ultimate</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        </dependency> 
+        <!--End of plugin module dependencies-->
     </dependencies>
     <build>
         <plugins>
@@ -517,10 +503,7 @@
                                         <!--                                        Attributes below are useless for local instance. 
                                         But they are need for webstart.	-->
                                         <attribute name="Permissions" value="all-permissions"/>
-                                        <attribute name="Trusted-Library" value="true"/>
                                         <attribute name="Codebase" value="*"/>
-                                        <attribute name="Caller-Allowable-Codebase" value="*"/>
-                                        <attribute name="Application-Library-Allowable-Codebase" value="*" />
                                     </manifest>
                                     <metainf file="${basedir}/../LICENSE.html"/>
                                     <metainf file="${basedir}/../NOTICES.txt"/>
@@ -589,16 +572,5 @@
                 </plugins>
             </build>
         </profile>
-<!--        <profile>
-            <id>webstart</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    
-                </plugins>
-            </build>
-        </profile>-->
     </profiles>
 </project>

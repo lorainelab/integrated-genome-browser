@@ -29,7 +29,7 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 ext.mainClassName = "com.affymetrix.main.Main"
-ext.applicationDefaultJvmArgs = ["-Xmx1g"]
+ext.applicationDefaultJvmArgs = ["-Xmx1g", "-DdevelopmentMode=true"]
 ext.appleJvmArgs = ["-Xdock:name=IGB", "-Dapple.laf.useScreenMenuBar=true"]
 
 def felixVersion = '4.2.2'

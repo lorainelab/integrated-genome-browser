@@ -6,7 +6,6 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'com.affymetrix'
-version = '8.2' //TODO read this from common.properties
 
 //Location to store webstart jars
 libsDirName = '../main/target/webstart'
@@ -14,6 +13,12 @@ def mavenTargetDir = 'main/target'
 def webStartDir = mavenTargetDir + '/webstart'
 def signedLibDir = webStartDir+ '/signed'
 def resourceDir = 'main/src/main/resources'
+
+ext.commonProps = new Properties() 
+ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.properties')) 
+//remove minor version
+version = commonProps.get('appVersion').substring(0,3)
+//securely read in keystore info from disk
 ext.props = new Properties() 
 ext.props.load(new FileInputStream(System.getProperty("user.home")+'/build.properties')) 
 project.setProperty('props', ext.props) 
@@ -27,20 +32,21 @@ ext.mainClassName = "com.affymetrix.main.Main"
 ext.applicationDefaultJvmArgs = ["-Xmx1g"]
 ext.appleJvmArgs = ["-Xdock:name=IGB", "-Dapple.laf.useScreenMenuBar=true"]
 
+def felixVersion = '4.2.2'
+
 repositories {
     mavenLocal()
     maven { url "http://eos.transvar.org/nexus/content/repositories/releases" }
     maven { url "http://eos.transvar.org/nexus/content/repositories/freehep-maven/" }
     maven { url "http://eos.transvar.org/nexus/content/repositories/central/" }
 }
+
+//Need to be kept in sync with main project pom file - the plan is to migrate to gradle entirely, but the short term this manual sync is needed.
 dependencies {
     compile(group: 'com.affymetrix', name: 'affymetrix-common', version:version) {
         exclude(module: '*')
     }
     compile(group: 'com.affymetrix', name: 'igb', version:version) {
-        exclude(module: '*')
-    }
-    compile(group: 'org.apache.felix', name: 'org.apache.felix.framework', version:'4.2.1') {
         exclude(module: '*')
     }
     compile(group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.0-rc1') {
@@ -71,7 +77,7 @@ dependencies {
     runtime(group: 'com.affymetrix', name: 'genoviz', version:'1.0') {
         exclude(module: '*')
     }
-    runtime(group: 'org.apache.felix', name: 'org.apache.felix.main', version:'4.2.1') {
+    compile(group: 'org.apache.felix', name: 'org.apache.felix.main', version:felixVersion) {
         exclude(module: '*')
     }
     runtime(group: 'com.affymetrix', name: 'apollo-library', version:version) {
@@ -155,6 +161,10 @@ dependencies {
     runtime(group: 'commons-pool', name: 'commons-pool', version:'1.6') {
         exclude(module: '*')
     }
+    runtime(group: 'com.jidesoft', name: 'jide-ultimate', version:'3.5.15') {
+        exclude(module: '*')
+    }
+    
 }
 
 clean{
@@ -205,43 +215,18 @@ task copyToLib(type: Copy) {
     from configurations.runtime
 }
 
-
-task signBundles(dependsOn: [copyToLib]) << {
-    def props =  project.getProperties().get('props')    
-    new File(signedLibDir).mkdirs()
-    def libFiles = files { file(webStartDir + '/lib').listFiles() }
-
-    libFiles.each {
-    //    println "Signing: " + it
-        //ant.jar to add Trusted-Library may not be needed
-        ant.jar(destfile: it, update: true) {
-            delegate.manifest {
-                attribute(name: 'Trusted-Library', value: 'true')
-            }
-        }
-    }
-    //        ant.signjar(
-    //            destDir: signedLibDir,
-    //            alias: props.get('keyStoreAlias'),
-    //            jar: it,
-    //            keystore: System.getProperty("user.home")+'/.keystore',
-    //            storepass: props.get('keypass'),
-    //            keypass: props.get('keypass'),
-    //            preservelastmodified: 'true')
-    //    }
-}
-
 task generateSmallJnlp(type: Copy){
+    def props =  project.getProperties().get('props')
     from resourceDir + '/JNLP-INF'
     into webStartDir
     include('jnlpTemplate.xml')
     rename('jnlpTemplate.xml','igb.jnlp')
     // Use some of the filters provided by Ant
     filter(ReplaceTokens, tokens: [
-            jnlpVersion: version, 
-            jnlpCodebase: 'http://eos.transvar.org/igb', 
-            igbJarName:'igb_exe', 
-            maxHeapSize: '1024'])
+            "jnlp.version": version, 
+            "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
+            "jnlp.jarName":'igb_exe', 
+            "jnlp.maxHeapSize": '1024m'])
 }
 
 task generateMediumJnlp(type: Copy) {
@@ -251,10 +236,10 @@ task generateMediumJnlp(type: Copy) {
     rename('jnlpTemplate.xml','igb-large.jnlp')
     // Use some of the filters provided by Ant
     filter(ReplaceTokens, tokens: [
-            jnlpVersion: version, 
-            jnlpCodebase: 'http://eos.transvar.org/igb', 
-            igbJarName:'igb_exe-large', 
-            maxHeapSize: '2048'])
+            "jnlp.version": version, 
+            "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
+            "jnlp.jarName":'igb_exe-large', 
+            "jnlp.maxHeapSize": '2048m'])
 }
 
 task generateLargeJnlp(type: Copy) {
@@ -264,10 +249,10 @@ task generateLargeJnlp(type: Copy) {
     rename('jnlpTemplate.xml','igb-5GB.jnlp')
     // Use some of the filters provided by Ant
     filter(ReplaceTokens, tokens: [
-            jnlpVersion: version, 
-            jnlpCodebase: 'http://eos.transvar.org/igb', 
-            igbJarName:'igb_exe-5GB', 
-            maxHeapSize: '5120'])
+            "jnlp.version": version, 
+            "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
+            "jnlp.jarName":'igb_exe-5GB', 
+            "jnlp.maxHeapSize": '5120m'])
 }
 
 task generateSmallJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
@@ -284,6 +269,7 @@ task generateMediumJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
     rename('igb-large.jnlp', 'APPLICATION_TEMPLATE.JNLP')
     into dest
 }
+
 task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
     File dest = new File(webStartDir + '/tmp/largeJar/JNLP-INF')
     from webStartDir
@@ -292,7 +278,7 @@ task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
     into dest
 }
 
-task webstartSmallJar(type: Jar, dependsOn: [classes, signBundles, generateSmallJnlpTemplate]) {
+task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate]) {
     archiveName = 'igb_exe.jar'
     from fileTree(dir: webStartDir + '/tmp/smallJar/')
     from 'build/classes/main'
@@ -301,7 +287,7 @@ task webstartSmallJar(type: Jar, dependsOn: [classes, signBundles, generateSmall
     exclude 'org.apache.felix.main-*.jar', 'org.apache.felix.framework*.jar'
     from zipTree(webStartDir+'/lib' + '/affymetrix-common-'+version+'.jar')
     exclude "META-INF/**"
-    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-4.2.1.jar')
+    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
     exclude "META-INF/**" 
     metaInf{
         from (resourceDir+'/META-INF/services')
@@ -309,19 +295,15 @@ task webstartSmallJar(type: Jar, dependsOn: [classes, signBundles, generateSmall
     }
     manifest{
         attributes(
-         "Main-Class": mainClassName,
-         "Application-Name": "IGB",
-         "Permissions":"all-permissions",
-         "Trusted-Library":"true",
-         "Codebase":"*",
-         "Caller-Allowable-Codebase":"*",
-         "Application-Library-Allowable-Codebase":"*",
-         "Created-By":"Loraine lab",
-         "Built-By":"Gradle 1.12"
+        "Application-Name": "IGB",   
+        "Permissions":"all-permissions",
+        "Created-By":"Loraine lab",
+        "Main-Class": 'com.affymetrix.main.Main',
         )
     }
 }
-task webstartMediumJar(type: Jar, dependsOn: [classes, signBundles, generateMediumJnlpTemplate]) {
+
+task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplate]) {
     archiveName = 'igb_exe-large.jar'
     from fileTree(dir: webStartDir + '/tmp/mediumJar/')
     from 'build/classes/main'
@@ -338,20 +320,15 @@ task webstartMediumJar(type: Jar, dependsOn: [classes, signBundles, generateMedi
     }
     manifest{
         attributes(
-         "Main-Class": mainClassName,
-         "Application-Name": "IGB",
-         "Permissions":"all-permissions",
-         "Trusted-Library":"true",
-         "Codebase":"*",
-         "Caller-Allowable-Codebase":"*",
-         "Application-Library-Allowable-Codebase":"*",
-         "Created-By":"Loraine lab",
-         "Built-By":"Gradle 1.12"
+        "Application-Name": "IGB",   
+        "Permissions":"all-permissions",
+        "Created-By":"Loraine lab",
+        "Main-Class": 'com.affymetrix.main.Main',
         )
     }
 }
 
-task webstartLargeJar(type: Jar, dependsOn: [classes, signBundles, generateLargeJnlpTemplate]) {
+task webstartLargeJar(type: Jar, dependsOn: [classes, generateLargeJnlpTemplate]) {
     archiveName = 'igb_exe-5GB.jar'
     from fileTree(dir: webStartDir + '/tmp/largeJar/')
     from 'build/classes/main'
@@ -366,17 +343,12 @@ task webstartLargeJar(type: Jar, dependsOn: [classes, signBundles, generateLarge
         from (resourceDir+'/META-INF/services')
         into 'services'
     }
-    manifest{
+     manifest{
         attributes(
-         "Main-Class": mainClassName,
-         "Application-Name": "IGB",
-         "Permissions":"all-permissions",
-         "Trusted-Library":"true",
-         "Codebase":"*",
-         "Caller-Allowable-Codebase":"*",
-         "Application-Library-Allowable-Codebase":"*",
-         "Created-By":"Loraine lab",
-         "Built-By":"Gradle 1.12"
+        "Application-Name": "IGB",   
+        "Permissions":"all-permissions",
+        "Created-By":"Loraine lab",
+        "Main-Class": 'com.affymetrix.main.Main',
         )
     }
 }
@@ -411,7 +383,7 @@ task generateJnlps(type: Copy, dependsOn: [generateSmallJnlp, generateMediumJnlp
     new File('main/target').mkdir()
 }
 
-task generateWebstart(dependsOn: [signBundles, webstartSmallJar, webstartMediumJar, webstartLargeJar, generateJnlps, copyWebstartResources, signWebstartJars]){
+task generateWebstart(dependsOn: [webstartSmallJar, webstartMediumJar, webstartLargeJar, generateJnlps, copyWebstartResources, signWebstartJars]){
     println 'Generating Webstart Artifacts'
 }
 

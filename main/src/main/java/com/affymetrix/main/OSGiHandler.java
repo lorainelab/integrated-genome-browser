@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -31,6 +32,13 @@ public class OSGiHandler {
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
 
+    final public static boolean IS_WINDOWS
+            = System.getProperty("os.name").toLowerCase().contains("windows");
+    final public static boolean IS_MAC
+            = System.getProperty("os.name").toLowerCase().contains("mac");
+    final public static boolean IS_LINUX
+            = System.getProperty("os.name").toLowerCase().contains("linux");
+
     private static final OSGiHandler instance = new OSGiHandler();
 
     public static OSGiHandler getInstance() {
@@ -42,6 +50,55 @@ public class OSGiHandler {
 
     public static void main(final String[] args) {
         getInstance().startOSGi(args);
+    }
+
+    /**
+     * start OSGi, load and start the OSGi implementation load the embedded
+     * bundles, if not cached, and start all bundles
+     *
+     * @param args the command line arguments
+     */
+    public void startOSGi(String[] args) {
+        if (isDevelopmentMode()) {
+            deleteDirectory(new File(getCacheFolder()));
+        }
+        if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
+            clearCache();
+            return;
+        }
+        ourLogger.log(Level.INFO, "Starting OSGi");
+        setLaf();
+
+        ourLogger.log(Level.INFO, "Loading OSGi framework");
+        String argArray = Arrays.toString(args);
+        loadFramework(argArray.substring(1, argArray.length() - 1));
+
+        try {
+            BundleContext bundleContext = framework.getBundleContext();
+            if (bundleContext.getBundles().length <= 1) {
+                ourLogger.log(Level.INFO, "Loading embedded OSGi bundles");
+                loadEmbeddedBundles(bundleContext);
+            }
+            uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
+            installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
+            for (Bundle bundle : bundleContext.getBundles()) {
+                bundle.start();
+            }
+            ourLogger.log(Level.INFO, "OSGi is started with {0} version {1}",
+                    new Object[]{framework.getSymbolicName(), framework.getVersion()});
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            ourLogger.log(Level.WARNING,
+                    "Could not create framework, plugins disabled: {0}", ex.getMessage());
+        }
+    }
+
+    private boolean isDevelopmentMode() {
+        String developmentMode = System.getProperty("developmentMode");
+        if (developmentMode != null && !developmentMode.isEmpty()) {
+            return System.getProperty("developmentMode").equals("true");
+        }
+        return false;
     }
 
     private String getCacheFolder() {
@@ -120,63 +177,6 @@ public class OSGiHandler {
             ex.printStackTrace(System.err);
             System.exit(0);
         }
-    }
-
-    /**
-     * start OSGi, load and start the OSGi implementation load the embedded
-     * bundles, if not cached, and start all bundles
-     *
-     * @param args the command line arguments
-     */
-    public synchronized void startOSGi(String[] args) {
-        if (isDevelopmentMode()) {
-            deleteDirectory(new File(getCacheFolder()));
-        }
-        if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
-            clearCache();
-            return;
-        }
-        ourLogger.log(Level.INFO, "Starting OSGi");
-        setLaf();
-
-        ourLogger.log(Level.INFO, "Loading OSGi framework");
-        String argArray = Arrays.toString(args);
-        loadFramework(argArray.substring(1, argArray.length() - 1));
-
-        try {
-            BundleContext bundleContext = framework.getBundleContext();
-            if (bundleContext.getBundles().length <= 1) {
-                ourLogger.log(Level.INFO, "Loading embedded OSGi bundles");
-                loadEmbeddedBundles(bundleContext);
-            }
-//			// This should not be required if felix.auto.start works correctly
-//			String felix_auto_start = CONFIG_BUNDLE.getString("felix.autoload.bundles");
-//			if(felix_auto_start != null && felix_auto_start.length() > 0 && felix_auto_start.split(" ").length > 1) {
-//				ourLogger.log(Level.INFO, "Installing remote OSGi bundles");
-//				for(String url : felix_auto_start.split(" ")) {
-//					installBundles(bundleContext, url);
-//				}
-//			}
-            uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
-            installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
-            for (Bundle bundle : bundleContext.getBundles()) {
-                bundle.start();
-            }
-            ourLogger.log(Level.INFO, "OSGi is started with {0} version {1}",
-                    new Object[]{framework.getSymbolicName(), framework.getVersion()});
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-            ourLogger.log(Level.WARNING,
-                    "Could not create framework, plugins disabled: {0}", ex.getMessage());
-        }
-    }
-
-    private boolean isDevelopmentMode() {
-        String developmentMode = System.getProperty("developmentMode");
-        if (developmentMode != null && !developmentMode.isEmpty()) {
-            return System.getProperty("developmentMode").equals("true");
-        }
-        return false;
     }
 
     private void uninstallBundles(BundleContext bundleContext, String uninstall_bundle) throws BundleException {
@@ -309,21 +309,37 @@ public class OSGiHandler {
 
         // if this is != null, then the user-requested l-and-f has already been applied
         if (System.getProperty("swing.defaultlaf") == null) {
-            String os = System.getProperty("os.name");
-            if (os != null && os.toLowerCase().contains("windows")) {
-                try {
+            try {
+                if (IS_WINDOWS) {
                     // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
                     Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                     LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
                     if (look_and_feel.isSupportedLookAndFeel()) {
                         UIManager.setLookAndFeel(look_and_feel);
                     }
-                } catch (Exception ulfe) {
-                    // Windows look and feel is only supported on Windows, and only in
-                    // some version of the jre.  That is perfectly ok.
+                } else if (IS_LINUX) {
+                    try {
+                        for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+                            if ("Nimbus".equals(lafInfo.getName())) {
+                                UIManager.setLookAndFeel(lafInfo.getClassName());
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        // If Nimbus is not available
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    }
+
+                } else if (IS_MAC) {
+                    String lnf = UIManager.getSystemLookAndFeelClassName();
+                    UIManager.setLookAndFeel(lnf);
                 }
+            } catch (Exception ulfe) {
+                // Windows look and feel is only supported on Windows, and only in
+                // some version of the jre.  That is perfectly ok.
             }
         }
+
     }
 
     public BundleContext getBundleContext() {

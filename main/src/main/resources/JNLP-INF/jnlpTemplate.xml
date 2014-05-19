@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="6.0+" codebase="@jnlpCodebase@">
+<jnlp spec="6.0+" codebase="@jnlp.codebase@">
     <information>
-        <title>IGB @jnlpVersion@</title>
+        <title>IGB @jnlp.version@</title>
         <vendor>Loraine Lab</vendor>
         <homepage href="http://bioviz.org/igb/" />
-        <description>Integrated Genome Browser (@jnlpVersion@)</description>
+        <description>Integrated Genome Browser (@jnlp.version@)</description>
         <icon href="igb.gif"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
             <menu submenu="IGB" />
         </shortcut>
-    </information>
-    <security>
-        <all-permissions/>
-    </security>
+    </information>   
     <resources>
-        <java version="1.6+" initial-heap-size="200m" max-heap-size="@maxHeapSize@m"/>
-        <jar href="@igbJarName@.jar" main="true" />
-        <property name="apple.laf.useScreenMenuBar" value="true" />
+        <java version="1.6+" initial-heap-size="64m" max-heap-size="@maxHeapSize@m"/>
+        <jar href="@jnlp.jarName@.jar" main="true" />
     </resources>
-    <application-desc main-class="com.affymetrix.main.Main" name="IGB">
+    <resources os="Mac\ OS\ X" arch="x86_64" >  
+        <java version="1.6+" initial-heap-size="64m" max-heap-size="@maxHeapSize@m" java-vm-args="-Dcom.apple.macos.useScreenMenuBar=true -Xdock:name=IGB"/>
+        <jar href="@jnlp.jarName@.jar" main="true" />
+    </resources>
+    <resources os="Mac\ OS\ X" arch="i386 x86">  
+        <java version="1.6+" initial-heap-size="64m" max-heap-size="@maxHeapSize@m" java-vm-args="-Dcom.apple.macos.useScreenMenuBar=true -Xdock:name=IGB"/>
+        <jar href="@jnlp.jarName@.jar" main="true" />
+    </resources>
+    <application-desc main-class="com.affymetrix.main.Main">
         <argument>-prefs</argument>
-        <argument>@jnlpCodebase@/igb_prefs.xml</argument>
+        <argument>@jnlp.codebase@/igb_prefs.xml</argument>
         <!-- Wildcard values inserted to allow modifications after signing -->
         <argument>-href</argument>
         <argument>*</argument>
         <argument>-scriptfile</argument>
         <argument>*</argument>
     </application-desc>
+    <security>
+        <all-permissions/>
+    </security>
 </jnlp>

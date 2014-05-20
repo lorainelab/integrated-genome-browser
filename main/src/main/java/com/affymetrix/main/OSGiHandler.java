@@ -317,20 +317,7 @@ public class OSGiHandler {
                     if (look_and_feel.isSupportedLookAndFeel()) {
                         UIManager.setLookAndFeel(look_and_feel);
                     }
-                } else if (IS_LINUX) {
-                    try {
-                        for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
-                            if ("Nimbus".equals(lafInfo.getName())) {
-                                UIManager.setLookAndFeel(lafInfo.getClassName());
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        // If Nimbus is not available
-                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                    }
-
-                } 
+                }  
             } catch (Exception ulfe) {
                 // Windows look and feel is only supported on Windows, and only in
                 // some version of the jre.  That is perfectly ok.

@@ -103,203 +103,209 @@ public final class BookmarkUnibrowControlServlet {
 
 		String threadDescription = "Loading Bookmark Data";
 		if (isGalaxyBookmark) {
-			threadDescription = "Loading Your Galaxy Data";
-		}
+            threadDescription = "Loading Your Galaxy Data";
+        }
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(threadDescription) {
+        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(threadDescription) {
 
-			@Override
-			protected Object runInBackground() {
-				String seqid = getFirstValueEntry(parameters, Bookmark.SEQID);
-				String version = getFirstValueEntry(parameters, Bookmark.VERSION);
-				String start_param = getFirstValueEntry(parameters, Bookmark.START);
-				String end_param = getFirstValueEntry(parameters, Bookmark.END);
+            @Override
+            protected Object runInBackground() {
+                try {
+                    String seqid = getFirstValueEntry(parameters, Bookmark.SEQID);
+                    String version = getFirstValueEntry(parameters, Bookmark.VERSION);
+                    String start_param = getFirstValueEntry(parameters, Bookmark.START);
+                    String end_param = getFirstValueEntry(parameters, Bookmark.END);
 //				String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
-				String select_start_param = getFirstValueEntry(parameters, Bookmark.SELECTSTART);
-				String select_end_param = getFirstValueEntry(parameters, Bookmark.SELECTEND);
-				boolean loadResidue = Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.LOADRESIDUES));
+                    String select_start_param = getFirstValueEntry(parameters, Bookmark.SELECTSTART);
+                    String select_end_param = getFirstValueEntry(parameters, Bookmark.SELECTEND);
+                    boolean loadResidue = Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.LOADRESIDUES));
 				// For historical reasons, there are two ways of specifying graphs in a bookmark
-				// Eventually, they should be treated more similarly, but for now some
-				// differences remain
-				// parameter "graph_file" can be handled by goToBookmark()
-				//    Does not check whether the file was previously loaded
-				//    Loads in GUI-friendly thread
-				//    Must be a file name, not a generic URL
-				// parameter "graph_source_url_0", "graph_source_url_1", ... is handled elsewhere
-				//    Checks to avoid double-loading of files
-				//    Loading can freeze the GUI
-				//    Can be any URL, not just a file
-				boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
-				boolean loaddata = true;
-				boolean loaddas2data = true;
-				int start = 0;
-				int end = 0;
+                    // Eventually, they should be treated more similarly, but for now some
+                    // differences remain
+                    // parameter "graph_file" can be handled by goToBookmark()
+                    //    Does not check whether the file was previously loaded
+                    //    Loads in GUI-friendly thread
+                    //    Must be a file name, not a generic URL
+                    // parameter "graph_source_url_0", "graph_source_url_1", ... is handled elsewhere
+                    //    Checks to avoid double-loading of files
+                    //    Loading can freeze the GUI
+                    //    Can be any URL, not just a file
+                    boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
+                    boolean loaddata = true;
+                    boolean loaddas2data = true;
+                    int start = 0;
+                    int end = 0;
 
-				//missing seqid or start or end? Attempt to set to current view
-				if (missingString(new String[]{seqid, start_param, end_param})) {
-					boolean pickOne = false;
-					//get AnnotatedSeqGroup for bookmark
-					String preferredVersionName = LOOKUP.getPreferredName(version);
-					AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(preferredVersionName);
-					if (bookMarkGroup != null) {
-						//same genome version as that in view?
-						SeqMapViewI currentSeqMap = igbService.getSeqMapView();
-						if (currentSeqMap != null) {
-							//get visible span
-							SeqSpan currentSpan = currentSeqMap.getVisibleSpan();
-							if (currentSpan != null && currentSpan.getBioSeq() != null) {
-								//check genome version, if same then set coordinates								
-								AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
-								if (!isGalaxyBookmark && (currentGroup != null && currentGroup.equals(bookMarkGroup))) {
-									start = currentSpan.getStart();
-									end = currentSpan.getEnd();
-									seqid = currentSpan.getBioSeq().getID();
-								} else {
-									pickOne = true;
-								}
-							} else {
-								pickOne = true;
-							}
-						} //pick first chromosome and 1M span
-						else {
-							pickOne = true;
-						}
-					}
-					//pick something, only works if version was loaded.
-					if (pickOne & !isGalaxyBookmark) {
-						BioSeq bs = bookMarkGroup.getSeq(0);
-						if (bs != null) {
-							int len = bs.getLength();
-							seqid = bs.getID();
-							start = len / 3 - 500000;
-							if (start < 0) {
-								start = 0;
-							}
-							end = start + 500000;
-							if (end > len) {
-								end = len - 1;
-							}
-						}
-					}
-				}
+                    //missing seqid or start or end? Attempt to set to current view
+                    if (missingString(new String[]{seqid, start_param, end_param})) {
+                        boolean pickOne = false;
+                        //get AnnotatedSeqGroup for bookmark
+                        String preferredVersionName = LOOKUP.getPreferredName(version);
+                        AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(preferredVersionName);
+                        if (bookMarkGroup != null) {
+                            //same genome version as that in view?
+                            SeqMapViewI currentSeqMap = igbService.getSeqMapView();
+                            if (currentSeqMap != null) {
+                                //get visible span
+                                SeqSpan currentSpan = currentSeqMap.getVisibleSpan();
+                                if (currentSpan != null && currentSpan.getBioSeq() != null) {
+                                    //check genome version, if same then set coordinates								
+                                    AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
+                                    if (!isGalaxyBookmark && (currentGroup != null && currentGroup.equals(bookMarkGroup))) {
+                                        start = currentSpan.getStart();
+                                        end = currentSpan.getEnd();
+                                        seqid = currentSpan.getBioSeq().getID();
+                                    } else {
+                                        pickOne = true;
+                                    }
+                                } else {
+                                    pickOne = true;
+                                }
+                            } //pick first chromosome and 1M span
+                            else {
+                                pickOne = true;
+                            }
+                        }
+                        //pick something, only works if version was loaded.
+                        if (pickOne & !isGalaxyBookmark) {
+                            BioSeq bs = bookMarkGroup.getSeq(0);
+                            if (bs != null) {
+                                int len = bs.getLength();
+                                seqid = bs.getID();
+                                start = len / 3 - 500000;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                end = start + 500000;
+                                if (end > len) {
+                                    end = len - 1;
+                                }
+                            }
+                        }
+                    }
 
-				//attempt to parse from bookmark?
-				if (start == 0 && end == 0) {
-					List<Integer> intValues = initializeIntValues(start_param, end_param, select_start_param, select_end_param);
-					start = intValues.get(0);
-					end = intValues.get(1);
-				}
+                    //attempt to parse from bookmark?
+                    if (start == 0 && end == 0) {
+                        List<Integer> intValues = initializeIntValues(start_param, end_param, select_start_param, select_end_param);
+                        start = intValues.get(0);
+                        end = intValues.get(1);
+                    }
 
-				List<String> server_urls = parameters.get(Bookmark.SERVER_URL);
-				List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
-				List<GenericServer> gServers = null;
-				if (server_urls.isEmpty() || query_urls.isEmpty() || server_urls.size() != query_urls.size()) {
-					loaddata = false;
-				} else {
-					gServers = loadServers(igbService, server_urls);
-				}
+                    List<String> server_urls = parameters.get(Bookmark.SERVER_URL);
+                    List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
+                    List<GenericServer> gServers = null;
+                    if (server_urls.isEmpty() || query_urls.isEmpty() || server_urls.size() != query_urls.size()) {
+                        loaddata = false;
+                    } else {
+                        gServers = loadServers(igbService, server_urls);
+                    }
 
-				List<String> das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
-				List<String> das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+                    List<String> das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
+                    List<String> das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
 
-				List<GenericServer> gServers2 = null;
+                    List<GenericServer> gServers2 = null;
 
-				if (das2_server_urls.isEmpty() || das2_query_urls.isEmpty() || das2_server_urls.size() != das2_query_urls.size()) {
-					loaddas2data = false;
-				} else {
-					gServers2 = loadServers(igbService, das2_server_urls);
-				}
+                    if (das2_server_urls.isEmpty() || das2_query_urls.isEmpty() || das2_server_urls.size() != das2_query_urls.size()) {
+                        loaddas2data = false;
+                    } else {
+                        gServers2 = loadServers(igbService, das2_server_urls);
+                    }
 
-				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end).orNull();
+                    final BioSeq seq = goToBookmark(igbService, seqid, version, start, end).orNull();
 
-				if (seq == null) {
-					if (isGalaxyBookmark) {
-						loadUnknownData(parameters);
-						return null; 
-					}
-					else if (loaddata) {
-						AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
-						if (seqGroup == null || !seqGroup.isSynonymous(version)) {
-							seqGroup = gmodel.addSeqGroup(version);
-						}
-						loadChromosomesFor(igbService, seqGroup, gServers, query_urls);
-					}
-					return null; /* user cancelled the change of genome, or something like that */
+                    if (seq == null) {
+                        if (isGalaxyBookmark) {
+                            loadUnknownData(parameters);
+                            return null;
+                        } else if (loaddata) {
+                            AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
+                            if (seqGroup == null || !seqGroup.isSynonymous(version)) {
+                                seqGroup = gmodel.addSeqGroup(version);
+                            }
+                            loadChromosomesFor(igbService, seqGroup, gServers, query_urls);
+                        }
+                        return null; /* user cancelled the change of genome, or something like that */
 
-				}
+                    }
 
-				if (loaddata) {
-					// TODO: Investigate edge case at max
-					if (seq.getMin() == start && seq.getMax() == end) {
-						end -= 1;
-					}
+                    if (loaddata) {
+                        // TODO: Investigate edge case at max
+                        if (seq.getMin() == start && seq.getMax() == end) {
+                            end -= 1;
+                        }
 
-					List<GenericFeature> gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
+                        List<GenericFeature> gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
 
-					if (has_properties) {
-						List<String> graph_urls = getGraphUrls(parameters);
-						final Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
+                        if (has_properties) {
+                            List<String> graph_urls = getGraphUrls(parameters);
+                            final Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
 
-						for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
-							String combo_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, Bookmark.GRAPH.COMBO.toString() + i);
-							if (combo_name != null) {
-								ITrackStyleExtended combo_style = combos.get(combo_name);
-								if (combo_style == null) {
-									combo_style = new SimpleTrackStyle("Joined Graphs", true);
-									combo_style.setTrackName("Joined Graphs");
-									combo_style.setExpandable(true);
+                            for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
+                                String combo_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, Bookmark.GRAPH.COMBO.toString() + i);
+                                if (combo_name != null) {
+                                    ITrackStyleExtended combo_style = combos.get(combo_name);
+                                    if (combo_style == null) {
+                                        combo_style = new SimpleTrackStyle("Joined Graphs", true);
+                                        combo_style.setTrackName("Joined Graphs");
+                                        combo_style.setExpandable(true);
 									//combo_style.setCollapsed(true);
-									//combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
-									combo_style.setBackground(igbService.getDefaultBackgroundColor());
-									//combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
-									combo_style.setForeground(igbService.getDefaultForegroundColor());
-									combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
-									combos.put(combo_name, combo_style);
-								}
-							}
-						}
+                                        //combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
+                                        combo_style.setBackground(igbService.getDefaultBackgroundColor());
+                                        //combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
+                                        combo_style.setForeground(igbService.getDefaultForegroundColor());
+                                        combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
+                                        combos.put(combo_name, combo_style);
+                                    }
+                                }
+                            }
 
-						for (final GenericFeature feature : gFeatures) {
-							if (feature != null && graph_urls.contains(feature.getURI().toString())) {
-								ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
+                            for (final GenericFeature feature : gFeatures) {
+                                if (feature != null && graph_urls.contains(feature.getURI().toString())) {
+                                    ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
-									@Override
-									public void run() {
-										BookmarkController.applyProperties(igbService, seq, parameters, feature, combos);
-									}
-								});
-							}
-						}
-					}
-				}
+                                        @Override
+                                        public void run() {
+                                            BookmarkController.applyProperties(igbService, seq, parameters, feature, combos);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
 
-				if (loaddas2data) {
-					loadOldBookmarks(igbService, gServers2, das2_query_urls, start, end);
-				}
+                    if (loaddas2data) {
+                        loadOldBookmarks(igbService, gServers2, das2_query_urls, start, end);
+                    }
 
 				//loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
-				//String[] data_urls = parameters.get(Bookmark.DATA_URL);
-				//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
-				//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
-				String selectParam = getFirstValueEntry(parameters, "select");
-				if (selectParam != null) {
-					igbService.performSelection(selectParam);
-				}
+                    //String[] data_urls = parameters.get(Bookmark.DATA_URL);
+                    //String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
+                    //loadDataFromURLs(uni, data_urls, url_file_extensions, null);
+                    String selectParam = getFirstValueEntry(parameters, "select");
+                    if (selectParam != null) {
+                        igbService.performSelection(selectParam);
+                    }
 
-				if (loadResidue) {
-					BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
-					SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
-					igbService.loadResidues(span, true);
-				}
-				return null;
-			}
+                    if (loadResidue) {
+                        BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
+                        SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
+                        igbService.loadResidues(span, true);
+                    }
+                } catch (Throwable t) {
+                    //Catch all to ensure thread does not continue indefinitely
+                    ourLogger.log(Level.SEVERE, "Error while loading bookmark.", t);
+                    return null;
+                }
 
-			@Override
-			protected void finished() {
-			}
-		};
-		CThreadHolder.getInstance().execute(parameters, worker);
-	}
+                return null;
+            }
+
+            @Override
+            protected void finished() {
+            }
+        };
+        CThreadHolder.getInstance().execute(parameters, worker);
+    }
 
 	/**
 	 * Checks for nulls or Strings with zero length.

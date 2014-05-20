@@ -165,17 +165,20 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 		return msg.toString();
 	}
 
-	private void parseAndGoToBookmark(final IHTTPSession session, boolean isGalaxyBookmark) throws NumberFormatException {
-		String params = session.getQueryParameterString();
-		ourLogger.log(Level.FINE, "Command = {0}", params);
-		//TODO refactor all of this code... there is no need to manually parse the request
-		ListMultimap<String, String> paramMap = Bookmark.parseParametersFromQuery(params);
-		if (paramMap.containsKey(FOCUS_IGB_COMMAND)) {
-			bringIgbToFront();
-		}
-		BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap, isGalaxyBookmark);
+        private void parseAndGoToBookmark(final IHTTPSession session, boolean isGalaxyBookmark) throws NumberFormatException {
+            String params = session.getQueryParameterString();
+            ourLogger.log(Level.FINE, "Command = {0}", params);
+            //TODO refactor all of this code... there is no need to manually parse the request
+            ListMultimap<String, String> paramMap = Bookmark.parseParametersFromQuery(params);
+            if (paramMap.containsKey(FOCUS_IGB_COMMAND)) {
+                bringIgbToFront();
+                if (paramMap.size() == 1) {
+                    return;
+                }
+            }
+            BookmarkUnibrowControlServlet.getInstance().goToBookmark(igbService, paramMap, isGalaxyBookmark);
 
-	}
+        }
 	
 	private void bringIgbToFront() {
 		JFrame f = igbService.getFrame();

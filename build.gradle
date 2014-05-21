@@ -74,7 +74,7 @@ dependencies {
     runtime(group: 'com.affymetrix', name: 'window-service', version:version) {
         exclude(module: '*')
     }
-    runtime(group: 'com.affymetrix', name: 'genoviz', version:'1.0') {
+    runtime(group: 'com.affymetrix', name: 'genoviz', version:'1.0.3') {
         exclude(module: '*')
     }
     compile(group: 'org.apache.felix', name: 'org.apache.felix.main', version:felixVersion) {

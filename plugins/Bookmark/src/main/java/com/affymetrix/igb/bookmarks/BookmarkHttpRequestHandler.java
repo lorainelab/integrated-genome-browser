@@ -111,7 +111,6 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 			String featureName = queryParams.get("checkLoadStatusForDataSet");
 			featureName = StringUtils.substringAfterLast(featureName, "/");
 			if (isDataSetLoaded(featureName)) {
-
 				return "complete";
 			}
 		}
@@ -145,10 +144,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 				+ "    <div class='well' align='center'>"
 				+ "      <h3>"
 				+ "        Thank you for using IGB! "
-				+ "      </h3>"
-				+ "      <p>"
-				+ "        Your Data is Loading"
-				+ "      </p>"
+				+ "      </h3>"			
 				+ "      <a class='btn btn-primary' href='http://localhost:7085/UnibrowControl?bringIGBToFront=true'>Click to go to IGB</a>"
 				+ "    </div>"
 		);

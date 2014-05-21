@@ -18,7 +18,7 @@
         <commonsLangVersion>3.1</commonsLangVersion>
         <commonsCsvVersion>1.0-SNAPSHOT</commonsCsvVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
-        <genovizVersion>1.0.2</genovizVersion>
+        <genovizVersion>1.0.3</genovizVersion>
         <felixMainVersion>4.2.2</felixMainVersion>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0</fusionVersion>

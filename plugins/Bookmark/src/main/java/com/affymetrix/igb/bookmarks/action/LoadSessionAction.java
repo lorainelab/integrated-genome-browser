@@ -51,7 +51,7 @@ public class LoadSessionAction extends GenericAction {
                 fd.setVisible(true);
               
                 if (fd.getFile() != null) {
-                    File selectedFile = new File(fd.getFile());
+                    File selectedFile = new File(fd.getDirectory(), fd.getFile());
                     try {
                         loadSession(selectedFile);
                     } catch (InvalidPreferencesFormatException ipfe) {

@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.symmetry.*;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  A parser for UCSC's BED format.
@@ -150,18 +151,18 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-			if (line.startsWith("#") || line.length() == 0) {  // skip comment lines
-				continue;
-			}
-			else if (line.startsWith("track")) {
+			if (line.startsWith("track")) {
 				track_line_parser.parseTrackLine(line);
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
-				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+				String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+                                if (StringUtils.isNotBlank(trackLineName)){
+                                    type = type.substring(0, type.indexOf(".bed")) + "_" + trackLineName;
+                                    track_line_parser.getCurrentTrackHash().put(TrackLineParser.NAME, type);
+                                }
 //				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 //				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
 //				style.setColorProvider(use_item_rgb? new RGB() : null);
 				bedType = track_line_parser.getCurrentTrackHash().get("type");
-				continue;
 			}
 			else if (line.startsWith("browser")) {
 				// currently take no action for browser lines

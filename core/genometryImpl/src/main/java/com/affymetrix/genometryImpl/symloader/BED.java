@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import org.apache.commons.lang3.StringUtils;
 
 import org.broad.tribble.readers.LineReader;
 
@@ -214,7 +215,11 @@ public class BED extends SymLoader implements LineProcessor {
             if (line.startsWith("track")) {
                 track_line_parser.parseTrackLine(line);
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
-                type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+                String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+                if (StringUtils.isNotBlank(trackLineName)) {
+                    type = type.substring(0, type.indexOf(".bed")) + "_" + trackLineName;
+                    track_line_parser.getCurrentTrackHash().put(TrackLineParser.NAME, type);
+                }
 //				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 //				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
 //				style.setColorProvider(use_item_rgb? new RGB() : null);

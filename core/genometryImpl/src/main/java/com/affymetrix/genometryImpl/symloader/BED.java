@@ -203,7 +203,6 @@ public class BED extends SymLoader implements LineProcessor {
 
         String line;
         String type = default_type;
-        String bedType = null;
         boolean use_item_rgb = true;
         GenometryModel gmodel = GenometryModel.getGenometryModel();
         Thread thread = Thread.currentThread();
@@ -212,20 +211,16 @@ public class BED extends SymLoader implements LineProcessor {
             if (line.length() == 0) {
                 continue;
             }
-            char firstChar = line.charAt(0);
-            if (firstChar == '#') {  // skip comment lines
-                continue;
-            } else if (firstChar == 't' && line.startsWith("track")) {
+            if (line.startsWith("track")) {
                 track_line_parser.parseTrackLine(line);
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
                 type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 //				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 //				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
 //				style.setColorProvider(use_item_rgb? new RGB() : null);
-                bedType = track_line_parser.getCurrentTrackHash().get("type");
+                String bedType = track_line_parser.getCurrentTrackHash().get("type");
                 bedDetail = "bedDetail".equals(bedType);
-                continue;
-            } else if (firstChar == 'b' && line.startsWith("browser")) {
+            } else if (line.startsWith("browser")) {
                 // currently take no action for browser lines
             } else {
                 if (DEBUG) {
@@ -344,7 +339,7 @@ public class BED extends SymLoader implements LineProcessor {
 
         BioSeq seq = group.getSeq(seq_name);
         if ((seq == null) && (seq_name.indexOf(';') > -1)) {
-			// if no seq found, try and split up seq_name by ";", in case it is in format
+            // if no seq found, try and split up seq_name by ";", in case it is in format
             //    "seqid;genome_version"
             String seqid = seq_name.substring(0, seq_name.indexOf(';'));
             String version = seq_name.substring(seq_name.indexOf(';') + 1);
@@ -665,7 +660,7 @@ public class BED extends SymLoader implements LineProcessor {
     /**
      * Implementing AnnotationWriter interface to write out annotations to an
      * output stream as "BED" format.
-	 *
+     *
      */
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
             String type, OutputStream outstream) {
@@ -841,7 +836,7 @@ public class BED extends SymLoader implements LineProcessor {
             String seq_name = bioseq.getKey();
             BioSeq seq = group.getSeq(seq_name);
             if ((seq == null) && (seq_name.indexOf(';') > -1)) {
-				// if no seq found, try and split up seq_name by ";", in case it is in format
+                // if no seq found, try and split up seq_name by ";", in case it is in format
                 //    "seqid;genome_version"
                 String seqid = seq_name.substring(0, seq_name.indexOf(';'));
                 String version = seq_name.substring(seq_name.indexOf(';') + 1);

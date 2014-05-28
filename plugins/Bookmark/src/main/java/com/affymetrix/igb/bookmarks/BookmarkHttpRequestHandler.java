@@ -17,6 +17,8 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.DataManagementTableInfo;
 import com.google.common.collect.ListMultimap;
 import fi.iki.elonen.NanoHTTPD;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,8 +114,32 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
             if (isDataSetLoaded(featureName)) {
                 return "complete";
             }
+        } else if (StringUtils.isNotBlank(queryParams.get("query_url"))) {
+            String query_url = queryParams.get("query_url");
+            if (remoteFileExists(query_url)) {
+                return "var remoteFileExists = true";
+            }
+            return "";
         }
         return "";
+    }
+    
+    private static boolean remoteFileExists(String url) {
+        try {
+            HttpURLConnection.setFollowRedirects(true);
+            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+            con.setRequestMethod("HEAD");
+            if (con.getResponseCode() == 307) {
+                //try https before failing
+                url = url.replace("http://", "https://");
+                con = (HttpURLConnection) new URL(url).openConnection();
+                return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+            } else {
+                return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isDataSetLoaded(String featureName) {

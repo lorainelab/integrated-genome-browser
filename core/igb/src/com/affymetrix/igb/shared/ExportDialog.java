@@ -15,12 +15,15 @@ import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import com.affymetrix.igb.shared.HeadLessExport;
 import com.affymetrix.igb.util.GraphicsUtil;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.osgi.service.IGBService;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB
@@ -37,8 +40,8 @@ public class ExportDialog extends HeadLessExport {
 
 	private static ExportDialog singleton;
 	static float FONT_SIZE = 13.0f;
-	static final String TITLE = "Export Image";
-	static final String DEFAULT_FILE = "export.png";
+	static final String TITLE = BUNDLE.getString("exportDialogTitle");
+	static final String DEFAULT_FILE = BUNDLE.getString("defaultExportFileName")+".png";
 	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
 	static final Object[] UNIT = {"pixels", "inches"};
 	static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
@@ -58,8 +61,7 @@ public class ExportDialog extends HeadLessExport {
 	private boolean isHeightSpinner = false;
 	private File exportFile;
 	private FileFilter extFilter;
-	private File fileFilter;
-	private ExportFileChooser fileChooser;
+	private File defaultExportFile;
 	private String selectedExt;
 	private LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST;
 	JComboBox extComboBox = new JComboBox();
@@ -79,6 +81,9 @@ public class ExportDialog extends HeadLessExport {
 	JRadioButton mvRadioButton = new JRadioButton();
 	JRadioButton mvlRadioButton = new JRadioButton();
 	JPanel buttonsPanel = new JPanel();
+        final public static boolean IS_MAC
+            = System.getProperty("os.name").toLowerCase().contains("mac");
+        
 	// detect export view size changed and activate refresh button.
 	private final ComponentListener resizelistener = new ComponentListener() {
 		public void componentResized(ComponentEvent e) {
@@ -346,44 +351,58 @@ public class ExportDialog extends HeadLessExport {
 
 	public void cancelButtonActionPerformed() {
 		static_frame.setVisible(false);
-	}
+        }
 
-	/**
-	 * Display a file chooser panel and let user choose output path.
-	 *
-	 * @param panel
-	 */
-	public void browseButtonActionPerformed(JPanel panel) {
-		if (fileFilter == null) {
-			fileFilter = new File(defaultDir, "export");
-		}
+    /**
+     * Display a file chooser panel and let user choose output path.
+     *
+     * @param panel
+     */
+    public void browseButtonActionPerformed(JPanel panel) {
+        Date today = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        String dateString = sdf.format(today);
+        String defaultFileName = BUNDLE.getString("defaultExportFileName") + "-" + dateString;
 
-		if (extFilter == null) {
-			extFilter = getFilter(selectedExt);
-		}
+        if (defaultExportFile == null) {
+            defaultExportFile = new File(defaultDir, defaultFileName);
+        }
 
-		fileChooser = new ExportFileChooser(defaultDir, fileFilter, extFilter, this);
-		fileChooser.setDialogTitle("Save view as...");
-		fileChooser.showDialog(panel, "Select");
+        if (extFilter == null) {
+            extFilter = getFilter(selectedExt);
+        }
 
-		if (fileChooser.getSelectedFile() != null) {
-			String newPath = fileChooser.getSelectedFile().getAbsolutePath();
-			fileFilter = fileChooser.getSelectedFile();
-			defaultDir = fileChooser.getCurrentDirectory();
-			extFilter = fileChooser.getFileFilter();
-			String ext = GeneralUtils.getExtension(newPath);
-			String des = fileChooser.getFileFilter().getDescription();
+        if (IS_MAC) {
+            showFileDialog(defaultFileName);
+        } else {
+            ExportFileChooser fileChooser = new ExportFileChooser(defaultDir, defaultExportFile, extFilter, this);
+            fileChooser.setDialogTitle("Save view as...");
+            fileChooser.showDialog(panel, "Select");
+            if (fileChooser.getSelectedFile() != null) {
+                completeBrowseButtonAction(fileChooser.getSelectedFile());
+            }
+        }
+    }
+    
+    private void showFileDialog(String defaultFileName) {
+        FileDialog dialog = new FileDialog(static_frame, "Save Session", FileDialog.SAVE);
+        //dialog.setFilenameFilter(fileNameFilter);
+        dialog.setFile(defaultFileName);
+        dialog.setVisible(true);
+        String fileS = dialog.getFile();
+        if (fileS != null) {
+            File sessionFile = new File(dialog.getDirectory(), dialog.getFile());
+            completeBrowseButtonAction(sessionFile);
+        }
+    }
 
-			// the output file extension is based on user's input
-			if (isExt(ext) && !des.equals(getDescription(ext))) {
-				des = getDescription(ext);
-			}
-
-			ExportFileType type = getType(des);
-			extComboBox.setSelectedItem(type);
-			resetPath(newPath);
-		}
-	}
+    private void completeBrowseButtonAction(File file) {
+        String newPath = file.getAbsolutePath();
+        String ext = GeneralUtils.getExtension(newPath);
+        ExportFileType type = getType(getDescription(ext));
+        extComboBox.setSelectedItem(type);
+        resetPath(newPath);
+    }
 
 	/**
 	 * Reset export file and file path text field to the new path.

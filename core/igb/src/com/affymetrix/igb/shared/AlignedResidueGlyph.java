@@ -61,6 +61,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 			char[] charArray, int seqBegIndex, int seqEndIndex, BitSet residueMask) {
 		
 		Graphics2D g = view.getGraphics();
+                g.setPaintMode();
 		Composite dac = g.getComposite();
 		byte[] quals = useBaseQuality ? qualCharIter.substring(seqBegIndex, seqEndIndex).getBytes() : null;
 		
@@ -79,7 +80,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 							alphaCompositeCache.put(alpha, ac);
 						}
 						g.setComposite(ac);
-					}
+					}                                        
 					g.setColor(this.getBackgroundColor());
 					int offset = (int) (j * pixelsPerBase);
 					//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.

@@ -24,169 +24,170 @@ import java.util.List;
 
 public class PSLParserTest {
 
-	/**
-	 * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.PSLParser.
-	 */
-	@Test
-	public void testWriteAnnotations() throws Exception {
-		//System.out.println("writeAnnotations");
+    /**
+     * Test of writeAnnotations method, of class
+     * com.affymetrix.igb.parsers.PSLParser.
+     */
+    @Test
+    public void testWriteAnnotations() throws Exception {
+        //System.out.println("writeAnnotations");
 
-		String string =
-				"70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr1	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n"
-				+ "71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n";
+        String string
+                = "70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr1	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n"
+                + "71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n";
 
-		InputStream istr = new ByteArrayInputStream(string.getBytes());
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_query = true;
-		String stream_name = "test_file";
-		PSLParser instance = new PSLParser();
+        InputStream istr = new ByteArrayInputStream(string.getBytes());
+        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        boolean annot_query = true;
+        String stream_name = "test_file";
+        PSLParser instance = new PSLParser();
 
-		List<UcscPslSym> syms = null;
-		try {
-			syms = instance.parse(istr, stream_name, group, group, annot_query, true);
-		} catch (IOException ioe) {
-			fail("Exception: " + ioe);
-		}
+        List<UcscPslSym> syms = null;
+        try {
+            syms = instance.parse(istr, stream_name, group, group, annot_query, true);
+        } catch (IOException ioe) {
+            fail("Exception: " + ioe);
+        }
 
-		Collections.sort(syms, new UcscPslComparator());
-		// Now we have read the data into "syms", so let's try writing it.
+        Collections.sort(syms, new UcscPslComparator());
+        // Now we have read the data into "syms", so let's try writing it.
 
-		BioSeq seq = group.getSeq("chr1");
-		String type = "test_type";
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+        BioSeq seq = group.getSeq("chr1");
+        String type = "test_type";
+        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
-		boolean result = instance.writeAnnotations(syms, seq, type, outstream);
-		assertEquals(true, result);
-		assertEquals(string, outstream.toString());
+        boolean result = instance.writeAnnotations(syms, seq, type, outstream);
+        assertEquals(true, result);
+        assertEquals(string, outstream.toString());
 
-		File file = createFileFromString(string);
-		group = new AnnotatedSeqGroup("Test Group");
-		PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
-				true, false, false);
-		syms = psl.getGenome();
-		seq = group.getSeq("chrl");
-		outstream = new ByteArrayOutputStream();
-		result = psl.writeAnnotations(syms, seq, type, outstream);
-		assertEquals(true, result);
-		assertEquals(string, outstream.toString());
+        File file = createFileFromString(string);
+        group = new AnnotatedSeqGroup("Test Group");
+        PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
+                true, false, false);
+        syms = psl.getGenome();
+        seq = group.getSeq("chrl");
+        outstream = new ByteArrayOutputStream();
+        result = psl.writeAnnotations(syms, seq, type, outstream);
+        assertEquals(true, result);
+        assertEquals(string, outstream.toString());
 
-	}
+    }
 
-	/**
-	 * Test of writeAnnotations method, of class com.affymetrix.genometryImpl.symloader.PSL
-	 */
-	public void testPslxFile() throws Exception {
-		String pslxString = "117	2	0	0	1	2	1	1	+	query	121	0	121	target	120	0	120	3	57,36,26,	0,57,95,	0,58,94,		"
-				+ "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CCCCCCCCCCCCCCCCCCCCCCCCCC,";
-		String stream_name = "test_file";
-		String type = "test_type";
+    /**
+     * Test of writeAnnotations method, of class
+     * com.affymetrix.genometryImpl.symloader.PSL
+     */
+    public void testPslxFile() throws Exception {
+        String pslxString = "117	2	0	0	1	2	1	1	+	query	121	0	121	target	120	0	120	3	57,36,26,	0,57,95,	0,58,94,		"
+                + "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CCCCCCCCCCCCCCCCCCCCCCCCCC,";
+        String stream_name = "test_file";
+        String type = "test_type";
 
-		File file = createFileFromString(pslxString);
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
-				true, false, false);
-		List<UcscPslSym> syms = psl.getGenome();
-		BioSeq seq = group.getSeq("target");
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		boolean result = psl.writeAnnotations(syms, seq, type, outstream);
-		assertEquals(true, result);
-		System.out.println(outstream.toString());
-		assertEquals(pslxString, outstream.toString());
-	}
+        File file = createFileFromString(pslxString);
+        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
+                true, false, false);
+        List<UcscPslSym> syms = psl.getGenome();
+        BioSeq seq = group.getSeq("target");
+        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+        boolean result = psl.writeAnnotations(syms, seq, type, outstream);
+        assertEquals(true, result);
+        System.out.println(outstream.toString());
+        assertEquals(pslxString, outstream.toString());
+    }
 
-	@Test
-	public void testFiles() throws Exception {
-		testFile("data/psl/test1.psl");
-		testFile("data/pslx/test.pslx");
-	}
+    @Test
+    public void testFiles() throws Exception {
+        testFile("data/psl/test1.psl");
+        testFile("data/pslx/test.pslx");
+    }
 
-	/**
-	 * @return the symmetries that match the given chromosome.
-	 */
-	public List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		for (SeqSymmetry sym : genomeResults) {
-			BioSeq seq2 = null;
-			if (sym instanceof UcscPslSym) {
-				seq2 = ((UcscPslSym) sym).getTargetSeq();
-			} else {
-				seq2 = sym.getSpanSeq(0);
-			}
-			if (seq.equals(seq2)) {
-				results.add(sym);
-			}
-		}
-		return results;
-	}
+    /**
+     * @return the symmetries that match the given chromosome.
+     */
+    public List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
+        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        for (SeqSymmetry sym : genomeResults) {
+            BioSeq seq2 = null;
+            if (sym instanceof UcscPslSym) {
+                seq2 = ((UcscPslSym) sym).getTargetSeq();
+            } else {
+                seq2 = sym.getSpanSeq(0);
+            }
+            if (seq.equals(seq2)) {
+                results.add(sym);
+            }
+        }
+        return results;
+    }
 
-	private void testFile(String filename) throws Exception {
-		
-		InputStream istr = PSLParserTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		BioSeq seq = null;
+    private void testFile(String filename) throws Exception {
 
-		PSLParser instance = new PSLParser();
-		List<UcscPslSym> syms = instance.parse(istr, filename, null, group, true, true);
-		Collections.sort(syms, new UcscPslComparator());
-		
-		PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), filename, group, null, null,
-				true, true, false);
-		List<BioSeq> seqs = psl.getChromosomeList();
+        InputStream istr = PSLParserTest.class.getClassLoader().getResourceAsStream(filename);
+        assertNotNull(istr);
+        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        BioSeq seq = null;
 
-		List<SeqSymmetry> syms1 = null;
-		List<UcscPslSym> syms2 = null;
+        PSLParser instance = new PSLParser();
+        List<UcscPslSym> syms = instance.parse(istr, filename, null, group, true, true);
+        Collections.sort(syms, new UcscPslComparator());
 
-		for (int i = 0; i < seqs.size(); i++) {
-			seq = seqs.get(i);
-			syms1 = filterResultsByChromosome(syms, seq);
-			syms2 = psl.getChromosome(seq);
-			testSeqSymmetry(syms1, syms2);
-		}
+        PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), filename, group, null, null,
+                true, true, false);
+        List<BioSeq> seqs = psl.getChromosomeList();
 
+        List<SeqSymmetry> syms1 = null;
+        List<UcscPslSym> syms2 = null;
 
-	}
+        for (int i = 0; i < seqs.size(); i++) {
+            seq = seqs.get(i);
+            syms1 = filterResultsByChromosome(syms, seq);
+            syms2 = psl.getChromosome(seq);
+            testSeqSymmetry(syms1, syms2);
+        }
 
-	private void testSeqSymmetry(List<? extends SeqSymmetry> syms1, List<? extends SeqSymmetry> syms2) {
-		assertEquals(syms1.size(), syms2.size());
-		SeqSymmetry sym1, sym2;
-		for (int i = 0; i < syms1.size(); i++) {
-			sym1 = syms1.get(i);
-			sym2 = syms2.get(i);
+    }
 
-			assertEquals(sym1.getID(), sym2.getID());
-			assertEquals(sym1.getChildCount(), sym2.getChildCount());
-			assertEquals(sym1.getSpanCount(), sym2.getSpanCount());
+    private void testSeqSymmetry(List<? extends SeqSymmetry> syms1, List<? extends SeqSymmetry> syms2) {
+        assertEquals(syms1.size(), syms2.size());
+        SeqSymmetry sym1, sym2;
+        for (int i = 0; i < syms1.size(); i++) {
+            sym1 = syms1.get(i);
+            sym2 = syms2.get(i);
 
-			for (int j = 0; j < sym1.getSpanCount(); j++) {
-				SeqSpan span1 = sym1.getSpan(j);
-				SeqSpan span2 = sym2.getSpan(j);
-				assertEquals(span1.getBioSeq().getID(), span1.getBioSeq().getID());
-				assertEquals(span1.getMinDouble(), span2.getMinDouble(), 0);
-				assertEquals(span1.getMaxDouble(), span2.getMaxDouble(), 0);
-			}
-		}
-	}
+            assertEquals(sym1.getID(), sym2.getID());
+            assertEquals(sym1.getChildCount(), sym2.getChildCount());
+            assertEquals(sym1.getSpanCount(), sym2.getSpanCount());
 
-	/**
-	 * Test of getMimeType method.
-	 */
-	@Test
-	public void testGetMimeType() {
-		//System.out.println("getMimeType");
+            for (int j = 0; j < sym1.getSpanCount(); j++) {
+                SeqSpan span1 = sym1.getSpan(j);
+                SeqSpan span2 = sym2.getSpan(j);
+                assertEquals(span1.getBioSeq().getID(), span1.getBioSeq().getID());
+                assertEquals(span1.getMinDouble(), span2.getMinDouble(), 0);
+                assertEquals(span1.getMaxDouble(), span2.getMaxDouble(), 0);
+            }
+        }
+    }
 
-		PSLParser instance = new PSLParser();
+    /**
+     * Test of getMimeType method.
+     */
+    @Test
+    public void testGetMimeType() {
+        //System.out.println("getMimeType");
 
-		String result = instance.getMimeType();
-		assertTrue("text/plain".equals(result));
-	}
+        PSLParser instance = new PSLParser();
 
-	public static File createFileFromString(String string) throws Exception {
-		File tempFile = File.createTempFile("tempFile", ".psl");
-		tempFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-		bw.write(string);
-		bw.close();
-		return tempFile;
-	}
+        String result = instance.getMimeType();
+        assertTrue("text/plain".equals(result));
+    }
+
+    public static File createFileFromString(String string) throws Exception {
+        File tempFile = File.createTempFile("tempFile", ".psl");
+        tempFile.deleteOnExit();
+        BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+        bw.write(string);
+        bw.close();
+        return tempFile;
+    }
 }

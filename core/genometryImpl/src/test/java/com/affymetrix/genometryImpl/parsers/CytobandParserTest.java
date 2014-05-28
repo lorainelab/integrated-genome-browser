@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.affymetrix.genometryImpl.parsers;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.Arm;
@@ -29,98 +30,91 @@ import static org.junit.Assert.*;
  */
 public class CytobandParserTest {
 
-	/**
-	 * Test of parse method, of class CytobandParser.
-	 */
-	@Test
-	public void testParse() throws Exception {
-		String filename = "data/cyt/test1.cyt";
-		InputStream istr = CytobandParserTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
+    /**
+     * Test of parse method, of class CytobandParser.
+     */
+    @Test
+    public void testParse() throws Exception {
+        String filename = "data/cyt/test1.cyt";
+        InputStream istr = CytobandParserTest.class.getClassLoader().getResourceAsStream(filename);
+        assertNotNull(istr);
 
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
+        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        boolean annot_seq = true;
 
-		CytobandParser instance = new CytobandParser();
-		List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
-		assertEquals(7, result.size());
-		CytobandSym sym = (CytobandSym) result.get(2);
-		assertEquals("gpos25", sym.getBand());
-		assertEquals(4300000, sym.getLength());
-		assertEquals(39600000, sym.getMin());
-		assertEquals(43900000, sym.getMax());
-		assertEquals(0, sym.getChildCount());
-		assertEquals(43900000, sym.getEnd());
-		assertEquals(Arm.SHORT, sym.getArm());
+        CytobandParser instance = new CytobandParser();
+        List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
+        assertEquals(7, result.size());
+        CytobandSym sym = (CytobandSym) result.get(2);
+        assertEquals("gpos25", sym.getBand());
+        assertEquals(4300000, sym.getLength());
+        assertEquals(39600000, sym.getMin());
+        assertEquals(43900000, sym.getMax());
+        assertEquals(0, sym.getChildCount());
+        assertEquals(43900000, sym.getEnd());
+        assertEquals(Arm.SHORT, sym.getArm());
 
+    }
 
+    /**
+     * Test of writeAnnotations method, of class CytobandParser.
+     */
+    @Test
+    public void testWriteAnnotations() throws FileNotFoundException, IOException {
 
-	}
+        String string = "chr1\t39600000\t43900000\tp34.2\tgpos25\n"
+                + "chr1\t43900000\t46500000\tp34.1\tgneg\n"
+                + "chr1\t56200000\t58700000\tp32.2\tgpos50\n";
 
-	/**
-	 * Test of writeAnnotations method, of class CytobandParser.
-	 */
-	@Test
-	public void testWriteAnnotations() throws FileNotFoundException, IOException {
+        InputStream istr = new ByteArrayInputStream(string.getBytes());
+        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        boolean annot_seq = true;
 
-		String string = "chr1\t39600000\t43900000\tp34.2\tgpos25\n" +
-						"chr1\t43900000\t46500000\tp34.1\tgneg\n" +
-						"chr1\t56200000\t58700000\tp32.2\tgpos50\n";
+        CytobandParser instance = new CytobandParser();
 
+        Collection<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 
-		InputStream istr = new ByteArrayInputStream(string.getBytes());
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
+        syms = instance.parse(istr, seq_group, annot_seq);
 
-		CytobandParser instance = new CytobandParser();
+        BioSeq seq = seq_group.getSeq("chr1");
+        String type = "test_type";
+        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
-		Collection<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        boolean result = instance.writeAnnotations(syms, seq, type, outstream);
+        assertEquals(true, result);
+        assertEquals(string, outstream.toString());
 
-		syms = instance.parse(istr, seq_group, annot_seq);
+    }
 
+    /**
+     * Test of writeCytobandFormat method, of class CytobandParser.
+     */
+    @Test
+    public void testWriteCytobandFormat() throws Exception {
+        Writer out = new StringWriter();
+        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        String filename = "data/cyt/test1.cyt";
+        filename = CytobandParserTest.class.getClassLoader().getResource(filename).getFile();
+        InputStream istr = new FileInputStream(filename);
+        assertNotNull(istr);
+        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        boolean annot_seq = true;
+        CytobandParser instance = new CytobandParser();
+        List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
+        BioSeq aseq = seq_group.getSeq(0);
+        CytobandSym sym = (CytobandSym) result.get(2);
+        CytobandParser.writeCytobandFormat(out, sym, aseq);
+        assertEquals("chr1\t39600000\t43900000\tp34.2\tgpos25\n", out.toString());
 
-		BioSeq seq = seq_group.getSeq("chr1");
-		String type = "test_type";
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+    }
 
+    /**
+     * Test of getMimeType method, of class CytobandParser.
+     */
+    @Test
+    public void testGetMimeType() {
 
-		boolean result = instance.writeAnnotations(syms, seq, type, outstream);
-		assertEquals(true, result);
-		assertEquals(string, outstream.toString());
-
-
-
-	}
-
-	/**
-	 * Test of writeCytobandFormat method, of class CytobandParser.
-	 */
-	@Test
-	public void testWriteCytobandFormat() throws Exception {
-		Writer out = new StringWriter();
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		String filename = "data/cyt/test1.cyt";
-		filename = CytobandParserTest.class.getClassLoader().getResource(filename).getFile();
-		InputStream istr = new FileInputStream(filename);
-		assertNotNull(istr);
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
-		CytobandParser instance = new CytobandParser();
-		List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
-		BioSeq aseq = seq_group.getSeq(0);
-		CytobandSym sym = (CytobandSym) result.get(2);
-		CytobandParser.writeCytobandFormat(out, sym, aseq);
-		assertEquals("chr1\t39600000\t43900000\tp34.2\tgpos25\n", out.toString());
-
-	}
-
-	/**
-	 * Test of getMimeType method, of class CytobandParser.
-	 */
-	@Test
-	public void testGetMimeType() {
-
-		CytobandParser instance = new CytobandParser();
-		assertEquals("txt/plain", instance.getMimeType());
-	}
+        CytobandParser instance = new CytobandParser();
+        assertEquals("txt/plain", instance.getMimeType());
+    }
 }

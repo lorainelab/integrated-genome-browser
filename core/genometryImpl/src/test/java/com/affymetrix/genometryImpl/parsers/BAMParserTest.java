@@ -22,60 +22,59 @@ import static org.junit.Assert.*;
  */
 public class BAMParserTest {
 
-	@Test
-		public void testParseFromFile() throws Exception {
-			
-			String filename = "data/bam/combined_mapping_q.sorted.bam";
-			filename = BAMParserTest.class.getClassLoader().getResource(filename).getFile();
-			assertTrue(new File(filename).exists());
+    @Test
+    public void testParseFromFile() throws Exception {
 
-			InputStream istr = new FileInputStream(filename);
-			DataInputStream dis = new DataInputStream(istr);
-			assertNotNull(dis);
+        String filename = "data/bam/combined_mapping_q.sorted.bam";
+        filename = BAMParserTest.class.getClassLoader().getResource(filename).getFile();
+        assertTrue(new File(filename).exists());
 
-			AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
-			BioSeq seq = group.addSeq("chr1", 197069962);
-			
-			SymLoader symL = new BAM(new File(filename).toURI(), "featureName", group);
-			assertNotNull(symL);
+        InputStream istr = new FileInputStream(filename);
+        DataInputStream dis = new DataInputStream(istr);
+        assertNotNull(dis);
 
-			List<? extends SeqSymmetry> result = symL.getChromosome(seq);
-			assertNotNull(result);
-			assertEquals(190, result.size());	// 190 alignments in sample file
+        AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
+        BioSeq seq = group.addSeq("chr1", 197069962);
 
-			SeqSymmetry sym = result.get(0);	// first (positive) strand
-			assertEquals("0", sym.getID());
-			assertEquals(51119999, sym.getSpan(seq).getMin());
-			assertEquals(51120035, sym.getSpan(seq).getMax());
-			assertTrue(sym.getSpan(seq).isForward());
-			Object residues = ((SymWithProps)sym).getProperty("residues");
-			assertNotNull(residues);
-			assertEquals("CACTGCTTAAAAATCCTCTTTAAAGAGCAAGCAAAT",residues.toString());
+        SymLoader symL = new BAM(new File(filename).toURI(), "featureName", group);
+        assertNotNull(symL);
 
-			sym = result.get(58);	// first negative strand
-			assertEquals("0", sym.getID());
-			assertEquals(51120691, sym.getSpan(seq).getMin());
-			assertEquals(51120727, sym.getSpan(seq).getMax());
-			assertFalse(sym.getSpan(seq).isForward());
-			residues = ((SymWithProps)sym).getProperty("residues");
-			assertNotNull(residues);
-			assertEquals("ACATTCATCTAATTCATGAATGGCAAAGACACGTCC",residues.toString());
+        List<? extends SeqSymmetry> result = symL.getChromosome(seq);
+        assertNotNull(result);
+        assertEquals(190, result.size());	// 190 alignments in sample file
 
-			// Strange, considering the span length is only 36
-			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120038, seq));
-			assertEquals(3, result.size());
+        SeqSymmetry sym = result.get(0);	// first (positive) strand
+        assertEquals("0", sym.getID());
+        assertEquals(51119999, sym.getSpan(seq).getMin());
+        assertEquals(51120035, sym.getSpan(seq).getMax());
+        assertTrue(sym.getSpan(seq).isForward());
+        Object residues = ((SymWithProps) sym).getProperty("residues");
+        assertNotNull(residues);
+        assertEquals("CACTGCTTAAAAATCCTCTTTAAAGAGCAAGCAAAT", residues.toString());
 
-			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120039, seq));
-			assertEquals(3, result.size());
-			sym = result.get(0);	// first (positive) strand
-			assertEquals("0", sym.getID());
-			assertEquals(51119999, sym.getSpan(seq).getMin());
-			assertEquals(51120035, sym.getSpan(seq).getMax());
+        sym = result.get(58);	// first negative strand
+        assertEquals("0", sym.getID());
+        assertEquals(51120691, sym.getSpan(seq).getMin());
+        assertEquals(51120727, sym.getSpan(seq).getMax());
+        assertFalse(sym.getSpan(seq).isForward());
+        residues = ((SymWithProps) sym).getProperty("residues");
+        assertNotNull(residues);
+        assertEquals("ACATTCATCTAATTCATGAATGGCAAAGACACGTCC", residues.toString());
 
+        // Strange, considering the span length is only 36
+        result = symL.getRegion(new SimpleSeqSpan(51120000, 51120038, seq));
+        assertEquals(3, result.size());
 
-			for(SeqSymmetry symOut : result) {
-				System.out.println(symOut.getID() + " " + symOut.getSpan(seq).getStart() + " " + symOut.getSpan(seq).getEnd());
-			}
-		}
+        result = symL.getRegion(new SimpleSeqSpan(51120000, 51120039, seq));
+        assertEquals(3, result.size());
+        sym = result.get(0);	// first (positive) strand
+        assertEquals("0", sym.getID());
+        assertEquals(51119999, sym.getSpan(seq).getMin());
+        assertEquals(51120035, sym.getSpan(seq).getMax());
+
+        for (SeqSymmetry symOut : result) {
+            System.out.println(symOut.getID() + " " + symOut.getSpan(seq).getStart() + " " + symOut.getSpan(seq).getEnd());
+        }
+    }
 
 }

@@ -156,7 +156,11 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
 				String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
                                 if (StringUtils.isNotBlank(trackLineName)){
-                                    type = type.substring(0, type.indexOf(".bed")) + "_" + trackLineName;
+                                    if (type.indexOf(".bed") > -1) {
+                                        type = type.substring(0, type.indexOf(".bed")) + "_" + trackLineName;
+                                    } else {
+                                        type = type + "_" + trackLineName;
+                                    }
                                     track_line_parser.getCurrentTrackHash().put(TrackLineParser.NAME, type);
                                 }
 //				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);

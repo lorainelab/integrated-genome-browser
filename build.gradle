@@ -14,6 +14,7 @@ def webStartDir = mavenTargetDir + '/webstart'
 def signedLibDir = webStartDir+ '/signed'
 def resourceDir = 'main/src/main/resources'
 
+//Load common properties to read version
 ext.commonProps = new Properties() 
 ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.properties')) 
 //remove minor version
@@ -41,7 +42,7 @@ repositories {
     maven { url "http://eos.transvar.org/nexus/content/repositories/central/" }
 }
 
-//Need to be kept in sync with main project pom file - the plan is to migrate to gradle entirely, but the short term this manual sync is needed.
+//Need to be kept in sync with main project pom file to continue to support gradle run and runDebug -- possibly not needed if not being used
 dependencies {
     compile(group: 'com.affymetrix', name: 'affymetrix-common', version:version) {
         exclude(module: '*')
@@ -208,13 +209,6 @@ task cbc(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-
-task copyToLib(type: Copy) {
-    new File(webStartDir + '/lib').mkdirs()
-    into webStartDir + '/lib'
-    from configurations.runtime
-}
-
 task generateSmallJnlp(type: Copy){
     def props =  project.getProperties().get('props')
     from resourceDir + '/JNLP-INF'
@@ -226,6 +220,7 @@ task generateSmallJnlp(type: Copy){
             "jnlp.version": version, 
             "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
             "jnlp.jarName":'igb_exe', 
+            "jnlp.httpAgent": 'IGB/'+ version+' (Webstart)',
             "jnlp.maxHeapSize": '1024m'])
 }
 
@@ -239,6 +234,7 @@ task generateMediumJnlp(type: Copy) {
             "jnlp.version": version, 
             "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
             "jnlp.jarName":'igb_exe-large', 
+            "jnlp.httpAgent": 'IGB/'+ version+' +LargeMem (Webstart)',
             "jnlp.maxHeapSize": '2048m'])
 }
 
@@ -252,6 +248,7 @@ task generateLargeJnlp(type: Copy) {
             "jnlp.version": version, 
             "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
             "jnlp.jarName":'igb_exe-5GB', 
+            "jnlp.httpAgent":'IGB/'+version+ ' +5GB (Webstart)',
             "jnlp.maxHeapSize": '5120m'])
 }
 
@@ -278,20 +275,10 @@ task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
     into dest
 }
 
-task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate, copyToLib]) {
+task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate]) {
     archiveName = 'igb_exe.jar'
+    from zipTree("igb_exe.jar")
     from fileTree(dir: webStartDir + '/tmp/smallJar/')
-    from 'build/classes/main'
-    from 'build/resources/main'
-    from webStartDir+'/lib'
-    from zipTree(webStartDir+'/lib' + '/affymetrix-common-'+version+'.jar')
-    exclude "META-INF/**"
-    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
-    exclude "META-INF/**" 
-    metaInf{
-        from (resourceDir+'/META-INF/services')
-        into 'services'
-    }
     manifest{
         attributes(
         "Application-Name": "IGB",   
@@ -302,20 +289,10 @@ task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate,
     }
 }
 
-task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplate, copyToLib]) {
+task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplate]) {
     archiveName = 'igb_exe-large.jar'
+    from zipTree("igb_exe.jar")
     from fileTree(dir: webStartDir + '/tmp/mediumJar/')
-    from 'build/classes/main'
-    from 'build/resources/main'
-    from webStartDir+'/lib'
-    from zipTree(webStartDir+'/lib' + '/affymetrix-common-' + version + '.jar')
-    exclude "META-INF/**"
-    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
-    exclude "META-INF/**" 
-    metaInf{
-        from (resourceDir+'/META-INF/services')
-        into 'services'
-    }
     manifest{
         attributes(
         "Application-Name": "IGB",   
@@ -326,21 +303,11 @@ task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplat
     }
 }
 
-task webstartLargeJar(type: Jar, dependsOn: [classes, generateLargeJnlpTemplate, copyToLib]) {
-    archiveName = 'igb_exe-5GB.jar'
+task webstartLargeJar(type: Jar, dependsOn: [classes, generateLargeJnlpTemplate]) {
+    archiveName = 'igb_exe-5GB.jar'    
+    from zipTree("igb_exe.jar")
     from fileTree(dir: webStartDir + '/tmp/largeJar/')
-    from 'build/classes/main'
-    from 'build/resources/main'
-    from webStartDir+'/lib'
-    from zipTree(webStartDir+'/lib' + '/affymetrix-common-' + version + '.jar')
-    exclude "META-INF/**"
-    from zipTree(webStartDir+'/lib' + '/org.apache.felix.main-'+felixVersion+'.jar')
-    exclude "META-INF/**" 
-    metaInf{
-        from (resourceDir+'/META-INF/services')
-        into 'services'
-    }
-     manifest{
+    manifest{
         attributes(
         "Application-Name": "IGB",   
         "Permissions":"all-permissions",

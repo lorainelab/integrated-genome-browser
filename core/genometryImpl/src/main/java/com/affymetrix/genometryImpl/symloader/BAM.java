@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FILE_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
@@ -13,8 +14,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SeekableFTPStream;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -70,7 +69,7 @@ public final class BAM extends XAM {
 			indexFile = findIndexFile(f);
 			samFileReader = new SAMFileReader(f, indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
-		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL)) {
+		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL) || StringUtils.equals(scheme, HTTPS_PROTOCOL)) {
 			String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
 				
 			if(reachable_url == null){
@@ -359,7 +358,7 @@ public final class BAM extends XAM {
 		if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 			File f = findIndexFile(new File(uri));
 			return f != null;
-		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL) || StringUtils.equals(scheme, FTP_PROTOCOL)) {
+		} else if (StringUtils.equals(scheme, HTTP_PROTOCOL) || StringUtils.equals(scheme, HTTPS_PROTOCOL) || StringUtils.equals(scheme, FTP_PROTOCOL)) {
 			String uriStr = findIndexFile(uri.toString());
 			return uriStr != null;
 		}

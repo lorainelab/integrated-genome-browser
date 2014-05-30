@@ -455,7 +455,8 @@ public final class GeneralUtils {
 			gzstr = new BlockCompressedInputStream(istr);
 		}
 		else {
-			gzstr = new GZIPInputStream(istr);
+                    URLConnection conn = LocalUrlCacher.connectToUrl(url, null, -1);
+                    gzstr = new GZIPInputStream(conn.getInputStream());
 		}
 
 		return gzstr;

@@ -275,7 +275,7 @@ task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
     into dest
 }
 
-task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate]) {
+task webstartSmallJar(type: Jar, dependsOn: [generateSmallJnlpTemplate]) {
     archiveName = 'igb_exe.jar'
     from zipTree("igb_exe.jar")
     from fileTree(dir: webStartDir + '/tmp/smallJar/')
@@ -289,7 +289,7 @@ task webstartSmallJar(type: Jar, dependsOn: [classes, generateSmallJnlpTemplate]
     }
 }
 
-task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplate]) {
+task webstartMediumJar(type: Jar, dependsOn: [generateMediumJnlpTemplate]) {
     archiveName = 'igb_exe-large.jar'
     from zipTree("igb_exe.jar")
     from fileTree(dir: webStartDir + '/tmp/mediumJar/')
@@ -303,7 +303,7 @@ task webstartMediumJar(type: Jar, dependsOn: [classes, generateMediumJnlpTemplat
     }
 }
 
-task webstartLargeJar(type: Jar, dependsOn: [classes, generateLargeJnlpTemplate]) {
+task webstartLargeJar(type: Jar, dependsOn: [generateLargeJnlpTemplate]) {
     archiveName = 'igb_exe-5GB.jar'    
     from zipTree("igb_exe.jar")
     from fileTree(dir: webStartDir + '/tmp/largeJar/')

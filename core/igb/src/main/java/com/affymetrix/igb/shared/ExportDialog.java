@@ -20,7 +20,6 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.util.GraphicsUtil;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.osgi.service.IGBService;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

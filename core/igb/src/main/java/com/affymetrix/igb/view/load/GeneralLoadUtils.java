@@ -191,28 +191,22 @@ public final class GeneralLoadUtils {
 		return gServer;
 	}
 
-	private static void removeServer(GenericServer server) {	
-		Set keySet = species2genericVersionList.keySet();
-		Iterator keyIterator = keySet.iterator();
-	
-		while (keyIterator.hasNext()) {
-			String key = (String) keyIterator.next();
-			Set<GenericVersion> versions = species2genericVersionList.get(key);
-			Iterator<GenericVersion> versionIterator = versions.iterator();
-			while (versionIterator.hasNext()) {
-				GenericVersion version = versionIterator.next();
-				if (version.gServer == server) {
-					GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
-					version.clear();
-					versionIterator.remove();
-				}
-			}
-		}
-		server.setEnabled(false);
-		if (server.serverType == null) {
-			IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
-		}
-	}
+    private static void removeServer(GenericServer server) {
+        Iterator<Map.Entry<String, GenericVersion>> i = species2genericVersionList.entries().iterator();
+        while (i.hasNext()) {
+            GenericVersion version = i.next().getValue();
+            if (version.gServer == server) {
+                GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
+                version.clear();
+                i.remove();
+            }
+        }
+
+        server.setEnabled(false);
+        if (server.serverType == null) {
+            IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
+        }
+    }
 	
 	private static final VersionDiscoverer versionDiscoverer = new VersionDiscoverer() {
 

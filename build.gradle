@@ -11,14 +11,15 @@ group = 'com.affymetrix'
 libsDirName = '../main/target/webstart'
 def mavenTargetDir = 'main/target'
 def webStartDir = mavenTargetDir + '/webstart'
-def signedLibDir = webStartDir+ '/signed'
 def resourceDir = 'main/src/main/resources'
 
 //Load common properties to read version
 ext.commonProps = new Properties() 
 ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.properties')) 
-//remove minor version
+
+//remove minor version portion of version string
 version = commonProps.get('appVersion').substring(0,3)
+
 //securely read in keystore info from disk
 ext.props = new Properties() 
 ext.props.load(new FileInputStream(System.getProperty("user.home")+'/build.properties')) 
@@ -42,130 +43,13 @@ repositories {
     maven { url "http://eos.transvar.org/nexus/content/repositories/central/" }
 }
 
-//Need to be kept in sync with main project pom file to continue to support gradle run and runDebug -- possibly not needed if not being used
 dependencies {
     compile(group: 'com.affymetrix', name: 'affymetrix-common', version:version) {
         exclude(module: '*')
     }
-    compile(group: 'com.affymetrix', name: 'igb', version:version) {
-        exclude(module: '*')
-    }
-    compile(group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.0-rc1') {
-        exclude(module: '*')
-    }
-    compile group: 'org.apache.commons', name: 'commons-csv', version:'1.0-SNAPSHOT'
-    compile group: 'commons-io', name: 'commons-io', version:'2.4'
-    compile group: 'org.broad', name: 'bigwig', version:'1.0'
-    compile group: 'commons-codec', name: 'commons-codec', version:'1.6'
-    runtime(group: 'com.affymetrix', name: 'igb-service', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'sharedLibWrapper', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'heatmap-editor', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'genometryImpl', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'igbSwingExt', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'window-service', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'genoviz', version:'1.0.3') {
-        exclude(module: '*')
-    }
     compile(group: 'org.apache.felix', name: 'org.apache.felix.main', version:felixVersion) {
         exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'apollo-library', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'annotation-tab', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'bigBedHandler', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'bigWigHandler', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'bookmark', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'externalView', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'graphTab', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'igbScript', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'keyWordSearch', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'ncbiBlast', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'ncbiPrimer', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'propertyView', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'restrictionSites', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'searchModelIdOrProps', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'searchModeLucene', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'searchView', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'sequenceViewer', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'survey', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'thresholding', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'tutorial', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'update', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'pluginsPage', version:version) {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.affymetrix', name: 'windowsServiceDef', version:version){
-        exclude(module: '*')
-    }
-    runtime(group: 'com.google.guava', name: 'guava', version:'16.0.1') {
-        exclude(module: '*')
-    }
-    runtime(group: 'org.apache.commons', name: 'commons-lang3', version:'3.1') {
-        exclude(module: '*')
-    }
-    runtime(group: 'org.apache.commons', name: 'commons-compress', version:'1.2') {
-        exclude(module: '*')
-    }
-    runtime(group: 'commons-pool', name: 'commons-pool', version:'1.6') {
-        exclude(module: '*')
-    }
-    runtime(group: 'com.jidesoft', name: 'jide-ultimate', version:'3.5.15') {
-        exclude(module: '*')
-    }
-    
+    }    
 }
 
 clean{

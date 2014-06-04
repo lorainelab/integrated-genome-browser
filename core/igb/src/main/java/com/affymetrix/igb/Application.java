@@ -1,5 +1,10 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometryImpl.util.UrlToFileName;
+import com.affymetrix.igb.view.StatusBar;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,12 +17,6 @@ import javax.swing.FocusManager;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.StatusAlert;
-import com.affymetrix.genometryImpl.util.UrlToFileName;
-import com.affymetrix.igb.view.StatusBar;
 
 public abstract class Application {
 

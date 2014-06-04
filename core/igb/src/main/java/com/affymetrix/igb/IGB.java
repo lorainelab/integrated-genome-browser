@@ -66,62 +66,62 @@ import javax.swing.*;
  * @version $Id: IGB.java 11452 2012-05-07 22:32:36Z lfrohman $
  */
 public final class IGB extends Application
-		implements GroupSelectionListener, SeqSelectionListener {
+        implements GroupSelectionListener, SeqSelectionListener {
 
-	private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
-	private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
-	public static final String NODE_PLUGINS = "plugins";
-	private JFrame frm;
-	private JMenuBar mbar;
-	private IGBToolBar tool_bar;
-	private SeqMapView map_view;
-	private AnnotatedSeqGroup prev_selected_group = null;
-	private BioSeq prev_selected_seq = null;
-	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
-	private IWindowService windowService;
-	private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
-	private static final Logger ourLogger = Logger.getLogger(IGB.class.getPackage().getName());
-        final public static boolean IS_WINDOWS
+    private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
+    private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
+    public static final String NODE_PLUGINS = "plugins";
+    private JFrame frm;
+    private JMenuBar mbar;
+    private IGBToolBar tool_bar;
+    private SeqMapView map_view;
+    private AnnotatedSeqGroup prev_selected_group = null;
+    private BioSeq prev_selected_seq = null;
+    public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
+    private IWindowService windowService;
+    private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
+    private static final Logger ourLogger = Logger.getLogger(IGB.class.getPackage().getName());
+    final public static boolean IS_WINDOWS
             = System.getProperty("os.name").toLowerCase().contains("windows");
-        final public static boolean IS_MAC
+    final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
-        final public static boolean IS_LINUX
+    final public static boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
 
-	public IGB() {
-		super();
-	}
+    public IGB() {
+        super();
+    }
 
-	@Override
-	public SeqMapView getMapView() {
-		return map_view;
-	}
+    @Override
+    public SeqMapView getMapView() {
+        return map_view;
+    }
 
-	@Override
-	public JFrame getFrame() {
-		return frm;
-	}
+    @Override
+    public JFrame getFrame() {
+        return frm;
+    }
 
-	private static void loadSynonyms(String file, SynonymLookup lookup) {
-		InputStream istr = null;
-		try {
-			istr = IGB.class.getResourceAsStream(file);
-			lookup.loadSynonyms(IGB.class.getResourceAsStream(file), true);
-		} catch (IOException ex) {
-			ourLogger.log(Level.FINE,
-					"Problem loading default synonyms file " + file, ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
-	}
+    private static void loadSynonyms(String file, SynonymLookup lookup) {
+        InputStream istr = null;
+        try {
+            istr = IGB.class.getResourceAsStream(file);
+            lookup.loadSynonyms(IGB.class.getResourceAsStream(file), true);
+        } catch (IOException ex) {
+            ourLogger.log(Level.FINE,
+                    "Problem loading default synonyms file " + file, ex);
+        } finally {
+            GeneralUtils.safeClose(istr);
+        }
+    }
 
-	//TODO: Remove this redundant call to set LAF. For now it fixes bug introduced by OSGi.
+    //TODO: Remove this redundant call to set LAF. For now it fixes bug introduced by OSGi.
     public static void setLaf() {
 
         // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
         System.setProperty("swing.aatext", "true");
 
-		// Letting the look-and-feel determine the window decorations would
+        // Letting the look-and-feel determine the window decorations would
         // allow exporting the whole frame, including decorations, to an eps file.
         // But it also may take away some things, like resizing buttons, that the
         // user is used to in their operating system, so leave as false.
@@ -144,7 +144,7 @@ public final class IGB extends Application
                         UIManager.setLookAndFeel(look_and_feel);
                     }
                 } catch (Exception ulfe) {
-					// Windows look and feel is only supported on Windows, and only in
+                    // Windows look and feel is only supported on Windows, and only in
                     // some version of the jre.  That is perfectly ok.
                 }
             } else if (IS_LINUX) {
@@ -170,446 +170,443 @@ public final class IGB extends Application
 
     }
 
-	public void init(String[] args) {
-		setLaf();
-	
-		// Set up a custom trust manager so that user is prompted
-		// to accept or reject untrusted (self-signed) certificates
-		// when connecting to server over HTTPS
-		IGBTrustManager.installTrustManager();
-	
+    public void init(String[] args) {
+        setLaf();
 
-		// Initialize the ConsoleView right off, so that ALL output will
-		// be captured there.
-		ConsoleView.init(APP_NAME);
-		printDetails(args);
+        // Set up a custom trust manager so that user is prompted
+        // to accept or reject untrusted (self-signed) certificates
+        // when connecting to server over HTTPS
+        IGBTrustManager.installTrustManager();
 
-		// Initialize statusbar output logger.
-		StatusBarOutput.initStatusBarOutput();
-		
-		loadSynonyms("/"+Constants.synonymsTxt, SynonymLookup.getDefaultLookup());
-		loadSynonyms("/"+Constants.chromosomesTxt, SynonymLookup.getChromosomeLookup());
+        // Initialize the ConsoleView right off, so that ALL output will
+        // be captured there.
+        ConsoleView.init(APP_NAME);
+        printDetails(args);
 
-		if ("Mac OS X".equals(System.getProperty("os.name"))) {
-			MacIntegration mi = MacIntegration.getInstance();
-			if (this.getIcon() != null) {
-				mi.setDockIconImage(this.getIcon());
-			}
-		}
+        // Initialize statusbar output logger.
+        StatusBarOutput.initStatusBarOutput();
 
-		frm = new JFrame(APP_NAME + " " + APP_VERSION);
+        loadSynonyms("/" + Constants.synonymsTxt, SynonymLookup.getDefaultLookup());
+        loadSynonyms("/" + Constants.chromosomesTxt, SynonymLookup.getChromosomeLookup());
 
-		// when HTTP authentication is needed, getPasswordAuthentication will
-		//    be called on the authenticator set as the default
-		Authenticator.setDefault(new IGBAuthenticator(frm));
-		
-		StateProvider stateProvider = new IGBStateProvider();
-		DefaultStateProvider.setGlobalStateProvider(stateProvider);
+        if ("Mac OS X".equals(System.getProperty("os.name"))) {
+            MacIntegration mi = MacIntegration.getInstance();
+            if (this.getIcon() != null) {
+                mi.setDockIconImage(this.getIcon());
+            }
+        }
 
-		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frm = new JFrame(APP_NAME + " " + APP_VERSION);
 
-		Image icon = getIcon();
-		if (icon != null) {
-			frm.setIconImage(icon);
-		}
+        // when HTTP authentication is needed, getPasswordAuthentication will
+        //    be called on the authenticator set as the default
+        Authenticator.setDefault(new IGBAuthenticator(frm));
 
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		gmodel.addGroupSelectionListener(this);
-		gmodel.addSeqSelectionListener(this);
-		// WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
-		//    otherwise assumptions for persisting group / seq / span prefs are not valid!
+        StateProvider stateProvider = new IGBStateProvider();
+        DefaultStateProvider.setGlobalStateProvider(stateProvider);
 
-		MenuUtil.setAccelerators(
-			new AbstractMap<String, KeyStroke>() {
+        frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-				@Override
-				public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
-					return null;
-				}
+        Image icon = getIcon();
+        if (icon != null) {
+            frm.setIconImage(icon);
+        }
 
-				@Override
-				public KeyStroke get(Object action_command) {
-					return PreferenceUtils.getAccelerator((String) action_command);
-				}
-			}
-		);
-		map_view = new SeqMapView(true, "SeqMapView");
-		gmodel.addSeqSelectionListener(map_view);
-		gmodel.addGroupSelectionListener(map_view);
-		gmodel.addSymSelectionListener(map_view);
+        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        gmodel.addGroupSelectionListener(this);
+        gmodel.addSeqSelectionListener(this);
+        // WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
+        //    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
-		mbar = new JMenuBar();
-		frm.setJMenuBar(mbar);
-		MainMenuUtil.getInstance().loadMenu(mbar, "IGB");
-		
-		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
-				new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
-		PreferenceUtils.setWindowSize(frm, frame_bounds);
+        MenuUtil.setAccelerators(
+                new AbstractMap<String, KeyStroke>() {
 
-		// Show the frame before loading the plugins.  Thus any error panel
-		// that is created by an exception during plugin set-up will appear
-		// on top of the main frame, not hidden by it.
+                    @Override
+                    public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
+                        return null;
+                    }
 
-		frm.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public KeyStroke get(Object action_command) {
+                        return PreferenceUtils.getAccelerator((String) action_command);
+                    }
+                }
+        );
+        map_view = new SeqMapView(true, "SeqMapView");
+        gmodel.addSeqSelectionListener(map_view);
+        gmodel.addGroupSelectionListener(map_view);
+        gmodel.addSymSelectionListener(map_view);
 
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				JFrame frame = (JFrame) evt.getComponent();
-				String message = "Do you really want to exit?";
+        mbar = new JMenuBar();
+        frm.setJMenuBar(mbar);
+        MainMenuUtil.getInstance().loadMenu(mbar, "IGB");
 
-				if (confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
-					TrackStyle.autoSaveUserStylesheet();
-					Persistence.saveCurrentView(map_view);
-					defaultCloseOperations();
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				} else {
-					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-				}
-			}
-		});
+        Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
+                new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
+        PreferenceUtils.setWindowSize(frm, frame_bounds);
 
-		ScriptManager.getInstance().setInputHandler(new ScriptManager.InputHandler() {
-			public InputStream getInputStream(String fileName) throws Exception {
-				return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
-			}
+        // Show the frame before loading the plugins.  Thus any error panel
+        // that is created by an exception during plugin set-up will appear
+        // on top of the main frame, not hidden by it.
+        frm.addWindowListener(new WindowAdapter() {
 
-			/* This method is used to convert the given file path from relative to absolute.
-			 */
-			private URI relativeToAbsolute(String path) throws URISyntaxException {
-				if (!(path.startsWith("file:")) && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:"))) {
-					return getAbsoluteFile(path).toURI();
-				}
-				return new URI(path);
-			}
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                JFrame frame = (JFrame) evt.getComponent();
+                String message = "Do you really want to exit?";
 
-			/*Returns the File object at given path
-			 */
-			private File getAbsoluteFile(String path) {
-				return new File(path).getAbsoluteFile();
-			}
-		});
-				
-		WebLinkUtils.autoLoad();
+                if (confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
+                    TrackStyle.autoSaveUserStylesheet();
+                    Persistence.saveCurrentView(map_view);
+                    defaultCloseOperations();
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                } else {
+                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                }
+            }
+        });
 
-		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
-		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
-		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
-		checkInternetConnection();
-		notifyCounter();
-		openQuickStart();
-		ToolTipManager.sharedInstance().setDismissDelay(10000);
-	}
-	
-	private void printDetails(String[] args) {
-		System.out.println("Starting: " + APP_NAME + " " + APP_VERSION);
-		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
-		Runtime runtime = Runtime.getRuntime();
-		System.out.println("Locale: " + Locale.getDefault());
-		System.out.println("System memory: " + runtime.maxMemory() / 1024);
-		if (args != null) {
-			System.out.print("arguments: ");
-			for (String arg : args) {
-				System.out.print(" " + arg);
-			}
-			System.out.println();
-		}
+        ScriptManager.getInstance().setInputHandler(new ScriptManager.InputHandler() {
+            public InputStream getInputStream(String fileName) throws Exception {
+                return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
+            }
 
-		System.out.println();
-	}
+            /* This method is used to convert the given file path from relative to absolute.
+             */
+            private URI relativeToAbsolute(String path) throws URISyntaxException {
+                if (!(path.startsWith("file:")) && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:"))) {
+                    return getAbsoluteFile(path).toURI();
+                }
+                return new URI(path);
+            }
 
-	private void notifyCounter(){
-		JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
-				IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
-		LoggingAdapter loggingAdapter = new LoggingAdapter() {
+            /*Returns the File object at given path
+             */
+            private File getAbsoluteFile(String path) {
+                return new File(path).getAbsoluteFile();
+            }
+        });
 
-			@Override
-			public void logError(String error) {
-				ourLogger.log(Level.FINE, "Google Analytics Error Message: {0}", error);
-			}
+        WebLinkUtils.autoLoad();
 
-			@Override
-			public void logMessage(String message) {
-				ourLogger.log(Level.FINE, "Google Analytics Response Message: {0}", message);
-			}
-		};
-		tracker.setLoggingAdapter(loggingAdapter);
-		tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
-		LocalUrlCacher.isValidURL(COUNTER_URL);
-	}
-	
-	private void checkInternetConnection() {
-		boolean connected = LocalUrlCacher.isValidURL(GUARANTEED_URL);
-		if (!connected) {
-			ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("internetError"));
-		}
-	}
+        GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
+        MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
+        SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
+        checkInternetConnection();
+        notifyCounter();
+        openQuickStart();
+        ToolTipManager.sharedInstance().setDismissDelay(10000);
+    }
 
-	private void openQuickStart() {
-		String version = PreferenceUtils.getStringParam(IGBConstants.APP_NAME, null);
-		if(version == null || !version.equals(IGBConstants.APP_VERSION)){
-			PreferenceUtils.getTopNode().put(IGBConstants.APP_NAME, IGBConstants.APP_VERSION);
-			GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
-		}
-	}
+    private void printDetails(String[] args) {
+        System.out.println("Starting: " + APP_NAME + " " + APP_VERSION);
+        System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+        Runtime runtime = Runtime.getRuntime();
+        System.out.println("Locale: " + Locale.getDefault());
+        System.out.println("System memory: " + runtime.maxMemory() / 1024);
+        if (args != null) {
+            System.out.print("arguments: ");
+            for (String arg : args) {
+                System.out.print(" " + arg);
+            }
+            System.out.println();
+        }
 
-	public void defaultCloseOperations() {
-		windowService.shutdown();
-	}
+        System.out.println();
+    }
 
-	public IGBTabPanel[] setWindowService(final IWindowService windowService) {
-		this.windowService = windowService;
-		windowService.setMainFrame(frm);
+    private void notifyCounter() {
+        JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
+                IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
+        LoggingAdapter loggingAdapter = new LoggingAdapter() {
 
-		windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
+            @Override
+            public void logError(String error) {
+                ourLogger.log(Level.FINE, "Google Analytics Error Message: {0}", error);
+            }
 
-		windowService.setStatusBar(status_bar);
-		if (tool_bar == null) {
-			tool_bar = new IGBToolBar();
-		}
-		windowService.setToolBar(tool_bar);
-		windowService.setTabsMenu(mbar);
-		windowService.setMenuCreator(
-				new IMenuCreator() {
+            @Override
+            public void logMessage(String message) {
+                ourLogger.log(Level.FINE, "Google Analytics Response Message: {0}", message);
+            }
+        };
+        tracker.setLoggingAdapter(loggingAdapter);
+        tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
+        LocalUrlCacher.isValidURL(COUNTER_URL);
+    }
 
-					@Override
-					public JMenuBar createMenu(String id) {
-						JMenuBar menubar = new JMenuBar();
-						MainMenuUtil.getInstance().loadMenu(menubar, id);
-						return menubar;
-					}
-				});
-		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
-	}
+    private void checkInternetConnection() {
+        boolean connected = LocalUrlCacher.isValidURL(GUARANTEED_URL);
+        if (!connected) {
+            ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("internetError"));
+        }
+    }
 
-	public JRPMenu addTopMenu(String id, String text) {
-		return MenuUtil.getRPMenu(mbar, id, text);
-	}
-	
-	public int addToolbarAction(GenericAction genericAction) {
-		if (tool_bar == null) {
-			tool_bar = new IGBToolBar();
-		}
-		addToolbarAction(genericAction, tool_bar.getItemCount());
-		
-		return tool_bar.getItemCount();
-	}
+    private void openQuickStart() {
+        String version = PreferenceUtils.getStringParam(IGBConstants.APP_NAME, null);
+        if (version == null || !version.equals(IGBConstants.APP_VERSION)) {
+            PreferenceUtils.getTopNode().put(IGBConstants.APP_NAME, IGBConstants.APP_VERSION);
+            GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
+        }
+    }
 
-	public void addToolbarAction(GenericAction genericAction, int index){
-		if (tool_bar == null) {
-			tool_bar = new IGBToolBar();
-		}		
-		tool_bar.addToolbarAction(genericAction, index);
-	}
-	
-	public void removeToolbarAction(GenericAction action) {
-		if(tool_bar == null) {
-			return;
-		}
-		tool_bar.removeToolbarAction(action);
-	}
-	
-	void saveToolBar() {
-		if(tool_bar == null) {
-			return;
-		}
-		
-		tool_bar.saveToolBar();
-	}
-	
-	@Override
-	public ImageIcon getSmallIcon(){
-		return CommonUtils.getInstance().getApplicationSmallIcon();
-	}
-	
-	/**
-	 * Returns the icon stored in the jar file. It is expected to be at
-	 * com.affymetrix.igb.igb.gif.
-	 *
-	 * @return null if the image file is not found or can't be opened.
-	 */
-	@Override
-	public Image getIcon() {
-		ImageIcon imageIcon = CommonUtils.getInstance().getApplicationIcon();
-		if (imageIcon != null) {
-			return imageIcon.getImage();
-		}
-		return null;
-	}
+    public void defaultCloseOperations() {
+        windowService.shutdown();
+    }
 
-	@Override
-	public void groupSelectionChanged(GroupSelectionEvent evt) {
-		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
-		if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
-			Persistence.saveSeqSelection(prev_selected_seq);
-			Persistence.saveSeqVisibleSpan(map_view);
-		}
-		prev_selected_group = selected_group;
-	}
+    public IGBTabPanel[] setWindowService(final IWindowService windowService) {
+        this.windowService = windowService;
+        windowService.setMainFrame(frm);
 
-	@Override
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		BioSeq selected_seq = evt.getSelectedSeq();
-		if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
-			Persistence.saveSeqVisibleSpan(map_view);
-		}
-		prev_selected_seq = selected_seq;
-		getFrame().setTitle(getTitleBar(selected_seq));
-	}
+        windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
 
-	public IWindowService getWindowService() {
-		return windowService;
-	}
+        windowService.setStatusBar(status_bar);
+        if (tool_bar == null) {
+            tool_bar = new IGBToolBar();
+        }
+        windowService.setToolBar(tool_bar);
+        windowService.setTabsMenu(mbar);
+        windowService.setMenuCreator(
+                new IMenuCreator() {
 
-	public JRPMenu getMenu(String menuId) {
-		String id = "IGB_main_" + menuId + "Menu";
-		int num_menus = mbar.getMenuCount();
-		for (int i = 0; i < num_menus; i++) {
-			JRPMenu menu_i = (JRPMenu) mbar.getMenu(i);
-			if (id.equals(menu_i.getId())) {
-				return menu_i;
-			}
-		}
-		return null;
-	}
+                    @Override
+                    public JMenuBar createMenu(String id) {
+                        JMenuBar menubar = new JMenuBar();
+                        MainMenuUtil.getInstance().loadMenu(menubar, id);
+                        return menubar;
+                    }
+                });
+        return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
+    }
 
-	public Set<IGBTabPanel> getTabs() {
-		return windowService.getPlugins();
-	}
+    public JRPMenu addTopMenu(String id, String text) {
+        return MenuUtil.getRPMenu(mbar, id, text);
+    }
 
-	@Override
-	public void setSelField(Map<String, Object> properties, String message){
-		tool_bar.setSelectionText(properties, message);
-	}
-	
-	/**
-	 * Get a named view.
-	 */
-	public IGBTabPanel getView(String viewName) {
-		for (IGBTabPanel plugin : windowService.getPlugins()) {
-			if (plugin.getClass().getName().equals(viewName)) {
-				return plugin;
-			}
-		}
-		String message = getClass().getName() + ".getView() failed for " + viewName;
-		ourLogger.severe(message);
-		return null;
-	}
+    public int addToolbarAction(GenericAction genericAction) {
+        if (tool_bar == null) {
+            tool_bar = new IGBToolBar();
+        }
+        addToolbarAction(genericAction, tool_bar.getItemCount());
 
-	/**
-	 * Get a named view.
-	 * This differs from {@link #getView(String)}
-	 * in that it wants the display name instead of the full name.
-	 * This is easier for scripting.
-	 * @param viewName the display name of a tab
-	 *        instead of a full package and class name.
-	 */
-	public IGBTabPanel getViewByDisplayName(String viewName) {
-		for (IGBTabPanel plugin : windowService.getPlugins()) {
-			if (plugin.getDisplayName().equals(viewName)) {
-				return plugin;
-			}
-		}
-		String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";
-		try {
-			ourLogger.severe(message);
-		}
-		catch (Exception x) {
-			System.err.println(message);
-		}
-		return null;
-	}
+        return tool_bar.getItemCount();
+    }
 
-	public SwingWorker<Void, Void> getScriptWorker() {
-		return scriptWorker;
-	}
+    public void addToolbarAction(GenericAction genericAction, int index) {
+        if (tool_bar == null) {
+            tool_bar = new IGBToolBar();
+        }
+        tool_bar.addToolbarAction(genericAction, index);
+    }
 
-	public void setScriptWorker(SwingWorker<Void, Void> scriptWorker) {
-		this.scriptWorker = scriptWorker;
-	}
+    public void removeToolbarAction(GenericAction action) {
+        if (tool_bar == null) {
+            return;
+        }
+        tool_bar.removeToolbarAction(action);
+    }
 
-	/**
-	 * Put the action's accelerator key (if there is one)
-	 * in the panel's input and action maps.
-	 * This makes the action available via shortcut,
-	 * even if it is "hidden" in a pop up menu.
-	 * @param theAction to which the shortcut points.
-	 */
-	public void addAction(GenericAction theAction) {
-		JPanel panel = (JPanel) this.frm.getContentPane();
-		Object o = theAction.getValue(Action.ACCELERATOR_KEY);
-		if (null != o && o instanceof KeyStroke) {
-			KeyStroke ks = (KeyStroke) o;
-			InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
-			ActionMap am = panel.getActionMap();
-			
-			Object existingObject = im.get(ks);
-			if(existingObject != null){
-				im.remove(ks);
-				Action existingAction = am.get(existingObject);
-				if(existingAction != null){
-					Logger.getLogger(IGB.class.getName()).log(
-							Level.SEVERE, "Trying to add set keystroke for action {0}."
-							+ " But action {1} exists with same keystroke \"{2}\"."
-							+ "\nUsing keystroke with latest action.", 
-							new Object[]{theAction.getId(), existingAction.getClass(), ks});
-					existingAction.putValue(Action.ACCELERATOR_KEY, null);
-					am.remove(existingObject);
-				}
-			}
-			
+    void saveToolBar() {
+        if (tool_bar == null) {
+            return;
+        }
+
+        tool_bar.saveToolBar();
+    }
+
+    @Override
+    public ImageIcon getSmallIcon() {
+        return CommonUtils.getInstance().getApplicationSmallIcon();
+    }
+
+    /**
+     * Returns the icon stored in the jar file. It is expected to be at
+     * com.affymetrix.igb.igb.gif.
+     *
+     * @return null if the image file is not found or can't be opened.
+     */
+    @Override
+    public Image getIcon() {
+        ImageIcon imageIcon = CommonUtils.getInstance().getApplicationIcon();
+        if (imageIcon != null) {
+            return imageIcon.getImage();
+        }
+        return null;
+    }
+
+    @Override
+    public void groupSelectionChanged(GroupSelectionEvent evt) {
+        AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
+        if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
+            Persistence.saveSeqSelection(prev_selected_seq);
+            Persistence.saveSeqVisibleSpan(map_view);
+        }
+        prev_selected_group = selected_group;
+    }
+
+    @Override
+    public void seqSelectionChanged(SeqSelectionEvent evt) {
+        BioSeq selected_seq = evt.getSelectedSeq();
+        if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
+            Persistence.saveSeqVisibleSpan(map_view);
+        }
+        prev_selected_seq = selected_seq;
+        getFrame().setTitle(getTitleBar(selected_seq));
+    }
+
+    public IWindowService getWindowService() {
+        return windowService;
+    }
+
+    public JRPMenu getMenu(String menuId) {
+        String id = "IGB_main_" + menuId + "Menu";
+        int num_menus = mbar.getMenuCount();
+        for (int i = 0; i < num_menus; i++) {
+            JRPMenu menu_i = (JRPMenu) mbar.getMenu(i);
+            if (id.equals(menu_i.getId())) {
+                return menu_i;
+            }
+        }
+        return null;
+    }
+
+    public Set<IGBTabPanel> getTabs() {
+        return windowService.getPlugins();
+    }
+
+    @Override
+    public void setSelField(Map<String, Object> properties, String message) {
+        tool_bar.setSelectionText(properties, message);
+    }
+
+    /**
+     * Get a named view.
+     */
+    public IGBTabPanel getView(String viewName) {
+        for (IGBTabPanel plugin : windowService.getPlugins()) {
+            if (plugin.getClass().getName().equals(viewName)) {
+                return plugin;
+            }
+        }
+        String message = getClass().getName() + ".getView() failed for " + viewName;
+        ourLogger.severe(message);
+        return null;
+    }
+
+    /**
+     * Get a named view. This differs from {@link #getView(String)} in that it
+     * wants the display name instead of the full name. This is easier for
+     * scripting.
+     *
+     * @param viewName the display name of a tab instead of a full package and
+     * class name.
+     */
+    public IGBTabPanel getViewByDisplayName(String viewName) {
+        for (IGBTabPanel plugin : windowService.getPlugins()) {
+            if (plugin.getDisplayName().equals(viewName)) {
+                return plugin;
+            }
+        }
+        String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";
+        try {
+            ourLogger.severe(message);
+        } catch (Exception x) {
+            System.err.println(message);
+        }
+        return null;
+    }
+
+    public SwingWorker<Void, Void> getScriptWorker() {
+        return scriptWorker;
+    }
+
+    public void setScriptWorker(SwingWorker<Void, Void> scriptWorker) {
+        this.scriptWorker = scriptWorker;
+    }
+
+    /**
+     * Put the action's accelerator key (if there is one) in the panel's input
+     * and action maps. This makes the action available via shortcut, even if it
+     * is "hidden" in a pop up menu.
+     *
+     * @param theAction to which the shortcut points.
+     */
+    public void addAction(GenericAction theAction) {
+        JPanel panel = (JPanel) this.frm.getContentPane();
+        Object o = theAction.getValue(Action.ACCELERATOR_KEY);
+        if (null != o && o instanceof KeyStroke) {
+            KeyStroke ks = (KeyStroke) o;
+            InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+            ActionMap am = panel.getActionMap();
+
+            Object existingObject = im.get(ks);
+            if (existingObject != null) {
+                im.remove(ks);
+                Action existingAction = am.get(existingObject);
+                if (existingAction != null) {
+                    Logger.getLogger(IGB.class.getName()).log(
+                            Level.SEVERE, "Trying to add set keystroke for action {0}."
+                            + " But action {1} exists with same keystroke \"{2}\"."
+                            + "\nUsing keystroke with latest action.",
+                            new Object[]{theAction.getId(), existingAction.getClass(), ks});
+                    existingAction.putValue(Action.ACCELERATOR_KEY, null);
+                    am.remove(existingObject);
+                }
+            }
+
 //			GenericActionHolder h = GenericActionHolder.getInstance();
-			String actionIdentifier = theAction.getId();
-			im.put(ks, actionIdentifier);
-			am.put(actionIdentifier, theAction);
-		}
-	}
+            String actionIdentifier = theAction.getId();
+            im.put(ks, actionIdentifier);
+            am.put(actionIdentifier, theAction);
+        }
+    }
 
-	private static String getTitleBar(BioSeq seq) {
-		StringBuilder title = new StringBuilder(128);
-		if (seq != null) {
-			if (title.length() > 0) {
-				title.append(" - ");
-			}
-			String seqid = seq.getID().trim();
-			Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
-			if (pattern.matcher(seqid).matches()) {
-				seqid = seqid.replace("chr", "Chromosome ");
-			}
+    private static String getTitleBar(BioSeq seq) {
+        StringBuilder title = new StringBuilder(128);
+        if (seq != null) {
+            if (title.length() > 0) {
+                title.append(" - ");
+            }
+            String seqid = seq.getID().trim();
+            Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
+            if (pattern.matcher(seqid).matches()) {
+                seqid = seqid.replace("chr", "Chromosome ");
+            }
 
-			title.append(seqid);
-			String version_info = getVersionInfo(seq);
-			if (version_info != null) {
-				title.append("  (").append(version_info).append(')');
-			}
-		}
-		if (title.length() > 0) {
-			title.append(" - ");
-		}
-		title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
-		return title.toString();
-	}
-	
-	private static String getVersionInfo(BioSeq seq) {
-		if (seq == null) {
-			return null;
-		}
-		String version_info = null;
-		if (seq.getSeqGroup() != null) {
-			AnnotatedSeqGroup group = seq.getSeqGroup();
-			if (group.getDescription() != null) {
-				version_info = group.getDescription();
-			} else {
-				version_info = group.getID();
-			}
-		}
-		if (version_info == null) {
-			version_info = seq.getVersion();
-		}
-		if ("hg17".equals(version_info)) {
-			version_info = "hg17 = NCBI35";
-		} else if ("hg18".equals(version_info)) {
-			version_info = "hg18 = NCBI36";
-		}
-		return version_info;
-	}
+            title.append(seqid);
+            String version_info = getVersionInfo(seq);
+            if (version_info != null) {
+                title.append("  (").append(version_info).append(')');
+            }
+        }
+        if (title.length() > 0) {
+            title.append(" - ");
+        }
+        title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
+        return title.toString();
+    }
+
+    private static String getVersionInfo(BioSeq seq) {
+        if (seq == null) {
+            return null;
+        }
+        String version_info = null;
+        if (seq.getSeqGroup() != null) {
+            AnnotatedSeqGroup group = seq.getSeqGroup();
+            if (group.getDescription() != null) {
+                version_info = group.getDescription();
+            } else {
+                version_info = group.getID();
+            }
+        }
+        if (version_info == null) {
+            version_info = seq.getVersion();
+        }
+        if ("hg17".equals(version_info)) {
+            version_info = "hg17 = NCBI35";
+        } else if ("hg18".equals(version_info)) {
+            version_info = "hg18 = NCBI36";
+        }
+        return version_info;
+    }
 }

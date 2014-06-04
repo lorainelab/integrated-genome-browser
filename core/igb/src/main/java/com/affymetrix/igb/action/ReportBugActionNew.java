@@ -14,29 +14,30 @@ import javax.swing.JFrame;
  * @version $Id: ReportBugAction.java 9589 2011-12-20 15:54:10Z lfrohman $
  */
 public class ReportBugActionNew extends GenericAction {
-	private static final long serialVersionUID = 1l;
-	private static final ReportBugActionNew ACTION = new ReportBugActionNew();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static ReportBugActionNew getAction() {
-		return ACTION;
-	}
+    private static final long serialVersionUID = 1l;
+    private static final ReportBugActionNew ACTION = new ReportBugActionNew();
 
-	private ReportBugActionNew() {
-		super("Report a Bug", null,
-				"16x16/actions/report_bug.png",
-				"22x22/actions/report_bug.png",
-				KeyEvent.VK_R, null, true);
-		this.ordinal = 130;
-	}
+    static {
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JFrame frame = new BugOrFeatureRequestForm(false);
-		frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
-		frame.setVisible(true);
-	}
+    public static ReportBugActionNew getAction() {
+        return ACTION;
+    }
+
+    private ReportBugActionNew() {
+        super("Report a Bug", null,
+                "16x16/actions/report_bug.png",
+                "22x22/actions/report_bug.png",
+                KeyEvent.VK_R, null, true);
+        this.ordinal = 130;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JFrame frame = new BugOrFeatureRequestForm(false);
+        frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+        frame.setVisible(true);
+    }
 }

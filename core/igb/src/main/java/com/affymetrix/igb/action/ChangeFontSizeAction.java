@@ -1,85 +1,83 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.JOptionPane;
 
 public class ChangeFontSizeAction extends SeqMapViewActionA {
-	private static final long serialVersionUID = 1L;
-	private static final ChangeFontSizeAction ACTION = new ChangeFontSizeAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static ChangeFontSizeAction getAction() {
-		return ACTION;
-	}
+    private static final long serialVersionUID = 1L;
+    private static final ChangeFontSizeAction ACTION = new ChangeFontSizeAction();
 
-	private ChangeFontSizeAction() {
-		super(BUNDLE.getString("changeFontSizeAction"), "16x16/actions/font_size.png",
-				"22x22/actions/font_size.png");
-	}
+    static {
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+    }
 
-	private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size) {
-		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null) {
-				style.setTrackNameSize(size);
-			}
-		}
-		getSeqMapView().getSeqMap().updateWidget();
-	}
+    public static ChangeFontSizeAction getAction() {
+        return ACTION;
+    }
 
-	private void changeFontSize(List<TierLabelGlyph> tier_labels) {
-		if (tier_labels == null || tier_labels.isEmpty()) {
-			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
-			return;
-		}
+    private ChangeFontSizeAction() {
+        super(BUNDLE.getString("changeFontSizeAction"), "16x16/actions/font_size.png",
+                "22x22/actions/font_size.png");
+    }
 
-		Object initial_value = TrackStyle.default_track_name_size;
-		if (tier_labels.size() == 1) {
-			TierLabelGlyph tlg = tier_labels.get(0);
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tg.getAnnotStyle();
-			if (style != null) {
-				initial_value = style.getTrackNameSize();
-			}
-		}
+    private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size) {
+        for (TierLabelGlyph tlg : tier_label_glyphs) {
+            TierGlyph tier = (TierGlyph) tlg.getInfo();
+            ITrackStyleExtended style = tier.getAnnotStyle();
+            if (style != null) {
+                style.setTrackNameSize(size);
+            }
+        }
+        getSeqMapView().getSeqMap().updateWidget();
+    }
 
-		Object input = JOptionPane.showInputDialog(null, BUNDLE.getString("selectFontSize"), BUNDLE.getString("changeSelectedTrackFontSize"), JOptionPane.PLAIN_MESSAGE, null,
-				TrackConstants.SUPPORTED_SIZE, initial_value);
+    private void changeFontSize(List<TierLabelGlyph> tier_labels) {
+        if (tier_labels == null || tier_labels.isEmpty()) {
+            ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
+            return;
+        }
 
-		if (input == null) {
-			return;
-		}
+        Object initial_value = TrackStyle.default_track_name_size;
+        if (tier_labels.size() == 1) {
+            TierLabelGlyph tlg = tier_labels.get(0);
+            TierGlyph tg = (TierGlyph) tlg.getInfo();
+            ITrackStyleExtended style = tg.getAnnotStyle();
+            if (style != null) {
+                initial_value = style.getTrackNameSize();
+            }
+        }
 
-		changeFontSize(tier_labels, (Float) input);
-	}
+        Object input = JOptionPane.showInputDialog(null, BUNDLE.getString("selectFontSize"), BUNDLE.getString("changeSelectedTrackFontSize"), JOptionPane.PLAIN_MESSAGE, null,
+                TrackConstants.SUPPORTED_SIZE, initial_value);
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		changeFontSize(getTierManager().getSelectedTierLabels());
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-	}
+        if (input == null) {
+            return;
+        }
 
-	@Override
-	public boolean isEnabled(){
-		return Selections.allGlyphs.size() > 0;
-	}
+        changeFontSize(tier_labels, (Float) input);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        changeFontSize(getTierManager().getSelectedTierLabels());
+        TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return Selections.allGlyphs.size() > 0;
+    }
 }

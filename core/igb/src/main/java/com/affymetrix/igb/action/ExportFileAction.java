@@ -15,39 +15,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExportFileAction
-extends AbstractExportFileAction {
-	private static final long serialVersionUID = 1L;
-	private static final ExportFileAction ACTION = new ExportFileAction();
-	
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-		ACTION.setEnabled(false);
-		GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
-	}
-	
-	public static ExportFileAction getAction() {
-		return ACTION;
-	}
+        extends AbstractExportFileAction {
 
-	private ExportFileAction() {
-		super(BUNDLE.getString("saveTrackAction"), null,
-				"16x16/actions/save.png",
-				"22x22/actions/save.png",
-				KeyEvent.VK_UNDEFINED, null, true);
-		putValue(SHORT_DESCRIPTION, BUNDLE.getString("saveTrackActionTooltip"));
-		this.ordinal = -9007100;
-	}
+    private static final long serialVersionUID = 1L;
+    private static final ExportFileAction ACTION = new ExportFileAction();
 
-	@Override
-	protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
-		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getInfo();
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		if (rootSym.getCategory().isContainer()) {
-			ExportFileModel.collectSyms(rootSym, syms, atier.getAnnotStyle().getGlyphDepth());
-		}
-		else {
-			syms.add(rootSym);
-		}
-		annotationWriter.writeAnnotations(syms, aseq, "", dos);
-	}
+    static {
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+        ACTION.setEnabled(false);
+        GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+    }
+
+    public static ExportFileAction getAction() {
+        return ACTION;
+    }
+
+    private ExportFileAction() {
+        super(BUNDLE.getString("saveTrackAction"), null,
+                "16x16/actions/save.png",
+                "22x22/actions/save.png",
+                KeyEvent.VK_UNDEFINED, null, true);
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("saveTrackActionTooltip"));
+        this.ordinal = -9007100;
+    }
+
+    @Override
+    protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException {
+        RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
+        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        if (rootSym.getCategory().isContainer()) {
+            ExportFileModel.collectSyms(rootSym, syms, atier.getAnnotStyle().getGlyphDepth());
+        } else {
+            syms.add(rootSym);
+        }
+        annotationWriter.writeAnnotations(syms, aseq, "", dos);
+    }
 }

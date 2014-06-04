@@ -11,28 +11,29 @@ import java.awt.event.ActionEvent;
  * @author hiralv
  */
 public class RefreshAFeatureAction extends GenericAction {
-	private static final long serialVersionUID = 1L;
-	private GenericFeature feature;
 
-	public static RefreshAFeatureAction createRefreshAFeatureAction(final GenericFeature feature) {
-		final String text = "Load "+feature.featureName;
-		RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text);
-		refreshAFeature.setFeature(feature);
-		return refreshAFeature;
-	}
+    private static final long serialVersionUID = 1L;
+    private GenericFeature feature;
 
-	private RefreshAFeatureAction(String text){
-		super(text, "toolbarButtonGraphics/general/Refresh16.gif", null);
-	}
+    public static RefreshAFeatureAction createRefreshAFeatureAction(final GenericFeature feature) {
+        final String text = "Load " + feature.featureName;
+        RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text);
+        refreshAFeature.setFeature(feature);
+        return refreshAFeature;
+    }
 
-	private void setFeature(GenericFeature feature) {
-		this.feature = feature;
-		this.enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME);
-	}
+    private RefreshAFeatureAction(String text) {
+        super(text, "toolbarButtonGraphics/general/Refresh16.gif", null);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
-	}
+    private void setFeature(GenericFeature feature) {
+        this.feature = feature;
+        this.enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        GeneralLoadUtils.loadAndDisplayAnnotations(feature);
+    }
 }

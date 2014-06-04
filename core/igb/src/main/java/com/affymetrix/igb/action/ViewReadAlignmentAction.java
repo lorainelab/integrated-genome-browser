@@ -3,65 +3,64 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.ActionEvent;
-
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
  * @author hiralv
  */
 public class ViewReadAlignmentAction extends SeqMapViewActionA {
-	private static final long serialVersionUID = 1l;
 
-	private static final String RESTOREREAD = BUNDLE.getString("restoreAlignment");
-	private static final String SHOWMISMATCH = BUNDLE.getString("showMismatch");
+    private static final long serialVersionUID = 1l;
 
-	private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction(RESTOREREAD);
-	private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction(SHOWMISMATCH);
+    private static final String RESTOREREAD = BUNDLE.getString("restoreAlignment");
+    private static final String SHOWMISMATCH = BUNDLE.getString("showMismatch");
 
-	private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+    private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction(RESTOREREAD);
+    private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction(SHOWMISMATCH);
 
-	private ViewReadAlignmentAction(String text){
-		super(text, null, null);
-	}
+    private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 
-	public static ViewReadAlignmentAction getReadRestoreAction(List<SeqSymmetry> syms){
-		return getAction(restoreRead, syms);
-	}
+    private ViewReadAlignmentAction(String text) {
+        super(text, null, null);
+    }
 
-	public static ViewReadAlignmentAction getMismatchAligmentAction(List<SeqSymmetry> syms){
-		return getAction(showMismatch, syms);
-	}
+    public static ViewReadAlignmentAction getReadRestoreAction(List<SeqSymmetry> syms) {
+        return getAction(restoreRead, syms);
+    }
 
-	private static ViewReadAlignmentAction getAction(ViewReadAlignmentAction action, List<SeqSymmetry> syms){
-		action.syms.clear();
-		action.syms.addAll(syms);
-		return action;
-	}
+    public static ViewReadAlignmentAction getMismatchAligmentAction(List<SeqSymmetry> syms) {
+        return getAction(showMismatch, syms);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
+    private static ViewReadAlignmentAction getAction(ViewReadAlignmentAction action, List<SeqSymmetry> syms) {
+        action.syms.clear();
+        action.syms.addAll(syms);
+        return action;
+    }
 
-		boolean set = true;
-		
-		if(RESTOREREAD.equals(e.getActionCommand())){
-			set = false;
-		}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
 
-		for (SeqSymmetry sym : syms) {
-			if (sym instanceof SymWithProps) {
-				SymWithProps swp = (SymWithProps) sym;
-				if (swp.getProperty(BAM.SHOWMASK) != null) {
-					swp.setProperty(BAM.SHOWMASK, set);
-				}
-			}
-		}
+        boolean set = true;
 
-		getSeqMapView().getSeqMap().repaint();
-	}
+        if (RESTOREREAD.equals(e.getActionCommand())) {
+            set = false;
+        }
+
+        for (SeqSymmetry sym : syms) {
+            if (sym instanceof SymWithProps) {
+                SymWithProps swp = (SymWithProps) sym;
+                if (swp.getProperty(BAM.SHOWMASK) != null) {
+                    swp.setProperty(BAM.SHOWMASK, set);
+                }
+            }
+        }
+
+        getSeqMapView().getSeqMap().repaint();
+    }
 }

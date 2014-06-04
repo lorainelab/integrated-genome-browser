@@ -16,33 +16,33 @@ import java.awt.event.ActionEvent;
  */
 public class ChangeTierLabelForegroundColorAction extends ChangeTierLabelColorActionA {
 
-	protected static final java.awt.Color DEFAULT_COLOR = javax.swing.UIManager.getColor("Button.background");
-	private static final long serialVersionUID = 1L;
-	private static final ChangeTierLabelForegroundColorAction ACTION = new ChangeTierLabelForegroundColorAction();
+    protected static final java.awt.Color DEFAULT_COLOR = javax.swing.UIManager.getColor("Button.background");
+    private static final long serialVersionUID = 1L;
+    private static final ChangeTierLabelForegroundColorAction ACTION = new ChangeTierLabelForegroundColorAction();
 
-	private ChangeTierLabelForegroundColorAction() {
-		super(BUNDLE.getString("changeTierLabelForegroundColorAction"), null, null);
-	}
+    private ChangeTierLabelForegroundColorAction() {
+        super(BUNDLE.getString("changeTierLabelForegroundColorAction"), null, null);
+    }
 
-	static {
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
+    static {
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+    }
 
-	public static ChangeTierLabelForegroundColorAction getAction() {
-		return ACTION;
-	}
+    public static ChangeTierLabelForegroundColorAction getAction() {
+        return ACTION;
+    }
 
-	public Color getBackgroundColor() {
-		return DEFAULT_COLOR;
-	}
+    public Color getBackgroundColor() {
+        return DEFAULT_COLOR;
+    }
 
-	public Color getForegroundColor() {
-		return DEFAULT_COLOR.brighter();
-	}
+    public Color getForegroundColor() {
+        return DEFAULT_COLOR.brighter();
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		changeColor(true);
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        changeColor(true);
+        TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+    }
 }

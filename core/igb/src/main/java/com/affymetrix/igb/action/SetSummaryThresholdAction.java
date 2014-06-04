@@ -8,10 +8,6 @@
  */
 package com.affymetrix.igb.action;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.JSlider;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
@@ -22,10 +18,13 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.ThresholdReader;
+import java.awt.event.ActionEvent;
+import javax.swing.JSlider;
 
 public class SetSummaryThresholdAction extends SeqMapViewActionA {
-	private static final long serialVersionUID = 1L;
-	private static final SetSummaryThresholdAction ACTION = new SetSummaryThresholdAction();
+
+    private static final long serialVersionUID = 1L;
+    private static final SetSummaryThresholdAction ACTION = new SetSummaryThresholdAction();
 
 //	static{
 //		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -34,45 +33,43 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
 //	public static SetSummaryThresholdAction getAction() {
 //		return ACTION;
 //	}
+    protected SetSummaryThresholdAction() {
+        super(IGBConstants.BUNDLE.getString("setSummaryThresholdAction"),
+                "16x16/actions/set summary threshold.png", "22x22/actions/set summary threshold.png");
+        this.ordinal = -4006000;
+    }
 
-	protected SetSummaryThresholdAction() {
-		super(IGBConstants.BUNDLE.getString("setSummaryThresholdAction"),
-			"16x16/actions/set summary threshold.png", "22x22/actions/set summary threshold.png");
-		this.ordinal = -4006000;
-	}
+    public boolean isDetail(ITrackStyleExtended style) {
+        int trackThreshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, ThresholdReader.default_threshold);
+        if (style != null && style.getSummaryThreshold() > 0) {
+            trackThreshold = style.getSummaryThreshold();
+        }
+        return ThresholdReader.getInstance().isDetail(trackThreshold);
+    }
 
-	public boolean isDetail(ITrackStyleExtended style) {
-		int trackThreshold = PreferenceUtils.getIntParam(PreferenceUtils.PREFS_THRESHOLD, ThresholdReader.default_threshold);
-		if (style != null && style.getSummaryThreshold() > 0) {
-			trackThreshold = style.getSummaryThreshold();
-		}
-		return ThresholdReader.getInstance().isDetail(trackThreshold);
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        int summaryThreshold;
+        for (TierGlyph tierGlyph : getTierManager().getSelectedTiers()) {
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		int summaryThreshold;
-		for (TierGlyph tierGlyph : getTierManager().getSelectedTiers()) {
-			
-			ITrackStyleExtended style = tierGlyph.getAnnotStyle();
-			if (style != null && style instanceof TrackStyle) {
-				boolean isDetail = isDetail(style);
-				if (isDetail) {
-					summaryThreshold = ThresholdReader.getInstance().toSummary();
-				}
-				else {
-					summaryThreshold = ThresholdReader.getInstance().toDetail();
-				}
-				((TrackStyle) style).setSummaryThreshold(summaryThreshold);
-				if (tierGlyph instanceof NeoRangeListener) {
-					NeoRangeEvent newevt = new NeoRangeEvent(getSeqMapView(), tierGlyph.getCoordBox().x, tierGlyph.getCoordBox().x + tierGlyph.getCoordBox().width);
-					((NeoRangeListener) tierGlyph).rangeChanged(newevt);
-				}
-			}
-		}
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		getSeqMapView().getSeqMap().updateWidget();
-		((JSlider)getSeqMapView().getSeqMap().getZoomer(NeoMap.X)).repaint();
-	}
+            ITrackStyleExtended style = tierGlyph.getAnnotStyle();
+            if (style != null && style instanceof TrackStyle) {
+                boolean isDetail = isDetail(style);
+                if (isDetail) {
+                    summaryThreshold = ThresholdReader.getInstance().toSummary();
+                } else {
+                    summaryThreshold = ThresholdReader.getInstance().toDetail();
+                }
+                ((TrackStyle) style).setSummaryThreshold(summaryThreshold);
+                if (tierGlyph instanceof NeoRangeListener) {
+                    NeoRangeEvent newevt = new NeoRangeEvent(getSeqMapView(), tierGlyph.getCoordBox().x, tierGlyph.getCoordBox().x + tierGlyph.getCoordBox().width);
+                    ((NeoRangeListener) tierGlyph).rangeChanged(newevt);
+                }
+            }
+        }
+        TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+        getSeqMapView().getSeqMap().updateWidget();
+        ((JSlider) getSeqMapView().getSeqMap().getZoomer(NeoMap.X)).repaint();
+    }
 }

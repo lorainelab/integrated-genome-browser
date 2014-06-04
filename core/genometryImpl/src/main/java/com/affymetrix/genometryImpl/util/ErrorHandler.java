@@ -92,12 +92,14 @@ public abstract class ErrorHandler implements DisplaysError{
 		if (SwingUtilities.isEventDispatchThread()) {
 			processDialog(pane, dialog, actions);
 		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-
-				public void run() {
-					processDialog(pane, dialog, actions);
-				}
-			});
+                    SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            processDialog(pane, dialog, actions);
+                            return null;
+                        }
+                    };
+                    sw.execute();
 		}
 	}
 		

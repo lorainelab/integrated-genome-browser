@@ -93,9 +93,14 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
             return new ServiceRegistration[]{bundleContext.registerService(AMenuItem.class, new AMenuItem(tutorialMenu, "help"), null)};
 
         } catch (FileNotFoundException fnfe) {
-            ourLogger.log(Level.WARNING, "Could not find file {0}.\n          coninuing...", fnfe.getMessage());
+            ourLogger.log(Level.SEVERE, "Could not find file {0}.\n          coninuing...", fnfe.getMessage());
         } catch (java.net.ConnectException ce) {
-            ourLogger.log(Level.WARNING, "Could not connect: {0}.\n          coninuing...", ce.getMessage());
+            ourLogger.log(Level.SEVERE, "Could not connect: {0}.\n          coninuing...", ce.getMessage());
+        } catch (java.net.UnknownHostException ex) {
+            ourLogger.log(Level.SEVERE, "Could not connect: {0}.\n          coninuing...", ex.getMessage());
+        }
+        catch (Exception ex) {
+            ourLogger.log(Level.SEVERE, ex.getMessage());
         }
 
         return null;

@@ -157,7 +157,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 				String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
                                 if (StringUtils.isNotBlank(trackLineName)){
                                     if (type.indexOf(".bed") > -1) {
-                                        type = type.substring(0, type.indexOf(".bed")) + "_" + trackLineName;
+                                        type = type.substring(0, type.indexOf(".bed")) + " " + trackLineName;
                                     } else {
                                         type = type + "_" + trackLineName;
                                     }

@@ -1,21 +1,5 @@
 package com.affymetrix.genometryImpl.quickload;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
@@ -30,6 +14,21 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBitNew;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class QuickloadServerType implements ServerTypeI {
 
@@ -315,6 +314,11 @@ public class QuickloadServerType implements ServerTypeI {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
 		}
+		if (!ping(quickloadURL.toString(), 3000)) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not reach url:", quickloadURL);
+			return false;
+		}
+		
 		quickloadServer.loadGenomeNames();
 		List<String> genomeList = quickloadServer.getGenomeNames();
 		if (genomeList == null || genomeList.isEmpty()) {
@@ -347,6 +351,20 @@ public class QuickloadServerType implements ServerTypeI {
 			versionDiscoverer.discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
 		return true;
+	}
+	
+	//Note  exception may be thrown on invalid SSL certificates.
+	public static boolean ping(String url, int timeout) {
+		try {
+			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+			connection.setConnectTimeout(timeout);
+			connection.setReadTimeout(timeout);
+			connection.setRequestMethod("HEAD");
+			int responseCode = connection.getResponseCode();
+			return (200 <= responseCode && responseCode <= 399);
+		} catch (IOException exception) {
+			return false;
+		}
 	}
 
 	@Override

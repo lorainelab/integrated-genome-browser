@@ -15,7 +15,7 @@ public class GenericServerPrefKeys {
      */
     public static final String SERVER_NAME = "name";
     public static final String IS_SERVER_ENABLED = "enabled";
-    public static final String CHECK_AVAILABILITY = "checkAvailibility";
+    public static final String ENABLE_IF_AVAILABLE = "enableIfAvailable";
     public static final String SERVER_LOGIN = "login";
     public static final String SERVER_PASSWORD = "password";
     public static final String SERVER_URL = "url";

@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
-import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.CHECK_AVAILABILITY;
+import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.ENABLE_IF_AVAILABLE;
 import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.IS_SERVER_ENABLED;
 import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.SERVER_LOGIN;
 import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.SERVER_NAME;
@@ -153,7 +153,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 //		this.referenceOnly = referenceOnly;
 
         if (this.node != null) {
-            if (this.node.getBoolean(CHECK_AVAILABILITY, false)) {
+            if (this.node.getBoolean(ENABLE_IF_AVAILABLE, false)) {
                 this.setEnabled(true);
             } else {
                 this.setEnabled(this.node.getBoolean(IS_SERVER_ENABLED, enabled));

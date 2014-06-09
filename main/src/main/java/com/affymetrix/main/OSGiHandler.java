@@ -82,6 +82,9 @@ public class OSGiHandler {
             uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
             installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
             for (Bundle bundle : bundleContext.getBundles()) {
+                if (isDevelopmentMode()) {
+                    System.out.println("Starting Bundle: " + bundle.getSymbolicName());
+                }
                 bundle.start();
             }
             ourLogger.log(Level.INFO, "OSGi is started with {0} version {1}",
@@ -317,7 +320,7 @@ public class OSGiHandler {
                     if (look_and_feel.isSupportedLookAndFeel()) {
                         UIManager.setLookAndFeel(look_and_feel);
                     }
-                }  
+                }
             } catch (Exception ulfe) {
                 // Windows look and feel is only supported on Windows, and only in
                 // some version of the jre.  That is perfectly ok.

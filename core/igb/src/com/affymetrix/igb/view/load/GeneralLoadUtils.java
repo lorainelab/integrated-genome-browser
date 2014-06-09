@@ -251,8 +251,7 @@ public final class GeneralLoadUtils {
 						ServerList.getServerInstance().removeServer(gServer.URL);//Remove the preference so that it wont add the server to list
 						ServerList.getServerInstance().removeServerFromPrefs(gServer.URL);
 						return false;
-					}
-					throw new IllegalStateException(MessageFormat.format("{0} is not reachable", gServer.serverName));
+					}					
 				}
 				
 				Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");

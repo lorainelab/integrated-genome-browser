@@ -75,7 +75,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         if (contextRoot.equals(SERVLET_NAME_OLD) || contextRoot.equals(SERVLET_NAME)) {
             parseAndGoToBookmark(session, false);
             response = new Response(getWelcomeMessage());
-            response.setStatus(Response.Status.OK);
+            response.setStatus(Response.Status.NO_CONTENT);
             return response;
         } else if (contextRoot.equals(GALAXY_REQUEST)) {
             //This exist to allow custom pipeline for galaxy requests if desired

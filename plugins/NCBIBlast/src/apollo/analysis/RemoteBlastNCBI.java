@@ -262,7 +262,6 @@ public class RemoteBlastNCBI {
 		conn.setRequestMethod("POST");
 		
 		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-		System.out.println(putBuf.toString());
 		wr.writeBytes(putBuf.toString());
 		wr.flush();
 		wr.close();

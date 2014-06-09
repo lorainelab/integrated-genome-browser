@@ -358,19 +358,29 @@ public class ExportDialog extends HeadLessExport {
 	 */
 	public void browseButtonActionPerformed(JPanel panel) {
 		String fileName = "igb";
-
+		File directory = defaultDir;
+		
 		if (StringUtils.isNotBlank(filePathTextField.getText())) {
 			fileName = filePathTextField.getText();
+			String tempDir = fileName.substring(0, fileName.lastIndexOf("/"));
+			try {
+				File f = new File(tempDir);
+				if (f.exists()) {
+					directory = f;
+				}
+			} catch (Exception ex) {
+				//do nothing
+			}
 			fileName = fileName.substring(fileName.lastIndexOf("/"));
 		}
 
-		defaultExportFile = new File(defaultDir, fileName);
+		defaultExportFile = new File(directory, fileName);
 		extFilter = getFilter(selectedExt);
 
 		if (IS_MAC) {
-			showFileDialog(fileName);
+			showFileDialog(directory.getAbsolutePath(), fileName);
 		} else {
-			ExportFileChooser fileChooser = new ExportFileChooser(defaultDir, defaultExportFile, extFilter, this);
+			ExportFileChooser fileChooser = new ExportFileChooser(directory, defaultExportFile, extFilter, this);
 			fileChooser.setDialogTitle("Save view as...");
 			fileChooser.showDialog(panel, "Select");
 			if (fileChooser.getSelectedFile() != null) {
@@ -379,9 +389,10 @@ public class ExportDialog extends HeadLessExport {
 		}
 	}
 
-	private void showFileDialog(String defaultFileName) {
+	private void showFileDialog(String directory, String defaultFileName) {
 		FileDialog dialog = new FileDialog(static_frame, "Save Session", FileDialog.SAVE);
 		//dialog.setFilenameFilter(fileNameFilter);
+		dialog.setDirectory(directory);
 		dialog.setFile(defaultFileName);
 		dialog.setVisible(true);
 		String fileS = dialog.getFile();

@@ -132,7 +132,7 @@ public class ExportDialogGUI extends JPanel {
                     .add(sizeLabel)
                     .add(resolutionComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(resolutionLabel))
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
@@ -232,6 +232,12 @@ public class ExportDialogGUI extends JPanel {
         browseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseButtonActionPerformed(evt);
+            }
+        });
+
+        filePathTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                filePathTextFieldFocusLost(evt);
             }
         });
 
@@ -367,6 +373,10 @@ public class ExportDialogGUI extends JPanel {
 	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
 		ed.extComboBoxActionPerformed();
 	}//GEN-LAST:event_extComboBoxActionPerformed
+
+    private void filePathTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_filePathTextFieldFocusLost
+      ed.filePathTextField.setText(filePathTextField.getText());
+    }//GEN-LAST:event_filePathTextFieldFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;

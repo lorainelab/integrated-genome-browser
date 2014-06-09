@@ -9,6 +9,23 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
+import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.SERVER_ORDER;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.action.AutoLoadFeatureAction;
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.util.IGBAuthenticator;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,27 +38,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.GroupLayout.Group;
+import java.util.prefs.Preferences;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
+import javax.swing.GroupLayout.Group;
 import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
-
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
-import com.affymetrix.genometryImpl.util.*;
-
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-
-import com.affymetrix.igb.action.AutoLoadFeatureAction;
-import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.IGBAuthenticator;
-import java.util.prefs.Preferences;
+import javax.swing.border.TitledBorder;
 
 /**
  *
@@ -374,7 +377,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	@Override
 	protected void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL){
 		Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
-		int order = node.getInt(GenericServer.ORDER, -1);
+		int order = node.getInt(SERVER_ORDER, -1);
 		boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
 		ServerList.getServerInstance().removeServer(url);
 		ServerList.getServerInstance().removeServerFromPrefs(url);

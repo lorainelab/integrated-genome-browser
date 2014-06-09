@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.util;
 
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FILE_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTP_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.IGB_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.SUPPORTED_PROTOCOLS;
@@ -656,7 +655,7 @@ public final class LocalUrlCacher {
 			return f;
 		}
 		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(HTTPS_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+		if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 			InputStream istr = null;
 			try {
 				String uriStr = uri.toString();
@@ -694,7 +693,7 @@ public final class LocalUrlCacher {
 		InputStream is = null;
 		if (scheme.length() == 0 || scheme.equals(FILE_PROTOCOL)) {
 			is = new FileInputStream(new File(uri));
-		} else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(HTTPS_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+		} else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 			is = LocalUrlCacher.getInputStream(uri.toString());
 		} else {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
@@ -719,7 +718,7 @@ public final class LocalUrlCacher {
 		try {
 			if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
 				is = new FileInputStream(new File(uri));
-			} else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(HTTPS_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+			} else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 				is = LocalUrlCacher.getInputStream(uri.toString());
 			} else {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
@@ -771,7 +770,7 @@ public final class LocalUrlCacher {
 			}
 		}
 
-		if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(HTTPS_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+		if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
 			InputStream istr = null;
 			try {
 
@@ -805,7 +804,7 @@ public final class LocalUrlCacher {
 			}
 		}
 
-		if (urlString.startsWith(HTTP_PROTOCOL) || urlString.startsWith(HTTPS_PROTOCOL) || urlString.startsWith(FTP_PROTOCOL)) {
+		if (urlString.startsWith(HTTP_PROTOCOL) || urlString.startsWith(FTP_PROTOCOL)) {
 			InputStream istr = null;
 			try {
 

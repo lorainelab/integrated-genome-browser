@@ -40,7 +40,7 @@ public class ExportDialog extends HeadLessExport {
     private static ExportDialog singleton;
     static float FONT_SIZE = 13.0f;
     static final String TITLE = "Export Image";
-    static final String DEFAULT_FILE = "export.png";
+    static final String DEFAULT_FILE = "IGB.png";
     static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
     static final Object[] UNIT = {"pixels", "inches"};
     static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);

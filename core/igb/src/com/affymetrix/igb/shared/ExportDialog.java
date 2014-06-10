@@ -392,7 +392,7 @@ public class ExportDialog extends HeadLessExport {
     }
 
     private void showFileDialog(String directory, String defaultFileName) {
-        FileDialog dialog = new FileDialog(static_frame, "Save Session", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(static_frame, "Save Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);
         dialog.setFile(defaultFileName);

@@ -355,7 +355,7 @@ public class ExportDialog extends HeadLessExport {
      */
     public void browseButtonActionPerformed(JPanel panel) {
         String fileName = "igb";
-        File directory = defaultDir;
+        File directory = new File(System.getProperty("user.home"));
 
         if (StringUtils.isNotBlank(filePathTextField.getText())) {
             fileName = filePathTextField.getText();

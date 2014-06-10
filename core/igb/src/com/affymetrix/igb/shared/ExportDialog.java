@@ -385,7 +385,7 @@ public class ExportDialog extends HeadLessExport {
 		defaultExportFile = new File(directory, fileName);
 		extFilter = getFilter(selectedExt);
 
-        if (true) {
+        if (IS_MAC) {
 			showFileDialog(directory.getAbsolutePath(), fileName);
 		} else {
 			ExportFileChooser fileChooser = new ExportFileChooser(directory, defaultExportFile, extFilter, this);

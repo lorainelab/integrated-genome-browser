@@ -19,8 +19,10 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.util.GraphicsUtil;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -383,7 +385,7 @@ public class ExportDialog extends HeadLessExport {
 		defaultExportFile = new File(directory, fileName);
 		extFilter = getFilter(selectedExt);
 
-        if (IS_MAC) {
+        if (true) {
 			showFileDialog(directory.getAbsolutePath(), fileName);
 		} else {
 			ExportFileChooser fileChooser = new ExportFileChooser(directory, defaultExportFile, extFilter, this);
@@ -407,7 +409,14 @@ public class ExportDialog extends HeadLessExport {
 		dialog.setVisible(true);
 		String fileS = dialog.getFile();
 		if (fileS != null) {
-			File imageFile = new File(dialog.getDirectory(), dialog.getFile());
+			String fileName = dialog.getFile();
+			String currentExt = GeneralUtils.getExtension(fileName);
+			if (ArrayUtils.contains(EXTENSION, currentExt)) {
+
+			} else {
+				fileName = fileName.substring(0, fileName.lastIndexOf('.')) + ".png";
+			}
+			File imageFile = new File(dialog.getDirectory(), fileName);
 			completeBrowseButtonAction(imageFile);
 			try {
 				okButtonActionPerformed(true);

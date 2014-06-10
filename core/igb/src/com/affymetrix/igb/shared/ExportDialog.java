@@ -19,9 +19,6 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.util.GraphicsUtil;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -40,7 +37,7 @@ public class ExportDialog extends HeadLessExport {
     private static ExportDialog singleton;
     static float FONT_SIZE = 13.0f;
     static final String TITLE = "Export Image";
-    static final String DEFAULT_FILE = "IGB.png";
+    static final String DEFAULT_FILE = "igb.png";
     static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
     static final Object[] UNIT = {"pixels", "inches"};
     static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
@@ -394,6 +391,10 @@ public class ExportDialog extends HeadLessExport {
     }
 
     private void showFileDialog(String directory, String defaultFileName) {
+		String ext = GeneralUtils.getExtension(defaultFileName);
+		if (StringUtils.isBlank(ext)){
+			defaultFileName += selectedExt;
+		}
         FileDialog dialog = new FileDialog(static_frame, "Save Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);

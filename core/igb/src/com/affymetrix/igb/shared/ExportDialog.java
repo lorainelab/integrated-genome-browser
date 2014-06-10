@@ -19,6 +19,8 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.util.GraphicsUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -365,8 +367,8 @@ public class ExportDialog extends HeadLessExport {
                 File f = new File(tempDir);
                 if (f.exists()) {
                     directory = f;
-                } else {
-					ErrorHandler.errorPanel("The output path is invalid.");
+                } else{
+				ErrorHandler.errorPanel("The output path is invalid.");
 				}
             } catch (Exception ex) {
                 //do nothing
@@ -398,15 +400,21 @@ public class ExportDialog extends HeadLessExport {
 		if (StringUtils.isBlank(ext)){
 			defaultFileName += selectedExt;
 		}
-        FileDialog dialog = new FileDialog(static_frame, "Save Image", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(static_frame, "Export Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);
         dialog.setFile(defaultFileName);
         dialog.setVisible(true);
         String fileS = dialog.getFile();
         if (fileS != null) {
-            File sessionFile = new File(dialog.getDirectory(), dialog.getFile());
-            completeBrowseButtonAction(sessionFile);
+            File imageFile = new File(dialog.getDirectory(), dialog.getFile());
+			try {
+				exportScreenshot(component, exportFile, selectedExt, false);
+			} catch (IOException ex) {
+				Logger.getLogger(ExportDialog.class.getName()).log(Level.SEVERE, null, ex);
+			}
+            completeBrowseButtonAction(imageFile);
+			
         }
     }
 

@@ -120,6 +120,7 @@ public class ExportDialog extends HeadLessExport {
         FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
         FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
         FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
+		defaultDir = new File(System.getProperty("user.home"));
     }
 
     /**
@@ -226,7 +227,7 @@ public class ExportDialog extends HeadLessExport {
                 exportFile = new File(file);
             }
 
-            defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
+          
 
             imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
 
@@ -355,7 +356,7 @@ public class ExportDialog extends HeadLessExport {
      */
     public void browseButtonActionPerformed(JPanel panel) {
         String fileName = "igb";
-        File directory = new File(System.getProperty("user.home"));
+        File directory = defaultDir;
 
         if (StringUtils.isNotBlank(filePathTextField.getText())) {
             fileName = filePathTextField.getText();

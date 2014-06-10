@@ -96,6 +96,8 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 			ourLogger.log(Level.WARNING, "Could not find file {0}.\n          coninuing...", fnfe.getMessage());
 		} catch (java.net.ConnectException ce) {
 			ourLogger.log(Level.WARNING, "Could not connect: {0}.\n          coninuing...", ce.getMessage());
+		} catch (Exception ex) {
+			ourLogger.log(Level.WARNING, "Could not connect: {0}.\n          coninuing...", ex.getMessage());
 		}
 
 		return null;

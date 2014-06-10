@@ -371,9 +371,11 @@ public class ExportDialog extends HeadLessExport {
             } catch (Exception ex) {
                 //do nothing
             }
-            if (fileName.contains("/")) {
-                fileName = fileName.substring(fileName.lastIndexOf("/"));
-            }
+           if (fileName.contains("/")) {
+				if (fileName.length() > fileName.lastIndexOf("/")) {
+					fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+				}
+			}
         }
 
         defaultExportFile = new File(directory, fileName);

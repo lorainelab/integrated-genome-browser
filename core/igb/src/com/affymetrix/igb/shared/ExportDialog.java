@@ -227,7 +227,7 @@ public class ExportDialog extends HeadLessExport {
                 exportFile = new File(file);
             }
 
-          
+            defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
 
             imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
 
@@ -365,7 +365,9 @@ public class ExportDialog extends HeadLessExport {
                 File f = new File(tempDir);
                 if (f.exists()) {
                     directory = f;
-                }
+                } else {
+					ErrorHandler.errorPanel("The output path is invalid.");
+				}
             } catch (Exception ex) {
                 //do nothing
             }

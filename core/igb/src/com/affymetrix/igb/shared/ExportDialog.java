@@ -409,7 +409,7 @@ public class ExportDialog extends HeadLessExport {
         if (fileS != null) {
             File imageFile = new File(dialog.getDirectory(), dialog.getFile());
 			try {
-				exportScreenshot(component, exportFile, selectedExt, false);
+				exportScreenshot(component, imageFile, selectedExt, false);
 			} catch (IOException ex) {
 				Logger.getLogger(ExportDialog.class.getName()).log(Level.SEVERE, null, ex);
 			}

@@ -414,7 +414,7 @@ public class ExportDialog extends HeadLessExport {
 			if (ArrayUtils.contains(EXTENSION, currentExt)) {
 
 			} else {
-				fileName = fileName.substring(0, fileName.lastIndexOf('.')) + ".png";
+				fileName = ".png";
 			}
 			File imageFile = new File(dialog.getDirectory(), fileName);
 			completeBrowseButtonAction(imageFile);
@@ -512,7 +512,7 @@ public class ExportDialog extends HeadLessExport {
 			}
 		}
 
-		if (exportFile.exists()) {
+		if (exportFile.exists() && !keepWindowOpen) {
 			if (!isOverwrite()) {
 				return;
 			}

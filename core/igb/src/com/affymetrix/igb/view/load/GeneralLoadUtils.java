@@ -254,7 +254,6 @@ public final class GeneralLoadUtils {
 					}					
 				}
 				
-				Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 				URL primaryURL = getServerDirectory(gServer.URL);
 				
@@ -290,6 +289,8 @@ public final class GeneralLoadUtils {
 						gServer.setEnabled(false);
 						return false;
 					}
+				} else {
+					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 				}
 				if(gServer.serverType == ServerTypeI.QuickLoad){
 					XmlPrefsParser.parse(gServer.serverObj.toString() +  "preferences.xml"); // Use server object for Quickload

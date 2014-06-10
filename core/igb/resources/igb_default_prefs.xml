@@ -7,10 +7,9 @@
 <server type="quickload" name="Pollen" url="http://www.igbquickload.org/pollen" order="1" default="true" mirror="http://bioviz.org/pollen/"/>
 <server type="quickload" name="Cytokinin" url="http://www.igbquickload.org/cyto" order="2" default="true" mirror="http://bioviz.org/cytopub/"/>
 <server type="quickload" name="Blueberry" url="http://www.igbquickload.org/blueberry" order="3" default="true" mirror="http://bioviz.org/berrypub/"/>
-<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="8" enabled="false" default="true"/>
-<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="9" default="true"/>
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="10" default="true"/>
-<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="11" default="true"/>
+<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="5" default="true"/>
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="6" default="true"/>
+<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="7" default="true"/>
 
 <!-- caching of slow servers (e.g., UCSC and Ensembl) -->
 

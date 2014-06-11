@@ -106,14 +106,14 @@ public final class GeneralLoadUtils {
 	static final SetMultimap<String, GenericVersion> species2genericVersionList
 			= Multimaps.synchronizedSetMultimap(LinkedHashMultimap.<String, GenericVersion>create());// the list of versions associated with the species
 
-	static final Map<String, String> versionName2species =
-			new HashMap<String, String>();	// the species associated with the given version.
+	static final Map<String, String> versionName2species
+			= new HashMap<String, String>();	// the species associated with the given version.
 
 	public static Map<String, String> getVersionName2Species() {
 		return versionName2species;
 	}
 
-	public static SetMultimap<String,GenericVersion> getSpecies2Generic() {
+	public static SetMultimap<String, GenericVersion> getSpecies2Generic() {
 		return species2genericVersionList;
 	}
 	/**
@@ -122,7 +122,7 @@ public final class GeneralLoadUtils {
 	 * @see SynonymLookup#getDefaultLookup()
 	 */
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-	
+
 	public static final String LOADING_MESSAGE_PREFIX = "Loading data set ";
 
 	static {
@@ -141,26 +141,25 @@ public final class GeneralLoadUtils {
 	private static Map<String, String> servermapping = new HashMap<String, String>();
 
 	/**
-	 * 
+	 *
 	 */
 //	private static RegionFinder regionFinder = new DefaultRegionFinder();
-	
-	private static GenericServerInitListener genericServerInitListener = new GenericServerInitListener(){
+	private static GenericServerInitListener genericServerInitListener = new GenericServerInitListener() {
 
 		@Override
 		public void genericServerInit(GenericServerInitEvent evt) {
-			GenericServer server = (GenericServer)evt.getSource();
-			if(server.getServerStatus() == ServerStatus.NotResponding){
+			GenericServer server = (GenericServer) evt.getSource();
+			if (server.getServerStatus() == ServerStatus.NotResponding) {
 				removeServer(server);
 			}
 		}
-		
+
 	};
-	
+
 	static {
 		ServerList.getServerInstance().addServerInitListener(genericServerInitListener);
 	}
-	
+
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 *
@@ -178,42 +177,36 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 
-		GenericServer gServer = serverList.addServer(serverType, serverName, 
+		GenericServer gServer = serverList.addServer(serverType, serverName,
 				serverURL, true, false, order, isDefault, mirrorURL);
-		
+
 		if (gServer == null) {
 			return null;
 		}
 
-		if(!discoverServer(gServer)){ 
+		if (!discoverServer(gServer)) {
 			return null;
 		}
 		return gServer;
 	}
 
-	private static void removeServer(GenericServer server) {	
-		Set keySet = species2genericVersionList.keySet();
-		Iterator keyIterator = keySet.iterator();
-	
-		while (keyIterator.hasNext()) {
-			String key = (String) keyIterator.next();
-			Set<GenericVersion> versions = species2genericVersionList.get(key);
-			Iterator<GenericVersion> versionIterator = versions.iterator();
-			while (versionIterator.hasNext()) {
-				GenericVersion version = versionIterator.next();
-				if (version.gServer == server) {
-					GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
-					version.clear();
-					versionIterator.remove();
-				}
+	private static void removeServer(GenericServer server) {
+		Iterator<Map.Entry<String, GenericVersion>> i = species2genericVersionList.entries().iterator();
+		while (i.hasNext()) {
+			GenericVersion version = i.next().getValue();
+			if (version.gServer == server) {
+				GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
+				version.clear();
+				i.remove();
 			}
 		}
+
 		server.setEnabled(false);
 		if (server.serverType == null) {
 			IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
 		}
 	}
-	
+
 	private static final VersionDiscoverer versionDiscoverer = new VersionDiscoverer() {
 
 		@Override
@@ -237,7 +230,7 @@ public final class GeneralLoadUtils {
 			ServerList.getRepositoryInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
 			return true;
 		}
-		
+
 		try {
 			if (gServer == null || gServer.serverType == ServerTypeI.LocalFiles) {
 				// should never happen
@@ -245,20 +238,20 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType != null) {
 				//tKanapar
-				if(!LocalUrlCacher.isValidURL(gServer.URL)){//Adding check on the request if authentication is required
-					if(IGBAuthenticator.authenticationRequestCancelled()){//If the cancel dialog is clicked in the IGB Authenticator
+				if (!LocalUrlCacher.isValidURL(gServer.URL)) {//Adding check on the request if authentication is required
+					if (IGBAuthenticator.authenticationRequestCancelled()) {//If the cancel dialog is clicked in the IGB Authenticator
 						IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
 						ServerList.getServerInstance().removeServer(gServer.URL);//Remove the preference so that it wont add the server to list
 						ServerList.getServerInstance().removeServerFromPrefs(gServer.URL);
 						return false;
-					}					
+					}
 				}
-				
+
 				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 				URL primaryURL = getServerDirectory(gServer.URL);
-				
+
 				if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
-					
+
 					/**
 					 * qlmirror - Quickload Mirror Server
 					 *
@@ -267,10 +260,11 @@ public final class GeneralLoadUtils {
 					 * The following code will try to use mirror server when
 					 * server is being discovered e.g. IGB startup
 					 *
-					 * Mirror server address is specified in igb_defaults_prefs.xml by 'mirror' attribute
+					 * Mirror server address is specified in
+					 * igb_defaults_prefs.xml by 'mirror' attribute
 					 *
 					 */
-					if(gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is not reachable.\nDo you want to use mirror site?")) {
+					if (gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is not reachable.\nDo you want to use mirror site?")) {
 //
 						// Change serverObj for Quickload to apply mirror site
 						// Currently only Quickload has mirror
@@ -292,12 +286,12 @@ public final class GeneralLoadUtils {
 				} else {
 					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 				}
-				if(gServer.serverType == ServerTypeI.QuickLoad){
-					XmlPrefsParser.parse(gServer.serverObj.toString() +  "preferences.xml"); // Use server object for Quickload
+				if (gServer.serverType == ServerTypeI.QuickLoad) {
+					XmlPrefsParser.parse(gServer.serverObj.toString() + "preferences.xml"); // Use server object for Quickload
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
-		} catch (IllegalStateException ex ) {
+		} catch (IllegalStateException ex) {
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -626,7 +620,6 @@ public final class GeneralLoadUtils {
 //				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC){
 //			return false;
 //		}
-
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
 		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles)) {
@@ -688,15 +681,15 @@ public final class GeneralLoadUtils {
 
 		optimized_sym = feature.optimizeRequest(span);
 
-		if (feature.getLoadStrategy() != LoadStrategy.GENOME 
-				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS2 
+		if (feature.getLoadStrategy() != LoadStrategy.GENOME
+				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS2
 				|| feature.gVersion.gServer.serverType == ServerTypeI.DAS) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
-			 if (checkBamAndSamLoading(feature, optimized_sym)) {
+			if (checkBamAndSamLoading(feature, optimized_sym)) {
 				return;
 			}
-			
+
 			loadFeaturesForSym(optimized_sym, feature);
 			return;
 		}
@@ -718,154 +711,154 @@ public final class GeneralLoadUtils {
 	}
 
 	static void iterateSeqList(final GenericFeature feature) {
-		
 
 		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(
 				MessageFormat.format(LOADING_FEATURE_MESSAGE, feature.featureName)) {
 
-			@Override
-			protected Void runInBackground() {
-				Timer timer = new Timer();
-				timer.start();
-				try {	
-					List<BioSeq> chrList = feature.symL.getChromosomeList();
-					Collections.sort(chrList,
-							new Comparator<BioSeq>() {
-								@Override
-								public int compare(BioSeq s1, BioSeq s2) {
-									return s1.getID().compareToIgnoreCase(s2.getID());
-								}
-							});
-					if(feature.symL.isMultiThreadOK()){
-						return multiThreadedLoad(chrList);
+					@Override
+					protected Void runInBackground() {
+						Timer timer = new Timer();
+						timer.start();
+						try {
+							List<BioSeq> chrList = feature.symL.getChromosomeList();
+							Collections.sort(chrList,
+									new Comparator<BioSeq>() {
+										@Override
+										public int compare(BioSeq s1, BioSeq s2) {
+											return s1.getID().compareToIgnoreCase(s2.getID());
+										}
+									});
+							if (feature.symL.isMultiThreadOK()) {
+								return multiThreadedLoad(chrList);
+							}
+							return singleThreadedLoad(chrList);
+						} catch (Throwable ex) {
+							Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE,
+									"Error while loading feature", ex);
+							return null;
+						} finally {
+							Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Loaded {0} in {1} secs", new Object[]{feature.featureName, (double) timer.read() / 1000f});
+						}
 					}
-					return singleThreadedLoad(chrList);
-				} catch (Throwable ex) {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, 
-							"Error while loading feature", ex);			
-					return null;
-				} finally {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Loaded {0} in {1} secs", new Object[]{feature.featureName, (double)timer.read()/1000f});
-				}
-			}
 
-			protected Void singleThreadedLoad(List<BioSeq> chrList) throws Exception {
-				final BioSeq current_seq = gmodel.getSelectedSeq();
-			
-				if (current_seq != null) {
-					loadOnSequence(current_seq);
-					publish(current_seq);
-				}
+					protected Void singleThreadedLoad(List<BioSeq> chrList) throws Exception {
+						final BioSeq current_seq = gmodel.getSelectedSeq();
 
-				for (final BioSeq seq : chrList) {
-					if (seq == current_seq) {
-						continue;
-					}
-					if (Thread.currentThread().isInterrupted()) {
-						break;
-					}
-					loadOnSequence(seq);
-				}
-				return null;
-			}
-		
-			ExecutorService internalExecutor;
-			protected Void multiThreadedLoad(List<BioSeq> chrList) throws Exception {
-				internalExecutor = Executors.newFixedThreadPool(MAX_INTERNAL_THREAD);
-				
-				final BioSeq current_seq = gmodel.getSelectedSeq();
-				
-				if (current_seq != null) {
-					internalExecutor.submit(new Runnable() {
-						@Override
-						public void run() {
+						if (current_seq != null) {
 							loadOnSequence(current_seq);
 							publish(current_seq);
 						}
-					});
-				}
 
-				for (final BioSeq seq : chrList) {
-					if (seq == current_seq) {
-						continue;
-					}
-
-					if (Thread.currentThread().isInterrupted()) {
-						break;
-					}
-
-					internalExecutor.submit(new Runnable() {
-						@Override
-						public void run() {
+						for (final BioSeq seq : chrList) {
+							if (seq == current_seq) {
+								continue;
+							}
+							if (Thread.currentThread().isInterrupted()) {
+								break;
+							}
 							loadOnSequence(seq);
 						}
-					});
-				}
-				internalExecutor.shutdown();
-				try {
-					internalExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-				} catch (InterruptedException ex) {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.WARNING, "Internal executor exception", ex);
-				}
-
-				return null;
-			}
-			
-			@Override
-			public boolean cancelThread(boolean b){
-				boolean confirm = super.cancelThread(b);
-				if(confirm && internalExecutor != null){
-					internalExecutor.shutdownNow();
-				}
-				return confirm;
-			}
-			
-			@Override
-			protected void process(List<BioSeq> seqs) {
-				BioSeq selectedSeq = gmodel.getSelectedSeq();
-				BioSeq seq = seqs.get(0);
-				// If user has switched sequence then do not process it
-				if(selectedSeq == seq){
-					gviewer.setAnnotatedSeq(seq, true, true);
-				}
-			}
-
-			@Override
-			protected void finished() {
-				if (isCancelled()) {
-					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
-				}
-
-				BioSeq seq = gmodel.getSelectedSeq();
-				if (seq != null) {
-					gviewer.setAnnotatedSeq(seq, true, true);
-				} else if (gmodel.getSelectedSeqGroup() != null) {
-					if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-						// This can happen when loading a brand-new genome
-						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+						return null;
 					}
-				}
-				GeneralLoadView.getLoadView().refreshDataManagementView();
-			}
 
-			private void loadOnSequence(BioSeq seq) {
-				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
-					return; // don't load into Whole Genome
-				}
+					ExecutorService internalExecutor;
 
-				try {
-					SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
-					if (optimized_sym != null) {
-						loadFeaturesForSym(feature, optimized_sym);
+					protected Void multiThreadedLoad(List<BioSeq> chrList) throws Exception {
+						internalExecutor = Executors.newFixedThreadPool(MAX_INTERNAL_THREAD);
+
+						final BioSeq current_seq = gmodel.getSelectedSeq();
+
+						if (current_seq != null) {
+							internalExecutor.submit(new Runnable() {
+								@Override
+								public void run() {
+									loadOnSequence(current_seq);
+									publish(current_seq);
+								}
+							});
+						}
+
+						for (final BioSeq seq : chrList) {
+							if (seq == current_seq) {
+								continue;
+							}
+
+							if (Thread.currentThread().isInterrupted()) {
+								break;
+							}
+
+							internalExecutor.submit(new Runnable() {
+								@Override
+								public void run() {
+									loadOnSequence(seq);
+								}
+							});
+						}
+						internalExecutor.shutdown();
+						try {
+							internalExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+						} catch (InterruptedException ex) {
+							Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.WARNING, "Internal executor exception", ex);
+						}
+
+						return null;
 					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					if(ex instanceof FileNotFoundException){
-						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+
+					@Override
+					public boolean cancelThread(boolean b) {
+						boolean confirm = super.cancelThread(b);
+						if (confirm && internalExecutor != null) {
+							internalExecutor.shutdownNow();
+						}
+						return confirm;
 					}
-				}
-			}
-		};
+
+					@Override
+					protected void process(List<BioSeq> seqs) {
+						BioSeq selectedSeq = gmodel.getSelectedSeq();
+						BioSeq seq = seqs.get(0);
+						// If user has switched sequence then do not process it
+						if (selectedSeq == seq) {
+							gviewer.setAnnotatedSeq(seq, true, true);
+						}
+					}
+
+					@Override
+					protected void finished() {
+						if (isCancelled()) {
+							feature.setLoadStrategy(LoadStrategy.NO_LOAD);
+						}
+
+						BioSeq seq = gmodel.getSelectedSeq();
+						if (seq != null) {
+							gviewer.setAnnotatedSeq(seq, true, true);
+						} else if (gmodel.getSelectedSeqGroup() != null) {
+							if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+								// This can happen when loading a brand-new genome
+								gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+							}
+						}
+						GeneralLoadView.getLoadView().refreshDataManagementView();
+					}
+
+					private void loadOnSequence(BioSeq seq) {
+						if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+							return; // don't load into Whole Genome
+						}
+
+						try {
+							SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
+							if (optimized_sym != null) {
+								loadFeaturesForSym(feature, optimized_sym);
+							}
+						} catch (Exception ex) {
+							ex.printStackTrace();
+							if (ex instanceof FileNotFoundException) {
+								ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+							}
+						}
+					}
+				};
 
 		CThreadHolder.getInstance().execute(feature, worker);
 	}
@@ -877,33 +870,33 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
-		final CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object> worker 
+		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
+		final CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object> worker
 				= new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>(LOADING_MESSAGE_PREFIX + feature.featureName, Thread.MIN_PRIORITY) {
-			
-			@Override
-			protected Map<String, List<? extends SeqSymmetry>> runInBackground() {
-				try {
-					return loadFeaturesForSym(feature, optimized_sym);
-				} catch(RuntimeException re) {
-					re.printStackTrace();
-				} catch (Exception ex) {
-					if(ex instanceof FileNotFoundException){
-						ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+
+					@Override
+					protected Map<String, List<? extends SeqSymmetry>> runInBackground() {
+						try {
+							return loadFeaturesForSym(feature, optimized_sym);
+						} catch (RuntimeException re) {
+							re.printStackTrace();
+						} catch (Exception ex) {
+							if (ex instanceof FileNotFoundException) {
+								ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+							}
+						} catch (Throwable t) {
+							t.printStackTrace();
+						}
+						return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 					}
-				} catch (Throwable t) {
-					t.printStackTrace();
-				}
-				return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
-			}
 
-			@Override
-			protected void finished() {
-				
-				BioSeq aseq = gmodel.getSelectedSeq();
+					@Override
+					protected void finished() {
 
-				if (aseq != null) {
-					gviewer.setAnnotatedSeq(aseq, true, true);
+						BioSeq aseq = gmodel.getSelectedSeq();
+
+						if (aseq != null) {
+							gviewer.setAnnotatedSeq(aseq, true, true);
 //					if (this.isCancelled()) {
 //						return;
 //					}
@@ -922,52 +915,52 @@ public final class GeneralLoadUtils {
 //						Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 //								Level.SEVERE, "Unable to get refresh action result.", ex);
 //					}
-				} else if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-					// This can happen when loading a brand-new genome
-					aseq = gmodel.getSelectedSeqGroup().getSeq(0);
-					gmodel.setSelectedSeq(aseq);
-				}
+						} else if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+							// This can happen when loading a brand-new genome
+							aseq = gmodel.getSelectedSeqGroup().getSeq(0);
+							gmodel.setSelectedSeq(aseq);
+						}
 
-				//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
-				if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
-					SeqGroupView.getInstance().refreshTable();
-				}
-				
-				GeneralLoadView.getLoadView().refreshDataManagementView();
-			}
-		};
+						//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
+						if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
+							SeqGroupView.getInstance().refreshTable();
+						}
+
+						GeneralLoadView.getLoadView().refreshDataManagementView();
+					}
+				};
 
 		CThreadHolder.getInstance().execute(feature, worker);
 	}
 
 	//TO DO: Make this private again.
 	public static Map<String, List<? extends SeqSymmetry>> loadFeaturesForSym(
-			GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception{
+			GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception {
 		if (feature.gVersion.gServer.serverType == null) {
 			return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
 		}
-		
+
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		SeqUtils.convertSymToSpanList(optimized_sym, optimized_spans);
 		Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
-		
+
 		for (SeqSpan optimized_span : optimized_spans) {
 			Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
 			// If thread was interruped then it might return null. 
 			// So avoid null pointer exception, check it here.
-			if(results != null){
-				for(Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()){
-					if(!loaded.containsKey(entry.getKey())){
+			if (results != null) {
+				for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
+					if (!loaded.containsKey(entry.getKey())) {
 						loaded.put(entry.getKey(), entry.getValue());
 					} else {
 						@SuppressWarnings("unchecked")
-						List<SeqSymmetry> syms = (List<SeqSymmetry>)loaded.get(entry.getKey());
+						List<SeqSymmetry> syms = (List<SeqSymmetry>) loaded.get(entry.getKey());
 						syms.addAll(entry.getValue());
 					}
 				}
 			}
-			
+
 			if (Thread.currentThread().isInterrupted()) {
 				break;
 			}
@@ -1022,8 +1015,8 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Get residues from servers: DAS/2, Quickload, or DAS/1.
-	 * Also gets partial residues.
+	 * Get residues from servers: DAS/2, Quickload, or DAS/1. Also gets partial
+	 * residues.
 	 *
 	 * @param genomeVersionName -- name of the genome.
 	 * @param span	-- May be null. If not, then it's used for partial loading.
@@ -1041,7 +1034,7 @@ public final class GeneralLoadUtils {
 			if (!version.gServer.isEnabled()) {
 				continue;
 			}
-			if(Thread.currentThread().isInterrupted()){
+			if (Thread.currentThread().isInterrupted()) {
 				return false;
 			}
 			String serverDescription = version.gServer.serverName + " " + version.gServer.serverType;
@@ -1053,7 +1046,7 @@ public final class GeneralLoadUtils {
 //			Application.getSingleton().removeNotLockedUpMsg(msg);
 			if (residuesLoaded) {
 				Application.getSingleton().setStatus(MessageFormat.format(IGBConstants.BUNDLE.getString("completedLoadingSequence"),
-					seq_name, min, max, serverDescription));
+						seq_name, min, max, serverDescription));
 				return true;
 			}
 		}
@@ -1079,7 +1072,6 @@ public final class GeneralLoadUtils {
 		 * if (aseq.isComplete()) { if (DEBUG) { System.out.println("already
 		 * have residues for " + seq_name); } return false; }
 		 */
-
 		// Determine list of servers that might have this chromosome sequence.
 		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
 		versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());
@@ -1096,7 +1088,6 @@ public final class GeneralLoadUtils {
 		}
 
 //		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
-
 		return getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 	}
 
@@ -1244,7 +1235,7 @@ public final class GeneralLoadUtils {
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {
-			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ",Level.WARNING);
+			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ", Level.WARNING);
 			return;
 		}
 
@@ -1252,13 +1243,12 @@ public final class GeneralLoadUtils {
 
 		if (gFeature == null) {
 			return;
-		}
-		else{
+		} else {
 			addFeature(gFeature);
 		}
 	}
-	
-	public static void addFeature(GenericFeature gFeature){
+
+	public static void addFeature(GenericFeature gFeature) {
 		if (gFeature.symL != null) {
 			addChromosomesForUnknownGroup(gFeature);
 		}
@@ -1267,10 +1257,9 @@ public final class GeneralLoadUtils {
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 
 //		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
-
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}
-	
+
 	private static void addChromosomesForUnknownGroup(final GenericFeature gFeature) {
 		if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			loadAllSymmetriesThread(gFeature);
@@ -1352,7 +1341,7 @@ public final class GeneralLoadUtils {
 		}
 		return false;
 	}
-				
+
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
 		GenericFeature gFeature = GeneralLoadUtils.getLoadedFeature(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
@@ -1377,7 +1366,7 @@ public final class GeneralLoadUtils {
 			boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 
 			Map<String, String> featureProps = null;
-			if(!LocalUrlCacher.isValidURI(uri)) {
+			if (!LocalUrlCacher.isValidURI(uri)) {
 				return null;
 			}
 			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.group);
@@ -1398,7 +1387,7 @@ public final class GeneralLoadUtils {
 
 		} else {
 			ErrorHandler.errorPanel("Cannot add same feature",
-					"The feature " + uri + " has already been added.",Level.WARNING);
+					"The feature " + uri + " has already been added.", Level.WARNING);
 		}
 
 		return gFeature;
@@ -1411,9 +1400,9 @@ public final class GeneralLoadUtils {
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
 		String extension = GeneralUtils.getExtension(unzippedStreamName);
 		boolean getNewVersion = false;
-		
+
 		if (extension.equals(BAM_EXT)) {
-			try{
+			try {
 				if (!handleBam(uri)) {
 					ErrorHandler.errorPanel("Cannot open file", "Failed to authenticate to server", Level.WARNING);
 					version = null;
@@ -1431,15 +1420,15 @@ public final class GeneralLoadUtils {
 			loadGroup = handleBp(uri, loadGroup);
 			getNewVersion = true;
 		}
-		
-		if(getNewVersion){
-			GenericVersion newVersion =  getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
-			if(GenometryModel.getGenometryModel().getSelectedSeqGroup() == null 
+
+		if (getNewVersion) {
+			GenericVersion newVersion = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+			if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null
 					|| version == newVersion
-					|| Application.confirmPanel(	MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
-							version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
+					|| Application.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
+									version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
 							PreferenceUtils.CONFIRM_BEFORE_GROUP_CHANGE,
-							PreferenceUtils.default_confirm_before_group_change)){
+							PreferenceUtils.default_confirm_before_group_change)) {
 				version = newVersion;
 			}
 		}
@@ -1473,12 +1462,12 @@ public final class GeneralLoadUtils {
 				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 						Level.WARNING, "File {0} has more than one group. Looking for the closest match to existing", new Object[]{uri.toString()});
 				//First look for the selected group in the groups
-				for(AnnotatedSeqGroup gr : groups){
-					if(gr == group){
+				for (AnnotatedSeqGroup gr : groups) {
+					if (gr == group) {
 						return gr;
 					}
 				}
-				
+
 				//If it does not match any exiting group the return the one that matches organism
 				if (group.getOrganism() != null && group.getOrganism().length() != 0) {
 					for (AnnotatedSeqGroup gr : groups) {
@@ -1487,11 +1476,11 @@ public final class GeneralLoadUtils {
 						}
 					}
 				}
-				
+
 				//If it does not match organism then return the group with most version
 				AnnotatedSeqGroup grp = groups.get(0);
-				for(AnnotatedSeqGroup gr : groups){
-					if(gr.getAllVersions().size() > grp.getAllVersions().size()){
+				for (AnnotatedSeqGroup gr : groups) {
+					if (gr.getAllVersions().size() > grp.getAllVersions().size()) {
 						grp = gr;
 					}
 				}

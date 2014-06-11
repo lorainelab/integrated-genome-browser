@@ -27,20 +27,10 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.util.Timer;
-import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -51,11 +41,7 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
-import static com.affymetrix.igb.view.load.FileExtensionContants.BAM_EXT;
-import static com.affymetrix.igb.view.load.FileExtensionContants.BAR_EXT;
-import static com.affymetrix.igb.view.load.FileExtensionContants.BP1_EXT;
-import static com.affymetrix.igb.view.load.FileExtensionContants.BP2_EXT;
-import static com.affymetrix.igb.view.load.FileExtensionContants.USEQ_EXT;
+import static com.affymetrix.igb.view.load.FileExtensionContants.*;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
@@ -208,12 +194,12 @@ public final class GeneralLoadUtils {
         Iterator<Map.Entry<String, GenericVersion>> i = species2genericVersionList.entries().iterator();
         while (i.hasNext()) {
             GenericVersion version = i.next().getValue();
-            if (version.gServer == server) {
-                GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
-                version.clear();
+                if (version.gServer == server) {
+                    GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
+                    version.clear();
                 i.remove();
+                }
             }
-        }
 
         server.setEnabled(false);
         if (server.serverType == null) {
@@ -259,10 +245,8 @@ public final class GeneralLoadUtils {
                         ServerList.getServerInstance().removeServerFromPrefs(gServer.URL);
                         return false;
                     }
-                    throw new IllegalStateException(MessageFormat.format("{0} is not reachable", gServer.serverName));
                 }
 
-                Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
                 GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
                 URL primaryURL = getServerDirectory(gServer.URL);
 
@@ -299,6 +283,8 @@ public final class GeneralLoadUtils {
                         gServer.setEnabled(false);
                         return false;
                     }
+                } else {
+                    Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
                 }
                 if (gServer.serverType == ServerTypeI.QuickLoad) {
                     XmlPrefsParser.parse(gServer.serverObj.toString() + "preferences.xml"); // Use server object for Quickload

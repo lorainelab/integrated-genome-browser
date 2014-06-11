@@ -511,8 +511,7 @@ public final class ServerList {
 
                     //If the server was previously not available give the user the option to disable permanently
                     if (previouslyUnavailable(node)) {
-                        if (Application.confirmPanel("Quickload Site: " + server.serverName + " (url:"+server.URL+") is still not responding, \n"
-                                + "would you like to permanently disable this server or continue to check for availability on startup?")) {
+                        if (Application.confirmPanel("The Quickload site named: " + server.serverName + " is still not responding. Would you like to ignore this site from now on?")) {
                              setEnableIfAvailable(node, false);
                         }
                     } else {

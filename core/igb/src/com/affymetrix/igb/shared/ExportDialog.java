@@ -385,7 +385,7 @@ public class ExportDialog extends HeadLessExport {
 		defaultExportFile = new File(directory, fileName);
 		extFilter = getFilter(selectedExt);
 
-        if (IS_MAC) {
+		if (IS_MAC) {
 			showFileDialog(directory.getAbsolutePath(), fileName);
 		} else {
 			ExportFileChooser fileChooser = new ExportFileChooser(directory, defaultExportFile, extFilter, this);
@@ -411,10 +411,8 @@ public class ExportDialog extends HeadLessExport {
 		if (fileS != null) {
 			String fileName = dialog.getFile();
 			String currentExt = GeneralUtils.getExtension(fileName);
-			if (ArrayUtils.contains(EXTENSION, currentExt)) {
-
-			} else {
-				fileName = ".png";
+			if (!ArrayUtils.contains(EXTENSION, currentExt)) {
+				fileName += ".png";
 			}
 			File imageFile = new File(dialog.getDirectory(), fileName);
 			completeBrowseButtonAction(imageFile);

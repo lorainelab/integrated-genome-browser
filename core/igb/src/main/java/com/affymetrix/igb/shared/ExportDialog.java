@@ -19,9 +19,9 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.util.GraphicsUtil;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -40,7 +40,7 @@ public class ExportDialog extends HeadLessExport {
     private static ExportDialog singleton;
     static float FONT_SIZE = 13.0f;
     static final String TITLE = "Export Image";
-    static final String DEFAULT_FILE = "export.png";
+    static final String DEFAULT_FILE = "igb.png";
     static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
     static final Object[] UNIT = {"pixels", "inches"};
     static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
@@ -123,6 +123,7 @@ public class ExportDialog extends HeadLessExport {
         FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
         FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
         FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
+        defaultDir = new File(System.getProperty("user.home"));
     }
 
     /**
@@ -367,12 +368,16 @@ public class ExportDialog extends HeadLessExport {
                 File f = new File(tempDir);
                 if (f.exists()) {
                     directory = f;
+                } else {
+                    ErrorHandler.errorPanel("The output path is invalid.");
                 }
             } catch (Exception ex) {
                 //do nothing
             }
             if (fileName.contains("/")) {
-                fileName = fileName.substring(fileName.lastIndexOf("/"));
+                if (fileName.length() > fileName.lastIndexOf("/")) {
+                    fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+                }
             }
         }
 
@@ -392,15 +397,31 @@ public class ExportDialog extends HeadLessExport {
     }
 
     private void showFileDialog(String directory, String defaultFileName) {
-        FileDialog dialog = new FileDialog(static_frame, "Save Session", FileDialog.SAVE);
+        String ext = GeneralUtils.getExtension(defaultFileName);
+        if (StringUtils.isBlank(ext)) {
+            defaultFileName += selectedExt;
+        }
+        FileDialog dialog = new FileDialog(static_frame, "Export Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);
         dialog.setFile(defaultFileName);
         dialog.setVisible(true);
         String fileS = dialog.getFile();
         if (fileS != null) {
-            File sessionFile = new File(dialog.getDirectory(), dialog.getFile());
-            completeBrowseButtonAction(sessionFile);
+            String fileName = dialog.getFile();
+            String currentExt = GeneralUtils.getExtension(fileName);
+            if (ArrayUtils.contains(EXTENSION, currentExt)) {
+
+            } else {
+                fileName += ".png";
+            }
+            File imageFile = new File(dialog.getDirectory(), fileName);
+            completeBrowseButtonAction(imageFile);
+            try {
+                okButtonActionPerformed(true);
+            } catch (IOException ex) {
+                Logger.getLogger(ExportDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -461,10 +482,7 @@ public class ExportDialog extends HeadLessExport {
         }
     }
 
-    /**
-     * Start export process when OK Button action performed.
-     */
-    public void okButtonActionPerformed() throws IOException {
+    private void okButtonActionPerformed(boolean keepWindowOpen) throws IOException {
         String previousPath = exportFile.getAbsolutePath();
         String newPath = filePathTextField.getText();
         exportFile = new File(newPath);
@@ -493,7 +511,7 @@ public class ExportDialog extends HeadLessExport {
             }
         }
 
-        if (exportFile.exists()) {
+        if (exportFile.exists() && !keepWindowOpen) {
             if (!isOverwrite()) {
                 return;
             }
@@ -510,7 +528,14 @@ public class ExportDialog extends HeadLessExport {
         exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
         exportNode.put(PREF_UNIT, unit);
 
-        static_frame.setVisible(false);
+        static_frame.setVisible(keepWindowOpen);
+    }
+
+    /**
+     * Start export process when OK Button action performed.
+     */
+    public void okButtonActionPerformed() throws IOException {
+        okButtonActionPerformed(false);
     }
 
     /**

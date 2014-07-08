@@ -314,7 +314,7 @@ public class QuickloadServerType implements ServerTypeI {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
 		}
-		if (!ping(quickloadURL.toString(), 3000)) {
+		if (!ping(quickloadURL, 3000)) {
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not reach url:", quickloadURL);
 			return false;
 		}
@@ -354,13 +354,18 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 	
 	//Note  exception may be thrown on invalid SSL certificates.
-	public static boolean ping(String url, int timeout) {
+	public static boolean ping(URL url, int timeout) {
 		try {
-			if (url.startsWith("file:")) {
-				File file = new File(url.substring(5));
-				return file.exists();
+			if (url.getProtocol().equals("file")) {
+				File f;
+				try {
+					f = new File(url.toURI());
+				} catch (URISyntaxException e) {
+					f = new File(url.getPath());
+				}
+				return f.exists();
 			} else {
-				HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 				connection.setConnectTimeout(timeout);
 				connection.setReadTimeout(timeout);
 				connection.setRequestMethod("HEAD");

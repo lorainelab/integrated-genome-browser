@@ -118,7 +118,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
 				GenericServer server = ServerList.getServerInstance().getServer((String) url);
 
-				AddSource.getSingleton().init(true, true, "Edit Source", server, (String) url, server.mirrorURL);
+				AddSource.getSingleton().init(true, true, "Edit Data Source", server, (String) url, server.mirrorURL);
 			}
 		});
 		editSourceButton.setEnabled(false);

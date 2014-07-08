@@ -95,7 +95,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
 
-				AddSource.getSingleton().init(false, enableCombo(), "Add Source", null, null, null);
+				AddSource.getSingleton().init(false, enableCombo(), "Add Data Source", null, null, null);
 			}
 		});
 

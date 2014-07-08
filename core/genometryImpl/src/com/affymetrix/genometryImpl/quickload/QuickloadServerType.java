@@ -356,13 +356,18 @@ public class QuickloadServerType implements ServerTypeI {
 	//Note  exception may be thrown on invalid SSL certificates.
 	public static boolean ping(String url, int timeout) {
 		try {
-			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-			connection.setConnectTimeout(timeout);
-			connection.setReadTimeout(timeout);
-			connection.setRequestMethod("HEAD");
-			int responseCode = connection.getResponseCode();
-			return (200 <= responseCode && responseCode <= 399);
-		} catch (IOException exception) {
+			if (url.startsWith("file:")) {
+				File file = new File(url.substring(5));
+				return file.exists();
+			} else {
+				HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+				connection.setConnectTimeout(timeout);
+				connection.setReadTimeout(timeout);
+				connection.setRequestMethod("HEAD");
+				int responseCode = connection.getResponseCode();
+				return (200 <= responseCode && responseCode <= 399);
+			}
+		} catch (Exception exception) {
 			return false;
 		}
 	}

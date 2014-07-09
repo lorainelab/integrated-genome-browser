@@ -8,8 +8,6 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
@@ -21,9 +19,9 @@ import com.affymetrix.igb.shared.FileTracker;
 import javax.swing.JFileChooser;
 import java.awt.HeadlessException;
 import java.awt.Component;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.Application;
 import java.awt.Point;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -52,7 +50,7 @@ public class AddSource extends JFrame {
 	}
 
 	public AddSource() {
-		initComponents();
+		initComponents();		
 		DocumentListener dl = new MyDocumentListener();
 		nameText.getDocument().addDocumentListener(dl);
 		urlText.getDocument().addDocumentListener(dl);
@@ -99,18 +97,13 @@ public class AddSource extends JFrame {
 			if (enableCombo) {
 				nameText.setText("Your server name");
 				typeCombo.setSelectedItem(ServerTypeI.QuickLoad);
-				addServerButton.setText("Add Server");
+				addServerButton.setText("Submit");
 			} else {
 				nameText.setText("Your repository name");
-				addServerButton.setText("Add Repository");
+				addServerButton.setText("Submit");
 			}
 
-			String clipBoardContent = GeneralUtils.getClipboard();
-			if (LocalUrlCacher.isURL(clipBoardContent)) {
-				urlText.setText(clipBoardContent);
-			} else {
-				urlText.setText("http://");
-			}
+			urlText.setText("http://");
 
 		}
 
@@ -166,7 +159,7 @@ public class AddSource extends JFrame {
 
         urlLabelField.setText("URL:");
 
-        openDir.setText("...");
+        openDir.setText("Choose local folder");
         openDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openDirActionPerformed(evt);
@@ -180,7 +173,7 @@ public class AddSource extends JFrame {
             }
         });
 
-        addServerButton.setText("Add Server");
+        addServerButton.setText("Submit");
         addServerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addServerButtonActionPerformed(evt);
@@ -192,9 +185,13 @@ public class AddSource extends JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(openDir)
+                        .add(0, 0, 0))
                     .add(layout.createSequentialGroup()
+                        .add(12, 12, 12)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(nameLabelField)
                             .add(typeLabel)
@@ -203,21 +200,21 @@ public class AddSource extends JFrame {
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(urlText)
                             .add(typeCombo, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(nameText))
-                        .add(8, 8, 8))
+                            .add(nameText)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(0, 198, Short.MAX_VALUE)
-                        .add(cancelButton)
+                        .addContainerGap(164, Short.MAX_VALUE)
+                        .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 78, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, openDir)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, addServerButton))
-                        .add(6, 6, 6))))
+                        .add(addServerButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .add(8, 8, 8))
         );
+
+        layout.linkSize(new java.awt.Component[] {addServerButton, openDir}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(24, 24, 24)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(nameLabelField)
                     .add(nameText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -231,11 +228,11 @@ public class AddSource extends JFrame {
                     .add(urlText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(openDir)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addServerButton)
                     .add(cancelButton))
-                .add(0, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         typeCombo.removeItem(ServerTypeI.LocalFiles);

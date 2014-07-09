@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBitNew;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.*;
+import java.net.HttpURLConnection;
 
 public class QuickloadServerType implements ServerTypeI {
 
@@ -315,6 +316,11 @@ public class QuickloadServerType implements ServerTypeI {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
 		}
+		if (!ping(quickloadURL.toString(), 3000)) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not reach url:", quickloadURL);
+			return false;
+		}
+		
 		quickloadServer.loadGenomeNames();
 		List<String> genomeList = quickloadServer.getGenomeNames();
 		if (genomeList == null || genomeList.isEmpty()) {
@@ -347,6 +353,25 @@ public class QuickloadServerType implements ServerTypeI {
 			versionDiscoverer.discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
 		return true;
+	}
+	
+	//Note  exception may be thrown on invalid SSL certificates.
+	public static boolean ping(String url, int timeout) {
+		try {
+			if (url.startsWith("file:")) {
+				File file = new File(url.substring(5));
+				return file.exists();
+			} else {
+				HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+				connection.setConnectTimeout(timeout);
+				connection.setReadTimeout(timeout);
+				connection.setRequestMethod("HEAD");
+				int responseCode = connection.getResponseCode();
+				return (200 <= responseCode && responseCode <= 399);
+			}
+		} catch (Exception exception) {
+			return false;
+		}
 	}
 
 	@Override

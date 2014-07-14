@@ -309,7 +309,7 @@ public class IGBToolBar extends JToolBar {
                         } else {
                             value.append(properties.get(key));
                         }
-                        rules_text.append(key + " : " + value + "\n");
+                        rules_text.append(key + ": " + value + "\n");
                         if (properties.get(key).toString().length() > maxLength) {
                             maxLength = properties.get(key).toString().length();
                         }

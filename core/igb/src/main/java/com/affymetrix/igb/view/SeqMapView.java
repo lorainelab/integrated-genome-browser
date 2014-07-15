@@ -1972,9 +1972,11 @@ public class SeqMapView extends JPanel
 		JMenuItem copy_residues_action = new JMenuItem(CopyResiduesAction.getAction());
 		copy_residues_action.setIcon(null);
 
+                JMenuItem select_rule_action = new JMenuItem(SelectionRuleAction.getAction());
 		setPopupMenuTitle(sym_info, selected_glyphs);
 
 		popup.add(sym_info);
+                popup.add(select_rule_action);
 //		if (!selected_glyphs.isEmpty()) {
 //			popup.add(zoomtoMI);
 //		}

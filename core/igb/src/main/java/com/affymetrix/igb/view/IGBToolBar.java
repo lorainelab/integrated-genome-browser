@@ -3,7 +3,6 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.event.ContinuousAction;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
@@ -28,9 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.action.SelectionRuleAction;
 
 /**
  *
@@ -41,12 +38,11 @@ public class IGBToolBar extends JToolBar {
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";
     private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
-
+    private static final SelectionRuleAction SELECTION_RULE_ACTION=  new SelectionRuleAction();
     private final JPanel toolbar_items_panel;
     private final JTextField tf;
     private final Font selection_font;
     private final Font no_selection_font;
-    private Map<String, Object> properties;
 
     public IGBToolBar() {
         super();
@@ -90,7 +86,7 @@ public class IGBToolBar extends JToolBar {
         selection_panel.add(lf);
         selection_panel.add(tf);
 
-        JButton button = new JButton(new SelectionRulesAction());
+        JButton button = new JButton(SELECTION_RULE_ACTION);
         button.setMargin(new Insets(2, 2, 2, 2));
 //		button.setBorder(null);
         selection_panel.add(button);
@@ -119,7 +115,8 @@ public class IGBToolBar extends JToolBar {
             tf.setText(selection_text);
             tf.setEnabled(true);
         }
-        this.properties = properties;
+        SELECTION_RULE_ACTION.setProperties(properties);
+        SELECTION_RULE_ACTION.setSelectionText(tf.getText());
     }
 
     public void addToolbarAction(GenericAction genericAction, int index) {
@@ -274,66 +271,5 @@ public class IGBToolBar extends JToolBar {
         }
     }
 
-    private class SelectionRulesAction extends GenericAction {
-
-        private static final long serialVersionUID = 1l;
-
-        public SelectionRulesAction() {
-            super(null, BUNDLE.getString("selectionInforTooltip"), "16x16/actions/info.png", "16x16/actions/info.png", 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JFrame messageFrame = new JFrame();
-            JTextArea rules_text = new JTextArea();
-            rules_text.setBorder(new EmptyBorder(10, 10, 10, 10));
-            rules_text.setEditable(false);
-            rules_text.setLineWrap(true);
-            rules_text.setColumns(40);
-            JScrollPane scroll_pane = new JScrollPane(rules_text);
-            messageFrame.add(scroll_pane);
-            if (no_selection_text.equals(tf.getText())) {
-                messageFrame.setTitle("How to Select and De-select Data in IGB");
-                rules_text.append(getRules());
-            } else {
-                messageFrame.setTitle(selection_info);
-                if (properties != null && !properties.isEmpty()) {
-                    List<String> keys = GeneralUtils.asSortedList(properties.keySet(), comparator);
-                    int maxLength = 0;
-                    for (String key : keys) {
-                        StringBuilder value = new StringBuilder();
-                        if (properties.get(key) instanceof String[]) {
-                            for (String obj : (String[]) properties.get(key)) {
-                                value.append(obj);
-                            }
-                        } else {
-                            value.append(properties.get(key));
-                        }
-                        rules_text.append(key + ": " + value + "\n");
-                        if (properties.get(key).toString().length() > maxLength) {
-                            maxLength = properties.get(key).toString().length();
-                        }
-                    }
-                    if (maxLength > 200) {
-                        rules_text.setColumns(60);
-                    }
-                } else {
-                    rules_text.append(tf.getText());
-                }
-            }
-            messageFrame.setMinimumSize(new Dimension(250, 100));
-            messageFrame.pack();
-            messageFrame.setLocationRelativeTo(IGB.getSingleton().getFrame());
-            messageFrame.setVisible(true);
-        }
-
-        private String getRules() {
-            return "1. Click on an annotation to select it.\n"
-                    + "2. Double-click something to zoom in on it.\n"
-                    + "3. Click-drag a region to select and count many items.\n"
-                    + "4. Click-SHIFT to add to the currently selected items.\n"
-                    + "5. Control-SHIFT click to remove an item from the currently selected items.\n"
-                    + "6. Click-drag the axis to zoom in on a region.\n";
-        }
-    }
+    
 }

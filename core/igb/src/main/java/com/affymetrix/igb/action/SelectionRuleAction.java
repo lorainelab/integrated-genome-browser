@@ -30,15 +30,15 @@ public class SelectionRuleAction extends GenericAction {
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";
     private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
+    private static final SelectionRuleAction ACTION = new SelectionRuleAction();
+
     private Map<String, Object> properties;
     private String selectionText;
     
     public SelectionRuleAction() {
-        super(null, BUNDLE.getString("selectionInforTooltip"), "16x16/actions/info.png", "16x16/actions/info.png", 0);
+        super("Get Info", BUNDLE.getString("selectionInforTooltip"), "16x16/actions/info.png", "16x16/actions/info.png", 0);
     }
-    public SelectionRuleAction(String name) {
-        super(name, BUNDLE.getString("selectionInforTooltip"), "16x16/actions/info.png", "16x16/actions/info.png", 0);
-    }
+
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
@@ -46,7 +46,9 @@ public class SelectionRuleAction extends GenericAction {
     public void setSelectionText(String selectionText) {
         this.selectionText = selectionText;
     }
-
+    public static SelectionRuleAction getAction() {
+        return ACTION;
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         JFrame messageFrame = new JFrame();

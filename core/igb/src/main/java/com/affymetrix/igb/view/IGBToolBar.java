@@ -34,7 +34,7 @@ public class IGBToolBar extends JToolBar {
 
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";
-    private static final SelectionRuleAction SELECTION_RULE_ACTION=  new SelectionRuleAction();
+    private static final SelectionRuleAction SELECTION_RULE_ACTION= SelectionRuleAction.getAction();
     private final JPanel toolbar_items_panel;
     private final JTextField tf;
     private final Font selection_font;
@@ -83,6 +83,7 @@ public class IGBToolBar extends JToolBar {
         selection_panel.add(tf);
 
         JButton button = new JButton(SELECTION_RULE_ACTION);
+        button.setText("");
         button.setMargin(new Insets(2, 2, 2, 2));
 //		button.setBorder(null);
         selection_panel.add(button);

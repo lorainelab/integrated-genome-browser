@@ -34,21 +34,23 @@ public class SelectionRuleAction extends GenericAction {
 
     private Map<String, Object> properties;
     private String selectionText;
-    
-    public SelectionRuleAction() {
+
+    private SelectionRuleAction() {
         super("Get Info", BUNDLE.getString("selectionInforTooltip"), "16x16/actions/info.png", "16x16/actions/info.png", 0);
     }
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
-   
+
     public void setSelectionText(String selectionText) {
         this.selectionText = selectionText;
     }
+
     public static SelectionRuleAction getAction() {
         return ACTION;
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JFrame messageFrame = new JFrame();

@@ -19,7 +19,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
     private IGBService igbService;
 
     public ViewGenomicSequenceInSeqViewerAction(IGBService igbService) {
-        super(AbstractSequenceViewer.BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/Sequence_Viewer.png", "22x22/actions/Sequence_Viewer.png", KeyEvent.VK_UNDEFINED, null, true);
+        super(AbstractSequenceViewer.BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/Sequence_Viewer.png", "22x22/actions/Sequence_Viewer.png", KeyEvent.VK_UNDEFINED, null, false);
         GenometryModel.getGenometryModel().addSymSelectionListener(this);
         setEnabled(false);
         this.igbService = igbService;

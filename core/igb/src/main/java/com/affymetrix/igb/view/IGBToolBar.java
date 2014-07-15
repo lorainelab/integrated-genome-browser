@@ -2,8 +2,6 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.ContinuousAction;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
@@ -21,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,7 +34,6 @@ public class IGBToolBar extends JToolBar {
 
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";
-    private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
     private static final SelectionRuleAction SELECTION_RULE_ACTION=  new SelectionRuleAction();
     private final JPanel toolbar_items_panel;
     private final JTextField tf;

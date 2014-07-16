@@ -30,7 +30,7 @@ public class ShowConsoleAction extends GenericAction {
         super(BUNDLE.getString("showConsole"), null,
                 "16x16/actions/console.png",
                 "22x22/actions/console.png",
-                KeyEvent.VK_C, null, true);
+                KeyEvent.VK_C, null, false);
         this.ordinal = 150;
     }
 

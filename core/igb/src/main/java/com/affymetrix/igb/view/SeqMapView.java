@@ -168,7 +168,6 @@ public class SeqMapView extends JPanel
 	private final AutoScroll autoScroll = new AutoScroll();
 	private final GlyphEdgeMatcher edge_matcher;
 	private JPopupMenu sym_popup = null;
-	private JLabel sym_info;
 	private SeqSymmetry toolTipSym;
 	// A fake menu item, prevents null pointer exceptions in loadResidues()
 	// for menu items whose real definitions are commented-out in the code
@@ -621,9 +620,6 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setupPopups() {
-		sym_info = new JLabel("");
-		sym_info.setEnabled(false); // makes the text look different (usually lighter)
-		sym_info.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		
 //		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
@@ -1966,48 +1962,27 @@ public class SeqMapView extends JPanel
 		JMenuItem select_parent_action = new JMenuItem(SelectParentAction.getAction());
 		select_parent_action.setIcon(null);
 		JMenuItem zoom_on_selected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());
-		zoom_on_selected.setIcon(null);
 		JMenuItem load_partial_sequence = new JMenuItem(LoadPartialSequenceAction.getAction());
 		load_partial_sequence.setIcon(null);
 		JMenuItem copy_residues_action = new JMenuItem(CopyResiduesAction.getAction());
 		copy_residues_action.setIcon(null);
-
+                
                 JMenuItem select_rule_action = new JMenuItem(SelectionRuleAction.getAction());
-		setPopupMenuTitle(sym_info, selected_glyphs);
-
-		popup.add(sym_info);
-                popup.add(select_rule_action);
-//		if (!selected_glyphs.isEmpty()) {
-//			popup.add(zoomtoMI);
-//		}
+                
 		final List<SeqSymmetry> selected_syms = getSelectedSyms();
+                
+                
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
+                    popup.add(select_rule_action);
+                    for (ContextualPopupListener listener : popup_listeners) {
+                        listener.popupNotify(popup, selected_syms, sym_used_for_title);
+                    }
+                    popup.add(new JSeparator());
+                    popup.add(select_parent_action);
+                    popup.add(zoom_on_selected);
+            }
 
-			//popup.add(SelectParentAction.getAction());
-			popup.add(select_parent_action);
-			//popup.add(ZoomOnSelectedSymsAction.getAction());
-			popup.add(zoom_on_selected);
-			// Disable view seq in seq viewer option for insertion
-			//ViewGenomicSequenceInSeqViewerAction viewGenomicSequenceInSeqViewerAction = ViewGenomicSequenceInSeqViewerAction.getAction();
-//			view_genomic_sequence_action.setEnabled(selected_glyphs.size() > 1 || (!selected_glyphs.isEmpty() && !(selected_glyphs.get(0) instanceof InsertionSeqGlyph)));
-			//popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
-			
-//			JMenuItem delete_sym_action = new JMenuItem(new AbstractAction("Delete Sym"){
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					for (SeqSymmetry sym : selected_syms) {
-//						removeSym(sym);
-//						aseq.removeAnnotation(sym);
-//					}
-//				}
-//			});
-//			popup.add(delete_sym_action);
-		}
-
-		for (ContextualPopupListener listener : popup_listeners) {
-			listener.popupNotify(popup, selected_syms, sym_used_for_title);
-		}
-
+		
 		TierGlyph tglyph = tier_manager.getTierGlyph(nevt);
 
 		if (tglyph != null) {

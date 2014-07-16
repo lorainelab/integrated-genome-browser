@@ -31,7 +31,7 @@ public abstract class BlastSearchAction extends GenericAction {
     protected final RemoteBlastNCBI.BlastType blastType;
 
     public BlastSearchAction(SeqMapViewI smv, RemoteBlastNCBI.BlastType blastType) {
-        super(blastType.toString().toUpperCase() + " nr protein database", null, null);
+        super(blastType.toString().toUpperCase() + " nr protein database", "16x16/actions/ncbi.png", null);
         this.smv = smv;
         this.blastType = blastType;
     }

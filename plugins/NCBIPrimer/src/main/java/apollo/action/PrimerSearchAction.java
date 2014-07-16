@@ -36,7 +36,7 @@ public class PrimerSearchAction extends GenericAction {
     private final NCBIPrimerBlastOpts ncbiPrimerBlastOpts;
 
     public PrimerSearchAction(SeqMapViewI smv, NCBIPrimerBlastOpts ncbiPrimerBlastOpts) {
-        super("Primer Blast Refseq mRNA (refseq_rna)", null, null);
+        super("Primer Blast Refseq mRNA (refseq_rna)", "16x16/actions/ncbi.png", null);
         this.smv = smv;
         this.ncbiPrimerBlastOpts = ncbiPrimerBlastOpts;
     }

@@ -28,13 +28,11 @@ public class NCBIBlastPopupListener implements ContextualPopupListener {
         if (!selected_items.isEmpty() && !(selected_items.get(0) instanceof GraphSym)) {
             BlastSearchAction blastXAction = new BlastXSearchAction(smv);
             JMenuItem remote_ncbi_blast_action = new JMenuItem(blastXAction);
-            remote_ncbi_blast_action.setIcon(null);
             remote_ncbi_blast_action.setEnabled(blastXAction.isEnabled());
             popup.add(remote_ncbi_blast_action);
 
             BlastSearchAction blastPAction = new BlastPSearchAction(smv);
             JMenuItem remote_ncbi_blastp_action = new JMenuItem(blastPAction);
-            remote_ncbi_blastp_action.setIcon(null);
             remote_ncbi_blastp_action.setEnabled(blastPAction.isEnabled());
             popup.add(remote_ncbi_blastp_action);
 

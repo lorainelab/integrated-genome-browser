@@ -107,7 +107,7 @@ final class LinkControl implements ContextualPopupListener {
 				url = webLink.getURLForSym(primary_sym);
 				name = webLink.getName();
 				if (name == null || name.equals(url)) {
-					name = "Get More Info";
+					name = "Search Web";
 				}
 
 				mi = makeMenuItem(name, url);
@@ -122,7 +122,7 @@ final class LinkControl implements ContextualPopupListener {
 				popup.add(mi);
 			}
 		} else {
-			name = "Get More Info";
+			name = "Search Web";
 			JMenu linkMenu = new JMenu(name);
 //			linkMenu.getPopupMenu().setBorder(popup.getBorder());
 //			//linkMenu.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));

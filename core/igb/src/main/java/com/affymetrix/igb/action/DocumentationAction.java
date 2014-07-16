@@ -29,7 +29,7 @@ public class DocumentationAction extends GenericAction {
         super(BUNDLE.getString("documentation"), BUNDLE.getString("goToIGBUserGuideTooltip"),
                 "16x16/actions/documentation.png",
                 "22x22/actions/documentation.png",
-                KeyEvent.VK_D, null, true);
+                KeyEvent.VK_D, null, false);
         this.ordinal = 110;
     }
 

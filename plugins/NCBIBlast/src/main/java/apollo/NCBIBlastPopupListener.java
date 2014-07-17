@@ -29,12 +29,14 @@ public class NCBIBlastPopupListener implements ContextualPopupListener {
             BlastSearchAction blastXAction = new BlastXSearchAction(smv);
             JMenuItem remote_ncbi_blast_action = new JMenuItem(blastXAction);
             remote_ncbi_blast_action.setEnabled(blastXAction.isEnabled());
-            popup.add(remote_ncbi_blast_action);
+            popup.add(remote_ncbi_blast_action,14);
+
 
             BlastSearchAction blastPAction = new BlastPSearchAction(smv);
             JMenuItem remote_ncbi_blastp_action = new JMenuItem(blastPAction);
             remote_ncbi_blastp_action.setEnabled(blastPAction.isEnabled());
-            popup.add(remote_ncbi_blastp_action);
+            popup.add(remote_ncbi_blastp_action,16);
+
 
         }
     }

@@ -1,5 +1,7 @@
 package com.affymetrix.igb.view;
 
+
+
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -55,7 +57,6 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.ClampViewAction;
 import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
@@ -81,6 +82,7 @@ import com.affymetrix.igb.shared.StyledGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
+
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.tiers.AccordionTierResizer;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -91,6 +93,10 @@ import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TierResizer;
+
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
@@ -128,6 +134,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -142,7 +149,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
@@ -251,7 +257,7 @@ public class SeqMapView extends JPanel
 	private final FloaterGlyph pixel_floater_glyph = new CoordFloaterGlyph();
 	private final AutoScroll autoScroll = new AutoScroll();
 	private final GlyphEdgeMatcher edge_matcher;
-	private JPopupMenu sym_popup = null;
+	private JRPPopupMenu sym_popup = null;
 	private SeqSymmetry toolTipSym;
 	// A fake menu item, prevents null pointer exceptions in loadResidues()
 	// for menu items whose real definitions are commented-out in the code
@@ -1963,10 +1969,18 @@ public class SeqMapView extends JPanel
 		}
 		return id;
 	}
-
+        
+        private JRPPopupMenu getOrganizedPopups(JRPPopupMenu sym_popup){
+            TreeMap<Integer,Component> popups = sym_popup.getPopupsMap();
+            for(Map.Entry<Integer,Component> mapEntry : popups.entrySet()){
+                sym_popup.add(mapEntry.getValue());
+            }
+            return sym_popup;           
+        }
+        
 	final void showPopup(NeoMouseEvent nevt) {
 		if (sym_popup == null) {
-			sym_popup = new JPopupMenu();
+			sym_popup = new JRPPopupMenu();
 			setupPopups();
 		}
 		sym_popup.setVisible(false); // in case already showing
@@ -1979,7 +1993,7 @@ public class SeqMapView extends JPanel
 		}
 
 		preparePopup(sym_popup, nevt);
-
+                sym_popup = getOrganizedPopups(sym_popup);
 		if (sym_popup.getComponentCount() > 0) {
 
 			if (nevt == null) {
@@ -2024,7 +2038,7 @@ public class SeqMapView extends JPanel
 	 * items added to it by this method. Display of the popup menu will be
 	 * handled by showPopup(), which calls this method.
 	 */
-	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
+	protected void preparePopup(JRPPopupMenu popup, NeoMouseEvent nevt) {
 		final List<GlyphI> selected_glyphs = seqmap.getSelected();
 		
 		Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
@@ -2048,15 +2062,21 @@ public class SeqMapView extends JPanel
                 
 		final List<SeqSymmetry> selected_syms = getSelectedSyms();
                 
+                JSeparator afterGetInfoSep = new JSeparator();
+                JSeparator afterViewReadSep = new JSeparator();
+                JSeparator afterPrimerBalstSep = new JSeparator();
+                popup.add(afterGetInfoSep,6);
+                popup.add(afterViewReadSep,12);
+                popup.add(afterPrimerBalstSep,20);
                 
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
-                    popup.add(select_rule_action);
                     for (ContextualPopupListener listener : popup_listeners) {
                         listener.popupNotify(popup, selected_syms, sym_used_for_title);
                     }
-                    popup.add(new JSeparator());
-                    popup.add(select_parent_action);
-                    popup.add(zoom_on_selected);
+                    popup.add(select_rule_action,4);
+                    popup.add(select_parent_action,22);
+                    popup.add(zoom_on_selected,24);
+
             }
 
 		

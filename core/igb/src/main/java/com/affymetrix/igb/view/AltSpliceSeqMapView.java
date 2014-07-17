@@ -17,14 +17,16 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
+
 import com.affymetrix.igb.swing.RPAdjustableJSlider;
+
+import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingWorker;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
@@ -392,7 +394,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 	
 	@Override
-	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
+	protected void preparePopup(JRPPopupMenu popup, NeoMouseEvent nevt) {
 		// No right click menu in slice view
 	}
 	

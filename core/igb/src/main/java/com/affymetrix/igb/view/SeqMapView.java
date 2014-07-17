@@ -338,9 +338,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.addComponentListener(new SeqMapViewComponentListener());
 
-		// the MapColor MUST be a very dark color or else the hairline (which is
-		// drawn with XOR) will not be visible!
-		seqmap.setMapColor(Color.BLACK);
+		seqmap.setMapColor(Color.WHITE);
 
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
 

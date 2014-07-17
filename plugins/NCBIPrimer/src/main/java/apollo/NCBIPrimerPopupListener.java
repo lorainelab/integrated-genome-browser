@@ -9,7 +9,6 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 
 /**
  *
@@ -29,8 +28,8 @@ public class NCBIPrimerPopupListener implements ContextualPopupListener {
     public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym) {
         if (!selected_items.isEmpty() && !(selected_items.get(0) instanceof GraphSym)) {
             JMenuItem remote_ncbi_primer_action = new JMenuItem(new PrimerSearchAction(smv, ncbiPrimerBlastOpts));
-            popup.add(new JSeparator());
-            popup.add(remote_ncbi_primer_action);
+            popup.add(remote_ncbi_primer_action,18);
+
         }
     }
 }

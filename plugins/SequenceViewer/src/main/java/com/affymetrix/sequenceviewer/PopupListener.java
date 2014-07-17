@@ -1,14 +1,13 @@
 package com.affymetrix.sequenceviewer;
 
 import java.util.List;
-import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import javax.swing.JSeparator;
+import javax.swing.JPopupMenu;
 
 /**
  *
@@ -26,9 +25,10 @@ public class PopupListener implements ContextualPopupListener {
     @Override
     public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
         if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
-            popup.add(new JSeparator());
-            popup.add(genomicSequenceViewer);
-            popup.add(readSequenceViewer);
+
+            popup.add(genomicSequenceViewer,8);
+            popup.add(readSequenceViewer,10);
+
         }
     }
 }

@@ -19,6 +19,7 @@ import javax.swing.JPopupMenu;
 
 final class LinkControl implements ContextualPopupListener {
 
+        @Override
 	public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
 		if (primary_sym == null || selected_syms.size() != 1) {
 			return;
@@ -117,7 +118,8 @@ final class LinkControl implements ContextualPopupListener {
 //				}
 
 				//mi.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
-				popup.add(mi);
+				popup.add(mi,2);
+
 			}
 		} else {
 			name = "Search Web";
@@ -129,7 +131,7 @@ final class LinkControl implements ContextualPopupListener {
 //				linkMenu = new JMenu(name);
 //				linkMenu.setEnabled(false);
 //			}
-			popup.add(linkMenu);
+			popup.add(linkMenu,2);
 
 			for (WebLink webLink : results) {
 				url = webLink.getURLForSym(primary_sym);

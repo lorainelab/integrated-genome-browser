@@ -1,15 +1,19 @@
 package com.affymetrix.igb.view;
 
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.igb.action.ViewReadAlignmentAction;
+
 import java.util.List;
 import javax.swing.JMenuItem;
+
 import javax.swing.JPopupMenu;
 
 /**

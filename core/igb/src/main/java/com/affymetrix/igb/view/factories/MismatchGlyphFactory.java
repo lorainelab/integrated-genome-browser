@@ -13,14 +13,14 @@ import com.affymetrix.igb.shared.GraphGlyph;
  */
 public class MismatchGlyphFactory extends GraphGlyphFactory {
 
-	@Override
-	public String getName() {
-		return "mismatch";
-	}
+    @Override
+    public String getName() {
+        return "mismatch";
+    }
 
-	@Override
-	protected void setGraphType(GraphSym newgraf, GraphState gstate, GraphGlyph graphGlyph) {
-		graphGlyph.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupType(graphGlyph) : new MismatchGraphType(graphGlyph));
-	}
-	
+    @Override
+    protected void setGraphType(GraphSym newgraf, GraphState gstate, GraphGlyph graphGlyph) {
+        graphGlyph.setGraphStyle(newgraf instanceof MisMatchPileupGraphSym ? new MismatchPileupType(graphGlyph) : new MismatchGraphType(graphGlyph));
+    }
+
 }

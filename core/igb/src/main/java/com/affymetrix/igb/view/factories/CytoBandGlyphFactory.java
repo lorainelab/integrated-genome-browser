@@ -15,20 +15,20 @@ import com.affymetrix.igb.tiers.CoordinateStyle;
  * @author hiralv
  */
 public class CytoBandGlyphFactory extends MapTierGlyphFactoryA {
-	
-	@Override
-	public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
-		DefaultTierGlyph resultAxisTier = (DefaultTierGlyph)smv.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
-		if(smv.shouldAddCytobandGlyph()){
-			GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(sym, smv, seq, resultAxisTier);
-			if (cytoband_glyph != null) {
-				resultAxisTier.addChild(cytoband_glyph);
-			}
-		}
-	}
-	
-	@Override
-	public String getName() {
-		return "cytoband";
-	}
+
+    @Override
+    public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
+        DefaultTierGlyph resultAxisTier = (DefaultTierGlyph) smv.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
+        if (smv.shouldAddCytobandGlyph()) {
+            GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(sym, smv, seq, resultAxisTier);
+            if (cytoband_glyph != null) {
+                resultAxisTier.addChild(cytoband_glyph);
+            }
+        }
+    }
+
+    @Override
+    public String getName() {
+        return "cytoband";
+    }
 }

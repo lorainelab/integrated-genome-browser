@@ -31,6 +31,35 @@ public class GlyphScroller {
     private static final int WINDOW_OFFSET = 4;
     private static final int SPEED = 10;
 
+    private static JWindow getWindow(JComponent... components) {
+        JWindow window = new JWindow();
+        for (JComponent component : components) {
+            window.add(component);
+        }
+
+        return window;
+    }
+
+    private static JScrollBar getScrollBar(TierGlyph tier, int sb_curr, float scale) {
+        int style_height = (int) tier.getChildHeight() * tier.getActualSlots() + 75;
+        if (tier.getDirection() != TierGlyph.Direction.REVERSE) {
+            style_height *= -1;
+        }
+
+        style_height *= scale;
+        int sb_min = Math.min(1, style_height);
+        int sb_max = Math.max(1, style_height);
+        sb_max = Math.max(sb_curr, sb_max);
+
+        return new JScrollBar(JScrollBar.VERTICAL, sb_curr, 0, sb_min, sb_max);
+    }
+
+    private static JSlider getSlider(TierGlyph tier, int sc_curr) {
+        JSlider slider = new JSlider(JSlider.VERTICAL, 1, 100, sc_curr);
+        slider.setInverted(true);
+        return slider;
+    }
+
     JWindow scroll_window, zoom_window;
     JScrollBar scrollbar;
     JSlider zoomer;
@@ -147,35 +176,6 @@ public class GlyphScroller {
         zoomer.removeChangeListener(listener);
         scrollbar.removeAdjustmentListener(listener);
         Application.getSingleton().getFrame().removeComponentListener(listener);
-    }
-
-    private static JWindow getWindow(JComponent... components) {
-        JWindow window = new JWindow();
-        for (JComponent component : components) {
-            window.add(component);
-        }
-
-        return window;
-    }
-
-    private static JScrollBar getScrollBar(TierGlyph tier, int sb_curr, float scale) {
-        int style_height = (int) tier.getChildHeight() * tier.getActualSlots() + 75;
-        if (tier.getDirection() != TierGlyph.Direction.REVERSE) {
-            style_height *= -1;
-        }
-
-        style_height *= scale;
-        int sb_min = Math.min(1, style_height);
-        int sb_max = Math.max(1, style_height);
-        sb_max = Math.max(sb_curr, sb_max);
-
-        return new JScrollBar(JScrollBar.VERTICAL, sb_curr, 0, sb_min, sb_max);
-    }
-
-    private static JSlider getSlider(TierGlyph tier, int sc_curr) {
-        JSlider slider = new JSlider(JSlider.VERTICAL, 1, 100, sc_curr);
-        slider.setInverted(true);
-        return slider;
     }
 
     private class Listeners implements MouseWheelListener,

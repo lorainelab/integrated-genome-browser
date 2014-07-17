@@ -28,6 +28,66 @@ import javax.swing.event.MouseInputAdapter;
 public class AccordionTierResizer extends MouseInputAdapter {
 
     private static final double RESIZE_THRESHOLD = 4.0;
+
+    /**
+     * Determines the scope of resizing. Given a border between two tiers
+     * determine a list of tiers that will be affected by the resize. Note that
+     * the returned list is of contiguous tiers. All tiers in the region than
+     * can be resized will be. Interior tiers that cannot be resized will just
+     * go along for the ride.
+     *
+     * @param theTierMouseIsAbove points to the tier just below the border being
+     * dragged.
+     * @param theList of tiers that might be resized.
+     * @return a maximal (possibly empty) section of theList such that some
+     * tiers in this list can be resized.
+     */
+    private static List<TierLabelGlyph> pertinentTiers(int theTierMouseIsAbove, List<TierLabelGlyph> theList) {
+        assert 0 <= theTierMouseIsAbove;
+        assert theTierMouseIsAbove < theList.size();
+        int top = theTierMouseIsAbove, limit;
+        for (int i = 0; i < theTierMouseIsAbove; i++) {
+            TierLabelGlyph g = theList.get(i);
+            if (g.isManuallyResizable()) {
+                top = i;
+                break;
+            }
+        }
+        limit = top;
+        for (int i = theList.size() - 1; theTierMouseIsAbove <= i; i--) {
+            TierLabelGlyph g = theList.get(i);
+            if (g.isManuallyResizable()) {
+                limit = i;
+                break;
+            }
+        }
+        return theList.subList(top, limit + 1);
+    }
+
+    private static List<TierLabelGlyph> consideringSelection(int theTierMouseIsAbove, List<TierLabelGlyph> theList) {
+        int top = 0, limit = theList.size() - 1;
+        if (0 < theTierMouseIsAbove
+                && (theList.get(theTierMouseIsAbove).isSelected()
+                || theList.get(theTierMouseIsAbove - 1).isSelected())) {
+            if (theList.get(theTierMouseIsAbove).isSelected()) {
+                for (int i = theTierMouseIsAbove; i < theList.size(); i++) {
+                    if (!theList.get(i).isSelected()) {
+                        limit = i - 1;
+                        break;
+                    }
+                }
+            }
+            if (theList.get(theTierMouseIsAbove - 1).isSelected()) {
+                for (int i = theTierMouseIsAbove - 1; 0 <= i; i--) {
+                    if (!theList.get(i).isSelected()) {
+                        top = i + 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return theList.subList(top, limit + 1);
+    }
     private AffyLabelledTierMap tiermap;
     private SeqMapView gviewer = null;
     private double start;
@@ -35,6 +95,8 @@ public class AccordionTierResizer extends MouseInputAdapter {
     private List<TierLabelGlyph> resizeRegion;
     private int atBorder; // points to the tier immediately below the mouse pointer.
     private boolean wasResizeable = false;
+
+    private boolean dragStarted = false; // It's our drag; we started it.
 
     /**
      * Construct a resizer for the given tiered map.
@@ -68,72 +130,6 @@ public class AccordionTierResizer extends MouseInputAdapter {
     }
 
     /**
-     * Determines the scope of resizing. Given a border between two tiers
-     * determine a list of tiers that will be affected by the resize. Note that
-     * the returned list is of contiguous tiers. All tiers in the region than
-     * can be resized will be. Interior tiers that cannot be resized will just
-     * go along for the ride.
-     *
-     * @param theTierMouseIsAbove points to the tier just below the border being
-     * dragged.
-     * @param theList of tiers that might be resized.
-     * @return a maximal (possibly empty) section of theList such that some
-     * tiers in this list can be resized.
-     */
-    private static List<TierLabelGlyph> pertinentTiers(
-            int theTierMouseIsAbove,
-            List<TierLabelGlyph> theList) {
-        assert 0 <= theTierMouseIsAbove;
-        assert theTierMouseIsAbove < theList.size();
-        int top = theTierMouseIsAbove, limit;
-        for (int i = 0; i < theTierMouseIsAbove; i++) {
-            TierLabelGlyph g = theList.get(i);
-            if (g.isManuallyResizable()) {
-                top = i;
-                break;
-            }
-        }
-        limit = top;
-        for (int i = theList.size() - 1; theTierMouseIsAbove <= i; i--) {
-            TierLabelGlyph g = theList.get(i);
-            if (g.isManuallyResizable()) {
-                limit = i;
-                break;
-            }
-        }
-        return theList.subList(top, limit + 1);
-    }
-
-    private static List<TierLabelGlyph> consideringSelection(
-            int theTierMouseIsAbove,
-            List<TierLabelGlyph> theList) {
-        int top = 0, limit = theList.size() - 1;
-        if (0 < theTierMouseIsAbove
-                && (theList.get(theTierMouseIsAbove).isSelected()
-                || theList.get(theTierMouseIsAbove - 1).isSelected())) {
-            if (theList.get(theTierMouseIsAbove).isSelected()) {
-                for (int i = theTierMouseIsAbove; i < theList.size(); i++) {
-                    if (!theList.get(i).isSelected()) {
-                        limit = i - 1;
-                        break;
-                    }
-                }
-            }
-            if (theList.get(theTierMouseIsAbove - 1).isSelected()) {
-                for (int i = theTierMouseIsAbove - 1; 0 <= i; i--) {
-                    if (!theList.get(i).isSelected()) {
-                        top = i + 1;
-                        break;
-                    }
-                }
-            }
-        }
-        return theList.subList(top, limit + 1);
-    }
-
-    private boolean dragStarted = false; // It's our drag; we started it.
-
-    /**
      * Establish some context and boundaries for the drag.
      *
      * @param theRegion is a list of contiguous tiers affected by the resize.
@@ -144,7 +140,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 
         this.start = nevt.getCoordY();
 
-		// These minimum heights are in coord space.
+        // These minimum heights are in coord space.
         // Shouldn't we be dealing in pixels?
         ourCeiling = 0;
         ourFloor = Double.POSITIVE_INFINITY;
@@ -164,7 +160,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
     @Override
     public void mousePressed(MouseEvent evt) {
 
-		// We only want to react when we're supposed to.
+        // We only want to react when we're supposed to.
         // i.e. when we have set the mouse cursor.
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
         assert m != evt.getSource(); // This seems odd.
@@ -182,7 +178,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
         List<GlyphI> glyphsClicked = nevt.getItems();
         GlyphI topgl = null;
         if (!glyphsClicked.isEmpty()) {
-			// DANGER: Herin lies secret knowlege of another object.
+            // DANGER: Herin lies secret knowlege of another object.
             // The list of label glyphs will be in order from bottom to top.
             topgl = glyphsClicked.get(glyphsClicked.size() - 1);
             // Slower, but more prudent would be to check the coord boxes.
@@ -289,7 +285,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
             }
             y += g.getCoordBox().height;
         }
-		// What about last one? Do we need to avoid rounding errors above?
+        // What about last one? Do we need to avoid rounding errors above?
 
         this.gviewer.getSeqMap().updateWidget();
 
@@ -344,7 +340,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
         LinearTransform trans = w.getView().getTransform();
         double threshold = RESIZE_THRESHOLD / trans.getScaleY();
         if (threshold < nevt.getCoordY() - topgl.getCoordBox().getY()) {
-			// then not at the top of this glyph.
+            // then not at the top of this glyph.
             // So, not at the top of any tier.
             return false;
         }

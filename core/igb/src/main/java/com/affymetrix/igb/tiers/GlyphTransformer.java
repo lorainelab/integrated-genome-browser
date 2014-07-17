@@ -27,6 +27,35 @@ public class GlyphTransformer {
     private static final int WINDOW_OFFSET = 4;
     private static final int SPEED = 10;
 
+    private static JWindow getWindow(JComponent... components) {
+        JWindow window = new JWindow(Application.getSingleton().getFrame());
+        for (JComponent component : components) {
+            window.add(component);
+        }
+
+        return window;
+    }
+
+    private static JScrollBar getScrollBar(TierGlyph tier, int sb_curr, float scale) {
+        int style_height = (int) tier.getChildHeight() * tier.getActualSlots() + 75;
+        if (tier.getDirection() != TierGlyph.Direction.REVERSE) {
+            style_height *= -1;
+        }
+
+        style_height *= scale;
+        int sb_min = Math.min(1, style_height);
+        int sb_max = Math.max(1, style_height);
+        sb_max = Math.max(sb_curr, sb_max);
+
+        return new JScrollBar(JScrollBar.VERTICAL, sb_curr, 0, sb_min, sb_max) {
+
+            @Override
+            public void addAdjustmentListener(AdjustmentListener listener) {
+                super.addAdjustmentListener(listener);
+            }
+        };
+    }
+
     final AffyLabelledTierMap map;
     final Listeners listener;
 
@@ -75,7 +104,7 @@ public class GlyphTransformer {
     private void zoom(float scale) {
         svmg.setScale(scale);
 
-		// Update scrollbar
+        // Update scrollbar
 //		scrollbar.removeAdjustmentListener(listener);
 //		scrollbar.setMaximum((int)(scrollbar.getMaximum() * scale));
 //		scrollbar.setMinimum((int)(scrollbar.getMinimum() * scale));
@@ -88,7 +117,7 @@ public class GlyphTransformer {
         // Remove Listeners
         removeListners(true);
 
-		// Dispose window
+        // Dispose window
 //		scroll_window.dispose();
         // Helps with garbage collection
 //		scrollbar = null;
@@ -150,35 +179,6 @@ public class GlyphTransformer {
 //		Application.getSingleton().getFrame().removeComponentListener(listener);
         // Restore value
         map.getZoomer(AffyLabelledTierMap.Y).setValue(zoom_pos);
-    }
-
-    private static JWindow getWindow(JComponent... components) {
-        JWindow window = new JWindow(Application.getSingleton().getFrame());
-        for (JComponent component : components) {
-            window.add(component);
-        }
-
-        return window;
-    }
-
-    private static JScrollBar getScrollBar(TierGlyph tier, int sb_curr, float scale) {
-        int style_height = (int) tier.getChildHeight() * tier.getActualSlots() + 75;
-        if (tier.getDirection() != TierGlyph.Direction.REVERSE) {
-            style_height *= -1;
-        }
-
-        style_height *= scale;
-        int sb_min = Math.min(1, style_height);
-        int sb_max = Math.max(1, style_height);
-        sb_max = Math.max(sb_curr, sb_max);
-
-        return new JScrollBar(JScrollBar.VERTICAL, sb_curr, 0, sb_min, sb_max) {
-
-            @Override
-            public void addAdjustmentListener(AdjustmentListener listener) {
-                super.addAdjustmentListener(listener);
-            }
-        };
     }
 
     private class Listeners implements MouseWheelListener,

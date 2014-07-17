@@ -32,13 +32,13 @@ import java.awt.geom.Point2D;
  */
 public class TextStroke implements Stroke {
 
+    private static final float FLATNESS = 1;
+
     private String text;
     private Font font;
     private boolean stretchToFit = false;
     private boolean repeat = false;
     private AffineTransform t = new AffineTransform();
-
-    private static final float FLATNESS = 1;
 
     public TextStroke(String text, Font font) {
         this(text, font, true, false);

@@ -23,21 +23,59 @@ import javax.swing.event.MouseInputAdapter;
 public class TierResizer extends MouseInputAdapter {
 
     private static final double RESIZE_THRESHOLD = 4.0;
+    protected static Cursor[] ourCursors = new Cursor[2];
+
+    static {
+        ourCursors[0] = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+        ourCursors[1] = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+    }
+
+    /**
+     * Determines the scope of resizing. Given a border between two tiers
+     * determine a list of tiers that will be affected by the resize. Note that
+     * the returned list is of contiguous tiers. The top and bottom tiers will
+     * be resized. Interior tiers that cannot be resized will just go along for
+     * the ride.
+     *
+     * @param theFirst points to tier just above the border being dragged.
+     * @param theTierMouseIsAbove points to the tier just below the border being
+     * dragged.
+     * @param theList of tiers that might be resized.
+     * @return a maximal (possibly empty) section of theList such that the tiers
+     * in this list can be resized and none of the others can.
+     */
+    private static List<TierLabelGlyph> pertinentTiers(int theFirst, int theTierMouseIsAbove, List<TierLabelGlyph> theList) {
+        assert 0 <= theFirst;
+        assert theFirst < theTierMouseIsAbove;
+        assert theTierMouseIsAbove < theList.size();
+        int top = theTierMouseIsAbove, limit = theTierMouseIsAbove;
+        for (int i = theFirst; 0 <= i; i--) {
+            TierLabelGlyph g = theList.get(i);
+            if (g.isManuallyResizable()) {
+                top = i;
+                break;
+            }
+        }
+        for (int i = theTierMouseIsAbove; i < theList.size(); i++) {
+            TierLabelGlyph g = theList.get(i);
+            if (g.isManuallyResizable()) {
+                limit = i + 1;
+                break;
+            }
+        }
+        return theList.subList(top, limit);
+    }
     private AffyLabelledTierMap tiermap;
     private SeqMapView gviewer = null;
     private double start;
     private double ourFloor, ourCeiling;
-    protected static Cursor[] ourCursors = new Cursor[2];
 
     private List<TierLabelGlyph> fixedInterior;
     private TierLabelGlyph lowerGl;
     private TierLabelGlyph upperGl;
     private boolean wasResizeable = false;
 
-    static {
-        ourCursors[0] = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
-        ourCursors[1] = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
-    }
+    private boolean dragStarted = false; // it's our drag, we started it.
 
     /**
      * Construct a resizer for the given tiered map.
@@ -71,47 +109,6 @@ public class TierResizer extends MouseInputAdapter {
     }
 
     /**
-     * Determines the scope of resizing. Given a border between two tiers
-     * determine a list of tiers that will be affected by the resize. Note that
-     * the returned list is of contiguous tiers. The top and bottom tiers will
-     * be resized. Interior tiers that cannot be resized will just go along for
-     * the ride.
-     *
-     * @param theFirst points to tier just above the border being dragged.
-     * @param theTierMouseIsAbove points to the tier just below the border being
-     * dragged.
-     * @param theList of tiers that might be resized.
-     * @return a maximal (possibly empty) section of theList such that the tiers
-     * in this list can be resized and none of the others can.
-     */
-    private static List<TierLabelGlyph> pertinentTiers(
-            int theFirst,
-            int theTierMouseIsAbove,
-            List<TierLabelGlyph> theList) {
-        assert 0 <= theFirst;
-        assert theFirst < theTierMouseIsAbove;
-        assert theTierMouseIsAbove < theList.size();
-        int top = theTierMouseIsAbove, limit = theTierMouseIsAbove;
-        for (int i = theFirst; 0 <= i; i--) {
-            TierLabelGlyph g = theList.get(i);
-            if (g.isManuallyResizable()) {
-                top = i;
-                break;
-            }
-        }
-        for (int i = theTierMouseIsAbove; i < theList.size(); i++) {
-            TierLabelGlyph g = theList.get(i);
-            if (g.isManuallyResizable()) {
-                limit = i + 1;
-                break;
-            }
-        }
-        return theList.subList(top, limit);
-    }
-
-    private boolean dragStarted = false; // it's our drag, we started it.
-
-    /**
      * Establish some context and boundaries for the drag.
      *
      * @param theRegion is a list of contiguous tiers affected by the resize.
@@ -124,7 +121,7 @@ public class TierResizer extends MouseInputAdapter {
 
         this.start = nevt.getCoordY();
 
-		// These minimum heights are in coord space.
+        // These minimum heights are in coord space.
         // Shouldn't we be dealing in pixels?
         ourCeiling = this.upperGl.getCoordBox().getY()
                 + this.upperGl.getMinimumHeight();
@@ -158,7 +155,7 @@ public class TierResizer extends MouseInputAdapter {
     @Override
     public void mousePressed(MouseEvent evt) {
 
-		// We only want to react when we're supposed to.
+        // We only want to react when we're supposed to.
         // i.e. when we have set the mouse cursor.
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
         assert m != evt.getSource(); // This seems odd.
@@ -176,7 +173,7 @@ public class TierResizer extends MouseInputAdapter {
         List<GlyphI> glyphsClicked = nevt.getItems();
         GlyphI topgl = null;
         if (!glyphsClicked.isEmpty()) {
-			// DANGER: Herin lies secret knowlege of another object.
+            // DANGER: Herin lies secret knowlege of another object.
             // The list of label glyphs will be in order from bottom to top.
             topgl = glyphsClicked.get(glyphsClicked.size() - 1);
             // Slower, but more prudent would be to check the coord boxes.
@@ -218,7 +215,7 @@ public class TierResizer extends MouseInputAdapter {
                 this.upperGl.resizeHeight(y, height);
 //				this.upperGl.getReferenceTier().resizeHeight(y, height);
 
-				// Move the fixed height glyphs in the middle,
+                // Move the fixed height glyphs in the middle,
                 // assuming that the list is sorted top to bottom.
                 height = this.upperGl.getCoordBox().getHeight();
                 y = this.upperGl.getCoordBox().getY() + height;
@@ -273,7 +270,7 @@ public class TierResizer extends MouseInputAdapter {
 
         if (needRepacking) {
 
-			// This is pretty good now. Tiers jump just a bit after resizing.
+            // This is pretty good now. Tiers jump just a bit after resizing.
             // Mostly in one direction. Maybe can get to the bottom of this.
             // The border width of 2 pixels looks suspicious both here
             // and when moving the lower split pane.
@@ -283,15 +280,15 @@ public class TierResizer extends MouseInputAdapter {
                     = (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
             boolean full_repack = true, stretch_vertically = true;
             lm.repackTheTiers(full_repack, stretch_vertically);
-			//lm.repackTiersToLabels();
+            //lm.repackTiersToLabels();
             // The above repack (either one I think)
             // changes (enlarges) the tier map's bounds.
             // This probably affects the tiers' spacing. - elb 2012-02-21
 
-			// Vanilla repack seems to have worse symptoms.
+            // Vanilla repack seems to have worse symptoms.
             //m.repack();
             //m.packTiers(true, false, false, true);
-			// This was also commented out.
+            // This was also commented out.
             // From the name "kludgeRepackingTheTiers"
             // it looks like someone tried a specialized repack.
             // Don't know who or how far they got.
@@ -325,7 +322,7 @@ public class TierResizer extends MouseInputAdapter {
         LinearTransform trans = w.getView().getTransform();
         double threshold = RESIZE_THRESHOLD / trans.getScaleY();
         if (threshold < nevt.getCoordY() - topgl.getCoordBox().getY()) {
-			// then not at the top of this glyph.
+            // then not at the top of this glyph.
             // So, not at the top of any tier.
             return false;
         }

@@ -56,12 +56,93 @@ import javax.swing.event.MouseInputListener;
  */
 public final class TierLabelManager implements PropertyHolder {
 
+    private static final int xoffset_pop = 10;
+    private static final int yoffset_pop = 0;
+
+    public static Map<String, Object> getTierProperties(TierGlyph glyph) {
+        if (glyph.getAnnotStyle().isGraphTier() && glyph.getChildCount() > 0
+                && glyph.getChild(0) instanceof GraphGlyph) {
+            return null;
+        }
+
+        return getFeatureProperties(glyph.getAnnotStyle().getFeature());
+    }
+
+    public static Map<String, Object> getFeatureProperties(GenericFeature feature) {
+        if (feature == null) {
+            return null;
+        }
+
+        Map<String, Object> props = new HashMap<String, Object>();
+        props.put("File Name", feature.featureName);
+        props.put("Description", feature.description());
+        if (feature.getFriendlyURL() != null) {
+            props.put("url", feature.getFriendlyURL());
+        }
+        String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.getName() + ")";
+        props.put("Server", server);
+
+        return props;
+    }
+
+    /**
+     * Gets all the GraphGlyph objects inside the given list of
+     * TierLabelGlyph's.
+     */
+    public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
+        List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+        for (TierLabelGlyph tlg : tier_label_glyphs) {
+            result.addAll(getContainedGraphs(tlg.getReferenceTier()));
+        }
+        return result;
+    }
+
+    /**
+     * Gets all the GraphGlyph objects inside the given TierLabelGlyph.
+     */
+    private static List<GraphGlyph> getContainedGraphs(TierGlyph tier) {
+        List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+        int child_count = tier.getChildCount();
+        if (child_count > 0 && tier.getAnnotStyle().isGraphTier()
+                && tier.getChild(0) instanceof GraphGlyph) {
+            for (int j = 0; j < child_count; j++) {
+                result.add((GraphGlyph) tier.getChild(j));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Collapse or expand tier.
+     *
+     * @param collapsed - boolean indicating whether to collapse or expand
+     * tiers.
+     */
+    static void setTierCollapsed(TierGlyph tg, boolean collapsed) {
+        ITrackStyleExtended style = tg.getAnnotStyle();
+        if (style.getExpandable()) {
+            style.setCollapsed(collapsed);
+            tg.setStyle(style);
+            // When collapsing, make them all be the same height as the tier.
+            // (this is for simplicity in figuring out how to draw things.)
+            if (collapsed) {
+                List<GraphGlyph> graphs = getContainedGraphs(tg);
+                double tier_height = style.getHeight();
+                for (GraphGlyph graph : graphs) {
+                    Rectangle2D.Double cbox = graph.getCoordBox();
+                    graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
+                }
+            }
+            for (ViewI v : tg.getScene().getViews()) {
+                tg.pack(v);
+            }
+        }
+    }
+
     private final AffyLabelledTierMap tiermap;
     private final AffyTieredMap labelmap;
 //	private final GlyphTransformer gs;
     private final JPopupMenu popup;
-    private final static int xoffset_pop = 10;
-    private final static int yoffset_pop = 0;
     private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
     private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
     private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
@@ -127,7 +208,7 @@ public final class TierLabelManager implements PropertyHolder {
 				// Dispatch track selection event
                 //doTrackSelection(topgl);
 
-				// Normally, clicking will clear previous selections before selecting new things.
+                // Normally, clicking will clear previous selections before selecting new things.
                 // but we preserve the current selections if:
                 //  1. shift or alt key is pressed, or
                 //  2. the pop-up key is being pressed
@@ -171,7 +252,7 @@ public final class TierLabelManager implements PropertyHolder {
                 if (isPopupTrigger) {
                     doPopup(evt);
                 } else if (selected_glyphs.size() > 0) {
-					// take glyph at end of selected, just in case there is more
+                    // take glyph at end of selected, just in case there is more
                     //    than .
                     TierLabelGlyph[] gls = labelmap.getSelected().toArray(new TierLabelGlyph[1]);
                     for (TierLabelGlyph gl : gls) {
@@ -192,7 +273,7 @@ public final class TierLabelManager implements PropertyHolder {
          */
         @Override
         public void mouseReleased(MouseEvent evt) {
-			// Start trying to set the vertical zoom point appropriately.
+            // Start trying to set the vertical zoom point appropriately.
             // First try, just set it at this place.
             if (evt instanceof NeoMouseEvent) {
                 NeoMouseEvent nevt = (NeoMouseEvent) evt;
@@ -288,33 +369,6 @@ public final class TierLabelManager implements PropertyHolder {
         }
 
         return propList;
-    }
-
-    public static Map<String, Object> getTierProperties(TierGlyph glyph) {
-
-        if (glyph.getAnnotStyle().isGraphTier() && glyph.getChildCount() > 0
-                && glyph.getChild(0) instanceof GraphGlyph) {
-            return null;
-        }
-
-        return getFeatureProperties(glyph.getAnnotStyle().getFeature());
-    }
-
-    public static Map<String, Object> getFeatureProperties(GenericFeature feature) {
-        if (feature == null) {
-            return null;
-        }
-
-        Map<String, Object> props = new HashMap<String, Object>();
-        props.put("File Name", feature.featureName);
-        props.put("Description", feature.description());
-        if (feature.getFriendlyURL() != null) {
-            props.put("url", feature.getFriendlyURL());
-        }
-        String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.getName() + ")";
-        props.put("Server", server);
-
-        return props;
     }
 
     private Map<String, Object> getTierProperties(ITrackStyleExtended style) {
@@ -413,7 +467,7 @@ public final class TierLabelManager implements PropertyHolder {
             int child_count = tg.getChildCount();
             if (child_count > 0) {
                 if (tg.getChild(0) instanceof GraphGlyph) {
-					// It would be nice if we could assume that a tier contains only
+                    // It would be nice if we could assume that a tier contains only
                     // GraphGlyph's or only non-GraphGlyph's, but that is not true.
                     //
                     // When graph thresholding is turned on, there can be one or
@@ -457,33 +511,6 @@ public final class TierLabelManager implements PropertyHolder {
         }
 
         gmodel.setSelectedSymmetries(new ArrayList<RootSeqSymmetry>(all_symmetries), new ArrayList<SeqSymmetry>(graph_symmetries), this);
-    }
-
-    /**
-     * Gets all the GraphGlyph objects inside the given list of
-     * TierLabelGlyph's.
-     */
-    public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-        List<GraphGlyph> result = new ArrayList<GraphGlyph>();
-        for (TierLabelGlyph tlg : tier_label_glyphs) {
-            result.addAll(getContainedGraphs(tlg.getReferenceTier()));
-        }
-        return result;
-    }
-
-    /**
-     * Gets all the GraphGlyph objects inside the given TierLabelGlyph.
-     */
-    private static List<GraphGlyph> getContainedGraphs(TierGlyph tier) {
-        List<GraphGlyph> result = new ArrayList<GraphGlyph>();
-        int child_count = tier.getChildCount();
-        if (child_count > 0 && tier.getAnnotStyle().isGraphTier()
-                && tier.getChild(0) instanceof GraphGlyph) {
-            for (int j = 0; j < child_count; j++) {
-                result.add((GraphGlyph) tier.getChild(j));
-            }
-        }
-        return result;
     }
 
     /**
@@ -538,33 +565,6 @@ public final class TierLabelManager implements PropertyHolder {
         tiermap.setTierStyles();
         repackTheTiers(true, true);
         tiermap.updateWidget();
-    }
-
-    /**
-     * Collapse or expand tier.
-     *
-     * @param collapsed - boolean indicating whether to collapse or expand
-     * tiers.
-     */
-    static void setTierCollapsed(TierGlyph tg, boolean collapsed) {
-        ITrackStyleExtended style = tg.getAnnotStyle();
-        if (style.getExpandable()) {
-            style.setCollapsed(collapsed);
-            tg.setStyle(style);
-			// When collapsing, make them all be the same height as the tier.
-            // (this is for simplicity in figuring out how to draw things.)
-            if (collapsed) {
-                List<GraphGlyph> graphs = getContainedGraphs(tg);
-                double tier_height = style.getHeight();
-                for (GraphGlyph graph : graphs) {
-                    Rectangle2D.Double cbox = graph.getCoordBox();
-                    graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
-                }
-            }
-            for (ViewI v : tg.getScene().getViews()) {
-                tg.pack(v);
-            }
-        }
     }
 
     public void toggleTierCollapsed(List<TierLabelGlyph> tier_glyphs) {
@@ -708,20 +708,6 @@ public final class TierLabelManager implements PropertyHolder {
         }
     }
 
-    /**
-     * An interface that lets listeners modify the popup menu before it is
-     * shown.
-     */
-    public interface PopupListener {
-
-        /**
-         * Called before the {@link TierLabelManager} popup menu is displayed.
-         * The listener may add elements to the popup menu before it gets
-         * displayed.
-         */
-        public void popupNotify(JPopupMenu popup, TierLabelManager handler);
-    }
-
     public void addTrackSelectionListener(TrackSelectionListener l) {
         track_selection_listeners.add(l);
     }
@@ -730,14 +716,6 @@ public final class TierLabelManager implements PropertyHolder {
         for (TrackSelectionListener l : track_selection_listeners) {
             l.trackSelectionNotify(topLevelGlyph, this);
         }
-    }
-
-    /**
-     * An interface that to listener for track selection events.
-     */
-    public interface TrackSelectionListener {
-
-        public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler);
     }
 
     @Override
@@ -753,7 +731,7 @@ public final class TierLabelManager implements PropertyHolder {
 
         Map<String, Object> props = null;
         if (sym instanceof SymWithProps) {
-			// using Propertied.cloneProperties() here instead of Propertied.getProperties()
+            // using Propertied.cloneProperties() here instead of Propertied.getProperties()
             //   because adding start, end, id, and length as additional key-val pairs to props Map
             //   and don't want these to bloat up sym's properties
             props = ((SymWithProps) sym).cloneProperties();
@@ -799,5 +777,27 @@ public final class TierLabelManager implements PropertyHolder {
 
     private void restoreCursor() {
         setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+    }
+
+    /**
+     * An interface that lets listeners modify the popup menu before it is
+     * shown.
+     */
+    public interface PopupListener {
+
+        /**
+         * Called before the {@link TierLabelManager} popup menu is displayed.
+         * The listener may add elements to the popup menu before it gets
+         * displayed.
+         */
+        public void popupNotify(JPopupMenu popup, TierLabelManager handler);
+    }
+
+    /**
+     * An interface that to listener for track selection events.
+     */
+    public interface TrackSelectionListener {
+
+        public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler);
     }
 }

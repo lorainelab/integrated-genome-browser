@@ -38,6 +38,7 @@ import javax.swing.event.TableModelListener;
 public final class AffyLabelledTierMap extends AffyTieredMap {
 
     private static final long serialVersionUID = 1L;
+    private static final double FUDGE_FACTOR = 0.2;
 
     private AffyTieredMap labelmap;
     private JSplitPane mapsplitter;
@@ -45,6 +46,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
     private List<TierLabelGlyph> ordered_glyphs = null;
     private JPanel can_panel;
     private NeoCanvas ncan;
+    private AffyLabelledTierMap.TierSelectionModel selectionModel = new AffyLabelledTierMap.TierSelectionModel();
+    protected EventListenerList listenerList = new EventListenerList();
 
     public AffyLabelledTierMap(boolean hscroll_show, boolean vscroll_show) {
         super(hscroll_show, vscroll_show, NeoConstants.HORIZONTAL);
@@ -122,8 +125,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
         return label_glyphs;
     }
 
-    private static final double FUDGE_FACTOR = 0.2;
-
     private List<TierLabelGlyph> getOrderedGlyphs() {
         List<TierLabelGlyph> orderedGlyphs = new ArrayList<TierLabelGlyph>();
         for (TierLabelGlyph tierLabelGlyph : label_glyphs) {
@@ -180,44 +181,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
         }
     }
 
-    /**
-     * An incomplete selection list model to support resizing and coloring. This
-     * is just a hack at this point. A more complete implementation might help.
-     * It was added to support (vertical) resizing of tiers taking selection
-     * into account. It also supports color scheme choices.
-     */
-    private class TierSelectionModel extends DefaultListSelectionModel
-            implements ActionListener {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
-            this.setSelectionInterval(0, l.size() - 1);
-			// Perhaps, here we should find out what the selection really is
-            // instead of leaving it up to the listeners.
-            // Soon...
-            this.fireValueChanged(0, 1, false);
-        }
-
-        @Override
-        public boolean isSelectedIndex(int theIndex) {
-            List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
-            TierLabelGlyph tlg = l.get(theIndex);
-            return tlg.isSelected();
-        }
-
-        @Override
-        public void setSelectionMode(int theMode) {
-            if (ListSelectionModel.MULTIPLE_INTERVAL_SELECTION != theMode) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-            super.setSelectionMode(theMode);
-        }
-    }
-    private AffyLabelledTierMap.TierSelectionModel selectionModel = new AffyLabelledTierMap.TierSelectionModel();
-
     public void addListSelectionListener(ListSelectionListener theListener) {
         this.selectionModel.addListSelectionListener(theListener);
     }
@@ -241,11 +204,11 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
      */
     private void createTierLabel(TierGlyph mtg, int tier_index) {
         TierLabelGlyph label_glyph = new TierLabelGlyph(mtg, tier_index);
-    // No need to set the TierLabelGlyph colors or label:
+        // No need to set the TierLabelGlyph colors or label:
         // it reads that information dynamically from the given TierGlyph
 
         labelmap.addItem(label_glyph);
-    // set info for string glyph to point to tier glyph
+        // set info for string glyph to point to tier glyph
         //   (which also sets value returned by label_glyph.getInfo())
         labelmap.setDataModel(label_glyph, mtg);
         label_glyphs.add(label_glyph);
@@ -382,8 +345,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
         setZoomBehavior(axis, CONSTRAIN_COORD, (range[0] + range[1]) / 2);
     }
 
-    protected EventListenerList listenerList = new EventListenerList();
-
     public void addTierOrderListener(TableModelListener l) {
         listenerList.add(TableModelListener.class, l);
     }
@@ -395,12 +356,48 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
     public void fireTierOrderChanged() {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListenerList();
-		// Process the listeners last to first, notifying
+        // Process the listeners last to first, notifying
         // those that are interested in this event
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == TableModelListener.class) {
                 ((TableModelListener) listeners[i + 1]).tableChanged(null);
             }
+        }
+    }
+
+    /**
+     * An incomplete selection list model to support resizing and coloring. This
+     * is just a hack at this point. A more complete implementation might help.
+     * It was added to support (vertical) resizing of tiers taking selection
+     * into account. It also supports color scheme choices.
+     */
+    private class TierSelectionModel extends DefaultListSelectionModel implements ActionListener {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
+            this.setSelectionInterval(0, l.size() - 1);
+            // Perhaps, here we should find out what the selection really is
+            // instead of leaving it up to the listeners.
+            // Soon...
+            this.fireValueChanged(0, 1, false);
+        }
+
+        @Override
+        public boolean isSelectedIndex(int theIndex) {
+            List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
+            TierLabelGlyph tlg = l.get(theIndex);
+            return tlg.isSelected();
+        }
+
+        @Override
+        public void setSelectionMode(int theMode) {
+            if (ListSelectionModel.MULTIPLE_INTERVAL_SELECTION != theMode) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+            super.setSelectionMode(theMode);
         }
     }
 }

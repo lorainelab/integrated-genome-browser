@@ -36,6 +36,58 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     public static final boolean DEBUG = false;
     public static final boolean DEBUG_NODE_PUTS = false;
 
+    private static Color getColor(Map<String, ? extends Object> props, String key) {
+        Color c = null;
+        Object o = props.get(key);
+        if ("".equals(o)) {
+            // setting the value of color to "" means that you want to ignore the
+            // color settings in any inherited context and revert to the default.
+            return null;
+        } else if (o instanceof Color) {
+            c = (Color) o;
+        } else if (o instanceof String) {
+            c = ColorUtils.getColor((String) o);
+        }
+        return c;
+    }
+
+    public static synchronized boolean autoSaveUserStylesheet() {
+        Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
+        if (stylesheet == null) {
+            Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "No user stylesheet present.");
+            return false;
+        }
+
+        java.io.File f = XmlStylesheetParser.getUserStylesheetFile();
+        String filename = f.getAbsolutePath();
+        java.io.FileWriter fw = null;
+        java.io.BufferedWriter bw = null;
+        try {
+            Logger.getLogger(TrackStyle.class.getName()).log(Level.INFO, "Saving user stylesheet to file {0}", filename);
+            File parent_dir = f.getParentFile();
+            if (parent_dir != null) {
+                parent_dir.mkdirs();
+            }
+            StringBuffer sb = new StringBuffer(1000);
+            sb = stylesheet.appendXML("\t", sb);
+            fw = new java.io.FileWriter(f);
+            bw = new java.io.BufferedWriter(fw);
+            bw.write(sb.toString());
+            bw.flush();
+
+            return true;
+        } catch (java.io.FileNotFoundException fnfe) {
+            Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Could not auto-save user stylesheet to {0}", filename);
+        } catch (java.io.IOException ioe) {
+            Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Error while saving user stylesheet to {0}", filename);
+        } finally {
+            GeneralUtils.safeClose(bw);
+            GeneralUtils.safeClose(fw);
+        }
+
+        return false;
+    }
+
     private boolean show = default_show;
     private boolean connected = default_connected;
     private boolean collapsed = default_collapsed;
@@ -71,28 +123,20 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private int summaryThreshold;
     private boolean separable = true;
     private boolean join = false;
-	// if float_graph, then graph should float above annotations in tiers
+    // if float_graph, then graph should float above annotations in tiers
     // if !float_graph, then graph should be in its own tier
     private boolean float_graph = false;
     private ColorProviderI color_provider = null;
     private SymmetryFilterI filter = null;
-
-    public void restoreToDefault() {
-        if (this.getFeature() != null) {
-            initStyle(IGBStateProvider.getDefaultInstance(), this.getFeature().featureProps);
-        }
-        this.setTrackName(original_track_name);
-
-        if (node != null) {
-            try {
-                node.removeNode();
-                node.flush();
-                node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
-            } catch (Exception ex) {
-                Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+    /**
+     * for height on the reverse strand. To help with track resizing.
+     */
+    private double reverseHeight = TrackConstants.default_height;
+    /**
+     * for maximum depth of stacked glyphs on the reverse strand. To help with
+     * resizing.
+     */
+    private int reverseMaxDepth = 0;
 
     protected TrackStyle() {
         method_name = null;
@@ -129,7 +173,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.unique_name = this.unique_name.substring(0, this.unique_name.length() - 1);
         }
         this.unique_name = multiple_slashes.matcher(this.unique_name).replaceAll("/");
-			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
+        // transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
         //   is now handled within PreferenceUtils.getSubnod() call
 
         initStyle(template, properties);
@@ -144,6 +188,23 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
         if (node != null) {
             initFromNode();
+        }
+    }
+
+    public void restoreToDefault() {
+        if (this.getFeature() != null) {
+            initStyle(IGBStateProvider.getDefaultInstance(), this.getFeature().featureProps);
+        }
+        this.setTrackName(original_track_name);
+
+        if (node != null) {
+            try {
+                node.removeNode();
+                node.flush();
+                node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
+            } catch (Exception ex) {
+                Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -202,7 +263,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         }
     }
 
-	// Copies properties from the given node, using the currently-loaded values as defaults.
+    // Copies properties from the given node, using the currently-loaded values as defaults.
     // generally call initFromTemplate before this.
     // Make sure to set human_name to some default before calling this.
     // Properties set this way do NOT get put in persistent storage.
@@ -253,7 +314,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         return props;
     }
 
-	// Copies selected properties from a PropertyMap into this object, but does NOT persist
+    // Copies selected properties from a PropertyMap into this object, but does NOT persist
     // these copied values -- if values were persisted, then if PropertyMap changed between sessions,
     //      older values would override newer values since persisted nodes take precedence
     //    (only want to persists when user sets preferences in GUI)
@@ -390,24 +451,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         // height???
     }
 
-    private static Color getColor(Map<String, ? extends Object> props, String key) {
-        Color c = null;
-        Object o = props.get(key);
-        if ("".equals(o)) {
-			// setting the value of color to "" means that you want to ignore the
-            // color settings in any inherited context and revert to the default.
-            return null;
-        } else if (o instanceof Color) {
-            c = (Color) o;
-        } else if (o instanceof String) {
-            c = ColorUtils.getColor((String) o);
-        }
-        return c;
-    }
-
-	// Copies properties from the template into this object, but does NOT persist
-    // these copied values.
-    // human_name and factory_instance are not modified
+    // Copies properties from the template into this object, but does NOT persist
     private void initFromTemplate(TrackStyle template) {
         this.setSeparate(template.getSeparate());
         this.setShow(template.getShow());
@@ -741,7 +785,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     @Override
     public void setExpandable(boolean b) {
-		// currently there is no need to make this property persistent.
+        // currently there is no need to make this property persistent.
         // there is rarly any reason to change it from the defualt value for
         // annotation tiers, only for graph tiers, which don't use this class
         expandable = b;
@@ -831,7 +875,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
      * customization panel.
      */
     public final void setCustomizable(boolean b) {
-		// Another option instead of a single set/getCustomizable flag would be
+        // Another option instead of a single set/getCustomizable flag would be
         // to have a bunch of individual flags: getSeparable(), getHumanNamable(),
         // getHasMaxDepth(), etc....
         customizable = b;
@@ -854,48 +898,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         return s;
     }
 
-    public static synchronized boolean autoSaveUserStylesheet() {
-        Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
-        if (stylesheet == null) {
-            Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "No user stylesheet present.");
-            return false;
-        }
-
-        java.io.File f = XmlStylesheetParser.getUserStylesheetFile();
-        String filename = f.getAbsolutePath();
-        java.io.FileWriter fw = null;
-        java.io.BufferedWriter bw = null;
-        try {
-            Logger.getLogger(TrackStyle.class.getName()).log(Level.INFO, "Saving user stylesheet to file {0}", filename);
-            File parent_dir = f.getParentFile();
-            if (parent_dir != null) {
-                parent_dir.mkdirs();
-            }
-            StringBuffer sb = new StringBuffer(1000);
-            sb = stylesheet.appendXML("\t", sb);
-            fw = new java.io.FileWriter(f);
-            bw = new java.io.BufferedWriter(fw);
-            bw.write(sb.toString());
-            bw.flush();
-
-            return true;
-        } catch (java.io.FileNotFoundException fnfe) {
-            Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Could not auto-save user stylesheet to {0}", filename);
-        } catch (java.io.IOException ioe) {
-            Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Error while saving user stylesheet to {0}", filename);
-        } finally {
-            GeneralUtils.safeClose(bw);
-            GeneralUtils.safeClose(fw);
-        }
-
-        return false;
-    }
-
-    /**
-     * for height on the reverse strand. To help with track resizing.
-     */
-    private double reverseHeight = TrackConstants.default_height;
-
     @Override
     public void setReverseHeight(double theNewHeight) {
         this.reverseHeight = theNewHeight;
@@ -917,11 +919,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     public double getForwardHeight() {
         return this.getHeight();
     }
-    /**
-     * for maximum depth of stacked glyphs on the reverse strand. To help with
-     * resizing.
-     */
-    private int reverseMaxDepth = 0;
 
     @Override
     public void setReverseMaxDepth(int theNewDepth) {
@@ -1094,4 +1091,5 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setShadeBasedOnQualityScore((Boolean) value);
         }
     }
+
 }

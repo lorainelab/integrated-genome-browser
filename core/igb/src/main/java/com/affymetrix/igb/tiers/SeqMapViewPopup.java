@@ -74,20 +74,6 @@ import javax.swing.border.Border;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
-    private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
-
-        private static final long serialVersionUID = 1L;
-
-        private JRPMenuItemTLP(GenericAction genericAction) {
-            super("Toolbar_" + genericAction.getId(), genericAction);
-        }
-
-        @Override
-        public List<TierGlyph> getTrackList() {
-            return gviewer.getTierManager().getSelectedTiers();
-        }
-    }
-
     private static final boolean DEBUG = false;
     private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
     private final SeqMapView gviewer;
@@ -118,7 +104,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
      * shortcuts should be available even before this pop up is ever popped up.
      * Sigh. - elb
      */
-	// Replacing this with GenericActionListener in Activator. HV 11/14/12
+    // Replacing this with GenericActionListener in Activator. HV 11/14/12
 //	private void addActions() {
 //		IGB igb = (IGB) Application.getSingleton();
 //		igb.addAction(ShowPlusStrandAction.getAction());
@@ -151,7 +137,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //	}
     public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
         if (gviewer != null) {
-			// if an AnnotatedSeqViewer is being used, ask it to update itself.
+            // if an AnnotatedSeqViewer is being used, ask it to update itself.
             // later this can be made more specific to just update the tiers that changed
             boolean preserve_view_x = !stretch_vertically;
             boolean preserve_view_y = !stretch_horizonatally;
@@ -509,7 +495,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         delete_track.setIcon(null);
         popup.add(delete_track);
 
-	//	if (tierGlyph != null) {
+        //	if (tierGlyph != null) {
         //		// Check whether this selection is a graph or an annotation
         //		ITrackStyleExtended style = tierGlyph.getAnnotStyle();
         //		GenericFeature feature = style.getFeature();
@@ -552,5 +538,19 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     SeqMapView getSeqMapView() {
         return gviewer;
+    }
+
+    private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
+
+        private static final long serialVersionUID = 1L;
+
+        private JRPMenuItemTLP(GenericAction genericAction) {
+            super("Toolbar_" + genericAction.getId(), genericAction);
+        }
+
+        @Override
+        public List<TierGlyph> getTrackList() {
+            return gviewer.getTierManager().getSelectedTiers();
+        }
     }
 }

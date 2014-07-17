@@ -20,15 +20,16 @@ import javax.swing.event.MouseInputAdapter;
 public class NewTierResizer extends MouseInputAdapter {
 
     private static final double RESIZE_THRESHOLD = 4.0;
+    protected static final Cursor ourCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
     private AffyLabelledTierMap tiermap;
     private SeqMapView gviewer = null;
     private double start;
     private double ourCeiling;
-    protected static final Cursor ourCursor
-            = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
 
     private List<TierLabelGlyph> fixedInterior;
     private TierLabelGlyph upperGl;
+
+    private boolean dragStarted = false; // it's our drag, we started it.
 
     /**
      * Construct a resizer for the given tiered map.
@@ -53,8 +54,6 @@ public class NewTierResizer extends MouseInputAdapter {
         // Otherwise, leave it alone. Other listeners can (and will) handle it.
     }
 
-    private boolean dragStarted = false; // it's our drag, we started it.
-
     /**
      * Establish some context and boundaries for the drag.
      *
@@ -66,7 +65,7 @@ public class NewTierResizer extends MouseInputAdapter {
         this.upperGl = theRegion.get(0);
         this.start = nevt.getCoordY();
 
-		// These minimum heights are in coord space.
+        // These minimum heights are in coord space.
         // Shouldn't we be dealing in pixels?
         ourCeiling = this.upperGl.getCoordBox().getY()
                 + this.upperGl.getMinimumHeight();
@@ -88,7 +87,7 @@ public class NewTierResizer extends MouseInputAdapter {
     @Override
     public void mousePressed(MouseEvent evt) {
 
-		// We only want to react when we're supposed to.
+        // We only want to react when we're supposed to.
         // i.e. when we have set the mouse cursor.
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
         assert m != evt.getSource(); // This seems odd.
@@ -105,7 +104,7 @@ public class NewTierResizer extends MouseInputAdapter {
         List<GlyphI> glyphsClicked = nevt.getItems();
         GlyphI topgl = null;
         if (!glyphsClicked.isEmpty()) {
-			// DANGER: Herin lies secret knowlege of another object.
+            // DANGER: Herin lies secret knowlege of another object.
             // The list of label glyphs will be in order from bottom to top.
             topgl = glyphsClicked.get(glyphsClicked.size() - 1);
             // Slower, but more prudent would be to check the coord boxes.
@@ -140,7 +139,7 @@ public class NewTierResizer extends MouseInputAdapter {
                      * & nevt.getCoordY() < ourFloor *
                      */
                     ) {
-//				this.gviewer.getSeqMap().setFloatBounds(NeoWidget.Y, 
+//				this.gviewer.getSeqMap().setFloatBounds(NeoWidget.Y,
 //					this.gviewer.getSeqMap().getCoordBounds().y, 
 //					this.gviewer.getSeqMap().getCoordBounds().height + delta);
 
@@ -156,7 +155,7 @@ public class NewTierResizer extends MouseInputAdapter {
                     }
                 }
 
-				// Move the fixed height glyphs in the middle,
+                // Move the fixed height glyphs in the middle,
                 // assuming that the list is sorted top to bottom.
                 for (TierLabelGlyph g : this.fixedInterior) {
                     g.moveRelative(0, delta);

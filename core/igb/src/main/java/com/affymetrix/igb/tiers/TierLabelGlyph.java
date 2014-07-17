@@ -32,6 +32,15 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
     private static final String LOADING_IMG_NAME = "images/hourglass.png";
     private static final Image LOADING_IMG;
 
+    private static int pbBuffer_x = 5;
+    private static Color IGBTrackMakerColor = Color.YELLOW;
+    private static final int placement = CENTER;
+    static int[] mark_x = new int[4];
+    static int[] mark_y = new int[4];
+    /*
+     * Draw a badge for igb track.
+     */
+
     static {
         ClassLoader loader = ClassLoader.getSystemClassLoader();
         if (loader == null) {
@@ -49,18 +58,79 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
             }
         }
     }
-    private static int pbBuffer_x = 5;
-    private static Color IGBTrackMakerColor = Color.YELLOW;
+
+    private static String getDirectionString(TierGlyph tg) {
+        return tg.getDirection().getDisplay();
+    }
+
+    @SuppressWarnings(value = "unused")
+    private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, TierGlyph.Direction direction) {
+        int maxLines = (upperY - lowerY) / text_height;
+        if (maxLines <= 0 || pixelbox.width - (pbBuffer_x * 2) <= 0) {
+            return;
+        }
+        String[] lines = IgbStringUtils.wrap(label, fm, pixelbox.width - (pbBuffer_x * 2), maxLines);
+        //pixelbox.x += pbBuffer_x;
+        int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
+
+        int text_width;
+        int x;
+        for (String line : lines) {
+            text_width = fm.stringWidth(line);
+            //Remark: the "height-3" parameter in the drawString function is a fine-tune to center vertically.
+            if (placement == LEFT) {
+                x = pixelbox.x - text_width;
+            } else if (placement == RIGHT) {
+                x = pixelbox.x + pixelbox.width - text_width;
+            } else {
+                x = pixelbox.x + pixelbox.width / 2 - text_width / 2;
+            }
+            g.drawString(line, x, height - 3);
+            height += text_height;
+        }
+    }
+
+    protected static void drawLock(final Graphics2D g, int x, int y, Color fgcolor, Color bgcolor) {
+        g.setColor(fgcolor);
+        g.fillArc(x + 6, y + 2, 8, 15, 0, 180);
+        g.fillRect(x + 5, y + 10, 10, 10);
+
+        g.setColor(bgcolor);
+        g.fillArc(x + 8, y + 4, 4, 12, 0, 180);
+        g.fillRect(x + 9, y + 15, 2, 4);
+
+        g.setColor(fgcolor.darker());
+        g.drawArc(x + 6, y + 2, 8, 15, 0, 180);
+        g.drawRect(x + 5, y + 10, 10, 10);
+        g.drawArc(x + 8, y + 4, 4, 12, 0, 180);
+        g.drawRect(x + 9, y + 15, 2, 4);
+    }
+
+    protected static void drawFilter(final Graphics2D g, int x, int y, Color fgcolor, Color bgcolor) {
+        mark_x[0] = x;
+        mark_x[1] = x + 15;
+        mark_x[2] = (mark_x[0] + mark_x[1]) / 2;
+
+        mark_y[0] = y;
+        mark_y[1] = y;
+        mark_y[2] = y + 10;
+
+        g.setColor(fgcolor);
+        g.fillPolygon(mark_x, mark_y, 3);
+        g.setColor(fgcolor.darker());
+        g.drawPolygon(mark_x, mark_y, 3);
+
+        g.setColor(fgcolor);
+        g.fillRect(mark_x[2] - 2, mark_y[2] - 4, 4, 10);
+        g.setColor(fgcolor.darker());
+        g.drawRect(mark_x[2] - 2, mark_y[2] - 4, 4, 10);
+    }
     private int position;
-    private static final int placement = CENTER;
     private boolean isIGBTrack;
     private final TierGlyph reference_tier;
     private boolean isLoading;
-
-    @Override
-    public String toString() {
-        return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + getCoordBox());
-    }
+    private int textPixelHeight;
+    private double textCoordHeight;
 
     /**
      * @param tier in the main part of the AffyLabelledTierMap. It must not be
@@ -71,6 +141,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
         setInfo(reference_tier);
         setPosition(position);
         setShowIGBTrack(IGBStateProvider.getShowIGBTrackMarkState());
+    }
+
+    @Override
+    public String toString() {
+        return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + getCoordBox());
     }
 
     public void setShowIGBTrack(boolean b) {
@@ -119,10 +194,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
      */
     public TierGlyph getReferenceTier() {
         return (TierGlyph) getInfo();
-    }
-
-    private static String getDirectionString(TierGlyph tg) {
-        return tg.getDirection().getDisplay();
     }
 
     /**
@@ -215,12 +286,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
         super.draw(view);
     }
 
-    static int[] mark_x = new int[4];
-    static int[] mark_y = new int[4];
-    /*
-     * Draw a badge for igb track.
-     */
-
     private void drawIGBBadge(Graphics2D g, Rectangle pixelbox) {
 
         mark_x[0] = pixelbox.x;
@@ -244,9 +309,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
         g.setStroke(oldStroke);
 
     }
-
-    private int textPixelHeight;
-    private double textCoordHeight;
 
     private void drawLoading(final Graphics g, Rectangle pixelbox) {
         if (LOADING_IMG == null || pixelbox.width == 0 || pixelbox.height == 0) {
@@ -276,7 +338,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
         // assumes that pixelbox coordinates are already computed
 
         String label = getLabelString();
-		// this was for test:
+        // this was for test:
         // label = "hey_this_is_going_to_be-a-long-text-to-test.the.behaviour";
         //label = "abc DEfgHIj  klMn		OPqRstUv  w xyz.  Antidisestablishmentarianism.  The quick brown fox jumps over a lazy dog.";
 
@@ -301,33 +363,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
             // if glyph's pixelbox wider than text, then center text
             pixelbox.x += pixelbox.width / 2 - text_width / 2;
             g.drawString(label, pixelbox.x, (lowerY + upperY + text_height) / 2);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, TierGlyph.Direction direction) {
-        int maxLines = (upperY - lowerY) / text_height;
-        if (maxLines <= 0 || pixelbox.width - (pbBuffer_x * 2) <= 0) {
-            return;
-        }
-        String[] lines = IgbStringUtils.wrap(label, fm, pixelbox.width - (pbBuffer_x * 2), maxLines);
-        //pixelbox.x += pbBuffer_x;
-        int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
-
-        int text_width;
-        int x;
-        for (String line : lines) {
-            text_width = fm.stringWidth(line);
-            //Remark: the "height-3" parameter in the drawString function is a fine-tune to center vertically.
-            if (placement == LEFT) {
-                x = pixelbox.x - text_width;
-            } else if (placement == RIGHT) {
-                x = pixelbox.x + pixelbox.width - text_width;
-            } else {
-                x = pixelbox.x + pixelbox.width / 2 - text_width / 2;
-            }
-            g.drawString(line, x, height - 3);
-            height += text_height;
         }
     }
 
@@ -389,39 +424,4 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
         return answer;
     }
 
-    protected static void drawLock(final Graphics2D g, int x, int y, Color fgcolor, Color bgcolor) {
-        g.setColor(fgcolor);
-        g.fillArc(x + 6, y + 2, 8, 15, 0, 180);
-        g.fillRect(x + 5, y + 10, 10, 10);
-
-        g.setColor(bgcolor);
-        g.fillArc(x + 8, y + 4, 4, 12, 0, 180);
-        g.fillRect(x + 9, y + 15, 2, 4);
-
-        g.setColor(fgcolor.darker());
-        g.drawArc(x + 6, y + 2, 8, 15, 0, 180);
-        g.drawRect(x + 5, y + 10, 10, 10);
-        g.drawArc(x + 8, y + 4, 4, 12, 0, 180);
-        g.drawRect(x + 9, y + 15, 2, 4);
-    }
-
-    protected static void drawFilter(final Graphics2D g, int x, int y, Color fgcolor, Color bgcolor) {
-        mark_x[0] = x;
-        mark_x[1] = x + 15;
-        mark_x[2] = (mark_x[0] + mark_x[1]) / 2;
-
-        mark_y[0] = y;
-        mark_y[1] = y;
-        mark_y[2] = y + 10;
-
-        g.setColor(fgcolor);
-        g.fillPolygon(mark_x, mark_y, 3);
-        g.setColor(fgcolor.darker());
-        g.drawPolygon(mark_x, mark_y, 3);
-
-        g.setColor(fgcolor);
-        g.fillRect(mark_x[2] - 2, mark_y[2] - 4, 4, 10);
-        g.setColor(fgcolor.darker());
-        g.drawRect(mark_x[2] - 2, mark_y[2] - 4, 4, 10);
-    }
 }

@@ -52,17 +52,6 @@ public class AffyTieredMap extends NeoMap {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<TierGlyph>();
-    private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
-
-    // the total pixel height of visible fixed pixel tiers
-    //    (recalculated with every packTiers() call)
-    protected int fixed_pixel_height;
-
-    // the total coord height of visible fixed coord tiers
-    //    (any visible tier that is NOT a fixed pixel tier)
-    //    (recalculated with every packTiers() call)
-    protected double fixed_coord_height;
     private static boolean show_plus = true;
     private static boolean show_minus = true;
     private static boolean show_mixed = true;
@@ -74,21 +63,6 @@ public class AffyTieredMap extends NeoMap {
      */
     public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
     // public static final String SELECTED_KEY = Action.SELECTED_KEY;
-
-    public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
-        super(hscroll, vscroll, orient, new LinearTransform());
-        this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
-        this.getView().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        this.getView().setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, show_plus);
-        ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, show_minus);
-        ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, show_mixed);
-    }
-
-    AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
-        this(hscroll, vscroll, NeoConstants.HORIZONTAL);
-        this.scroller[Y] = vscroller;
-    }
 
     public static boolean isShowPlus() {
         return show_plus;
@@ -112,6 +86,30 @@ public class AffyTieredMap extends NeoMap {
 
     public static void setShowMixed(boolean show_mixed_) {
         show_mixed = show_mixed_;
+    }
+    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<TierGlyph>();
+    private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
+    // the total pixel height of visible fixed pixel tiers
+    //    (recalculated with every packTiers() call)
+    protected int fixed_pixel_height;
+    // the total coord height of visible fixed coord tiers
+    //    (any visible tier that is NOT a fixed pixel tier)
+    //    (recalculated with every packTiers() call)
+    protected double fixed_coord_height;
+
+    public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
+        super(hscroll, vscroll, orient, new LinearTransform());
+        this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
+        this.getView().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        this.getView().setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+        ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, show_plus);
+        ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, show_minus);
+        ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, show_mixed);
+    }
+
+    AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
+        this(hscroll, vscroll, NeoConstants.HORIZONTAL);
+        this.scroller[Y] = vscroller;
     }
 
     /**
@@ -572,30 +570,6 @@ public class AffyTieredMap extends NeoMap {
         }
     }
 
-    /**
-     * A subclass of JCheckBoxMenuItem that pays attention to my version of
-     * AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
-     * the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
-     */
-    public static final class ActionToggler extends JRPCheckBoxMenuItem implements PropertyChangeListener {
-
-        private static final long serialVersionUID = 1L;
-
-        public ActionToggler(String id, Action action) {
-            super(id, action);
-            this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY_)).booleanValue());
-            action.addPropertyChangeListener(this);
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (AffyTieredMap.SELECTED_KEY_.equals(evt.getPropertyName())) {
-                Boolean b = (Boolean) evt.getNewValue();
-                this.setSelected(b.booleanValue());
-            }
-        }
-    }
-
     @Override
     public AxisGlyph addAxis(int offset) {
         AxisGlyph axis = null;
@@ -701,6 +675,30 @@ public class AffyTieredMap extends NeoMap {
         for (MouseMotionListener ml : mouse_motion_listeners) {
             if (ml.getClass() == clazz) {
                 removeMouseMotionListener(ml);
+            }
+        }
+    }
+
+    /**
+     * A subclass of JCheckBoxMenuItem that pays attention to my version of
+     * AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
+     * the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
+     */
+    public static final class ActionToggler extends JRPCheckBoxMenuItem implements PropertyChangeListener {
+
+        private static final long serialVersionUID = 1L;
+
+        public ActionToggler(String id, Action action) {
+            super(id, action);
+            this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY_)));
+            action.addPropertyChangeListener(this);
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (AffyTieredMap.SELECTED_KEY_.equals(evt.getPropertyName())) {
+                Boolean b = (Boolean) evt.getNewValue();
+                this.setSelected(b);
             }
         }
     }

@@ -68,7 +68,7 @@ final public class MouseShortCut implements MouseListener {
         //AffyLabelledTierMap
         if (e.getSource() instanceof AffyLabelledTierMap) {
             if (e.isAltDown()) {
-				//if alt is pressed.
+                //if alt is pressed.
 
                 return;
             }

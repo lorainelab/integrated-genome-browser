@@ -24,51 +24,6 @@ public final class IGBStateProvider extends DefaultStateProvider {
     private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
     private static TrackStyle default_instance = null;
 
-    @Override
-    public GraphState getGraphState(String id, String human_name, String extension, java.util.Map<String, String> props) {
-        if (human_name == null) {
-            String unzippedName = GeneralUtils.getUnzippedName(id);
-            human_name = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
-        }
-        return super.getGraphState(id, human_name, extension, props);
-    }
-
-    @Override
-    public void removeAnnotStyle(String name) {
-        removeInstance(name);
-    }
-
-    @Override
-    public ITrackStyleExtended getAnnotStyle(String unique_name) {
-        return getAnnotStyle(unique_name, null, null, null);
-    }
-
-    @Override
-    public ITrackStyleExtended getAnnotStyle(String unique_name, String track_name, String file_type, java.util.Map<String, String> props) {
-        TrackStyle style = static_map.get(unique_name.toLowerCase());
-        if (style == null) {
-            if (TrackStyle.DEBUG) {
-                System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
-            }
-            TrackStyle template = getDefaultInstance();
-
-            if (!getShowFullFilePathInTrackMark()) {
-                if (track_name != null) {
-                    track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator) + 1);
-                }
-            }
-
-            style = new TrackStyle(unique_name, track_name, file_type, template, props);
-            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
-            if (fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph || fth.getFileTypeCategory() == FileTypeCategory.Mismatch)) {
-                style.setExpandable(false);
-                style.setGraphTier(true);
-            }
-            static_map.put(unique_name.toLowerCase(), style);
-        }
-        return style;
-    }
-
     /**
      * Returns all (persistent and temporary) instances of AnnotStyle.
      */
@@ -147,6 +102,51 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
     public static boolean getDrawCollapseState() {
         return draw_collapse_icon;
+    }
+
+    @Override
+    public GraphState getGraphState(String id, String human_name, String extension, java.util.Map<String, String> props) {
+        if (human_name == null) {
+            String unzippedName = GeneralUtils.getUnzippedName(id);
+            human_name = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
+        }
+        return super.getGraphState(id, human_name, extension, props);
+    }
+
+    @Override
+    public void removeAnnotStyle(String name) {
+        removeInstance(name);
+    }
+
+    @Override
+    public ITrackStyleExtended getAnnotStyle(String unique_name) {
+        return getAnnotStyle(unique_name, null, null, null);
+    }
+
+    @Override
+    public ITrackStyleExtended getAnnotStyle(String unique_name, String track_name, String file_type, java.util.Map<String, String> props) {
+        TrackStyle style = static_map.get(unique_name.toLowerCase());
+        if (style == null) {
+            if (TrackStyle.DEBUG) {
+                System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
+            }
+            TrackStyle template = getDefaultInstance();
+
+            if (!getShowFullFilePathInTrackMark()) {
+                if (track_name != null) {
+                    track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator) + 1);
+                }
+            }
+
+            style = new TrackStyle(unique_name, track_name, file_type, template, props);
+            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
+            if (fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph || fth.getFileTypeCategory() == FileTypeCategory.Mismatch)) {
+                style.setExpandable(false);
+                style.setGraphTier(true);
+            }
+            static_map.put(unique_name.toLowerCase(), style);
+        }
+        return style;
     }
 
 }

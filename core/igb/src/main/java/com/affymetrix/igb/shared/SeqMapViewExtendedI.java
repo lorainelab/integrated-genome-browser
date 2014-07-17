@@ -8,6 +8,8 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
  * @author hiralv
  */
 public interface SeqMapViewExtendedI extends SeqMapViewI {
-	public TierGlyph getTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
-	public boolean shouldAddCytobandGlyph();
+
+    public TierGlyph getTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
+
+    public boolean shouldAddCytobandGlyph();
 }

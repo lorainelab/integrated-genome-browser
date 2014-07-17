@@ -11,8 +11,8 @@ import com.affymetrix.igb.swing.ScriptManager;
  * @author dcnorris
  */
 public class IGBScriptAction {
-	
-	public static void executeScriptAction(String tutorialArg) {
-		ScriptManager.getInstance().runScriptString(tutorialArg, "igb");
-	}
+
+    public static void executeScriptAction(String tutorialArg) {
+        ScriptManager.getInstance().runScriptString(tutorialArg, "igb");
+    }
 }

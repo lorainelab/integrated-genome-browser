@@ -12,8 +12,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 /**
- * UI delegate for the HeatMapSlider component. HeatMapSliderUI paints two thumbs,
- * one for the lower value and one for the upper value.
+ * UI delegate for the HeatMapSlider component. HeatMapSliderUI paints two
+ * thumbs, one for the lower value and one for the upper value.
  */
 class HeatMapSliderUI extends BasicSliderUI {
 
@@ -110,7 +110,7 @@ class HeatMapSliderUI extends BasicSliderUI {
 
             // Adjust upper value to snap to ticks if necessary.
             if (slider.getSnapToTicks()) {
-                int upperValue = ((HeatMapSlider)slider).getValue(i);
+                int upperValue = ((HeatMapSlider) slider).getValue(i);
                 int snappedValue = upperValue;
                 int majorTickSpacing = slider.getMajorTickSpacing();
                 int minorTickSpacing = slider.getMinorTickSpacing();
@@ -131,7 +131,7 @@ class HeatMapSliderUI extends BasicSliderUI {
                     }
 
                     if (snappedValue != upperValue) {
-                        ((HeatMapSlider)slider).setValue(i, snappedValue - ((HeatMapSlider)slider).getValue(i));
+                        ((HeatMapSlider) slider).setValue(i, snappedValue - ((HeatMapSlider) slider).getValue(i));
                     }
                 }
             }
@@ -139,12 +139,12 @@ class HeatMapSliderUI extends BasicSliderUI {
             // Calculate upper thumb location.  The thumb is centered over its 
             // value on the track.
             if (slider.getOrientation() == JSlider.HORIZONTAL) {
-                int upperPosition = xPositionForValue(((HeatMapSlider)slider).getValue(i));
+                int upperPosition = xPositionForValue(((HeatMapSlider) slider).getValue(i));
                 // Set upper thumb size.
                 thumbsRect[i].x = upperPosition - (thumbsRect[i].width / 2);
                 thumbsRect[i].y = trackRect.y;
             } else {
-                int upperPosition = yPositionForValue(((HeatMapSlider)slider).getValue(i));
+                int upperPosition = yPositionForValue(((HeatMapSlider) slider).getValue(i));
                 thumbsRect[i].x = trackRect.x;
                 thumbsRect[i].y = upperPosition - (thumbsRect[i].height / 2);
             }
@@ -255,11 +255,9 @@ class HeatMapSliderUI extends BasicSliderUI {
         graphics2d.draw(track);
     }
 
-    
     /**
      * Overrides superclass method to do nothing. Thumb painting is handled
-     * within the
-     * <code>paint()</code> method.
+     * within the <code>paint()</code> method.
      */
     @Override
     public void paintThumb(Graphics g) {
@@ -396,7 +394,7 @@ class HeatMapSliderUI extends BasicSliderUI {
                     return;
                 }
             }
-            
+
             for (int i = 0; i < thumbsDragging.length; i++) {
                 thumbsDragging[i] = false;
             }
@@ -437,25 +435,26 @@ class HeatMapSliderUI extends BasicSliderUI {
          * value in the slider.
          */
         private void moveUpperThumb(int no) {
-            
+
             switch (slider.getOrientation()) {
                 case JSlider.VERTICAL:
                     int halfThumbHeight = thumbRect.height / 2;
                     int thumbTop = currentMouseY - offset;
-                    int thumbHeightMiddle = thumbTop + halfThumbHeight;;
-                    
-                    ((HeatMapSlider)slider).setValue(no, valueForYPosition(thumbHeightMiddle));
-                    setUpperThumbLocation(no, thumbRect.x, yPositionForValue(((HeatMapSlider)slider).getValue(no)));
-                    
+                    int thumbHeightMiddle = thumbTop + halfThumbHeight;
+                    ;
+
+                    ((HeatMapSlider) slider).setValue(no, valueForYPosition(thumbHeightMiddle));
+                    setUpperThumbLocation(no, thumbRect.x, yPositionForValue(((HeatMapSlider) slider).getValue(no)));
+
                     break;
 
                 case JSlider.HORIZONTAL:
                     int halfThumbWidth = thumbRect.width / 2;
                     int thumbLeft = currentMouseX - offset;
                     int thumbWidthMiddle = thumbLeft + halfThumbWidth;
-                    
-                    ((HeatMapSlider)slider).setValue(no, valueForXPosition(thumbWidthMiddle));
-                    setUpperThumbLocation(no, xPositionForValue(((HeatMapSlider)slider).getValue(no)), thumbRect.y);
+
+                    ((HeatMapSlider) slider).setValue(no, valueForXPosition(thumbWidthMiddle));
+                    setUpperThumbLocation(no, xPositionForValue(((HeatMapSlider) slider).getValue(no)), thumbRect.y);
                     break;
 
                 default:

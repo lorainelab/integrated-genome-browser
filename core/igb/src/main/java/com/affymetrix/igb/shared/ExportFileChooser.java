@@ -22,100 +22,100 @@ import javax.swing.filechooser.FileFilter;
  */
 public class ExportFileChooser extends JFileChooser {
 
-	private static final long serialVersionUID = 1L;
-	boolean accepted = false;
-	File previousFile;
-	FileFilter selectedFilter;
+    private static final long serialVersionUID = 1L;
+    boolean accepted = false;
+    File previousFile;
+    FileFilter selectedFilter;
 
-	public ExportFileChooser(File directory, File selectedFile, FileFilter selectedFilter, ExportDialog exportDialog) {
-		super(directory);
-		this.selectedFilter = selectedFilter;
-		setPreviousFile(selectedFile);
-		setAcceptAllFileFilterUsed(false);
-		init(exportDialog);
-	}
+    public ExportFileChooser(File directory, File selectedFile, FileFilter selectedFilter, ExportDialog exportDialog) {
+        super(directory);
+        this.selectedFilter = selectedFilter;
+        setPreviousFile(selectedFile);
+        setAcceptAllFileFilterUsed(false);
+        init(exportDialog);
+    }
 
-	@Override
-	public void approveSelection() {
-		accepted = true;
-		super.approveSelection();
-	}
+    @Override
+    public void approveSelection() {
+        accepted = true;
+        super.approveSelection();
+    }
 
-	public void setPreviousFile(File file) {
-		this.previousFile = file;
-		setSelectedFile(previousFile);
-	}
+    public void setPreviousFile(File file) {
+        this.previousFile = file;
+        setSelectedFile(previousFile);
+    }
 
-	public File getPreviousFile() {
-		return previousFile;
-	}
+    public File getPreviousFile() {
+        return previousFile;
+    }
 
-	@Override
-	public void cancelSelection() {
-		setSelectedFile(null);
-		super.cancelSelection();
-	}
+    @Override
+    public void cancelSelection() {
+        setSelectedFile(null);
+        super.cancelSelection();
+    }
 
-	@Override
-	protected JDialog createDialog(Component parent) throws HeadlessException {
-		JDialog dialog = super.createDialog(parent);
-		dialog.setLocation(300, 200);
-		dialog.setResizable(false);
-		dialog.addWindowListener(new WindowAdapter() {
+    @Override
+    protected JDialog createDialog(Component parent) throws HeadlessException {
+        JDialog dialog = super.createDialog(parent);
+        dialog.setLocation(300, 200);
+        dialog.setResizable(false);
+        dialog.addWindowListener(new WindowAdapter() {
 
-			@Override
-			public void windowClosing(WindowEvent e) {
-				if (!accepted) {
-					setSelectedFile(null);
-				}
-			}
-		});
-		return dialog;
-	}
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (!accepted) {
+                    setSelectedFile(null);
+                }
+            }
+        });
+        return dialog;
+    }
 
-	private void init(final ExportDialog exportDialog) {
-		
-		for (FileFilter fileFilter : exportDialog.getAllExportFileFilters()) {
-			addChoosableFileFilter(fileFilter);
-		}
-		
-		setFileFilter(selectedFilter);
+    private void init(final ExportDialog exportDialog) {
 
-		addPropertyChangeListener(new PropertyChangeListener() {
+        for (FileFilter fileFilter : exportDialog.getAllExportFileFilters()) {
+            addChoosableFileFilter(fileFilter);
+        }
 
-			public void propertyChange(PropertyChangeEvent e) {
-				String property = e.getPropertyName();
-				if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
+        setFileFilter(selectedFilter);
 
-					if (e.getOldValue() instanceof ExportFileFilter
-							&& e.getNewValue() instanceof ExportFileFilter) {
+        addPropertyChangeListener(new PropertyChangeListener() {
 
-						ExportFileFilter newFilter = (ExportFileFilter) e.getNewValue();
+            public void propertyChange(PropertyChangeEvent e) {
+                String property = e.getPropertyName();
+                if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
 
-						File currentDirectory = getCurrentDirectory();
-						File previousFile = getPreviousFile();
-						if (previousFile != null) {
+                    if (e.getOldValue() instanceof ExportFileFilter
+                            && e.getNewValue() instanceof ExportFileFilter) {
 
-							File file = null;
-							if (currentDirectory != null) {
-								file = new File(currentDirectory, previousFile.getName());
-							} else {
-								file = previousFile;
-							}
+                        ExportFileFilter newFilter = (ExportFileFilter) e.getNewValue();
 
-							final File selectedFile = exportDialog.changeFileExtension(
-									file, newFilter.getExtension());
-							SwingUtilities.invokeLater(new Runnable() {
+                        File currentDirectory = getCurrentDirectory();
+                        File previousFile = getPreviousFile();
+                        if (previousFile != null) {
 
-								public void run() {
-									setPreviousFile(selectedFile);
-									validate();
-								}
-							});
-						}
-					}
-				}
-			}
-		});
-	}
+                            File file = null;
+                            if (currentDirectory != null) {
+                                file = new File(currentDirectory, previousFile.getName());
+                            } else {
+                                file = previousFile;
+                            }
+
+                            final File selectedFile = exportDialog.changeFileExtension(
+                                    file, newFilter.getExtension());
+                            SwingUtilities.invokeLater(new Runnable() {
+
+                                public void run() {
+                                    setPreviousFile(selectedFile);
+                                    validate();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
 }

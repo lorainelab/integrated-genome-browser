@@ -1,4 +1,3 @@
-
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -24,73 +23,73 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  * @author hiralv
  */
 public class LoadResidueAction extends GenericAction {
-	private static final long serialVersionUID = 1L;
-	final SeqSpan span;
-	final boolean tryFull;
-	
-	public LoadResidueAction(final SeqSpan span, boolean tryFull){
-		super("Load Residue", null, null);
-		this.span = span;
-		this.tryFull = tryFull;
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		
-		// Hack for complete sequence
-		SeqSpan newSpan = span;
-		BioSeq seq = span.getBioSeq();
-		if(span.getMin() == seq.getMin() && span.getMax() == seq.getMax()){
-			newSpan = new SimpleSeqSpan(span.getMin(), span.getMax() - 1, seq);
-		}
-		
-		//Check if sequence is already loaded
-		if (!seq.isAvailable(newSpan)) {
-			boolean new_residue_loaded = false;
-			Application app = Application.getSingleton();
-			JFrame frame = (app == null) ? null : app.getFrame();
-			final JDialog dialog = new JDialog(frame, "Loading...");
-			JLabel message = new JLabel("Residues are being loaded please wait");
-			JProgressBar progressBar = new JProgressBar();
 
-			//progressBar.setMaximumSize(new Dimension(150, 5));
-			progressBar.setIndeterminate(true);
+    private static final long serialVersionUID = 1L;
+    final SeqSpan span;
+    final boolean tryFull;
 
-			Box box = Box.createVerticalBox();
-			box.add(Box.createGlue());
-			box.add(message);
-			box.add(progressBar);
+    public LoadResidueAction(final SeqSpan span, boolean tryFull) {
+        super("Load Residue", null, null);
+        this.span = span;
+        this.tryFull = tryFull;
+    }
 
-			dialog.getContentPane().add(box, "Center");
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
 
-			//dialog.setUndecorated(true);
-			dialog.setResizable(false);
-			dialog.validate();
-			dialog.pack();
+        // Hack for complete sequence
+        SeqSpan newSpan = span;
+        BioSeq seq = span.getBioSeq();
+        if (span.getMin() == seq.getMin() && span.getMax() == seq.getMax()) {
+            newSpan = new SimpleSeqSpan(span.getMin(), span.getMax() - 1, seq);
+        }
 
-			if (frame != null) {
-				dialog.setLocationRelativeTo(frame);
-			}
+        //Check if sequence is already loaded
+        if (!seq.isAvailable(newSpan)) {
+            boolean new_residue_loaded = false;
+            Application app = Application.getSingleton();
+            JFrame frame = (app == null) ? null : app.getFrame();
+            final JDialog dialog = new JDialog(frame, "Loading...");
+            JLabel message = new JLabel("Residues are being loaded please wait");
+            JProgressBar progressBar = new JProgressBar();
 
+            //progressBar.setMaximumSize(new Dimension(150, 5));
+            progressBar.setIndeterminate(true);
 
-			dialog.setVisible(true);
-			new_residue_loaded = GeneralLoadView.getLoadView().loadResidues(span, tryFull);
+            Box box = Box.createVerticalBox();
+            box.add(Box.createGlue());
+            box.add(message);
+            box.add(progressBar);
 
-			dialog.setVisible(false);
-			dialog.dispose();
-			
-			if (new_residue_loaded) {
-				ThreadUtils.runOnEventQueue(new Runnable() {
+            dialog.getContentPane().add(box, "Center");
 
-					public void run() {
-						final SeqMapView smv = IGB.getSingleton().getMapView();
-						smv.setAnnotatedSeq(span.getBioSeq(), true, true, true);
-					}
-				});
-			}
-		}
+            //dialog.setUndecorated(true);
+            dialog.setResizable(false);
+            dialog.validate();
+            dialog.pack();
 
-		actionDone();
-	}
+            if (frame != null) {
+                dialog.setLocationRelativeTo(frame);
+            }
+
+            dialog.setVisible(true);
+            new_residue_loaded = GeneralLoadView.getLoadView().loadResidues(span, tryFull);
+
+            dialog.setVisible(false);
+            dialog.dispose();
+
+            if (new_residue_loaded) {
+                ThreadUtils.runOnEventQueue(new Runnable() {
+
+                    public void run() {
+                        final SeqMapView smv = IGB.getSingleton().getMapView();
+                        smv.setAnnotatedSeq(span.getBioSeq(), true, true, true);
+                    }
+                });
+            }
+        }
+
+        actionDone();
+    }
 }

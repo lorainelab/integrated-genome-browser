@@ -16,25 +16,27 @@ import java.util.ArrayList;
  * @author jnicol
  */
 public final class SearchUtils {
-	/**
-	 * Due to disagreements between group ID search and BioSeq ID search, do both and combine their results.
-	 */
-	public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
 
-		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
-		if (search_props) {
-			if (chrFilter == null) {
-				group.searchProperties(syms, regex, -1);
-			} else {
-				chrFilter.searchProperties(syms, regex, -1);
-			}
-		} else {
-			if (chrFilter == null) {
-				group.search(syms, regex, -1);
-			} else {
-				chrFilter.search(syms, regex, -1);
-			}
-		}
+    /**
+     * Due to disagreements between group ID search and BioSeq ID search, do
+     * both and combine their results.
+     */
+    public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
+
+        Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
+        if (search_props) {
+            if (chrFilter == null) {
+                group.searchProperties(syms, regex, -1);
+            } else {
+                chrFilter.searchProperties(syms, regex, -1);
+            }
+        } else {
+            if (chrFilter == null) {
+                group.search(syms, regex, -1);
+            } else {
+                chrFilter.search(syms, regex, -1);
+            }
+        }
 
 //		List<BioSeq> chrs;
 //		if (chrFilter != null) {
@@ -61,111 +63,112 @@ public final class SearchUtils {
 //					break;
 //			}
 //		}
-		
-		return new ArrayList<SeqSymmetry>(syms);
-	}
+        return new ArrayList<SeqSymmetry>(syms);
+    }
 
-	/**
-	 * Recursively search for symmetries that match regex.
-	 * @param syms
-	 * @param sym
-	 * @param match
-	 */
-	private static void findIDsInSym(Set<SeqSymmetry> syms, SeqSymmetry sym, Matcher match) {
-		if (sym == null) {
-			return;
-		}
-		if (!(sym instanceof TypeContainerAnnot)) {
-			if (sym.getID() != null && match.reset(sym.getID()).matches()) {
-				syms.add(sym);	// ID matches
-				// If parent matches, then don't list children
-				return;
-			} else if (sym instanceof SymWithProps) {
-				String method = BioSeq.determineMethod(sym);
-				if (method != null && match.reset(method).matches()) {
-					syms.add(sym);	// method matches
-					// If parent matches, then don't list children
-					return;
-				}
-			}
-		}
-		int childCount = sym.getChildCount();
-		Thread current_thread = Thread.currentThread();
-		for (int i = 0; i < childCount; i++) {
-			if(current_thread.isInterrupted()) {
-				break;
-			}
-			
-			findIDsInSym(syms, sym.getChild(i), match);
-		}
-	}
+    /**
+     * Recursively search for symmetries that match regex.
+     *
+     * @param syms
+     * @param sym
+     * @param match
+     */
+    private static void findIDsInSym(Set<SeqSymmetry> syms, SeqSymmetry sym, Matcher match) {
+        if (sym == null) {
+            return;
+        }
+        if (!(sym instanceof TypeContainerAnnot)) {
+            if (sym.getID() != null && match.reset(sym.getID()).matches()) {
+                syms.add(sym);	// ID matches
+                // If parent matches, then don't list children
+                return;
+            } else if (sym instanceof SymWithProps) {
+                String method = BioSeq.determineMethod(sym);
+                if (method != null && match.reset(method).matches()) {
+                    syms.add(sym);	// method matches
+                    // If parent matches, then don't list children
+                    return;
+                }
+            }
+        }
+        int childCount = sym.getChildCount();
+        Thread current_thread = Thread.currentThread();
+        for (int i = 0; i < childCount; i++) {
+            if (current_thread.isInterrupted()) {
+                break;
+            }
 
-	public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
-		String[] props_to_search;
-		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
-		if (search_props) {
-			group.searchProperties(syms, regex, limit);
-			props_to_search = new String[]{"id", "gene name", "description"};
-		} else {
-			group.search(syms, regex, -1);
-			props_to_search = new String[]{"id"};
-		}
+            findIDsInSym(syms, sym.getChild(i), match);
+        }
+    }
 
-		final Matcher matcher = regex.matcher("");
-		Set<String> results = new HashSet<String>(limit);
-		SymWithProps swp;
-		String match;
-		Object value;
-		for (SeqSymmetry seq : syms) {
-			if (seq instanceof SymWithProps) {
-				swp = (SymWithProps) seq;
+    public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
+        String[] props_to_search;
+        Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
+        if (search_props) {
+            group.searchProperties(syms, regex, limit);
+            props_to_search = new String[]{"id", "gene name", "description"};
+        } else {
+            group.search(syms, regex, -1);
+            props_to_search = new String[]{"id"};
+        }
 
-				// Iterate through each properties.
-				for (String prop : props_to_search) {
-					value = swp.getProperty(prop);
-					if (value != null) {
-						match = value.toString();
-						matcher.reset(match);
-						if (matcher.matches()) {
-							results.add(match);
-						}
-					}
-				}
-			}
-		}
-		
-		return results;
-	}
-		
-	/**
-	 * Binary search that either looks for the exact key or the closest key
-	 * @param list, list to search
-	 * @param key, key to search
-	 * @param compare, Comparator to compare key and list values
-	 * @return key position
-	 */
-	public static <T> int binarySearch(List<T> list, T key, Comparator<T> compare) {
-		int low, high, med, c;
-		T temp;
-		high = list.size();
-		low = 0;
-		med = (high + low) / 2;
+        final Matcher matcher = regex.matcher("");
+        Set<String> results = new HashSet<String>(limit);
+        SymWithProps swp;
+        String match;
+        Object value;
+        for (SeqSymmetry seq : syms) {
+            if (seq instanceof SymWithProps) {
+                swp = (SymWithProps) seq;
 
-		while (high != low+1) {
-			temp = list.get(med);
-			c = compare.compare(temp, key);
+                // Iterate through each properties.
+                for (String prop : props_to_search) {
+                    value = swp.getProperty(prop);
+                    if (value != null) {
+                        match = value.toString();
+                        matcher.reset(match);
+                        if (matcher.matches()) {
+                            results.add(match);
+                        }
+                    }
+                }
+            }
+        }
 
-			if (c == 0) {
-				return med;
-			} else if (c < 0){
-				low = med;
-			}else{
-				high = med;
-			}
-			
-			med = (high + low) / 2;
-		}
+        return results;
+    }
 
-		return med;	
-	}
+    /**
+     * Binary search that either looks for the exact key or the closest key
+     *
+     * @param list, list to search
+     * @param key, key to search
+     * @param compare, Comparator to compare key and list values
+     * @return key position
+     */
+    public static <T> int binarySearch(List<T> list, T key, Comparator<T> compare) {
+        int low, high, med, c;
+        T temp;
+        high = list.size();
+        low = 0;
+        med = (high + low) / 2;
+
+        while (high != low + 1) {
+            temp = list.get(med);
+            c = compare.compare(temp, key);
+
+            if (c == 0) {
+                return med;
+            } else if (c < 0) {
+                low = med;
+            } else {
+                high = med;
+            }
+
+            med = (high + low) / 2;
+        }
+
+        return med;
+    }
 }

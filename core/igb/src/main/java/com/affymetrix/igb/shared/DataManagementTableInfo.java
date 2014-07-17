@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -17,11 +16,11 @@ import java.util.List;
  */
 public class DataManagementTableInfo {
 
-	public static List<String> getDataManagementTableTrackNames() {
-		ImmutableList.Builder<String> builder = new ImmutableList.Builder<String>();
-		for (VirtualFeature vFeature : GeneralLoadView.getLoadView().getTableModel().virtualFeatures) {
-			builder.add(vFeature.getFeature().featureName);
-		}
-		return builder.build();
-	}
+    public static List<String> getDataManagementTableTrackNames() {
+        ImmutableList.Builder<String> builder = new ImmutableList.Builder<String>();
+        for (VirtualFeature vFeature : GeneralLoadView.getLoadView().getTableModel().virtualFeatures) {
+            builder.add(vFeature.getFeature().featureName);
+        }
+        return builder.build();
+    }
 }

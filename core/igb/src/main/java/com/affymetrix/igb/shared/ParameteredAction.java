@@ -1,4 +1,3 @@
-
 package com.affymetrix.igb.shared;
 
 /**
@@ -6,5 +5,6 @@ package com.affymetrix.igb.shared;
  * @author hiralv
  */
 public interface ParameteredAction {
-	public void performAction(Object... parameters);
+
+    public void performAction(Object... parameters);
 }

@@ -1,13 +1,12 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 /**
  *

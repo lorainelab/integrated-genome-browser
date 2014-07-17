@@ -9,8 +9,12 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.style.DynamicStyleHeatMap;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -18,21 +22,30 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
+import static com.affymetrix.igb.shared.Selections.allGlyphs;
+import static com.affymetrix.igb.shared.Selections.allStyles;
+import static com.affymetrix.igb.shared.Selections.annotStyles;
+import static com.affymetrix.igb.shared.Selections.graphStates;
+import static com.affymetrix.igb.shared.Selections.isAllAnnot;
+import static com.affymetrix.igb.shared.Selections.isAllGraph;
+import static com.affymetrix.igb.shared.Selections.isAllGraphStyleLocked;
+import static com.affymetrix.igb.shared.Selections.isAllSupportTwoTrack;
+import static com.affymetrix.igb.shared.Selections.isAnyFloat;
+import static com.affymetrix.igb.shared.Selections.isAnyJoined;
+import static com.affymetrix.igb.shared.Selections.isOneJoined;
 import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.genometryImpl.style.DynamicStyleHeatMap;
-
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-
 import com.jidesoft.combobox.ColorComboBox;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.util.*;
-import javax.swing.*;
-
-import static com.affymetrix.igb.shared.Selections.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  * For Panels that update the Track styles (as opposed to the track style

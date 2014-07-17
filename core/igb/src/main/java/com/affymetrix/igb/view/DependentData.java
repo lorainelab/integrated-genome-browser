@@ -9,10 +9,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-
 import java.util.ArrayList;
 import java.util.List;
 

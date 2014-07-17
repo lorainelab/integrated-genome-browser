@@ -1,5 +1,11 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.weblink.WebLink;
+import com.affymetrix.genometryImpl.weblink.WebLinkList;
+import com.affymetrix.igb.parsers.XmlPrefsParser;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,14 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.PatternSyntaxException;
 import org.w3c.dom.Element;
-
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.weblink.WebLinkList;
-import com.affymetrix.genometryImpl.weblink.WebLink;
-
-import com.affymetrix.igb.parsers.XmlPrefsParser;
 
 /**
  *

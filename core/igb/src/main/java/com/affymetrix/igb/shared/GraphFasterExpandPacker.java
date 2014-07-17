@@ -1,10 +1,9 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Rectangle;
-import java.util.Collections;
-
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.Rectangle;
+import java.util.Collections;
 
 /**
  *

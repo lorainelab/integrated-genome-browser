@@ -1,9 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.IParameters;
@@ -22,7 +18,10 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class TrackUtils {
 

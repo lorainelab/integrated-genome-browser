@@ -1,15 +1,13 @@
 package com.affymetrix.igb.shared;
 
+import cern.colt.list.DoubleArrayList;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.widget.tieredmap.CollapsedTierPacker;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import cern.colt.list.DoubleArrayList;
-
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.tieredmap.CollapsedTierPacker;
 
 public final class CollapsePacker extends CollapsedTierPacker {
 

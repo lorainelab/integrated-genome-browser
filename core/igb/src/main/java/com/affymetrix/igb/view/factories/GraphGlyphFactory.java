@@ -1,9 +1,5 @@
 package com.affymetrix.igb.view.factories;
 
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -14,9 +10,21 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.igb.graphTypes.*;
-import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.graphTypes.DotGraphType;
+import com.affymetrix.igb.graphTypes.EmptyBarGraphType;
+import com.affymetrix.igb.graphTypes.FillBarGraphType;
+import com.affymetrix.igb.graphTypes.HeatMapGraphType;
+import com.affymetrix.igb.graphTypes.LineGraphType;
+import com.affymetrix.igb.graphTypes.MinMaxAvgGraphType;
+import com.affymetrix.igb.graphTypes.StairStepGraphType;
+import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.TierGlyph;
 import java.util.EnumMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 

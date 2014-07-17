@@ -1,15 +1,14 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.BitSet;
-
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.util.BitSet;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  *

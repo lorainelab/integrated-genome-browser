@@ -9,33 +9,39 @@
  */
 package com.affymetrix.igb.view;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 import cern.colt.list.IntArrayList;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-
-import com.affymetrix.igb.swing.JRPCheckBox;
-import com.affymetrix.igb.swing.JRPSlider;
-import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
-
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.view.factories.TransformTierGlyph;
+import com.affymetrix.igb.swing.JRPCheckBox;
+import com.affymetrix.igb.swing.JRPSlider;
+import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.

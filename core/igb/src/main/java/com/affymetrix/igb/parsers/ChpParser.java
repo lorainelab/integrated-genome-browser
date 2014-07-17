@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb.parsers;
 
-import java.io.*;
-import java.util.*;
 import affymetrix.calvin.data.CHPTilingEntry;
 import affymetrix.calvin.data.ProbeSetQuantificationData;
 import affymetrix.calvin.data.ProbeSetQuantificationDetectionData;
@@ -28,12 +26,17 @@ import affymetrix.fusion.chp.FusionCHPQuantificationData;
 import affymetrix.fusion.chp.FusionCHPQuantificationDetectionData;
 import affymetrix.fusion.chp.FusionCHPTilingData;
 import affymetrix.fusion.chp.FusionExpressionProbeSetResults;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
+import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
+import com.affymetrix.genometryImpl.das2.Das2Region;
+import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -42,15 +45,20 @@ import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genometryImpl.das2.Das2Region;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.genometry.LazyChpSym;
-import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
-import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class ChpParser {
 

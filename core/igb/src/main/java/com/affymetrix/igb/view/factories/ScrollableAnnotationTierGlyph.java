@@ -7,11 +7,24 @@ import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-import com.affymetrix.igb.shared.*;
-import java.awt.*;
+import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.shared.FasterExpandPacker;
+import com.affymetrix.igb.shared.ITransformableTierGlyph;
+import com.affymetrix.igb.shared.ScrollableFasterExpandPacker;
+import com.affymetrix.igb.shared.TierGlyph;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.*;
 
 /**
  * copy / modification of TierGlyph for ViewModeGlyph for annotations

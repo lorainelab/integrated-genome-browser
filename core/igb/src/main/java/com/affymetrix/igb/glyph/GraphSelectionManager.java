@@ -9,16 +9,8 @@
  */
 package com.affymetrix.igb.glyph;
 
-import java.awt.Component;
-import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.util.*;
-
-import javax.swing.*;
-
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -26,14 +18,22 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
+import javax.swing.JPopupMenu;
 
 /**
  * This class provides a popup menu for a SeqMapView to allow certain graph

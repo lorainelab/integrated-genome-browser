@@ -13,10 +13,10 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.List;

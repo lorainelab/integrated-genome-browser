@@ -1,11 +1,10 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genoviz.util.ErrorHandler;
 
 /**
  *

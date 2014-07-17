@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.view;
 
-import java.awt.event.*;
-import java.util.List;
-
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 /**
  * A class to handle generic resizing of Glyphs (border between Glyphs)

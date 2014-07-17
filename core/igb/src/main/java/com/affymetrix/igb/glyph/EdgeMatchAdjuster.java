@@ -12,15 +12,33 @@
  */
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.swing.JRPTextField;
+import com.affymetrix.igb.util.ColorUtils;
+import com.affymetrix.igb.view.SeqMapView;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Window;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;

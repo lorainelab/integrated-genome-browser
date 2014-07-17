@@ -10,23 +10,22 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-
-import java.util.logging.Logger;
-import java.net.MalformedURLException;
-import java.util.logging.Level;
-
-import com.affymetrix.igb.shared.FileTracker;
-import javax.swing.JFileChooser;
-import java.awt.HeadlessException;
-import java.awt.Component;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
-import javax.swing.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 

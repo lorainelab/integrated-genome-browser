@@ -13,14 +13,16 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Stylesheet implements Cloneable, XmlAppender {

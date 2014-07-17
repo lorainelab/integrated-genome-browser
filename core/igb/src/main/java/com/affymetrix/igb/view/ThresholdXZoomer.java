@@ -1,5 +1,12 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.swing.RPAdjustableJSlider;
+import com.affymetrix.igb.util.ThresholdReader;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,15 +14,6 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.swing.RPAdjustableJSlider;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.util.ThresholdReader;
-
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *

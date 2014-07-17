@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;

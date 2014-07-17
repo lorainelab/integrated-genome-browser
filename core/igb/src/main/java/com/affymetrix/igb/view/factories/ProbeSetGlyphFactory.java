@@ -1,10 +1,5 @@
 package com.affymetrix.igb.view.factories;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -14,9 +9,23 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.igb.shared.*;
+import com.affymetrix.genoviz.glyph.DirectedGlyph;
+import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
+import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
+import com.affymetrix.genoviz.glyph.EfficientOutlineContGlyph;
+import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.LineContainerGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
+import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

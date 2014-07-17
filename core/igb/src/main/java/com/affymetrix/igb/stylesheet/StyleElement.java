@@ -14,10 +14,13 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-//import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 class StyleElement implements DrawableElement {

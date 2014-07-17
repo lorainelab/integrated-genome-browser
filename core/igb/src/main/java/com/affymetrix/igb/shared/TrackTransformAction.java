@@ -1,9 +1,8 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.operator.Operator;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.affymetrix.genometryImpl.operator.Operator;
 
 public class TrackTransformAction extends TrackFunctionOperationA {
 

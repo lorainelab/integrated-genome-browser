@@ -1,5 +1,7 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -9,9 +11,6 @@ import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
-
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.jidesoft.combobox.ColorComboBox;
 /**
  *
  * @version $Id: ColorUtils.java 8371 2011-06-29 19:55:31Z dcnorris $

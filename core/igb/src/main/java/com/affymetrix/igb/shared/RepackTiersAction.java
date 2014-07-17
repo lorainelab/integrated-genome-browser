@@ -1,14 +1,12 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.AbstractAction;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.AbstractAction;
 
 /**
  * note - this class contains an instance of SeqMapView. For now, there is just

@@ -21,8 +21,6 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;

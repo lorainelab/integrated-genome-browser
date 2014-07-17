@@ -16,7 +16,7 @@ package com.affymetrix.igb.glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.widget.NeoMap;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**

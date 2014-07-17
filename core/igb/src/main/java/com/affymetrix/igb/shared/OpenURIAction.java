@@ -9,28 +9,26 @@
  */
 package com.affymetrix.igb.shared;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
-import java.net.URI;
-import javax.swing.JOptionPane;
-
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.igb.swing.ScriptManager;
-import com.affymetrix.igb.swing.ScriptProcessorHolder;
-
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.action.RunScriptAction;
-import com.affymetrix.igb.IGBServiceImpl;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.ScriptProcessorHolder;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.JOptionPane;
 
 public class OpenURIAction extends SeqMapViewActionA {
 

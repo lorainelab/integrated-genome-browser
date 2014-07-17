@@ -1,15 +1,14 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.prefs.BackingStoreException;
-
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.util.logging.Level;
+import java.util.prefs.BackingStoreException;
 
 /**
  * Used to cache info on current directory.

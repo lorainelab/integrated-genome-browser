@@ -1,7 +1,5 @@
 package com.affymetrix.igb.glyph;
 
-import java.awt.Graphics;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -11,6 +9,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import java.awt.Graphics;
 
 /**
  * An arrow glyph.

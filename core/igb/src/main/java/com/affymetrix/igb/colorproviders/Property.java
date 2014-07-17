@@ -1,13 +1,12 @@
 package com.affymetrix.igb.colorproviders;
 
-import java.awt.Color;
-
 import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.general.BoundedParameter;
 import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.igb.IGBConstants;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 

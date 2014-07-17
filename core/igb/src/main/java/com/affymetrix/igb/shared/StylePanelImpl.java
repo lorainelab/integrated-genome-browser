@@ -1,15 +1,14 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Color;
-import java.util.List;
-import javax.swing.JComboBox;
-import com.jidesoft.combobox.ColorComboBox;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.jidesoft.combobox.ColorComboBox;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.JComboBox;
 
 public abstract class StylePanelImpl extends StylePanel implements Selections.RefreshSelectionListener {
 

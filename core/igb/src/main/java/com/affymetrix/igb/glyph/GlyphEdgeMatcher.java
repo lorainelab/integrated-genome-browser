@@ -9,9 +9,6 @@
  */
 package com.affymetrix.igb.glyph;
 
-import java.awt.Color;
-import java.awt.geom.Rectangle2D;
-import java.util.List;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
@@ -19,7 +16,10 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CodonGlyph;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class GlyphEdgeMatcher {
 

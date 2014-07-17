@@ -1,13 +1,12 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import java.awt.event.ActionEvent;
-import java.util.Map;
-
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.SeqMapViewActionA;
+import java.awt.event.ActionEvent;
 import java.util.EnumMap;
+import java.util.Map;
 
 public class SelectAllAction extends SeqMapViewActionA {
 

@@ -1,20 +1,18 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
-import java.util.logging.Logger;
-
-import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
-import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

@@ -2,7 +2,24 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.action.*;
+import com.affymetrix.igb.action.ChangeBackgroundColorAction;
+import com.affymetrix.igb.action.ChangeExpandMaxAction;
+import com.affymetrix.igb.action.ChangeForegroundColorAction;
+import com.affymetrix.igb.action.ChangeForwardColorAction;
+import com.affymetrix.igb.action.ChangeLabelColorAction;
+import com.affymetrix.igb.action.ChangeReverseColorAction;
+import com.affymetrix.igb.action.ChangeTierHeightAction;
+import com.affymetrix.igb.action.FloatTiersAction;
+import com.affymetrix.igb.action.LabelGlyphAction;
+import com.affymetrix.igb.action.RenameTierAction;
+import com.affymetrix.igb.action.SetDirectionStyleArrowAction;
+import com.affymetrix.igb.action.SetDirectionStyleColorAction;
+import com.affymetrix.igb.action.ShowOneTierAction;
+import com.affymetrix.igb.action.ShowTwoTiersAction;
+import com.affymetrix.igb.action.TierFontSizeAction;
+import com.affymetrix.igb.action.UnFloatTiersAction;
+import com.affymetrix.igb.action.UnsetDirectionStyleArrowAction;
+import com.affymetrix.igb.action.UnsetDirectionStyleColorAction;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 

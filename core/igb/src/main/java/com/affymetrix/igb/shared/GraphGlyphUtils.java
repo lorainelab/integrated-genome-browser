@@ -12,7 +12,6 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
-
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Arrays;

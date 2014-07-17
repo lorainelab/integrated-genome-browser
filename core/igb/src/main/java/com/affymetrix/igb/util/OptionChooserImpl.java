@@ -2,11 +2,10 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.shared.OpenURIAction;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @author hiralv

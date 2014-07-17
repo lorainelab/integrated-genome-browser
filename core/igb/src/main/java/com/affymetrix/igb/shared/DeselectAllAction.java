@@ -1,9 +1,8 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.event.ActionEvent;
-
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.SeqMapViewActionA;
+import java.awt.event.ActionEvent;
 
 public class DeselectAllAction extends SeqMapViewActionA {
 

@@ -1,5 +1,12 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometryImpl.symmetry.CdsSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.weblink.WebLink;
+import com.affymetrix.igb.prefs.WebLinkUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -9,15 +16,6 @@ import java.util.Map;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.symmetry.CdsSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.weblink.WebLink;
-
-import com.affymetrix.igb.prefs.WebLinkUtils;
 
 final class LinkControl implements ContextualPopupListener {
 

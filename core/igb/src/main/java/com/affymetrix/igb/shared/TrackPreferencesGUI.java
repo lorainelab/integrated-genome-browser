@@ -5,16 +5,18 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.NumericFilter;
+import static com.affymetrix.igb.shared.Selections.allStyles;
+import static com.affymetrix.igb.shared.Selections.annotStyles;
+import static com.affymetrix.igb.shared.Selections.graphStates;
+import com.affymetrix.igb.swing.JRPTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JRadioButton;
-import static com.affymetrix.igb.shared.Selections.*;
 import javax.swing.text.AbstractDocument;
 
 /**

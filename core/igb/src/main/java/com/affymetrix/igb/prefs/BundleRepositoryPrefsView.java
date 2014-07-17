@@ -13,9 +13,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.util.ServerTypeI;
-import javax.swing.GroupLayout.Group;
-
 import com.affymetrix.igb.general.ServerList;
+import javax.swing.GroupLayout.Group;
 
 public class BundleRepositoryPrefsView extends ServerPrefsView {
 

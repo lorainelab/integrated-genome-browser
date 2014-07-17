@@ -1,13 +1,12 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.swing.JRPFileChooser;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import javax.swing.JDialog;
-
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.swing.JRPFileChooser;
 
 /** A JFileChooser that has a checkbox for whether you want to merge annotations.
  *  Note that an alternative way of adding a checkbox to a JFileChooser

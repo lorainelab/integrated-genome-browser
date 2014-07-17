@@ -2,13 +2,13 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.geom.Rectangle2D.Double;
 import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
-
-import java.util.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpandPacker extends ExpandedTierPacker {
 

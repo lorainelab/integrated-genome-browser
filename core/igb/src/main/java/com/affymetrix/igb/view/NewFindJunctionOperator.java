@@ -4,32 +4,29 @@
  */
 package com.affymetrix.igb.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.ChildThresholdFilter;
-import com.affymetrix.genometryImpl.filter.WithIntronFilter;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.filter.UniqueLocationFilter;
+import com.affymetrix.genometryImpl.filter.WithIntronFilter;
 import com.affymetrix.genometryImpl.general.IParameters;
+import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.Operator.Style;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-
-import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class NewFindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 

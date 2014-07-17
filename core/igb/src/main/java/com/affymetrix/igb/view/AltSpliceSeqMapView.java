@@ -1,13 +1,5 @@
 package com.affymetrix.igb.view;
 
-import java.awt.Adjustable;
-import java.awt.Component;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingWorker;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -23,10 +15,17 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.tiers.TrackStyle;
+import java.awt.Adjustable;
+import java.awt.Component;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingWorker;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;

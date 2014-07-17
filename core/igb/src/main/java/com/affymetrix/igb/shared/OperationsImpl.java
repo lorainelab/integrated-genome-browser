@@ -1,40 +1,39 @@
 package com.affymetrix.igb.shared;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeSet;
+import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.general.IParameters;
+import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.util.IDComparator;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.NumericFilter;
+import com.affymetrix.igb.IGBConstants;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
+import static com.affymetrix.igb.shared.Selections.isAllRootSeqSymmetrySame;
+import static com.affymetrix.igb.shared.Selections.rootSyms;
+import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
-
-import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.general.IParameters;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.util.IDComparator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.swing.NumericFilter;
-
-import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
-
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.osgi.service.IGBService;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import static com.affymetrix.igb.shared.Selections.*;
 
 public class OperationsImpl extends Operations implements RefreshSelectionListener {
 

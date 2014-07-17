@@ -13,13 +13,14 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.Font;
-import java.util.prefs.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 public final class UnibrowHairline {
 

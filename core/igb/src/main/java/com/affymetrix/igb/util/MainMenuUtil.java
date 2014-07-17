@@ -1,27 +1,53 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.shared.LoadURLAction;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.ReportBugAction;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.IGBConstants;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.action.AboutIGBAction;
+import com.affymetrix.igb.action.AutoLoadThresholdAction;
+import com.affymetrix.igb.action.CancelScriptAction;
+import com.affymetrix.igb.action.ClampViewAction;
+import com.affymetrix.igb.action.ClearVisualTools;
+import com.affymetrix.igb.action.ConfigureScrollAction;
+import com.affymetrix.igb.action.CopyResiduesAction;
+import com.affymetrix.igb.action.DocumentationAction;
+import com.affymetrix.igb.action.DrawCollapseControlAction;
+import com.affymetrix.igb.action.ExitAction;
+import com.affymetrix.igb.action.ExportFileAction;
+import com.affymetrix.igb.action.ExportImageAction;
+import com.affymetrix.igb.action.IGBSupportAction;
+import com.affymetrix.igb.action.LoadFileAction;
+import com.affymetrix.igb.action.NewGenomeAction;
+import com.affymetrix.igb.action.PreferencesAction;
+import com.affymetrix.igb.action.RemoveFeatureAction;
+import com.affymetrix.igb.action.RunScriptAction;
+import com.affymetrix.igb.action.ShowAllVisualToolsAction;
+import com.affymetrix.igb.action.ShowConsoleAction;
+import com.affymetrix.igb.action.ShowFilterMarkAction;
+import com.affymetrix.igb.action.ShowFullFilePathInTrack;
+import com.affymetrix.igb.action.ShowIGBTrackMarkAction;
+import com.affymetrix.igb.action.ShowLockedTrackIconAction;
+import com.affymetrix.igb.action.StartAutoScrollAction;
+import com.affymetrix.igb.action.StopAutoScrollAction;
+import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
+import com.affymetrix.igb.action.ToggleHairlineAction;
+import com.affymetrix.igb.action.ToggleHairlineLabelAction;
+import com.affymetrix.igb.action.ToggleToolTipAction;
+import com.affymetrix.igb.action.WebLinksAction;
+import com.affymetrix.igb.shared.DeselectAllAction;
+import com.affymetrix.igb.shared.LoadURLAction;
+import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.shared.DeselectAllAction;
-import com.affymetrix.igb.shared.SelectAllAction;
-
+import com.affymetrix.igb.swing.MenuUtil;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 

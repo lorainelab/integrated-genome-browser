@@ -14,7 +14,11 @@
 package com.affymetrix.igb.stylesheet;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  *  A cascading implementation of the Java Map class that also implements

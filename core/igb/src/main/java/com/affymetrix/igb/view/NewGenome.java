@@ -1,5 +1,13 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.shared.OpenURIAction;
+import com.affymetrix.igb.swing.JRPFileChooser;
+import com.jidesoft.hints.ListDataIntelliHints;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -9,15 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
-
-import com.jidesoft.hints.ListDataIntelliHints;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.igb.swing.JRPFileChooser;
-import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.OpenURIAction;
 
 /**
  *

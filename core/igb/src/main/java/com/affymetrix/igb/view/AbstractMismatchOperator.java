@@ -1,8 +1,6 @@
 
 package com.affymetrix.igb.view;
 
-import java.util.List;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
@@ -11,8 +9,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
-
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.util.List;
 
 /**
  *

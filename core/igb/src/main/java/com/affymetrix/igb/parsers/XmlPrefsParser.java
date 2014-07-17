@@ -12,6 +12,11 @@
  */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.igb.general.ServerList.RepositoryElementHandler;
+import com.affymetrix.igb.general.ServerList.ServerElementHandler;
+import com.affymetrix.igb.prefs.WebLinkUtils.WeblinkElementHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -24,13 +29,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-
-import com.affymetrix.igb.prefs.WebLinkUtils.WeblinkElementHandler;
-import com.affymetrix.igb.general.ServerList.RepositoryElementHandler;
-import com.affymetrix.igb.general.ServerList.ServerElementHandler;
 
 /**
  *Class for parsing preferences for IGB.

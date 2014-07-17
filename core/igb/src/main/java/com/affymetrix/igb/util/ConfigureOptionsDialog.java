@@ -1,8 +1,8 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.general.NewInstance;
+import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;

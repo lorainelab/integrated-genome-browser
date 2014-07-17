@@ -1,11 +1,12 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.igb.action.TierHeightAction;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
-
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import static com.affymetrix.igb.shared.Selections.*;
+import com.affymetrix.igb.action.TierHeightAction;
+import static com.affymetrix.igb.shared.Selections.allGlyphs;
+import static com.affymetrix.igb.shared.Selections.isAllButOneLocked;
+import static com.affymetrix.igb.shared.Selections.isAnyLockable;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 
 /**
  *

@@ -1,11 +1,28 @@
 package com.affymetrix.igb.util;
 
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.im.InputContext;
-import java.io.*;
-import javax.swing.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import javax.swing.DropMode;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JPasswordField;
+import javax.swing.TransferHandler;
 import javax.swing.plaf.UIResource;
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
+import javax.swing.text.EditorKit;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
 
 /**
  * Taken from javax.swing.plaf.basic.BasicTextUI.TextTransferHandler

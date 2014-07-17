@@ -1,20 +1,25 @@
 package com.affymetrix.igb.view.factories;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.IndexedSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-
-import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *

@@ -9,24 +9,30 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
-
+import com.affymetrix.igb.shared.IPrefEditorComponent;
+import com.affymetrix.igb.swing.MenuUtil;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Rectangle;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 public final class PreferencesPanel extends JPanel {
 

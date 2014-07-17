@@ -11,14 +11,20 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.RangeSlider;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.swing.JRPRadioButton;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -31,7 +37,6 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.AbstractDocument;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public final class GraphVisibleBoundsSetter extends JPanel
         implements ChangeListener, ActionListener, FocusListener {

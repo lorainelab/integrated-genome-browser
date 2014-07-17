@@ -1,10 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.Arrays;
-import java.util.BitSet;
-
 import com.affymetrix.genometryImpl.AminoAcid;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
@@ -16,6 +11,10 @@ import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.ColorUtils;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.Arrays;
+import java.util.BitSet;
 
 public class CodonGlyph extends AbstractAlignedTextGlyph {
 

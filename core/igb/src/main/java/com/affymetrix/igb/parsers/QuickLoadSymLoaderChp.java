@@ -1,21 +1,20 @@
 package com.affymetrix.igb.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This is an extension of the QuickLoadSymLoader class, specifically for chp files.

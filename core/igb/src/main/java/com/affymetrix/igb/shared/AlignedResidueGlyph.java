@@ -10,7 +10,6 @@ import java.util.BitSet;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.Color;
 
 /**
  *
@@ -69,10 +68,11 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
         int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
         float alpha;
         for (int j = 0; j < charArray.length; j++) {
-            if (useBaseQuality) {
-                g.setComposite(dac);
-                if (getShowMask() && residueMask != null && !residueMask.get(j)) {
+
+            if (getShowMask() && residueMask != null && !residueMask.get(j)) {
+                if (useBaseQuality) {
                     alpha = 1.0f - getAlpha(quals[j]);
+
                     if (alpha < 1.0f) {
                         AlphaComposite ac = alphaCompositeCache.get(alpha);
                         if (ac == null) {
@@ -85,7 +85,12 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
                     int offset = (int) (j * pixelsPerBase);
                     //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
                     g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
+                    g.setComposite(dac);
                 }
+                continue;	// skip drawing of this residue
+            }
+
+            if (useBaseQuality) {
                 g.setColor(this.getBackgroundColor());
                 int offset = (int) (j * pixelsPerBase);
                 //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
@@ -102,13 +107,18 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
                     g.setComposite(ac);
                 }
             }
+
             g.setColor(helper.determineResidueColor(charArray[j]));
-            //Create a colored rectangle.
+
+			//Create a colored rectangle.
             //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
             int offset = (int) (j * pixelsPerBase);
             //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
             g.fillRect(getPixelBox().x + offset, getPixelBox().y, intPixelsPerBase, getPixelBox().height);
 
+            if (useBaseQuality) {
+                g.setComposite(dac);
+            }
         }
 
         if (useBaseQuality) {

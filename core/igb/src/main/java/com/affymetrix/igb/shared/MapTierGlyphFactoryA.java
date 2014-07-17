@@ -131,6 +131,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 
     }
 
+    //Determines residue mismatches
     private static BitSet getResidueMask(String residues, String mask) {
         if (residues != null && mask != null) {
             BitSet residueMask = new BitSet();

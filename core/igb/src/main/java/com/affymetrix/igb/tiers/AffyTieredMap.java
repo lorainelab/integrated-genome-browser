@@ -56,11 +56,11 @@ public class AffyTieredMap extends NeoMap {
     private final List<TierGlyph> tiers = new CopyOnWriteArrayList<TierGlyph>();
     private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 
-	// the total pixel height of visible fixed pixel tiers
+    // the total pixel height of visible fixed pixel tiers
     //    (recalculated with every packTiers() call)
     protected int fixed_pixel_height;
 
-	// the total coord height of visible fixed coord tiers
+    // the total coord height of visible fixed coord tiers
     //    (any visible tier that is NOT a fixed pixel tier)
     //    (recalculated with every packTiers() call)
     protected double fixed_coord_height;
@@ -74,7 +74,7 @@ public class AffyTieredMap extends NeoMap {
      * so I have to fake it.
      */
     public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
-	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
+    // public static final String SELECTED_KEY = Action.SELECTED_KEY;
 
     public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
         super(hscroll, vscroll, orient, new LinearTransform());
@@ -157,7 +157,7 @@ public class AffyTieredMap extends NeoMap {
 
     @Override
     public void repack() {
-		// WARNING
+        // WARNING
         // currently _ONLY_ tiers and glyphs placed in tiers will be repacked --
         // anything added directly to map other than tiers will need to
         // be dealt with manually
@@ -205,7 +205,7 @@ public class AffyTieredMap extends NeoMap {
         }
 
         Rectangle2D.Double mbox = getCoordBounds();
-		// assuming all tiers start anchored at 0 when being packed...
+        // assuming all tiers start anchored at 0 when being packed...
         //   if want to add anchor location stuff back in, refer to
         //   com.affymetrix.genoviz. widget. TieredNeoMap
         double offset = 0;
@@ -236,7 +236,7 @@ public class AffyTieredMap extends NeoMap {
 //				}
             }
             height = mtg.getCoordBox().height;
-			// need to call moveAbsolute to trigger recursive move of
+            // need to call moveAbsolute to trigger recursive move of
             //   all children
             mtg.moveAbsolute(mtg.getCoordBox().x, offset);
             offset += height;
@@ -432,7 +432,7 @@ public class AffyTieredMap extends NeoMap {
                 || Double.isNaN(zoom_scale)) {
             return;
         }
-		// should be able to replace many variables calculation here with
+        // should be able to replace many variables calculation here with
         //    access to view coordbox fields...
         Rectangle2D.Double prev_view_coords = view.calcCoordBox();
         double prev_pixels_per_coord = pixels_per_coord[id]; // should be same as trans.getScale()
@@ -446,7 +446,7 @@ public class AffyTieredMap extends NeoMap {
         double coord_beg, coord_end, coord_size;
         double fixed_coord, fixed_pixel;
 
-		// assuming modifying Y
+        // assuming modifying Y
         // assume zoom constraint is always to hold middle of previous view constant...
         if (zoom_behavior[id] == CONSTRAIN_MIDDLE) {
             fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
@@ -472,7 +472,7 @@ public class AffyTieredMap extends NeoMap {
         double first_coord_displayed = -coord_offset;
         double last_coord_displayed = first_coord_displayed + visible_coords;
 
-		// modifying view's transform so that scale-dependent packing occurs
+        // modifying view's transform so that scale-dependent packing occurs
         // AS IF zoom had already occurred
         // (not sure what this will mean for offset-dependent packing [though
         //   offset is set here, it may change later to trim view to scene] --
@@ -482,7 +482,7 @@ public class AffyTieredMap extends NeoMap {
         //   pack down from 0, so that scene starts at 0 and ends at (y+height)
         //   of last packed tier]
         trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), pix_offset);
-		// pack tiers (which may modify scene bounds) based on view with transform
+        // pack tiers (which may modify scene bounds) based on view with transform
         //    modified to take into account zoom_scale and "proposed" offset
         packTiers(false, true, false);
 
@@ -491,7 +491,7 @@ public class AffyTieredMap extends NeoMap {
         coord_beg = scenebox.y;
         coord_size = scenebox.height;
         coord_end = coord_beg + coord_size;
-		// adjusting so that view doesn't extend beyond scene (unless total size
+        // adjusting so that view doesn't extend beyond scene (unless total size
         //    of view is bigger than scene...)
         if (first_coord_displayed < coord_beg) {
             first_coord_displayed = coord_beg;
@@ -505,7 +505,7 @@ public class AffyTieredMap extends NeoMap {
         coord_offset = -first_coord_displayed;
         pixel_offset[id] = coord_offset / coords_per_pixel[id];
 
-		// redoing setting of transform, in case there were any adjusments to trim to scene...
+        // redoing setting of transform, in case there were any adjusments to trim to scene...
         // assuming modifying Y
         trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), pixel_offset[id]);
 
@@ -534,7 +534,7 @@ public class AffyTieredMap extends NeoMap {
         }
         updateWidget();
 
-		// pack them again!  This clears-up problems with the packing of the axis
+        // pack them again!  This clears-up problems with the packing of the axis
         // tier and getting the labelmap lined-up with the main tier map.
         packTiers(false, true, tierChanged);
     }
@@ -639,7 +639,7 @@ public class AffyTieredMap extends NeoMap {
         if (topgl == null) {
             return null;
         }
-		// trying to do smarter selection of parent (for example, transcript)
+        // trying to do smarter selection of parent (for example, transcript)
         //     versus child (for example, exon)
         // calculate pixel width of topgl, if <= 2, and it has no children,
         //   and parent glyphs has pixel width <= 10, then select parent instead of child..
@@ -648,13 +648,13 @@ public class AffyTieredMap extends NeoMap {
         this.getView().transformToPixels(cbox, pbox);
 
         if (pbox.width <= 2) {
-			// if the selection is very small, move the x_coord to the center
+            // if the selection is very small, move the x_coord to the center
             // of the selection so we can zoom-in on it.
             zoom_point.x = cbox.x + cbox.width / 2;
             zoom_point.y = cbox.y + cbox.height / 2;
 
             if ((topgl.getChildCount() == 0) && (topgl.getParent() != null)) {
-				// Watch for null parents:
+                // Watch for null parents:
                 // The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
                 cbox = topgl.getParent().getCoordBox();
                 this.getView().transformToPixels(cbox, pbox);

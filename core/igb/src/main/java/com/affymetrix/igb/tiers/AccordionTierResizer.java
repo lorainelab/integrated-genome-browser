@@ -310,8 +310,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
         this.dragStarted = false;
         boolean needRepacking = (1 < this.resizeRegion.size());
 
-        for (int i = 0; i < this.resizeRegion.size(); i++) {
-            TierLabelGlyph g = this.resizeRegion.get(i);
+        for (TierLabelGlyph g : this.resizeRegion) {
             if (g.isManuallyResizable()) {
                 TierGlyph tg = g.getReferenceTier();
                 tg.setPreferredHeight(

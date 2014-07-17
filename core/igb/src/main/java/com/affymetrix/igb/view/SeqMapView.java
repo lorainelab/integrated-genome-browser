@@ -668,11 +668,11 @@ public class SeqMapView extends JPanel
 
 				public void run() {
 					List<GraphGlyph> graphs = collectGraphs();
-					for (int i = 0; i < graphs.size(); i++) {
-						if(graphs.get(i).getAnnotStyle().getFloatTier()){
-							getFloaterGlyph().checkBounds(graphs.get(i), getSeqMap().getView());
-						}
-					}
+                                    for (GraphGlyph graph : graphs) {
+                                        if (graph.getAnnotStyle().getFloatTier()) {
+                                            getFloaterGlyph().checkBounds(graph, getSeqMap().getView());
+                                        }
+                                    }
 					getSeqMap().stretchToFit(false, false);
 					getSeqMap().updateWidget();
 
@@ -1023,19 +1023,15 @@ public class SeqMapView extends JPanel
 	//    via iterators, but feels safer this way...)
 	private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
 		List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
-		for (int i = 0; i < cur_tiers.size(); i++) {
-//			if (i == axis_index) {
-//				continue;
-//			}
-			TierGlyph tg = cur_tiers.get(i);
-			temp_tiers.add(tg);
-			if (DEBUG_TIERS) {
-				System.out.println("removing tier from map: " + tg.getAnnotStyle().getTrackName());
-			}
-			tg.removeAllChildren();
-			tg.setScene(null);
-			//seqmap.removeTier(tg);
-		}
+            for (TierGlyph tg : cur_tiers) {
+                temp_tiers.add(tg);
+                if (DEBUG_TIERS) {
+                    System.out.println("removing tier from map: " + tg.getAnnotStyle().getTrackName());
+                }
+                tg.removeAllChildren();
+                tg.setScene(null);
+                //seqmap.removeTier(tg);
+            }
 		return temp_tiers;
 	}
 
@@ -1062,16 +1058,15 @@ public class SeqMapView extends JPanel
 	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
 		// add back in previous annotation tiers (with all children removed)
 		if (temp_tiers != null) {
-			for (int i = 0; i < temp_tiers.size(); i++) {
-				TierGlyph tg = temp_tiers.get(i);
-				if (DEBUG_TIERS) {
-					System.out.println("adding back tier: " + tg.getAnnotStyle().getTrackName() + ", scene = " + tg.getScene());
-				}
-				if (tg.getAnnotStyle() != null) {
-					tg.setStyle(tg.getAnnotStyle());
-				}
-				seqmap.addTier(tg, false);
-			}
+                    for (TierGlyph tg : temp_tiers) {
+                        if (DEBUG_TIERS) {
+                            System.out.println("adding back tier: " + tg.getAnnotStyle().getTrackName() + ", scene = " + tg.getScene());
+                        }
+                        if (tg.getAnnotStyle() != null) {
+                            tg.setStyle(tg.getAnnotStyle());
+                        }
+                        seqmap.addTier(tg, false);
+                    }
 			temp_tiers.clear(); // redundant hint to garbage collection
 		}
 	}
@@ -2406,13 +2401,13 @@ public class SeqMapView extends JPanel
 		if(properties.length >= 1){
 			props.append("<div align='center'> <b> ").append(getSortString(properties[0][1])).append(" </b> </div> <hr>");
 		}
-		for (int i = 0; i < properties.length; i++) {
-			props.append("<b>");
-			props.append(properties[i][0]);
-			props.append(" : </b>");
-			props.append(getSortString(properties[i][1]));
-			props.append("<br>");
-		}
+            for (String[] propertie : properties) {
+                props.append("<b>");
+                props.append(propertie[0]);
+                props.append(" : </b>");
+                props.append(getSortString(propertie[1]));
+                props.append("<br>");
+            }
 		props.append("</html>");
 
 		return props.toString();

@@ -61,11 +61,10 @@ class StyleElement implements DrawableElement {
     }
     if (matchElements != null) {
       clone.matchElements = new ArrayList<MatchElement>(matchElements.size());
-      for (int i=0; i<matchElements.size(); i++) {
-        MatchElement me = matchElements.get(i);
-        MatchElement new_me = (MatchElement) me.clone();
-        clone.matchElements.add(new_me);
-      }
+        for (MatchElement me : matchElements) {
+            MatchElement new_me = (MatchElement) me.clone();
+            clone.matchElements.add(new_me);
+        }
     }
     return clone;
   }  

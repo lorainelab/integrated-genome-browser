@@ -4,6 +4,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import java.security.GeneralSecurityException;
+import java.security.cert.X509Certificate;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -39,9 +40,9 @@ public class IGBTrustManager implements X509TrustManager {
 
 	public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 		StringBuilder certificates = new StringBuilder("\n\n");
-		for (int i = 0; i < certs.length; i++) {
-			certificates.append(certs[i].getIssuerX500Principal().getName()).append(",").append("\n");
-		}
+            for (X509Certificate cert : certs) {
+                certificates.append(cert.getIssuerX500Principal().getName()).append(",").append("\n");
+            }
 		Application app = Application.getSingleton();
 		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
 		boolean response = Application.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),

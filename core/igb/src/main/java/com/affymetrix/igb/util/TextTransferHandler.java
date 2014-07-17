@@ -66,19 +66,18 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		DataFlavor stringFlavor = null;
 
 		if (c instanceof JEditorPane) {
-			for (int i = 0; i < flavors.length; i++) {
-				String mime = flavors[i].getMimeType();
-				if (mime.startsWith(((JEditorPane) c).getEditorKit().getContentType())) {
-					return flavors[i];
-				} else if (plainFlavor == null && mime.startsWith("text/plain")) {
-					plainFlavor = flavors[i];
-				} else if (refFlavor == null && mime.startsWith("application/x-java-jvm-local-objectref")
-						&& flavors[i].getRepresentationClass() == java.lang.String.class) {
-					refFlavor = flavors[i];
-				} else if (stringFlavor == null && flavors[i].equals(DataFlavor.stringFlavor)) {
-					stringFlavor = flavors[i];
-				}
-			}
+                    for (DataFlavor flavor : flavors) {
+                        String mime = flavor.getMimeType();
+                        if (mime.startsWith(((JEditorPane) c).getEditorKit().getContentType())) {
+                            return flavor;
+                        } else if (plainFlavor == null && mime.startsWith("text/plain")) {
+                            plainFlavor = flavor;
+                        } else if (refFlavor == null && mime.startsWith("application/x-java-jvm-local-objectref") && flavor.getRepresentationClass() == java.lang.String.class) {
+                            refFlavor = flavor;
+                        } else if (stringFlavor == null && flavor.equals(DataFlavor.stringFlavor)) {
+                            stringFlavor = flavor;
+                        }
+                    }
 			if (plainFlavor != null) {
 				return plainFlavor;
 			} else if (refFlavor != null) {
@@ -90,17 +89,16 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		}
 
 
-		for (int i = 0; i < flavors.length; i++) {
-			String mime = flavors[i].getMimeType();
-			if (mime.startsWith("text/plain")) {
-				return flavors[i];
-			} else if (refFlavor == null && mime.startsWith("application/x-java-jvm-local-objectref")
-					&& flavors[i].getRepresentationClass() == java.lang.String.class) {
-				refFlavor = flavors[i];
-			} else if (stringFlavor == null && flavors[i].equals(DataFlavor.stringFlavor)) {
-				stringFlavor = flavors[i];
-			}
-		}
+            for (DataFlavor flavor : flavors) {
+                String mime = flavor.getMimeType();
+                if (mime.startsWith("text/plain")) {
+                    return flavor;
+                } else if (refFlavor == null && mime.startsWith("application/x-java-jvm-local-objectref") && flavor.getRepresentationClass() == java.lang.String.class) {
+                    refFlavor = flavor;
+                } else if (stringFlavor == null && flavor.equals(DataFlavor.stringFlavor)) {
+                    stringFlavor = flavor;
+                }
+            }
 		if (refFlavor != null) {
 			return refFlavor;
 		} else if (stringFlavor != null) {
@@ -558,11 +556,11 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		 */
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			DataFlavor[] flavors = getTransferDataFlavors();
-			for (int i = 0; i < flavors.length; i++) {
-				if (flavors[i].equals(flavor)) {
-					return true;
-				}
-			}
+                    for (DataFlavor flavor1 : flavors) {
+                        if (flavor1.equals(flavor)) {
+                            return true;
+                        }
+                    }
 			return false;
 		}
 
@@ -650,11 +648,11 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		 */
 		protected boolean isHTMLFlavor(DataFlavor flavor) {
 			DataFlavor[] flavors = htmlFlavors;
-			for (int i = 0; i < flavors.length; i++) {
-				if (flavors[i].equals(flavor)) {
-					return true;
-				}
-			}
+                    for (DataFlavor flavor1 : flavors) {
+                        if (flavor1.equals(flavor)) {
+                            return true;
+                        }
+                    }
 			return false;
 		}
 
@@ -684,11 +682,11 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		 */
 		protected boolean isPlainFlavor(DataFlavor flavor) {
 			DataFlavor[] flavors = plainFlavors;
-			for (int i = 0; i < flavors.length; i++) {
-				if (flavors[i].equals(flavor)) {
-					return true;
-				}
-			}
+                    for (DataFlavor flavor1 : flavors) {
+                        if (flavor1.equals(flavor)) {
+                            return true;
+                        }
+                    }
 			return false;
 		}
 
@@ -718,11 +716,11 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		 */
 		protected boolean isStringFlavor(DataFlavor flavor) {
 			DataFlavor[] flavors = stringFlavors;
-			for (int i = 0; i < flavors.length; i++) {
-				if (flavors[i].equals(flavor)) {
-					return true;
-				}
-			}
+                    for (DataFlavor flavor1 : flavors) {
+                        if (flavor1.equals(flavor)) {
+                            return true;
+                        }
+                    }
 			return false;
 		}
 	}

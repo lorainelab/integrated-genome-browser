@@ -122,16 +122,15 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
                     List<TierLabelGlyph> l = ltm.getOrderedTierLabels();
                     int j = 0;
                     int colors = s.numberOfForegrounds();
-                    for (int i = 0; i < l.size(); i++) {
-                        TierLabelGlyph tlg = l.get(i);
-                        TierGlyph g = tlg.getReferenceTier();
-                        if (tlg.isSelected()) {
-                            Color c = Color.decode(s.getForeground(j));
-                            g.getAnnotStyle().setBackground(bg);
-                            g.getAnnotStyle().setForeground(c);
-                            j = (j + 1) % colors;
-                        }
-                    }
+            for (TierLabelGlyph tlg : l) {
+                TierGlyph g = tlg.getReferenceTier();
+                if (tlg.isSelected()) {
+                    Color c = Color.decode(s.getForeground(j));
+                    g.getAnnotStyle().setBackground(bg);
+                    g.getAnnotStyle().setForeground(c);
+                    j = (j + 1) % colors;
+                }
+            }
                     refreshMap(false, false);
                 }
                 break;

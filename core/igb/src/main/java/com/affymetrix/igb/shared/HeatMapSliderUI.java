@@ -99,9 +99,8 @@ class HeatMapSliderUI extends BasicSliderUI {
         // Call superclass method for lower thumb size.
         super.calculateThumbSize();
 
-        // Set upper thumb size.
-        for (int i = 0; i < thumbsRect.length; i++) {
-            thumbsRect[i].setSize(thumbRect.width, thumbRect.height);
+        for (Rectangle thumbsRect1 : thumbsRect) {
+            thumbsRect1.setSize(thumbRect.width, thumbRect.height);
         }
     }
 
@@ -230,12 +229,12 @@ class HeatMapSliderUI extends BasicSliderUI {
             // paintFocus( g );
         }
 
-        for (int i = 0; i < thumbsRect.length; i++) {
-            if (clip.intersects(thumbsRect[i])) {
+        for (Rectangle thumbsRect1 : thumbsRect) {
+            if (clip.intersects(thumbsRect1)) {
                 if (isMac) {
-                    paintUpperThumb(g, thumbsRect[i]);
+                    paintUpperThumb(g, thumbsRect1);
                 } else {
-                    paintThumb(g, thumbsRect[i]);
+                    paintThumb(g, thumbsRect1);
                 }
             }
         }

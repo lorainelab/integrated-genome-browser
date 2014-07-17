@@ -507,18 +507,16 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         List<GlyphI> childrens = new ArrayList<GlyphI>();
         childrens.addAll(temp.getChildren());
 
-        for (int i = 0; i < childrens.size(); i++) {
-            addChild(childrens.get(i));
+        for (GlyphI children : childrens) {
+            addChild(children);
         }
 
         childrens.clear();
 //		childrens.addAll(temp.getMiddleGlyphs());
-
-        for (int i = 0; i < childrens.size(); i++) {
-            addMiddleGlyph(childrens.get(i));
+        for (GlyphI children : childrens) {
+            addMiddleGlyph(children);
         }
-
-		//TODO: Set list of all getInfo
+        //TODO: Set list of all getInfo
 //		if(!(getInfo() instanceof List)){
 //			List<Object> info = new ArrayList<Object>();
 //			info.add(getInfo());

@@ -154,8 +154,8 @@ public class GlyphTransformer {
 
     private static JWindow getWindow(JComponent... components) {
         JWindow window = new JWindow(Application.getSingleton().getFrame());
-        for (int i = 0; i < components.length; i++) {
-            window.add(components[i]);
+        for (JComponent component : components) {
+            window.add(component);
         }
 
         return window;

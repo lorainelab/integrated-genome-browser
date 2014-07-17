@@ -279,20 +279,18 @@ public class PopupInfo extends JWindow {
 	
 	private void formatTooltip() {
 		tooltip.setText(null);
-		for (int i = 0; i < properties.length; i++) {
-			try {
-				tooltip.getDocument().insertString(
-						tooltip.getDocument().getLength(), properties[i][0], NAME);
-				tooltip.getDocument().insertString(
-						tooltip.getDocument().getLength(), " ", null);
-				tooltip.getDocument().insertString(
-						tooltip.getDocument().getLength(), properties[i][1], null);
-				tooltip.getDocument().insertString(
-						tooltip.getDocument().getLength(), "\n", null);
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
-		}
+            for (String[] propertie : properties) {
+                try {
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
+                    tooltip.getDocument().insertString(
+                            tooltip.getDocument().getLength(), " ", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[1], null);
+                    tooltip.getDocument().insertString(
+                            tooltip.getDocument().getLength(), "\n", null);
+                }catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
 	}
 	
 	private Point determineBestLocation(Point currentPoint){

@@ -151,8 +151,8 @@ public class GlyphScroller {
 
     private static JWindow getWindow(JComponent... components) {
         JWindow window = new JWindow();
-        for (int i = 0; i < components.length; i++) {
-            window.add(components[i]);
+        for (JComponent component : components) {
+            window.add(component);
         }
 
         return window;

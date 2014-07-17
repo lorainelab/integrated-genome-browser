@@ -231,15 +231,14 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 
 		Set<TrackStyle> customizables = new HashSet<TrackStyle>(currentStyles.size());
-		for (int i = 0; i < currentStyles.size(); i++) {
-			TrackStyle the_style = currentStyles.get(i);
-			if (the_style.getCustomizable()) {
-				// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
-				//if ((!the_style.isGraphTier())) {
-				customizables.add(the_style);
-				//}
-			}
-		}
+            for (TrackStyle the_style : currentStyles) {
+                if (the_style.getCustomizable()) {
+                    // if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
+                    //if ((!the_style.isGraphTier())) {
+                    customizables.add(the_style);
+                    //}
+                }
+            }
 
 		if (!isContained || ((TierPrefsTableModel) model).getStyles().size() > currentStyles.size()) {
 			((TierPrefsTableModel) model).setStyles(customizables);

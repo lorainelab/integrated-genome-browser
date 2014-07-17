@@ -111,9 +111,11 @@ class MatchElement implements DrawableElement {
   }
 
   static boolean knownTestType(String type) {
-    for (int i=0; i<knownTypes.length; i++) {
-      if (type.equals(knownTypes[i])) { return true; }
-    }
+      for (String knownType : knownTypes) {
+          if (type.equals(knownType)) {
+              return true;
+          }
+      }
     return false;
   }
 

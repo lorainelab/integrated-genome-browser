@@ -86,18 +86,18 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	private void initializeFileTypes() {
 		list.clear();
 		temp = FileTypeHolder.getInstance().getNameToExtensionMap(null).values().toArray();
-		for (int i = 0; i < temp.length; i++) {
-			StringTokenizer tokens = new StringTokenizer(temp[i].toString(), ",");
-			while (tokens.hasMoreElements()) {
-				allowedTrackDefaults = tokens.nextToken();
-				allowedTrackDefaults = allowedTrackDefaults.replace("[", "");
-				allowedTrackDefaults = allowedTrackDefaults.replace("]", "");
-				allowedTrackDefaults = allowedTrackDefaults.trim();
-				if (!Arrays.asList(sequenceFormats).contains(allowedTrackDefaults)) {
-					list.add(allowedTrackDefaults);
-				}
-			}
-		}
+            for (Object temp1 : temp) {
+                StringTokenizer tokens = new StringTokenizer(temp1.toString(), ",");
+                while (tokens.hasMoreElements()) {
+                    allowedTrackDefaults = tokens.nextToken();
+                    allowedTrackDefaults = allowedTrackDefaults.replace("[", "");
+                    allowedTrackDefaults = allowedTrackDefaults.replace("]", "");
+                    allowedTrackDefaults = allowedTrackDefaults.trim();
+                    if (!Arrays.asList(sequenceFormats).contains(allowedTrackDefaults)) {
+                        list.add(allowedTrackDefaults);
+                    }
+                }
+            }
 		Collections.sort(list);
 		trackDefaults = list.toArray(new String[list.size()]);
 	}

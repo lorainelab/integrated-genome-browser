@@ -52,8 +52,8 @@ public class ImportPreferencesAction extends GenericAction {
             }
         }
         IPrefEditorComponent[] components = PreferencesPanel.getSingleton().getPrefEditorComponents();
-        for (int i = 0; i < components.length; i++) {
-            components[i].refresh();
+        for (IPrefEditorComponent component : components) {
+            component.refresh();
         }
     }
 }

@@ -192,13 +192,13 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 			}
 		}
 		Component[] comps = xzoombox.getComponents();
-		for (int i = 0; i < comps.length; i++) {
-			comps[i].setEnabled(b);
-		}
+            for (Component comp : comps) {
+                comp.setEnabled(b);
+            }
 		comps = yzoombox.getComponents();
-		for (int i = 0; i < comps.length; i++) {
-			comps[i].setEnabled(b);
-		}
+            for (Component comp : comps) {
+                comp.setEnabled(b);
+            }
 	}
 
 	private void stopSlicingThread() {

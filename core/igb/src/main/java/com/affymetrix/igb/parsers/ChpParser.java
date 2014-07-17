@@ -531,15 +531,14 @@ public final class ChpParser {
 
 		Map<String, String> file_prop_hash = new LinkedHashMap<String, String>();
 		List<ParameterNameValue> alg_params = tchp.getAlgParams();
-		for (int i = 0; i < alg_params.size(); i++) {
-			ParameterNameValue param = alg_params.get(i);
-			String pname = param.getName();
-			String pval = param.getValueText();
-			// unfortunately, param.getValueText() is NOT Ascii text, as it is supposed to be.
-			// the character encoding is unknown, so the text looks like garbage (at least on Unix).
-			//      System.out.println("   param:  name = " + pname + ", val = " + pval);
-			file_prop_hash.put(pname, pval);
-		}
+            for (ParameterNameValue param : alg_params) {
+                String pname = param.getName();
+                String pval = param.getValueText();
+                // unfortunately, param.getValueText() is NOT Ascii text, as it is supposed to be.
+                // the character encoding is unknown, so the text looks like garbage (at least on Unix).
+                //      System.out.println("   param:  name = " + pname + ", val = " + pval);
+                file_prop_hash.put(pname, pval);
+            }
 
 		AnnotatedSeqGroup group = null;
 		BioSeq aseq = null;
@@ -616,13 +615,12 @@ public final class ChpParser {
 			}
 
 			List<ParameterNameValue> seq_params = seq.getParameters();
-			for (int k = 0; k < seq_params.size(); k++) {
-				ParameterNameValue param = seq_params.get(k);
-				String pname = param.getName();
-				String pval = param.getValueText();
-				//	System.out.println("   param:  name = " + pname + ", val = " + pval);
-				gsym.setProperty(pname, pval);
-			}
+                for (ParameterNameValue param : seq_params) {
+                    String pname = param.getName();
+                    String pval = param.getValueText();
+                    //	System.out.println("   param:  name = " + pname + ", val = " + pval);
+                    gsym.setProperty(pname, pval);
+                }
 
 
 			// add all seq_prop_hash entries as gsym properties

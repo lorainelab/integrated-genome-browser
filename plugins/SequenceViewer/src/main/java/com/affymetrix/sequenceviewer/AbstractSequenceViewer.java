@@ -235,7 +235,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             }
         } catch (Exception e) {
             if (this.errorMessage == null) {
-                this.errorMessage = "Some error ocurred, Please raise a bug request";
+                this.errorMessage = BUNDLE.getString("errorMessage");
             }
         } finally {
             if (errorMessage != null) {

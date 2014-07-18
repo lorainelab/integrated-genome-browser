@@ -1994,6 +1994,9 @@ public class SeqMapView extends JPanel
 
 		preparePopup(sym_popup, nevt);
                 sym_popup = getOrganizedPopups(sym_popup);
+                if(sym_popup.getComponentCount() ==0){
+                    return;
+                }
 		if (sym_popup.getComponentCount() > 0) {
 
 			if (nevt == null) {

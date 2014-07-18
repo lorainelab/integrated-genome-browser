@@ -1994,6 +1994,9 @@ public class SeqMapView extends JPanel
 
 		preparePopup(sym_popup, nevt);
                 sym_popup = getOrganizedPopups(sym_popup);
+                if(sym_popup.getComponentCount() ==0){
+                    return;
+                }
 		if (sym_popup.getComponentCount() > 0) {
 
 			if (nevt == null) {
@@ -2062,17 +2065,18 @@ public class SeqMapView extends JPanel
                 
 		final List<SeqSymmetry> selected_syms = getSelectedSyms();
                 
-                JSeparator afterGetInfoSep = new JSeparator();
-                JSeparator afterViewReadSep = new JSeparator();
-                JSeparator afterPrimerBalstSep = new JSeparator();
-                popup.add(afterGetInfoSep,6);
-                popup.add(afterViewReadSep,12);
-                popup.add(afterPrimerBalstSep,20);
+                
                 
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
                     for (ContextualPopupListener listener : popup_listeners) {
                         listener.popupNotify(popup, selected_syms, sym_used_for_title);
                     }
+                    JSeparator afterGetInfoSep = new JSeparator();
+                    JSeparator afterViewReadSep = new JSeparator();
+                    JSeparator afterPrimerBalstSep = new JSeparator();
+                    popup.add(afterGetInfoSep,6);
+                    popup.add(afterViewReadSep,12);
+                    popup.add(afterPrimerBalstSep,20);
                     popup.add(select_rule_action,4);
                     popup.add(select_parent_action,22);
                     popup.add(zoom_on_selected,24);

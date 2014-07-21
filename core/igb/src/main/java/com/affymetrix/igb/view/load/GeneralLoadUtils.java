@@ -1417,10 +1417,7 @@ public final class GeneralLoadUtils {
 
         if (extension.equals(BAM_EXT)) {
             try {
-                if (!handleBam(uri)) {
-                    ErrorHandler.errorPanel("Cannot open file", "Failed to authenticate to server", Level.WARNING);
-                    version = null;
-                }
+                handleBam(uri);              
             } catch (BamIndexNotFoundException ex) {
                 String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
                 ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
@@ -1454,12 +1451,7 @@ public final class GeneralLoadUtils {
     }
 
     private static boolean handleBam(URI uri) throws BamIndexNotFoundException {
-        try {
-            return BAM.hasIndex(uri);
-        } catch (IOException ex) {
-            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+        return BAM.hasIndex(uri);
     }
 
     /**

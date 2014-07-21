@@ -340,11 +340,10 @@ public final class BAM extends XAM {
                 return f;
             }
         } catch (Exception e) {
-            if (e instanceof IOException) {
+            if (!(e instanceof IOException)) {
                 Logger.getLogger(BAM.class.getName()).log(
                         Level.WARNING, null, e);
             }
-            throw new BamIndexNotFoundException();
 
         }
         throw new BamIndexNotFoundException();
@@ -365,11 +364,10 @@ public final class BAM extends XAM {
                 return baiUriStr;
             }
         } catch (Exception e) {
-            if (e instanceof IOException) {
+            if (!(e instanceof IOException)) {
                 Logger.getLogger(BAM.class.getName()).log(
                         Level.WARNING, null, e);
             }
-            throw new BamIndexNotFoundException();
         }
         throw new BamIndexNotFoundException();
     }

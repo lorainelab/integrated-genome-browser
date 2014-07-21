@@ -162,12 +162,6 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>igb-service</artifactId>
-                <version>${igbVersion}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.affymetrix</groupId>
                 <artifactId>window-service</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>

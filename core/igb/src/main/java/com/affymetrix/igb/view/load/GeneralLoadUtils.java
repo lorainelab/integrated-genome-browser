@@ -1422,7 +1422,10 @@ public final class GeneralLoadUtils {
                     version = null;
                 }
             } catch (BamIndexNotFoundException ex) {
-                ErrorHandler.errorPanel("Cannot open file", "Bam Index file not found", Level.WARNING);
+                String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
+                ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
+                version = null;
+
             }
         } else if (extension.equals(USEQ_EXT)) {
             loadGroup = handleUseq(uri, loadGroup);

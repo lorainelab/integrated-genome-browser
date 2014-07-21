@@ -321,7 +321,7 @@ public final class BAM extends XAM {
     /**
      * Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.
      */
-    static public File findIndexFile(File bamfile) throws IOException {
+    static public File findIndexFile(File bamfile) throws IOException, BamIndexNotFoundException {
         //look for xxx.bam.bai
         String path = bamfile.getPath();
         File f = new File(path + ".bai");
@@ -335,8 +335,7 @@ public final class BAM extends XAM {
         if (f.exists()) {
             return f;
         }
-
-        return null;
+        throw new BamIndexNotFoundException();
     }
 
     static public String findIndexFile(String bamfile) throws BamIndexNotFoundException {

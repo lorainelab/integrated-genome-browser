@@ -338,7 +338,7 @@ public final class BAM extends XAM {
         throw new BamIndexNotFoundException();
     }
 
-    static public String findIndexFile(String bamfile) throws BamIndexNotFoundException {
+    public static String findIndexFile(String bamfile) throws BamIndexNotFoundException {
         // Guess at the location of the .bai URL as BAM URL + ".bai"
         String baiUriStr = bamfile + ".bai";
 

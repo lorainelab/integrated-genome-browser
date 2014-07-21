@@ -320,43 +320,59 @@ public final class BAM extends XAM {
 
     /**
      * Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.
+     * @param bamfile
+     * @return file
+     * @throws com.affymetrix.genometryImpl.symloader.BAM.BamIndexNotFoundException 
      */
-    static public File findIndexFile(File bamfile) throws IOException {
+    public static File findIndexFile(File bamfile) throws BamIndexNotFoundException {
         //look for xxx.bam.bai
-        String path = bamfile.getPath();
-        File f = new File(path + ".bai");
-        if (f.exists()) {
-            return f;
-        }
+        try {
+            String path = bamfile.getPath();
+            File f = new File(path + ".bai");
+            if (f.exists()) {
+                return f;
+            }
 
-        //look for xxx.bai
-        path = path.substring(0, path.length() - 3) + "bai";
-        f = new File(path);
-        if (f.exists()) {
-            return f;
-        }
+            //look for xxx.bai
+            path = path.substring(0, path.length() - 3) + "bai";
+            f = new File(path);
+            if (f.exists()) {
+                return f;
+            }
+        } catch (Exception e) {
+            if (!(e instanceof IOException)) {
+                Logger.getLogger(BAM.class.getName()).log(
+                        Level.WARNING, null, e);
+            }
 
-        return null;
-    }
-
-    static public String findIndexFile(String bamfile) throws BamIndexNotFoundException {
-        // Guess at the location of the .bai URL as BAM URL + ".bai"
-        String baiUriStr = bamfile + ".bai";
-
-        if (LocalUrlCacher.isValidURL(baiUriStr)) {
-            return baiUriStr;
-        }
-
-        baiUriStr = bamfile.substring(0, bamfile.length() - 3) + "bai";
-
-        //look for xxx.bai
-        if (LocalUrlCacher.isValidURL(baiUriStr)) {
-            return baiUriStr;
         }
         throw new BamIndexNotFoundException();
     }
 
-    public static boolean hasIndex(URI uri) throws IOException, BamIndexNotFoundException {
+    public static String findIndexFile(String bamfile) throws BamIndexNotFoundException {
+        // Guess at the location of the .bai URL as BAM URL + ".bai"        
+        try {
+            String baiUriStr = bamfile + ".bai";
+            if (LocalUrlCacher.isValidURL(baiUriStr)) {
+                return baiUriStr;
+            }
+
+            baiUriStr = bamfile.substring(0, bamfile.length() - 3) + "bai";
+
+            //look for xxx.bai
+            if (LocalUrlCacher.isValidURL(baiUriStr)) {
+                return baiUriStr;
+            }
+        } catch (Exception e) {
+            if (!(e instanceof IOException)) {
+                Logger.getLogger(BAM.class.getName()).log(
+                        Level.WARNING, null, e);
+            }
+        }
+        throw new BamIndexNotFoundException();
+    }
+
+    public static boolean hasIndex(URI uri) throws BamIndexNotFoundException {
         String scheme = uri.getScheme().toLowerCase();
         if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
             File f = findIndexFile(new File(uri));

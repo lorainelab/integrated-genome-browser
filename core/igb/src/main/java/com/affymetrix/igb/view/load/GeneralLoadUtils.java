@@ -1285,6 +1285,7 @@ public final class GeneralLoadUtils {
         final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
         final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), gFeature.featureName);
         final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
+            boolean featureRemoved = false;
 
             @Override
             protected Boolean runInBackground() {
@@ -1295,7 +1296,8 @@ public final class GeneralLoadUtils {
                     return true;
                 } catch (Exception ex) {
                     ((QuickLoadSymLoader) gFeature.symL).logException(ex);
-                    return removeFeatureAndRefresh(gFeature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    featureRemoved = removeFeatureAndRefresh(gFeature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    return featureRemoved;
                 }
 
             }
@@ -1338,7 +1340,7 @@ public final class GeneralLoadUtils {
                     gmodel.setSelectedSeq(gmodel.getSelectedSeq());
                 }
                 ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
-                if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
+                if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved /*||
                          gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
                     Application.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
                             GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);

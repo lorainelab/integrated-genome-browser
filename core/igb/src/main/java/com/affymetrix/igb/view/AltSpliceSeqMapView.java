@@ -15,12 +15,11 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TierGlyph;
-
-import com.affymetrix.igb.swing.RPAdjustableJSlider;
-
 import com.affymetrix.igb.swing.JRPPopupMenu;
+import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.Adjustable;
 import java.awt.Component;
@@ -44,7 +43,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private Map<ITrackStyleExtended, ITrackStyleExtended> style2Style;
 	
 	AltSpliceSeqMapView(boolean b) {
-		super(b, "AltSpliceSeqMapView");
+		super(b, "AltSpliceSeqMapView", Application.getSingleton().getFrame());
 		if (tier_manager != null) {
 			tier_manager.setDoGraphSelections(false);
 		}

@@ -257,7 +257,7 @@ public final class IGB extends Application
                     }
                 }
         );
-        map_view = new SeqMapView(true, "SeqMapView");
+        map_view = new SeqMapView(true, "SeqMapView", getFrame());
         gmodel.addSeqSelectionListener(map_view);
         gmodel.addGroupSelectionListener(map_view);
         gmodel.addSymSelectionListener(map_view);

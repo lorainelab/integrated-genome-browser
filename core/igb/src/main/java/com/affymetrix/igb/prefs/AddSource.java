@@ -321,7 +321,7 @@ public class AddSource extends JFrame {
 
 	protected static File fileChooser(int mode, Component parent) throws HeadlessException {
 		JFileChooser chooser = new JFileChooser();
-
+                File file;
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		chooser.setFileSelectionMode(mode);
 		chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
@@ -331,7 +331,8 @@ public class AddSource extends JFrame {
 		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
 			return null;
 		}
-
-		return chooser.getSelectedFile();
+                file = chooser.getSelectedFile();
+                FileTracker.DATA_DIR_TRACKER.setFile(file.getParentFile());
+		return file;
 	}
 }

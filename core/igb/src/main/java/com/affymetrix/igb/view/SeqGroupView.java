@@ -36,6 +36,7 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -102,10 +103,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private JRPComboBox speciesCB;
 	private JRPComboBox versionCB;
 	private final IGBService igbService;
-
+        private SelectVersionPanel selectVersionPanel;
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
 		gviewer = Application.getSingleton().getMapView();
+                selectVersionPanel = new SelectVersionPanel();
 		seqtable = new JRPStyledTable("SeqGroupView_seqtable") {
 
 			private static final long serialVersionUID = 1L;
@@ -263,6 +265,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		try {
 			if ((src == speciesCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
 				speciesCBChanged(); // make sure display gets updated
+                                toogleView(false);
 			} else if ((src == versionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
 				versionCBChanged();
 			}
@@ -285,14 +288,27 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		// Populate the versionName CB
 		refreshVersionCB(speciesName);
-
+                
 		// Select the null group (and the null seq), if it's not already selected.
 		if (curGroup != null) {
 			gmodel.setSelectedSeqGroup(null); // This method is being called on purpose to fire group selection event.
 			gmodel.setSelectedSeq(null);	  // which in turns calls refreshTreeView method.
 		}
 	}
+        
+        /**
+         * This method is used to toggle view in the gViewer when the user has only selected the 
+         * species and yet to choose the version.
+         * The method considers that the gviewer has the seqmap as the last component added.
+         * @param isVersionSelected 
+         */
+        private void toogleView(boolean isVersionSelected) {
+            int index = gviewer.getComponentCount()-1;
+            gviewer.remove(index);
+            gviewer.add(isVersionSelected ? gviewer.getSeqMap() : selectVersionPanel);
+            gviewer.repaint();
 
+        }
 	/**
 	 * The versionName combo box changed. This changes the selected group
 	 * (either to null, or to a valid group). It is assumed that at this point,
@@ -318,6 +334,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	public void setSelectedGroup(String versionName) {
+                toogleView(true);
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");
@@ -352,6 +369,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
+                toogleView(true);
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		if (SeqGroupView.DEBUG_EVENTS) {
 			System.out.println("SeqGroupView received groupSelectionChanged() event");

@@ -12,10 +12,11 @@ import java.awt.Color;
  */
 public interface ColorProviderI extends ID, SupportsFileTypeCategory, NewInstance<ColorProviderI> {
 
-	/**
-	 * Get color for the given object
-	 * @param sym
-	 * @return 
-	 */
-	public Color getColor(SeqSymmetry sym);
+    /**
+     * Get color for the given object
+     *
+     * @param sym
+     * @return
+     */
+    public Color getColor(SeqSymmetry sym);
 }

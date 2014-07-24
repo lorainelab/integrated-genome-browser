@@ -10,17 +10,17 @@ import java.awt.Color;
  * @author hiralv
  */
 public class RGB extends ColorProvider {
-	
-	@Override
-	public String getName() {
-		return "rgb";
-	}
-	
-	@Override
-	public Color getColor(SeqSymmetry sym){
-		if(sym instanceof SymWithProps){
-			return (Color) ((SymWithProps)sym).getProperty(TrackLineParser.ITEM_RGB);
-		}
-		return null;
-	}
+
+    @Override
+    public String getName() {
+        return "rgb";
+    }
+
+    @Override
+    public Color getColor(SeqSymmetry sym) {
+        if (sym instanceof SymWithProps) {
+            return (Color) ((SymWithProps) sym).getProperty(TrackLineParser.ITEM_RGB);
+        }
+        return null;
+    }
 }

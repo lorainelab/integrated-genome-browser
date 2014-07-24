@@ -26,119 +26,118 @@ import java.util.zip.ZipInputStream;
  */
 public class USeq extends SymLoader {
 
-	private ArchiveInfo archiveInfo = null;
-	private ZipInputStream zis = null;
-	private BufferedInputStream bis = null;
-	private final Map<BioSeq, String> chromosomeList = new HashMap<BioSeq, String>();
-	
-	//for region parsing
-	private USeqArchive useqArchive = null;
+    private ArchiveInfo archiveInfo = null;
+    private ZipInputStream zis = null;
+    private BufferedInputStream bis = null;
+    private final Map<BioSeq, String> chromosomeList = new HashMap<BioSeq, String>();
 
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-	static {
-		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.AUTOLOAD);
-		strategyList.add(LoadStrategy.GENOME);
-	}
+    //for region parsing
+    private USeqArchive useqArchive = null;
 
-	public USeq(URI uri, String featureName, AnnotatedSeqGroup group) {
-		super(uri, featureName, group);
-	}
+    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 
-	public List<LoadStrategy> getLoadChoices() {
-		return strategyList;
-	}
+    static {
+        strategyList.add(LoadStrategy.NO_LOAD);
+        strategyList.add(LoadStrategy.VISIBLE);
+        strategyList.add(LoadStrategy.AUTOLOAD);
+        strategyList.add(LoadStrategy.GENOME);
+    }
 
-	public void init() throws Exception  {
-		if (this.isInitialized) {
-			return;
-		}
-		try{			
-			//for getRegion()
-			useqArchive = new USeqArchive(LocalUrlCacher.convertURIToFile(uri));
-			
-			//for getGenome()
-			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			zis = new ZipInputStream(bis);
-			zis.getNextEntry();
-			archiveInfo = new ArchiveInfo(zis, false);
-			
-			//build list of BioSeqs (one for each chromosome in the USeqArchive)
-			HashMap<String,Integer> chromBase = useqArchive.fetchChromosomesAndLastBase();
-			for (String chrom : chromBase.keySet()){
-				//fetch the BioSeq from the AnnotationGroup if it exists
-				chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom), uri.toString()),chrom);
-			}
-			Collections.sort(new ArrayList<BioSeq>(chromosomeList.keySet()),new BioSeqComparator());
-			
-		} catch(Exception ex){
-			throw ex;
-		} finally {
-			GeneralUtils.safeClose(bis);
-			GeneralUtils.safeClose(zis);
-		}
-		
-		super.init();
-	}
+    public USeq(URI uri, String featureName, AnnotatedSeqGroup group) {
+        super(uri, featureName, group);
+    }
 
+    public List<LoadStrategy> getLoadChoices() {
+        return strategyList;
+    }
 
-	public List<? extends SeqSymmetry> getGenome() throws Exception  {
-		init();
-		try {
-			//is it a graph dataset?
-			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
-				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), uri.toString(), archiveInfo);
-			//must be a region dataset
-			} else {
-				USeqRegionParser rp = new USeqRegionParser();
-				return rp.parse(zis, group, uri.toString(), false, archiveInfo);
-			}
-		} catch(Exception ex){
-			throw ex;
-		} finally {
-			GeneralUtils.safeClose(bis);
-			GeneralUtils.safeClose(zis);
-		}
-	}
-	
-	
-	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
-		try {
-			init();
-			//fetch region, this may be stranded
-			if(!chromosomeList.containsKey(span.getBioSeq())) {
-				return null;
-			}
+    public void init() throws Exception {
+        if (this.isInitialized) {
+            return;
+        }
+        try {
+            //for getRegion()
+            useqArchive = new USeqArchive(LocalUrlCacher.convertURIToFile(uri));
 
-			int start = span.getStart();
-			int stop = span.getEnd();
-			String chrom = chromosomeList.get(span.getBioSeq());
-			USeqData[] useqData = useqArchive.fetch(chrom, start, stop);
-			//any data?
-			if (useqData == null) {
-				return null;
-			}
-			//is it a graph dataset?
-			if (useqArchive.getArchiveInfo().getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
-				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(useqArchive, useqData, GenometryModel.getGenometryModel(), uri.toString());
-			//must be a region dataset
-			} else {				
-				USeqRegionParser rp = new USeqRegionParser();
-				return rp.parse(useqArchive, useqData, group, uri.toString());
-			}
-		} catch(Exception ex){
-			throw ex;
-		} finally {
-			GeneralUtils.safeClose(bis);
-			GeneralUtils.safeClose(zis);
-		}
-	}
+            //for getGenome()
+            bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+            zis = new ZipInputStream(bis);
+            zis.getNextEntry();
+            archiveInfo = new ArchiveInfo(zis, false);
 
-	public List<BioSeq> getChromosomeList() throws Exception  {
-		init();
-		return new ArrayList<BioSeq>(chromosomeList.keySet());
-	}
+            //build list of BioSeqs (one for each chromosome in the USeqArchive)
+            HashMap<String, Integer> chromBase = useqArchive.fetchChromosomesAndLastBase();
+            for (String chrom : chromBase.keySet()) {
+                //fetch the BioSeq from the AnnotationGroup if it exists
+                chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom), uri.toString()), chrom);
+            }
+            Collections.sort(new ArrayList<BioSeq>(chromosomeList.keySet()), new BioSeqComparator());
+
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            GeneralUtils.safeClose(bis);
+            GeneralUtils.safeClose(zis);
+        }
+
+        super.init();
+    }
+
+    public List<? extends SeqSymmetry> getGenome() throws Exception {
+        init();
+        try {
+            //is it a graph dataset?
+            if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
+                USeqGraphParser gp = new USeqGraphParser();
+                return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), uri.toString(), archiveInfo);
+                //must be a region dataset
+            } else {
+                USeqRegionParser rp = new USeqRegionParser();
+                return rp.parse(zis, group, uri.toString(), false, archiveInfo);
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            GeneralUtils.safeClose(bis);
+            GeneralUtils.safeClose(zis);
+        }
+    }
+
+    public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception {
+        try {
+            init();
+            //fetch region, this may be stranded
+            if (!chromosomeList.containsKey(span.getBioSeq())) {
+                return null;
+            }
+
+            int start = span.getStart();
+            int stop = span.getEnd();
+            String chrom = chromosomeList.get(span.getBioSeq());
+            USeqData[] useqData = useqArchive.fetch(chrom, start, stop);
+            //any data?
+            if (useqData == null) {
+                return null;
+            }
+            //is it a graph dataset?
+            if (useqArchive.getArchiveInfo().getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
+                USeqGraphParser gp = new USeqGraphParser();
+                return gp.parseGraphSyms(useqArchive, useqData, GenometryModel.getGenometryModel(), uri.toString());
+                //must be a region dataset
+            } else {
+                USeqRegionParser rp = new USeqRegionParser();
+                return rp.parse(useqArchive, useqData, group, uri.toString());
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            GeneralUtils.safeClose(bis);
+            GeneralUtils.safeClose(zis);
+        }
+    }
+
+    public List<BioSeq> getChromosomeList() throws Exception {
+        init();
+        return new ArrayList<BioSeq>(chromosomeList.keySet());
+    }
 }

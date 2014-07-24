@@ -564,10 +564,10 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                             } else {
                                 if ("GT".equals(format[k])) {
                                     String[] genotypes = data[k].split("[|/]");
-                                    for (int l = 0; l < genotypes.length; l++) {
-                                        if (!NO_DATA.equals(genotypes[l])) {
+                                    for (String genotype : genotypes) {
+                                        if (!NO_DATA.equals(genotype)) {
                                             SimpleSymWithProps container = getContainerSymFromMap(genotypeDataMap, dataKey, seq);
-                                            int index = Integer.parseInt(genotypes[l]);
+                                            int index = Integer.parseInt(genotype);
                                             if (index == 0) {
                                                 container.addChild(refSym);
                                             } else {

@@ -6,23 +6,24 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 
 public class BedGraph extends Wiggle implements AnnotationWriter {
-	private static final String TRACK_TYPE = "bedgraph";
 
-	public BedGraph() {
-		this(null, null, null);
-	}
+    private static final String TRACK_TYPE = "bedgraph";
 
-	public BedGraph(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri, featureName, seq_group);
-	}
+    public BedGraph() {
+        this(null, null, null);
+    }
 
-	@Override
-	protected String getTrackType() {
-		return TRACK_TYPE;
-	}
+    public BedGraph(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+        super(uri, featureName, seq_group);
+    }
 
-	@Override
-	public String getMimeType() {
-		return "text/bedgraph";
-	}
+    @Override
+    protected String getTrackType() {
+        return TRACK_TYPE;
+    }
+
+    @Override
+    public String getMimeType() {
+        return "text/bedgraph";
+    }
 }

@@ -217,7 +217,7 @@ public class BED extends SymLoader implements LineProcessor {
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
                 String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
                 if (StringUtils.isNotBlank(trackLineName)) {
-                    if (type.indexOf(".bed") > -1) {
+                    if (type.contains(".bed")) {
                         type = type.substring(0, type.indexOf(".bed")) + " " + trackLineName;
                     } else {
                         type = type + "_" + trackLineName;
@@ -339,11 +339,7 @@ public class BED extends SymLoader implements LineProcessor {
         max = Math.max(beg, end);
 
         if (!checkRange(min, max, minimum, maximum)) {
-            if (max > maximum) {
-                return false;
-            }
-
-            return true;
+            return max <= maximum;
         }
 
         BioSeq seq = group.getSeq(seq_name);

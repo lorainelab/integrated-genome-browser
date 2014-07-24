@@ -23,8 +23,9 @@ import java.util.logging.Logger;
  * this class with input file path as single parameter and set stdout stream
  * into output file. If you have any problems or ideas don't hesitate to contact
  * me through email: rsutormin[at]gmail.com.
- * 
+ *
  * Ref : storage.bioinf.fbb.msu.ru/~roman/TwoBitParser.java
+ *
  * @author Roman Sutormin (storage.bioinf.fbb.msu.ru/~roman)
  */
 public class TwoBitNew extends SymLoader {
@@ -53,19 +54,19 @@ public class TwoBitNew extends SymLoader {
         'T', 'C', 'A', 'G'
     };
 
-	private final Map<BioSeq, String> chrMap = new HashMap<BioSeq, String>();
-	
-    public TwoBitNew(URI uri, String featureName, AnnotatedSeqGroup group){
-		super(uri, featureName, group);  
+    private final Map<BioSeq, String> chrMap = new HashMap<BioSeq, String>();
+
+    public TwoBitNew(URI uri, String featureName, AnnotatedSeqGroup group) {
+        super(uri, featureName, group);
     }
 
-	@Override
-	public void init() throws Exception{
-		if (this.isInitialized) {
-			return;
-		}
-		raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
-		long sign = readFourBytes();
+    @Override
+    public void init() throws Exception {
+        if (this.isInitialized) {
+            return;
+        }
+        raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+        long sign = readFourBytes();
         if (sign == 0x1A412743) {
             if (DEBUG) {
                 System.err.println("2bit: Normal number architecture");
@@ -81,7 +82,7 @@ public class TwoBitNew extends SymLoader {
         readFourBytes();
         int seq_qnt = (int) readFourBytes();
         readFourBytes();
-		String seq_name;
+        String seq_name;
         BioSeq seq;
         for (int i = 0; i < seq_qnt; i++) {
             int name_len = raf.read();
@@ -90,12 +91,12 @@ public class TwoBitNew extends SymLoader {
                 chars[j] = (char) raf.read();
             }
             seq_name = new String(chars);
-			seq = group.getSeq(seq_name);
-			if(seq == null) {
-				continue;
-			}
-			
-			chrMap.put(seq, seq_name);
+            seq = group.getSeq(seq_name);
+            if (seq == null) {
+                continue;
+            }
+
+            chrMap.put(seq, seq_name);
             long pos = readFourBytes();
             seq2pos.put(seq_name, pos);
             if (DEBUG) {
@@ -103,52 +104,52 @@ public class TwoBitNew extends SymLoader {
                         + "pos=" + pos);
             }
         }
-		super.init();
-	}
-	
-	@Override
-	public List<BioSeq> getChromosomeList() throws Exception  {
-		init();
-		return new ArrayList<BioSeq>(chrMap.keySet());
-	}
+        super.init();
+    }
 
-	@Override
-	public String getRegionResidues(SeqSpan span) throws Exception  {
-		init();
-		BioSeq seq = span.getBioSeq();
-		if(chrMap.containsKey(seq)){
-			this.setCurrentSequence(chrMap.get(seq));
-			return getResidueString(span.getMin(), span.getMax() - span.getMin());
-		}
-		
-		Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING,"Seq {0} not present {1}",new Object[]{seq.getID(), uri.toString()});
-		return "";
-	}
-	
-	private String getResidueString(int start, int len) throws IOException{
-		if (cur_seq_name == null) {
+    @Override
+    public List<BioSeq> getChromosomeList() throws Exception {
+        init();
+        return new ArrayList<BioSeq>(chrMap.keySet());
+    }
+
+    @Override
+    public String getRegionResidues(SeqSpan span) throws Exception {
+        init();
+        BioSeq seq = span.getBioSeq();
+        if (chrMap.containsKey(seq)) {
+            this.setCurrentSequence(chrMap.get(seq));
+            return getResidueString(span.getMin(), span.getMax() - span.getMin());
+        }
+
+        Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getID(), uri.toString()});
+        return "";
+    }
+
+    private String getResidueString(int start, int len) throws IOException {
+        if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
         }
         System.out.println(">" + cur_seq_name + " pos=" + cur_seq_pos + ", len=" + len);
-        
-		char[] residues = new char[len];
-		int ch;
-		
-		setCurrentSequencePosition(start);
+
+        char[] residues = new char[len];
+        int ch;
+
+        setCurrentSequencePosition(start);
         for (int qnt = 0; (qnt < residues.length); qnt++) {
-			ch = read();
-			if (ch < 0 || Thread.currentThread().isInterrupted()) {
-				break;
-			}
-			residues[qnt] = (char) ch;
-		}
-		close();
-		if(Thread.currentThread().isInterrupted()){
-			return null;
-		}
-		return new String(residues);
-	}
-	
+            ch = read();
+            if (ch < 0 || Thread.currentThread().isInterrupted()) {
+                break;
+            }
+            residues[qnt] = (char) ch;
+        }
+        close();
+        if (Thread.currentThread().isInterrupted()) {
+            return null;
+        }
+        return new String(residues);
+    }
+
     private long readFourBytes() throws Exception {
         long ret = 0;
         if (!reverse) {
@@ -454,7 +455,6 @@ public class TwoBitNew extends SymLoader {
         }
     }
 
-	
     public static void main(String[] args) throws Exception {
 //        if (args.length == 0) {
 //            System.out.println("Usage: <program> <input.2bit> [<seq_name> [<start> [<length>]]]");
@@ -462,12 +462,12 @@ public class TwoBitNew extends SymLoader {
 //            return;
 //        }
         TwoBitNew p = new TwoBitNew(new URI("http://igbquickload.org/quickload/H_sapiens_Feb_2009/H_sapiens_Feb_2009.2bit"), null, null);
-		//p.setCurrentSequence(p.getSequenceNames()[0]);
-		Timer timer = new Timer();
-		timer.start();
-		p.printFastaSequence(100000);
-		timer.print();
-		p.close();
+        //p.setCurrentSequence(p.getSequenceNames()[0]);
+        Timer timer = new Timer();
+        timer.start();
+        p.printFastaSequence(100000);
+        timer.print();
+        p.close();
 //        if (args.length == 1) {
 //            String[] names = p.getSequenceNames();
 //            for (int i = 0; i < names.length; i++) {

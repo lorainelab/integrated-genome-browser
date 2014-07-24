@@ -9,56 +9,60 @@ import java.util.List;
 
 /**
  * common parent class for all Fasta SymLoaders
+ *
  * @author jnicol
  */
 public abstract class FastaCommon extends SymLoader {
-	private static final List<String> pref_list = new ArrayList<String>();
-	static {
-		pref_list.add("fa");
-	}
 
-	protected final List<BioSeq> chrSet = new ArrayList<BioSeq>();
+    private static final List<String> pref_list = new ArrayList<String>();
 
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-	static {
-		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.VISIBLE);
+    static {
+        pref_list.add("fa");
+    }
+
+    protected final List<BioSeq> chrSet = new ArrayList<BioSeq>();
+
+    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+
+    static {
+        strategyList.add(LoadStrategy.NO_LOAD);
+        strategyList.add(LoadStrategy.VISIBLE);
 //		strategyList.add(LoadStrategy.CHROMOSOME);
-	}
+    }
 
-	public FastaCommon(URI uri, String featureName, AnnotatedSeqGroup group) {
-		super(uri, "", group);
-		this.isResidueLoader = true;
-	}
+    public FastaCommon(URI uri, String featureName, AnnotatedSeqGroup group) {
+        super(uri, "", group);
+        this.isResidueLoader = true;
+    }
 
-	@Override
-	public void init() throws Exception {
-		if (this.isInitialized) {
-			return;
-		}
-		if(initChromosomes()) {
-			super.init();
-		}
-	}
+    @Override
+    public void init() throws Exception {
+        if (this.isInitialized) {
+            return;
+        }
+        if (initChromosomes()) {
+            super.init();
+        }
+    }
 
-	@Override
-	public List<LoadStrategy> getLoadChoices() {
-		return strategyList;
-	}
+    @Override
+    public List<LoadStrategy> getLoadChoices() {
+        return strategyList;
+    }
 
-	@Override
-	public List<BioSeq> getChromosomeList() throws Exception {
-		init();
-		return chrSet;
-	}
+    @Override
+    public List<BioSeq> getChromosomeList() throws Exception {
+        init();
+        return chrSet;
+    }
 
-	/**
-	 * Get seqids and lengths for all chromosomes.
-	 */
-	protected abstract boolean initChromosomes() throws Exception;
+    /**
+     * Get seqids and lengths for all chromosomes.
+     */
+    protected abstract boolean initChromosomes() throws Exception;
 
-	@Override
-	public List<String> getFormatPrefList() {
-		return pref_list;
-	}
+    @Override
+    public List<String> getFormatPrefList() {
+        return pref_list;
+    }
 }

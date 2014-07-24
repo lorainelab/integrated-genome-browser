@@ -13,30 +13,31 @@ import java.util.Collections;
  *
  * @author hiralv
  */
-public class SymLoaderInstNC extends SymLoaderInst{
-	
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-	static {
-		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.GENOME);
-	}
-	
-	public SymLoaderInstNC(URI uri, String featureName, AnnotatedSeqGroup group){
-		super(uri, featureName, group);
-	}
+public class SymLoaderInstNC extends SymLoaderInst {
 
-	@Override
-	public List<LoadStrategy> getLoadChoices() {
-		return strategyList;
-	}
+    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 
-	@Override
-	public List<BioSeq> getChromosomeList(){
-		return Collections.<BioSeq>emptyList();
-	}
+    static {
+        strategyList.add(LoadStrategy.NO_LOAD);
+        strategyList.add(LoadStrategy.GENOME);
+    }
 
-	@Override
-	public List<? extends SeqSymmetry> getGenome() throws Exception  {
-		return super.getGenome();
-	}
+    public SymLoaderInstNC(URI uri, String featureName, AnnotatedSeqGroup group) {
+        super(uri, featureName, group);
+    }
+
+    @Override
+    public List<LoadStrategy> getLoadChoices() {
+        return strategyList;
+    }
+
+    @Override
+    public List<BioSeq> getChromosomeList() {
+        return Collections.<BioSeq>emptyList();
+    }
+
+    @Override
+    public List<? extends SeqSymmetry> getGenome() throws Exception {
+        return super.getGenome();
+    }
 }

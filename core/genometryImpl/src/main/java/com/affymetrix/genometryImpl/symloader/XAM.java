@@ -254,7 +254,7 @@ public abstract class XAM extends SymLoader {
                     currentChildStart = currentChildEnd + celLength;
                     currentChildEnd = currentChildStart;
                 } else if (cel.getOperator() == CigarOperator.PADDING) {
-					// TODO -- allow possibility that PADDING is terminator, not M
+                    // TODO -- allow possibility that PADDING is terminator, not M
                     // print matches
                     currentChildEnd += celLength;
                 } else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {

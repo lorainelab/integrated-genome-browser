@@ -22,8 +22,7 @@ import com.affymetrix.genometryImpl.util.*;
 
 /**
  *
- * @author jnicol Could be improved with iterators. But for now this should be
- * fine.
+ * @author jnicol
  */
 public abstract class SymLoader {
 
@@ -133,7 +132,7 @@ public abstract class SymLoader {
             GeneralUtils.safeClose(bis);
         }
 
-		//Logger.getLogger(this.getClass().getName()).log(
+        //Logger.getLogger(this.getClass().getName()).log(
         //		Level.SEVERE, "Retrieving genome is not defined");
         //return null;
     }

@@ -20,298 +20,297 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Sgr extends SymLoader implements AnnotationWriter {
-	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-	static {
-		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.VISIBLE);
+    private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
+
+    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+
+    static {
+        strategyList.add(LoadStrategy.NO_LOAD);
+        strategyList.add(LoadStrategy.VISIBLE);
 //		strategyList.add(LoadStrategy.CHROMOSOME);
-		strategyList.add(LoadStrategy.GENOME);
-	}
-	
-	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri, featureName, seq_group);
-	}
+        strategyList.add(LoadStrategy.GENOME);
+    }
 
-	@Override
-	public void init() throws Exception  {
-		if (this.isInitialized) {
-			return;
-		}
-		if(buildIndex()){
-			super.init();
-		}
-	}
+    public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+        super(uri, featureName, seq_group);
+    }
 
-	@Override
-	public List<LoadStrategy> getLoadChoices() {
-		return strategyList;
-	}
+    @Override
+    public void init() throws Exception {
+        if (this.isInitialized) {
+            return;
+        }
+        if (buildIndex()) {
+            super.init();
+        }
+    }
 
-	@Override
-	public List<BioSeq> getChromosomeList() throws Exception  {
-		init();
-		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
-		Collections.sort(chromosomeList,new BioSeqComparator());
-		return chromosomeList;
-	}
+    @Override
+    public List<LoadStrategy> getLoadChoices() {
+        return strategyList;
+    }
 
-	@Override
-	public List<GraphSym> getGenome() throws Exception  {
-		init();
-		List<BioSeq> allSeq = getChromosomeList();
-		List<GraphSym> retList = new ArrayList<GraphSym>();
-		for(BioSeq seq : allSeq){
-			retList.addAll(getChromosome(seq));
-		}
-		return retList;
-	}
+    @Override
+    public List<BioSeq> getChromosomeList() throws Exception {
+        init();
+        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        Collections.sort(chromosomeList, new BioSeqComparator());
+        return chromosomeList;
+    }
 
-	@Override
-	public List<GraphSym> getChromosome(BioSeq seq) throws Exception  {
-		init();
-		return parse(seq, seq.getMin(), seq.getMax() + 1); //interbase format
-	}
+    @Override
+    public List<GraphSym> getGenome() throws Exception {
+        init();
+        List<BioSeq> allSeq = getChromosomeList();
+        List<GraphSym> retList = new ArrayList<GraphSym>();
+        for (BioSeq seq : allSeq) {
+            retList.addAll(getChromosome(seq));
+        }
+        return retList;
+    }
 
+    @Override
+    public List<GraphSym> getChromosome(BioSeq seq) throws Exception {
+        init();
+        return parse(seq, seq.getMin(), seq.getMax() + 1); //interbase format
+    }
 
-	@Override
-	public List<GraphSym> getRegion(SeqSpan span) throws Exception  {
-		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax() + 1); //interbaseformat
-	}
+    @Override
+    public List<GraphSym> getRegion(SeqSpan span) throws Exception {
+        init();
+        return parse(span.getBioSeq(), span.getMin(), span.getMax() + 1); //interbaseformat
+    }
 
-	public String getMimeType() {
-		return "text/sgr";
-	}
+    public String getMimeType() {
+        return "text/sgr";
+    }
 
+    private List<GraphSym> parse(BioSeq seq, int min, int max) throws Exception {
+        List<GraphSym> results = new ArrayList<GraphSym>();
+        IntArrayList xlist = new IntArrayList();
+        FloatArrayList ylist = new FloatArrayList();
+        BufferedReader br = null;
+        FileOutputStream fos = null;
 
-	private List<GraphSym> parse(BioSeq seq, int min, int max) throws Exception  {
-		List<GraphSym> results = new ArrayList<GraphSym>();
-		IntArrayList xlist = new IntArrayList();
-		FloatArrayList ylist = new FloatArrayList();
-		BufferedReader br = null;
-		FileOutputStream fos = null;
+        try {
+            File file = chrList.get(seq);
+            if (file == null) {
+                Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+                return Collections.<GraphSym>emptyList();
+            }
 
-		try {
-			File file = chrList.get(seq);
-			if (file == null) {
-				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
-				return Collections.<GraphSym>emptyList();
-			}
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-			
 			// Using whole file path so probably not needed : HV 02/20/12
-			// Making sure the ID is unique on the seq
-			// will make sure the GraphState is also unique on the seq.
-			// String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
-			
-			boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
+            // Making sure the ID is unique on the seq
+            // will make sure the GraphState is also unique on the seq.
+            // String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
+            boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
 
-			GraphSym sym = createResults(xlist, seq, ylist, uri.toString(), sort);
+            GraphSym sym = createResults(xlist, seq, ylist, uri.toString(), sort);
 
-			results.add(sym);
+            results.add(sym);
 
-			if(sort){
-				fos = new FileOutputStream(file);
-				writeSgrFormat(sym,fos);
-			}
+            if (sort) {
+                fos = new FileOutputStream(file);
+                writeSgrFormat(sym, fos);
+            }
 
-			file.setReadOnly();
-			
-			return results;
-		} catch (Exception ex){
-			throw ex;
-		} finally {
-			GeneralUtils.safeClose(br);
-			GeneralUtils.safeClose(fos);
-		}
+            file.setReadOnly();
 
-	}
+            return results;
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            GeneralUtils.safeClose(br);
+            GeneralUtils.safeClose(fos);
+        }
 
-	/**
-	 * Parse the lines in the one-chromosome stream.
-	 * @param br
-	 * @param xlist
-	 * @param ylist
-	 * @param min
-	 * @param max
-	 * @param sorted
-	 * @return boolean indicating whether we need to sort the data
-	 * @throws IOException
-	 * @throws NumberFormatException
-	 */
-	private static boolean parseLines(
-			BufferedReader br, IntArrayList xlist, FloatArrayList ylist, int min, int max, boolean sorted)
-			throws IOException, NumberFormatException {
-		String[] fields;
-		String line;
-		int x = 0;
-		float y = 0.0f;
-		int prevx = 0;
-		boolean sort = false;
+    }
 
-		while ((line = br.readLine()) != null) {
-			if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
-				continue;
-			}
-			fields = line_regex.split(line);
-			if (fields == null || fields.length == 0) {
-				continue;
-			}
-			
-			x = Integer.parseInt(fields[1]);
+    /**
+     * Parse the lines in the one-chromosome stream.
+     *
+     * @param br
+     * @param xlist
+     * @param ylist
+     * @param min
+     * @param max
+     * @param sorted
+     * @return boolean indicating whether we need to sort the data
+     * @throws IOException
+     * @throws NumberFormatException
+     */
+    private static boolean parseLines(
+            BufferedReader br, IntArrayList xlist, FloatArrayList ylist, int min, int max, boolean sorted)
+            throws IOException, NumberFormatException {
+        String[] fields;
+        String line;
+        int x = 0;
+        float y = 0.0f;
+        int prevx = 0;
+        boolean sort = false;
 
-			if (x >= max) {
-				// only look in range
-				if (sorted) {
-					break;	// if data is sorted on x, no further points will be < max
-				}
-				continue;
-			}
+        while ((line = br.readLine()) != null) {
+            if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
+                continue;
+            }
+            fields = line_regex.split(line);
+            if (fields == null || fields.length == 0) {
+                continue;
+            }
 
-			if (x < min) {
-				// only look in range
-				continue;
-			}	
-			
-			y = Float.parseFloat(fields[2]);
-			xlist.add(x);
-			ylist.add(y);
+            x = Integer.parseInt(fields[1]);
 
-			if (!sorted) {
-				if (prevx > x) {
-					sort = true;
-				} else {
-					prevx = x;
-				}
-			}
-		}
+            if (x >= max) {
+                // only look in range
+                if (sorted) {
+                    break;	// if data is sorted on x, no further points will be < max
+                }
+                continue;
+            }
 
-		return sort;
-	}
+            if (x < min) {
+                // only look in range
+                continue;
+            }
 
-	public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
-		BioSeq seq = graf.getGraphSeq();
-		if (seq == null) {
-			throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
-		}
-		String seq_id = seq.getID();
+            y = Float.parseFloat(fields[2]);
+            xlist.add(x);
+            ylist.add(y);
 
-		BufferedOutputStream bos = null;
-		DataOutputStream dos = null;
-		try {
-			bos = new BufferedOutputStream(ostr);
-			dos = new DataOutputStream(bos);
-			writeGraphPoints(graf, dos, seq_id);
-		} finally {
-			GeneralUtils.safeClose(bos);
-			GeneralUtils.safeClose(dos);
-		}
-		return true;
-	}
+            if (!sorted) {
+                if (prevx > x) {
+                    sort = true;
+                } else {
+                    prevx = x;
+                }
+            }
+        }
 
-	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos, String seq_id) throws IOException {
-		int total_points = graf.getPointCount();
-		for (int i = 0; i < total_points; i++) {
-			dos.writeBytes(seq_id + "\t" + graf.getGraphXCoord(i) + "\t"
-					+ graf.getGraphYCoordString(i) + "\n");
-		}
-	}
+        return sort;
+    }
 
+    public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
+        BioSeq seq = graf.getGraphSeq();
+        if (seq == null) {
+            throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
+        }
+        String seq_id = seq.getID();
 
-	private static GraphSym createResults(
-			IntArrayList xlist, BioSeq aseq, FloatArrayList ylist, String gid, boolean sort) {
-			int[] xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
-			xlist = null;
-			float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
-			ylist = null;
-			
-			if (sort) {
-				GrParser.sortXYDataOnX(xcoords, ycoords);
-			}
+        BufferedOutputStream bos = null;
+        DataOutputStream dos = null;
+        try {
+            bos = new BufferedOutputStream(ostr);
+            dos = new DataOutputStream(bos);
+            writeGraphPoints(graf, dos, seq_id);
+        } finally {
+            GeneralUtils.safeClose(bos);
+            GeneralUtils.safeClose(dos);
+        }
+        return true;
+    }
 
-			return new GraphSym(xcoords, ycoords, gid, aseq);
-	}
+    private static void writeGraphPoints(GraphSym graf, DataOutputStream dos, String seq_id) throws IOException {
+        int total_points = graf.getPointCount();
+        for (int i = 0; i < total_points; i++) {
+            dos.writeBytes(seq_id + "\t" + graf.getGraphXCoord(i) + "\t"
+                    + graf.getGraphYCoordString(i) + "\n");
+        }
+    }
 
+    private static GraphSym createResults(
+            IntArrayList xlist, BioSeq aseq, FloatArrayList ylist, String gid, boolean sort) {
+        int[] xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
+        xlist = null;
+        float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
+        ylist = null;
 
-	/**
-	 * Parse lines in the arbitrary-chromosome stream.
-	 * @param istr
-	 * @param chrLength
-	 * @param chrFiles
-	 */
-	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles) throws Exception  {
-		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
-		BufferedReader br = null;
-		BufferedWriter bw = null;
-		String[] fields = null;
-		String line, seqid;
-		int x;
-		
-		try {
-			br = new BufferedReader(new InputStreamReader(istr));
-			Thread thread = Thread.currentThread();
-			while ((line = br.readLine()) != null && !thread.isInterrupted()) {
-				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
-					continue;
-				}
+        if (sort) {
+            GrParser.sortXYDataOnX(xcoords, ycoords);
+        }
 
-				fields = line_regex.split(line);
-				seqid = fields[0];
-				x = Integer.parseInt(fields[1]);
+        return new GraphSym(xcoords, ycoords, gid, aseq);
+    }
 
-				if (!chrs.containsKey(seqid)) {
-					addToLists(chrs, seqid, chrFiles, chrLength, ".sgr");
-				}
-				
-				if (x > chrLength.get(seqid)) {
-					chrLength.put(seqid, x);
-				}
-				
-				bw = chrs.get(seqid);
-				bw.write(line + "\n");
-			}
-			return !thread.isInterrupted();
-		} catch (Exception ex){
-			throw ex;
-		} finally{
-			for(BufferedWriter b : chrs.values()){
-				try {
-					b.flush();
-				} catch (IOException ex) {
-					Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
-				}
-				GeneralUtils.safeClose(b);
-			}
-			GeneralUtils.safeClose(bw);
-			GeneralUtils.safeClose(br);
-		}
-	}
+    /**
+     * Parse lines in the arbitrary-chromosome stream.
+     *
+     * @param istr
+     * @param chrLength
+     * @param chrFiles
+     */
+    @Override
+    protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
+        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        String[] fields = null;
+        String line, seqid;
+        int x;
 
-	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
-		BufferedOutputStream bos = null;
-		DataOutputStream dos = null;
-		try {
-			bos = new BufferedOutputStream(ostr);
-			dos = new DataOutputStream(bos);
+        try {
+            br = new BufferedReader(new InputStreamReader(istr));
+            Thread thread = Thread.currentThread();
+            while ((line = br.readLine()) != null && !thread.isInterrupted()) {
+                if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
+                    continue;
+                }
 
-			Iterator<? extends SeqSymmetry> iter = syms.iterator();
-			for(GraphSym graf; iter.hasNext(); ){
-				graf = (GraphSym)iter.next();
-				writeGraphPoints(graf, dos, graf.getGraphSeq().getID());
-			}
+                fields = line_regex.split(line);
+                seqid = fields[0];
+                x = Integer.parseInt(fields[1]);
 
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(dos);
-		}
+                if (!chrs.containsKey(seqid)) {
+                    addToLists(chrs, seqid, chrFiles, chrLength, ".sgr");
+                }
 
-		return false;
-	}
-	
+                if (x > chrLength.get(seqid)) {
+                    chrLength.put(seqid, x);
+                }
+
+                bw = chrs.get(seqid);
+                bw.write(line + "\n");
+            }
+            return !thread.isInterrupted();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            for (BufferedWriter b : chrs.values()) {
+                try {
+                    b.flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                GeneralUtils.safeClose(b);
+            }
+            GeneralUtils.safeClose(bw);
+            GeneralUtils.safeClose(br);
+        }
+    }
+
+    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
+        BufferedOutputStream bos = null;
+        DataOutputStream dos = null;
+        try {
+            bos = new BufferedOutputStream(ostr);
+            dos = new DataOutputStream(bos);
+
+            Iterator<? extends SeqSymmetry> iter = syms.iterator();
+            for (GraphSym graf; iter.hasNext();) {
+                graf = (GraphSym) iter.next();
+                writeGraphPoints(graf, dos, graf.getGraphSeq().getID());
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            GeneralUtils.safeClose(dos);
+        }
+
+        return false;
+    }
+
 }

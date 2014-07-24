@@ -63,7 +63,7 @@ public final class BAM extends XAM {
         SAMFileReader samFileReader = null;
         String scheme = uri.getScheme().toLowerCase();
         if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
-			// BAM is file.
+            // BAM is file.
             //indexFile = new File(uri.)
             File f = new File(uri);
             indexFile = findIndexFile(f);
@@ -263,13 +263,13 @@ public final class BAM extends XAM {
                 Logger.getLogger(BAM.class.getName()).log(Level.INFO, "No overlapping bam alignments.", "Min-Max: " + min + "-" + max);
                 return;
             }
-			//write out records to file
+            //write out records to file
             //TODO: is this hack necessary with updated picard.jar?
             reader.getFileHeader().setSortOrder(net.sf.samtools.SAMFileHeader.SortOrder.coordinate); // A hack to prevent error caused by picard tool.
 
             net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
             if (BAMWriter) {
-					// BAM files cannot be written to the stream one line at a time.
+                // BAM files cannot be written to the stream one line at a time.
                 // Rather, a tempfile is created, and later read into the stream.
                 try {
                     tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");
@@ -319,10 +319,13 @@ public final class BAM extends XAM {
     }
 
     /**
-     * Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.
+     * Modified to look for both xxx.bai and xxx.bam.bai files in parent
+     * directory.
+     *
      * @param bamfile
      * @return file
-     * @throws com.affymetrix.genometryImpl.symloader.BAM.BamIndexNotFoundException 
+     * @throws
+     * com.affymetrix.genometryImpl.symloader.BAM.BamIndexNotFoundException
      */
     public static File findIndexFile(File bamfile) throws BamIndexNotFoundException {
         //look for xxx.bam.bai
@@ -385,7 +388,7 @@ public final class BAM extends XAM {
         return false;
     }
 
-	//Can be used later. Do not remove.
+    //Can be used later. Do not remove.
     //Moving to a new plugin project BAMIndexer -KTS
     @SuppressWarnings("unused")
     static private File createIndexFile(File bamfile) throws IOException {

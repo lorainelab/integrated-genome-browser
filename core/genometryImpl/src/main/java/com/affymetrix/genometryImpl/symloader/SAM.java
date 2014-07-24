@@ -31,181 +31,183 @@ import org.broad.tribble.readers.LineReader;
  *
  * @author hiralv
  */
-public class SAM extends XAM implements LineProcessor{
-	
-	public SAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri, featureName, seq_group);
-	}
-	
-	@Override
-	public void init() throws Exception  {
-		try {
-			reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
-			reader.setValidationStringency(ValidationStringency.SILENT);
+public class SAM extends XAM implements LineProcessor {
 
-			if (this.isInitialized) {
-				return;
-			}
+    public SAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+        super(uri, featureName, seq_group);
+    }
 
-			if (initTheSeqs()) {
-				super.init();
-			}
-			
-		} catch (SAMFormatException ex) {
-			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n"
-					+ "Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). "
-					+ "See console for the details of the exception.\n", Level.SEVERE);
-			ex.printStackTrace();
-		}
-	}
-	
-	@Override
-	protected boolean initTheSeqs(){
-		boolean ret = super.initTheSeqs();
-		
-		if(ret){
-			if(header.getSortOrder() != SAMFileHeader.SortOrder.coordinate){
-				Logger.getLogger(SAM.class.getName()).log(Level.SEVERE,"Sam file must be sorted by coordinate.");
-				return false;
-			}
-		}
-		return ret;
-	}
-	
-	@Override
-	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception  {
-		init();
-		if (reader != null) {
-			CloseableIterator<SAMRecord> iter = reader.iterator();
-			if (iter != null && iter.hasNext()) {
-				return parse(iter, seq, min, max, containerSym, contained, true);
-			}
-		}
+    @Override
+    public void init() throws Exception {
+        try {
+            reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
+            reader.setValidationStringency(ValidationStringency.SILENT);
 
-		return Collections.<SeqSymmetry>emptyList();
-	}
-	
-	public List<SeqSymmetry> parse(CloseableIterator<SAMRecord> iter, BioSeq seq, int min, int max, 
-			boolean containerSym, boolean contained, boolean check) throws Exception {
-		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
-		List<Throwable> errList = new ArrayList<Throwable>(10);
-		int maximum;
-		String seqId = seqs.get(seq);
-		SAMRecord sr = null;
-		try {
-			while (iter.hasNext() && (!Thread.currentThread().isInterrupted())) {
-				try {
-					sr = iter.next();
-					maximum = sr.getAlignmentEnd();
+            if (this.isInitialized) {
+                return;
+            }
 
-					if (check) {
-						if (!seqId.equals(sr.getReferenceName())) {
-							continue;
-						}
+            if (initTheSeqs()) {
+                super.init();
+            }
 
-						if (!(checkRange(sr.getAlignmentStart(), maximum, min, max))) {
-							if (maximum > max) {
-								break;
-							}
-							continue;
-						}
-					}
+        } catch (SAMFormatException ex) {
+            ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n"
+                    + "Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). "
+                    + "See console for the details of the exception.\n", Level.SEVERE);
+            ex.printStackTrace();
+        }
+    }
 
-					if (skipUnmapped && sr.getReadUnmappedFlag()) {
-						continue;
-					}
-					symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
-				} catch (SAMException e) {
-					errList.add(e);
-				}
-			}
-			return symList;
-		} catch (Exception ex){
-			throw ex;
-		} finally {
-			if (iter != null) {
-				iter.close();
-			}
+    @Override
+    protected boolean initTheSeqs() {
+        boolean ret = super.initTheSeqs();
 
-			if (!errList.isEmpty()) {
-				ErrorHandler.errorPanel("SAM exception", "Ignoring " + errList.size() + " records", errList, Level.WARNING);
-			}
-		}
-	}
-	
-	private static boolean checkRange(int start, int end, int min, int max){
+        if (ret) {
+            if (header.getSortOrder() != SAMFileHeader.SortOrder.coordinate) {
+                Logger.getLogger(SAM.class.getName()).log(Level.SEVERE, "Sam file must be sorted by coordinate.");
+                return false;
+            }
+        }
+        return ret;
+    }
 
-		//getChromosome && getRegion
-		if(end < min || start > max){
-			return false;
-		}
+    @Override
+    public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception {
+        init();
+        if (reader != null) {
+            CloseableIterator<SAMRecord> iter = reader.iterator();
+            if (iter != null && iter.hasNext()) {
+                return parse(iter, seq, min, max, containerSym, contained, true);
+            }
+        }
 
-		return true;
-	}
+        return Collections.<SeqSymmetry>emptyList();
+    }
 
-	@Override
-	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
-		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
-	}
+    public List<SeqSymmetry> parse(CloseableIterator<SAMRecord> iter, BioSeq seq, int min, int max,
+            boolean containerSym, boolean contained, boolean check) throws Exception {
+        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
+        List<Throwable> errList = new ArrayList<Throwable>(10);
+        int maximum;
+        String seqId = seqs.get(seq);
+        SAMRecord sr = null;
+        try {
+            while (iter.hasNext() && (!Thread.currentThread().isInterrupted())) {
+                try {
+                    sr = iter.next();
+                    maximum = sr.getAlignmentEnd();
 
-	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
-		// LineTrackerI ignored, since the SAMTextReader hides the lines
-		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
-		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
-	}
+                    if (check) {
+                        if (!seqId.equals(sr.getReferenceName())) {
+                            continue;
+                        }
 
-	public void init(URI uri) {
-		reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
-		reader.setValidationStringency(ValidationStringency.SILENT);
-		header = reader.getFileHeader();
-	}
-	
-	private class AsciiTabixLineReader extends BufferedLineReader {
+                        if (!(checkRange(sr.getAlignmentStart(), maximum, min, max))) {
+                            if (maximum > max) {
+                                break;
+                            }
+                            continue;
+                        }
+                    }
 
-		private final LineReader readerImpl;
-		private int lineNumber;
-		
-		AsciiTabixLineReader(LineReader readerImpl) {
-			super(null);
-			this.readerImpl = readerImpl;
-			lineNumber = 0;
-		}
+                    if (skipUnmapped && sr.getReadUnmappedFlag()) {
+                        continue;
+                    }
+                    symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
+                } catch (SAMException e) {
+                    errList.add(e);
+                }
+            }
+            return symList;
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            if (iter != null) {
+                iter.close();
+            }
 
-		@Override
-		public String readLine() {
-			try {
-				return readerImpl.readLine();
-			} catch (IOException ex) {
-				Logger.getLogger(SAM.class.getName()).log(Level.SEVERE, null, ex);
-			}finally{
-				lineNumber++;
-			}
-			return null;
-		}
+            if (!errList.isEmpty()) {
+                ErrorHandler.errorPanel("SAM exception", "Ignoring " + errList.size() + " records", errList, Level.WARNING);
+            }
+        }
+    }
 
-		@Override
-		public int getLineNumber() {
-			return lineNumber;
-		}
+    private static boolean checkRange(int start, int end, int min, int max) {
 
-		@Override
-		public void close() {
-			readerImpl.close();
-		}
-		
-		@Override
-		public int peek() { return -1; }
+        //getChromosome && getRegion
+        if (end < min || start > max) {
+            return false;
+        }
 
-	}
+        return true;
+    }
 
-	@Override
-	public SeqSpan getSpan(String line) {
-		return null; // not used yet
-	}
-	
-	public boolean processInfoLine(String line, List<String> infoLines) {
-		return false; // not used yet
-	}
+    @Override
+    public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
+        init();
+        return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
+    }
+
+    @Override
+    public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
+        // LineTrackerI ignored, since the SAMTextReader hides the lines
+        SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
+        return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
+    }
+
+    public void init(URI uri) {
+        reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
+        reader.setValidationStringency(ValidationStringency.SILENT);
+        header = reader.getFileHeader();
+    }
+
+    private class AsciiTabixLineReader extends BufferedLineReader {
+
+        private final LineReader readerImpl;
+        private int lineNumber;
+
+        AsciiTabixLineReader(LineReader readerImpl) {
+            super(null);
+            this.readerImpl = readerImpl;
+            lineNumber = 0;
+        }
+
+        @Override
+        public String readLine() {
+            try {
+                return readerImpl.readLine();
+            } catch (IOException ex) {
+                Logger.getLogger(SAM.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                lineNumber++;
+            }
+            return null;
+        }
+
+        @Override
+        public int getLineNumber() {
+            return lineNumber;
+        }
+
+        @Override
+        public void close() {
+            readerImpl.close();
+        }
+
+        @Override
+        public int peek() {
+            return -1;
+        }
+
+    }
+
+    @Override
+    public SeqSpan getSpan(String line) {
+        return null; // not used yet
+    }
+
+    public boolean processInfoLine(String line, List<String> infoLines) {
+        return false; // not used yet
+    }
 }

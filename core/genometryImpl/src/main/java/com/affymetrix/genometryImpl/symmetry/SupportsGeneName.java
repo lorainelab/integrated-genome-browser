@@ -10,6 +10,6 @@ package com.affymetrix.genometryImpl.symmetry;
  */
 public interface SupportsGeneName {
 
-	public String getGeneName();
- 
+    public String getGeneName();
+
 }

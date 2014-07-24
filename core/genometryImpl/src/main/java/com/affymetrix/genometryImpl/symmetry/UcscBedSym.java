@@ -1,16 +1,12 @@
 /**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -21,10 +17,10 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import java.io.*;
 import java.util.*;
 
-
 /**
- *  A SeqSymmetry (as well as SeqSpan) representation of UCSC BED format annotatations.
- *  <pre>
+ * A SeqSymmetry (as well as SeqSpan) representation of UCSC BED format
+ * annotatations.
+ * <pre>
  *  From http://genome.ucsc.edu/goldenPath/help/customTrack.html#BED
  *  BED format provides a flexible way to define the data lines that are displayed
  *  in an annotation track. BED lines have three required fields and nine additional
@@ -67,179 +63,217 @@ import java.util.*;
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  * </pre>
  */
-public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, SymSpanWithCds, Scored  {
-	float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
-	int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
-	int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
-	boolean hasCdsSpan = false;
-	private SeqSymmetry children[];
-	
-	/**
-	 *  Constructs a SeqSymmetry optimized for BED-file format.
-	 *  This object is optimized for the case where all optional columns in the
-	 *  bed file are used.  If you are using only the first few columns, it would
-	 *  be more efficient to use a different SeqSymmetry object.
-	 *  @param cdsMin the start of the CDS region, "thinEnd", or Integer.MIN_VALUE.
-	 *         If cdsMin = Integer.MIN_VALUE or cdsMin = cdsMax, then there is no CDS.
-	 *  @param cdsMax the end of the CDS region, "thickEnd", or Integer.MIN_VALUE.
-	 *  @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no score.
-	 */
-	public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
-			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
-		super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
-		this.score = score;
-		this.cdsMin = cdsMin;
-		this.cdsMax = cdsMax;
-		hasCdsSpan = ((cdsMin != Integer.MIN_VALUE) && (cdsMax != Integer.MIN_VALUE) && (cdsMin != cdsMax));
-	}
+public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, SymSpanWithCds, Scored {
 
-	@Override
-	public boolean isCdsStartStopSame(){
-		return cdsMin == cdsMax;
-	}
-	
-	/**
-	 *  Returns true if the cds was specified in the constructor with valid values.
-	 *  If cdsMin = cdsMax = Integer.MIN_VALUE, or if cdsMin = cdsMax, then there is no CDS.
-	 *
-	 */
-	public boolean hasCdsSpan() { return hasCdsSpan; }
-	public SeqSpan getCdsSpan() {
-		if (! hasCdsSpan()) { return null; }
-		if (forward) { return new SimpleSeqSpan(cdsMin, cdsMax, seq); }
-		else { return new SimpleSeqSpan(cdsMax, cdsMin, seq); }
-	}
-	
-	@Override
-	public SeqSymmetry getChild(int index) {
-		if (blockMins == null || (blockMins.length <= index)) {
-			return null;
-		}
-		if (children == null) {
-			children = new SeqSymmetry[blockMins.length];
-		}
+    float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
+    int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
+    int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
+    boolean hasCdsSpan = false;
+    private SeqSymmetry children[];
 
-		if (children[index] == null) {
-			if (forward) {
-				children[index] = new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
-			} else {
-				children[index] = new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
-			}
-		}
-		return children[index];
-	}
+    /**
+     * Constructs a SeqSymmetry optimized for BED-file format. This object is
+     * optimized for the case where all optional columns in the bed file are
+     * used. If you are using only the first few columns, it would be more
+     * efficient to use a different SeqSymmetry object.
+     *
+     * @param cdsMin the start of the CDS region, "thinEnd", or
+     * Integer.MIN_VALUE. If cdsMin = Integer.MIN_VALUE or cdsMin = cdsMax, then
+     * there is no CDS.
+     * @param cdsMax the end of the CDS region, "thickEnd", or
+     * Integer.MIN_VALUE.
+     * @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no
+     * score.
+     */
+    public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
+            boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
+        super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
+        this.score = score;
+        this.cdsMin = cdsMin;
+        this.cdsMax = cdsMax;
+        hasCdsSpan = ((cdsMin != Integer.MIN_VALUE) && (cdsMax != Integer.MIN_VALUE) && (cdsMin != cdsMax));
+    }
 
-	protected class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
-		public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
-			super(start, end, seq);
-		}
+    @Override
+    public boolean isCdsStartStopSame() {
+        return cdsMin == cdsMax;
+    }
+
+    /**
+     * Returns true if the cds was specified in the constructor with valid
+     * values. If cdsMin = cdsMax = Integer.MIN_VALUE, or if cdsMin = cdsMax,
+     * then there is no CDS.
+     *
+     */
+    public boolean hasCdsSpan() {
+        return hasCdsSpan;
+    }
+
+    public SeqSpan getCdsSpan() {
+        if (!hasCdsSpan()) {
+            return null;
+        }
+        if (forward) {
+            return new SimpleSeqSpan(cdsMin, cdsMax, seq);
+        } else {
+            return new SimpleSeqSpan(cdsMax, cdsMin, seq);
+        }
+    }
+
+    @Override
+    public SeqSymmetry getChild(int index) {
+        if (blockMins == null || (blockMins.length <= index)) {
+            return null;
+        }
+        if (children == null) {
+            children = new SeqSymmetry[blockMins.length];
+        }
+
+        if (children[index] == null) {
+            if (forward) {
+                children[index] = new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
+            } else {
+                children[index] = new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
+            }
+        }
+        return children[index];
+    }
+
+    protected class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
+
+        public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
+            super(start, end, seq);
+        }
 
 		// For the web links to be constructed properly, this class must implement getID(),
-		// or must NOT implement SymWithProps.
-		public String getID() {return UcscBedSym.this.getID();}
-		public Map<String,Object> getProperties() {return UcscBedSym.this.getProperties();}
-		public Map<String,Object> cloneProperties() {return UcscBedSym.this.cloneProperties();}
-		public Object getProperty(String key) {return UcscBedSym.this.getProperty(key);}
-		public boolean setProperty(String key, Object val) {return UcscBedSym.this.setProperty(key, val);}
-		public float getScore() {return UcscBedSym.this.getScore(); }
-	}
+        // or must NOT implement SymWithProps.
+        public String getID() {
+            return UcscBedSym.this.getID();
+        }
 
-	public float getScore() { return score; }
+        public Map<String, Object> getProperties() {
+            return UcscBedSym.this.getProperties();
+        }
 
-	@Override
-	public Map<String,Object> cloneProperties() {
-		Map<String,Object> tprops = super.cloneProperties();
+        public Map<String, Object> cloneProperties() {
+            return UcscBedSym.this.cloneProperties();
+        }
+
+        public Object getProperty(String key) {
+            return UcscBedSym.this.getProperty(key);
+        }
+
+        public boolean setProperty(String key, Object val) {
+            return UcscBedSym.this.setProperty(key, val);
+        }
+
+        public float getScore() {
+            return UcscBedSym.this.getScore();
+        }
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    @Override
+    public Map<String, Object> cloneProperties() {
+        Map<String, Object> tprops = super.cloneProperties();
 //		if (hasCdsSpan) {
 //			tprops.put("cds min", Integer.valueOf(cdsMin));
 //			tprops.put("cds max", Integer.valueOf(cdsMax));
 //		} 
-		if (score != Float.NEGATIVE_INFINITY) {
-			tprops.put("score", new Float(score));
-		}
-		return tprops;
-	}
+        if (score != Float.NEGATIVE_INFINITY) {
+            tprops.put("score", new Float(score));
+        }
+        return tprops;
+    }
 
-	@Override
-	public Object getProperty(String key) {
-		// test for standard gene sym  props
-		if (hasCdsSpan && key.equals("cds min")) { return Integer.valueOf(cdsMin); }
-		else if (hasCdsSpan && key.equals("cds max")) { return Integer.valueOf(cdsMax); }
-		else if (key.equals("score") && (score != Float.NEGATIVE_INFINITY)) { return new Float(score); }
-		
-		return super.getProperty(key);
-	}
+    @Override
+    public Object getProperty(String key) {
+        // test for standard gene sym  props
+        if (hasCdsSpan && key.equals("cds min")) {
+            return Integer.valueOf(cdsMin);
+        } else if (hasCdsSpan && key.equals("cds max")) {
+            return Integer.valueOf(cdsMax);
+        } else if (key.equals("score") && (score != Float.NEGATIVE_INFINITY)) {
+            return new Float(score);
+        }
 
-	protected String getScoreString(){
-		return Float.toString(getScore());
-	}
-	
-	public void outputBedFormat(DataOutputStream out) throws IOException  {
-		out.write(seq.getID().getBytes());
-		out.write('\t');
-		out.write(Integer.toString(txMin).getBytes());
-		out.write('\t');
-		out.write(Integer.toString(txMax).getBytes());
+        return super.getProperty(key);
+    }
+
+    protected String getScoreString() {
+        return Float.toString(getScore());
+    }
+
+    public void outputBedFormat(DataOutputStream out) throws IOException {
+        out.write(seq.getID().getBytes());
+        out.write('\t');
+        out.write(Integer.toString(txMin).getBytes());
+        out.write('\t');
+        out.write(Integer.toString(txMax).getBytes());
 		// only first three fields are required
 
-		// only keep going if has name
-		if (name != null) {
-			out.write('\t');
-			out.write(getName().getBytes());
-			// only keep going if has score field
-			if (getScore() > Float.NEGATIVE_INFINITY) {
-				out.write('\t');
-				if (getScore() == 0) {
-					out.write('0');
-				} else {
-					out.write((getScoreString()).getBytes());
-				}
-				out.write('\t');
-				if (isForward()) { out.write('+'); }
-				else { out.write('-'); }
-				// only keep going if has thickstart/thickend
-				if (cdsMin > Integer.MIN_VALUE &&
-						cdsMax > Integer.MIN_VALUE)  {
-					out.write('\t');
-					out.write(Integer.toString(cdsMin).getBytes());
-					out.write('\t');
-					out.write(Integer.toString(cdsMax).getBytes());
-					// only keep going if has blockcount/blockSizes/blockStarts
-					int child_count = this.getChildCount();
-					if (child_count > 0) {
-						out.write('\t');
-						// writing out extra "reserved" field, which currently should always be 0
-						out.write('0');
-						out.write('\t');
-						out.write(Integer.toString(child_count).getBytes());
-						out.write('\t');
-						// writing blocksizes
-						for (int i=0; i<child_count; i++) {
-							out.write(Integer.toString(blockMaxs[i]-blockMins[i]).getBytes());
-							out.write(',');
-						}
-						out.write('\t');
-						// writing blockstarts
-						for (int i=0; i<child_count; i++) {
-							out.write(Integer.toString(blockMins[i]-txMin).getBytes());
-							out.write(',');
-						}
-					}
-				}
-			}
-		}
-	}
+        // only keep going if has name
+        if (name != null) {
+            out.write('\t');
+            out.write(getName().getBytes());
+            // only keep going if has score field
+            if (getScore() > Float.NEGATIVE_INFINITY) {
+                out.write('\t');
+                if (getScore() == 0) {
+                    out.write('0');
+                } else {
+                    out.write((getScoreString()).getBytes());
+                }
+                out.write('\t');
+                if (isForward()) {
+                    out.write('+');
+                } else {
+                    out.write('-');
+                }
+                // only keep going if has thickstart/thickend
+                if (cdsMin > Integer.MIN_VALUE
+                        && cdsMax > Integer.MIN_VALUE) {
+                    out.write('\t');
+                    out.write(Integer.toString(cdsMin).getBytes());
+                    out.write('\t');
+                    out.write(Integer.toString(cdsMax).getBytes());
+                    // only keep going if has blockcount/blockSizes/blockStarts
+                    int child_count = this.getChildCount();
+                    if (child_count > 0) {
+                        out.write('\t');
+                        // writing out extra "reserved" field, which currently should always be 0
+                        out.write('0');
+                        out.write('\t');
+                        out.write(Integer.toString(child_count).getBytes());
+                        out.write('\t');
+                        // writing blocksizes
+                        for (int i = 0; i < child_count; i++) {
+                            out.write(Integer.toString(blockMaxs[i] - blockMins[i]).getBytes());
+                            out.write(',');
+                        }
+                        out.write('\t');
+                        // writing blockstarts
+                        for (int i = 0; i < child_count; i++) {
+                            out.write(Integer.toString(blockMins[i] - txMin).getBytes());
+                            out.write(',');
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public String toString() {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			outputBedFormat(new DataOutputStream(baos));
-		}
-		catch (IOException x) {
-			return x.getMessage();
-		}
-		return baos.toString();
-	}
+    @Override
+    public String toString() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            outputBedFormat(new DataOutputStream(baos));
+        } catch (IOException x) {
+            return x.getMessage();
+        }
+        return baos.toString();
+    }
 }
-
-

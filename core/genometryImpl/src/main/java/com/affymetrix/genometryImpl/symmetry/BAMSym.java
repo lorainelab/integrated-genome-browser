@@ -166,7 +166,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             this.residueMask = bitset;
         }
 
-		// For the web links to be constructed properly, this class must implement getID(),
+        // For the web links to be constructed properly, this class must implement getID(),
         // or must NOT implement SymWithProps.
         @Override
         public String getID() {
@@ -248,7 +248,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             return averageQualityScore;
         }
 
-		// For the web links to be constructed properly, this class must implement getID(),
+        // For the web links to be constructed properly, this class must implement getID(),
         // or must NOT implement SymWithProps.
         @Override
         public String getID() {

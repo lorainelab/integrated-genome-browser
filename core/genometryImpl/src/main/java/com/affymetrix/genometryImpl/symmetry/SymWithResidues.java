@@ -8,11 +8,11 @@ import java.util.BitSet;
  */
 public interface SymWithResidues extends SymWithProps {
 
-	public String getResidues();
+    public String getResidues();
 
-	public String getResidues(int start, int end);
-	
-	public BitSet getResidueMask();
-	
-	public void setResidueMask(BitSet bitset);
+    public String getResidues(int start, int end);
+
+    public BitSet getResidueMask();
+
+    public void setResidueMask(BitSet bitset);
 }

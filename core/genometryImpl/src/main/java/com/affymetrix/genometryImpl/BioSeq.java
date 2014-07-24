@@ -743,37 +743,58 @@ public class BioSeq implements SearchableCharIterator {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        int hash = 5;
+        hash = 59 * hash + (this.type_id2sym != null ? this.type_id2sym.hashCode() : 0);
+        hash = 59 * hash + (this.annots != null ? this.annots.hashCode() : 0);
+        hash = 59 * hash + (this.seq_group != null ? this.seq_group.hashCode() : 0);
+        hash = 59 * hash + (this.residues_provider != null ? this.residues_provider.hashCode() : 0);
+        hash = 59 * hash + (this.residues != null ? this.residues.hashCode() : 0);
+        hash = 59 * hash + this.start;
+        hash = 59 * hash + this.end;
+        hash = 59 * hash + (this.compose != null ? this.compose.hashCode() : 0);
+        hash = 59 * hash + (int) (Double.doubleToLongBits(this.length) ^ (Double.doubleToLongBits(this.length) >>> 32));
+        hash = 59 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
         if (obj == null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
-        BioSeq other = (BioSeq) obj;
-        if (end != other.end) {
+        final BioSeq other = (BioSeq) obj;
+        if (this.type_id2sym != other.type_id2sym && (this.type_id2sym == null || !this.type_id2sym.equals(other.type_id2sym))) {
             return false;
         }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
+        if (this.annots != other.annots && (this.annots == null || !this.annots.equals(other.annots))) {
             return false;
         }
-        if (start != other.start) {
+        if (this.seq_group != other.seq_group && (this.seq_group == null || !this.seq_group.equals(other.seq_group))) {
             return false;
         }
-        return true;
+        if (this.residues_provider != other.residues_provider && (this.residues_provider == null || !this.residues_provider.equals(other.residues_provider))) {
+            return false;
+        }
+        if ((this.residues == null) ? (other.residues != null) : !this.residues.equals(other.residues)) {
+            return false;
+        }
+        if (this.start != other.start) {
+            return false;
+        }
+        if (this.end != other.end) {
+            return false;
+        }
+        if (this.compose != other.compose && (this.compose == null || !this.compose.equals(other.compose))) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.length) != Double.doubleToLongBits(other.length)) {
+            return false;
+        }
+        return !((this.id == null) ? (other.id != null) : !this.id.equals(other.id));
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.symmetry;
 
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.util.Map;
 
 /**

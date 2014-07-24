@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public abstract class AbstractAnnotationOperator implements Operator {
 	final protected FileTypeCategory category;

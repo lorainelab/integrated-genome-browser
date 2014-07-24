@@ -1,5 +1,10 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.symmetry.impl.CompositeMismatchGraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.impl.CompositeGraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.SeqSpan;

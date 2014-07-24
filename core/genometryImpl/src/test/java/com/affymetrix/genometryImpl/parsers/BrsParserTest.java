@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;

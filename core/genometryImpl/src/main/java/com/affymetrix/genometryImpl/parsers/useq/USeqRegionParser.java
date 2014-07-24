@@ -28,10 +28,10 @@ import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionText;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
 
 /**For parsing binary USeq region data into GenViz display objects.
  * @author david.nix@hci.utah.edu*/

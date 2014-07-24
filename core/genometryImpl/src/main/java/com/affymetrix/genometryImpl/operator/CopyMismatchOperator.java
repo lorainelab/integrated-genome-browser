@@ -3,9 +3,9 @@ package com.affymetrix.genometryImpl.operator;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
-import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.MisMatchPileupGraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.util.List;
 
 /**

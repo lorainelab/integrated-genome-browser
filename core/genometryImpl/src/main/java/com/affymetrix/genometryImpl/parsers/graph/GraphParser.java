@@ -7,7 +7,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.Parser;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 
 /**
  * interface for all graph file type funtionality. Only applicable to

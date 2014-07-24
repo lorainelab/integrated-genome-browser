@@ -9,12 +9,13 @@
  */
 package com.affymetrix.genometryImpl.symmetry;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 

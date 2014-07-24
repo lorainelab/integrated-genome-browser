@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.general.BoundedParameter;
 import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.util.LinkedList;
 import java.util.List;
 

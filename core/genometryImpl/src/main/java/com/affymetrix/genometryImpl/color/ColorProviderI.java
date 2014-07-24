@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.color;
 import com.affymetrix.genometryImpl.general.ID;
 import com.affymetrix.genometryImpl.general.NewInstance;
 import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.awt.Color;
 
 /**

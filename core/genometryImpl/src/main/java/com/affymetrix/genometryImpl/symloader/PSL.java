@@ -18,11 +18,11 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.Psl3Sym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetryConverter;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
+import com.affymetrix.genometryImpl.symmetry.impl.Psl3Sym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetryConverter;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import org.broad.tribble.readers.LineReader;
 

@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public final class SimpleBedParser implements AnnotationWriter {

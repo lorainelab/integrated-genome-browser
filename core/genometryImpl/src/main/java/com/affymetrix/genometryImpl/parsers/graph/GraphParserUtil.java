@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 
 public class GraphParserUtil {
 	private static final GraphParserUtil instance = new GraphParserUtil();

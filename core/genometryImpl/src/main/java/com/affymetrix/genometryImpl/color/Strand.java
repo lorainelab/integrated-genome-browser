@@ -2,7 +2,7 @@ package com.affymetrix.genometryImpl.color;
 
 import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.awt.Color;
 
 /**

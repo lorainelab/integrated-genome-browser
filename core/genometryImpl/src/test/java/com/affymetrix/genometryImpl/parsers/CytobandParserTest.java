@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.Arm;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

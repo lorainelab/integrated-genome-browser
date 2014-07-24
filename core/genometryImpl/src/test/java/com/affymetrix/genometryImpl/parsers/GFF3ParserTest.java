@@ -7,8 +7,8 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.symloader.GFF3;
-import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 import java.io.*;
 import java.util.*;

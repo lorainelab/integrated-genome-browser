@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.comparator;
 
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 import java.io.Serializable;
 import java.util.Comparator;

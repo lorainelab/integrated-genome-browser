@@ -7,8 +7,8 @@ import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 
 import java.util.Arrays;
 

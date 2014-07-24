@@ -12,6 +12,7 @@ package com.affymetrix.genometryImpl.symmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 

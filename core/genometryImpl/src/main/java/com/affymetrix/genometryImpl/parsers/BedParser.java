@@ -12,12 +12,13 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleScoredSymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
-import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.Scored;
 import java.io.*;

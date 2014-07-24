@@ -1,6 +1,10 @@
 
 package com.affymetrix.genometryImpl.operator;
 
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
 import java.util.ArrayList;
 import java.util.List;
 

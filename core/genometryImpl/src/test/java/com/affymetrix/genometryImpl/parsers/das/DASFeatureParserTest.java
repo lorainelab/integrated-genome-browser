@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import javax.xml.stream.XMLStreamException;
 

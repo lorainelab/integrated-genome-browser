@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symloader.Gr;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 
 import java.io.*;
 import java.net.URL;

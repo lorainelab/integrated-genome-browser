@@ -2,7 +2,7 @@ package com.affymetrix.genometryImpl.parsers.graph;
 
 import java.io.ByteArrayInputStream;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
+import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 
 import static org.junit.Assert.*;
 

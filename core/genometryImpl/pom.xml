@@ -136,6 +136,7 @@
                             com.affymetrix.genometryImpl.style,
                             com.affymetrix.genometryImpl.symloader,
                             com.affymetrix.genometryImpl.symmetry,
+                            com.affymetrix.genometryImpl.symmetry.impl,
                             com.affymetrix.genometryImpl.thread,
                             com.affymetrix.genometryImpl.util,
                             com.affymetrix.genometryImpl.weblink

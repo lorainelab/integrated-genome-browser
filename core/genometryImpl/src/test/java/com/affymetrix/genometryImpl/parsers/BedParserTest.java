@@ -3,9 +3,9 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.BED;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
 
 import java.io.*;
 import java.util.*;

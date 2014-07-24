@@ -9,6 +9,9 @@
  */
 package com.affymetrix.genometryImpl.symmetry;
 
+import com.affymetrix.genometryImpl.symmetry.impl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+
 public interface IndexedSym extends SeqSymmetry {
 
     public void setParent(ScoredContainerSym parent);

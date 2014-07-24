@@ -1,5 +1,8 @@
 package com.affymetrix.genometryImpl.symloader;
 
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
 import java.io.*;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -16,7 +19,6 @@ import com.affymetrix.genometryImpl.filter.SymmetryFilterIntersecting;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.*;
 

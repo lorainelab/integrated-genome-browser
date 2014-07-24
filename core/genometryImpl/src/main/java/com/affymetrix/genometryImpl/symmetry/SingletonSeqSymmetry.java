@@ -11,8 +11,8 @@ package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-
-import java.util.*;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import java.util.List;
 
 /**
  * A symmetry containing only a single span. In other words, it has a "breadth"

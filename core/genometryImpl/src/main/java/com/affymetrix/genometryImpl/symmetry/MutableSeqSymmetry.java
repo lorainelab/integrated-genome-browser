@@ -10,6 +10,7 @@
 package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public interface MutableSeqSymmetry extends SeqSymmetry {
 

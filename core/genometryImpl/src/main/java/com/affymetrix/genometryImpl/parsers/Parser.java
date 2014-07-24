@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 /**
  * This is an interface for all the functionality needed to process a

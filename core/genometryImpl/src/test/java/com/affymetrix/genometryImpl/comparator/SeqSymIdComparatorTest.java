@@ -2,8 +2,8 @@ package com.affymetrix.genometryImpl.comparator;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 
 /**

@@ -120,7 +120,7 @@ public final class ScoredIntervalParser implements GraphParser {
             Matcher strand_matcher = strand_regex.matcher("");
             List<IndexedSingletonSym> isyms = new ArrayList<IndexedSingletonSym>();
 
-			// There should already be a non-header line in the 'line' variable.
+            // There should already be a non-header line in the 'line' variable.
             // Continue reading lines until there are no more lines.
             for (; line != null; line = br.readLine()) {
                 isyms.clear();
@@ -192,14 +192,14 @@ public final class ScoredIntervalParser implements GraphParser {
                     // need to match up to pre-existing annotation in seq_group
                     SeqSymmetry original_sym = findSym(seq_group, annot_id);
                     if (original_sym == null) {
-						// if no sym with exact id found, then try "extended id", because may be
+                        // if no sym with exact id found, then try "extended id", because may be
                         //     a case where sym id had to be "extended" to uniquify it
                         //     for instance, when the same probeset maps to multiple locations
                         //     extended ids are just the original id with ".$" appended, where $ is
                         //     a number, and if id with $ exists, then there must also be ids with all
                         //     positive integers < $ as well.
                         SeqSymmetry mod_sym = findSym(seq_group, annot_id + ".0");
-						// if found matching sym based on extended id, then need to keep incrementing and
+                        // if found matching sym based on extended id, then need to keep incrementing and
                         //    looking for more syms with extended ids
                         if (mod_sym == null) {
                             // no sym matching id found -- filtering out
@@ -219,7 +219,7 @@ public final class ScoredIntervalParser implements GraphParser {
                             }
                         }
                     } else {
-						// making a big assumption here, that first SeqSpan in sym is seqid to use...
+                        // making a big assumption here, that first SeqSpan in sym is seqid to use...
                         //    on the other hand, not sure how much it matters...
                         //    for now, since most syms to match up with will come from via parsing of GFF files,
                         //       probably ok
@@ -245,7 +245,7 @@ public final class ScoredIntervalParser implements GraphParser {
                     findex++;
                 }
 
-				// usually there will be only one IndexedSingletonSym in isyms list,
+                // usually there will be only one IndexedSingletonSym in isyms list,
                 //    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
                 //    so cycle through all isyms
                 for (IndexedSingletonSym child : isyms) {
@@ -299,7 +299,7 @@ public final class ScoredIntervalParser implements GraphParser {
             throws IOException {
         // parse header lines (which must begin with "#")
         while (((line = br.readLine()) != null) && (line.charAt(0) == '#' || line.charAt(0) == ' ' || line.charAt(0) == '\t')) {
-			// skipping starting lines that begin with space or tab, since
+            // skipping starting lines that begin with space or tab, since
             // files output from GCOS begin with a header line that starts with a tab.
             if (line.charAt(0) == ' ' || line.charAt(0) == '\t') {
                 System.out.println("skipping line starting with whitespace: " + line);
@@ -345,20 +345,22 @@ public final class ScoredIntervalParser implements GraphParser {
             ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(unique_container_name);
             style.setGlyphDepth(1);
             List<SinEntry> entry_list = seq2sinentries.get(aseq);
-            int entry_count = entry_list.size();
-            for (SinEntry entry : entry_list) {
-                container.addChild(entry.sym);
-            }
-            for (int i = 0; i < score_count; i++) {
-                String score_name = score_names.get(i);
-                float[] score_column = new float[entry_count];
-                for (int k = 0; k < entry_count; k++) {
-                    SinEntry sentry = entry_list.get(k);
-                    score_column[k] = sentry.scores[i];
+            if (entry_list != null) {
+                int entry_count = entry_list.size();
+                for (SinEntry entry : entry_list) {
+                    container.addChild(entry.sym);
                 }
-                container.addScores(score_name, score_column);
+                for (int i = 0; i < score_count; i++) {
+                    String score_name = score_names.get(i);
+                    float[] score_column = new float[entry_count];
+                    for (int k = 0; k < entry_count; k++) {
+                        SinEntry sentry = entry_list.get(k);
+                        score_column[k] = sentry.scores[i];
+                    }
+                    container.addScores(score_name, score_column);
+                }
             }
-			// always add the container as an annotation, and
+            // always add the container as an annotation, and
             // do not attach any graphs
             // ScoredContainerGlyph factory will then draw container syms, or graphs, or both
             container.setID(unique_container_name);
@@ -374,7 +376,7 @@ public final class ScoredIntervalParser implements GraphParser {
      * Find the first matching symmetry in the seq_group, or null
      */
     private static SeqSymmetry findSym(AnnotatedSeqGroup seq_group, String id) {
-		//TODO: Make this parser deal with the fact that there can be multiple
+        //TODO: Make this parser deal with the fact that there can be multiple
         // syms with the same ID rather than insisting on taking only the first match.
         // This probably will make this parser simpler, since we may be able to drop
         // this stuff about adding ".0" and ".1" to non-unique ids.
@@ -436,7 +438,7 @@ public final class ScoredIntervalParser implements GraphParser {
             } else if (GraphSym.GRAPH_STRAND_MINUS.equals(strand_property)) {
                 strand_char = '-';
             } else if (GraphSym.GRAPH_STRAND_BOTH.equals(strand_property)) {
-				// the GraphIntervalSym does NOT keep track of the strand of each
+                // the GraphIntervalSym does NOT keep track of the strand of each
                 // individual region inside it.
                 strand_char = '.';
             }

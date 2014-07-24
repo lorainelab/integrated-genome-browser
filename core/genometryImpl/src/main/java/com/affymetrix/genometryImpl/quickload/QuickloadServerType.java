@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.quickload;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -496,7 +497,7 @@ public class QuickloadServerType implements ServerTypeI {
         AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
         String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, (String) version.gServer.serverObj, span, aseq);
         if (residues != null) {
-            BioSeq.addResiduesToComposition(aseq, residues, span);
+            BioSeqUtils.addResiduesToComposition(aseq, residues, span);
             return true;
         }
         return false;

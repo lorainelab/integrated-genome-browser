@@ -2,6 +2,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
@@ -85,7 +86,7 @@ public final class SearchUtils {
                 // If parent matches, then don't list children
                 return;
             } else if (sym instanceof SymWithProps) {
-                String method = BioSeq.determineMethod(sym);
+                String method = BioSeqUtils.determineMethod(sym);
                 if (method != null && match.reset(method).matches()) {
                     syms.add(sym);	// method matches
                     // If parent matches, then don't list children

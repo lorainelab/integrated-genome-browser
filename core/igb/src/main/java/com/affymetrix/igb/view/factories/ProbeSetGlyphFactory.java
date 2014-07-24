@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.impl.DerivedSeqSymmetry;
@@ -334,7 +335,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
                 return;
             }
         }
-        String meth = BioSeq.determineMethod(probeset);
+        String meth = BioSeqUtils.determineMethod(probeset);
         DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
         SeqUtils.transformSymmetry(probeset_sym, consensus_sym, true);
         // Note that the transformation generates a probeset_sym of depth 3
@@ -490,7 +491,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
-        String meth = BioSeq.determineMethod(sym);
+        String meth = BioSeqUtils.determineMethod(sym);
         String human_name = meth;
         if (meth != null) {
 			// Why to strip off the ending ??

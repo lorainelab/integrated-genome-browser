@@ -10,20 +10,21 @@
 package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -530,7 +531,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
-        String method = BioSeq.determineMethod(sym);
+        String method = BioSeqUtils.determineMethod(sym);
         if (method == null) {
             return;
         }

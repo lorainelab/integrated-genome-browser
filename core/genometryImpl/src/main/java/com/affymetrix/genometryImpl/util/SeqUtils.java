@@ -1440,7 +1440,7 @@ public static boolean areResiduesComplete(String residues) {
 	}
 
 	public static SeqSymmetry convert(SeqSymmetry sym, BioSeq aseq, BioSeq cseq){
-		String method = BioSeq.determineMethod(sym);
+		String method = BioSeqUtils.determineMethod(sym);
 		if(method == null){
 			return null;
 		}

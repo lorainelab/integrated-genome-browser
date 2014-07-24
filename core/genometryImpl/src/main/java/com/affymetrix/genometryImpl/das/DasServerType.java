@@ -19,6 +19,7 @@ import javax.xml.stream.XMLStreamException;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -374,7 +375,7 @@ public class DasServerType implements ServerTypeI {
 		String residues = dasResiduesHandler.getDasResidues(version, seq_name, min, max);
 //			String residues = DasLoader.getDasResidues(version, seq_name, min, max);
 		if (residues != null) {
-			BioSeq.addResiduesToComposition(aseq, residues, span);
+			BioSeqUtils.addResiduesToComposition(aseq, residues, span);
 			return true;
 		}
 

@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 
 import java.io.*;
@@ -163,7 +164,7 @@ public final class GFF3Parser implements Parser {
 					Fasta fasta = new Fasta(null, null, seq_group);
 					String residues = fasta.parse(it, seq, minV, maxV);
 					if(residues != null) {
-						BioSeq.addResiduesToComposition(seq, residues, new SimpleSeqSpan(minV, maxV, seq));
+						BioSeqUtils.addResiduesToComposition(seq, residues, new SimpleSeqSpan(minV, maxV, seq));
 					}
 //					SymWithProps sym = new SimpleSymWithResidues(default_source, 
 //							seq, minV, maxV, "", 0.0f, true, 0, 0, null, null, residues);

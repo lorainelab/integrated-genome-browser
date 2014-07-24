@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -81,7 +81,7 @@ public class WebLinkList {
 		
 		// Most links come from matching the tier name (i.e. method)
 		// to a regular expression.
-		String method = BioSeq.determineMethod(sym);
+		String method = BioSeqUtils.determineMethod(sym);
 		if (method == null) { // rarely happens, but can
 			return Collections.<WebLink>emptyList();
 		}

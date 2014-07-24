@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -155,7 +156,7 @@ public class TrackView {
 
     private void addAnnotationGlyphs(SeqMapView smv, RootSeqSymmetry annotSym, BioSeq seq) {
         // Map symmetry subclass or method type to a factory, and call factory to make glyphs
-        String meth = BioSeq.determineMethod(annotSym);
+        String meth = BioSeqUtils.determineMethod(annotSym);
         if (meth != null) {
             MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
             ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);

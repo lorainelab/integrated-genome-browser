@@ -121,7 +121,7 @@ public class LocalFilesServerType implements ServerTypeI {
 			try {
 				String residues = feature.symL.getRegionResidues(span);
 				if (residues != null) {
-					BioSeq.addResiduesToComposition(aseq, residues, span);
+					BioSeqUtils.addResiduesToComposition(aseq, residues, span);
 					return true;
 				}
 			} catch (Exception ex) {

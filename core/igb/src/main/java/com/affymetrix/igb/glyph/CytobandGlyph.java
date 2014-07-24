@@ -1,6 +1,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
@@ -97,7 +98,7 @@ public abstract class CytobandGlyph {
 			}
 		}
 
-		String meth = BioSeq.determineMethod(cyto_annots);
+		String meth = BioSeqUtils.determineMethod(cyto_annots);
 		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 //		TransformTierGlyph cytobandTier = new TransformTierGlyph(style);
 //		smv.getSeqMap().addTier(cytobandTier, false);

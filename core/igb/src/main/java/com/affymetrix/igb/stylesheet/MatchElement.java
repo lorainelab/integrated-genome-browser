@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -143,13 +143,13 @@ class MatchElement implements DrawableElement {
     }
     
     else if (MATCH_BY_EXACT_METHOD.equals(match_test)) {
-      if (match_param.equals( BioSeq.determineMethod(sym) ))  {
+      if (match_param.equals( BioSeqUtils.determineMethod(sym) ))  {
         result = true;
       }
     }
 
     else if (MATCH_BY_METHOD_REGEX.equals(match_test) && match_regex != null) {
-      if (match_regex.matcher(BioSeq.determineMethod(sym)).matches())  {
+      if (match_regex.matcher(BioSeqUtils.determineMethod(sym)).matches())  {
         result = true;
       }
     }

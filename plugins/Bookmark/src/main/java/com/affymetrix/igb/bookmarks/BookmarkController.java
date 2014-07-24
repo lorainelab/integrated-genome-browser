@@ -14,6 +14,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -220,7 +221,7 @@ public abstract class BookmarkController {
 							maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
 
 				} else {
-					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(BioSeq.determineMethod(sym));
+					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(BioSeqUtils.determineMethod(sym));
 					GenericFeature feature = style.getFeature();
 
 					if (!gFeature.equals(feature)) {

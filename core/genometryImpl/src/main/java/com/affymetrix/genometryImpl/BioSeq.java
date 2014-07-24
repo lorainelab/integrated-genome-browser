@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl;
 
+import static com.affymetrix.genometryImpl.util.BioSeqUtils.determineMethod;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -7,9 +8,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.symmetry.impl.TypedSym;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -351,32 +350,6 @@ public class BioSeq implements SearchableCharIterator {
         }
     }
 
-    /**
-     * Finds the "method" for a SeqSymmetry. Looks for the "method" in four
-     * places, in order: (1) the property "method", (2) the property "meth", (3)
-     * the property "type", (4) TypedSym.getType(). If no method is found,
-     * returns null.
-     */
-    public static String determineMethod(SeqSymmetry sym) {
-        String meth = null;
-        if (sym instanceof SymWithProps) {
-            SymWithProps psym = (SymWithProps) sym;
-            meth = (String) psym.getProperty("method");
-            if (meth == null) {
-                meth = (String) psym.getProperty("meth");
-            }
-            if (meth == null) {
-                meth = (String) psym.getProperty("type");
-            }
-        }
-        if (meth == null) {
-            if (sym instanceof TypedSym) {
-                meth = ((TypedSym) sym).getType();
-            }
-        }
-        return meth;
-    }
-
     public SearchableCharIterator getResiduesProvider() {
         return residues_provider;
     }
@@ -388,7 +361,7 @@ public class BioSeq implements SearchableCharIterator {
         residues_provider = chariter;
     }
 
-    public void removeResidueProvider() {
+    public  void removeResidueProvider() {
         residues_provider = null;
     }
 
@@ -439,8 +412,8 @@ public class BioSeq implements SearchableCharIterator {
             Logger.getLogger(BioSeq.class.getName()).log(Level.FINE, "Invalid arguments: {0},{1},{2}", new Object[]{start, end, residue_length});
             return "";
         }
-
-		//TODO: If start is greater than residue_length then
+        
+        //TODO: If start is greater than residue_length then
         //			this condition fails and returns unexpected string
         // Sanity checks on argument size.
         start = Math.min(start, residue_length);
@@ -481,7 +454,7 @@ public class BioSeq implements SearchableCharIterator {
         Arrays.fill(char_array, fillchar);
         SeqSymmetry rootsym = this.getComposition();
         if (rootsym != null) {
-				// adjusting index into array to compensate for possible seq start < 0
+            // adjusting index into array to compensate for possible seq start < 0
             //int array_offset = -start;
             getResiduesFromComposition(residue_span, rootsym, char_array);
             // Note that new String(char[]) causes the allocation of a second char array
@@ -570,7 +543,7 @@ public class BioSeq implements SearchableCharIterator {
         if (residues_provider != null || residues != null) {
             return true;
         }
-			// assuming that if all sequences the composite is composed of are
+        // assuming that if all sequences the composite is composed of are
         //    complete, then composite is also complete
         //    [which is an invalid assumption! Because that further assumes that composed seq
         //     is fully covered by the sequences that it is composed from...]
@@ -596,10 +569,10 @@ public class BioSeq implements SearchableCharIterator {
     }
 
     //Same as isComplete but faster and effective.
+
     public boolean isAvailable() {
         return isAvailable(start, end);
     }
-
     public boolean isAvailable(int start, int end) {
         return isAvailable(new SimpleSeqSpan(start, end, this));
     }
@@ -661,86 +634,6 @@ public class BioSeq implements SearchableCharIterator {
         return this.getID();
     }
 
-    public static List<SingletonSymWithProps> searchForRegexInResidues(boolean forward,
-            Pattern regex, String residues, int residue_offset, BioSeq seq) {
-        List<SingletonSymWithProps> results = new ArrayList<SingletonSymWithProps>();
-
-        Matcher matcher = regex.matcher(residues);
-        while (matcher.find() && !Thread.currentThread().isInterrupted()) {
-            int residue_start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
-            int residue_end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
-            //int end = matcher.end(0) + residue_offset;
-            SingletonSymWithProps info = forward ? new SingletonSymWithProps(residue_start, residue_end, seq)
-                    : new SingletonSymWithProps(residue_end, residue_start, seq);
-            info.setProperty("method", "Search term:" + regex.pattern());
-            info.setProperty("direction", forward ? "forward" : "reverse");
-            info.setProperty("match", matcher.group(0));
-            info.setProperty("pattern", regex.pattern());
-
-            results.add(info);
-        }
-        return results;
-    }
-
-    /**
-     * Add residues to composition (full sequence loaded).
-     *
-     * @param aseq
-     */
-    public static void addResiduesToComposition(BioSeq aseq) {
-        if (aseq.getResiduesProvider() != null) {
-            SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
-            BioSeq subseq = new BioSeq(
-                    aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getResiduesProvider().getLength());
-            subseq.setResiduesProvider(aseq.getResiduesProvider());
-            addSubseqToComposition(aseq, span, subseq);
-            return;
-        }
-        String residues = aseq.getResidues();
-        SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
-        addResiduesToComposition(aseq, residues, span);
-    }
-
-    /**
-     * Adds the residues to the composite sequence. This allows merging of
-     * subsequences.
-     *
-     * @param aseq
-     * @param residues
-     * @param span
-     */
-    public static void addResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
-        BioSeq subseq = new BioSeq(
-                aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), residues.length());
-        subseq.setResidues(residues);
-        addSubseqToComposition(aseq, span, subseq);
-    }
-
-    private static void addSubseqToComposition(BioSeq aseq, SeqSpan span, BioSeq subSeq) {
-        SeqSpan subSpan = new SimpleSeqSpan(0, span.getLength(), subSeq);
-        SeqSpan mainSpan = span;
-        MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
-        subsym.addSpan(subSpan);
-        subsym.addSpan(mainSpan);
-        MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
-        if (compsym == null) {
-            //No children.  Add one.
-            compsym = new SimpleMutableSeqSymmetry();
-            compsym.addChild(subsym);
-            compsym.addSpan(new SimpleSeqSpan(mainSpan.getMin(), mainSpan.getMax(), aseq));
-            aseq.setComposition(compsym);
-        } else {
-            // Merge children that already exist.
-            compsym.addChild(subsym);
-            SeqSpan compspan = compsym.getSpan(aseq);
-            int compmin = Math.min(compspan.getMin(), span.getMin());
-            int compmax = Math.max(compspan.getMax(), span.getMax());
-            SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
-            compsym.removeSpan(compspan);
-            compsym.addSpan(new_compspan);
-        }
-    }
-
     @Override
     public int hashCode() {
         int hash = 5;
@@ -795,6 +688,7 @@ public class BioSeq implements SearchableCharIterator {
         }
         return !((this.id == null) ? (other.id != null) : !this.id.equals(other.id));
     }
+
 
 
 }

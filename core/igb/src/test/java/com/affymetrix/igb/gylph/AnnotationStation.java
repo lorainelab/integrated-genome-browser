@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
-import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientPointedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -55,6 +54,7 @@ public class AnnotationStation extends javax.swing.JFrame {
     private CustomLabelledTierMap tieredMap;
     private boolean stretchXTofit, stretchYToFit = false;
     private DefaultTierGlyph annotationTierGlyph;
+    private static final int DEFAULT_ANNOTATION_TRACK_HEIGHT = 200;
 
     public AnnotationStation() {
         setTitle("Annotation Station 2.0");
@@ -396,7 +396,7 @@ public class AnnotationStation extends javax.swing.JFrame {
         MapGlyphFactory fac = tieredMap.getFactory();
         try {
             int start = Integer.parseInt(startTextField.getText());
-            int end = Integer.parseInt(stopTextField.getText()) - 1;
+            int end = Integer.parseInt(stopTextField.getText());
             Class glyph_class = Class.forName(glyph_name);
             fac.setGlyphtype(glyph_class);
             fac.setBackgroundColor(col);
@@ -537,7 +537,7 @@ public class AnnotationStation extends javax.swing.JFrame {
         resultAxisTier.addChild(axis_glyph);
 
         tieredMap.addTier(resultAxisTier, false);
-        BioSeq bioSeq = new BioSeq("ch1", "custom1", 500);
+        BioSeq bioSeq = new BioSeq("ch1", 500);
         bioSeq.setResidues(getResidues(500));
         bioSeq.setBounds(0, 500);
         CharSeqGlyph seq_glyph = CharSeqGlyph.initSeqGlyph(bioSeq, axis_glyph);
@@ -575,30 +575,34 @@ public class AnnotationStation extends javax.swing.JFrame {
         annotationTierGlyph.setDirection(StyledGlyph.Direction.BOTH);
         addSomeGlyphs();
 
-        annotationTierGlyph.setCoords(0, 0, tieredMap.getScene().getCoordBox().getWidth(), 200);
+        annotationTierGlyph.setCoords(0, 0, tieredMap.getScene().getCoordBox().getWidth(), DEFAULT_ANNOTATION_TRACK_HEIGHT);
 
         tieredMap.addTier(annotationTierGlyph, true);
 
     }
-    
+
     private void addSomeGlyphs() {
         tieredMap.getFactory().setGlyphtype(EfficientLabelledLineGlyph.class);
         EfficientLabelledLineGlyph labelGlyph = (EfficientLabelledLineGlyph) tieredMap.getFactory().makeGlyph(100, 200);
         labelGlyph.setLabel("Test");
         labelGlyph.setLabelLocation(NORTH);
-        labelGlyph.setMoveChildren(true);
+        labelGlyph.setCoords(100, DEFAULT_ANNOTATION_TRACK_HEIGHT - 25, 100, 25);
         annotationTierGlyph.addChild(labelGlyph);
+
         tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.EfficientPointedGlyph.class);
-        GlyphI point = tieredMap.getFactory().makeGlyph(100, 200);
-      
-        tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.LineStretchContainerGlyph.class);
-        GlyphI glyph = tieredMap.getFactory().makeGlyph(200, 240);
+        EfficientPointedGlyph point = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(100, 125);
+        point.setForward(true);
+        labelGlyph.addChild(point);
+
+        tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.EfficientLineContGlyph.class);
+        GlyphI glyph = tieredMap.getFactory().makeGlyph(125, 176);
         labelGlyph.addChild(glyph);
-          labelGlyph.addChild(point);
+
         tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.EfficientPointedGlyph.class);
-        EfficientPointedGlyph efPGlyph = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(240, 280);
+        EfficientPointedGlyph efPGlyph = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(175, 200);
         efPGlyph.setForward(false);
         labelGlyph.addChild(efPGlyph);
+
     }
 
     private String getResidues(int size) {

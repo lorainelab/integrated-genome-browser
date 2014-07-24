@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -342,7 +343,7 @@ public class Das2ServerType implements ServerTypeI {
 		List<SeqSymmetry> resultList = null;
 		String method = null;
 		for (SeqSymmetry result : results) {
-			method = BioSeq.determineMethod(result);
+			method = BioSeqUtils.determineMethod(result);
 			if (track2Results.containsKey(method)) {
 				resultList = track2Results.get(method);
 			} else {
@@ -574,13 +575,13 @@ public class Das2ServerType implements ServerTypeI {
 		if (partial_load) {
 			String residues = GetPartialFASTADas2Residues(uri);
 			if (residues != null) {
-				BioSeq.addResiduesToComposition(aseq, residues, span);
+				BioSeqUtils.addResiduesToComposition(aseq, residues, span);
 				return true;
 			}
 		}
 		else {
 			if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
-				BioSeq.addResiduesToComposition(aseq);
+				BioSeqUtils.addResiduesToComposition(aseq);
 				return true;
 			}
 		}

@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -117,7 +117,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 			}
 		}
 		if (drawable == null) {
-			drawable = getAssociationForMethod(BioSeq.determineMethod(sym));
+			drawable = getAssociationForMethod(BioSeqUtils.determineMethod(sym));
 		}
 		if (drawable == null) {
 			drawable = getDefaultStyleElement();

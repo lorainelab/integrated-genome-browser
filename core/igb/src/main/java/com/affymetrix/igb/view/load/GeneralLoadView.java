@@ -5,6 +5,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -319,7 +320,7 @@ public final class GeneralLoadView {
                                         child = sym.getChild(i);
                                         if (child instanceof SimpleSymWithResidues) {
                                             rchild = (SimpleSymWithResidues) child;
-                                            BioSeq.addResiduesToComposition(seq, rchild.getResidues(), rchild.getSpan(seq));
+                                            BioSeqUtils.addResiduesToComposition(seq, rchild.getResidues(), rchild.getSpan(seq));
                                         }
                                     }
                                     seq.removeAnnotation(sym);

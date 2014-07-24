@@ -166,7 +166,7 @@ public class FindJunction {
         for(BioSeq bioSeq : bam.getChromosomeList()){
             SeqSpan currentSpan = new SimpleMutableSeqSpan(bioSeq.getMin(), bioSeq.getMax(), bioSeq);
             if(twoBitFile != null){
-                BioSeq.addResiduesToComposition(bioSeq, twoBitFile.getRegionResidues(currentSpan), currentSpan);
+                BioSeqUtils.addResiduesToComposition(bioSeq, twoBitFile.getRegionResidues(currentSpan), currentSpan);
             }
             writeJunction.run(bioSeq);
             bioSeq.setComposition(null);

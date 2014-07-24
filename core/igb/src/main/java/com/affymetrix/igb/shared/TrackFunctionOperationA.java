@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -95,7 +96,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             }
             if (rootSym != null) {
                 seqSymList.add(rootSym);
-                String method = BioSeq.determineMethod(rootSym);
+                String method = BioSeqUtils.determineMethod(rootSym);
                 if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && method != null) {
                     preferredStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
                 }

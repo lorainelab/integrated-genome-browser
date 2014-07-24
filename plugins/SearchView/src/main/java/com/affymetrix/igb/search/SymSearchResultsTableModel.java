@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingConstants;
 
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -71,7 +71,7 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
                 }
                 return "";
             case TIER_COLUMN:
-                String method = BioSeq.determineMethod(sym);
+                String method = BioSeqUtils.determineMethod(sym);
                 if (method != null) {
                     return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).getTrackName();
                 }

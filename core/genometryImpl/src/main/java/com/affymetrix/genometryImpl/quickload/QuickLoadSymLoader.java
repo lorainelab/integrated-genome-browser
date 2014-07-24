@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -227,7 +228,7 @@ public class QuickLoadSymLoader extends SymLoader {
 			//if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
 			//	feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 			//}
-			BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
+			BioSeqUtils.addResiduesToComposition(span.getBioSeq(), results, span);
 		}
 	}
 

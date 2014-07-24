@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterIntersecting;
@@ -270,7 +271,7 @@ public abstract class SymLoader {
         List<SeqSymmetry> resultList = null;
         String method = null;
         for (SeqSymmetry result : results) {
-            method = BioSeq.determineMethod(result);
+            method = BioSeqUtils.determineMethod(result);
             if (track2Results.containsKey(method)) {
                 resultList = track2Results.get(method);
             } else {

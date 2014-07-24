@@ -3,6 +3,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
@@ -2696,7 +2697,7 @@ public class SeqMapView extends JPanel
     public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex,
             String residues, int residue_offset, Color hitColor) {
         final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
-        List<SingletonSymWithProps> results = BioSeq.searchForRegexInResidues(forward, regex, residues, residue_offset, getAnnotatedSeq());
+        List<SingletonSymWithProps> results = BioSeqUtils.searchForRegexInResidues(forward, regex, residues, residue_offset, getAnnotatedSeq());
         for (SingletonSymWithProps result : results) {
             GlyphI gl = new FillRectGlyph() {
                 @Override

@@ -30,6 +30,7 @@ import org.xml.sax.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
@@ -688,7 +689,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
 		//	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		if (feat_type == null) {
-			feat_type = BioSeq.determineMethod(annot);
+			feat_type = BioSeqUtils.determineMethod(annot);
 		}
 		String feat_id = getChildID(annot, parent_id, parent_index);
 		String feat_title = null;

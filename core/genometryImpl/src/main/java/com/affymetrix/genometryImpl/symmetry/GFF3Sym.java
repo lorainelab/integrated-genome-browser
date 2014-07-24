@@ -256,23 +256,23 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 
 		String[] tag_vals = attributes.split(";");
 
-		for (int i=0; i<tag_vals.length; i++) {
-			if ("".equals(tag_vals[i])) {
-				continue;
-			}
-			String[] tag_and_vals = equalsP.split(tag_vals[i], 2);
-			if (tag_and_vals.length == 2) {
-				String[] vals = commaP.split(tag_and_vals[1]);
-				for (int j=0; j<vals.length; j++) {
-					vals[j] = GeneralUtils.URLDecode(vals[j]);
-				}
-				if (vals.length == 1) { // put a single String
-					m.put(tag_and_vals[0], vals[0]);
-				} else { // put a String array
-					m.put(tag_and_vals[0], vals);
-				}
-			}
-		}
+            for (String tag_val : tag_vals) {
+                if ("".equals(tag_val)) {
+                    continue;
+                }
+                String[] tag_and_vals = equalsP.split(tag_val, 2);
+                if (tag_and_vals.length == 2) {
+                    String[] vals = commaP.split(tag_and_vals[1]);
+                    for (int j=0; j<vals.length; j++) {
+                        vals[j] = GeneralUtils.URLDecode(vals[j]);
+                    }
+                    if (vals.length == 1) { // put a single String
+                        m.put(tag_and_vals[0], vals[0]);
+                    } else { // put a String array
+                        m.put(tag_and_vals[0], vals);
+                    }
+                }
+            }
 	}
 
 	/** Returns a non-null String[]. */
@@ -284,12 +284,12 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		String prop_with_equals = prop_name + "=";
 		String val = null;
 
-		for (int i=0; i<tag_vals.length; i++) {
-			if (tag_vals[i].startsWith(prop_with_equals)) {
-				val = tag_vals[i].substring(prop_with_equals.length());
-				break;
-			}
-		}
+            for (String tag_val : tag_vals) {
+                if (tag_val.startsWith(prop_with_equals)) {
+                    val = tag_val.substring(prop_with_equals.length());
+                    break;
+                }
+            }
 		if (val == null) {
 			return EMPTY_RESULT;
 		}

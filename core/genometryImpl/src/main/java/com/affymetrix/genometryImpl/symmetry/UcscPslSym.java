@@ -156,9 +156,9 @@ public class UcscPslSym
 
 		StringBuilder builder = new StringBuilder(2000);
 
-		for(int i=0; i<target_res_arr.length; i++){
-			builder.append(target_res_arr[i]);
-		}
+            for (String target_res_arr1 : target_res_arr) {
+                builder.append(target_res_arr1);
+            }
 
 		return builder.toString();
 	}

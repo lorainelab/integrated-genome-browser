@@ -53,7 +53,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
         if (!query.isEmpty()) {
             GeneralUtils.browse(UCSC_URL + query);
         } else {
-            ErrorHandler.errorPanel("Unable to map genome '" + igbService.getSeqMapView().getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
+            ErrorHandler.errorPanel("Unable to map genome '" + igbService.getSeqMapView().getAnnotatedSeq().getSeqGroup().getID() + "' to a UCSC genome.");
         }
     }
 
@@ -103,7 +103,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
             return "";
         }
 
-        String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
+        String UcscVersion = getUcscGenomeVersion(aseq.getSeqGroup().getID());
         if (!UcscVersion.isEmpty()) {
             return "db=" + UcscVersion + "&position=" + getRegionString();
         }

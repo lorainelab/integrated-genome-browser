@@ -406,7 +406,7 @@ public abstract class BookmarkController {
 		BioSeq seq = span.getBioSeq();
 		ImmutableListMultimap.Builder<String,String> builder = ImmutableListMultimap.<String,String>builder();
 		builder.put(Bookmark.SEQID, seq.getID());
-		builder.put(Bookmark.VERSION, seq.getVersion());
+		builder.put(Bookmark.VERSION, seq.getSeqGroup().getID());
 		builder.put(Bookmark.START, Integer.toString(span.getMin()));
 		builder.put(Bookmark.END, Integer.toString(span.getMax()));
 		return builder.build();
@@ -460,7 +460,7 @@ public abstract class BookmarkController {
 			return null;
 		}
 
-		String version = aseq.getVersion();
+		String version = aseq.getSeqGroup().getID();
 		Date date = new Date();
 		
 		SimpleSymWithProps mark_sym = new BookmarkSymmetry();
@@ -524,6 +524,6 @@ public abstract class BookmarkController {
 		if (aseq == null) {
 			return null;
 		}
-		return MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, aseq.getVersion(), aseq.getID(), span.getMin(), span.getMax());
+		return MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, aseq.getSeqGroup().getID(), aseq.getID(), span.getMin(), span.getMax());
 	}
 }

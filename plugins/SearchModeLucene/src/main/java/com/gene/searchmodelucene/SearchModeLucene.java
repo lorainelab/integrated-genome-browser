@@ -42,7 +42,7 @@ public class SearchModeLucene implements IKeyWordSearch {
             String seqName = doc.get("seq");
             BioSeq seq;
             if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null) {
-                seq = new BioSeq(seqName, "", 0);
+                seq = new BioSeq(seqName, 0);
             } else {
                 seq = GenometryModel.getGenometryModel().getSelectedSeqGroup().getSeq(seqName);
             }

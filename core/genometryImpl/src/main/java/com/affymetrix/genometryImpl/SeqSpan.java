@@ -27,14 +27,6 @@ public interface SeqSpan {
     public boolean isForward();
 
     public BioSeq getBioSeq();
-	// boolean isReverse();
-	/*
-     public int getStrand()
-     public static int FORWARD = 0;
-     public static int REVERSE = 1;
-     public static int BOTH = 2;
-     public static int UNKNOWN = 3;
-     */
 
     public double getStartDouble();
 

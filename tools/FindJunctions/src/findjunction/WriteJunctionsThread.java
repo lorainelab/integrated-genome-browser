@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.FindJunctionOperator;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;

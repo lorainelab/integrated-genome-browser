@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.igb.graphTypes.MismatchGraphType;
 import com.affymetrix.igb.graphTypes.MismatchPileupType;
 import com.affymetrix.igb.shared.GraphGlyph;

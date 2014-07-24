@@ -2,7 +2,7 @@ package com.affymetrix.sequenceviewer;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.osgi.service.IGBService;

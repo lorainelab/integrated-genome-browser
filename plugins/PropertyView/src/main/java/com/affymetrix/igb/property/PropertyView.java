@@ -14,8 +14,8 @@ import javax.swing.table.TableRowSorter;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
 import com.affymetrix.igb.osgi.service.IGBService;

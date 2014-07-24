@@ -22,8 +22,8 @@ import javax.swing.table.TableRowSorter;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;

@@ -10,7 +10,7 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.GraphGlyph;

@@ -2,9 +2,9 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;

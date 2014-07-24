@@ -3,8 +3,8 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.IGBConstants;
 import java.util.List;
 

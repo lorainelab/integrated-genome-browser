@@ -3,7 +3,7 @@ package com.affymetrix.igb.view.factories;
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public class ExpandSymPacker {
 

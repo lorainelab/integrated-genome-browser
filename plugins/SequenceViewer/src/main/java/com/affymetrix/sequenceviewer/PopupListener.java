@@ -5,8 +5,8 @@ import javax.swing.JMenuItem;
 
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import javax.swing.JPopupMenu;
 
 /**

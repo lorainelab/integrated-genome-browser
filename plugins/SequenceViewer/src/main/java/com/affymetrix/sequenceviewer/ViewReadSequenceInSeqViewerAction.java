@@ -8,8 +8,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SymWithResidues;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.igb.osgi.service.IGBService;

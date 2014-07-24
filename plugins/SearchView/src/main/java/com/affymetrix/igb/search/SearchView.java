@@ -14,7 +14,7 @@ import javax.swing.table.TableColumn;
 
 import com.affymetrix.common.ExtensionPointHandler;
 
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

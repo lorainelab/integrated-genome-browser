@@ -144,8 +144,7 @@
                         <Bundle-SymbolicName>com.affymetrix.igb.IGB</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>   
         </plugins>
     </build>
-
 </project>

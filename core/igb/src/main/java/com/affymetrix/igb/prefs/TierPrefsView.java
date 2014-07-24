@@ -2,8 +2,8 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;

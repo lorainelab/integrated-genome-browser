@@ -7,8 +7,8 @@ import java.util.List;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public class BigWigParser implements GraphParser {
 

@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 public class AnnotationsTableModel extends DefaultTableModel {

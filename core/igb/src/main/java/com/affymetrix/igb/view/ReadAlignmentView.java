@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 
 import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.igb.action.ViewReadAlignmentAction;
 

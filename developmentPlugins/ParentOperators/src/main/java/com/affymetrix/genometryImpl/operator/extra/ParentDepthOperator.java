@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public class ParentDepthOperator extends AbstractAnnotationTransformer implements Operator {
 

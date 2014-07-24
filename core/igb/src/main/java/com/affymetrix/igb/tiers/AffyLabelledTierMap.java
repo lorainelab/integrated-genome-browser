@@ -35,18 +35,18 @@ import javax.swing.event.TableModelListener;
  * Wraps a AffyTieredMap and another map that has tier labels which track
  * changes in tiers (size, placement) of AffyTieredMap.
  */
-public final class AffyLabelledTierMap extends AffyTieredMap {
+public class AffyLabelledTierMap extends AffyTieredMap {
 
     private static final long serialVersionUID = 1L;
-    private static final double FUDGE_FACTOR = 0.2;
+    static final double FUDGE_FACTOR = 0.2;
 
-    private AffyTieredMap labelmap;
-    private JSplitPane mapsplitter;
-    private final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
-    private List<TierLabelGlyph> ordered_glyphs = null;
-    private JPanel can_panel;
-    private NeoCanvas ncan;
-    private AffyLabelledTierMap.TierSelectionModel selectionModel = new AffyLabelledTierMap.TierSelectionModel();
+    AffyTieredMap labelmap;
+    JSplitPane mapsplitter;
+    final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
+    List<TierLabelGlyph> ordered_glyphs = null;
+    JPanel can_panel;
+    NeoCanvas ncan;
+    AffyLabelledTierMap.TierSelectionModel selectionModel = new AffyLabelledTierMap.TierSelectionModel();
     protected EventListenerList listenerList = new EventListenerList();
 
     public AffyLabelledTierMap(boolean hscroll_show, boolean vscroll_show) {
@@ -77,7 +77,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
         labelmap.setRubberBandBehavior(false);
         this.setBackground(Color.blue);
         labelmap.setBackground(Color.lightGray);
-        // setMapColor() controls what I normally think of as the background.
 
         mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         mapsplitter.setDividerSize(8);
@@ -371,7 +370,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap {
      * It was added to support (vertical) resizing of tiers taking selection
      * into account. It also supports color scheme choices.
      */
-    private class TierSelectionModel extends DefaultListSelectionModel implements ActionListener {
+    protected class TierSelectionModel extends DefaultListSelectionModel implements ActionListener {
 
         private static final long serialVersionUID = 1L;
 

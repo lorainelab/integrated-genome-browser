@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.color.ColorProvider;
 import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.HeatMapExtended;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.IGBConstants;
 import cytoscape.visual.ui.editors.continuous.BasicVirtualRange;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;

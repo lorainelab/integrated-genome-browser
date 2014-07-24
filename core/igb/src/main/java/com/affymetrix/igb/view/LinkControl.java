@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.symmetry.CdsSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.weblink.WebLink;

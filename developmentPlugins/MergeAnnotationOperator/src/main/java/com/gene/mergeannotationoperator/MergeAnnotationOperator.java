@@ -8,9 +8,9 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.AbstractAnnotationOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 
 public class MergeAnnotationOperator extends AbstractAnnotationOperator implements Operator {
 

@@ -2,7 +2,7 @@ package com.affymetrix.igb.colorproviders;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.color.ColorProvider;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.color.ColorPalette;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.igb.IGBConstants;

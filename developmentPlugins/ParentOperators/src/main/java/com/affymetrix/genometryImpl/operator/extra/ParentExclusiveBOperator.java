@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.operator.extra;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 public class ParentExclusiveBOperator extends ParentExclusiveOperator implements Operator {
 

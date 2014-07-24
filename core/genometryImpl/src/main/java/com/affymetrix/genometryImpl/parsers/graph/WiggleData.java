@@ -78,7 +78,7 @@ public final class WiggleData {
 
 		int largest_x = xList[dataSize-1] + wList[dataSize-1];
 		
-		return (new BioSeq(seq_id, null, largest_x));
+		return (new BioSeq(seq_id, largest_x));
 	}
 
 	/**

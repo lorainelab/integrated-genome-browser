@@ -101,15 +101,14 @@ public final class LiftParser {
 				// experimenting with constructing virtual sequences by using chromosomes as contigs
 				BioSeq contig = seq_group.getSeq(contig_name);
 				if (contig == null) {
-					contig = new BioSeq(contig_name, "", match_length);
+					contig = new BioSeq(contig_name, match_length);
 				}
 
 				contig_count++;
 				BioSeq chrom = seq_group.getSeq(chrom_name);
 				if (chrom == null) {
 					chrom_count++;
-					chrom = seq_group.addSeq(chrom_name, chrom_length);
-					chrom.setVersion(seq_group.getID());
+					chrom = seq_group.addSeq(chrom_name, chrom_length);					
 				}
 
 				MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();

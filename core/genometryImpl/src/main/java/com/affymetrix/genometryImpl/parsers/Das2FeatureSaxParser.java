@@ -907,7 +907,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		BioSeq seq;
 		// need to revisit what to do if group == null
 		if (group == null) {
-			seq = new BioSeq(seqid, "", max);
+			seq = new BioSeq(seqid, max);
 		} else {
 			if (ADD_NEW_SEQS_TO_GROUP) {
 				// this will both create the seq and stretch its length if necessary.
@@ -915,7 +915,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			} else {
 				seq = group.getSeq(seqid);
 				if (seq == null) {
-					seq = new BioSeq(seqid, "", max);
+					seq = new BioSeq(seqid, max);
 				}
 			}
 		}

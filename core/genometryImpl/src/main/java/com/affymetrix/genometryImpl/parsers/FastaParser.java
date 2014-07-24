@@ -332,7 +332,7 @@ public final class FastaParser implements Parser {
 		
 		System.out.println("id: " + seqid);
 		if (seq == null) {
-			seq = new BioSeq(seqid, seqid, residues.length());
+			seq = new BioSeq(seqid, residues.length());
 			seq.setResidues(residues);
 		}
 		else {  // try to merge with existing seq

@@ -161,7 +161,7 @@ public final class NibbleResiduesParser implements Parser {
 			if (seq_group.getSeq(name) != null) {
 				return seq_group.getSeq(name);
 			}
-			result_seq = new BioSeq(name, seq_group.getID(), total_residues);
+			result_seq = new BioSeq(name, total_residues);
 		} catch (Exception ex) {
 			Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

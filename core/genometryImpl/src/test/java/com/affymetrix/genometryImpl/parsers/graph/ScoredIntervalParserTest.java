@@ -47,7 +47,6 @@ public class ScoredIntervalParserTest {
 
 		aseq = seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
 		assertEquals(100208700, aseq.getLength());
-		assertEquals("Test Seq Group", aseq.getVersion());
 		assertEquals("chr1", aseq.getID());
 	}
 

@@ -158,7 +158,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 			// need to debug this eventually...
 			if (acount >= 1) {
 				SimpleSymWithProps new_psym = new SimpleSymWithProps();
-				BioSeq seq = new BioSeq(seqid, aseq.getVersion(), 1000000000);
+				BioSeq seq = new BioSeq(seqid, 1000000000);
 				new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 				new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 				for (int k = 0; k < acount; k++) {
@@ -196,7 +196,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				MutableSeqSymmetry psym = (MutableSeqSymmetry)id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					BioSeq seq = new BioSeq(seqid, seqid, 1000000000);
+					BioSeq seq = new BioSeq(seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);

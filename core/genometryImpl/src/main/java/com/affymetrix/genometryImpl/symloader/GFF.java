@@ -128,7 +128,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             int coord_a = Integer.parseInt(fields[3]);
             int coord_b = Integer.parseInt(fields[4]);
 
-            return new SimpleSeqSpan(coord_a, coord_b, new BioSeq(seq_name, "", 0));
+            return new SimpleSeqSpan(coord_a, coord_b, new BioSeq(seq_name, 0));
         }
 
         return null;

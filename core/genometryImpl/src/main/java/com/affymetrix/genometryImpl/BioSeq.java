@@ -33,7 +33,6 @@ public class BioSeq implements SearchableCharIterator {
     private Map<String, RootSeqSymmetry> type_id2sym = null;   // lazy instantiation of type ids to container annotations
     private List<RootSeqSymmetry> annots;
     private AnnotatedSeqGroup seq_group;
-    private String version;
     private SearchableCharIterator residues_provider;
 	// GAH 8-14-2002: need a residues field in case residues need to be cached
     // (rather than derived from composition), or if we choose to store residues here
@@ -65,12 +64,11 @@ public class BioSeq implements SearchableCharIterator {
      */
     private final String id;
 
-    public BioSeq(String seqid, String seqversion, int length) {
+    public BioSeq(String seqid, int length) {
         this.id = seqid;
         this.length = length;
         start = 0;
         end = length;
-        this.version = seqversion;
     }
 
     public String getID() {
@@ -101,14 +99,6 @@ public class BioSeq implements SearchableCharIterator {
             return Collections.<String>emptySet();
         }
         return type_id2sym.keySet();
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String str) {
-        this.version = str;
     }
 
     /**
@@ -701,7 +691,7 @@ public class BioSeq implements SearchableCharIterator {
         if (aseq.getResiduesProvider() != null) {
             SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
             BioSeq subseq = new BioSeq(
-                    aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
+                    aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getResiduesProvider().getLength());
             subseq.setResiduesProvider(aseq.getResiduesProvider());
             addSubseqToComposition(aseq, span, subseq);
             return;
@@ -721,7 +711,7 @@ public class BioSeq implements SearchableCharIterator {
      */
     public static void addResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
         BioSeq subseq = new BioSeq(
-                aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
+                aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), residues.length());
         subseq.setResidues(residues);
         addSubseqToComposition(aseq, span, subseq);
     }

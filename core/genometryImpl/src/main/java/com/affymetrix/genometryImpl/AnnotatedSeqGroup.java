@@ -299,14 +299,14 @@ public class AnnotatedSeqGroup {
                 aseq.setLength(length);
             }
         } else {
-            aseq = createBioSeq(seqid, this.getID(), length);
+            aseq = createBioSeq(seqid, length);
             this.addSeq(aseq);
         }
         return aseq;
     }
 
-    protected BioSeq createBioSeq(String seqid, String version, int length) {
-        return new BioSeq(seqid, version, length);
+    protected BioSeq createBioSeq(String seqid, int length) {
+        return new BioSeq(seqid, length);
     }
 
     /**

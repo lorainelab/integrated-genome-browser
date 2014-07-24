@@ -25,8 +25,8 @@ public class SeqUtilsTest {
 
 	@Before
 		public void setUp() throws Exception {
-			seqA = new BioSeq("Seq A", "version", 1000000);
-			seqB = new BioSeq("Seq B", "version", 1000000);
+			seqA = new BioSeq("Seq A", 1000000);
+			seqB = new BioSeq("Seq B", 1000000);
 		}
 
 	@After
@@ -290,8 +290,8 @@ public class SeqUtilsTest {
 	 */
 	@Test
 		public void testTransformSymmetry() {
-			BioSeq annot_seq = new BioSeq("annot", "version", 1000000);
-			BioSeq view_seq = new BioSeq("view_seq", "version", 1000000);
+			BioSeq annot_seq = new BioSeq("annot", 1000000);
+			BioSeq view_seq = new BioSeq("view_seq", 1000000);
 
 			// First create a slicing transforming symmetry such that
 			// region from 500-600 in seqA get transformed to region 0-100 in seqB
@@ -364,7 +364,7 @@ public class SeqUtilsTest {
 	public void testExclusive(){
 		SeqSymmetry symA,symB,result;
 		SeqSpan result_span;
-		BioSeq seq = new BioSeq("seq", "version", 1000);
+		BioSeq seq = new BioSeq("seq", 1000);
 		symA = new SingletonSeqSymmetry(300, 800, seq);
 		symB = new SingletonSeqSymmetry(700, 900, seq);
 		result = SeqUtils.exclusive(symA, symB, seq);
@@ -380,7 +380,7 @@ public class SeqUtilsTest {
 	@Test
 	public void testTransformSpan(){
 		
-		BioSeq annot_seq = new BioSeq("annot", "version",1000000);
+		BioSeq annot_seq = new BioSeq("annot", 1000000);
 		SimpleSeqSpan srcSpan = new SimpleSeqSpan(500,800,annot_seq);
 		MutableSeqSpan dstSpan = new SimpleMutableSeqSpan(300,900,annot_seq);
         SeqSymmetry sym = new SingletonSeqSymmetry(300, 800, annot_seq);
@@ -406,7 +406,7 @@ public class SeqUtilsTest {
 }
 	@Test
 	public void testGetResidues(){
-		BioSeq seq = new BioSeq("seq", "version",30);
+		BioSeq seq = new BioSeq("seq", 30);
 		seq.setResidues("atgctgaacaatgactagtaactcgaatga");
 		MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
 		sym.addChild(new SingletonSeqSymmetry(2, 6,seq));
@@ -421,7 +421,7 @@ public class SeqUtilsTest {
 	}
 	@Test
 	public void testEncompass(){
-		BioSeq annot_seq = new BioSeq("annot", "version",1000000);
+		BioSeq annot_seq = new BioSeq("annot", 1000000);
 		SeqSpan spanA = new SimpleSeqSpan(500,300,annot_seq);
 		SeqSpan spanB = new SimpleSeqSpan(800,900,annot_seq);
 		MutableSeqSpan dstSpan = new SimpleMutableSeqSpan(300,900,annot_seq);
@@ -462,8 +462,8 @@ public class SeqUtilsTest {
 		assertEquals(500.0d,resultEnd4,0.000001d);
 
 		//Check for False
-		BioSeq annot_seq1 = new BioSeq("annot", "version1",1000000);
-		BioSeq annot_seq2 = new BioSeq("annot", "version2",1000000);
+		BioSeq annot_seq1 = new BioSeq("annot", 1000000);
+		BioSeq annot_seq2 = new BioSeq("annot", 1000000);
         SeqSpan spanI = new SimpleSeqSpan(1000,500,annot_seq1);
 		SeqSpan spanJ = new SimpleSeqSpan(900,800,annot_seq2);
 		MutableSeqSpan dstSpan5 = new SimpleMutableSeqSpan(1500,500,annot_seq1);

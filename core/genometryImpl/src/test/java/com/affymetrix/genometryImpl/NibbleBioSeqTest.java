@@ -29,7 +29,7 @@ public class NibbleBioSeqTest {
 		String test_string = "ACTGAAACCCTTTGGGNNNATATGCGC";
 
 		byte[] test_array = NibbleIterator.stringToNibbles(test_string, 0, test_string.length());
-		BioSeq nibseq = new BioSeq(null, null, test_string.length());
+		BioSeq nibseq = new BioSeq(null, test_string.length());
 		NibbleIterator nibber = new NibbleIterator(test_array, test_string.length());
 		assertEquals(test_string, nibber.substring(0, test_string.length()));
 

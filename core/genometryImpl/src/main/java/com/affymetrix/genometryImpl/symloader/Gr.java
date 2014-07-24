@@ -79,7 +79,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
         unnamed = group.getSeq(UNNAMED);
 
         if (unnamed == null) {
-            unnamed = new BioSeq(UNNAMED, null, 0);
+            unnamed = new BioSeq(UNNAMED, 0);
         }
 
         GraphSym sym = parse(unnamed, Integer.MIN_VALUE, Integer.MAX_VALUE);

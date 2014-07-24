@@ -80,9 +80,6 @@ public abstract class XAM extends SymLoader {
                 String seqID = ssr.getSequenceName();
                 int seqLength = ssr.getSequenceLength();
                 BioSeq seq = group.addSeq(seqID, seqLength, uri.toString());
-                if (seq.getVersion() != null) {
-                    seq.setVersion(group.getID());
-                }
                 seqs.put(seq, seqID);
             } catch (Exception ex) {
                 ex.printStackTrace();

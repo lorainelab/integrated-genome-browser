@@ -129,7 +129,7 @@ public final class BrptParser implements Parser {
 				MutableSeqSymmetry psym = id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					seq = new BioSeq(seqid, seqid, 1000000000);
+					seq = new BioSeq(seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);

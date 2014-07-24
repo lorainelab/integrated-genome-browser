@@ -772,7 +772,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 						seq = testseq;
 						break;
 					} else {
-						String test_version = testseq.getVersion();
+						String test_version = seq_group.getID();
 						if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
 							seq = testseq;
 							break;

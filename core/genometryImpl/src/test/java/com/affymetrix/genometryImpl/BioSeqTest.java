@@ -4,8 +4,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class BioSeqTest {
-static final BioSeq seq         = new BioSeq("seq", "version", 0);
-	static final BioSeq seq_len     = new BioSeq("len", "version", 500);
+static final BioSeq seq         = new BioSeq("seq", 0);
+	static final BioSeq seq_len     = new BioSeq("len", 500);
 
 	/**
 	 * Test if CompositeNegSeq(String) will accept a null string.
@@ -51,7 +51,7 @@ static final BioSeq seq         = new BioSeq("seq", "version", 0);
 	 */
 	private void constructorTest(String id, String version, String err_msg) {
 		try {
-			BioSeq testseq = new BioSeq(id, version, 0);
+			BioSeq testseq = new BioSeq(id, 0);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}
@@ -61,7 +61,7 @@ static final BioSeq seq         = new BioSeq("seq", "version", 0);
 	 */
 	private void constructorTest(String id, String version, int len, String err_msg) {
 		try {
-			BioSeq testseq = new BioSeq(id, version, len);
+			BioSeq testseq = new BioSeq(id, len);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}
@@ -72,7 +72,7 @@ static final BioSeq seq         = new BioSeq("seq", "version", 0);
 	 */
 	@Test
 		public void testSetBounds1() {
-			BioSeq testseq  = new BioSeq("testseq", "version", 1000);
+			BioSeq testseq  = new BioSeq("testseq", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -130,7 +130,7 @@ static final BioSeq seq         = new BioSeq("seq", "version", 0);
 	 */
 	@Test
 		public void testSetBounds4() {
-			BioSeq testseq = new BioSeq("testseq", "version", 1000);
+			BioSeq testseq = new BioSeq("testseq", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -187,7 +187,7 @@ static final BioSeq seq         = new BioSeq("seq", "version", 0);
 	 */
 	@Test
 		public void testSetBoundsDouble2() {
-			BioSeq testseq = new BioSeq("testseq", "version", 1000);
+			BioSeq testseq = new BioSeq("testseq", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());

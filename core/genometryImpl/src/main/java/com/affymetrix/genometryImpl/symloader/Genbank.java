@@ -327,7 +327,7 @@ public final class Genbank extends SymLoader {
                         if (tag.equals("chromosome")) {
                             seq = this.group.getSeq(value);
                             if (seq == null) {
-                                seq = new BioSeq(value, "", length);
+                                seq = new BioSeq(value, length);
                             }
                             chrLength.put(value, length);
                             chrFound = true;
@@ -338,7 +338,7 @@ public final class Genbank extends SymLoader {
                 }
                 if (!chrFound) {
                     Logger.getLogger(Genbank.class.getName()).log(Level.WARNING, "No chromosome name found in sources");
-                    seq = new BioSeq(seqName, "", length);
+                    seq = new BioSeq(seqName, length);
                     chrLength.put(seqName, length);
                 }
             } else if (findLength && (key.equals("gene")

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
+      <SubComponents>
+        <Menu class="javax.swing.JMenu" name="fileMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="File"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Exit"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="editMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="edit"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="addAnnotationTier">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="addAnnotationTierGlyph"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addAnnotationTierActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+      </SubComponents>
+    </Menu>
+  </NonVisualComponents>
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[1100, 720]"/>
+    </Property>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[1100, 0]"/>
+    </Property>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+      <Connection code="new Rectangle(0, 0, 1100, 720).getSize()" type="code"/>
+    </Property>
+    <Property name="resizable" type="boolean" value="false"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jPanel1" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel3" alignment="0" min="-2" pref="1029" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel3" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="startFieldLabel" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="startTextField" linkSize="3" min="-2" pref="73" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="stopFieldLabel" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="stopTextField" linkSize="3" min="-2" pref="73" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="typeComboBox" pref="452" max="32767" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="addButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="colorComboBox" min="-2" pref="90" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="clearButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="colorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="clearButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="typeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="addButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="stopTextField" linkSize="4" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="stopFieldLabel" linkSize="2" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                      <Component id="startTextField" linkSize="4" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="startFieldLabel" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="startFieldLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Start"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="stopFieldLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Stop"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="stopTextField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="255"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="startTextField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="245"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="typeComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox(glyphtypes)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="String[] glyphtypes = {&#xa;        &quot;com.affymetrix.genoviz.glyph.FillRectGlyph&quot;,&#xa;        &quot;com.affymetrix.genoviz.glyph.OutlineRectGlyph&quot;,&#xa;        &quot;com.affymetrix.genoviz.glyph.FillOvalGlyph&quot;,&#xa;        &quot;com.affymetrix.genoviz.glyph.ArrowGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.LabelGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.PointedGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.FloaterGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.FlyweightPointGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.InsertionSeqGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.SquiggleGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.AlignedProteinGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientSolidGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientPointedGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.RoundRectGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.AlignedResiduesGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.GapGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.DirectedGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.PixelFloaterGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.BridgeGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.CenteredCircleGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.TriBarGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.CoordFloaterGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.BasicImageGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.ThreshGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.ColorSepGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.AlignmentGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.FillOvalGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientLabelledGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientOutlineContGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.GlyphStyle&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientLineContGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.AxisGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.OutlineRectGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.RoundRectMaskGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.StretchContainerGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.LabelledRectGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.LineContainerGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.BasicGraphGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.InvisibleBoxGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.TransientGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.SequenceGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.BoundedPointGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.TriangleGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.SolidGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.PointedOutlinedGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.GlyphStyleFactory&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.OutlinedPointedGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.AlignedDNAGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.StringGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.ColoredResiduesGlyph&quot;,&#xa;&quot;com.affymetrix.genoviz.glyph.LineStretchContainerGlyph&quot;,&#xa;&quot;com.affymetrix.igb.shared.DeletionGlyph&quot;,&#xa;&quot;com.affymetrix.igb.shared.AlignedResidueGlyph&quot;,&#xa;&quot;com.affymetrix.igb.shared.CodonGlyph&quot;,&#xa;&quot;com.affymetrix.igb.shared.WrappedStringGlyph&quot;,&#xa;&quot;com.affymetrix.igb.shared.StyledGlyph&quot;&#xa;    };"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="addButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Add"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="clearButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Clear Map"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="colorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox(colors)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="String[] colors = {&quot;blue&quot;, &quot;red&quot;, &quot;green&quot;, &quot;black&quot;, &quot;yellow&quot;};"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Color"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel3">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+      <SubComponents>
+        <Component class="com.affymetrix.genoviz.widget.NeoMap" name="neoMap2">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tieredMap"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Center"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JSlider" name="jSlider1">
+          <Properties>
+            <Property name="maximum" type="int" value="1000"/>
+            <Property name="value" type="int" value="0"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tieredMap.getXzoomer()"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="First"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JSlider" name="yslider">
+          <Properties>
+            <Property name="orientation" type="int" value="1"/>
+            <Property name="value" type="int" value="0"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tieredMap.getYzoomer()"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Before"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Container class="javax.swing.JPanel" name="jPanel2">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Last"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="stretchXToFit"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox1ActionPerformed"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                  <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="0.0"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="jCheckBox2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="stretchYToFit"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox2ActionPerformed"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                  <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="0.0"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

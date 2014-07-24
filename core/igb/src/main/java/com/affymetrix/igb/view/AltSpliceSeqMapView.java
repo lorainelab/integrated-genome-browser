@@ -236,7 +236,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 			return;
 		}
 
-		this.viewseq = new BioSeq("view_seq", "", aseq.getLength());
+		this.viewseq = new BioSeq("view_seq", aseq.getLength());
 		slice_symmetry = sym;
 		coord_shift = true;
 

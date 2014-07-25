@@ -13,6 +13,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
@@ -47,7 +48,7 @@ public abstract class BrowserView extends JPanel {
 
     public abstract void initializeCookies();
 
-    public abstract Image getImage(Loc loc, int pixWidth);
+    public abstract Image getImage(Loc loc, int pixWidth) throws ImageUnavailableException;
 
     public abstract String getViewName();
 
@@ -105,7 +106,7 @@ public abstract class BrowserView extends JPanel {
                 worker = new SwingWorker<Image, Void>() {
 
                     @Override
-                    public Image doInBackground() {
+                    public Image doInBackground() throws ImageUnavailableException {
                         String ucscQuery = ucscViewAction.getUCSCQuery();
                         Loc loc = Loc.fromUCSCQuery(ucscQuery);
                         if (ucscQuery.length() == 0 || loc.db.length() == 0) {
@@ -123,9 +124,15 @@ public abstract class BrowserView extends JPanel {
                             scroll.setViewportView(browserImage);
                         } catch (InterruptedException ignore) {
                         } catch (CancellationException ignore) {
-                        } catch (java.util.concurrent.ExecutionException e) {
+                        } catch (ExecutionException e) {
                             String why = null;
                             Throwable cause = e.getCause();
+                            if (cause instanceof ImageUnavailableException) {
+                                Image image = BrowserLoader.createErrorImage(cause.getMessage(), pixWidth);
+                                browserImage = new BrowserImage();
+                                browserImage.setImage(image);
+                                scroll.setViewportView(browserImage);
+                            }
                             if (cause != null) {
                                 why = cause.getMessage();
                             } else {

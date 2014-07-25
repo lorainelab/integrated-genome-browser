@@ -17,6 +17,8 @@ import javax.imageio.ImageIO;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import java.awt.image.BufferedImage;
+import java.rmi.server.ExportException;
 
 /**
  * Helper class for getting genomic images from ENSEMBL The mappings for ensembl
@@ -99,7 +101,7 @@ class ENSEMBLoader extends BrowserLoader {
      * @return
      */
     @Override
-    public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies) {
+    public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {
         String url = "";
         try {
             url = getUrlForView(loc, pixWidth);
@@ -115,13 +117,13 @@ class ENSEMBLoader extends BrowserLoader {
             url = getImageUrl(url, cookie, new ENSEMBLURLFinder());
             if (url.startsWith("http")) {
                 try {
-                    return new ImageError(ImageIO.read(new URL(url)), "");
+                    return ImageIO.read(new URL(url));
                 } catch (IOException e) {
                     Logger.getLogger(BrowserView.class.getName()).log(Level.FINE, "url was : " + url, e);
                 }
             }
         }
-        return new ImageError(createErrorImage(url, pixWidth), MessageFormat.format(ExternalViewer.BUNDLE.getString("Error"), url));
+        throw new ImageUnavailableException();
     }
 }
 
@@ -139,7 +141,8 @@ class ENSEMBLURLFinder implements URLFinder {
     private final static Pattern panelPattern = Pattern.compile("id=\"contigviewbottom\"");
     private final static Pattern imagePattern = Pattern.compile("img-tmp(.*png)");
 
-    public String findUrl(BufferedReader reader, URL redirectedURL) throws IOException {
+    @Override
+    public String findUrl(BufferedReader reader, URL redirectedURL) throws IOException, ImageUnavailableException {
         String inputLine = "";
         boolean panel = false;
         while ((inputLine = reader.readLine()) != null) {
@@ -155,7 +158,7 @@ class ENSEMBLURLFinder implements URLFinder {
                 }
             }
         }
-        return MessageFormat.format(ExternalViewer.BUNDLE.getString("findImageURLError"), redirectedURL.toExternalForm());
+        throw new ImageUnavailableException();
     }
 }
 

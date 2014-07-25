@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +31,7 @@ public class UCSCLoader extends BrowserLoader {
         return "http://genome.ucsc.edu/cgi-bin/hgTracks?" + width + "db=" + loc.db + "&position=" + loc.chr + ":" + loc.start + "-" + loc.end;
     }
 
-    public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies) {
+    public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {
         String base_url = getUrlForView(loc, pixWidth);
         String file_name_url = getImageUrl(base_url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder(fileNameBaseUrl, fileNamePattern));
         if (file_name_url.startsWith("http")) {
@@ -60,10 +59,10 @@ public class UCSCLoader extends BrowserLoader {
                     finalImage = tempImage;
                 }
             }
-            return new ImageError(finalImage, "");
+            return finalImage;
         }
 
-        return new ImageError(createErrorImage(file_name_url, pixWidth), "Error");
+        throw new ImageUnavailableException();
     }
 
     class UCSCURLFinder implements URLFinder {
@@ -76,7 +75,7 @@ public class UCSCLoader extends BrowserLoader {
             this.pattern = pattern;
         }
 
-        public String findUrl(BufferedReader reader, URL redirectedUrl) throws IOException {
+        public String findUrl(BufferedReader reader, URL redirectedUrl) throws IOException, ImageUnavailableException {
             String inputLine;
             while ((inputLine = reader.readLine()) != null) {
                 Matcher m = pattern.matcher(inputLine);
@@ -86,7 +85,7 @@ public class UCSCLoader extends BrowserLoader {
                     return base_url + fileName;
                 }
             }
-            return MessageFormat.format(ExternalViewer.BUNDLE.getString("findImageURLError"), "");
+            throw new ImageUnavailableException();
         }
     }
 }

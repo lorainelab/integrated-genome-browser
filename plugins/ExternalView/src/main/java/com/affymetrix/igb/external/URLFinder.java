@@ -11,5 +11,5 @@ import java.net.URL;
  */
 public interface URLFinder {
 
-    public String findUrl(BufferedReader reader, URL url) throws IOException;
+    public String findUrl(BufferedReader reader, URL url) throws IOException, ImageUnavailableException;
 }

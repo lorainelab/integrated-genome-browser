@@ -327,6 +327,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		if (versionName.equals(SELECT_GENOME)) {
 			// Select the null group (and the null seq), if it's not already selected.
+                        toogleView(false);
 			return;
 		}
 

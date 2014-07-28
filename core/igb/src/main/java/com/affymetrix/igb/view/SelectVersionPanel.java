@@ -11,6 +11,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 /**
@@ -24,10 +25,10 @@ public class SelectVersionPanel extends JPanel {
     public SelectVersionPanel() {
         this.setBackground(Color.black);
     }
-    final String first = "Integrated Genome Browser";
-    final String second = "Next, choose a genome version using the ";
-    final String third = "Current Genome ";
-    final String fourth = "tab at right.";
+    private final String first = "Integrated Genome Browser";
+    private final String second = "Next, choose a genome version using the ";
+    private final String third = "Current Genome ";
+    private final String fourth = "tab at right.";
 
     @Override
     public void paintComponent(Graphics g2) {
@@ -42,8 +43,13 @@ public class SelectVersionPanel extends JPanel {
         FontMetrics m = g.getFontMetrics(f);
         FontMetrics m1 = g.getFontMetrics(fb);
         FontMetrics m2 = g.getFontMetrics(f2);
-
+        int[] xPoints = {this.getWidth() - 10, this.getWidth() - 10, this.getWidth()};
+        int[] yPoints = {50, 70, 60};
         int yPos = (int) (.50 * this.getHeight()) - 25;
+
+        g.setColor(Color.decode("#fffb86"));
+        g.drawLine(this.getWidth() - 40, 60, this.getWidth() - 10, 60);
+        g.fillPolygon(xPoints, yPoints, xPoints.length);
 
         g.setFont(f2);
         g.setColor(Color.decode("#fffb86"));

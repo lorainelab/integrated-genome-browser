@@ -35,7 +35,7 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 
     public int getActualSlots();
 
-    public int getSlotsNeeded(ViewI ourView);
+    public int getSlotsNeeded(ViewI view);
 
     public boolean isManuallyResizable();
 

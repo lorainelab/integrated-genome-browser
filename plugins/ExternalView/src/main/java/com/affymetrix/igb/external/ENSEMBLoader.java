@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.image.BufferedImage;
-import java.rmi.server.ExportException;
 
 /**
  * Helper class for getting genomic images from ENSEMBL The mappings for ensembl
@@ -88,7 +87,8 @@ class ENSEMBLoader extends BrowserLoader {
             return ExternalViewer.BUNDLE.getString("regionTooLargeError");
         }
         String chr = loc.chr.replaceAll("chr", "");
-        String url = urlMap.get(loc.db).url + "/Location/View?r=" + chr + ":" + (loc.start + 1) + "-" + loc.end; //ensembl = 1 based
+        String url = urlMap.get(loc.db).url + "/Component/Location/Web/ViewBottom?r=" + chr + ":" + (loc.start + 1) + "-" + loc.end; //ensembl = 1 based
+        url = url + ";image_width=" + pixWidth + ";export=png";
         Logger.getLogger(ENSEMBLoader.class.getName()).log(Level.FINE, "url was : {0}", url);
         return url;
     }
@@ -105,24 +105,13 @@ class ENSEMBLoader extends BrowserLoader {
         String url = "";
         try {
             url = getUrlForView(loc, pixWidth);
-        } catch (Exception e) {
-            url = MessageFormat.format(ExternalViewer.BUNDLE.getString("translateUCSCEnsembleError"), loc);
-        }
-        if (url.startsWith("http")) {
-            String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
-            String session = cookies.get(EnsemblView.ENSEMBLSESSION);
-            if (session != null && session.length() != 0) {
-                cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
-            }
-            url = getImageUrl(url, cookie, new ENSEMBLURLFinder());
             if (url.startsWith("http")) {
-                try {
-                    return ImageIO.read(new URL(url));
-                } catch (IOException e) {
-                    Logger.getLogger(BrowserView.class.getName()).log(Level.FINE, "url was : " + url, e);
-                }
+                return ImageIO.read(new URL(url));
             }
+        } catch (IOException e) {
+            Logger.getLogger(BrowserView.class.getName()).log(Level.FINE, "url was : " + url, e);
         }
+
         throw new ImageUnavailableException();
     }
 }

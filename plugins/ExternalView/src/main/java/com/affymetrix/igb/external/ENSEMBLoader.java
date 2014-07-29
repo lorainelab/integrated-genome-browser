@@ -79,9 +79,9 @@ class ENSEMBLoader extends BrowserLoader {
 
     public String getUrlForView(Loc loc, int pixWidth) {
         if (!urlMap.containsKey(loc.db)) {
-            return MessageFormat.format(ExternalViewer.BUNDLE.getString("transposeError"), loc.db);
+            return MessageFormat.format(ExternalViewer.BUNDLE.getString("ensemblTransposeError"), loc.db);
         }
-        if (loc.length() >= 100000) {
+        if (loc.length() >= 100000) {            
             return ExternalViewer.BUNDLE.getString("regionTooLargeError");
         }
         String chr = loc.chr.replaceAll("chr", "");
@@ -102,24 +102,23 @@ class ENSEMBLoader extends BrowserLoader {
     public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {
         String url;
         Closer closer = Closer.create();
-        try {
-            url = getUrlForView(loc, pixWidth);
-            String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
-            String session = cookies.get(EnsemblView.ENSEMBLSESSION);
-            if (session != null && session.length() != 0) {
-                cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
-            }
-            InputStream in = getConnection(url, cookie).getInputStream();
-            closer.register(in);
-            BufferedImage image = ImageIO.read(in);
-            if(image == null){
+        url = getUrlForView(loc, pixWidth);
+        if (url.startsWith("http")) {
+            try {
+                String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
+                String session = cookies.get(EnsemblView.ENSEMBLSESSION);
+                if (session != null && session.length() != 0) {
+                    cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
+                }
+                InputStream in = getConnection(url, cookie).getInputStream();
+                closer.register(in);                
+                return ImageIO.read(in);
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "IOException.", e);  
                 throw new ImageUnavailableException();
             }
-            return image;
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "IOException.", e);
-            throw new ImageUnavailableException();
-        } 
+        }
+        throw new ImageUnavailableException(url);
     }
 }
 

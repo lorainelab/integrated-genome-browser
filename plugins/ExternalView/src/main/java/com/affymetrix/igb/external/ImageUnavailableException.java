@@ -16,4 +16,7 @@ public class ImageUnavailableException extends Exception {
     ImageUnavailableException() {
         super(MessageFormat.format(ExternalViewer.BUNDLE.getString("findImageURLError"), ""));
     }
+    ImageUnavailableException(String message){
+        super(message);
+    }
 }

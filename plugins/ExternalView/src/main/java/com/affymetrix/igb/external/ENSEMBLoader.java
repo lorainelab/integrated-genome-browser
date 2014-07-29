@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.image.BufferedImage;
+import java.net.HttpURLConnection;
 
 /**
  * Helper class for getting genomic images from ENSEMBL The mappings for ensembl
@@ -102,17 +103,21 @@ class ENSEMBLoader extends BrowserLoader {
      */
     @Override
     public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {
-        String url = "";
+        String url;
         try {
             url = getUrlForView(loc, pixWidth);
-            if (url.startsWith("http")) {
-                return ImageIO.read(new URL(url));
+            String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
+            String session = cookies.get(EnsemblView.ENSEMBLSESSION);
+            if (session != null && session.length() != 0) {
+                cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
             }
+            return ImageIO.read(new URL(getImageUrl(url, cookie, new ENSEMBLURLFinder())));
+        } catch (ImageUnavailableException e) {
+            throw new ImageUnavailableException();
         } catch (IOException e) {
-            Logger.getLogger(BrowserView.class.getName()).log(Level.FINE, "url was : " + url, e);
-        }
-
-        throw new ImageUnavailableException();
+            logger.log(Level.WARNING, "IOException.", e);
+            throw new ImageUnavailableException();
+        }        
     }
 }
 

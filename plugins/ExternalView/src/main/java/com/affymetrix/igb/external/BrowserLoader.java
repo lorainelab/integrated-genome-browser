@@ -1,8 +1,7 @@
 package com.affymetrix.igb.external;
 
-import com.google.common.io.Closeables;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.google.common.io.Closer;
-import com.google.common.io.Resources;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -10,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
@@ -41,6 +41,19 @@ public abstract class BrowserLoader {
 
     abstract public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException;
 
+    public HttpURLConnection getConnection(String url, String cookie) throws IOException {
+        URL request_url = new URL(url);
+        HttpURLConnection request_con = (HttpURLConnection) request_url.openConnection();
+        request_con.setInstanceFollowRedirects(true);
+        request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+        request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
+        request_con.setUseCaches(false);
+        if (cookie != null) {
+            request_con.addRequestProperty("Cookie", cookie);
+        }
+        return request_con;
+    }
+
     /**
      *
      * @param url the UCSC genome/region url
@@ -50,7 +63,7 @@ public abstract class BrowserLoader {
     public String getImageUrl(String url, String cookie, URLFinder urlfinder) throws ImageUnavailableException {
         Closer closer = Closer.create();
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(Resources.asByteSource(new URL(url)).openBufferedStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(getConnection(url, cookie).getInputStream()));
             closer.register(in);
             return urlfinder.findUrl(in, null);
         } catch (Throwable t) {

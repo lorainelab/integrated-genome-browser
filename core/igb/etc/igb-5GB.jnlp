@@ -21,7 +21,6 @@
 		<jar href="@igb.jar.5GB.name@.jar" main="true" />
 		<!-- jar href="igb-i18n.jar" / -->
 		<property name="apple.laf.useScreenMenuBar" value="true" />
-		<property name="http.agent" value="IGB/@jnlp.version@ +5GB (Webstart)" />
 	</resources>
 	<application-desc main-class="com.affymetrix.main.Main" name="IGB">
 		<argument>-prefs</argument>

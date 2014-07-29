@@ -4,21 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.google.common.io.Closer;
 import java.awt.image.BufferedImage;
-import java.net.HttpURLConnection;
 
 /**
  * Helper class for getting genomic images from ENSEMBL The mappings for ensembl
@@ -104,6 +101,7 @@ class ENSEMBLoader extends BrowserLoader {
     @Override
     public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {
         String url;
+        Closer closer = Closer.create();
         try {
             url = getUrlForView(loc, pixWidth);
             String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
@@ -111,50 +109,21 @@ class ENSEMBLoader extends BrowserLoader {
             if (session != null && session.length() != 0) {
                 cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
             }
-            return ImageIO.read(new URL(getImageUrl(url, cookie, new ENSEMBLURLFinder())));
-        } catch (ImageUnavailableException e) {
-            throw new ImageUnavailableException();
+            InputStream in = getConnection(url, cookie).getInputStream();
+            closer.register(in);
+            BufferedImage image = ImageIO.read(in);
+            if(image == null){
+                throw new ImageUnavailableException();
+            }
+            return image;
         } catch (IOException e) {
             logger.log(Level.WARNING, "IOException.", e);
             throw new ImageUnavailableException();
-        }        
+        } 
     }
 }
 
-/**
- * Extracts the image url from the returned html page. ENSEMBL likes to change
- * the ids of the elments quite often e.g. sep2009 id = "BottomViewPanel" ->
- * may2010 id ="contigviewbottom"
- *
- * the panelPattern could be part of the ensemblurl and passed into the
- * constructor to be more flexible and allow other ensembl versions
- *
- */
-class ENSEMBLURLFinder implements URLFinder {
 
-    private final static Pattern panelPattern = Pattern.compile("id=\"contigviewbottom\"");
-    private final static Pattern imagePattern = Pattern.compile("img-tmp(.*png)");
-
-    @Override
-    public String findUrl(BufferedReader reader, URL redirectedURL) throws IOException, ImageUnavailableException {
-        String inputLine = "";
-        boolean panel = false;
-        while ((inputLine = reader.readLine()) != null) {
-            if (!panel) {
-                Matcher m = panelPattern.matcher(inputLine);
-                panel = m.find();
-            } else {
-                Matcher m = imagePattern.matcher(inputLine);
-                if (m.find()) {
-                    Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "found fileName {0}", inputLine);
-                    String fileName = m.group(1);
-                    return "http://" + redirectedURL.getHost() + "/img-tmp" + fileName;
-                }
-            }
-        }
-        throw new ImageUnavailableException();
-    }
-}
 
 class EnsemblURL {
 

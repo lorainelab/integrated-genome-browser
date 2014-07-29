@@ -33,7 +33,8 @@ public class UCSCLoader extends BrowserLoader {
 
     public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {
         String base_url = getUrlForView(loc, pixWidth);
-        String file_name_url = getImageUrl(base_url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder(fileNameBaseUrl, fileNamePattern));
+        String userId = cookies.get(UCSCView.UCSCUSERID).equals("") ? null : UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID);
+        String file_name_url = getImageUrl(base_url, userId, new UCSCURLFinder(fileNameBaseUrl, fileNamePattern));
         if (file_name_url.startsWith("http")) {
             BufferedImage finalImage = null;
             BufferedImage fileImage = null;
@@ -43,7 +44,7 @@ public class UCSCLoader extends BrowserLoader {
             } catch (IOException e) {
                 Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + file_name_url, e);
             }
-            String side_name_url = getImageUrl(base_url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder(sideNameBaseUrl, sideNamePattern));
+            String side_name_url = getImageUrl(base_url,userId, new UCSCURLFinder(sideNameBaseUrl, sideNamePattern));
             if (fileImage != null && side_name_url.startsWith("http")) {
                 BufferedImage sideImage = null;
                 try {

@@ -2,9 +2,10 @@ package com.affymetrix.sequenceviewer;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SymWithResidues;
+
 import com.affymetrix.igb.osgi.service.IGBService;
 
 public class ReadSequenceViewer extends AbstractSequenceViewer {

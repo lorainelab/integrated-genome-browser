@@ -11,7 +11,6 @@ package com.affymetrix.genometryImpl.symmetry.impl;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.util.List;
 
 /**
@@ -44,6 +43,11 @@ public class SingletonSeqSymmetry extends LeafSingletonSymmetry implements SeqSy
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

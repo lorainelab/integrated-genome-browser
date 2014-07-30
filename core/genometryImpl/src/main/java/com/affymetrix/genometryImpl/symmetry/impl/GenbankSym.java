@@ -229,6 +229,11 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
         public boolean setProperty(String key, Object val) {
             return GenbankSym.this.setProperty(key, val);
         }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     // SeqSpan implementation

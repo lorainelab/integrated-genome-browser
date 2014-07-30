@@ -9,7 +9,6 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -21,6 +20,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.IndexedSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

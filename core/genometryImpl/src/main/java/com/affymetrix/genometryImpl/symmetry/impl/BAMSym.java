@@ -1,8 +1,8 @@
 package com.affymetrix.genometryImpl.symmetry.impl;
 
-import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
-import com.affymetrix.genometryImpl.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symmetry.BasicSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -197,6 +197,11 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put("forward", this.isForward());
             return tprops;
         }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     class BamInsChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
@@ -279,6 +284,11 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put("forward", this.isForward());
             tprops.put("feature_type", "insertion");
             return tprops;
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
 

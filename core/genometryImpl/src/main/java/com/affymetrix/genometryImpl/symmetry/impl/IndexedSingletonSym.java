@@ -96,4 +96,9 @@ public final class IndexedSingletonSym extends SingletonSeqSymmetry implements I
             return false;
         }
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
 }

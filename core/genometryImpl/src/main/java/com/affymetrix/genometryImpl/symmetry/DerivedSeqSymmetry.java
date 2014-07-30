@@ -9,7 +9,6 @@
  */
 package com.affymetrix.genometryImpl.symmetry;
 
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 /**

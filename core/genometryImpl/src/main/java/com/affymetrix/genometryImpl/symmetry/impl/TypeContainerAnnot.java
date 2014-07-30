@@ -9,13 +9,13 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
-import com.affymetrix.genometryImpl.symmetry.TypedSym;
-import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.TypedSym;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;

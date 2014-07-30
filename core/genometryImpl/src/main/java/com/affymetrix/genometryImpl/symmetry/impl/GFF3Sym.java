@@ -9,7 +9,6 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
-import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.Scored;
@@ -17,6 +16,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.Arrays;

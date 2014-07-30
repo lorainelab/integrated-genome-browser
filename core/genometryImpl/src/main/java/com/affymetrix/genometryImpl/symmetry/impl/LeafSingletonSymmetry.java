@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 /**
  * A symmetry containing only a single span, and no children In other words, it
@@ -91,6 +90,11 @@ public class LeafSingletonSymmetry extends SimpleMutableSeqSpan implements SeqSy
 
     public String getID() {
         return null;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

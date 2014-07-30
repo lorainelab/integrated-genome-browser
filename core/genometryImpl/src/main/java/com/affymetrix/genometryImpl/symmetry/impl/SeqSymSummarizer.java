@@ -9,7 +9,6 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -19,6 +18,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.ArrayList;
 import java.util.Arrays;

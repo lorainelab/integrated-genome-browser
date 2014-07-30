@@ -35,4 +35,9 @@ public final class SingletonSymWithIntId extends MutableSingletonSeqSymmetry imp
     public int getIntID() {
         return nid;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -9,13 +9,13 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
-import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
-import com.affymetrix.genometryImpl.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.BasicSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -174,6 +174,11 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 
         public float getScore() {
             return UcscBedSym.this.getScore();
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
 

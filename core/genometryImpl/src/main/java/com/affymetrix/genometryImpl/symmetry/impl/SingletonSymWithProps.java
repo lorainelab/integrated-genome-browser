@@ -79,4 +79,9 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
         }
         return props.get(name);
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -6,9 +6,12 @@
 package com.affymetrix.igb.gylph;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -34,12 +37,14 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import static com.affymetrix.igb.view.SeqMapView.axisFont;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
+import com.google.common.math.IntMath;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.math.RoundingMode;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -63,7 +68,6 @@ public class AnnotationStation extends javax.swing.JFrame {
         addAnnotationTier();
         initComponents();
         setupZoomStripe();
-
     }
 
     private void setupZoomStripe() {
@@ -204,6 +208,9 @@ public class AnnotationStation extends javax.swing.JFrame {
         String[] colors = {"blue", "red", "green", "black", "yellow"};
         colorComboBox = new javax.swing.JComboBox(colors);
         jLabel1 = new javax.swing.JLabel();
+        rowTextLabel = new javax.swing.JLabel();
+        glyphRowTextField = new javax.swing.JTextField();
+        autoLayoutCheckBox = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         neoMap2 = tieredMap;
         jSlider1 = tieredMap.getXzoomer();
@@ -247,21 +254,37 @@ public class AnnotationStation extends javax.swing.JFrame {
 
         jLabel1.setText("Color");
 
+        rowTextLabel.setText("Row");
+
+        autoLayoutCheckBox.setText("AutoLayoutRow");
+        autoLayoutCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoLayoutCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(startFieldLabel)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(startFieldLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(startTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(autoLayoutCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(startTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rowTextLabel)
+                    .addComponent(stopFieldLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(stopFieldLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(stopTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(typeComboBox, 0, 452, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(glyphRowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stopTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(113, 113, 113)
+                .addComponent(typeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(addButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -291,7 +314,12 @@ public class AnnotationStation extends javax.swing.JFrame {
                     .addComponent(stopFieldLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(startTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(startFieldLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(rowTextLabel)
+                    .addComponent(glyphRowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(autoLayoutCheckBox))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {startFieldLabel, stopFieldLabel});
@@ -361,10 +389,10 @@ public class AnnotationStation extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1029, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -397,6 +425,11 @@ public class AnnotationStation extends javax.swing.JFrame {
         try {
             int start = Integer.parseInt(startTextField.getText());
             int end = Integer.parseInt(stopTextField.getText());
+            int height = -1;
+
+            if (!autoLayoutCheckBox.isSelected()) {
+                height = Integer.parseInt(glyphRowTextField.getText());
+            }
             Class glyph_class = Class.forName(glyph_name);
             fac.setGlyphtype(glyph_class);
             fac.setBackgroundColor(col);
@@ -424,8 +457,12 @@ public class AnnotationStation extends javax.swing.JFrame {
         //add annotation tier
     }//GEN-LAST:event_addAnnotationTierActionPerformed
 
+    private void autoLayoutCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoLayoutCheckBoxActionPerformed
+        glyphRowTextField.setEnabled(!autoLayoutCheckBox.isSelected());
+    }//GEN-LAST:event_autoLayoutCheckBoxActionPerformed
+
     private void addItemToAnnotationTrack(int start, int end, Class glyph_class) {
-        annotationTierGlyph.addChild(tieredMap.getFactory().makeGlyph(start, end));
+        addPairedEndStyleGlyphSet(start, end);
         tieredMap.stretchToFit(stretchXTofit, stretchYToFit);
         tieredMap.updateWidget();
     }
@@ -466,11 +503,13 @@ public class AnnotationStation extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAnnotationTier;
     private javax.swing.JButton addButton;
+    private javax.swing.JCheckBox autoLayoutCheckBox;
     private javax.swing.JButton clearButton;
     private javax.swing.JComboBox colorComboBox;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JTextField glyphRowTextField;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
@@ -480,6 +519,7 @@ public class AnnotationStation extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSlider jSlider1;
     private com.affymetrix.genoviz.widget.NeoMap neoMap2;
+    private javax.swing.JLabel rowTextLabel;
     private javax.swing.JLabel startFieldLabel;
     private javax.swing.JTextField startTextField;
     private javax.swing.JLabel stopFieldLabel;
@@ -582,27 +622,63 @@ public class AnnotationStation extends javax.swing.JFrame {
     }
 
     private void addSomeGlyphs() {
+        addPairedEndStyleGlyphSet(100, 200);
+        addPairedEndStyleGlyphSet(100, 250);
+        addPairedEndStyleGlyphSet(50, 90);
+        addPairedEndStyleGlyphSet(100, 150);
+    }
+
+    private void addPairedEndStyleGlyphSet(int start, int end) {
+        addPairedEndStyleGlyphSet(start, end, -1);
+    }
+
+    //assumes forwardness for the moment
+    private void addPairedEndStyleGlyphSet(int start, int end, int offsetRows) {
+        if (offsetRows == -1) {
+            offsetRows = getOffset(start, end);
+        }
+
+        int width = end - start;
+        int quarterWidth = IntMath.divide(width, 4, RoundingMode.UP);
+        int halfWidth = IntMath.divide(width, 2, RoundingMode.UP);
         tieredMap.getFactory().setGlyphtype(EfficientLabelledLineGlyph.class);
-        EfficientLabelledLineGlyph labelGlyph = (EfficientLabelledLineGlyph) tieredMap.getFactory().makeGlyph(100, 200);
-        labelGlyph.setLabel("Test");
+        EfficientLabelledLineGlyph labelGlyph = (EfficientLabelledLineGlyph) tieredMap.getFactory().makeGlyph(start, end);
+        labelGlyph.setLabel("Label");
         labelGlyph.setLabelLocation(NORTH);
-        labelGlyph.setCoords(100, DEFAULT_ANNOTATION_TRACK_HEIGHT - 25, 100, 25);
+        offsetRows = 25 + (25 * offsetRows);
+        labelGlyph.setCoords(start, DEFAULT_ANNOTATION_TRACK_HEIGHT - offsetRows, width, annotationTierGlyph.getChildHeight());
         annotationTierGlyph.addChild(labelGlyph);
 
         tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.EfficientPointedGlyph.class);
-        EfficientPointedGlyph point = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(100, 125);
+        EfficientPointedGlyph point = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(start, start + quarterWidth);
         point.setForward(true);
         labelGlyph.addChild(point);
 
         tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.EfficientLineContGlyph.class);
-        GlyphI glyph = tieredMap.getFactory().makeGlyph(125, 176);
+        GlyphI glyph = tieredMap.getFactory().makeGlyph(start + quarterWidth, start + halfWidth + quarterWidth + 1);
         labelGlyph.addChild(glyph);
 
         tieredMap.getFactory().setGlyphtype(com.affymetrix.genoviz.glyph.EfficientPointedGlyph.class);
-        EfficientPointedGlyph efPGlyph = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(175, 200);
+
+        EfficientPointedGlyph efPGlyph = (EfficientPointedGlyph) tieredMap.getFactory().makeGlyph(start + halfWidth + quarterWidth, end);
         efPGlyph.setForward(false);
         labelGlyph.addChild(efPGlyph);
 
+    }
+
+    private int getOffset(int start, int end) {
+        int offset = 0;
+        SeqSpan span = new SimpleSeqSpan(start, end, null);
+        if (annotationTierGlyph.getChildren() != null) {
+            for (GlyphI glyph : annotationTierGlyph.getChildren()) {
+                int glyphStart = (int) glyph.getCoordBox().getX();
+                SeqSpan glyphSpan = new SimpleSeqSpan(glyphStart, glyphStart + (int) glyph.getCoordBox().getWidth(), null);
+                if (SeqUtils.overlap(span, glyphSpan)) {
+                    offset++;
+                }
+            }
+        }
+        return offset;
     }
 
     private String getResidues(int size) {

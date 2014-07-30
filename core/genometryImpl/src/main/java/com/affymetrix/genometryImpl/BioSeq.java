@@ -33,7 +33,7 @@ public class BioSeq implements SearchableCharIterator {
     private List<RootSeqSymmetry> annots;
     private AnnotatedSeqGroup seq_group;
     private SearchableCharIterator residues_provider;
-	// GAH 8-14-2002: need a residues field in case residues need to be cached
+    // GAH 8-14-2002: need a residues field in case residues need to be cached
     // (rather than derived from composition), or if we choose to store residues here
     // instead of in composition seqs in case we actually want to compose/cache
     // all residues...
@@ -361,7 +361,7 @@ public class BioSeq implements SearchableCharIterator {
         residues_provider = chariter;
     }
 
-    public  void removeResidueProvider() {
+    public void removeResidueProvider() {
         residues_provider = null;
     }
 
@@ -412,7 +412,7 @@ public class BioSeq implements SearchableCharIterator {
             Logger.getLogger(BioSeq.class.getName()).log(Level.FINE, "Invalid arguments: {0},{1},{2}", new Object[]{start, end, residue_length});
             return "";
         }
-        
+
         //TODO: If start is greater than residue_length then
         //			this condition fails and returns unexpected string
         // Sanity checks on argument size.
@@ -569,10 +569,10 @@ public class BioSeq implements SearchableCharIterator {
     }
 
     //Same as isComplete but faster and effective.
-
     public boolean isAvailable() {
         return isAvailable(start, end);
     }
+
     public boolean isAvailable(int start, int end) {
         return isAvailable(new SimpleSeqSpan(start, end, this));
     }
@@ -634,61 +634,40 @@ public class BioSeq implements SearchableCharIterator {
         return this.getID();
     }
 
-    @Override
+//    @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + (this.type_id2sym != null ? this.type_id2sym.hashCode() : 0);
-        hash = 59 * hash + (this.annots != null ? this.annots.hashCode() : 0);
-        hash = 59 * hash + (this.seq_group != null ? this.seq_group.hashCode() : 0);
-        hash = 59 * hash + (this.residues_provider != null ? this.residues_provider.hashCode() : 0);
-        hash = 59 * hash + (this.residues != null ? this.residues.hashCode() : 0);
-        hash = 59 * hash + this.start;
-        hash = 59 * hash + this.end;
-        hash = 59 * hash + (this.compose != null ? this.compose.hashCode() : 0);
-        hash = 59 * hash + (int) (Double.doubleToLongBits(this.length) ^ (Double.doubleToLongBits(this.length) >>> 32));
-        hash = 59 * hash + (this.id != null ? this.id.hashCode() : 0);
-        return hash;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final BioSeq other = (BioSeq) obj;
-        if (this.type_id2sym != other.type_id2sym && (this.type_id2sym == null || !this.type_id2sym.equals(other.type_id2sym))) {
+        BioSeq other = (BioSeq) obj;
+        if (end != other.end) {
             return false;
         }
-        if (this.annots != other.annots && (this.annots == null || !this.annots.equals(other.annots))) {
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
             return false;
         }
-        if (this.seq_group != other.seq_group && (this.seq_group == null || !this.seq_group.equals(other.seq_group))) {
+        if (start != other.start) {
             return false;
         }
-        if (this.residues_provider != other.residues_provider && (this.residues_provider == null || !this.residues_provider.equals(other.residues_provider))) {
-            return false;
-        }
-        if ((this.residues == null) ? (other.residues != null) : !this.residues.equals(other.residues)) {
-            return false;
-        }
-        if (this.start != other.start) {
-            return false;
-        }
-        if (this.end != other.end) {
-            return false;
-        }
-        if (this.compose != other.compose && (this.compose == null || !this.compose.equals(other.compose))) {
-            return false;
-        }
-        if (Double.doubleToLongBits(this.length) != Double.doubleToLongBits(other.length)) {
-            return false;
-        }
-        return !((this.id == null) ? (other.id != null) : !this.id.equals(other.id));
+        return true;
     }
-
-
 
 }

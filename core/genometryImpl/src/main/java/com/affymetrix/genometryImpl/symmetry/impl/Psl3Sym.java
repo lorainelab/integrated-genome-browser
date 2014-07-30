@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.LeafTrioSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.io.DataOutputStream;
 import java.io.IOException;

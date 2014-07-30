@@ -11,7 +11,6 @@ package com.affymetrix.genometryImpl.symmetry.impl;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 
 public final class ScoredSingletonSym extends SingletonSeqSymmetry implements Scored {
 

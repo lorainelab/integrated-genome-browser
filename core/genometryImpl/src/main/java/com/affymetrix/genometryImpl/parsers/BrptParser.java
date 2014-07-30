@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;

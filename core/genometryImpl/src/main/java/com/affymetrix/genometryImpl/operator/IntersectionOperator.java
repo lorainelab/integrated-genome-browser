@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SingletonSeqSymmetry;
 
 public class IntersectionOperator extends AbstractAnnotationOperator implements Operator {
 

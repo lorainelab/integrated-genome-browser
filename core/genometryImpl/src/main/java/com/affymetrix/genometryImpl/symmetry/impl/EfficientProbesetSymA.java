@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.IntId;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,7 @@
 
 package com.affymetrix.genometryImpl.operator;
 
+import com.affymetrix.genometryImpl.symmetry.impl.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;

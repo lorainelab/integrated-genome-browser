@@ -223,7 +223,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     public final void setStyle(ITrackStyleExtended style) {
         this.style = style;
 
-		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
+        // most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
         // the fg color to the TierLabel glyph, which does pay attention to that color.
         setForegroundColor(style.getForeground());
         setFillColor(style.getBackground());
@@ -257,7 +257,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
                 g.fillRect(getPixelBox().x, getPixelBox().y, 2 * getPixelBox().width, getPixelBox().height + 1);
             }
 
-			// cycle through "middleground" glyphs,
+            // cycle through "middleground" glyphs,
             //   make sure their coord box y and height are set to same as TierGlyph,
             //   then call mglyph.draw(view)
             // TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
@@ -347,7 +347,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     @Override
     public void removeAllChildren() {
         super.removeAllChildren();
-		// also remove all middleground glyphs
+        // also remove all middleground glyphs
         // this is currently the only place where middleground glyphs are treated as if they were children
         //   maybe should rename this method clear() or something like that...
         // only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by
@@ -622,7 +622,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
                         public void run() {
                             updateParent(tg);
                             GeneralLoadView.getLoadView().refreshDataManagementView();
-							//TODO: Find a way to avoid this
+                            //TODO: Find a way to avoid this
                             //if (lastUsedGlyph == saveDetailGlyph) {
                             smv.repackTheTiers(true, true);
                             smv.getSeqMap().updateWidget();
@@ -667,7 +667,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     public void pack(ViewI view) {
         super.pack(view);
         if (this.getCoordBox().height < MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT) {
-			// Only do this for resizable tiers for now.
+            // Only do this for resizable tiers for now.
             // It would screw up the axis tier, for one.
             if (isManuallyResizable()) {
                 Rectangle2D.Double oldBox = getCoordBox();
@@ -710,7 +710,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
                 ((DirectedGlyph) child).setForward(isForward);
             }
             if (0 < child.getChildCount()) {
-				// The above test is needed as of 2011-03-01
+                // The above test is needed as of 2011-03-01
                 // because child.getChildren() returns null instead of an empty list.
                 scaleChildHeights(theScale, child.getChildren(), theView);
             }

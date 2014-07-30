@@ -11,7 +11,6 @@ package com.affymetrix.genometryImpl.symmetry.impl;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.IndexedSym;
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import java.util.Map;
 

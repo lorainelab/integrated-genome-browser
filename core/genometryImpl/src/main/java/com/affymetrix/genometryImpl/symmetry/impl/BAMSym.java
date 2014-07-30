@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.symmetry.impl;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.Arrays;
 import java.util.BitSet;

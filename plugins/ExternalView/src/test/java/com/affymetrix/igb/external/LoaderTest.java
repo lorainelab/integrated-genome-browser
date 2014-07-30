@@ -13,7 +13,7 @@ public class LoaderTest {
         Map<String, String> cookies = new HashMap<String, String>();
         cookies.put(EnsemblView.ENSEMBLSESSION, "");
         cookies.put(EnsemblView.ENSEMBLWIDTH, "800");
-        Loc loc = new Loc("hg38", "chr4", 113435486, 113777472);//chr4:113,435,486-113,777,472
+        Loc loc = new Loc("hg38", "chr4", 113775472, 113777472);//chr4:113,435,486-113,777,472
         BufferedImage image = new ENSEMBLoader().getImage(loc, 800, cookies);
         assertNotNull(image);
     }

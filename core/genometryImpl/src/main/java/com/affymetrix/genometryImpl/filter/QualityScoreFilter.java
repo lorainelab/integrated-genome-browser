@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.general.Parameter;
 import com.affymetrix.genometryImpl.operator.comparator.MathComparisonOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SymWithBaseQuality;
+import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
 import java.util.LinkedList;
 import java.util.List;
 

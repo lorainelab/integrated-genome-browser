@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.symmetry.impl;
+package com.affymetrix.genometryImpl.symmetry;
 
 /**
  *

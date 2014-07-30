@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SymSpanWithCds;
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.ColorUtils;

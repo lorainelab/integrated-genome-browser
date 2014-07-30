@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;

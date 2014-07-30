@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.graphTypes.DotGraphType;

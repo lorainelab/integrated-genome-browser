@@ -9,6 +9,8 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
+import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;

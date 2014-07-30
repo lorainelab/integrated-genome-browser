@@ -9,6 +9,8 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
+import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
+
 public final class SimpleDerivedSeqSymmetry extends SimpleMutableSeqSymmetry
         implements DerivedSeqSymmetry {
 

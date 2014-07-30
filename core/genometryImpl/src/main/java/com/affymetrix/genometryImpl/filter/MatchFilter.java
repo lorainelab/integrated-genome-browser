@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SymWithResidues;
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import java.util.BitSet;
 
 /**

@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.impl.TypedSym;
+import com.affymetrix.genometryImpl.symmetry.TypedSym;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

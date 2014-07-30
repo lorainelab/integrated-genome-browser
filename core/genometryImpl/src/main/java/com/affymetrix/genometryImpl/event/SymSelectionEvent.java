@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.event;
 
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 import java.util.Collections;

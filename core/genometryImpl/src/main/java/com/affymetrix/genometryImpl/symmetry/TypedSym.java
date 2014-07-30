@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.genometryImpl.symmetry.impl;
+package com.affymetrix.genometryImpl.symmetry;
 
 public interface TypedSym {
 

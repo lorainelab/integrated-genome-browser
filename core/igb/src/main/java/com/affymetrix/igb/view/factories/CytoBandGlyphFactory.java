@@ -2,7 +2,7 @@ package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;

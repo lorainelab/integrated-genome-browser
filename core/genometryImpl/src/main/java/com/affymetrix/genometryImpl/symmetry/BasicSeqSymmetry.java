@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.symmetry.impl;
+package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
@@ -17,15 +17,15 @@ import java.util.Map;
  */
 public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProps {
 
-    BioSeq seq; // "chrom"
-    int txMin; // "chromStart"
-    int txMax; // "chromEnd"
-    String name; // "name"
-    boolean forward; // "strand"
-    int[] blockMins; // "blockStarts" + "txMin"
-    int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
-    String type;
-    Map<String, Object> props;
+    protected BioSeq seq; // "chrom"
+    protected int txMin; // "chromStart"
+    protected int txMax; // "chromEnd"
+    protected String name; // "name"
+    protected boolean forward; // "strand"
+    protected int[] blockMins; // "blockStarts" + "txMin"
+    protected int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
+    protected String type;
+    protected Map<String, Object> props;
 
     /**
      * Constructs a SeqSymmetry optimized for BED-file format. This object is

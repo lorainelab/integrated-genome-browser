@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.impl.TypedSym;
+import com.affymetrix.genometryImpl.symmetry.TypedSym;
 
 import java.awt.Color;
 import java.awt.GradientPaint;

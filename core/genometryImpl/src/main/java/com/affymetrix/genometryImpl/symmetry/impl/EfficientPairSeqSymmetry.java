@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SymWithResidues;
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;

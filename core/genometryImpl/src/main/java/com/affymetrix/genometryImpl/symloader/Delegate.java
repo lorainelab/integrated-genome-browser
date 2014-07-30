@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;

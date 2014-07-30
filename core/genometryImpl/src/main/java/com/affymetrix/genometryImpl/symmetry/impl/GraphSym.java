@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.symmetry.impl;
 
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;

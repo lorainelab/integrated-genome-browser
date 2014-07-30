@@ -3,7 +3,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SymSpanWithCds;
+import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;

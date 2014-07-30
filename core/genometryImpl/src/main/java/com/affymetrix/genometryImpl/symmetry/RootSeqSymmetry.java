@@ -1,6 +1,8 @@
-package com.affymetrix.genometryImpl.symmetry.impl;
+package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import java.util.Set;
 import java.util.regex.Pattern;
 

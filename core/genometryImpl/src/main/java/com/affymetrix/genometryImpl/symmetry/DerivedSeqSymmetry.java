@@ -7,9 +7,10 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.genometryImpl.symmetry.impl;
+package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 /**
  * a symmetry derived from another "original" symmetry. It maintains a reference

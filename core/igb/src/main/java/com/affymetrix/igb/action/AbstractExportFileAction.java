@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ExportFileModel;
 import com.affymetrix.genometryImpl.util.GFileChooser;

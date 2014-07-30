@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.symmetry.impl;
 
+import com.affymetrix.genometryImpl.symmetry.SupportsGeneName;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser.Orientation;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.impl.TypedSym;
+import com.affymetrix.genometryImpl.symmetry.TypedSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.util.HashMap;
 import java.util.List;

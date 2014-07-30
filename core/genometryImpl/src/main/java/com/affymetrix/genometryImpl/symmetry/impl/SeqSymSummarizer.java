@@ -9,6 +9,7 @@
  */
 package com.affymetrix.genometryImpl.symmetry.impl;
 
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

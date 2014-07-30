@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.symmetry.impl;
 
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.util.BitSet;
 

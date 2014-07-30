@@ -2,7 +2,7 @@ package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.GlyphI;

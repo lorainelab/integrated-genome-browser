@@ -45,7 +45,7 @@ public class ExportFileAction
     protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException {
         List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
         RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) atier.getInfo();
-        if (rootSeqSymmetry.getCategory().isContainer()) {
+        if (rootSeqSymmetry.getCategory().isContainer() && (rootSeqSymmetry instanceof TypeContainerAnnot) ) {
             AnnotatedSeqGroup group = aseq.getSeqGroup();
             List<BioSeq> seql = group.getSeqList();
             for (BioSeq aseql : seql) {

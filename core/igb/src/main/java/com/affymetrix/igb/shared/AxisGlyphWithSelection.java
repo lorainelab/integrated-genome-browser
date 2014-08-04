@@ -4,6 +4,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -13,7 +14,8 @@ import java.awt.geom.Rectangle2D;
 public class AxisGlyphWithSelection extends AxisGlyph {
 
     private GlyphI sel_glyph;
-
+    private Color jumpZoomColor = new Color(180,250,250);
+            
     public AxisGlyphWithSelection() {
         super();
         setSelectable(true);
@@ -153,7 +155,7 @@ public class AxisGlyphWithSelection extends AxisGlyph {
     protected void drawSelectedOutline(ViewI view) {
         if (sel_glyph != null) {
             draw(view);
-            sel_glyph.setBackgroundColor(view.getScene().getSelectionColor());
+            sel_glyph.setBackgroundColor(jumpZoomColor);
             sel_glyph.drawTraversal(view);
         } else {
             super.drawSelectedOutline(view);

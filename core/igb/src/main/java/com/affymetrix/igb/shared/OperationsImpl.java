@@ -37,6 +37,8 @@ import javax.swing.text.AbstractDocument;
 
 public class OperationsImpl extends Operations implements RefreshSelectionListener {
 
+    private static final long serialVersionUID = 1L;
+
     boolean DEBUG_EVENTS = false;
 
     protected final IGBService igbService;

@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
  */
 public class ZoomOnSelectedSymsAction extends SeqMapViewActionA {
 
+    private static final long serialVersionUID = 1L;
+
     private static ZoomOnSelectedSymsAction ACTION = new ZoomOnSelectedSymsAction();
 
     public static ZoomOnSelectedSymsAction getAction() {

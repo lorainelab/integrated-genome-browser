@@ -26,6 +26,8 @@ import javax.swing.border.EmptyBorder;
  * @author tkanapar
  */
 public class SelectionRuleAction extends GenericAction {
+    
+    private static final long serialVersionUID = 1L;
 
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";

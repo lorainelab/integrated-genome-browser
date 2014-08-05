@@ -12,6 +12,8 @@ import javax.swing.JPanel;
  */
 public class ExportDialogGUI extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private ExportDialog ed;
 
     public ExportDialogGUI(ExportDialog ed) {

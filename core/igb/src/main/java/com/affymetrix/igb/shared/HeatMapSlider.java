@@ -15,6 +15,8 @@ import javax.swing.JSlider;
  */
 public class HeatMapSlider extends JSlider {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Constructs a HeatMapSlider with the specified default minimum and maximum
      * values.

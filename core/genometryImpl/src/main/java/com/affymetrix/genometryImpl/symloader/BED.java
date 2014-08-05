@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -818,7 +819,7 @@ public class BED extends SymLoader implements LineProcessor {
 
         } catch (IOException ex) {
             if (ex.getMessage() != null && ex.getMessage().toLowerCase().contains(TOO_MANY_CONTIGS_EXCEPTION.toLowerCase())) {
-                ErrorHandler.errorPanel("File contains too many contigs; some will not be shown.");
+                ErrorHandler.errorPanel(GenometryConstants.BUNDLE.getString("tooManyContigsError"));
                 return true;
             }
             throw ex;

@@ -12,6 +12,8 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
  */
 public class ColorByScoreEditor extends javax.swing.JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates new form ColorByScoreEditor
      */

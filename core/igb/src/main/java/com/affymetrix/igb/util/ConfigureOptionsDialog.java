@@ -18,85 +18,87 @@ import javax.swing.JOptionPane;
 @SuppressWarnings("unchecked")
 public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog {
 
-	private ConfigureOptionsPanel<T> configureOptionPanel;
-	private JOptionPane optionPane;
-	private JButton okOption, cancelOption;
-	
-	/**
-	 * Creates the reusable dialog.
-	 */
-	public ConfigureOptionsDialog(Class clazz, String label) {
-		this(clazz, label, null);
-	}
+    private static final long serialVersionUID = 1L;
 
-	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter) {
-		this(clazz, label, filter, true);
-	}
-	
-	public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, boolean includeNone) {
-		super((Frame) null, true);
-		init(clazz, label, filter, includeNone);
-	}
-	
-	private void init(Class clazz, String label, Filter<T> filter, boolean includeNone) throws SecurityException {
-		configureOptionPanel = new ConfigureOptionsPanel<T>(clazz, label, filter, includeNone){
-			@Override
-			public void revalidate() {
-				super.revalidate();
-				ConfigureOptionsDialog.this.pack();
-			}
-		};
+    private ConfigureOptionsPanel<T> configureOptionPanel;
+    private JOptionPane optionPane;
+    private JButton okOption, cancelOption;
 
-		okOption = new JButton("OK");
-		cancelOption = new JButton("Cancel");
-		Object[] options = new Object[]{okOption, cancelOption};
+    /**
+     * Creates the reusable dialog.
+     */
+    public ConfigureOptionsDialog(Class clazz, String label) {
+        this(clazz, label, null);
+    }
 
-		optionPane = new JOptionPane(configureOptionPanel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-		optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+    public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter) {
+        this(clazz, label, filter, true);
+    }
 
-		setResizable(true);
-		setContentPane(optionPane);
-		//setModal(false);
-		setAlwaysOnTop(false);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, boolean includeNone) {
+        super((Frame) null, true);
+        init(clazz, label, filter, includeNone);
+    }
 
-		addListeners();
-		pack();
-	}
+    private void init(Class clazz, String label, Filter<T> filter, boolean includeNone) throws SecurityException {
+        configureOptionPanel = new ConfigureOptionsPanel<T>(clazz, label, filter, includeNone) {
+            @Override
+            public void revalidate() {
+                super.revalidate();
+                ConfigureOptionsDialog.this.pack();
+            }
+        };
 
-	private void addListeners() {
+        okOption = new JButton("OK");
+        cancelOption = new JButton("Cancel");
+        Object[] options = new Object[]{okOption, cancelOption};
 
-		ActionListener al = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				if (ae.getSource() == okOption) {
-					optionPane.setValue(JOptionPane.OK_OPTION);
-				} else {
-					optionPane.setValue(JOptionPane.CANCEL_OPTION);
-				}
-				dispose();
-			}
-		};
-		okOption.addActionListener(al);
-		cancelOption.addActionListener(al);
-	}
+        optionPane = new JOptionPane(configureOptionPanel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 
-	@Override
-	public void setEnabled(boolean b){
-		configureOptionPanel.setEnabled(b);
-	}
-	
-	public void setInitialValue(T cp) {
-		configureOptionPanel.setInitialValue(cp);
-	}
-	
-	public T showDialog() {
-		//If initial value was not set, then set it here
-		setVisible(true);
-		return configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer)optionPane.getValue() == JOptionPane.OK_OPTION); 
-	}
-	
-	public Object getValue(){
-		configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer)optionPane.getValue() == JOptionPane.OK_OPTION); 
-		return optionPane.getValue();
-	}
+        setResizable(true);
+        setContentPane(optionPane);
+        //setModal(false);
+        setAlwaysOnTop(false);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        addListeners();
+        pack();
+    }
+
+    private void addListeners() {
+
+        ActionListener al = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                if (ae.getSource() == okOption) {
+                    optionPane.setValue(JOptionPane.OK_OPTION);
+                } else {
+                    optionPane.setValue(JOptionPane.CANCEL_OPTION);
+                }
+                dispose();
+            }
+        };
+        okOption.addActionListener(al);
+        cancelOption.addActionListener(al);
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        configureOptionPanel.setEnabled(b);
+    }
+
+    public void setInitialValue(T cp) {
+        configureOptionPanel.setInitialValue(cp);
+    }
+
+    public T showDialog() {
+        //If initial value was not set, then set it here
+        setVisible(true);
+        return configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer) optionPane.getValue() == JOptionPane.OK_OPTION);
+    }
+
+    public Object getValue() {
+        configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer) optionPane.getValue() == JOptionPane.OK_OPTION);
+        return optionPane.getValue();
+    }
 }

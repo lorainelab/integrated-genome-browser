@@ -86,6 +86,8 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
      */
     class AutoScrollConfigDialog extends JDialog {
 
+        private static final long serialVersionUID = 1L;
+
         private JOptionPane optionPane;
         private JRPTextField pix_to_scrollTF, time_intervalTF;
         private JLabel bases_per_minuteL, minutes_per_seqL;
@@ -196,7 +198,7 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
             if (autoScroll.isScrolling()) {
                 stop();
 
-				// Regain the focus
+                // Regain the focus
                 // Todo: Need to get source from the event
                 if (e.getDocument() == pix_to_scrollTF.getDocument()) {
                     pix_to_scrollTF.requestFocusInWindow();

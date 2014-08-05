@@ -46,6 +46,8 @@ import javax.swing.text.AbstractDocument;
 @SuppressWarnings("unchecked")
 public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private T returnValue, selectedCP;
     private Map<String, Object> paramMap;
     private JComboBox comboBox;

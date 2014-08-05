@@ -11,6 +11,8 @@ import javax.swing.SwingUtilities;
  */
 public class MaxSlotsChooser extends javax.swing.JFrame {
 
+    private static final long serialVersionUID = 1L;
+
     private Integer optimum = 5;
     private final Integer unlimitted = 0;
     private Integer initial = 0;

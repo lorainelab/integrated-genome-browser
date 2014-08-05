@@ -23,6 +23,8 @@ import javax.swing.event.ListSelectionListener;
  */
 public class GlyphTransformer {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int SCROLLBAR_WIDTH = 12;
     private static final int WINDOW_OFFSET = 4;
     private static final int SPEED = 10;

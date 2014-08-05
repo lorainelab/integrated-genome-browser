@@ -66,6 +66,8 @@ public class ToggleTrackResizingAction extends SeqMapViewActionA {
 
     private class TrackResizingAction extends GenericAction {
 
+        private static final long serialVersionUID = 1L;
+
         final MouseInputAdapter resizer;
 
         protected TrackResizingAction(String text, MouseInputAdapter resizer) {

@@ -9,6 +9,8 @@ package com.affymetrix.igb.shared;
  * @author tkanapar
  */
 public class PrintDialogGUI extends javax.swing.JPanel {
+    
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new form PrintDialogGUI

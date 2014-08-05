@@ -63,6 +63,8 @@ public class HeatMapSlider extends JSlider {
 
     private static class MultiValuedBoundedRangeModel extends DefaultBoundedRangeModel {
 
+        private static final long serialVersionUID = 1L;
+
         private final int[] values;
 
         private MultiValuedBoundedRangeModel(int noOfValues, int min, int max) {

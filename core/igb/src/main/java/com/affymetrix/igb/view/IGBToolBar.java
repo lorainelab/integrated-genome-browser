@@ -46,6 +46,8 @@ import javax.swing.UIManager;
  * @author hiralv
  */
 public class IGBToolBar extends JToolBar {
+    
+    private static final long serialVersionUID = 1L;
 
     private static final String NO_SELECTION_TEXT = "Click the map below to select annotations";
     private static final String SELECTION_INFO = "Selection Info";

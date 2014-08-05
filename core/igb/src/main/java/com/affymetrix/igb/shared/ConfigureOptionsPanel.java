@@ -382,6 +382,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     private static class IDListCellRenderer extends DefaultListCellRenderer {
 
+        private static final long serialVersionUID = 1L;
+
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {

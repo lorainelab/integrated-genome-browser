@@ -91,7 +91,8 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="transformationGoB">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Apply"/>
+            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to run operation on selected tracks."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transformationGoBActionPerformed"/>
@@ -195,7 +196,8 @@
         </Component>
         <Component class="javax.swing.JButton" name="operationGoB">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Apply"/>
+            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to run operation on selected tracks."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="operationGoBActionPerformed"/>

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
@@ -31,7 +31,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="annotationsPanel" pref="160" max="32767" attributes="1"/>
+                  <Component id="annotationsPanel" max="32767" attributes="1"/>
                   <Group type="102" attributes="0">
                       <Component id="stackHeightPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -274,14 +274,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthTextFieldActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.com.affymetrix.igb.swing.JRPTextField(&quot;trackPreference_maxDepth&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPTextField(&quot;trackPreference_maxDepth&quot;)"/>
             <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="stackDepthGoButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Apply"/>
-            <Property name="toolTipText" type="java.lang.String" value="Click or press ENTER to set the stack height."/>
+            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to run operation on selected tracks."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthGoButtonActionPerformed"/>
@@ -371,14 +371,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setPxHeightTextBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.affymetrix.com.affymetrix.igb.swing.JRPTextField(&quot;trackPreference_tierHeight&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPTextField(&quot;trackPreference_tierHeight&quot;)"/>
             <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((javax.swing.text.AbstractDocument)setPxHeightTextBox.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="pxGoButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Apply"/>
-            <Property name="toolTipText" type="java.lang.String" value="Click to apply a new locked track height."/>
+            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to run operation on selected tracks."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pxGoButtonActionPerformed"/>

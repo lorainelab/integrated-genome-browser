@@ -183,8 +183,8 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        stackDepthGoButton.setText("Apply");
-        stackDepthGoButton.setToolTipText("Click or press ENTER to set the stack height.");
+        stackDepthGoButton.setText("Go");
+        stackDepthGoButton.setToolTipText("Click to run operation on selected tracks.");
         stackDepthGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stackDepthGoButtonActionPerformed(evt);
@@ -209,7 +209,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
                 .add(0, 0, 0)
                 .add(stackDepthGoButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 66, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
-                .add(stackDepthAllButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, Short.MAX_VALUE)
+                .add(stackDepthAllButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .add(0, 0, 0))
         );
         stackHeightPanelLayout.setVerticalGroup(
@@ -242,8 +242,8 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        pxGoButton.setText("Apply");
-        pxGoButton.setToolTipText("Click to apply a new locked track height.");
+        pxGoButton.setText("Go");
+        pxGoButton.setToolTipText("Click to run operation on selected tracks.");
         pxGoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pxGoButtonActionPerformed(evt);
@@ -296,7 +296,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                    .add(annotationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(stackHeightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)

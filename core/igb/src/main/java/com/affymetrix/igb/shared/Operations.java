@@ -39,7 +39,8 @@ public abstract class Operations extends javax.swing.JPanel {
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Operations"));
 
-        transformationGoB.setText("Apply");
+        transformationGoB.setText("Go");
+        transformationGoB.setToolTipText("Click to run operation on selected tracks.");
         transformationGoB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 transformationGoBActionPerformed(evt);
@@ -90,7 +91,8 @@ public abstract class Operations extends javax.swing.JPanel {
         operationParam.setEditable(false);
         ((javax.swing.text.AbstractDocument)operationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 
-        operationGoB.setText("Apply");
+        operationGoB.setText("Go");
+        operationGoB.setToolTipText("Click to run operation on selected tracks.");
         operationGoB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 operationGoBActionPerformed(evt);

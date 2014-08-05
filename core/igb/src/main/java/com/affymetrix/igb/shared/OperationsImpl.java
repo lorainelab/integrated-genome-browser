@@ -68,11 +68,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
             }
         });
 
-        getTransformationGoB().setText("Apply");
-        getTransformationGoB().setToolTipText(operatorSingleTrackApplyToolTip);
 
-        getOperationGoB().setText("Apply");
-        getOperationGoB().setToolTipText(operatorMultipleTrackApplyToolTip);
 
         getTransformationParamLabel().setVisible(false);
         getTransformationParam().setVisible(false);
@@ -297,8 +293,6 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
     private static final String selectMaxGraphsMessage = BUNDLE.getString("operatorMaxTooltip");
     private static final String selectRangeGraphsMessage = BUNDLE.getString("operatorRangeTooltip");
 
-    private static final String operatorSingleTrackApplyToolTip = BUNDLE.getString("operatorSingleTrackApplyToolTip");
-    private static final String operatorMultipleTrackApplyToolTip = BUNDLE.getString("operatorMultipleTrackApplyToolTip");
 
     public static String getTooltipMessage(Operator operator) {
         if (operator == null) {

@@ -14,7 +14,7 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -310,7 +310,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		show2TracksCheckBox.setSelected(!(Boolean) getValueAt(COL_SHOW_2_TRACKS));
 		collapsedCheckBox.setSelected((Boolean) getValueAt(COL_COLLAPSED));
 
-		DIRECTION_TYPE type = (DIRECTION_TYPE) getValueAt(COL_DIRECTION_TYPE);
+		DirectionType type = (DirectionType) getValueAt(COL_DIRECTION_TYPE);
 		if (type == null) {
 			colorCheckBox.setSelected(false);
 			arrowCheckBox.setSelected(false);
@@ -485,8 +485,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		return value;
 	}
 
-	private DIRECTION_TYPE checkDirection(TrackStyle style, TrackStyle temp) {
-		DIRECTION_TYPE value = style.getDirectionName();
+	private DirectionType checkDirection(TrackStyle style, TrackStyle temp) {
+		DirectionType value = style.getDirectionName();
 		if (!value.equals(temp.getDirectionName())) {
 			return null;
 		}
@@ -533,7 +533,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		setSelectedByDirection(style.getDirectionName());
 	}
 
-	private void setSelectedByDirection(DIRECTION_TYPE direction) {
+	private void setSelectedByDirection(DirectionType direction) {
 		switch (direction) {
 			case NONE:
 				colorCheckBox.setSelected(false);
@@ -835,7 +835,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 						}
 						break;
 						case COL_DIRECTION_TYPE:
-							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
+							style.setDirectionType((TrackConstants.DirectionType) value);
 							break;
 						case COL_SHOW_2_TRACKS:
 							style.setSeparate(!(((Boolean) value).booleanValue()));

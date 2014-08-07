@@ -224,6 +224,7 @@ public final class GeneralLoadView {
         loadStrategies.add(LoadStrategy.AUTOLOAD);
         loadStrategies.add(LoadStrategy.VISIBLE);
 //		loadStrategies.add(LoadStrategy.CHROMOSOME);
+        //TODO refactor code to not use serverType == null as a hack
         loadFeatures(loadStrategies, null);
     }
 
@@ -253,10 +254,6 @@ public final class GeneralLoadView {
             if (GeneralLoadUtils.isLoaded(gFeature)) {
                 continue;
             }
-//			if (isPreLoaded(gFeature)) {
-//				continue;
-//			}
-
             loadFeature(loadStrategies, gFeature, serverType);
         }
     }
@@ -266,6 +263,7 @@ public final class GeneralLoadView {
             return false;
         }
 
+        //TODO refactor code to not use serverType == null as a hack
         if (serverType != null && gFeature.gVersion.gServer.serverType != serverType) {
             return false;
         }
@@ -432,7 +430,7 @@ public final class GeneralLoadView {
         table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(35);
         table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(35);
 
-		// Don't enable combo box for full genome sequence
+        // Don't enable combo box for full genome sequence
         // Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
         DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
     }

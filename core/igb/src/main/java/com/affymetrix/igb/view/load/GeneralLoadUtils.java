@@ -208,12 +208,12 @@ public final class GeneralLoadUtils {
         Iterator<Map.Entry<String, GenericVersion>> i = species2genericVersionList.entries().iterator();
         while (i.hasNext()) {
             GenericVersion version = i.next().getValue();
-                if (version.gServer == server) {
-                    GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
-                    version.clear();
+            if (version.gServer == server) {
+                GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
+                version.clear();
                 i.remove();
-                }
             }
+        }
 
         server.setEnabled(false);
         if (server.serverType == null) {
@@ -527,7 +527,7 @@ public final class GeneralLoadUtils {
         try {
             genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
         } catch (IllegalStateException ex) {
-			// due to multithreading, it's possible that this sequence has been created by another thread while doing this test.
+            // due to multithreading, it's possible that this sequence has been created by another thread while doing this test.
             // we can safely return in this case.
             Logger.getLogger(GeneralLoadUtils.class.getName()).fine("Ignoring multithreading illegal state exception.");
             return;
@@ -637,7 +637,7 @@ public final class GeneralLoadUtils {
         BioSeq selected_seq = gmodel.getSelectedSeq();
         BioSeq visible_seq = gviewer.getViewSeq();
         if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles)) {
-			//      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
+            //      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
             //System.out.println("@@@@@ selected chrom: " + selected_seq);
             //System.out.println("@@@@@ visible chrom: " + visible_seq);
             return false;
@@ -961,7 +961,7 @@ public final class GeneralLoadUtils {
         for (SeqSpan optimized_span : optimized_spans) {
             Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
-			// If thread was interruped then it might return null. 
+            // If thread was interruped then it might return null. 
             // So avoid null pointer exception, check it here.
             if (results != null) {
                 for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
@@ -1035,7 +1035,7 @@ public final class GeneralLoadUtils {
      * @param genomeVersionName -- name of the genome.
      * @param span	-- May be null. If not, then it's used for partial loading.
      */
-	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
+    // Most confusing thing here -- certain parsers update the composition, and certain ones do not.
     // DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
     public static boolean getResidues(Set<GenericVersion> versionsWithChrom, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
         if (span == null) {
@@ -1246,7 +1246,7 @@ public final class GeneralLoadUtils {
     }
 
     public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
-		// If server requires authentication then.
+        // If server requires authentication then.
         // If it cannot be authenticated then don't add the feature.
         if (!LocalUrlCacher.isValidURI(uri)) {
             ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ", Level.WARNING);
@@ -1374,7 +1374,7 @@ public final class GeneralLoadUtils {
             String uriString = uri.toString();
             int httpIndex = uriString.toLowerCase().indexOf("http:");
             if (httpIndex > -1) {
-				// Strip off initial characters up to and including http:
+                // Strip off initial characters up to and including http:
                 // Sometimes this is necessary, as URLs can start with invalid "http:/"
                 uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
                 uri = URI.create(uriString);
@@ -1419,7 +1419,7 @@ public final class GeneralLoadUtils {
 
         if (extension.equals(BAM_EXT)) {
             try {
-                handleBam(uri);              
+                handleBam(uri);
             } catch (BamIndexNotFoundException ex) {
                 String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
                 ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
@@ -1599,6 +1599,7 @@ public final class GeneralLoadUtils {
         GenericFeature f = getLoadedFeature(gFeature.getURI());
         if (f != null && f != gFeature) {
             gFeature.clear();
+            //TODO look into this refresh call
             GeneralLoadView.getLoadView().refreshTreeView();
             return true;
         }
@@ -1607,16 +1608,11 @@ public final class GeneralLoadUtils {
     }
 
     public static GenericFeature getLoadedFeature(URI uri) {
-        if (GeneralLoadUtils.getVisibleFeatures() == null) {
-            return null;
-        }
-
         for (GenericFeature gFeature : GeneralLoadUtils.getVisibleFeatures()) {
             if (gFeature.getURI().equals(uri) && gFeature.isVisible()) {
                 return gFeature;
             }
         }
-
         return null;
     }
 }

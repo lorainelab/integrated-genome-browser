@@ -69,31 +69,31 @@ public interface TrackConstants {
     static final float default_track_name_size = 12;
     static final float default_min_score_color = 1.0f;
     static final float default_max_score_color = 1000.f;
-    static final DIRECTION_TYPE default_direction_type = DIRECTION_TYPE.NONE;
+    static final DirectionType DEFAULT_DIRECTION_TYPE = DirectionType.NONE;
     public static final Object[] SUPPORTED_SIZE = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f};
     public static final Object[] LABELFIELD = {NO_LABEL, "id", "name", "score"};
 
-    public static enum DIRECTION_TYPE {
+    public static enum DirectionType {
 
         NONE,
         ARROW,
         COLOR,
         BOTH;
 
-        public static DIRECTION_TYPE valueFor(String string) {
-            for (DIRECTION_TYPE type : DIRECTION_TYPE.values()) {
+        public static DirectionType valueFor(String string) {
+            for (DirectionType type : DirectionType.values()) {
                 if (type.name().equalsIgnoreCase(string)) {
                     return type;
                 }
             }
-            return default_direction_type;
+            return DEFAULT_DIRECTION_TYPE;
         }
 
-        public static DIRECTION_TYPE valueFor(int i) {
-            if (i < DIRECTION_TYPE.values().length) {
-                return DIRECTION_TYPE.values()[i];
+        public static DirectionType valueFor(int i) {
+            if (i < DirectionType.values().length) {
+                return DirectionType.values()[i];
             }
-            return default_direction_type;
+            return DEFAULT_DIRECTION_TYPE;
         }
     }
 }

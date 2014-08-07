@@ -148,7 +148,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         int child_y = 100; // relevant relative to parent_y
 
         ITrackStyleExtended the_style = the_tier.getAnnotStyle();
-        TrackConstants.DIRECTION_TYPE direction_type = TrackConstants.DIRECTION_TYPE.valueFor(the_style.getDirectionType());
+        TrackConstants.DirectionType direction_type = TrackConstants.DirectionType.valueFor(the_style.getDirectionType());
         Color consensus_color = getSymColor(consensus_sym, the_style, forward, direction_type);
 
         boolean use_label = (label_field != null && !label_field.equals(TrackConstants.NO_LABEL)
@@ -198,7 +198,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         }
 
 //		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, 
-//				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal());
+//				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == TrackConstants.DirectionType.ARROW.ordinal());
 		// call out to handle rendering to indicate if any of the children of the
         //    orginal annotation are completely outside the view
         DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq,
@@ -217,21 +217,21 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         return pglyph;
     }
 
-    private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, TrackConstants.DIRECTION_TYPE direction_type)
+    private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, TrackConstants.DirectionType direction_type)
             throws InstantiationException, IllegalAccessException {
 
         if (cspan.getLength() == 0) {
             return new DeletionGlyph();
         } else if (((isLast && cspan.isForward()) || (isFirst && !cspan.isForward()))
-                && (direction_type == TrackConstants.DIRECTION_TYPE.ARROW || direction_type == TrackConstants.DIRECTION_TYPE.BOTH)) {
+                && (direction_type == TrackConstants.DirectionType.ARROW || direction_type == TrackConstants.DirectionType.BOTH)) {
             return new PointedGlyph();
         }
 
         return new EfficientOutlinedRectGlyph();
     }
 
-    private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, TrackConstants.DIRECTION_TYPE direction_type) {
-        if (direction_type == TrackConstants.DIRECTION_TYPE.COLOR || direction_type == TrackConstants.DIRECTION_TYPE.BOTH) {
+    private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, TrackConstants.DirectionType direction_type) {
+        if (direction_type == TrackConstants.DirectionType.COLOR || direction_type == TrackConstants.DirectionType.BOTH) {
             if (isForward) {
                 return style.getForwardColor();
             }

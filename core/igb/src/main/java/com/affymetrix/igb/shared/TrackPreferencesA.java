@@ -608,7 +608,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
         strandsArrowCheckBox.setEnabled(isAllAnnot() && isAllSupportTwoTrack());
         boolean allArrow = isAllAnnot();
         for (ITrackStyleExtended style : annotStyles) {
-            if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal() || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+            if (!(style.getDirectionType() == TrackConstants.DirectionType.ARROW.ordinal() || style.getDirectionType() == TrackConstants.DirectionType.BOTH.ordinal())) {
                 allArrow = false;
                 break;
             }
@@ -619,7 +619,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
     private boolean isAllStrandsColor() {
         boolean allColor = true;
         for (ITrackStyleExtended style : annotStyles) {
-            if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal() || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+            if (!(style.getDirectionType() == TrackConstants.DirectionType.COLOR.ordinal() || style.getDirectionType() == TrackConstants.DirectionType.BOTH.ordinal())) {
                 allColor = false;
                 break;
             }

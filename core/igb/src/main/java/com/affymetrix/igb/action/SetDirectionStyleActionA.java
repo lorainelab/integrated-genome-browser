@@ -16,13 +16,13 @@ public abstract class SetDirectionStyleActionA extends SeqMapViewActionA {
     }
 
     protected boolean isArrowStyle(ITrackStyleExtended style) {
-        return style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal()
-                || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal();
+        return style.getDirectionType() == TrackConstants.DirectionType.ARROW.ordinal()
+                || style.getDirectionType() == TrackConstants.DirectionType.BOTH.ordinal();
     }
 
     protected boolean isColorStyle(ITrackStyleExtended style) {
-        return style.getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal()
-                || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal();
+        return style.getDirectionType() == TrackConstants.DirectionType.COLOR.ordinal()
+                || style.getDirectionType() == TrackConstants.DirectionType.BOTH.ordinal();
     }
 
     @Override
@@ -39,23 +39,23 @@ public abstract class SetDirectionStyleActionA extends SeqMapViewActionA {
             if (style == null) {
                 continue;
             }
-            TrackConstants.DIRECTION_TYPE directionType = null;
+            TrackConstants.DirectionType directionType = null;
             if (!isArrowStyle(style) && !isColorStyle(style)) {
-                directionType = TrackConstants.DIRECTION_TYPE.NONE;
+                directionType = TrackConstants.DirectionType.NONE;
             }
             if (isArrowStyle(style) && !isColorStyle(style)) {
-                directionType = TrackConstants.DIRECTION_TYPE.ARROW;
+                directionType = TrackConstants.DirectionType.ARROW;
             }
             if (!isArrowStyle(style) && isColorStyle(style)) {
-                directionType = TrackConstants.DIRECTION_TYPE.COLOR;
+                directionType = TrackConstants.DirectionType.COLOR;
             }
             if (isArrowStyle(style) && isColorStyle(style)) {
-                directionType = TrackConstants.DIRECTION_TYPE.BOTH;
+                directionType = TrackConstants.DirectionType.BOTH;
             }
             style.setDirectionType(directionType.ordinal());
 
             // Turn off color by RGB when direction type is either both or color
-            if (directionType == TrackConstants.DIRECTION_TYPE.BOTH || directionType == TrackConstants.DIRECTION_TYPE.COLOR) {
+            if (directionType == TrackConstants.DirectionType.BOTH || directionType == TrackConstants.DirectionType.COLOR) {
                 style.setColorProvider(null);
             }
         }

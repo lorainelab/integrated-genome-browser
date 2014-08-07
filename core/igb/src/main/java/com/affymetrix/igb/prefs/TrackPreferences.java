@@ -96,7 +96,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		table.setDefaultEditor(Color.class, new DefaultCellEditor(new ColorExComboBox()));
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
-		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
+		table.setDefaultEditor(TrackConstants.DirectionType.class, new DefaultCellEditor(new JComboBox(TrackConstants.DirectionType.values())));
 
 		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(60);
 		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(60);
@@ -304,15 +304,15 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		if (applyChanged) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.BOTH, 0, COL_DIRECTION_TYPE);
 				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.COLOR, 0, COL_DIRECTION_TYPE);
 				}
 			} else {
 				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.ARROW, 0, COL_DIRECTION_TYPE);
 				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.NONE, 0, COL_DIRECTION_TYPE);
 				}
 			}
 		}
@@ -322,15 +322,15 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		if (applyChanged) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.BOTH, 0, COL_DIRECTION_TYPE);
 				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.COLOR, 0, COL_DIRECTION_TYPE);
 				}
 			} else {
 				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.ARROW, 0, COL_DIRECTION_TYPE);
 				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, 0, COL_DIRECTION_TYPE);
+					model.setValueAt(TrackConstants.DirectionType.NONE, 0, COL_DIRECTION_TYPE);
 				}
 			}
 		}

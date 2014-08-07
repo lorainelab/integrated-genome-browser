@@ -10,7 +10,7 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -233,7 +233,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 				show2TracksCheckBox.setSelected(!selectedStyle.getSeparate());
 				collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
-				switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
+				switch (DirectionType.valueFor(selectedStyle.getDirectionType())) {
 					case NONE:
 						colorCheckBox.setSelected(false);
 						arrowCheckBox.setSelected(false);
@@ -434,7 +434,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 							if (!style.equals(default_annot_style)) {
 								element.getPropertyMap().put(PROP_DIRECTION_TYPE, value.toString());
 							}
-							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
+							style.setDirectionType((TrackConstants.DirectionType) value);
 							break;
 						case COL_SHOW_2_TRACKS:
 							if (!style.equals(default_annot_style)) {

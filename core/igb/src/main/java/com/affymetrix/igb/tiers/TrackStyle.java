@@ -99,7 +99,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private Color labelForeground;
     private Color labelBackground;
     private String label_field = default_label_field;
-    private DIRECTION_TYPE direction_type = default_direction_type;
+    private DirectionType direction_type = DEFAULT_DIRECTION_TYPE;
     private int glyph_depth = default_glyphDepth;
     private double height = default_height;
     private double y = default_y;
@@ -128,6 +128,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private boolean float_graph = false;
     private ColorProviderI color_provider = null;
     private SymmetryFilterI filter = null;
+    //Only appropriate for Bam/Sam files, but being placed here for now
+    private boolean showAsPaired = false;
     /**
      * for height on the reverse strand. To help with track resizing.
      */
@@ -283,7 +285,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         end_color = (Color) load(PREF_END_COLOR, this.getReverseColor());
         label_field = (String) load(PREF_LABEL_FIELD, this.getLabelField());
         track_name_size = (Float) load(PREF_TRACK_SIZE, this.getTrackNameSize());
-        direction_type = DIRECTION_TYPE.valueFor((Integer) load(PREF_DIRECTION_TYPE, this.getDirectionType()));
+        direction_type = DirectionType.valueFor((Integer) load(PREF_DIRECTION_TYPE, this.getDirectionType()));
         Color temp_fg = (Color) load(PREF_LABEL_FOREGROUND, this.getLabelForeground());
         Color temp_bg = (Color) load(PREF_LABEL_BACKGROUND, this.getLabelBackground());
         if (temp_fg != foreground) {
@@ -414,9 +416,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         }
         String directionstring = (String) props.get(PROP_DIRECTION_TYPE);
         if (directionstring != null && !"".equals(directionstring)) {
-            DIRECTION_TYPE prev_direction_type = direction_type;
+            DirectionType prev_direction_type = direction_type;
             try {
-                this.setDirectionType(DIRECTION_TYPE.valueFor(directionstring));
+                this.setDirectionType(DirectionType.valueFor(directionstring));
             } catch (Exception ex) {
                 this.setDirectionType(prev_direction_type);
             }
@@ -726,7 +728,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         return this.feature;
     }
 
-    public void setDirectionType(DIRECTION_TYPE type) {
+    public void setDirectionType(DirectionType type) {
         this.direction_type = type;
         save(PREF_DIRECTION_TYPE, type.ordinal());
     }
@@ -738,10 +740,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     @Override
     public void setDirectionType(int ordinal) {
-        direction_type = TrackConstants.DIRECTION_TYPE.values()[ordinal];
+        direction_type = TrackConstants.DirectionType.values()[ordinal];
     }
 
-    public DIRECTION_TYPE getDirectionName() {
+    public DirectionType getDirectionName() {
         return direction_type;
     }
 
@@ -835,6 +837,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     public SymmetryFilterI getFilter() {
         return filter;
     }
+
+     @Override
+    public boolean isShowAsPaired() {
+       return showAsPaired;
+    }
+
+    public void setShowAsPaired(boolean showAsPaired) {
+        this.showAsPaired = showAsPaired;
+    }    
 
     public boolean drawCollapseControl() {
         return (IGBStateProvider.getDrawCollapseState() && getExpandable());
@@ -1091,5 +1102,4 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setShadeBasedOnQualityScore((Boolean) value);
         }
     }
-
 }

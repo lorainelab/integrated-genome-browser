@@ -19,19 +19,19 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
     private boolean isLast = false;
     private Color startColor = Color.GREEN;
     private Color endColor = Color.RED;
-    private DIRECTION_TYPE type;
+    private DirectionType type;
     private Rectangle2D.Double stcb;
     private Rectangle2D.Double edcb;
     private int x[] = new int[6];
     private int y[] = new int[6];
 
-    public DualDirectedGlyph(boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) {
+    public DualDirectedGlyph(boolean isFirst, boolean isLast, DirectionType direction_type) {
         super();
         setPosition(isFirst, isLast);
         setDirectionType(direction_type);
     }
 
-    public final void setDirectionType(DIRECTION_TYPE type) {
+    public final void setDirectionType(DirectionType type) {
         this.type = type;
     }
 
@@ -41,9 +41,9 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
     }
 
     public void draw(ViewI view) {
-        if (type == DIRECTION_TYPE.ARROW) {
+        if (type == DirectionType.ARROW) {
             drawArrow(view);
-        } else if (type == DIRECTION_TYPE.COLOR) {
+        } else if (type == DirectionType.COLOR) {
             drawColored(view);
         } else {
             drawNone(view);

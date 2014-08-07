@@ -243,8 +243,8 @@ public abstract class Selections {
     public static boolean isAllStrandsColor() {
         boolean allColor = true;
         for (ITrackStyleExtended style : annotStyles) {
-            if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.COLOR.ordinal()
-                    || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+            if (!(style.getDirectionType() == TrackConstants.DirectionType.COLOR.ordinal()
+                    || style.getDirectionType() == TrackConstants.DirectionType.BOTH.ordinal())) {
                 allColor = false;
                 break;
             }
@@ -255,8 +255,8 @@ public abstract class Selections {
     public static boolean isAllStrandsArrow() {
         boolean allArrow = true;
         for (ITrackStyleExtended style : annotStyles) {
-            if (!(style.getDirectionType() == TrackConstants.DIRECTION_TYPE.ARROW.ordinal()
-                    || style.getDirectionType() == TrackConstants.DIRECTION_TYPE.BOTH.ordinal())) {
+            if (!(style.getDirectionType() == TrackConstants.DirectionType.ARROW.ordinal()
+                    || style.getDirectionType() == TrackConstants.DirectionType.BOTH.ordinal())) {
                 allArrow = false;
                 break;
             }

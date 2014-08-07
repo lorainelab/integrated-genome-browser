@@ -6,13 +6,15 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
+import com.google.common.base.Optional;
+import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +117,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
         }
         return csg;
 
-		// SEQ array has unexpected behavior;  commenting out for now.
+        // SEQ array has unexpected behavior;  commenting out for now.
 		/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
          byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
          for (int i = 0; i < seqArr.length; i++) {
@@ -153,5 +155,29 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
             return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
         }
         return sym;
+    }
+
+    protected class Track {
+
+        private final TierGlyph forwardTier;
+        private final TierGlyph reverseTier;
+
+        public Track(TierGlyph forwardTier) {            
+            this(forwardTier, null);
+        }
+
+        public Track(TierGlyph forwardTier, TierGlyph reverseTier) {
+            checkNotNull(forwardTier);
+            this.forwardTier = forwardTier;
+            this.reverseTier = reverseTier;
+        }
+
+        public TierGlyph getForwardTier() {
+            return forwardTier;
+        }
+
+        public Optional<TierGlyph> getReverseTier() {
+            return Optional.fromNullable(reverseTier);
+        }
     }
 }

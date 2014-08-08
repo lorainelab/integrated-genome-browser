@@ -11,7 +11,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 /**
@@ -25,10 +24,9 @@ public class SelectVersionPanel extends JPanel {
     public SelectVersionPanel() {
         this.setBackground(Color.black);
     }
-    private final String first = "Integrated Genome Browser";
-    private final String second = "Next, choose a genome version using the ";
-    private final String third = "Current Genome ";
-    private final String fourth = "tab at right.";
+    private final String firstLine = "Welcome to Integrated Genome Browser";
+    private final String secondLine = "You selected a species. Next, select a genome version.";
+    private final String inlineArrowText = "Select genome version.";
 
     @Override
     public void paintComponent(Graphics g2) {
@@ -37,41 +35,35 @@ public class SelectVersionPanel extends JPanel {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-        Font f = new Font("Sans Serif", Font.PLAIN, 20);
-        Font fb = new Font("Sans Serif", Font.BOLD, 20);
-        Font f2 = new Font("Sans Serif", Font.PLAIN, 30);
-        FontMetrics m = g.getFontMetrics(f);
-        FontMetrics m1 = g.getFontMetrics(fb);
-        FontMetrics m2 = g.getFontMetrics(f2);
+        Font smallFont = new Font("Sans Serif", Font.PLAIN, 20);
+        Font largeFont = new Font("Sans Serif", Font.PLAIN, 30);
+        FontMetrics m = g.getFontMetrics(smallFont);
+        FontMetrics m2 = g.getFontMetrics(largeFont);
+
+        int fixedArrowYpos = 50;
         int[] xPoints = {this.getWidth() - 10, this.getWidth() - 10, this.getWidth()};
-        int[] yPoints = {50, 70, 60};
+        int[] yPoints = {fixedArrowYpos - 10, fixedArrowYpos + 10, fixedArrowYpos};
         int yPos = (int) (.50 * this.getHeight()) - 25;
 
         g.setColor(Color.decode("#fffb86"));
-        g.drawLine(this.getWidth() - 40, 60, this.getWidth() - 10, 60);
+        g.drawLine(this.getWidth() - 40, fixedArrowYpos, this.getWidth() - 10, fixedArrowYpos);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
 
-        g.setFont(f2);
+        g.setFont(smallFont);
+        int xPos = this.getWidth() - (m.stringWidth(inlineArrowText) + 40);
+        g.drawString(inlineArrowText, xPos, fixedArrowYpos + 5);
+
+        g.setFont(largeFont);
         g.setColor(Color.decode("#fffb86"));
-        int xPos = (this.getWidth() / 2) - m2.stringWidth(first) / 2;
+        xPos = (this.getWidth() / 2) - m2.stringWidth(firstLine) / 2;
         yPos += 25;
-        g.drawString(first, xPos, yPos);
+        g.drawString(firstLine, xPos, yPos);
 
-        g.setFont(f);
-        xPos = (this.getWidth() / 2) - m.stringWidth(second + third + fourth) / 2;
+        g.setFont(smallFont);
+        xPos = (this.getWidth() / 2) - m.stringWidth(secondLine) / 2;
         g.setColor(Color.decode("#FFFFFF"));
         yPos += 25;
-        g.drawString(second, xPos, yPos);
-
-        g.setFont(fb);
-        xPos += m.stringWidth(second);
-        g.setColor(Color.decode("#FFFFFF"));
-        g.drawString(third, xPos, yPos);
-
-        g.setFont(f);
-        xPos += m1.stringWidth(third);
-        g.setColor(Color.decode("#FFFFFF"));
-        g.drawString(fourth, xPos, yPos);
+        g.drawString(secondLine, xPos, yPos);
 
     }
 }

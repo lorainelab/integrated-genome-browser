@@ -82,7 +82,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     private boolean colorSwitch = (Boolean) PreferenceUtils.load(PreferenceUtils.getTopNode(), PREF_COLOR_SCHEME, false);
     private final static int EXON_COLOR = 1;
     private final static int INTRON_COLOR = 2;
-    private boolean toggle_Reverse_Complement = false;
+    private boolean toggleReverseComplement = false;
 
     List<CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
     Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
@@ -131,7 +131,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
     private void checkNegativeStrand(SeqSpan cdsSpan) {
         if (!cdsSpan.isForward()) {
-            this.toggle_Reverse_Complement = true;
+            this.toggleReverseComplement = true;
             if (!revCompCBMenuItem.isSelected()) {
                 revCompCBMenuItem.setSelected(true);
             }
@@ -397,7 +397,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         int start = 0, end = 0;
         Iterator<CreateValueSet> it_working = null;
         seqview.setResidues("");
-        if (toggle_Reverse_Complement) {
+        if (toggleReverseComplement) {
             it_working = reverse_complement.listIterator();
         } else {
             it_working = working_list.listIterator();
@@ -415,7 +415,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             int cdsEnd = cv.getSi().getCdsEnd();
             int revCdsStart = cv.getSi().getReverseCdsStart();
             int revCdsEnd = cv.getSi().getReverseCdsEnd();
-            if (toggle_Reverse_Complement) {
+            if (toggleReverseComplement) {
                 seqview.appendResidues(reverse_residues);
             } else {
                 seqview.appendResidues(residues);
@@ -427,7 +427,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
                 seqview.addTextColorAnnotation(start, end - 1, cols[INTRON_COLOR]);
             }
             if (cv.getSi().getCdsStart() >= 0) {
-                if (toggle_Reverse_Complement) {
+                if (toggleReverseComplement) {
                     seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, Color.green);
                     seqview.setCdsStart(start + revCdsStart - 3);
                 } else {
@@ -437,7 +437,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             }
 
             if (cv.getSi().getCdsEnd() >= 0) {
-                if (toggle_Reverse_Complement) {
+                if (toggleReverseComplement) {
                     seqview.addOutlineAnnotation(start + revCdsEnd, start + revCdsEnd + 2, Color.red);
                     seqview.setCdsEnd(start + revCdsEnd);
                 } else {
@@ -475,7 +475,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         customFormatting(residues_sym);
         //this.createAllLists();
         addFormattedResidues();
-        copyAnnotAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
+        if (toggleReverseComplement) {
+            copyAnnotAction.setEnabled(seqview.getCdsStart() > seqview.getCdsEnd());
+        } else {
+            copyAnnotAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
+        }
         copyAnnotatedSeqAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
         seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES + OFFSET, INITIAL_NUMBER_OF_LINES));
         mapframe.setPreferredSize(seqview.getPreferredSize());
@@ -756,7 +760,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
         int start = 0, end = 0;
         Iterator<CreateValueSet> it_working = null;
-        if (toggle_Reverse_Complement) {
+        if (toggleReverseComplement) {
             it_working = reverse_complement.listIterator();
         } else {
             it_working = working_list.listIterator();
@@ -777,7 +781,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
                 continue;
             }
 
-            if (toggle_Reverse_Complement) {
+            if (toggleReverseComplement) {
                 annotatedSeqStringBuffer.append(reverse_residues);
             } else {
                 annotatedSeqStringBuffer.append(residues);
@@ -808,7 +812,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             cdsMinOffset = seqview.getCdsStart() - intronLengthBeforeCDSStart;
             cdsMaxOffset = seqview.getCdsEnd() - intronLengthBeforeCDSEnd;
         }
-
+        if (toggleReverseComplement) {
+            cdsMinOffset = cdsMinOffset + cdsMaxOffset;
+            cdsMaxOffset = cdsMinOffset - cdsMaxOffset;
+            cdsMinOffset = cdsMinOffset - cdsMaxOffset;
+        }
         String annotatedResidues = residues.substring(cdsMinOffset, cdsMaxOffset + 3);
         annotatedResidues = DNAUtils.translate(annotatedResidues, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
         if (annotatedResidues != null) {
@@ -832,7 +840,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
         int start = 0, end = 0;
         Iterator<CreateValueSet> it_working = null;
-        if (toggle_Reverse_Complement) {
+        if (toggleReverseComplement) {
             it_working = reverse_complement.listIterator();
         } else {
             it_working = working_list.listIterator();
@@ -851,7 +859,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             int revCdsStart = cv.getSi().getReverseCdsStart();
             int revCdsEnd = cv.getSi().getReverseCdsEnd();
 
-            if (toggle_Reverse_Complement) {
+            if (toggleReverseComplement) {
                 copyAnnotatedSeqStringBuffer.append(reverse_residues);
             } else {
                 copyAnnotatedSeqStringBuffer.append(residues);
@@ -864,7 +872,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             }
 
             if (cv.getSi().getCdsStart() >= 0) {
-                if (toggle_Reverse_Complement) {
+                if (toggleReverseComplement) {
                     copyAnnotatedSeqStringBuffer.replace(start + revCdsStart - 3, start + revCdsStart, copyAnnotatedSeqStringBuffer.substring(start + revCdsStart - 3, start + revCdsStart).toLowerCase());
                 } else {
                     copyAnnotatedSeqStringBuffer.replace(start + cdsStart, start + cdsStart + 3, copyAnnotatedSeqStringBuffer.substring(start + cdsStart, start + cdsStart + 3).toLowerCase());
@@ -872,7 +880,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             }
 
             if (cv.getSi().getCdsEnd() >= 0) {
-                if (toggle_Reverse_Complement) {
+                if (toggleReverseComplement) {
                     copyAnnotatedSeqStringBuffer.replace(start + revCdsEnd, start + revCdsEnd + 3, copyAnnotatedSeqStringBuffer.substring(start + revCdsEnd, start + revCdsEnd + 3).toLowerCase());
                 } else {
                     copyAnnotatedSeqStringBuffer.replace(start + cdsEnd - 3, start + cdsEnd, copyAnnotatedSeqStringBuffer.substring(start + cdsEnd - 3, start + cdsEnd).toLowerCase());
@@ -913,9 +921,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         } else if (theItem == revCompCBMenuItem) {
             JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
             if (mi.getState()) {
-                this.toggle_Reverse_Complement = true;
+                this.toggleReverseComplement = true;
             } else {
-                this.toggle_Reverse_Complement = false;
+                this.toggleReverseComplement = false;
             }
             seqview.clearWidget();
             this.addFormattedResidues();

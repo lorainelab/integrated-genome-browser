@@ -14,11 +14,12 @@ import java.util.Map;
  *
  * @author hiralv
  */
+//
 public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProps {
 
     protected BioSeq seq; // "chrom"
-    protected int txMin; // "chromStart"
-    protected int txMax; // "chromEnd"
+    protected int txMin;
+    protected int txMax;
     protected String name; // "name"
     protected boolean forward; // "strand"
     protected int[] blockMins; // "blockStarts" + "txMin"
@@ -26,20 +27,6 @@ public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProp
     protected String type;
     protected Map<String, Object> props;
 
-    /**
-     * Constructs a SeqSymmetry optimized for BED-file format. This object is
-     * optimized for the case where all optional columns in the bed file are
-     * used. If you are using only the first few columns, it would be more
-     * efficient to use a different SeqSymmetry object.
-     *
-     * @param cdsMin the start of the CDS region, "thinEnd", or
-     * Integer.MIN_VALUE. If cdsMin = Integer.MIN_VALUE or cdsMin = cdsMax, then
-     * there is no CDS.
-     * @param cdsMax the end of the CDS region, "thickEnd", or
-     * Integer.MIN_VALUE.
-     * @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no
-     * score.
-     */
     public BasicSeqSymmetry(String type, BioSeq seq, int txMin, int txMax, String name,
             boolean forward, int[] blockMins, int[] blockMaxs) {
         this.type = type;
@@ -48,7 +35,6 @@ public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProp
         this.txMax = txMax;
         this.name = name;
         this.forward = forward;
-
         this.blockMins = blockMins;
         this.blockMaxs = blockMaxs;
     }

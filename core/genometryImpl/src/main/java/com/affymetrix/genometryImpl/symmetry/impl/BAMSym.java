@@ -4,9 +4,11 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
@@ -38,6 +40,11 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     //Should be made final
     private boolean readPairedFlag, firstOfPairFlag, secondOfPairFlag, duplicateReadFlag;
     private int flags;
+    //1-based inclusive leftmost position of the clippped mate sequence, or 0 if there is no position.
+    private int mateStart;
+    private boolean mateUnMapped;
+    //strand of the mate (false for forward; true for reverse strand).
+    private boolean mateNegativeStrandFlag;
 
     //Residues residues;
     private String insResidues;
@@ -94,13 +101,13 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
     @Override
     public SeqSymmetry getChild(int index) {
-        if (blockMins == null || (blockMins.length <= index)) {
+        if (blockMins == null || index >= (blockMins.length)) {
             return null;
         }
         if (children == null) {
             children = new SeqSymmetry[blockMins.length];
         }
-
+        
         if (children[index] == null) {
             if (forward) {
                 children[index] = new BamChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
@@ -111,10 +118,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         return children[index];
     }
 
+    @Override
     public String substring(int start, int end) {
         return getResidues(start, end);
     }
 
+    @Override
     public int indexOf(String searchstring, int offset) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -329,7 +338,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         if (averageQualityScore == null) {
             if (blockMins != null && blockMins.length > 0) {
                 int quality = 0;
-                averageQualityScore = new Integer(quality);
+                averageQualityScore = quality;
                 for (int i = 0; i < blockMins.length; i++) {
                     quality = getAverageQuality(((SymWithBaseQuality) this.getChild(i)).getBaseQuality());
                     // If any child has score of -1 then set overall score to -1
@@ -542,4 +551,29 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     public void setFlags(int i) {
         this.flags = i;
     }
+
+    public int getMateStart() {
+        return mateStart;
+    }
+
+    public void setMateStart(int mateStart) {
+        this.mateStart = mateStart;
+    }
+
+    public boolean isMateUnMapped() {
+        return mateUnMapped;
+    }
+
+    public void setMateUnMapped(boolean mateUnMapped) {
+        this.mateUnMapped = mateUnMapped;
+    }
+
+    public boolean isMateNegativeStrandFlag() {
+        return mateNegativeStrandFlag;
+    }
+
+    public void setMateNegativeStrandFlag(boolean mateNegativeStrandFlag) {
+        this.mateNegativeStrandFlag = mateNegativeStrandFlag;
+    }
+
 }

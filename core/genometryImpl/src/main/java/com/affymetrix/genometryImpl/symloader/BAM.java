@@ -7,6 +7,8 @@ import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FILE_P
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTP_PROTOCOL;
+import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
+import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -14,6 +16,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SeekableFTPStream;
+import com.google.common.base.Optional;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -44,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 public final class BAM extends XAM {
 
     public final static List<String> pref_list = new ArrayList<String>();
+    private SAMFileReader mateReader;
 
     static {
         pref_list.add("bam");
@@ -116,6 +120,7 @@ public final class BAM extends XAM {
 
         try {
             reader = getSAMFileReader();
+            mateReader = getSAMFileReader();
             //set header
             header = reader.getFileHeader();
 
@@ -160,10 +165,14 @@ public final class BAM extends XAM {
     /**
      * Return a list of symmetries for the given chromosome range.
      */
-    public synchronized List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception {
+    public synchronized List<SeqSymmetry> parse(SeqSpan span) throws Exception {
         init();
+        BioSeq seq = span.getBioSeq();
+        int min = span.getMin();
+        int max = span.getMax();
         List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
         List<Throwable> errList = new ArrayList<Throwable>(10);
+        boolean contained = false;
         CloseableIterator<SAMRecord> iter = null;
         try {
             if (reader != null) {
@@ -181,7 +190,21 @@ public final class BAM extends XAM {
                             if (skipUnmapped && sr.getReadUnmappedFlag()) {
                                 continue;
                             }
-                            symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
+
+                            BAMSym bamSym = (BAMSym) convertSAMRecordToSymWithProps(sr, seq, uri.toString());
+                            if (bamSym.getReadPairedFlag()) {
+                                if (bamSym.isMateNegativeStrandFlag()) {
+                                    Optional<BAMSym> mate = getReadMate(sr, seq);
+                                    if (mate.isPresent()) {
+                                        symList.add(new PairedBamSymWrapper(bamSym, mate.get()));
+                                    } else {
+                                        symList.add(bamSym);
+                                    }
+                                }
+                            } else {
+                                symList.add(bamSym);
+                            }
+
                         } catch (SAMException e) {
                             errList.add(e);
                         }
@@ -201,6 +224,17 @@ public final class BAM extends XAM {
         }
 
         return symList;
+    }
+
+    private Optional<BAMSym> getReadMate(SAMRecord sr, BioSeq seq) {
+        SAMRecord mateSAMRecord = mateReader.queryMate(sr);
+        //check to be sure the mate is in the same BioSeq else ignore mate
+        if (mateSAMRecord.getAlignmentStart() > seq.getMax()) {
+            return Optional.absent();
+        } else {
+            BAMSym mateBamSym = (BAMSym) convertSAMRecordToSymWithProps(mateSAMRecord, seq, uri.toString());
+            return Optional.fromNullable(mateBamSym);
+        }
     }
 
     /**

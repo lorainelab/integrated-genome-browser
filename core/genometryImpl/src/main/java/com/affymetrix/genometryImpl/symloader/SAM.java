@@ -19,6 +19,7 @@ import net.sf.samtools.util.CloseableIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -42,7 +43,7 @@ public class SAM extends XAM implements LineProcessor {
         try {
             reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
             reader.setValidationStringency(ValidationStringency.SILENT);
-
+           
             if (this.isInitialized) {
                 return;
             }
@@ -73,22 +74,24 @@ public class SAM extends XAM implements LineProcessor {
     }
 
     @Override
-    public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception {
+    public List<SeqSymmetry> parse(SeqSpan span) throws Exception {
         init();
         if (reader != null) {
             CloseableIterator<SAMRecord> iter = reader.iterator();
             if (iter != null && iter.hasNext()) {
-                return parse(iter, seq, min, max, containerSym, contained, true);
+                return parse(iter, span, true);
             }
         }
 
         return Collections.<SeqSymmetry>emptyList();
     }
 
-    public List<SeqSymmetry> parse(CloseableIterator<SAMRecord> iter, BioSeq seq, int min, int max,
-            boolean containerSym, boolean contained, boolean check) throws Exception {
+    public List<SeqSymmetry> parse(CloseableIterator<SAMRecord> iter, SeqSpan span, boolean check) throws Exception {
+        BioSeq seq = span.getBioSeq();
+        int min = span.getMin();
+        int max = span.getMax();
         List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
-        List<Throwable> errList = new ArrayList<Throwable>(10);
+        List<Throwable> errList = new ArrayList<Throwable>();
         int maximum;
         String seqId = seqs.get(seq);
         SAMRecord sr = null;
@@ -120,13 +123,10 @@ public class SAM extends XAM implements LineProcessor {
                 }
             }
             return symList;
-        } catch (Exception ex) {
-            throw ex;
         } finally {
             if (iter != null) {
                 iter.close();
             }
-
             if (!errList.isEmpty()) {
                 ErrorHandler.errorPanel("SAM exception", "Ignoring " + errList.size() + " records", errList, Level.WARNING);
             }
@@ -144,16 +144,11 @@ public class SAM extends XAM implements LineProcessor {
     }
 
     @Override
-    public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
-        init();
-        return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
-    }
-
-    @Override
     public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
         // LineTrackerI ignored, since the SAMTextReader hides the lines
         SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
-        return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
+        SimpleSeqSpan seqSpan = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
+        return parse(str.queryUnmapped(), seqSpan, false);
     }
 
     public void init(URI uri) {

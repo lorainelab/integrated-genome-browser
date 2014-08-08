@@ -108,19 +108,20 @@ public abstract class XAM extends SymLoader {
     @Override
     public List<SeqSymmetry> getChromosome(BioSeq seq) throws Exception {
         init();
-        return parse(seq, seq.getMin(), seq.getMax(), true, false);
+        SimpleSeqSpan seqSpan = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
+        return parse(seqSpan);
     }
 
     @Override
     public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
         init();
-        return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
+        return parse(span);
     }
 
     /**
      * @return a list of symmetries for the given chromosome range.
      */
-    public abstract List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception;
+    public abstract List<SeqSymmetry> parse(SeqSpan span) throws Exception;
 
     /**
      * Convert SAMRecord to SymWithProps.
@@ -146,24 +147,24 @@ public abstract class XAM extends SymLoader {
             span = new SimpleSeqSpan(end, start, seq);
         }
 
-        List<SeqSpan> insertChilds = new ArrayList<SeqSpan>();
-        List<SeqSpan> childs = getChildren(seq, sr.getCigar(), sr.getReadNegativeStrandFlag(), insertChilds);
+        List<SeqSpan> insertChildren = new ArrayList<SeqSpan>();
+        List<SeqSpan> children = getChildren(seq, sr, insertChildren);
 
-        int blockMins[] = new int[childs.size()];
-        int blockMaxs[] = new int[childs.size()];
-        for (int i = 0; i < childs.size(); i++) {
-            blockMins[i] = childs.get(i).getMin() + span.getMin();
-            blockMaxs[i] = blockMins[i] + childs.get(i).getLength();
+        int blockMins[] = new int[children.size()];
+        int blockMaxs[] = new int[children.size()];
+        for (int i = 0; i < children.size(); i++) {
+            blockMins[i] = children.get(i).getMin() + span.getMin();
+            blockMaxs[i] = blockMins[i] + children.get(i).getLength();
         }
 
-        int iblockMins[] = new int[insertChilds.size()];
-        int iblockMaxs[] = new int[insertChilds.size()];
-        for (int i = 0; i < insertChilds.size(); i++) {
-            iblockMins[i] = insertChilds.get(i).getMin() + span.getMin();
-            iblockMaxs[i] = iblockMins[i] + insertChilds.get(i).getLength();
+        int iblockMins[] = new int[insertChildren.size()];
+        int iblockMaxs[] = new int[insertChildren.size()];
+        for (int i = 0; i < insertChildren.size(); i++) {
+            iblockMins[i] = insertChildren.get(i).getMin() + span.getMin();
+            iblockMaxs[i] = iblockMins[i] + insertChildren.get(i).getLength();
         }
 
-        if (childs.isEmpty()) {
+        if (children.isEmpty()) {
             blockMins = new int[1];
             blockMins[0] = span.getStart();
             blockMaxs = new int[1];
@@ -184,11 +185,16 @@ public abstract class XAM extends SymLoader {
         if (sym.getReadPairedFlag()) {
             sym.setFirstOfPairFlag(sr.getFirstOfPairFlag());
             sym.setSecondOfPairFlag(sr.getSecondOfPairFlag());
+            //1-based inclusive leftmost position of the clippped mate sequence, or 0 if there is no position.
+            sym.setMateStart(sr.getMateAlignmentStart() - 1);
+            sym.setMateUnMapped(sr.getMateUnmappedFlag());
+            sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
         }
+
         return sym;
     }
 
-    private static void addAllSAMRecordProperties(SymWithProps sym, SAMRecord sr) {
+    protected static void addAllSAMRecordProperties(SymWithProps sym, SAMRecord sr) {
         for (SAMTagAndValue tv : sr.getAttributes()) {
             sym.setProperty(tv.tag, tv.value);
         }
@@ -206,7 +212,9 @@ public abstract class XAM extends SymLoader {
         getFileHeaderProperties(sr.getHeader(), sym);
     }
 
-    private static List<SeqSpan> getChildren(BioSeq seq, Cigar cigar, boolean isNegative, List<SeqSpan> insertChilds) {
+    protected static List<SeqSpan> getChildren(BioSeq seq, SAMRecord sr, List<SeqSpan> insertChilds) {
+        Cigar cigar = sr.getCigar();
+        boolean isNegative = sr.getReadNegativeStrandFlag();
         List<SeqSpan> results = new ArrayList<SeqSpan>();
         if (cigar == null || cigar.numCigarElements() == 0) {
             return results;

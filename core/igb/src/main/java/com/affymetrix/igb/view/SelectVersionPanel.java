@@ -39,19 +39,19 @@ public class SelectVersionPanel extends JPanel {
         Font largeFont = new Font("Sans Serif", Font.PLAIN, 30);
         FontMetrics m = g.getFontMetrics(smallFont);
         FontMetrics m2 = g.getFontMetrics(largeFont);
-        
+
         int fixedArrowYpos = 50;
         int[] xPoints = {this.getWidth() - 10, this.getWidth() - 10, this.getWidth()};
-        int[] yPoints = {fixedArrowYpos-10, fixedArrowYpos+10, fixedArrowYpos};
+        int[] yPoints = {fixedArrowYpos - 10, fixedArrowYpos + 10, fixedArrowYpos};
         int yPos = (int) (.50 * this.getHeight()) - 25;
-                
+
         g.setColor(Color.decode("#fffb86"));
         g.drawLine(this.getWidth() - 40, fixedArrowYpos, this.getWidth() - 10, fixedArrowYpos);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
-        
+
         g.setFont(smallFont);
-        int xPos = this.getWidth()-(m.stringWidth(inlineArrowText)+40);
-        g.drawString(inlineArrowText, xPos, fixedArrowYpos+5);
+        int xPos = this.getWidth() - (m.stringWidth(inlineArrowText) + 40);
+        g.drawString(inlineArrowText, xPos, fixedArrowYpos + 5);
 
         g.setFont(largeFont);
         g.setColor(Color.decode("#fffb86"));

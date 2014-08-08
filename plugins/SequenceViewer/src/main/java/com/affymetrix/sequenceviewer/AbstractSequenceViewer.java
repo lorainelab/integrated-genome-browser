@@ -475,7 +475,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         customFormatting(residues_sym);
         //this.createAllLists();
         addFormattedResidues();
-        copyAnnotAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
+        if (toggle_Reverse_Complement) {
+            copyAnnotAction.setEnabled(seqview.getCdsStart() > seqview.getCdsEnd());
+        } else {
+            copyAnnotAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
+        }
         copyAnnotatedSeqAction.setEnabled(seqview.getCdsStart() < seqview.getCdsEnd());
         seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES + OFFSET, INITIAL_NUMBER_OF_LINES));
         mapframe.setPreferredSize(seqview.getPreferredSize());
@@ -808,7 +812,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             cdsMinOffset = seqview.getCdsStart() - intronLengthBeforeCDSStart;
             cdsMaxOffset = seqview.getCdsEnd() - intronLengthBeforeCDSEnd;
         }
-
+        if(toggle_Reverse_Complement){
+            cdsMinOffset = cdsMinOffset + cdsMaxOffset;
+            cdsMaxOffset = cdsMinOffset - cdsMaxOffset;
+            cdsMinOffset = cdsMinOffset - cdsMaxOffset;
+        }
         String annotatedResidues = residues.substring(cdsMinOffset, cdsMaxOffset + 3);
         annotatedResidues = DNAUtils.translate(annotatedResidues, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
         if (annotatedResidues != null) {

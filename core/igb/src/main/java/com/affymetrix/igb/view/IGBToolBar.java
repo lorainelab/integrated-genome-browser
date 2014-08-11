@@ -227,9 +227,14 @@ public class IGBToolBar extends JToolBar {
         }
     };
 
-    private MouseListener continuousActionListener = new MouseAdapter() {
+    private final MouseListener continuousActionListener = new MouseAdapter() {
         private Timer timer;
 
+        @Override
+        public void mouseExited(MouseEvent e) {
+            mouseReleased(e);
+        }
+       
         @Override
         public void mousePressed(MouseEvent e) {
             if (!(e.getSource() instanceof JButton)

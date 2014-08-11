@@ -136,21 +136,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		igb.addAction(RepackSelectedTiersAction.getAction());
 //		igb.addAction(AutoLoadThresholdAction.getAction());
 //	}
-    public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
+    public void refreshMap(boolean stretchVertically, boolean stretchHorizonatally) {
         if (gviewer != null) {
             // if an AnnotatedSeqViewer is being used, ask it to update itself.
             // later this can be made more specific to just update the tiers that changed
-            boolean preserve_view_x = !stretch_vertically;
-            boolean preserve_view_y = !stretch_horizonatally;
-            gviewer.updatePanel(preserve_view_x, preserve_view_y);
+            boolean preserveViewX = !stretchVertically;
+            boolean preserveViewY = !stretchHorizonatally;
+            gviewer.updatePanel(preserveViewX, preserveViewY);
         } else {
             // if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
-            handler.repackTheTiers(false, stretch_vertically);
+            handler.repackTheTiers(false, stretchVertically);
         }
     }
 
-    public void repack(final boolean full_repack, boolean tier_changed) {
-        repackStub.repack(full_repack, tier_changed);
+    public void repack(final boolean fullRepack, boolean tierChanged) {
+        repackStub.repack(fullRepack, tierChanged);
     }
 
     private JMenu addOperationMenu(List<? extends SeqSymmetry> syms) {
@@ -192,25 +192,25 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         return operationsMenu;
     }
 
-    private JMenu addChangeMenu(int num_selections, boolean any_are_expanded, boolean any_are_separate_tiers, boolean any_are_single_tier, boolean any_are_color_off, boolean coordinates_track_selected) {
+    private JMenu addChangeMenu(int numSelections, boolean anyAreExpanded, boolean anyAreSeparateTiers, boolean anyAreSingleTier, boolean anyAreColorOff, boolean coordinatesTrackSelected) {
         JMenu changeMenu = new JMenu(BUNDLE.getString("changeMenu"));
         JMenuItem change_foreground_color = new JRPMenuItemTLP(ChangeForegroundColorAction.getAction());
-        change_foreground_color.setEnabled(num_selections > 0);
+        change_foreground_color.setEnabled(numSelections > 0);
         changeMenu.add(change_foreground_color);
         JMenuItem change_background_color = new JRPMenuItemTLP(ChangeBackgroundColorAction.getAction());
-        change_background_color.setEnabled(num_selections > 0);
+        change_background_color.setEnabled(numSelections > 0);
         changeMenu.add(change_background_color);
         JMenuItem change_label_color = new JRPMenuItemTLP(ChangeLabelColorAction.getAction());
-        change_label_color.setEnabled(num_selections > 0);
+        change_label_color.setEnabled(numSelections > 0);
         changeMenu.add(change_label_color);
         JMenuItem rename = new JRPMenuItemTLP(RenameTierAction.getAction());
-        rename.setEnabled(num_selections == 1);
+        rename.setEnabled(numSelections == 1);
         changeMenu.add(rename);
         JMenuItem change_font_size = new JRPMenuItemTLP(ChangeFontSizeAction.getAction());
-        change_font_size.setEnabled(num_selections > 0);
+        change_font_size.setEnabled(numSelections > 0);
         changeMenu.add(change_font_size);
         JMenuItem change_Tier_Height = new JRPMenuItemTLP(ChangeTierHeightAction.getAction());
-        if (num_selections > 0 && !(handler.getSelectedTierLabels().get(0).getReferenceTier().getAnnotStyle().getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE))
+        if (numSelections > 0 && !(handler.getSelectedTierLabels().get(0).getReferenceTier().getAnnotStyle().getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE))
                 && (((DefaultTierGlyph) (handler.getSelectedTierLabels().get(0).getReferenceTier())).isHeightFixed())) {
             change_Tier_Height.setEnabled(true);
         } else {
@@ -218,7 +218,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         }
         changeMenu.add(change_Tier_Height);
         JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
-        change_expand_max.setEnabled(any_are_expanded);
+        change_expand_max.setEnabled(anyAreExpanded);
         changeMenu.add(change_expand_max);
 //		JMenuItem change_expand_max_all = new JRPMenuItemTLP(ChangeExpandMaxAllAction.getAction());
 //		change_expand_max_all.setEnabled(num_selections > 0);
@@ -229,10 +229,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private JMenu addShowMenu(boolean containHiddenTiers) {
         final JMenu showMenu = new JMenu(BUNDLE.getString("showMenu"));
         showMenu.removeAll();
-        JMenuItem show_all_action = new JMenuItem(ShowAllAction.getAction());
-        show_all_action.setIcon(null);
-        show_all_action.setText("All");
-        showMenu.add(show_all_action);
+        JMenuItem showAllAction = new JMenuItem(ShowAllAction.getAction());
+        showAllAction.setIcon(null);
+        showAllAction.setText("All");
+        showMenu.add(showAllAction);
         showMenu.add(new JSeparator());
         //showMenu.setEnabled(false);
         List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
@@ -282,21 +282,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     @Override
     public void popupNotify(javax.swing.JPopupMenu popup, final TierLabelManager handler) {
-        int num_selections = Selections.allGlyphs.size();
-        boolean any_are_collapsed = false;
-        boolean any_are_expanded = false;
-        boolean coordinates_track_selected = false;
+        int numSelections = Selections.allGlyphs.size();
+        boolean anyAreCollapsed = false;
+        boolean anyAreExpanded = false;
+        boolean coordinatesTrackSelected = false;
         boolean containHiddenTiers = false;
-        boolean any_alignment = false;
-        boolean any_show_residue_mask = false;
-        boolean any_shade_based_on_quality = false;
-        boolean all_same_category = num_selections > 0;
+        boolean anyAlignment = false;
+        boolean anyShowResidueMask = false;
+        boolean anyShadeBasedOnQuality = false;
+        boolean allSameCategory = numSelections > 0;
 //		boolean any_are_separate_tiers = false;
 //		boolean any_are_single_tier = false;
 //		boolean any_lockable = false;
 //		boolean any_locked = false;
-        int no_of_locked = 0;
-        FileTypeCategory category = num_selections > 0 && Selections.allGlyphs.get(0).getInfo() != null
+        int noOfLocked = 0;
+        FileTypeCategory category = numSelections > 0 && Selections.allGlyphs.get(0).getInfo() != null
                 ? ((RootSeqSymmetry) Selections.allGlyphs.get(0).getInfo()).getCategory()
                 : null;
 
@@ -304,26 +304,26 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             ITrackStyleExtended astyle = glyph.getAnnotStyle();
 
             if (astyle.getExpandable()) {
-                any_are_collapsed = any_are_collapsed || astyle.getCollapsed();
-                any_are_expanded = any_are_expanded || !astyle.getCollapsed();
+                anyAreCollapsed = anyAreCollapsed || astyle.getCollapsed();
+                anyAreExpanded = anyAreExpanded || !astyle.getCollapsed();
             }
 
             if (astyle.getShow() && glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph) glyph).isHeightFixed()) {
-                no_of_locked++;
+                noOfLocked++;
             }
 
             if (glyph.getInfo() != null && ((RootSeqSymmetry) glyph.getInfo()).getCategory() != category) {
-                all_same_category = false;
+                allSameCategory = false;
             }
 
             if (glyph.getInfo() != null && ((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment) {
-                any_alignment = true;
-                any_show_residue_mask = any_show_residue_mask || astyle.getShowResidueMask();
-                any_shade_based_on_quality = any_shade_based_on_quality || astyle.getShadeBasedOnQualityScore();
+                anyAlignment = true;
+                anyShowResidueMask = anyShowResidueMask || astyle.getShowResidueMask();
+                anyShadeBasedOnQuality = anyShadeBasedOnQuality || astyle.getShadeBasedOnQualityScore();
             }
 
             if (astyle == CoordinateStyle.coordinate_annot_style) {
-                coordinates_track_selected = true;
+                coordinatesTrackSelected = true;
             }
 
             if (!astyle.getShow()) {
@@ -340,11 +340,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
         }
 
-        StyledGlyph styledGlyph = (num_selections == 1 ? Selections.allGlyphs.get(0) : null);
+        StyledGlyph styledGlyph = (numSelections == 1 ? Selections.allGlyphs.get(0) : null);
 
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         Border colorBorder, finalBorder;
-        if (num_selections == 1 && styledGlyph != null) {
+        if (numSelections == 1 && styledGlyph != null) {
             colorBorder = BorderFactory.createLineBorder(styledGlyph.getAnnotStyle().getForeground());
             finalBorder = BorderFactory.createCompoundBorder(colorBorder, emptyBorder);
 
@@ -354,15 +354,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         }
         popup.setBorder(finalBorder);
 
-        JMenuItem optimize_stack_height = new JRPMenuItemTLP(ChangeExpandMaxOptimizeAction.getAction());
-        optimize_stack_height.setIcon(null);
-        optimize_stack_height.setEnabled(Selections.annotSyms.size() > 0);
-        optimize_stack_height.setText("Optimize Stack Height");
-        popup.add(optimize_stack_height);
-        JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
-        change_expand_max.setText("Set Stack Height...");
-        change_expand_max.setIcon(null);
-        popup.add(change_expand_max);
+        JMenuItem optimizeStackHeight = new JRPMenuItemTLP(ChangeExpandMaxOptimizeAction.getAction());
+        optimizeStackHeight.setIcon(null);
+        optimizeStackHeight.setEnabled(Selections.annotSyms.size() > 0);
+        optimizeStackHeight.setText("Optimize Stack Height");
+        popup.add(optimizeStackHeight);
+        JMenuItem changeExpandMax = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
+        changeExpandMax.setText("Set Stack Height...");
+        changeExpandMax.setIcon(null);
+        popup.add(changeExpandMax);
 //		popup.add(addChangeMenu(num_selections, any_are_expanded, any_are_separate_tiers, any_are_single_tier, any_are_color_off, coordinates_track_selected));
 //		strandsMenu.removeAll();
 //		strandsMenu.add(at1);
@@ -380,18 +380,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         JMenuItem hide = new JMenuItem();
         hide.setAction(HideAction.getAction());
         hide.setIcon(null);
-        hide.setEnabled(num_selections > 0);
+        hide.setEnabled(numSelections > 0);
         popup.add(hide);
         JMenu showMenu = addShowMenu(containHiddenTiers);
         popup.add(showMenu);
         showMenu.getPopupMenu().setBorder(finalBorder);
         JMenuItem collapse = new JCheckBoxMenuItem();
-        if ((!any_are_expanded && !any_are_collapsed) || (any_are_expanded && any_are_collapsed) || coordinates_track_selected) {
+        if ((!anyAreExpanded && !anyAreCollapsed) || (anyAreExpanded && anyAreCollapsed) || coordinatesTrackSelected) {
             collapse.setEnabled(false);
-        } else if (any_are_expanded) {
+        } else if (anyAreExpanded) {
             collapse.setAction(CollapseAction.getAction());
             collapse.setSelected(false);
-        } else if (any_are_collapsed) {
+        } else if (anyAreCollapsed) {
             collapse.setAction(ExpandAction.getAction());
             collapse.setSelected(true);
         }
@@ -405,12 +405,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
         popup.add(new JSeparator());
         JCheckBoxMenuItem showResidueMask = new JCheckBoxMenuItem(ShowMismatchAction.getAction());
-        showResidueMask.setEnabled(any_alignment);
-        showResidueMask.setSelected(any_alignment && any_show_residue_mask);
+        showResidueMask.setEnabled(anyAlignment);
+        showResidueMask.setSelected(anyAlignment && anyShowResidueMask);
         popup.add(showResidueMask);
         JCheckBoxMenuItem useBaseQuality = new JCheckBoxMenuItem(ShadeUsingBaseQualityAction.getAction());
-        useBaseQuality.setEnabled(any_alignment);
-        useBaseQuality.setSelected(any_alignment && any_shade_based_on_quality);
+        useBaseQuality.setEnabled(anyAlignment);
+        useBaseQuality.setSelected(anyAlignment && anyShadeBasedOnQuality);
         popup.add(useBaseQuality);
 //		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
 //		expand.setEnabled(any_are_collapsed);
@@ -446,6 +446,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         popup.add(operationsMenu);
         operationsMenu.getPopupMenu().setBorder(finalBorder);
         operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
+        operationsMenu.setEnabled(!coordinatesTrackSelected);
 //		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
 //		color_by_score.setSelected(any_are_color_by_score && num_selections > 0 && !coordinates_track_selected);
 //		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);
@@ -458,31 +459,31 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
         popup.add(new JSeparator());
 
-        JMenuItem set_color_by = new JRPMenuItemTLP(ColorByAction.getAction());
-        set_color_by.setIcon(null);
-        set_color_by.setEnabled(all_same_category && (category == FileTypeCategory.Annotation
+        JMenuItem setColorBy = new JRPMenuItemTLP(ColorByAction.getAction());
+        setColorBy.setIcon(null);
+        setColorBy.setEnabled(allSameCategory && (category == FileTypeCategory.Annotation
                 || category == FileTypeCategory.Alignment || category == FileTypeCategory.ProbeSet));
-        popup.add(set_color_by);
+        popup.add(setColorBy);
 
-        JMenuItem filter_action = new JRPMenuItemTLP(FilterAction.getAction());
-        filter_action.setIcon(null);
-        filter_action.setEnabled(all_same_category && (category == FileTypeCategory.Annotation
+        JMenuItem filterAction = new JRPMenuItemTLP(FilterAction.getAction());
+        filterAction.setIcon(null);
+        filterAction.setEnabled(allSameCategory && (category == FileTypeCategory.Annotation
                 || category == FileTypeCategory.Alignment || category == FileTypeCategory.ProbeSet));
-        popup.add(filter_action);
+        popup.add(filterAction);
 
         popup.add(new JSeparator());
 
-        JMenuItem save_selected_annotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
-        save_selected_annotations.setEnabled(styledGlyph != null && styledGlyph instanceof TierGlyph
+        JMenuItem saveSelectedAnnotations = new JRPMenuItemTLP(ExportSelectedAnnotationFileAction.getAction());
+        saveSelectedAnnotations.setEnabled(styledGlyph != null && styledGlyph instanceof TierGlyph
                 && !((TierGlyph) styledGlyph).getSelected().isEmpty() && ExportSelectedAnnotationFileAction.getAction().isExportable(styledGlyph.getFileTypeCategory()));
-        save_selected_annotations.setIcon(null);
-        popup.add(save_selected_annotations);
-        JMenuItem save_track = new JRPMenuItemTLP(ExportFileAction.getAction());
-        save_track.setEnabled(num_selections == 1 && !coordinates_track_selected && styledGlyph.getInfo() != null && ExportSelectedAnnotationFileAction.getAction().isExportable(styledGlyph.getFileTypeCategory()));
-        save_track.setIcon(null);
-        popup.add(save_track);
+        saveSelectedAnnotations.setIcon(null);
+        popup.add(saveSelectedAnnotations);
+        JMenuItem saveTrack = new JRPMenuItemTLP(ExportFileAction.getAction());
+        saveTrack.setEnabled(numSelections == 1 && !coordinatesTrackSelected && styledGlyph.getInfo() != null && ExportSelectedAnnotationFileAction.getAction().isExportable(styledGlyph.getFileTypeCategory()));
+        saveTrack.setIcon(null);
+        popup.add(saveTrack);
 
-        if (!handler.getSelectedTiers().isEmpty()) {
+        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected) {
             boolean canShowAsPaired = true;
             for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
                 if (!tierGlyph.getAnnotStyle().getMethodName().endsWith(".bam")) {
@@ -496,17 +497,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         }
         popup.add(new JSeparator());
 
-        JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
-        remove_data_from_tracks.setText("Clear Data");
-        remove_data_from_tracks.setEnabled(Selections.rootSyms.size() > 0);
-        remove_data_from_tracks.setIcon(null);
-        popup.add(remove_data_from_tracks); // Remove data from selected tracks.
+        JMenuItem removeDataFromTracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
+        removeDataFromTracks.setText("Clear Data");
+        removeDataFromTracks.setEnabled(Selections.rootSyms.size() > 0);
+        removeDataFromTracks.setIcon(null);
+        popup.add(removeDataFromTracks); // Remove data from selected tracks.
 
-        JMenuItem delete_track = new JRPMenuItemTLP(CloseTracksAction.getAction());
-        delete_track.setText("Delete Track");
-        delete_track.setEnabled(!coordinates_track_selected);
-        delete_track.setIcon(null);
-        popup.add(delete_track);
+        JMenuItem deleteTrack = new JRPMenuItemTLP(CloseTracksAction.getAction());
+        deleteTrack.setText("Delete Track");
+        deleteTrack.setEnabled(!coordinatesTrackSelected);
+        deleteTrack.setIcon(null);
+        popup.add(deleteTrack);
 
         //	if (tierGlyph != null) {
         //		// Check whether this selection is a graph or an annotation

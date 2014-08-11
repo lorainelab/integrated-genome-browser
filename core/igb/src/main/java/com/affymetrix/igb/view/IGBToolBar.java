@@ -47,32 +47,32 @@ import javax.swing.UIManager;
  */
 public class IGBToolBar extends JToolBar {
 
-    private static final String no_selection_text = "Click the map below to select annotations";
-    private static final String selection_info = "Selection Info";
+    private static final String NO_SELECTION_TEXT = "Click the map below to select annotations";
+    private static final String SELECTION_INFO = "Selection Info";
     private static final SelectionRuleAction SELECTION_RULE_ACTION= SelectionRuleAction.getAction();
-    private final JPanel toolbar_items_panel;
-    private final JTextField tf;
-    private final Font selection_font;
-    private final Font no_selection_font;
+    private final JPanel TOOLBAR_ITEM_PANEL;
+    private final JTextField TEXT_FIELD;
+    private final Font SELECTION_FONT;
+    private final Font NO_SELECTION_FONT;
 
     public IGBToolBar() {
         super();
 
-        toolbar_items_panel = new DragAndDropJPanel();
-        toolbar_items_panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        toolbar_items_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-        ((DragAndDropJPanel) toolbar_items_panel).addDropTargetListener(new DropTargetAdapter() {
+        TOOLBAR_ITEM_PANEL = new DragAndDropJPanel();
+        TOOLBAR_ITEM_PANEL.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        TOOLBAR_ITEM_PANEL.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        ((DragAndDropJPanel) TOOLBAR_ITEM_PANEL).addDropTargetListener(new DropTargetAdapter() {
             @Override
             public void drop(DropTargetDropEvent dtde) {
                 reIndex();
             }
         });
 
-        tf = new JTextField(25);
-        tf.setBackground(Color.WHITE);
-        tf.setComponentPopupMenu(CCPUtils.getCCPPopup());
-        selection_font = tf.getFont();
-        no_selection_font = selection_font.deriveFont(Font.ITALIC);
+        TEXT_FIELD = new JTextField(25);
+        TEXT_FIELD.setBackground(Color.WHITE);
+        TEXT_FIELD.setComponentPopupMenu(CCPUtils.getCCPPopup());
+        SELECTION_FONT = TEXT_FIELD.getFont();
+        NO_SELECTION_FONT = SELECTION_FONT.deriveFont(Font.ITALIC);
         setFloatable(false);
         setLayout(new BorderLayout());
 
@@ -80,33 +80,33 @@ public class IGBToolBar extends JToolBar {
     }
 
     private void setup() {
-        JPanel selection_panel = new JPanel();
-        selection_panel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
-        selection_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        selection_panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        selection_panel.setBackground(Color.WHITE);
+        JPanel selectionpanel = new JPanel();
+        selectionpanel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
+        selectionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        selectionpanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        selectionpanel.setBackground(Color.WHITE);
 
-        tf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        tf.setEditable(false);
+        TEXT_FIELD.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        TEXT_FIELD.setEditable(false);
 
-        JLabel lf = new JLabel(selection_info + ": ");
+        JLabel lf = new JLabel(SELECTION_INFO + ": ");
         lf.setFont(lf.getFont().deriveFont(Font.ITALIC));
         lf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         lf.setBackground(Color.WHITE);
 
-        selection_panel.add(lf);
-        selection_panel.add(tf);
+        selectionpanel.add(lf);
+        selectionpanel.add(TEXT_FIELD);
 
         JButton button = new JButton(SELECTION_RULE_ACTION);
         button.setText("");
         button.setMargin(new Insets(2, 2, 2, 2));
 //		button.setBorder(null);
-        selection_panel.add(button);
+        selectionpanel.add(button);
 
-        selection_panel.validate();
+        selectionpanel.validate();
 
-        add(toolbar_items_panel, BorderLayout.LINE_START);
-        add(selection_panel, BorderLayout.LINE_END);
+        add(TOOLBAR_ITEM_PANEL, BorderLayout.LINE_START);
+        add(selectionpanel, BorderLayout.LINE_END);
 
         super.validate();
 
@@ -115,20 +115,20 @@ public class IGBToolBar extends JToolBar {
         Selections.addRefreshSelectionListener(refreshSelectionListener);
     }
 
-    public void setSelectionText(Map<String, Object> properties, String selection_text) {
-        if (selection_text == null || selection_text.length() == 0) {
-            tf.setForeground(Color.LIGHT_GRAY);
-            tf.setFont(no_selection_font);
-            tf.setText(no_selection_text);
-            tf.setEnabled(false);
+    public void setSelectionText(Map<String, Object> properties, String selectionText) {
+        if (selectionText == null || selectionText.length() == 0) {
+            TEXT_FIELD.setForeground(Color.LIGHT_GRAY);
+            TEXT_FIELD.setFont(NO_SELECTION_FONT);
+            TEXT_FIELD.setText(NO_SELECTION_TEXT);
+            TEXT_FIELD.setEnabled(false);
         } else {
-            tf.setForeground(Color.BLACK);
-            tf.setFont(selection_font);
-            tf.setText(selection_text);
-            tf.setEnabled(true);
+            TEXT_FIELD.setForeground(Color.BLACK);
+            TEXT_FIELD.setFont(SELECTION_FONT);
+            TEXT_FIELD.setText(selectionText);
+            TEXT_FIELD.setEnabled(true);
         }
         SELECTION_RULE_ACTION.setProperties(properties);
-        SELECTION_RULE_ACTION.setSelectionText(tf.getText());
+        SELECTION_RULE_ACTION.setSelectionText(TEXT_FIELD.getText());
     }
 
     public void addToolbarAction(GenericAction genericAction, int index) {
@@ -146,23 +146,23 @@ public class IGBToolBar extends JToolBar {
         }
 
         int local_index = 0;
-        while (local_index < index && local_index < toolbar_items_panel.getComponentCount()
-                && index >= getOrdinal(toolbar_items_panel.getComponent(local_index))) {
+        while (local_index < index && local_index < TOOLBAR_ITEM_PANEL.getComponentCount()
+                && index >= getOrdinal(TOOLBAR_ITEM_PANEL.getComponent(local_index))) {
             local_index++;
         }
 
-        toolbar_items_panel.add(button, local_index);
+        TOOLBAR_ITEM_PANEL.add(button, local_index);
         refreshToolbar();
     }
 
     public void removeToolbarAction(GenericAction action) {
         boolean removed = false;
-        for (int i = 0; i < toolbar_items_panel.getComponentCount(); i++) {
-            if (((JButton) toolbar_items_panel.getComponent(i)).getAction() == action) {
+        for (int i = 0; i < TOOLBAR_ITEM_PANEL.getComponentCount(); i++) {
+            if (((JButton) TOOLBAR_ITEM_PANEL.getComponent(i)).getAction() == action) {
                 if (action instanceof ContinuousAction) {
-                    ((JButton) toolbar_items_panel.getComponent(i)).removeMouseListener(continuousActionListener);
+                    ((JButton) TOOLBAR_ITEM_PANEL.getComponent(i)).removeMouseListener(continuousActionListener);
                 }
-                toolbar_items_panel.remove(i);
+                TOOLBAR_ITEM_PANEL.remove(i);
                 refreshToolbar();
                 removed = true;
                 break;
@@ -177,8 +177,8 @@ public class IGBToolBar extends JToolBar {
     }
 
     private void refreshToolbar() {
-        toolbar_items_panel.validate();
-        toolbar_items_panel.repaint();
+        TOOLBAR_ITEM_PANEL.validate();
+        TOOLBAR_ITEM_PANEL.repaint();
 
         validate();
         repaint();
@@ -186,7 +186,7 @@ public class IGBToolBar extends JToolBar {
 
     public void reIndex() {
         int index = 0;
-        for (Component c : toolbar_items_panel.getComponents()) {
+        for (Component c : TOOLBAR_ITEM_PANEL.getComponents()) {
             if (c instanceof JRPButtonTLP) {
                 ((JRPButtonTLP) c).setIndex(index++);
             }
@@ -195,7 +195,7 @@ public class IGBToolBar extends JToolBar {
 
     public void saveToolBar() {
         int index = 0;
-        for (Component c : toolbar_items_panel.getComponents()) {
+        for (Component c : TOOLBAR_ITEM_PANEL.getComponents()) {
             if (c instanceof JButton && ((JButton) c).getAction() instanceof GenericAction) {
                 GenericAction action = (GenericAction) ((JButton) c).getAction();
                 PreferenceUtils.getToolbarNode().putInt(action.getId() + ".index", index++);
@@ -204,7 +204,7 @@ public class IGBToolBar extends JToolBar {
     }
 
     public int getItemCount() {
-        return toolbar_items_panel.getComponentCount();
+        return TOOLBAR_ITEM_PANEL.getComponentCount();
     }
 
     private int getOrdinal(Component c) {
@@ -218,7 +218,7 @@ public class IGBToolBar extends JToolBar {
     private RefreshSelectionListener refreshSelectionListener = new RefreshSelectionListener() {
         @Override
         public void selectionRefreshed() {
-            for (Component c : toolbar_items_panel.getComponents()) {
+            for (Component c : TOOLBAR_ITEM_PANEL.getComponents()) {
                 if (c instanceof JButton && ((JButton) c).getAction() instanceof AbstractAction) {
                     AbstractAction action = (AbstractAction) ((JButton) c).getAction();
                     c.setEnabled(action.isEnabled());

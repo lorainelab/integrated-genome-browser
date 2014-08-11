@@ -33,6 +33,7 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
+import com.affymetrix.genoviz.glyph.EfficientMateJoinGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.EfficientSolidGlyph;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
@@ -62,9 +63,9 @@ import org.apache.commons.lang3.StringUtils;
  * $
  */
 public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
-
+    
     private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###.###");
-
+    
     static {
         COMMA_FORMAT.setDecimalSeparatorAlwaysShown(false);
     }
@@ -90,166 +91,138 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
      */
     boolean drawChildren;
     private Track track;
-
+    private TierGlyph tierGlyph;
+    private ITrackStyleExtended trackStyle;
+    
     public AnnotationGlyphFactory() {
         codon_glyph_processor = new CodonGlyphProcessor();
     }
-
+    
     @Override
     public void init(Map<String, Object> options) {
     }
-
+    
     @Override
     public boolean supportsTwoTrack() {
         return true;
     }
-
+    
     protected void addLeafsToTier(SeqSymmetry originalSym, int desired_leaf_depth) {
-        int depth = SeqUtils.getDepthFor(originalSym);
-        drawChildren = (depth >= 2);
-        if (originalSym instanceof PairedBamSymWrapper) {
-
-            PairedBamSymWrapper pair = (PairedBamSymWrapper) originalSym;
-            addToTier(pair.getChild(0));
-            addToTier(pair.getChild(1));
-
-            return;
-        }
-        if (depth > desired_leaf_depth || originalSym instanceof TypeContainerAnnot) {
-            int childCount = originalSym.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                addLeafsToTier(originalSym.getChild(i), desired_leaf_depth);
-            }
-        } else {  // depth == desired_leaf_depth
-            addToTier(originalSym);
-        }
-    }
-
-    private void addToTier(List<? extends SeqSymmetry> insyms) {
-        for (SeqSymmetry insym : insyms) {
-            int depth = SeqUtils.getDepthFor(insym);
-            drawChildren = (depth >= 2);
-            addToTier(insym);
-        }
-    }
-
-    protected void addToTier(SeqSymmetry originalSym) {
-        SeqSymmetry sym = originalSym;
-        updateAnnotSeq();
-        updateViewSeq();
-        if (annotSeq != viewSeq) {
-            sym = seqMap.transformForViewSeq(originalSym, annotSeq);
-        }
-        if (sym == null) {
-            return;
-        }
-        addTopChild(originalSym, sym);
-    }
-
-    protected void addTopChild(SeqSymmetry originalSym, SeqSymmetry sym) {
-        updateSymSpan(sym);
+        SeqSymmetry sym = initSymSpan(originalSym);
         if (!isValidSymSpan) {
             return;
         }
-        TierGlyph tierGlyph = getTierGlyph(track);
-        Optional<GlyphI> glyph = determinePGlyph(originalSym, sym);
+        int depth = SeqUtils.getDepthFor(sym);
+        if (sym instanceof PairedBamSymWrapper) {
+            if (trackStyle.isShowAsPaired()) {
+                addTopChild(sym);
+            } else {
+                addTopChild(sym.getChild(0));
+                initSymSpan(sym.getChild(1));
+                addTopChild(sym.getChild(1));
+            }
+            return;
+        }
+        if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
+            int childCount = sym.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                addLeafsToTier(sym.getChild(i), desired_leaf_depth);
+            }
+        } else {  // depth == desired_leaf_depth
+            addTopChild(sym);
+        }
+    }
+    
+    private void addToTier(List<? extends SeqSymmetry> insyms) {
+        for (SeqSymmetry insym : insyms) {
+            addTopChild(insym);
+        }
+    }
+    
+    protected void addTopChild(SeqSymmetry sym) {
+        int depth = SeqUtils.getDepthFor(sym);
+        drawChildren = (depth >= 2);
+        Optional<GlyphI> glyph = determinePGlyph(sym);
         if (glyph.isPresent()) {
-            ITrackStyleExtended trackStyle = tierGlyph.getAnnotStyle();
             if (trackStyle.getFilter() != null) {
                 glyph.get().setVisibility(trackStyle.getFilter().filterSymmetry(annotSeq, sym));
             }
             tierGlyph.addChild(glyph.get());
         }
     }
-
-    protected Optional<GlyphI> determinePGlyph(SeqSymmetry originalSym, SeqSymmetry sym) {
+    
+    protected Optional<GlyphI> determinePGlyph(SeqSymmetry sym) {
         Optional<GlyphI> parentGlyph;
-        TierGlyph tierGlyph = getTierGlyph(track);
-        ITrackStyleExtended trackStyle = tierGlyph.getAnnotStyle();
+        
         DirectionType directionType = DirectionType.valueFor(trackStyle.getDirectionType());
-        Color color = getSymColor(originalSym, trackStyle, directionType);
-        if (drawChildren && originalSym.getChildCount() > 0) {
-            parentGlyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, originalSym, sym, color);
+        Color color = getSymColor(sym);
+        if (drawChildren && sym.getChildCount() > 0) {
+            parentGlyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, sym);
             // call out to handle rendering to indicate if any of the children of the
             //    original annotation are completely outside the view
             if (parentGlyph.isPresent()) {
-                if (originalSym instanceof PairedBamSymWrapper) {
-                    handlePairedChildren((PairedBamSymWrapper) originalSym, sym, parentGlyph.get());
+                if (sym instanceof PairedBamSymWrapper) {
+                    handlePairedChildren((PairedBamSymWrapper) sym, parentGlyph.get());
                 } else {
-                    addChildren(originalSym, sym, parentGlyph.get(), trackStyle);
-                    handleInsertionGlyphs(originalSym, parentGlyph.get());
+                    addChildren(sym, parentGlyph.get());
+                    handleInsertionGlyphs(sym, parentGlyph.get());
                 }
             }
-
+            
         } else {
             // depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-            parentGlyph = determineGlyph(CHILD_GLYPH_CLASS, originalSym, sym, color);
+            parentGlyph = determineGlyph(CHILD_GLYPH_CLASS, sym);
             if (parentGlyph.isPresent()) {
                 if (directionType == DirectionType.ARROW || directionType == DirectionType.BOTH) {
-                    addChildGlyph(sym, symSpan, directionType, parentGlyph.get().getCoordBox().getHeight(), color, false, parentGlyph.get());
+                    addChildGlyph(sym, symSpan, parentGlyph.get().getCoordBox().getHeight(), color, false, parentGlyph.get());
                 }
-                addAlignedResiduesGlyph(originalSym, symSpan, DEFAULT_CHILD_HEIGHT, parentGlyph.get());
+                addAlignedResiduesGlyph(sym, symSpan, DEFAULT_CHILD_HEIGHT, parentGlyph.get());
             }
         }
         return parentGlyph;
     }
-
-    private void handlePairedChildren(PairedBamSymWrapper originalSym, SeqSymmetry sym, GlyphI parentGlyph) {
+    
+    private void handlePairedChildren(PairedBamSymWrapper sym, GlyphI parentGlyph) {
         Optional<GlyphI> firstChildPglyph;
         Optional<GlyphI> secondChildPglyph;
-        SeqSymmetry originalSym1 = originalSym.getChild(0);
-        SeqSymmetry sym1 = originalSym1;
-        SeqSymmetry originalSym2 = originalSym.getChild(1);
-        SeqSymmetry sym2 = originalSym2;
-
-        TierGlyph tierGlyph = getTierGlyph(track);
-        ITrackStyleExtended trackStyle = tierGlyph.getAnnotStyle();
-        DirectionType directionType = DirectionType.valueFor(trackStyle.getDirectionType());
-        Color color = getSymColor(originalSym, trackStyle, directionType);
-
-        TierGlyph tierGlyph2 = getTierGlyph(track, seqMap.getViewSeqSpan(originalSym2));
-        ITrackStyleExtended trackStyle2 = tierGlyph2.getAnnotStyle();
-        DirectionType directionType2 = DirectionType.valueFor(trackStyle2.getDirectionType());
-        Color color2 = getSymColor(originalSym2, trackStyle2, directionType2);
-
-        if (annotSeq != viewSeq) {
-            sym1 = seqMap.transformForViewSeq(originalSym1, annotSeq);
-            sym2 = seqMap.transformForViewSeq(originalSym2, annotSeq);
-        }
-
-        firstChildPglyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, originalSym1, sym1, color);
-        secondChildPglyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, originalSym2, sym2, color2);
-
+        SeqSymmetry sym1 = sym.getChild(0);
+        SeqSymmetry sym2 = sym.getChild(1);
+        
+        sym1 = seqMap.transformForViewSeq(sym1, annotSeq);
+        sym2 = seqMap.transformForViewSeq(sym2, annotSeq);
+        
+        firstChildPglyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, sym1);
+        secondChildPglyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, sym2);
+        
         if (firstChildPglyph.isPresent() && secondChildPglyph.isPresent()) {
-            addChildren(originalSym1, sym1, firstChildPglyph.get(), trackStyle);
-            handleInsertionGlyphs(originalSym1, firstChildPglyph.get());
-            addChildren(originalSym2, sym2, secondChildPglyph.get(), trackStyle2);
-            handleInsertionGlyphs(originalSym2, secondChildPglyph.get());
-
+            addChildren(sym1, firstChildPglyph.get());
+            handleInsertionGlyphs(sym1, firstChildPglyph.get());
+            addChildren(sym2, secondChildPglyph.get());
+            handleInsertionGlyphs(sym2, secondChildPglyph.get());
             parentGlyph.addChild(firstChildPglyph.get());
             parentGlyph.addChild(secondChildPglyph.get());
         }
-
+        
     }
-
-    private Optional<GlyphI> determineGlyph(Class<?> glyphClass, SeqSymmetry originalSym, SeqSymmetry sym, Color color) {
+    
+    private Optional<GlyphI> determineGlyph(Class<?> glyphClass, SeqSymmetry sym) {
         EfficientSolidGlyph pglyph = null;
-        //override class variable to handle special paired child special case
-        SeqSpan symSpan = seqMap.getViewSeqSpan(originalSym);
         try {
-            TierGlyph tierGlyph = getTierGlyph(track);
-            boolean labelInSouth = !symSpan.isForward() && track.getReverseTier().isPresent();
-            ITrackStyleExtended trackStyle = tierGlyph.getAnnotStyle();
-            DirectionType directionType = DirectionType.valueFor(trackStyle.getDirectionType());
+            SeqSpan span = seqMap.getViewSeqSpan(sym);
+            Color color = getSymColor(sym);
+            boolean labelInSouth = !span.isForward() && track.getReverseTier().isPresent();
 
             // Note: Setting parent height (pheight) larger than the child height (cheight)
             // allows the user to select both the parent and the child as separate entities
             // in order to look at the properties associated with them.  Otherwise, the method
             // EfficientGlyph.pickTraversal() will only allow one to be chosen.
             double pheight = DEFAULT_CHILD_HEIGHT + 0.0001;
-            if (AbstractTierGlyph.useLabel(trackStyle)) {
+            if (sym instanceof PairedBamSymWrapper) {
+                pglyph = (EfficientSolidGlyph) EfficientMateJoinGlyph.class.newInstance();
+                color = Color.BLACK;
+            } else if (AbstractTierGlyph.useLabel(trackStyle)) {
                 EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) LABLELLED_PARENT_GLYPH_CLASS.newInstance();
-                Optional<Object> property = getTheProperty(originalSym, trackStyle.getLabelField());
+                Optional<Object> property = getTheProperty(sym, trackStyle.getLabelField());
                 String label = "";
                 if (property.isPresent()) {
                     if (property.get() instanceof Number) {
@@ -266,14 +239,15 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 lglyph.setLabel(label);
                 pheight = 2 * pheight;
                 pglyph = lglyph;
-
+                
             } else {
                 pglyph = (EfficientSolidGlyph) glyphClass.newInstance();
             }
-            pglyph.setCoords(symSpan.getMin(), 0, symSpan.getLength(), pheight);
+            pglyph.setCoords(span.getMin(), 0, span.getLength(), pheight);
             pglyph.setColor(color);
+            DirectionType directionType = DirectionType.valueFor(tierGlyph.getAnnotStyle().getDirectionType());
             if (directionType == DirectionType.ARROW || directionType == DirectionType.BOTH) {
-                pglyph.setDirection(symSpan.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
+                pglyph.setDirection(span.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
             }
             tierGlyph.setDataModelFromOriginalSym(pglyph, sym);
         } catch (InstantiationException ex) {
@@ -283,13 +257,13 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         }
         return Optional.<GlyphI>fromNullable(pglyph);
     }
-
-    private void addChildren(SeqSymmetry originalSym, SeqSymmetry sym, GlyphI parentGlyph, ITrackStyleExtended trackStyle) {
+    
+    private void addChildren(SeqSymmetry sym, GlyphI parentGlyph) {
         SeqSpan cdsSpan = null;
         SeqSymmetry cds_sym = null;
         boolean sameSeq = annotSeq == viewSeq;
-        if ((originalSym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) originalSym).hasCdsSpan()) {
-            cdsSpan = ((SupportsCdsSpan) originalSym).getCdsSpan();
+        if ((sym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) sym).hasCdsSpan()) {
+            cdsSpan = ((SupportsCdsSpan) sym).getCdsSpan();
             MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
             tempsym.addSpan(new SimpleMutableSeqSpan(cdsSpan));
             if (!sameSeq) {
@@ -303,8 +277,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
         int childCount = sym.getChildCount();
         List<SeqSymmetry> outsideChildren = new ArrayList<SeqSymmetry>();
-        DirectionType directionType = DirectionType.valueFor(trackStyle.getDirectionType());
-        Color color = getSymColor(originalSym, trackStyle, directionType);
+        Color color = getSymColor(sym);
         double thinHeight = DEFAULT_CHILD_HEIGHT * 0.6;
 //		Color start_color = the_style.getStartColor();
 //		Color end_color = the_style.getEndColor();
@@ -320,12 +293,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 if (cds) {
                     cheight = DEFAULT_CHILD_HEIGHT;
                 }
-
-                addChildGlyph(child, cspan, directionType, cheight, color, childCount > 1, parentGlyph);
+                
+                addChildGlyph(child, cspan, cheight, color, childCount > 1, parentGlyph);
                 addAlignedResiduesGlyph(child, cspan, cheight, parentGlyph);
-
+                
                 if (!cds) {
-                    handleCDSSpan(cdsSpan, cspan, cds_sym, child, originalSym, color, parentGlyph);
+                    handleCDSSpan(cdsSpan, cspan, cds_sym, child, sym, color, parentGlyph);
                 }
             }
         }
@@ -336,18 +309,18 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         //    orginal annotation are completely outside the view
         DeletionGlyph.handleEdgeRendering(outsideChildren, parentGlyph, annotSeq, viewSeq, 0.0, thinHeight);
     }
-
-    private void addChildGlyph(SeqSymmetry sym, SeqSpan cspan, DirectionType directionType, double height, Color color, boolean hitable, GlyphI pglyph) {
-        TierGlyph tierGlyph = getTierGlyph(track, seqMap.getViewSeqSpan(sym));
+    
+    private void addChildGlyph(SeqSymmetry sym, SeqSpan cspan, double height, Color color, boolean hitable, GlyphI pglyph) {
+        
         GlyphI cglyph;
-        Optional<GlyphI> child = getChild(cspan, cspan.getMin() == symSpan.getMin(), cspan.getMax() == symSpan.getMax(), directionType);
+        Optional<GlyphI> child = getChild(cspan, cspan.getMin() == symSpan.getMin(), cspan.getMax() == symSpan.getMax());
         if (child.isPresent()) {
             cglyph = child.get();
             cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), height);
             cglyph.setColor(color);
             tierGlyph.setDataModelFromOriginalSym(cglyph, sym);
             pglyph.addChild(cglyph);
-
+            
             cglyph.setHitable(hitable);
             if (cglyph instanceof DirectedGlyph) {
                 ((DirectedGlyph) cglyph).setForward(cspan.isForward());
@@ -355,31 +328,30 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             codon_glyph_processor.processGlyph(cglyph, sym, annotSeq);
         }
     }
-
+    
     private static Optional<Object> getTheProperty(SeqSymmetry sym, String prop) {
         if (StringUtils.isBlank(prop)) {
             return Optional.absent();
         }
         SeqSymmetry original = getMostOriginalSymmetry(sym);
-
+        
         if (original instanceof SymWithProps) {
             Object ret = ((SymWithProps) original).getProperty(prop);
-
+            
             if (ret == null || ret.toString().length() == 0) {
                 ret = ((SymWithProps) original).getProperty(prop.toLowerCase());
             }
-
+            
             if (ret == null || ret.toString().length() == 0) {
                 ret = ((SymWithProps) original).getProperty(prop.toUpperCase());
             }
-
+            
             return Optional.fromNullable(ret);
         }
         return Optional.absent();
     }
-
+    
     private void addAlignedResiduesGlyph(SeqSymmetry sym, SeqSpan span, double height, GlyphI pglyph) {
-        TierGlyph tierGlyph = getTierGlyph(track);
         AlignedResidueGlyph alignResidueGlyph = getAlignedResiduesGlyph(sym, annotSeq, true);
         if (alignResidueGlyph != null) {
             alignResidueGlyph.setCoords(span.getMin(), 0, span.getLength(), height);
@@ -391,9 +363,10 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             pglyph.addChild(alignResidueGlyph);
         }
     }
-
-    private Optional<GlyphI> getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DirectionType directionType) {
+    
+    private Optional<GlyphI> getChild(SeqSpan cspan, boolean isFirst, boolean isLast) {
         try {
+            DirectionType directionType = DirectionType.valueFor(trackStyle.getDirectionType());
             if (cspan.getLength() == 0) {
                 return Optional.<GlyphI>fromNullable(new DeletionGlyph());
             } else if (((isLast && cspan.isForward()) || (isFirst && !cspan.isForward()))
@@ -408,11 +381,13 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         }
         return Optional.<GlyphI>fromNullable(null);
     }
-
-    private Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, DirectionType directionType) {
+    
+    private Color getSymColor(SeqSymmetry insym) {
         Color color = null;
-        ColorProviderI cp = style.getColorProvider();
-        boolean isForward = symSpan.isForward();
+        SeqSpan span = seqMap.getViewSeqSpan(insym);
+        ColorProviderI cp = trackStyle.getColorProvider();
+        DirectionType directionType = DirectionType.valueFor(trackStyle.getDirectionType());
+        boolean isForward = span.isForward();
         if (cp != null) {
             SeqSymmetry sym = insym;
             if (insym instanceof DerivedSeqSymmetry) {
@@ -420,23 +395,22 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             }
             color = cp.getColor(sym);
         }
-
+        
         if (color == null) {
             if (directionType == DirectionType.COLOR || directionType == DirectionType.BOTH) {
                 if (isForward) {
-                    return style.getForwardColor();
+                    return trackStyle.getForwardColor();
                 }
-                return style.getReverseColor();
+                return trackStyle.getReverseColor();
             }
-            return style.getForeground();
+            return trackStyle.getForeground();
         }
-
+        
         return color;
     }
-
+    
     private void handleCDSSpan(SeqSpan cdsSpan, SeqSpan childSpan, SeqSymmetry cdsSym, SeqSymmetry child, SeqSymmetry originalSym, Color childColor, GlyphI pglyph) {
         try {
-            TierGlyph tierGlyph = getTierGlyph(track);
             boolean sameSeq = annotSeq == viewSeq;
             if (SeqUtils.overlap(cdsSpan, childSpan)) {
                 CdsSeqSymmetry cdsSym2 = new CdsSeqSymmetry();
@@ -446,7 +420,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                     SeqUtils.transformSymmetry(cdsSym2, seqMap.getTransformPath());
                 }
                 cdsSym2.setPropertySymmetry(originalSym);
-
+                
                 SeqSpan cds_span = seqMap.getViewSeqSpan(cdsSym2);
                 if (cds_span != null) {
                     GlyphI cds_glyph;
@@ -468,79 +442,78 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             Logger.getLogger(AnnotationGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private void handleInsertionGlyphs(SeqSymmetry sym, GlyphI pglyph) {
-        TierGlyph tierGlyph = getTierGlyph(track);
         if (!(sym instanceof BAMSym)) {
             return;
         }
-
+        
         BAMSym inssym = (BAMSym) sym;
         if (inssym.getInsChildCount() == 0) {
             return;
         }
-
+        
         BioSeq coordseq = seqMap.getViewSeq();
         SeqSymmetry psym = inssym;
         if (annotSeq != viewSeq) {
             psym = seqMap.transformForViewSeq(inssym, annotSeq);
         }
         SeqSpan pspan = seqMap.getViewSeqSpan(psym);
-
+        
         Color color = Color.RED;
-
+        
         for (int i = 0; i < inssym.getInsChildCount(); i++) {
-
+            
             SeqSymmetry childsym = inssym.getInsChild(i);
             SeqSymmetry dsym = childsym;
-
+            
             if (annotSeq != coordseq) {
                 dsym = seqMap.transformForViewSeq(childsym, annotSeq);
             }
             SeqSpan dspan = seqMap.getViewSeqSpan(dsym);
             SeqSpan ispan = childsym.getSpan(annotSeq);
-
+            
             if (ispan == null || dspan == null) {
                 continue;
             }
-
+            
             InsertionSeqGlyph isg = new InsertionSeqGlyph();
             isg.setSelectable(true);
             String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1);
             isg.setResidues(residues);
             isg.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
             isg.setColor(color);
-
+            
             pglyph.addChild(isg);
             tierGlyph.setDataModelFromOriginalSym(isg, childsym);
         }
     }
-
+    
     @Override
     public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
         setSeqMap(gviewer);
         if (sym != null) {
-            int glyph_depth = style.getGlyphDepth();
-            TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
-            TierGlyph forward_tier = gviewer.getTrack(style, useDirection);
-            forward_tier.setTierType(TierGlyph.TierType.ANNOTATION);
-            forward_tier.setInfo(sym);
+            int glyphDepth = style.getGlyphDepth();
+            TierGlyph.Direction tierDirection = !style.getSeparable() ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+            TierGlyph forwardTier = gviewer.getTrack(style, tierDirection);
+            forwardTier.setTierType(TierGlyph.TierType.ANNOTATION);
+            forwardTier.setInfo(sym);
             if (style.getSeparate()) {
-                TierGlyph reverse_tier = (useDirection == TierGlyph.Direction.BOTH) ? forward_tier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+                TierGlyph reverse_tier = (tierDirection == TierGlyph.Direction.BOTH) ? forwardTier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
                 reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
                 reverse_tier.setInfo(sym);
-                setTrack(new Track(forward_tier, reverse_tier));
-                addLeafsToTier(sym, glyph_depth);
+                setTrack(new Track(forwardTier, reverse_tier));
+                addLeafsToTier(sym, glyphDepth);
                 doMiddlegroundShading(reverse_tier, gviewer, seq);
             } else {
                 // use only one tier
-                setTrack(new Track(forward_tier));
-                addLeafsToTier(sym, glyph_depth);
+                setTrack(new Track(forwardTier));
+                addLeafsToTier(sym, glyphDepth);
             }
-            doMiddlegroundShading(forward_tier, gviewer, seq);
+            doMiddlegroundShading(forwardTier, gviewer, seq);
         }
     }
-
+    
     @Override
     public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
         setSeqMap(gviewer);
@@ -548,7 +521,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         TierGlyph forward_tier = gviewer.getTrack(style, useDirection);
         forward_tier.setTierType(TierGlyph.TierType.ANNOTATION);
         forward_tier.setInfo(rootSym);
-
+        
         TierGlyph reverse_tier = (useDirection == TierGlyph.Direction.BOTH) ? forward_tier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
         reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
         forward_tier.setInfo(rootSym);
@@ -557,7 +530,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         doMiddlegroundShading(forward_tier, gviewer, seq);
         doMiddlegroundShading(reverse_tier, gviewer, seq);
     }
-
+    
     public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
         setSeqMap(gviewer);
         String method = BioSeqUtils.determineMethod(sym);
@@ -568,61 +541,69 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
         TierGlyph forward_tier = seqMap.getTrack(style, useDirection);
         forward_tier.setTierType(TierGlyph.TierType.ANNOTATION);
-
+        
         TierGlyph reverse_tier = (useDirection == TierGlyph.Direction.BOTH) ? forward_tier : seqMap.getTrack(style, TierGlyph.Direction.REVERSE);
         reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
         setTrack(new Track(forward_tier, reverse_tier));
         int depth = SeqUtils.getDepthFor(sym);
         drawChildren = (depth >= 2);
-        addToTier(sym);
+        addTopChild(sym);
     }
-
+    
     @Override
     public String getName() {
         return "annotation/alignment";
     }
-
+    
     private void updateAnnotSeq() {
         annotSeq = seqMap.getAnnotatedSeq();
     }
-
+    
     private void updateViewSeq() {
         viewSeq = seqMap.getViewSeq();
     }
-
+    
+    private SeqSymmetry initSymSpan(SeqSymmetry originalSym) {
+        SeqSymmetry sym;
+        updateAnnotSeq();
+        updateViewSeq();
+        sym = seqMap.transformForViewSeq(originalSym, annotSeq);
+        updateSymSpan(sym);
+        setTierGlyph();
+        return sym;
+    }
+    
     private void updateSymSpan(SeqSymmetry sym) {
         symSpan = seqMap.getViewSeqSpan(sym);
         isValidSymSpan = !(symSpan == null || symSpan.getLength() == 0);
     }
-
-    private TierGlyph getTierGlyph(Track track) {
+    
+    private void setTierGlyph() {
         if (!symSpan.isForward()) {
             if (track.getReverseTier().isPresent()) {
-                return track.getReverseTier().get();
+                tierGlyph = track.getReverseTier().get();
             } else {
-                return track.getForwardTier();
+                tierGlyph = track.getForwardTier();
             }
+        } else {
+            tierGlyph = track.getForwardTier();
         }
-        return track.getForwardTier();
+        trackStyle = tierGlyph.getAnnotStyle();
     }
-
-    private TierGlyph getTierGlyph(Track track, SeqSpan span) {
-        if (!span.isForward()) {
-            if (track.getReverseTier().isPresent()) {
-                return track.getReverseTier().get();
-            } else {
-                return track.getForwardTier();
-            }
+    
+    private Optional<TierGlyph> getReverseTierGlyph() {
+        if (track.getReverseTier().isPresent()) {
+            return Optional.<TierGlyph>fromNullable(track.getReverseTier().get());
         }
-        return track.getForwardTier();
+        return Optional.absent();
     }
-
+    
     private void setTrack(Track track) {
         this.track = track;
     }
-
+    
     private void setSeqMap(SeqMapViewExtendedI seqMap) {
         this.seqMap = seqMap;
     }
-
+    
 }

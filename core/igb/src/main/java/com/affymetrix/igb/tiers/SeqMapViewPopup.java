@@ -42,6 +42,7 @@ import com.affymetrix.igb.action.ShowAllAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMismatchAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
+import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
@@ -481,6 +482,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         save_track.setIcon(null);
         popup.add(save_track);
 
+        if (!handler.getSelectedTiers().isEmpty()) {
+            boolean canShowAsPaired = true;
+            for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
+                if (!tierGlyph.getAnnotStyle().getMethodName().endsWith(".bam")) {
+                    canShowAsPaired = false;
+                }
+            }
+            if (canShowAsPaired) {
+                JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
+                popup.add(showAsPaired);
+            }
+        }
         popup.add(new JSeparator());
 
         JMenuItem remove_data_from_tracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());

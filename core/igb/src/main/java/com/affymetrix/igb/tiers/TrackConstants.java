@@ -18,6 +18,7 @@ public interface TrackConstants {
     // The String constants named PREF_* are for use in the persistent preferences
     // They are not displayed to users, and should never change
     static final String PREF_CONNECTED = "Connected";
+    static final String PREF_SHOW_AS_PAIRED = "Show As Paired";
     static final String PREF_GLYPH_DEPTH = "Glyph Depth";
     static final String PREF_COLLAPSED = "Collapsed";
     static final String PREF_MAX_DEPTH = "Max Depth";

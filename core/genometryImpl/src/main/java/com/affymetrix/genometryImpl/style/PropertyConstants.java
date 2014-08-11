@@ -14,6 +14,7 @@ public interface PropertyConstants {
 	static final String PROP_NAME_SIZE = "name_size";
 	static final String PROP_SHOW_2TRACK = "show2tracks";
 	static final String PROP_CONNECTED = "connected";
+        static final String PROP_SHOW_AS_PAIRED = "showAsPaired";
 	static final String PROP_GLYPH_DEPTH = "glyph_depth";
 	static final String PROP_LABEL_FIELD = "label_field";
 	static final String PROP_LABEL_FOREGROUND = "label_foreground";

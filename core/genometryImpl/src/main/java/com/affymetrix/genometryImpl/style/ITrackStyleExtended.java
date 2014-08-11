@@ -31,7 +31,7 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setSeparate(boolean b);
 	boolean getSeparate();
         
-        /** Controls whether plus and minus strands will be drawn separately. */
+       
 	void setShowAsPaired(boolean b);
 	boolean isShowAsPaired();
 

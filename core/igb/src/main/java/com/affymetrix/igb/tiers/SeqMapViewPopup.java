@@ -446,6 +446,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         popup.add(operationsMenu);
         operationsMenu.getPopupMenu().setBorder(finalBorder);
         operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
+        operationsMenu.setEnabled(!coordinates_track_selected);
 //		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
 //		color_by_score.setSelected(any_are_color_by_score && num_selections > 0 && !coordinates_track_selected);
 //		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);

@@ -32,7 +32,7 @@ import java.util.prefs.Preferences;
  */
 public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
 
-    private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
+    private static Preferences tiersRootNode = PreferenceUtils.getTopNode().node("tiers");
     public static final boolean DEBUG = false;
     public static final boolean DEBUG_NODE_PUTS = false;
 
@@ -181,7 +181,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         initStyle(template, properties);
 
         try {
-            node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
+            node = PreferenceUtils.getSubnode(tiersRootNode, this.unique_name);
         } catch (Exception e) {
             // if there is a problem creating the node, continue with a non-persistent style.
             e.printStackTrace();
@@ -203,7 +203,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             try {
                 node.removeNode();
                 node.flush();
-                node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
+                node = PreferenceUtils.getSubnode(tiersRootNode, this.unique_name);
             } catch (Exception ex) {
                 Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -277,6 +277,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         show2tracks = (Boolean) load(PREF_SHOW2TRACKS, this.getSeparate());
         glyph_depth = (Integer) load(PREF_GLYPH_DEPTH, this.getGlyphDepth());
         connected = (Boolean) load(PREF_CONNECTED, this.getConnected());
+        showAsPaired = (Boolean) load(PREF_SHOW_AS_PAIRED, this.isShowAsPaired());
         collapsed = (Boolean) load(PREF_COLLAPSED, this.getCollapsed());
         max_depth = (Integer) load(PREF_MAX_DEPTH, this.getMaxDepth());
         foreground = (Color) load(PREF_FOREGROUND, this.getForeground());
@@ -843,8 +844,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
        return showAsPaired;
     }
 
+    @Override
     public void setShowAsPaired(boolean showAsPaired) {
         this.showAsPaired = showAsPaired;
+        save(PREF_SHOW_AS_PAIRED, showAsPaired);
     }    
 
     public boolean drawCollapseControl() {

@@ -51,7 +51,7 @@ public class IGBToolBar extends JToolBar {
     private static final String SELECTION_INFO = "Selection Info";
     private static final SelectionRuleAction SELECTION_RULE_ACTION = SelectionRuleAction.getAction();
     private final JPanel toolbarItemPanel;
-    private final JTextField textField;
+    private final JTextField selectionInfoTextField;
     private final Font selectionFont;
     private final Font noSelectionFont;
 
@@ -68,10 +68,10 @@ public class IGBToolBar extends JToolBar {
             }
         });
 
-        textField = new JTextField(25);
-        textField.setBackground(Color.WHITE);
-        textField.setComponentPopupMenu(CCPUtils.getCCPPopup());
-        selectionFont = textField.getFont();
+        selectionInfoTextField = new JTextField(25);
+        selectionInfoTextField.setBackground(Color.WHITE);
+        selectionInfoTextField.setComponentPopupMenu(CCPUtils.getCCPPopup());
+        selectionFont = selectionInfoTextField.getFont();
         noSelectionFont = selectionFont.deriveFont(Font.ITALIC);
         setFloatable(false);
         setLayout(new BorderLayout());
@@ -80,33 +80,33 @@ public class IGBToolBar extends JToolBar {
     }
 
     private void setup() {
-        JPanel selectionpanel = new JPanel();
-        selectionpanel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
-        selectionpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        selectionpanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        selectionpanel.setBackground(Color.WHITE);
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
+        selectionPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        selectionPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        selectionPanel.setBackground(Color.WHITE);
 
-        textField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        textField.setEditable(false);
+        selectionInfoTextField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        selectionInfoTextField.setEditable(false);
 
         JLabel lf = new JLabel(SELECTION_INFO + ": ");
         lf.setFont(lf.getFont().deriveFont(Font.ITALIC));
         lf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         lf.setBackground(Color.WHITE);
 
-        selectionpanel.add(lf);
-        selectionpanel.add(textField);
+        selectionPanel.add(lf);
+        selectionPanel.add(selectionInfoTextField);
 
         JButton button = new JButton(SELECTION_RULE_ACTION);
         button.setText("");
         button.setMargin(new Insets(2, 2, 2, 2));
 //		button.setBorder(null);
-        selectionpanel.add(button);
+        selectionPanel.add(button);
 
-        selectionpanel.validate();
+        selectionPanel.validate();
 
         add(toolbarItemPanel, BorderLayout.LINE_START);
-        add(selectionpanel, BorderLayout.LINE_END);
+        add(selectionPanel, BorderLayout.LINE_END);
 
         super.validate();
 
@@ -117,18 +117,18 @@ public class IGBToolBar extends JToolBar {
 
     public void setSelectionText(Map<String, Object> properties, String selectionText) {
         if (selectionText == null || selectionText.length() == 0) {
-            textField.setForeground(Color.LIGHT_GRAY);
-            textField.setFont(noSelectionFont);
-            textField.setText(NO_SELECTION_TEXT);
-            textField.setEnabled(false);
+            selectionInfoTextField.setForeground(Color.LIGHT_GRAY);
+            selectionInfoTextField.setFont(noSelectionFont);
+            selectionInfoTextField.setText(NO_SELECTION_TEXT);
+            selectionInfoTextField.setEnabled(false);
         } else {
-            textField.setForeground(Color.BLACK);
-            textField.setFont(selectionFont);
-            textField.setText(selectionText);
-            textField.setEnabled(true);
+            selectionInfoTextField.setForeground(Color.BLACK);
+            selectionInfoTextField.setFont(selectionFont);
+            selectionInfoTextField.setText(selectionText);
+            selectionInfoTextField.setEnabled(true);
         }
         SELECTION_RULE_ACTION.setProperties(properties);
-        SELECTION_RULE_ACTION.setSelectionText(textField.getText());
+        SELECTION_RULE_ACTION.setSelectionText(selectionInfoTextField.getText());
     }
 
     public void addToolbarAction(GenericAction genericAction, int index) {

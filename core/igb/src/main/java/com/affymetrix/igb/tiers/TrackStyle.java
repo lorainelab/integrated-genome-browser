@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start
@@ -299,7 +300,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     public PropertyMap getProperties() {
         PropertyMap props = new PropertyMap();
-
         props.put(PROP_FOREGROUND, PreferenceUtils.getColorString(getForeground()));
         props.put(PROP_BACKGROUND, PreferenceUtils.getColorString(getBackground()));
         props.put(PROP_START_COLOR, PreferenceUtils.getColorString(getForwardColor()));
@@ -308,12 +308,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         props.put(PROP_LABEL_FIELD, getLabelField());
         props.put(PROP_MAX_DEPTH, String.valueOf(getMaxDepth()));
         props.put(PROP_CONNECTED, String.valueOf(getConnected()));
+        props.put(PROP_SHOW_AS_PAIRED, String.valueOf(isShowAsPaired()));
         props.put(PROP_SEPARATE, String.valueOf(getSeparate()));
         props.put(PROP_SHOW, String.valueOf(getShow()));
         props.put(PROP_COLLAPSED, String.valueOf(getCollapsed()));
         props.put(PROP_FONT_SIZE, String.valueOf(getTrackNameSize()));
         props.put(PROP_DIRECTION_TYPE, String.valueOf(getDirectionName()));
-
         return props;
     }
 
@@ -357,7 +357,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         }
 
         String gdepth_string = (String) props.get(PROP_GLYPH_DEPTH);
-        if (gdepth_string != null && !"".equals(gdepth_string)) {
+        if (StringUtils.isNotBlank(gdepth_string)) {
             int prev_glyph_depth = glyph_depth;
             try {
                 this.setGlyphDepth(Integer.parseInt(gdepth_string));
@@ -367,12 +367,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         }
 
         String labfield = (String) props.get(PROP_LABEL_FIELD);
-        if (labfield != null && !"".equals(labfield)) {
+        if (StringUtils.isNotBlank(labfield)) {
             this.setLabelField(labfield);
         }
 
         String mdepth_string = (String) props.get(PROP_MAX_DEPTH);
-        if (mdepth_string != null && !"".equals(mdepth_string)) {
+        if (StringUtils.isNotBlank(mdepth_string)) {
             int prev_max_depth = max_depth;
             try {
                 this.setMaxDepth(Integer.parseInt(mdepth_string));
@@ -382,7 +382,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         }
 
         String sepstring = (String) props.get(PROP_SEPARATE);
-        if (sepstring != null && !"".equals(sepstring)) {
+        if (StringUtils.isNotBlank(sepstring)) {
             if (sepstring.equalsIgnoreCase(FALSE)) {
                 this.setSeparate(false);
             } else if (sepstring.equalsIgnoreCase(TRUE)) {
@@ -390,8 +390,17 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             }
         }
 
+        String showAsPairedString = (String) props.get(PROP_SHOW_AS_PAIRED);
+        if (StringUtils.isNotBlank(showAsPairedString)) {
+            if (showAsPairedString.equalsIgnoreCase(FALSE)) {
+                this.setShowAsPaired(false);
+            } else if (showAsPairedString.equalsIgnoreCase(TRUE)) {
+                this.setShowAsPaired(true);
+            }
+        }
+
         String showstring = (String) props.get(PROP_SHOW);
-        if (showstring != null && !"".equals(showstring)) {
+        if (StringUtils.isNotBlank(showstring)) {
             if (showstring.equalsIgnoreCase(FALSE)) {
                 show = false;
             } else if (showstring.equalsIgnoreCase(TRUE)) {
@@ -399,7 +408,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             }
         }
         String collapstring = (String) props.get(PROP_COLLAPSED);
-        if (collapstring != null && !"".equals(collapstring)) {
+        if (StringUtils.isNotBlank(collapstring)) {
             if (collapstring.equalsIgnoreCase(FALSE)) {
                 this.setCollapsed(false);
             } else if (collapstring.equalsIgnoreCase(TRUE)) {
@@ -407,7 +416,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             }
         }
         String fontstring = (String) props.get(PROP_FONT_SIZE);
-        if (fontstring != null && !"".equals(fontstring)) {
+        if (StringUtils.isNotBlank(fontstring)) {
             float prev_font_size = track_name_size;
             try {
                 this.setTrackNameSize(Float.parseFloat(fontstring));
@@ -416,7 +425,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             }
         }
         String directionstring = (String) props.get(PROP_DIRECTION_TYPE);
-        if (directionstring != null && !"".equals(directionstring)) {
+        if (StringUtils.isNotBlank(directionstring)) {
             DirectionType prev_direction_type = direction_type;
             try {
                 this.setDirectionType(DirectionType.valueFor(directionstring));
@@ -431,7 +440,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 //			} 
 //		}
         String nameSizeString = (String) props.get(PROP_NAME_SIZE);
-        if (nameSizeString != null && !"".equals(nameSizeString)) {
+        if (StringUtils.isNotBlank(nameSizeString)) {
             float prev_font_size = track_name_size;
             try {
                 this.setTrackNameSize(Float.parseFloat(nameSizeString));
@@ -440,7 +449,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             }
         }
         String show2tracksString = (String) props.get(PROP_SHOW_2TRACK);
-        if (show2tracksString != null && !"".equals(show2tracksString)) {
+        if (StringUtils.isNotBlank(show2tracksString)) {
             if (show2tracksString.equalsIgnoreCase(FALSE)) {
                 this.setSeparate(false);
             } else if (show2tracksString.equalsIgnoreCase(TRUE)) {
@@ -469,6 +478,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         this.setReverseColor(template.getReverseColor());
 //		this.setViewMode(template.getViewMode());
         this.setDirectionType(template.getDirectionName());
+        this.setShowAsPaired(template.isShowAsPaired());
         this.setLabelForeground(null);
     }
 
@@ -839,16 +849,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         return filter;
     }
 
-     @Override
+    @Override
     public boolean isShowAsPaired() {
-       return showAsPaired;
+        return showAsPaired;
     }
 
     @Override
     public void setShowAsPaired(boolean showAsPaired) {
         this.showAsPaired = showAsPaired;
         save(PREF_SHOW_AS_PAIRED, showAsPaired);
-    }    
+        if (showAsPaired) {
+            setSeparate(false);
+        }
+    }
 
     public boolean drawCollapseControl() {
         return (IGBStateProvider.getDrawCollapseState() && getExpandable());
@@ -1075,6 +1088,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setSeparate((Boolean) value);
         } else if (PROP_CONNECTED.equals(key) && value instanceof Boolean) {
             this.setConnected((Boolean) value);
+        } else if (PROP_SHOW_AS_PAIRED.equals(key) && value instanceof Boolean) {
+            this.setShowAsPaired((Boolean) value);
         } else if (PROP_GLYPH_DEPTH.equals(key) && value instanceof Number) {
             this.setGlyphDepth((Integer) value);
         } else if (PROP_LABEL_FIELD.equals(key) && value instanceof String) {

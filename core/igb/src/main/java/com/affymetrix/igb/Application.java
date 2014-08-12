@@ -242,6 +242,10 @@ public abstract class Application {
         }
     }
 
+    public static void infoPanel(String message) {
+        JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private static Component getActiveWindow() {
         Component comp = FocusManager.getCurrentManager().getActiveWindow();
         if (comp == null) {

@@ -27,7 +27,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -308,8 +307,8 @@ public class AddSource extends JFrame {
             GenericServer server = ServerList.getServerInstance().getServer(urlText.getText());
             if (server == null) {
                 CThreadHolder.getInstance().execute(evt, worker);
-            } else {               
-                Application.infoPanel("<html>The server <i color=blue>"+server.getFriendlyURL()+"</i> has already been added. </html>");
+            } else {
+                Application.infoPanel("<html>The server <i color=blue>" + server.getFriendlyURL() + "</i> has already been added. </html>");
             }
 
             this.setVisible(false);

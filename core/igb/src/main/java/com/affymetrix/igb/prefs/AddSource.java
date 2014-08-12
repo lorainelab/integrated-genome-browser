@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
@@ -26,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -302,7 +304,13 @@ public class AddSource extends JFrame {
 
                 }
             };
-            CThreadHolder.getInstance().execute(evt, worker);
+
+            GenericServer server = ServerList.getServerInstance().getServer(urlText.getText());
+            if (server == null) {
+                CThreadHolder.getInstance().execute(evt, worker);
+            } else {               
+                Application.infoPanel("<html>The server <i color=blue>"+server.getFriendlyURL()+"</i> has already been added. </html>");
+            }
 
             this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed

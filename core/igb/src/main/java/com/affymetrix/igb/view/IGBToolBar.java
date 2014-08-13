@@ -21,6 +21,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -46,7 +47,7 @@ import javax.swing.UIManager;
  * @author hiralv
  */
 public class IGBToolBar extends JToolBar {
-    
+
     private static final long serialVersionUID = 1L;
 
     private static final String NO_SELECTION_TEXT = "Click the map below to select annotations";
@@ -67,6 +68,18 @@ public class IGBToolBar extends JToolBar {
             @Override
             public void drop(DropTargetDropEvent dtde) {
                 reIndex();
+            }
+
+            @Override
+            public void dragEnter(DropTargetDragEvent dtde) {                
+                for (Component c : toolbarItemPanel.getComponents()) {
+                    if (c instanceof JRPButtonTLP) {
+                        for (MouseListener m : ((JRPButtonTLP) c).getMouseListeners()) {
+                            MouseEvent me = new MouseEvent(c, 0, 0, 0, 100, 100, 1, false);
+                            m.mouseReleased(me);
+                        }
+                    }
+                }
             }
         });
 
@@ -191,6 +204,7 @@ public class IGBToolBar extends JToolBar {
         for (Component c : toolbarItemPanel.getComponents()) {
             if (c instanceof JRPButtonTLP) {
                 ((JRPButtonTLP) c).setIndex(index++);
+                // ((JRPButtonTLP) c).getm
             }
         }
     }
@@ -231,11 +245,6 @@ public class IGBToolBar extends JToolBar {
 
     private final MouseListener continuousActionListener = new MouseAdapter() {
         private Timer timer;
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-            mouseReleased(e);
-        }
 
         @Override
         public void mousePressed(MouseEvent e) {

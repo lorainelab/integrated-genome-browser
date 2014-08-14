@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
+import com.affymetrix.genometryImpl.event.AxisPopupListener;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -200,6 +201,7 @@ public class SeqMapView extends JPanel
     private com.affymetrix.igb.swing.JRPToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
     private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
+    private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<AxisPopupListener>();
     /**
      * maximum number of query glyphs for edge matcher. any more than this and
      * won't attempt to edge match (edge matching is currently very inefficient
@@ -575,6 +577,8 @@ public class SeqMapView extends JPanel
 
         LinkControl link_control = new LinkControl();
         this.addPopupListener(link_control);
+        
+        
 
 //		this.addPopupListener(new ReadAlignmentView());
         PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
@@ -2087,10 +2091,13 @@ public class SeqMapView extends JPanel
                     }
 
                     if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
-						//popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
+                        //popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
                         //popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
                         //popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
                         popup.add(copy_residues_action);
+                        for (AxisPopupListener listener : axisPopupListeners) {
+                            listener.addPopup(popup);
+                        }
 //						view_genomic_sequence_action.setEnabled(true);	
                     }
                 }
@@ -2122,6 +2129,17 @@ public class SeqMapView extends JPanel
         label.setText(title);
     }
 
+    @Override
+    public void addAxisPopupListener(AxisPopupListener listener) {
+        axisPopupListeners.add(listener);
+    }
+
+    @Override
+    public void removeAxisPopupListener(AxisPopupListener listener) {
+        axisPopupListeners.remove(listener);
+    }
+
+    
     @Override
     public void addPopupListener(ContextualPopupListener listener) {
         popup_listeners.add(listener);

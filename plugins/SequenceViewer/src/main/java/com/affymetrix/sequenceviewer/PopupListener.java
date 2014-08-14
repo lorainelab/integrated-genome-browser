@@ -1,5 +1,6 @@
 package com.affymetrix.sequenceviewer;
 
+import com.affymetrix.genometryImpl.event.AxisPopupListener;
 import java.util.List;
 import javax.swing.JMenuItem;
 
@@ -13,7 +14,7 @@ import javax.swing.JPopupMenu;
  *
  * @author hiralv
  */
-public class PopupListener implements ContextualPopupListener {
+public class PopupListener implements ContextualPopupListener,AxisPopupListener {
 
     JMenuItem genomicSequenceViewer, readSequenceViewer;
 
@@ -31,4 +32,10 @@ public class PopupListener implements ContextualPopupListener {
 
         }
     }
+
+    @Override
+    public void addPopup(JPopupMenu popup) {
+        popup.add(genomicSequenceViewer);
+    }
+    
 }

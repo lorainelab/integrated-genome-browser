@@ -4,6 +4,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
+import com.affymetrix.genometryImpl.event.AxisPopupListener;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
@@ -252,6 +253,7 @@ public class Activator implements BundleActivator {
 
         addMenuItemListener(bundleContext);
         addPopupListener(bundleContext);
+        addAxisPopupListener(bundleContext);
         addScriptListener(bundleContext);
         addPrefEditorComponentListener(bundleContext);
         initSeqMapViewActions();
@@ -643,6 +645,22 @@ public class Activator implements BundleActivator {
         );
     }
 
+    private void addAxisPopupListener(final BundleContext bundleContext) {
+        ExtensionPointHandler<AxisPopupListener> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AxisPopupListener.class);
+        popupExtensionPoint.addListener(
+                new ExtensionPointListener<AxisPopupListener>() {
+                    @Override
+                    public void addService(AxisPopupListener listener) {
+                        Application.getSingleton().getMapView().addAxisPopupListener(listener);
+                    }
+
+                    @Override
+                    public void removeService(AxisPopupListener listener) {
+                        Application.getSingleton().getMapView().removeAxisPopupListener(listener);
+                    }
+                }
+        );
+    }
     private void addScriptListener(final BundleContext bundleContext) {
         ExtensionPointHandler<ScriptProcessor> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ScriptProcessor.class);
         popupExtensionPoint.addListener(
